@@ -25,10 +25,16 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
     protected $validColumnsObjectConcrete = array();
 
     /**
-     * @see Object_Abstract_Resource_Mysql::init
+     * @var Object_Concrete_Resource_Mysql_InheritanceHelper
      */
-    public function init() {
+    protected $inheritanceHelper = null;
+
+    /**
+     * @see Object_Abstract_Resource_Mysql::init  
+     */
+    public function init() {  
         parent::init();
+        $this->inheritanceHelper = new Object_Concrete_Resource_Mysql_InheritanceHelper($this->model->getO_classId());
     }
 
     /**
@@ -340,6 +346,9 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
         $object = get_object_vars($this->model);
 
         $data = array();
+        $this->inheritanceHelper->resetFieldsToCheck();
+        $oldData = $this->db->fetchRow("SELECT * FROM object_query_" . $this->model->getO_classId() . " WHERE oo_id = ?", $this->model->getId());
+
         foreach ($object as $key => $value) {
             $fd = $this->model->geto_class()->getFieldDefinition($key);
 
@@ -355,11 +364,46 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
                         else {
                             $data[$key] = $insertData;
                         }
+
+                        
+                        //get changed fields for inheritance
+                        if($fd->isRelationType()) {
+                            if (is_array($insertData)) {
+                                $doInsert = false;
+                                foreach($insertData as $insertDataKey => $insertDataValue) {
+                                    if($oldData[$insertDataKey] != $insertDataValue) {
+                                        $doInsert = true;
+                                    }
+                                }
+
+                                if($doInsert) {
+                                    $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
+                                }
+                            } else {
+                                if($oldData[$key] != $insertData) {
+                                    $this->inheritanceHelper->addRelationToCheck($key);
+                                }
+                            }
+
+                        } else {
+                            if (is_array($insertData)) {
+                                foreach($insertData as $insertDataKey => $insertDataValue) {
+                                    if($oldData[$insertDataKey] != $insertDataValue) {
+                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                    }
+                                }
+                            } else {
+                                if($oldData[$key] != $insertData) {
+                                    $this->inheritanceHelper->addFieldToCheck($key);
+                                }
+                            }
+                        }
+
                     } else {
                         logger::debug(get_class($this) . ": Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                     }
                 }
-            }
+            } 
         }
         $data["oo_id"] = $this->model->getO_id();
 
@@ -373,6 +417,12 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
 
         // HACK: see a few lines above!
         Pimcore::resetAdminMode();
+    }
+
+    
+    public function saveChilds() {
+        $this->inheritanceHelper->doUpdate($this->model->getId());
+        $this->inheritanceHelper->resetFieldsToCheck();
     }
 
     /**

@@ -14,7 +14,7 @@
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-
+ 
 class Object_Concrete extends Object_Abstract {
     
     /**
@@ -165,17 +165,8 @@ class Object_Concrete extends Object_Abstract {
      * @return void
      */
     public function saveChilds () {
-        if($this->hasChilds()) {
-            foreach ($this->getChilds() as $child) {
-                //only for Object_Concrete we need to save child elements
-                // if the class of the child object allowes inheritance we have to save all childs because their query table with inherited fields must be up-to date
-                if($child instanceof Object_Concrete) {
-                    if($child->getClass()->getAllowInherit()) {
-                        $child->save();
-                    }
-                    $child->saveChilds();
-                }
-            }
+        if($this->getClass()->getAllowInherit()) {
+            $this->getResource()->saveChilds();
         }
     }
 
@@ -464,9 +455,11 @@ class Object_Concrete extends Object_Abstract {
     public function getValueFromParent($key) {
         if ($this->getO_parent() instanceof Object_Abstract) {
             if ($this->getO_parent()->getO_type() == "object") {
-                $method = "get" . $key;
-                if (method_exists($this->getO_parent(), $method)) {
-                    return $this->getO_parent()->$method();
+                if ($this->getO_parent()->getO_classId() == $this->getO_classId()) {
+                    $method = "get" . $key;
+                    if (method_exists($this->getO_parent(), $method)) {
+                        return $this->getO_parent()->$method();
+                    }
                 }
             }
         }
