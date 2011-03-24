@@ -580,7 +580,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             //$tmpAsset["qtip"] = '<img src="/admin/asset/get-image-thumbnail/id/' . $asset->getId() . '/width/130/aspectratio/true" width="130" />';
             $tmpAsset["qtipCfg"] = array(
                 "title" => "ID: " . $asset->getId(),
-                "text" => '<img src="/admin/asset/get-image-thumbnail/id/' . $asset->getId() . '/width/130/aspectratio/true" width="130" />',
+                "text" => '<img src="/admin/asset/get-image-thumbnail/id/' . $asset->getId() . '/width/130/aspectratio/true" width="130" /><br />' . $this->getTranslator()->translate("size") . ': ' . $asset->getWidth() . "x" . $asset->getHeight(),
                 "width" => 140
             );
         }
