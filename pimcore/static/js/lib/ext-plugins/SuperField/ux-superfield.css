@@ -1,0 +1,107 @@
+.x-superfield-header {
+	  border-bottom: #cccccc solid 1px;
+}
+.x-superfield.x-form-invalid .x-superfield-header{
+      background:#FFFFFF url(../../resources/images/default/grid/invalid_line.gif) repeat-x scroll center bottom;
+      border:none;
+}
+.x-superfield-items {
+      padding-top:5px;
+}
+.x-superfield-items th {
+	color: #666;
+	padding-right:4px;
+	padding-bottom:3px;
+	vertical-align: top;
+	font-size: 11px;
+	font-weight: bold;
+}
+.x-superfield-wrap, .x-superfield-items{
+	overflow: hidden;
+}
+.x-superfield-items.center th, .x-superfield-items.center td {
+	text-align: center;
+}
+
+.x-superfield-item td{
+      padding-right:4px;
+}
+.x-superfield-item.odd {
+	background-color:#fff;
+}
+.x-superfield-item.even {
+	background-color:#efefef;
+}
+.x-superfield-wrap {
+	width: 100%;
+}
+.x-superfield-wrap .x-superfield.x-form-invalid{
+      background: #ffffff;
+      border:none;
+}
+.x-superfield-button {
+    cursor: pointer;
+    border: none;
+    padding: 0px !important;
+    outline-style: none;
+    outline-width: 0pt;
+    text-align:left !important;
+    width: auto;
+    background: none;
+}
+.x-superfield-button.add {
+    margin-left: 0px;
+}
+.ext-gecko .x-superfield-button.add {
+    margin-left:-4px;
+}
+
+.x-superfield-button img {
+    background: transparent url(tools.gif) no-repeat !important;
+}
+.x-superfield-button.add img{
+    background-position: 0px 0px !important;    
+}
+.x-superfield-button.add img.over{
+    background-position: -15px 0px !important;    
+}
+.x-superfield-button.edit img{
+    background-position: -0px -15px !important;    
+}
+.x-superfield-button.edit img.over{
+    background-position: -15px -15px !important;    
+}
+.x-superfield-button.delete img {
+    background-position: -0px -30px !important;    
+}
+.x-superfield-button.delete img.over{
+    background-position: -15px -30px !important;    
+}
+.x-superfield-button span{
+    line-height:15px;
+    vertical-align: top;
+    font-size: 11px;
+    padding-left: 2px;
+}
+.x-superfield-button.over span{
+      color:#000;
+}
+
+.x-superfield-summary-header {
+	border-bottom: #cccccc solid 1px;
+}
+.x-superfield-header.disabled .x-superfield-button {
+      cursor: auto;
+}
+.x-superfield-header.disabled .x-superfield-button-icon{
+	cursor:auto;
+}
+.x-superfield-item {
+      color: #666;
+      font: normal 13px tahoma,verdana,helvetica;
+      padding: 0pt;
+      vertical-align: middle;
+}
+.x-superfield-item td {
+     
+}

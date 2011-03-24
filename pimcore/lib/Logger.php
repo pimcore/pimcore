@@ -1,0 +1,130 @@
+<?php
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+ 
+class Logger {
+	
+	private static $logger = array();
+	private static $priorities = array();
+	private static $dummyMode = true;
+	
+	public static function setLogger ($logger) {
+        self::$logger = array();
+		self::$logger[] = $logger;
+        self::$dummyMode = false;
+	}
+    
+    public static function addLogger ($logger,$reset = false) {
+        if($reset) {
+            self::$logger = array();
+        }
+        self::$logger[] = $logger;
+        self::$dummyMode = false;
+    }
+    
+    public static function getLogger () {
+		return self::$logger;
+	}
+	
+	public static function setPriorities ($prios) {
+		self::$priorities = $prios;
+	}
+	
+	public static function initDummy() {
+		self::$dummyMode = true;
+	}
+	
+	public static function log ($message,$code=Zend_Log::INFO) {
+		
+		if(self::$dummyMode) {
+			return;
+		}
+		
+		if(in_array($code,self::$priorities)) {
+			if(is_object($message) || is_array($message)) {
+                // special formatting for exception
+				if($message instanceof Exception) {
+					$message = "[Exception] with message: ".$message->getMessage()
+                        ."\n"
+                        ."In file: "
+                        .$message->getFile()
+                        . " on line "
+                        .$message->getLine()
+                        ."\n"
+                        .$message->getTraceAsString();
+				}
+				else {
+					$message = print_r($message,true);
+				}
+			}
+
+            foreach (self::$logger as $logger) {
+                $logger->log($message,$code);
+            }
+		}
+	}
+    
+    
+    /**
+     * $l is for backward compatibility
+     **/
+    
+     public static function emergency ($m, $l = null) {
+        Logger::log($m,Zend_Log::EMERG);
+    }
+    
+    public static function emerg ($m, $l = null) {
+        self::emergency($m);
+    }
+    
+    public static function critical ($m, $l = null) {
+        Logger::log($m,Zend_Log::CRIT);
+    }
+    
+    public static function crit ($m, $l = null) {
+        self::critical($m);
+    }
+    
+    public static function error ($m, $l = null) {
+        Logger::log($m,Zend_Log::ERR);
+    }
+    
+    public static function err ($m, $l = null) {
+        self::error($m);
+    }
+    
+    public static function alert ($m, $l = null) {
+        Logger::log($m,Zend_Log::ALERT);
+    }
+    
+    public static function warning ($m, $l = null) {
+        Logger::log($m,Zend_Log::WARN);
+    }
+    
+    public static function warn ($m, $l = null) {
+        self::warning($m);
+    }
+    
+    public static function notice ($m, $l = null) {
+        Logger::log($m,Zend_Log::NOTICE);
+    }
+    
+    public static function info ($m, $l = null) {
+        Logger::log($m,Zend_Log::INFO);
+    }
+    
+    public static function debug ($m, $l = null) {
+        Logger::log($m,Zend_Log::DEBUG);
+    }
+}

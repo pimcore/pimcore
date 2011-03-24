@@ -1,0 +1,214 @@
+/*///////////////////////////////*/
+html {
+  cursor: text;
+}
+.editbox {
+  margin: .4em;
+  padding: 0;
+  font-family: monospace;
+  font-size: 10pt;
+  color: black;
+}
+.editbox p {
+  margin: 0;
+}
+
+html, body {
+background: #cccccc !important;
+}
+
+/*///////////////////////////////*/
+/* Inside character classes */
+span.regex-class-special-escape {
+    color: Coral;
+}
+span.regex-class-begin, span.regex-class-end {
+    color: YellowGreen;
+}
+span.regex-class-negator {
+    color: Wheat;
+}
+span.regex-class-range-hyphen {
+   color: Turquoise;
+}
+span.regex-class-final-hyphen {
+    color: Violet;
+}
+
+/*///////////////////////////////*/
+/* Inside character classes (suffixable by -begin-range or -end-range if beginning or ending a range) */
+span.regex-unicode-class-inside {
+    color: Tomato;
+}
+span.regex-class-initial-hyphen {
+    color: Teal;
+}
+span.regex-class-character {
+    color: Tan;
+}
+span.regex-class-octal {
+    color: SteelBlue;
+}
+span.regex-class-hex {
+    color: SpringGreen;
+}
+span.regex-class-unicode-escape {
+    color: SlateGray;
+}
+span.regex-class-ascii-control {
+    color: SlateBlue;
+}
+span.regex-class-extra-escaped {
+    color: SkyBlue;
+}
+span.regex-class-escaped-special {
+    color: CornflowerBlue;
+}
+
+/*///////////////////////////////*/
+span.class-special-escape-begin-range, span.class-special-escape-end-range {
+    color: Brown;
+}
+span.regex-unicode-class-inside-begin-range, span.regex-unicode-class-inside-end-range {
+    color: Silver;
+}
+span.regex-class-initial-hyphen-begin-range, span.regex-class-initial-hyphen-end-range {
+    color: SeaGreen;
+}
+span.regex-class-character-begin-range, span.regex-class-character-end-range {
+    color: SandyBrown;
+}
+span.regex-class-octal-begin-range, span.regex-class-octal-end-range {
+    color: Salmon;
+}
+span.regex-class-hex-begin-range, span.regex-class-hex-end-range {
+    color: SaddleBrown;
+}
+span.regex-class-unicode-escape-begin-range, span.regex-class-unicode-escape-end-range {
+    color: RoyalBlue;
+}
+span.regex-class-ascii-control-begin-range, span.regex-class-ascii-control-end-range {
+    color: RosyBrown;
+}
+span.regex-class-extra-escaped-begin-range, span.regex-class-extra-escaped-end-range {
+    color: Orange;
+}
+span.regex-class-escaped-special-begin-range, span.regex-class-escaped-special-end-range {
+    color: DarkKhaki;
+}
+
+
+/*///////////////////////////////*/
+/* Outside character classes */
+span.regex-special-escape {
+    color: Chocolate;
+}
+span.regex-escaped-special {
+    color: Orange;
+}
+span.regex-alternator {
+    color: darkpink;
+}
+span.regex-unicode-class-outside {
+    color: Green;
+}
+span.regex-octal {
+    color: MediumVioletRed;
+}
+span.regex-ascii {
+    color: MediumTurquoise;
+}
+span.regex-hex {
+    color: MediumSpringGreen;
+}
+span.regex-unicode-escape {
+    color:pink;
+}
+span.regex-ascii-control {
+    color: MediumSlateBlue;
+}
+span.regex-extra-escaped {
+    color: MediumSeaGreen;
+}
+span.regex-quantifier-escape {
+    color: Azure;
+}
+span.regex-quantifiers {
+    color: MediumPurple;
+}
+span.regex-repetition {
+    color: MediumOrchid;
+}
+span.regex-literal-begin, span.regex-literal-end {
+    color: MediumBlue;
+}
+span.regex-character {
+    color: Navy;
+}
+
+/*///////////////////////////////*/
+/* Literals/Surrounding characters */
+span.regex-flags {
+    color: Green;
+}
+
+/*///////////////////////////////*/
+/* Optional outside character class features*/
+span.regex-empty-class {
+    color: Lime;
+}
+span.regex-named-backreference {
+    color: LightSlateGray;
+}
+span.regex-free-spacing-mode {
+    background-color: LightSeaGreen;
+}
+span.regex-mode-modifier {
+    color: LightSalmon;
+}
+span.regex-comment-pattern {
+    color: LightGreen;
+}
+span.regex-capturing-group, span.regex-ending-capturing-group {
+    color: LightGray;
+}
+span.regex-named-capturing-group, span.regex-ending-named-capturing-group {
+    color: LightCoral;
+}
+span.regex-group, span.regex-ending-group {
+    color: LawnGreen;
+}
+
+
+span.regex-capturing-group1-1, span.regex-ending-capturing-group1-1 {
+    background-color: red;
+}
+span.regex-capturing-group1-2, span.regex-ending-capturing-group1-2 {
+    background-color: orange;
+}
+span.regex-capturing-group2-1, span.regex-ending-capturing-group2-1 {
+    background-color: yellow;
+}
+span.regex-capturing-group2-2, span.regex-ending-capturing-group2-2 {
+    background-color: green;
+}
+
+/*///////////////////////////////*/
+/* Closing parentheses without opening, etc. */
+span.regex-bad-character, span.regex-bad-sequence {
+    color: red;
+}
+
+/* Used if "uniform" inner_group_mode is used */
+span.regex-group-1-1 {
+    background-color: blue;
+}
+span.regex-group-1-2 {
+    background-color: green;
+}
+span.regex-group-2-1 {
+    background-color: pink;
+}
+span.regex-group-2-2 {
+    background-color: yellow;
+}

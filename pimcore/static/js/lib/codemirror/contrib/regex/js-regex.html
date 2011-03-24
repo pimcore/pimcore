@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CodeMirror Regex Highlighting</title>
+<script type="text/javascript" src="../../js/codemirror.js"></script>
+<script type="text/javascript">
+
+window.onload = function () {
+
+  createEditor('js-regexp', 'uniform');
+  createEditor('js-regexp-type', 'type');
+  createEditor('js-regexp-none', false);
+    
+  function createEditor (id, type) {
+      var jseditor = CodeMirror.fromTextArea(id, {
+        noScriptCaching: true,
+        // continuousScanning: true,  // Normally Debugging only, but useful with regex
+        parserConfig: {
+            // flags: 'x',
+            //literal: true,
+            flavor: 'ecma-262-ed3',
+            regex_mode_modifier: true,
+            regex_max_levels:2,
+            regex_max_alternating:2,
+            regex_inner_group_mode: type
+        },
+        parserfile: ["tokenizejavascript.js", "parsejavascript.js", "../contrib/regex/js/parseregex.js","../contrib/regex/js/parsejavascript_and_regex.js"],
+        stylesheet: ["css/js-regexcolors.css", "../../css/jscolors.css"],    
+        path: '../../js/',
+        height: 'dynamic',
+        minHeight: 20,
+
+        // Demonstrates Unicode tooltip features
+        activeTokens : (function () {
+            var charLimit = 500;
+            var lastEquivalent, rangeBegan, lastRangeHyphen;
+            
+            function _buildTitle (beginChar, endChar) {
+                var beginCode = beginChar.charCodeAt(0), endCode = endChar.charCodeAt(0);
+                var title = '';
+                if (endCode - beginCode <= charLimit) {
+                    for (var i = beginCode; i <= endCode; i++) {
+                        title += String.fromCharCode(i);
+                    }
+                }
+                return title;
+            }
+            
+            return function (spanNode, token, editor) {
+                var content = token.content;
+                if (lastEquivalent && token.style === 'regex-class-range-hyphen') {
+                    rangeBegan = true;
+                    lastRangeHyphen = spanNode;
+                }
+                else if (rangeBegan) {
+                    var beginChar = lastEquivalent;
+                    var endChar = (token.equivalent || content);
+                    lastRangeHyphen.title = _buildTitle(beginChar, endChar);
+                    rangeBegan = false;
+                    lastEquivalent = null;
+                }
+                else if (content === ']') {
+                    rangeBegan = false;
+                }
+                else {
+                    rangeBegan = false;
+                    // Fix: 'regex-unicode-class-inside' not supported and should not be since it wouldn't make sense as a starting range?
+                    lastEquivalent = token.equivalent || content;
+                }
+                
+                if (token.display) {
+                    spanNode.title = token.display;
+                }
+                else if (token.equivalent) {
+                    if (token.unicode) {
+                        var range = /(.)-(.)/g;
+                        spanNode.title = token.equivalent.replace(range,
+                            function (n0, n1, n2) {
+                                return _buildTitle(n1, n2);
+                            }
+                        );
+                    }
+                    else {
+                        spanNode.title = token.equivalent;
+                    }
+                }
+            };
+        }())
+      });
+  }
+};
+
+</script>
+</head>
+
+<body>
+<div>
+    <h1>CodeMirror JavaScript-Integrated Regex Code Editor Demonstration</h1>
+        <p>This demonstrates a parser in the regex folder which wraps the regular CodeMirror JavaScript editor and adds syntax coloring to
+        regular expression literals in JavaScript.</p>
+        <textarea id="js-regexp" cols="60" rows="1">
+var aVar = "aString" + 42 + aFunction(anArg, true);
+var myRgx = /test(group1|group2|(?:group3))and(group4)and(gr(ou)p5)/gi;
+</textarea>
+
+        <p>While the above styles by depth or sequence no matter the grouping type, this parser also allows styling distinctly by grouping type (capturing, named, non-capturing), while also still allowing alternating of colors within a type.</p>
+        <textarea id="js-regexp-type" cols="60" rows="1">
+var aVar = "aString" + 42 + aFunction(anArg, true);
+var myRgx = /test(group1|group2|(?:group3))and(group4)and(gr(ou)p5)/gi;
+</textarea>
+        <p>One may also simply turn off the styling of content inside groups, allowing only individual tokens to be styled per the stylesheet (though the parentheses tokens themselves can still indicate depth or sequence):</p>
+        <textarea id="js-regexp-none" cols="60" rows="1">
+var aVar = "aString" + 42 + aFunction(anArg, true);
+var myRgx = /test(group1|group2|(?:group3))and(group4)and(gr(ou)p5)/gi;
+</textarea>
+</div>
+</body>
+</html>

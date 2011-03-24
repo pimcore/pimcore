@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <script src="js/codemirror.js" type="text/javascript"></script>
+    <script src="js/mirrorframe.js" type="text/javascript"></script>
+    <title>CodeMirror: JavaScript demonstration</title>
+    <link rel="stylesheet" type="text/css" href="css/docs.css"/>
+  </head>
+  <body style="padding: 20px;">
+
+<p>This page demonstrates <a href="index.html">CodeMirror</a>'s
+JavaScript parser. Note that the ugly buttons at the top are not are
+not part of CodeMirror proper -- they demonstrate the way it can be
+embedded in a web-application.</p>
+
+<div>
+<textarea id="code" cols="120" rows="30">
+// Here you see some JavaScript code. Mess around with it to get
+// acquainted with CodeMirror's features.
+
+// Press enter inside the object and your new line will be suitably
+// indented.
+var keyBindings = {
+  enter: "newline-and-indent",
+  tab: "reindent-selection",
+  ctrl_z: "undo",
+  ctrl_y: "redo",
+  ctrl_backspace: "undo-for-safari (which blocks ctrl-z)",
+  ctrl_bracket: "highlight-brackets",
+  ctrl_shift_bracket: "jump-to-matching-bracket"
+};
+
+// Press tab on the next line and the wrong indentation will be fixed.
+      var regex = /foo|bar/i;
+
+function example(x) {
+  // Local variables get a different colour than global ones.
+  var y = 44.4;
+  return x + y - z;
+}
+</textarea>
+</div>
+
+<script type="text/javascript">
+  var textarea = document.getElementById('code');
+  var editor = new MirrorFrame(CodeMirror.replace(textarea), {
+    height: "350px",
+    content: textarea.value,
+    parserfile: ["tokenizejavascript.js", "parsejavascript.js"],
+    stylesheet: "css/jscolors.css",
+    path: "js/",
+    autoMatchParens: true
+  });
+</script>
+
+  </body>
+</html>

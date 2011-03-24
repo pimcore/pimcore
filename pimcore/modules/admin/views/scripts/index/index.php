@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=8" />
+    
+    <title><?php echo $_SERVER["HTTP_HOST"] ?> :: Pimcore</title>
+
+    <!-- load in head because of the progress bar at loading -->
+    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
+</head>
+
+<body onunload="pimcore.helpers.unload();">
+    
+    <div id="pimcore_logo" style="display: none;">
+        <img src="/pimcore/static/img/logo.png"/>
+    </div>
+    
+    <div id="pimcore_loading">
+        <img class="logo" src="/pimcore/static/img/loading-logo.png?_dc=<?php echo Pimcore_Version::$revision ?>" />
+        <img class="loading" src="/pimcore/static/img/loading.gif?_dc=<?php echo Pimcore_Version::$revision ?>" />
+    </div>
+    
+    
+    <script type="text/javascript">
+        var pimcore = {}; // namespace
+    </script>
+    
+    
+    <?php // define stylesheets ?>
+    <?php
+        $conf = Zend_Registry::get("pimcore_config_system");
+        
+        $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css";
+        if ($conf->general->theme) {
+            $themeUrl = $conf->general->theme;
+        }
+
+        $styles = array(
+            "/admin/misc/admin-css",
+            "/pimcore/static/css/icons.css",
+            "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
+            $themeUrl,
+            "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.css",
+            "/pimcore/static/js/lib/ext-plugins/Notification/notification.css",
+            "/pimcore/static/js/lib/ext-plugins/SuperField/ux-superfield.css",
+            "/pimcore/static/js/lib/ext-plugins/SuperBoxSelect/superboxselect.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/css/RowEditor.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/css/Spinner.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/statusbar/css/statusbar.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/css/Portal.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/css/MultiSelect.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/gridfilters/css/GridFilters.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/gridfilters/css/RangeMenu.css",
+            "/pimcore/static/js/lib/ext-plugins/ux.maximgb.tg/css/TreeGrid.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/fileuploadfield/css/fileuploadfield.css",
+            "/pimcore/static/css/ext-admin-overwrite.css"
+        );
+    ?>
+    
+    <!-- stylesheets -->
+    <?php foreach ($styles as $style) { ?>
+        <link rel="stylesheet" type="text/css" href="<?php echo $style ?>?_dc=<?php echo Pimcore_Version::$revision ?>" />
+    <?php } ?>
+
+    
+    
+    
+    
+    <?php //****************************************************************************************** ?>
+    
+    
+    
+    
+    
+    <?php // define scripts ?>
+    <?php
+        
+        // SCRIPT LIBRARIES
+        $scriptExtAdapter = "lib/ext/adapter/jquery/ext-jquery-adapter.js";
+        $scriptExt = "lib/ext/ext-all.js";
+        if (PIMCORE_DEVMODE) { 
+            $scriptExtAdapter = "lib/ext/adapter/jquery/ext-jquery-adapter-debug.js";
+            $scriptExt = "lib/ext/ext-all-debug.js";
+        }
+        
+        $scriptLibs = array(
+            
+            // library            
+            "lib/prototype-light.js",
+            "lib/jquery-1.4.2.min.js",
+            "lib/jquery.color.js",
+            $scriptExtAdapter,
+            
+            $scriptExt,
+            "lib/ext-plugins/SwfUploadPanel/swfupload.js",
+            "lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.js",
+            "lib/ext-plugins/Notification/Ext.ux.Notification.js",
+            "lib/ext-plugins/PagingTreeLoader/PagingTreeLoader.js",
+            "lib/ext-plugins/GridRowOrder/roworder.js",
+            "lib/ext-plugins/SuperField/SuperField.js",
+            "lib/ext-plugins/PimcoreFormLayout/panel.js",
+            "lib/ext-plugins/ux/Reorderer.js",
+            "lib/ext-plugins/ux/ToolbarReorderer.js",
+            "lib/ext-plugins/ux/DataViewTransition.js",
+            "lib/ext-plugins/ux/treegrid/TreeGridSorter.js",
+            "lib/ext-plugins/ux/treegrid/TreeGridColumnResizer.js",
+            "lib/ext-plugins/ux/treegrid/TreeGridNodeUI.js",
+            "lib/ext-plugins/ux/treegrid/TreeGridLoader.js",
+            "lib/ext-plugins/ux/treegrid/TreeGridColumns.js",
+            "lib/ext-plugins/ux/treegrid/TreeGrid.js",
+            "lib/ext-plugins/ux.maximgb.tg/TreeGrid.js",
+            "lib/ext-plugins/SuperBoxSelect/SuperBoxSelect.js",
+
+            "lib/ext-plugins/ux/RowEditor.js",
+            "lib/ext-plugins/ux/Spinner.js",
+            "lib/ext-plugins/ux/SpinnerField.js",
+            "lib/ext-plugins/ux/MultiSelect.js",
+            "lib/ext-plugins/ux/CheckColumn.js",
+            "lib/ext-plugins/ux/statusbar/StatusBar.js",
+            "lib/ext-plugins/ux/Portal.js",
+            "lib/ext-plugins/ux/PortalColumn.js",
+            "lib/ext-plugins/ux/Portlet.js",
+            "lib/ext-plugins/ux/gridfilters/menu/RangeMenu.js",
+            "lib/ext-plugins/ux/gridfilters/menu/ListMenu.js",
+            "lib/ext-plugins/ux/gridfilters/GridFilters.js",
+            "lib/ext-plugins/ux/gridfilters/filter/Filter.js",
+            "lib/ext-plugins/ux/gridfilters/filter/StringFilter.js",
+            "lib/ext-plugins/ux/gridfilters/filter/DateFilter.js",
+            "lib/ext-plugins/ux/gridfilters/filter/ListFilter.js",
+            "lib/ext-plugins/ux/gridfilters/filter/NumericFilter.js",
+            "lib/ext-plugins/ux/gridfilters/filter/BooleanFilter.js",
+            "lib/ext-plugins/ux/fileuploadfield/FileUploadField.js",
+            "lib/ckeditor/ckeditor.js",
+        
+            // locale
+            "lib/ext/locale/ext-lang-" . $this->language . ".js",
+
+            "lib/codemirror/js/codemirror.js"
+        );
+        
+        
+        // PIMCORE SCRIPTS
+        $scripts = array(
+            
+            // fixes for libraries
+            "pimcore/libfixes.js",
+            
+            // small libs
+            "lib/array_merge.js",
+            "lib/array_merge_recursive.js",
+                  
+            // runtime
+            "pimcore/namespace.js",
+            "pimcore/functions.js",
+            "pimcore/globalmanager.js",
+            "pimcore/helpers.js",
+        
+            "pimcore/user.js",
+
+            // settings
+            "pimcore/settings/user/panel.js",
+            "pimcore/settings/user/PermissionRowEditor.js",
+            "pimcore/settings/profile/panel.js",
+            "pimcore/settings/thumbnails.js",
+            "pimcore/settings/translations.js",
+            "pimcore/settings/translation/website.js",
+            "pimcore/settings/translation/admin.js",
+            "pimcore/settings/properties.js",
+            "pimcore/settings/scheduler.js",
+            "pimcore/settings/property/predefined.js",
+            "pimcore/settings/docTypes.js",
+            "pimcore/settings/system.js",
+            "pimcore/settings/website.js",
+            "pimcore/settings/dependencies.js",
+            "pimcore/settings/staticroutes.js",
+            "pimcore/settings/update.js",
+            "pimcore/settings/languages.js",
+            "pimcore/settings/redirects.js",
+            "pimcore/settings/glossary.js",
+            "pimcore/settings/systemlog.js",
+            "pimcore/settings/backup.js",
+            "pimcore/settings/recyclebin.js",
+            "pimcore/settings/fileexplorer/file.js",
+            "pimcore/settings/fileexplorer/explorer.js",
+            "pimcore/settings/maintenance.js",
+
+            // element
+            "pimcore/element/abstract.js",
+            "pimcore/element/selector/selector.js",
+            "pimcore/element/selector/abstract.js",
+            "pimcore/element/selector/document.js",
+            "pimcore/element/selector/asset.js",
+            "pimcore/element/selector/object.js",
+
+            //element importer, exporter
+            "pimcore/element/importer.js",
+            "pimcore/element/exporter.js",
+        
+            // documents
+            "pimcore/document/properties.js",
+            "pimcore/document/document.js",
+            "pimcore/document/page_snippet.js",
+            "pimcore/document/edit.js",
+            "pimcore/document/versions.js",
+            "pimcore/document/pages/settings.js",
+            "pimcore/document/pages/preview.js",
+            "pimcore/document/snippets/settings.js",
+            "pimcore/document/link.js",
+            "pimcore/document/folder.js",
+            "pimcore/document/permissions.js",
+            "pimcore/document/tree.js",
+            "pimcore/document/snippet.js",
+            "pimcore/document/page.js",
+            
+            // assets
+            "pimcore/asset/asset.js",
+            "pimcore/asset/unknown.js",
+            "pimcore/asset/image.js",
+            "pimcore/asset/document.js",
+            "pimcore/asset/video.js",
+            "pimcore/asset/text.js",
+            "pimcore/asset/folder.js",
+            "pimcore/asset/versions.js",
+            "pimcore/asset/permissions.js",
+            "pimcore/asset/tree.js",
+        
+            // object
+            "pimcore/object/helpers/edit.js",
+            "pimcore/object/classes/class.js",
+            "pimcore/object/class.js",
+            "pimcore/object/classes/data/data.js",
+            "pimcore/object/classes/data/date.js",
+            "pimcore/object/classes/data/datetime.js",
+            "pimcore/object/classes/data/time.js",
+            "pimcore/object/classes/data/href.js",
+            "pimcore/object/classes/data/image.js",
+            "pimcore/object/classes/data/input.js",
+            "pimcore/object/classes/data/numeric.js",
+            "pimcore/object/classes/data/objects.js",
+            "pimcore/object/classes/data/nonownerobjects.js",
+            "pimcore/object/classes/data/select.js",
+            "pimcore/object/classes/data/user.js",
+            "pimcore/object/classes/data/textarea.js",
+            "pimcore/object/classes/data/wysiwyg.js",
+            "pimcore/object/classes/data/checkbox.js",
+            "pimcore/object/classes/data/slider.js",
+            "pimcore/object/classes/data/multihref.js",
+            "pimcore/object/classes/data/table.js",
+            "pimcore/object/classes/data/country.js",
+            "pimcore/object/classes/data/geopoint.js",
+            "pimcore/object/classes/data/language.js",
+            "pimcore/object/classes/data/password.js",
+            "pimcore/object/classes/data/multiselect.js",
+            "pimcore/object/classes/data/link.js",
+            "pimcore/object/classes/data/geobounds.js",
+            "pimcore/object/classes/data/geopolygon.js",
+            "pimcore/object/classes/data/fieldcollections.js",
+            "pimcore/object/classes/data/localizedfields.js",
+            "pimcore/object/classes/data/countrymultiselect.js",
+            "pimcore/object/classes/data/languagemultiselect.js",
+            "pimcore/object/classes/layout/layout.js",
+            "pimcore/object/classes/layout/accordion.js",
+            "pimcore/object/classes/layout/fieldset.js",
+            "pimcore/object/classes/layout/panel.js",
+            "pimcore/object/classes/layout/region.js",
+            "pimcore/object/classes/layout/tabpanel.js",
+            "pimcore/object/classes/layout/button.js",
+            "pimcore/object/classes/layout/text.js",
+            "pimcore/object/fieldcollection.js",
+            "pimcore/object/fieldcollections/field.js",
+            "pimcore/object/tags/abstract.js",
+            "pimcore/object/tags/date.js",
+            "pimcore/object/tags/datetime.js",
+            "pimcore/object/tags/time.js",
+            "pimcore/object/tags/href.js",
+            "pimcore/object/tags/image.js",
+            "pimcore/object/tags/input.js",
+            "pimcore/object/tags/numeric.js",
+            "pimcore/object/tags/objects.js",
+            "pimcore/object/tags/nonownerobjects.js",
+            "pimcore/object/tags/select.js",
+            "pimcore/object/tags/user.js",
+            "pimcore/object/tags/checkbox.js",
+            "pimcore/object/tags/textarea.js",
+            "pimcore/object/tags/wysiwyg.js",
+            "pimcore/object/tags/slider.js",
+            "pimcore/object/tags/multihref.js",
+            "pimcore/object/tags/table.js",
+            "pimcore/object/tags/country.js",
+            "pimcore/object/tags/geopoint.js",
+            "pimcore/object/tags/language.js",
+            "pimcore/object/tags/password.js",
+            "pimcore/object/tags/multiselect.js",
+            "pimcore/object/tags/link.js",
+            "pimcore/object/tags/geobounds.js",
+            "pimcore/object/tags/geopolygon.js",
+            "pimcore/object/tags/fieldcollections.js",
+            "pimcore/object/tags/localizedfields.js",
+            "pimcore/object/tags/countrymultiselect.js",
+            "pimcore/object/tags/languagemultiselect.js",
+            "pimcore/object/versions.js",
+            "pimcore/object/importer.js",
+            "pimcore/object/permissions.js",
+            "pimcore/object/folder/search.js",
+            "pimcore/object/edit.js",
+            "pimcore/object/abstract.js",
+            "pimcore/object/object.js",
+            "pimcore/object/folder.js",
+            "pimcore/object/tree.js",
+            "pimcore/object/customviews/settings.js",
+            "pimcore/object/customviews/tree.js",
+            
+            //plugins
+            "pimcore/plugin/overview.js",
+            "pimcore/plugin/settings.js",
+            "pimcore/plugin/broker.js",
+            "pimcore/plugin/plugin.js",
+            "pimcore/plugin/update.js",
+        
+            // reports
+            "pimcore/report/panel.js",
+            "pimcore/report/broker.js",
+            "pimcore/report/abstract.js",
+            "pimcore/report/settings.js",
+            "pimcore/report/analytics/settings.js",
+            "pimcore/report/analytics/elementoverview.js",
+            "pimcore/report/analytics/elementexplorer.js",
+            "pimcore/report/analytics/elementnavigation.js",
+            "pimcore/report/webmastertools/settings.js",
+            "pimcore/report/webmastertools/keywords.js",
+            "pimcore/report/webmastertools/crawling.js",
+            "pimcore/report/websiteoptimizer/abcreate.js",
+
+            // layout
+            "pimcore/layout/portal.js",
+            "pimcore/layout/portlets/abstract.js",
+            "pimcore/layout/portlets/modifiedDocuments.js",
+            "pimcore/layout/portlets/modifiedObjects.js",
+            "pimcore/layout/portlets/modifiedAssets.js",
+            "pimcore/layout/portlets/modificationStatistic.js",
+            "pimcore/layout/portlets/feed.js",
+            "pimcore/layout/portlets/analytics.js",
+            
+            "pimcore/layout/toolbar.js",
+            "pimcore/layout/treepanelmanager.js",
+            "pimcore/document/seemode.js"
+        );
+    ?>
+    
+    <!-- some javascript -->
+    <?php // pimcore constants ?>
+    <script type="text/javascript">
+        pimcore.settings = {
+            upload_max_filesize: <?php echo $this->upload_max_filesize; ?>,
+            sessionId: "<?php echo $_COOKIE["pimcore_admin_sid"] ?>",
+            version: "<?php echo Pimcore_Version::getVersion() ?>",
+            build: "<?php echo Pimcore_Version::$revision ?>",
+            maintenance: <?php echo $this->maintenance_enabled; ?>,
+            mail: <?php echo $this->mail_settings_incomplete ?>,
+            welcomescreen: <?php echo $this->config->general->welcomescreen ? "true" : "false"; ?>,
+            debug: <?php echo $this->config->general->debug ? "true" : "false"; ?>,
+            google_maps_api_key: "<?php echo $this->config->services->googlemaps->apikey; ?>",
+            google_analytics_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::isConfigured()) ?>,
+            google_analytics_advanced: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::getSiteConfig()->advanced); ?>,
+            google_webmastertools_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Webmastertools::isConfigured()) ?>,
+            customviews: <?php echo Zend_Json::encode($this->customview_config) ?>,
+            language: '<?php echo $this->language; ?>',
+            websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
+            google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>"
+        };
+    </script>
+    
+    
+    <?php // 3rd party libraries ?>
+    <?php if ($this->config->services->googlemaps->apikey) { ?>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?php echo $this->config->services->googlemaps->apikey; ?>"
+            type="text/javascript"></script>
+    <?php } ?>
+    
+    <script type="text/javascript" src="/admin/misc/json-transliteration"></script>
+    <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/"></script>
+    <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/"></script>
+    <script type="text/javascript" src="/admin/user/get-current-user/"></script>
+    <script type="text/javascript" src="/admin/misc/available-languages"></script>
+    
+    
+    <!-- library scripts -->
+    <?php foreach ($scriptLibs as $scriptUrl) { ?>
+        <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <?php } ?>
+    
+    
+    
+    <!-- internal scripts -->
+    <?php if (PIMCORE_DEVMODE) { ?>
+        <?php foreach ($scripts as $scriptUrl) { ?>
+            <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+        <?php } ?>
+    <?php } else { ?>
+        <?php 
+            $scriptContents = "";
+            foreach ($scripts as $scriptUrl) {
+                if(is_file(PIMCORE_PATH."/static/js/".$scriptUrl)) {
+                    $scriptContents .= file_get_contents(PIMCORE_PATH."/static/js/".$scriptUrl) . "\n\n\n";
+                }
+            }
+        ?>
+        <script type="text/javascript" src="<?php echo Pimcore_Tool_Admin::getMinimizedScriptPath($scriptContents) ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <?php } ?>
+    
+    
+    
+    <?php // load plugin scripts ?>
+    <?php
+        try {
+            $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
+            if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
+                foreach ($pluginBroker->getPlugins() as $plugin) {
+                    if ($plugin->isInstalled()) {
+                        $jsPaths = $plugin->getJsPaths();
+                        if (!empty($jsPaths)) {
+                            foreach ($jsPaths as $jsPath) {
+                                $jsPath=trim($jsPath);
+                                if (!empty($jsPath)) {
+                                    ?>
+                                    <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo time() ?>"></script>
+                                    <?php
+        
+                                }
+                            }
+                        }
+                        $cssPaths = $plugin->getCssPaths();
+                        if (!empty($cssPaths)) {
+                            foreach ($cssPaths as $cssPath) {
+                                $cssPath = trim($cssPath);
+                                if (!empty($cssPath)) {
+                                    ?>
+                                    <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo time() ?>"/>
+                                    <?php
+        
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+        catch (Exception $e) {}
+    ?>
+
+    <?php // MUST BE THE LAST LINE ?>
+    <script type="text/javascript" src="/pimcore/static/js/pimcore/startup.js"></script>
+
+</body>
+</html>

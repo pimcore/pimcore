@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>ToastWindow</title>
+	<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+
+	<!-- GC -->
+ 	<!-- LIBS -->
+ 	<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+ 	<!-- ENDLIBS -->
+
+	<script type="text/javascript" src="../../ext-all.js"></script>
+
+	<script type="text/javascript" src="Ext.ux.Notification.js"></script>
+
+	<script type="text/javascript" src="protoculous-packer.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="../examples.css" />
+
+	<style>
+		body {overflow: hidden;}
+		.x-icon-error{background-image:url(exclamation.gif) ! important;}
+		.x-icon-information{background-image:url(information.gif) ! important;}
+		.x-notification .x-window-body{margin: 0;padding:1em ! important; width: auto ! important;}
+		.x-notification .x-tool-close{display: none}
+		.x-notification.fixed .x-tool-close{display: block}
+	</style>
+
+	<script>
+	Ext.onReady(function()
+	{
+		var viewport = new Ext.Viewport({
+			layout: 'border',
+			items: [
+				{
+					region: 'center',
+					title: 'Toast Windows',
+					items: [
+						{
+							xtype: 'button',
+							text: 'Eject new toast window',
+							style: 'margin: 20px',
+							listeners: {
+								click: function(){
+									new Ext.ux.Notification({
+										iconCls:	'x-icon-error',
+										title:	  'Ruh-row',
+										html:	   'This is just a stub.  This is only a stub.  If this would have been a real functioning doo-dad, you never would have even seen this stub.',
+										autoDestroy: true,
+										hideDelay:  5000,
+										listeners: {
+											'beforerender': function(){
+												Sound.enable();
+												Sound.play('notify.wav');
+												Sound.disable();
+											}
+										}
+									}).show(document); 
+ 
+								}
+							}
+						}
+					]
+				}
+			]
+		});
+	});
+	</script>
+</head>
+<body>
+</body>
+</html>

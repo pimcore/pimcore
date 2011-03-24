@@ -1,0 +1,23 @@
+
+
+# CKEDITOR
+- removed the following files / directories
+    /ckeditor/_samples/
+    /ckeditor/_source/
+
+
+# EXT JS
+- moved folder /ext/examples/ux/ to /ext-plugins/ux/
+- moved folder /ext/src/locale/ to /ext/locale/
+- removed the following files / directories
+    /ext/docs/
+    /ext/src/
+    /ext/test/
+    /ext/welcome/
+    /ext/pkgs/
+    /ext/examples/
+
+    
+
+
+

@@ -1,0 +1,66 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>SwfUpload Example</title>
+
+    <link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
+
+    <!-- GC -->
+ 	<!-- LIBS -->
+ 	<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
+ 	<!-- ENDLIBS -->
+
+    <script type="text/javascript" src="../../ext-all.js"></script>
+
+    <script type="text/javascript" src="swfupload.js"></script>
+    <script type="text/javascript" src="SwfUploadPanel.js"></script>
+    <link rel="stylesheet" type="text/css" href="SwfUploadPanel.css" />
+
+</head>
+<body>
+<script type="text/javascript">
+Ext.onReady(function() {
+    var w = new Ext.Window({
+        title: 'Test Upload',
+        width: 400,
+        height: 300,
+        layout: 'fit',
+        closeAction: 'hide',
+    	modal: true,
+        items: [
+            new Ext.ux.SwfUploadPanel({
+                border: false,
+                debug: true,
+
+                upload_url: 'upload.php',
+                post_params: {
+                    sid: '<your_session_id>'
+                },
+                file_types: '*.*',
+                file_types_description: 'All files',
+                flash_url: 'swfupload.swf',
+
+                // Set to true if you only want to select one file from the FileDialog.
+                single_file_select: false, 
+                // This will prompt for removing files from queue.
+                confirm_delete: true, 
+                // Remove file from grid after uploaded.
+                remove_completed: true,
+                
+                listeners: {
+                    startUpload: function(panel) {
+                        // called when upload starts
+                    },
+                    allUploadsComplete: function() {
+                        // called when all uploads are completed
+                    }
+                }
+            })
+        ]
+    });
+    
+    w.show();
+});
+</script>
+</body>
+</html>

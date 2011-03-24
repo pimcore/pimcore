@@ -1,0 +1,15 @@
+.SwfUploadPanel_iconAdd {
+	background-image:url(upload_add.png) !important;
+}
+
+.SwfUploadPanel_iconUpload {
+	background-image:url(upload_upload.png) !important;
+}
+
+.SwfUploadPanel_iconCancel {
+	background-image:url(upload_cancel.png) !important;
+}
+
+.SwfUploadPanel_iconClear {
+    background-image:url(upload_clear.png) !important;
+}

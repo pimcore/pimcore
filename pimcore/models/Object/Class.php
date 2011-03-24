@@ -1,0 +1,570 @@
+<?php
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @package    Object
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+class Object_Class extends Pimcore_Model_Abstract {
+
+    /**
+     * @var int
+     */
+    public $id;
+
+    /**
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @var int
+     */
+    public $creationDate;
+
+    /**
+     * @var int
+     */
+    public $modificationDate;
+
+    /**
+     * @var int
+     */
+    public $userOwner;
+
+    /**
+     * @var int
+     */
+    public $userModification;
+
+    /**
+     * Name of the parent class if set
+     *
+     * @var string
+     */
+    public $parentClass;
+
+    /**
+     * @var boolean
+     */
+    public $allowInherit = false;
+
+    /**
+     * @var array
+     */
+    public $fieldDefinitions;
+
+    /**
+     * @var array
+     */
+    public $layoutDefinitions;
+
+    /**
+     * @var string
+     */
+    public $icon;
+
+    /**
+     * @var array
+     */
+    public $propertyVisibility = array(
+        "grid" => array(
+            "id" => true,
+            "path" => true,
+            "published" => true,
+            "modificationDate" => true,
+            "creationDate" => true
+        ),
+        "search" => array(
+            "id" => true,
+            "path" => true,
+            "published" => true,
+            "modificationDate" => true,
+            "creationDate" => true
+        )
+    );
+    
+    
+    /**
+     * @param integer $id
+     * @return Object_Class
+     */
+    public static function getById($id) {
+
+        $cacheKey = "class_" . $id;
+
+        try {
+            $class = Zend_Registry::get($cacheKey);
+        }
+        catch (Exception $e) {
+
+            $class = new self();
+            Zend_Registry::set($cacheKey, $class);
+            $class->getResource()->getById($id);
+        }
+
+        return $class;
+    }
+
+    /**
+     * @param string $name
+     * @return Object_Class
+     */
+    public static function getByName($name) {
+        $class = new self();
+        $class->getResource()->getByName($name);
+        return $class;
+    }
+
+    /**
+     * @param array $values
+     * @return Object_Class
+     */
+    public static function create($values = array()) {
+        $class = new self();
+        $class->setValues($values);
+
+        return $class;
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function rename($name) {
+
+        $this->deletePhpClasses();
+        $this->updateClassNameInObjects($name);
+
+        $this->setName($name);
+        $this->save();
+    }
+
+
+    /**
+     * @return void
+     */
+    public function save() {
+
+        $this->setModificationDate(time());
+
+        $this->getResource()->save();
+
+        // create class for object
+        $extendClass = "Object_Concrete";
+        if ($this->getParentClass()) {
+            $extendClass = $this->getParentClass();
+        }
+
+        // creaste directory if not exists
+        if (!is_dir(PIMCORE_CLASS_DIRECTORY . "/Object")) {
+            mkdir(PIMCORE_CLASS_DIRECTORY . "/Object");
+        }
+
+        $cd = '<?php ';
+
+        $cd .= "\n\n";
+        $cd .= "class Object_" . ucfirst($this->getName()) . " extends " . $extendClass . " {";
+        $cd .= "\n\n";
+
+        $cd .= 'public $o_classId = ' . $this->getId() . ";\n";
+        $cd .= 'public $o_className = "' . $this->getName() . '"' . ";\n";
+
+        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
+            foreach ($this->getFieldDefinitions() as $key => $def) {
+                if (!(method_exists($def,"isRemoteOwner") and $def->isRemoteOwner())) {
+                    $cd .= "public $" . $key . ";\n";
+                }
+            }
+        }
+
+        $cd .= "\n\n";
+
+
+        $cd .= '/**' . "\n";
+        $cd .= '* @param array $values' . "\n";
+        $cd .= '* @return Object_' . ucfirst($this->getName()) . "\n";
+        $cd .= '*/' . "\n";
+        $cd .= 'public static function create($values = array()) {';
+        $cd .= "\n";
+        $cd .= "\t" . '$object = new self();' . "\n";
+        $cd .= "\t" . '$object->setValues($values);' . "\n";
+        $cd .= "\t" . 'return $object;' . "\n";
+        $cd .= "}";
+
+        $cd .= "\n\n";
+
+        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
+            $relationTypes = array();
+            foreach ($this->getFieldDefinitions() as $key => $def) {
+
+                if (method_exists($def,"isRemoteOwner") and $def->isRemoteOwner()) {
+                    continue;
+                }
+
+                // get setter and getter code
+                $cd .= $def->getGetterCode($this);
+                $cd .= $def->getSetterCode($this);
+
+                // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
+                if(method_exists($def, "classSaved")) {
+                    $def->classSaved($this);
+                }
+
+                if ($def->isRelationType()) {
+                    $relationTypes[$key] = array("type" => $def->getFieldType());
+                }
+
+                // collect lazyloaded fields
+                if ($def instanceof Object_Class_Data_Relations_Abstract and $def->getLazyLoading()) {
+                    $lazyLoadedFields[] = $key;
+                }
+            }
+
+            $cd .= 'protected static $_relationFields = ' . var_export($relationTypes, true) . ";\n\n";
+            $cd .= 'public $lazyLoadedFields = ' . var_export($lazyLoadedFields, true) . ";\n\n";
+        }
+
+        $cd .= "}\n";
+        $cd .= "\n";
+
+        $h = fopen(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php", "w+");
+        fwrite($h, $cd);
+        fclose($h);
+
+        // create list class
+
+        $cd = '<?php ';
+
+        $cd .= "\n\n";
+        $cd .= "class Object_" . ucfirst($this->getName()) . "_List extends Object_List_Concrete {";
+        $cd .= "\n\n";
+
+        $cd .= 'public $classId = ' . $this->getId() . ";\n";
+        $cd .= 'public $className = "' . $this->getName() . '"' . ";\n";
+
+        $cd .= "\n\n";
+        $cd .= "}\n";
+        /*$cd .= "?>";*/
+
+        @mkdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
+        $h = fopen(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php", "w+");
+        fwrite($h, $cd);
+        fclose($h);
+
+
+        // empty object cache
+        try {
+            Pimcore_Model_Cache::clearTag("class_" . $this->getId());
+        }
+        catch (Exception $e) {
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function delete() {
+
+        // delete all objects using this class
+        $list = new Object_List();
+        $list->setCondition("o_classId = '" . $this->getId() . "'");
+        $list->load();
+
+        foreach ($list->getObjects() as $o) {
+            $o->delete();
+        }
+
+        $this->deletePhpClasses();
+        
+        // empty object cache
+        try {
+            Pimcore_Model_Cache::clearTag("class_" . $this->getId());
+        }
+        catch (Exception $e) {}
+        
+        // empty output cache
+        try {
+            Pimcore_Model_Cache::clearTag("output");
+        }
+        catch (Exception $e) {}
+        
+        $this->getResource()->delete();
+    }
+
+    /**
+     * @return void
+     */
+    protected function deletePhpClasses() {
+        // delete the class files
+        @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php");
+        @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php");
+        @rmdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
+    }
+
+    /**
+     * @return int
+     */
+    function getId() {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    function getName() {
+        return $this->name;
+    }
+
+    /**
+     * @return int
+     */
+    function getCreationDate() {
+        return $this->creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    function getModificationDate() {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @return int
+     */
+    function getUserOwner() {
+        return $this->userOwner;
+    }
+
+    /**
+     * @return int
+     */
+    function getUserModification() {
+        return $this->userModification;
+    }
+
+    /**
+     * @param int $id
+     * @return void
+     */
+    function setId($id) {
+        $this->id = $id;
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     */
+    function setName($name) {
+        $this->name = $name;
+    }
+
+    /**
+     * @param int $creationDate
+     * @return void
+     */
+    function setCreationDate($creationDate) {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     * @return void
+     */
+    function setModificationDate($modificationDate) {
+        $this->modificationDate = $modificationDate;
+    }
+
+    /**
+     * @param int $userOwner
+     * @return void
+     */
+    function setUserOwner($userOwner) {
+        $this->userOwner = $userOwner;
+    }
+
+    /**
+     * @param int $userModification
+     * @return void
+     */
+    function setUserModification($userModification) {
+        $this->userModification = $userModification;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFieldDefinitions() {
+        return $this->fieldDefinitions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLayoutDefinitions() {
+        return $this->layoutDefinitions;
+    }
+
+    /**
+     * @param array $fieldDefinitions
+     * @return void
+     */
+    public function setFieldDefinitions($fieldDefinitions) {
+        $this->fieldDefinitions = $fieldDefinitions;
+    }
+
+    /**
+     * @param string $key
+     * @param Object_Class_Data $data
+     * @return void
+     */
+    public function setFieldDefinition($key, $data) {
+        $this->fieldDefinitions[$key] = $data;
+    }
+
+    /**
+     * @return Object_Data
+     */
+    public function getFieldDefinition($key) {
+
+        if (array_key_exists($key, $this->fieldDefinitions)) {
+            return $this->fieldDefinitions[$key];
+        }
+        return false;
+    }
+
+    /**
+     * @param array $layoutDefinitions
+     * @return void
+     */
+    public function setLayoutDefinitions($layoutDefinitions) {
+        $this->layoutDefinitions = $layoutDefinitions;
+
+        $this->fieldDefinitions = array();
+
+        $this->extractDataDefinitions($this->layoutDefinitions);
+    }
+
+    /**
+     * @param array|Object_Class_Layout|Object_Class_Data $def
+     * @return void
+     */
+    public function extractDataDefinitions($def) {
+
+        if ($def instanceof Object_Class_Layout) {
+            if ($def->hasChilds()) {
+                foreach ($def->getChilds() as $child) {
+                    $this->extractDataDefinitions($child);
+                }
+            }
+        }
+
+        if ($def instanceof Object_Class_Data) {
+            $this->setFieldDefinition($def->getName(), $def);
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getAllowParent() {
+        return $this->allowParent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getParent() {
+        return $this->parent;
+    }
+
+    /**
+     * @param boolean $allowParent
+     * @return void
+     */
+    public function setAllowParent($allowParent) {
+        $this->allowParent = (bool) $allowParent;
+    }
+
+    /**
+     * @param mixed $parent
+     * @return void
+     */
+    public function setParent($parent) {
+        $this->parent = $parent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParentClass() {
+        return $this->parentClass;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getAllowInherit() {
+        return $this->allowInherit;
+    }
+
+    /**
+     * @param string $parentClass
+     * @return void
+     */
+    public function setParentClass($parentClass) {
+        $this->parentClass = $parentClass;
+    }
+
+    /**
+     * @param boolean $allowInherit
+     * @return void
+     */
+    public function setAllowInherit($allowInherit) {
+        $this->allowInherit = (bool) $allowInherit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIcon() {
+        return $this->icon;
+    }
+
+    /**
+     * @param string $icon
+     */
+    public function setIcon($icon) {
+        $this->icon = $icon;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getPropertyVisibility() {
+        return $this->propertyVisibility;
+    }
+
+    /**
+     * @param array $propertyVisibility
+     */
+    public function setPropertyVisibility($propertyVisibility) {
+        if(is_array($propertyVisibility)) {
+            $this->propertyVisibility = $propertyVisibility;
+        }
+    }
+    
+    
+
+}

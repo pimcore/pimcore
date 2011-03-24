@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <script src="js/codemirror.js" type="text/javascript"></script>
+    <title>CodeMirror: Sparql demonstration</title>
+    <link rel="stylesheet" type="text/css" href="css/docs.css"/>
+  </head>
+  <body style="padding: 20px;">
+
+<p>Demonstration of <a href="index.html">CodeMirror</a>'s Sparql
+highlighter.</p>
+
+<div style="border-top: 1px solid black; border-bottom: 1px solid black;">
+<textarea id="code" cols="120" rows="30">
+PREFIX a: &lt;http://www.w3.org/2000/10/annotation-ns#>
+PREFIX dc: &lt;http://purl.org/dc/elements/1.1/>
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/>
+
+# Comment!
+
+SELECT ?given ?family
+WHERE {
+  ?annot a:annotates &lt;http://www.w3.org/TR/rdf-sparql-query/> .
+  ?annot dc:creator ?c .
+  OPTIONAL {?c foaf:given ?given ;
+               foaf:family ?family } .
+  FILTER isBlank(?c)
+}
+</textarea>
+</div>
+
+<script type="text/javascript">
+  var editor = CodeMirror.fromTextArea('code', {
+    height: "250px",
+    parserfile: "parsesparql.js",
+    stylesheet: "css/sparqlcolors.css",
+    path: "js/"
+  });
+</script>
+
+  </body>
+</html>

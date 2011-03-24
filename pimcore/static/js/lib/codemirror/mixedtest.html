@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <script src="js/codemirror.js" type="text/javascript"></script>
+    <title>CodeMirror: HTML mixed-mode demonstration</title>
+    <link rel="stylesheet" type="text/css" href="css/docs.css"/>
+  </head>
+  <body style="padding: 20px;">
+
+<p>This is a simple demonstration of the HTML mixed-mode indentation
+module for <a href="index.html">CodeMirror</a>. Script tags use the JS
+parser, style tags use the CSS parser.</p>
+
+<div style="border: 1px solid black; padding: 3px;">
+<textarea id="code" cols="120" rows="30">
+&lt;html>
+  &lt;head>
+    &lt;title>HTML Example&lt;/title>
+    &lt;script type="text/javascript">
+      function foo(bar, baz) {
+        alert("quux");
+        return bar + baz + 1;
+      }
+    &lt;/script>
+    &lt;style type="text/css">
+      div.border {
+        border: 1px solid black;
+        padding: 3px;
+      }
+      #foo code {
+        font-family: courier, monospace;
+        font-size: 80%;
+        color: #448888;
+      }
+    &lt;/style>
+  &lt;/head>
+  &lt;body>
+    &lt;p>Duh&lt;/p>
+  &lt;/body>
+&lt;/html>
+</textarea>
+</div>
+
+<script type="text/javascript">
+  var editor = CodeMirror.fromTextArea('code', {
+    height: "350px",
+    parserfile: ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsehtmlmixed.js"],
+    stylesheet: ["css/xmlcolors.css", "css/jscolors.css", "css/csscolors.css"],
+    path: "js/"
+  });
+</script>
+  </body>
+</html>

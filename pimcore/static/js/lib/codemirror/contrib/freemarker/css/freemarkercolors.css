@@ -1,0 +1,63 @@
+html {
+    cursor: text;
+}
+
+.editbox {
+    margin: .4em;
+    padding: 0;
+    font-family: monospace; 
+    font-size: 12px;
+    font-size-adjust: none;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: normal;
+    color: black;
+}
+
+pre.code, .editbox {
+    color: black;
+}
+
+.editbox p {
+    margin: 0;
+}
+
+span.freemarker-comment {
+    color: #BB9977;
+}
+
+span.freemarker-generic {
+}
+
+span.freemarker-boundary {
+    color: darkblue;
+}
+
+span.freemarker-directive {
+    color: darkblue;
+}
+
+span.freemarker-identifier {
+    color: purple;
+}
+
+span.freemarker-builtin {
+    color: gray;
+}
+
+span.freemarker-punctuation {
+    color: blue;
+}
+
+span.freemarker-string {
+    color: darkGreen;
+}
+
+span.freemarker-number {
+    color: blue;
+}
+
+span.freemarker-error {
+    color: #F00 !important;
+}

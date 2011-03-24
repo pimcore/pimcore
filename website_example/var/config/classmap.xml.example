@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+
+    <!-- read more here: http://www.pimcore.org/wiki/display/PIMCORE/Extending+pimcore+(since+1.3.2) -->
+
+    <!-- Objects -->
+    <Object_Product>Myproject_ObjectProduct</Object_Product>
+    <Object_Product_List>Myproject_ObjectProductList</Object_Product_List>
+    
+    <Object_Folder>Myproject_ObjectFolder</Object_Folder>
+    <Object_List>Myproject_ObjectList</Object_List>
+
+    <!-- Assets -->
+    <Asset_Folder>Myproject_AssetFolder</Asset_Folder>
+    <Asset_Image>Myproject_AssetImage</Asset_Image>
+
+    <Asset_List>Myproject_AssetList</Asset_List>
+
+    <!-- Documents -->
+    <Document_Page>Myproject_DocumentPage</Document_Page>
+    <Document_Snippet>Myproject_DocumentSnippet</Document_Snippet>
+    <Document_Link>Myproject_DocumentLink</Document_Link>
+    <Document_Folder>Myproject_DocumentFolder</Document_Folder>
+
+    <Document_List>Myproject_DocumentList</Document_List>
+
+</zend-config>

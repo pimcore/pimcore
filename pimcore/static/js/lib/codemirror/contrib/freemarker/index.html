@@ -1,0 +1,75 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <script src="../../js/codemirror.js" type="text/javascript"></script>
+    <title>CodeMirror: Freemarker demonstration</title>
+    <link rel="stylesheet" type="text/css" href="../../css/docs.css"/>
+    <style type="text/css">
+      .CodeMirror-line-numbers {
+        width: 2em;
+        color: #aaa;
+        background-color: #eee;
+        text-align: right;
+        padding-right: .3em;
+        font-family: tahoma, arial, helvetica, sans-serif;
+        font-size: 12px;
+        line-height: normal;
+        padding-top: .4em;
+      }
+    </style>
+  </head>
+  <body style="padding: 20px;">
+
+<p>This page demonstrates <a href="../../index.html">CodeMirror</a>'s
+Freemarker parser. Written by Magnus Ljung, released under a BSD-style <a
+href="LICENSE">license</a>.</p>
+
+<div style="border-top: 1px solid black; border-bottom: 1px solid black;">
+<textarea id="code" cols="120" rows="30">
+&lt;!--
+example useless code to show Freemarker syntax highlighting
+this is multiline comment
+--&gt;
+
+&lt;#macro join sequence separator&gt;
+    &lt;#assign first="true"/&gt;
+    &lt;#list sequence as entry&gt;&lt;#if first=="true"&gt;&lt;#assign first="false"/&gt;&lt;#else&gt;${separator} &lt;/#if&gt;${entry}&lt;/#list&gt;
+&lt;/#macro&gt;
+
+Here is some text that isn't Freemarker.
+
+Let's join a list &lt;@join ["foo", "bar", "baz"] ", "/&gt;
+
+Some expressions: ${test} ${another?test?substring(0, 12)}
+
+Use alternative directive syntax:
+[#if user == "Big Joe"]
+    Hello big ${user} xxx
+[/#if]
+</textarea>
+</div>
+
+<script type="text/javascript">
+  var editor = CodeMirror.fromTextArea('code', {
+    height: "350px",
+    parserfile: "../contrib/freemarker/js/parsefreemarker.js",
+    stylesheet: "css/freemarkercolors.css",
+    path: "../../js/",
+    continuousScanning: 500,
+    autoMatchParens: true,
+    lineNumbers: true,
+    markParen: function(node, ok) { 
+        node.style.backgroundColor = ok ? "#CCF" : "#FCC#";
+        if(!ok) {
+            node.style.color = "red";
+        }
+    },
+    unmarkParen: function(node) { 
+         node.style.backgroundColor = "";
+         node.style.color = "";
+    },
+    indentUnit: 4
+  });
+  </script>
+</body>
+</html>

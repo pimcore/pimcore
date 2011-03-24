@@ -1,0 +1,672 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Implementing a Syntax-Highlighting JavaScript Editor In JavaScript</title>
+    <link rel="stylesheet" type="text/css" href="css/docs.css"/>
+    <link rel="stylesheet" type="text/css" href="css/jscolors.css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+
+<h1 style="letter-spacing: -2px; font-size: 2.7em;">Implementing a Syntax-Highlighting<br/> JavaScript Editor—In JavaScript</h1>
+
+<pre class="grey">
+<img src="css/baboon.png" class="logo" alt="logo"/>/* A brutal odyssey to the dark
+   side of the DOM tree */
+</pre>
+
+<div class="clear"><div class="leftbig blk">
+
+  <p>In one of his (very informative) <a
+  href="http://www.learnwebdesignonline.com/videos/programming/javascript/yahoo-douglas-crockford">video
+  lectures</a>, Douglas Crockford remarks that writing JavaScript
+  for the web is 'programming in a hostile environment'. I had done
+  my fair share of weird workarounds, and even occasonally gave up
+  an on idea entirely because browsers just wouldn't support it, but
+  before this project I never really realized just how powerless a
+  programmer can be in the face of buggy, incompatible, and poorly
+  designed platforms.</p>
+
+  <p>The plan was not ridiculously ambitious. I wanted to 'enhance' a
+  textarea to the point where writing code in it is pleasant. This meant
+  automatic indentation and, if possible at all, syntax highlighting.</p>
+
+  <p>In this document I describe the story of implementing this, for your
+  education and amusement. A demonstration of the resulting program,
+  along with the source code, can be found at <a
+  href="http://codemirror.net/">the project website</a>.</p>
+
+  <p style="color: #811; font-size: 90%; font-style: italic">Note:
+  some of the details given here no longer apply to the current <a
+  href="http://codemirror.net/">CodeMirror</a> codebase, which has
+  evolved quite a bit in the meantime.</p>
+
+  <h2 id="indent">Take one: Only indentation</h2>
+
+  <p>The very first attempt merely added auto-indentation to a textarea
+  element. It would scan backwards through the content of the area,
+  starting from the cursor, until it had enough information to decide
+  how to indent the current line. It took me a while to figure out a
+  decent model for indenting JavaScript code, but in the end this seems
+  to work:</p>
+
+  <ul>
+    <li>Code that sits inside a block is indented one unit (generally two
+    spaces) more than the statement or brace that opened the block.</li>
+    <li>A statement that is continued to the next line is indented one unit
+    more than the line that starts the statement.</li>
+    <li>When dealing with lists of arguments or the content of array and
+    object literals there are two possible models. If there is any text
+    directly after the opening brace, bracket, or parenthesis,
+    subsequent lines are aligned with this opening character. If the
+    opening character is followed by a newline (optionally with whitespace
+    or comments before it), the next line is indented one unit further
+    than the line that started the list.</li>
+    <li>And, obviously, if a statement follows another statement it is
+    indented the same amount as the one before it.</li>
+  </ul>
+
+  <p>When scanning backwards through code one has to take string values,
+  comments, and regular expressions (which are delimited by slashes)
+  into account, because braces and semicolons and such are not
+  significant when they appear inside them. Single-line ('//') comments
+  turned out to be rather inefficient to check for when doing a
+  backwards scan, since every time you encounter a newline you have to
+  go on to the next newline to determine whether this line ends in a
+  comment or not. Regular expressions are even worse &#x2015; without
+  contextual information they are impossible to distinguish from the
+  division operator, and I didn't get them working in this first
+  version.</p>
+
+  <p>To find out which line to indent, and to make sure that adding or
+  removing whitespace doesn't cause the cursor to jump in strange ways,
+  it is necessary to determine which text the user has selected. Even
+  though I was working with just a simple textarea at this point, this
+  was already a bit of a headache.</p>
+
+  <p>On W3C-standards-respecting browsers, textarea nodes have
+  <code>selectionStart</code> and <code>selectionEnd</code>
+  properties which nicely give you the amount of characters before
+  the start and end of the selection. Great!</p>
+
+  <p>Then, there is Internet Explorer. Internet Explorer also has an API
+  for looking at and manipulating selections. It gives you information
+  such as a detailed map of the space the selected lines take up on the
+  screen, in pixels, and of course the text inside the selection. It
+  does, however, not give you much of a clue on where the selection is
+  located in the document.</p>
+
+  <p>After some experimentation I managed to work out an elaborate
+  method for getting something similar to the
+  <code>selectionStart</code> and <code>selectionEnd</code> values
+  in other browsers. It worked like this:</p>
+
+  <ul>
+    <li>Get the <code>TextRange</code> object corresponding to the selection.</li>
+    <li>Record the length of the text inside it.</li>
+    <li>Make another <code>TextRange</code> that covers the whole textarea element.</li>
+    <li>Set the start of the first <code>TextRange</code> to the start of the second one.</li>
+    <li>Again get the length of the text in the first object.</li>
+    <li>Now <code>selectionEnd</code> is the second length, and <code>selectionStart</code> is
+    the second minus the first one.</li>
+  </ul>
+
+  <p>That seemed to work, but when resetting the selection after modifying
+  the content of the textarea I ran into another interesting feature of
+  these <code>TextRange</code>s: You can move their endpoints by a given number of
+  characters, which is useful when trying to set a cursor at the Nth
+  character of a textarea, but in this context, newlines are <em>not</em>
+  considered to be characters, so you'll always end up one character too
+  far for every newline you passed. Of course, you can count newlines
+  and compensate for this (though it is still not possible to position
+  the cursor right in front of a newline). Sheesh.</p>
+
+  <p>After ragging on Internet Explorer for a while, let us move on and rag
+  on Firefox a bit. It turns out that, in Firefox, getting and setting
+  the text content of a DOM element is unexplainably expensive,
+  especially when there is a lot of text involved. As soon as I tried to
+  use my indentation code to indent itself (some 400 lines), I found
+  myself waiting for over four seconds every time I pressed enter. That
+  seemed a little slow.</p>
+
+  <h2 id="designmode">designMode it is</h2>
+
+  <p>The solution was obvious: Since the text inside a textarea can only be
+  manipulated as one single big string, I had to spread it out over
+  multiple nodes. How do you spread editable content over multiple
+  nodes? Right! <code>designMode</code> or <code>contentEditable</code>.</p>
+
+  <p>Now I wasn't entirely naive about <code>designMode</code>, I had been looking
+  into writing a non-messy WYSIWYG editor before, and at that time I had
+  concluded two things:</p>
+
+  <ul>
+    <li>It is impossible to prevent the user from inserting whichever HTML
+    junk he wants into the document.</li>
+    <li>In Internet Explorer, it is extemely hard to get a good view
+    on what nodes the user has selected.</li>
+  </ul>
+
+  <p>Basically, the good folks at Microsoft designed a really bad interface
+  for putting editable documents in pages, and the other browsers, not
+  wanting to be left behind, more or less copied that. And there isn't
+  much hope for a better way to do this appearing anytime soon. Wise
+  people probably use a Flash movie or (God forbid) a Java applet for
+  these kind of things, though those are not without drawbacks either.</p>
+
+  <p>Anyway, seeing how using an editable document would also make syntax
+  highlighting possible, I foolishly went ahead. There is something
+  perversely fascinating about trying to build a complicated system on a
+  lousy, unsuitable platform.</p>
+
+  <h2 id="parser">A parser</h2>
+
+  <p>How does one do decent syntax highlighting? A very simple scanning can
+  tell the difference between strings, comments, keywords, and other
+  code. But this time I wanted to actually be able to recognize regular
+  expressions, so that I didn't have any blatant incorrect behaviour
+  anymore.</p>
+
+  <p>That brought me to the idea of doing a serious parse on the code. This
+  would not only make detecting regular expressions much easier, it
+  would also give me detailed information about the code, which can be
+  used to determine proper indentation levels, and to make subtle
+  distinctions in colouring, for example the difference between variable
+  names and property names.</p>
+
+  <p>And hey, when we're parsing the whole thing, it would even be possible
+  to make a distinction between local and global variables, and colour
+  them differently. If you've ever programmed JavaScript you can
+  probably imagine how useful this would be &#x2015; it is ridiculously easy
+  to accidentally create global instead of local variables. I don't
+  consider myself a JavaScript rookie anymore, but it was (embarrasingly
+  enough) only this week that I realized that my habit of typing <code>for
+  (name in object) ...</code> was creating a global variable <code>name</code>, and that
+  I should be typing <code>for (var name in object) ...</code> instead.</p>
+
+  <p>Re-parsing all the code the user has typed in every time he hits a key
+  is obviously not feasible. So how does one combine on-the-fly
+  highlighting with a serious parser? One option would be to split the
+  code into top-level statements (functions, variable definitions, etc.)
+  and parse these separately. This is horribly clunky though, especially
+  considering the fact that modern JavaScripters often put all the code
+  in a file in a single big object or function to prevent namespace
+  pollution.</p>
+
+  <p>I have always liked continuation-passing style and generators. So the
+  idea I came up with is this: An interruptable, resumable parser. This
+  is a parser that does not run through a whole document at once, but
+  parses on-demand, a little bit at a time. At any moment you can create
+  a copy of its current state, which can be resumed later. You start
+  parsing at the top of the code, and keep going as long as you like,
+  but throughout the document, for example at every end of line, you
+  store a copy of the current parser state. Later on, when line 106
+  changes, you grab the interrupted parser that was stored at the end of
+  line 105, and use it to re-parse line 106. It still knows exactly what
+  the context was at that point, which local variables were defined,
+  which unfinished statements were encountered, and so on.</p>
+
+  <p>But that, unfortunately, turned out to be not quite as easy as it
+  sounds.</p>
+
+  <h2 id="dom">The DOM nodes underfoot</h2>
+
+  <p>Of course, when working inside an editable frame we don't just
+  have to deal with text. The code will be represented by some kind
+  of DOM tree. My first idea was to set the <code>white-space:
+  pre</code> style for the frame and try to work with mostly text,
+  with the occasional coloured <code>span</code> element. It turned
+  out that support for <code>white-space: pre</code> in browsers,
+  especially in editable frames, is so hopelessly glitchy that this
+  was unworkable.</p>
+
+  <p>Next I tried a series of <code>div</code> elements, one per
+  line, with <code>span</code> elements inside them. This seemed to
+  nicely reflect the structure of the code in a shallowly
+  hierarchical way. I soon realized, however, that my code would be
+  much more straightfoward when using no hierarchy whatsoever
+  &#x2015; a series of <code>span</code>s, with <code>br</code> tags
+  at the end of every line. This way, the DOM nodes form a flat
+  sequence that corresponds to the sequence of the text &#x2015;
+  just extract text from <code>span</code> nodes and substitute
+  newlines for <code>br</code> nodes.</p>
+
+  <p>It would be a shame if the editor would fall apart as soon as
+  someone pastes some complicated HTML into it. I wanted it to be
+  able to deal with whatever mess it finds. This means using some
+  kind of HTML-normalizer that takes arbitrary HTML and flattens it
+  into a series of <code>br</code>s and <code>span</code> elements
+  that contain a single text node. Just like the parsing process, it
+  would be best if this did not have to done to the entire buffer
+  every time something changes.</p>
+
+  <p>It took some banging my head against my keyboard, but I found a very
+  nice way to model this. It makes heavy use of generators, for which I
+  used <a href="http://www.mochikit.com">MochiKit</a>'s iterator
+  framework. Bob Ippolito explains the concepts in this library very
+  well in his <a
+  href="http://bob.pythonmac.org/archives/2005/07/06/iteration-in-javascript/">blog
+  post</a> about it. (Also notice some of the dismissive comments at the
+  bottom of that post. They say "I don't think I really want to learn
+  this, so I'll make up some silly reason to condemn it.")</p>
+
+  <p>The highlighting process consists of the following elements:
+  normalizing the DOM tree, extracting the text from the DOM tree,
+  tokenizing this text, parsing the tokens, and finally adjusting the
+  DOM nodes to reflect the structure of the code.</p>
+
+  <p>The first two, I put into a single generator. It scans the DOM
+  tree, fixing anything that is not a simple top-level
+  <code>span</code> or <code>br</code>, and it produces the text
+  content of the nodes (or a newline in case of a <code>br</code>)
+  as its output &#x2015; each time it is called, it yields a string.
+  Continuation passing style was a good way to model this process in
+  an iterator, which has to be processed one step at a time. Look at
+  this simplified version:</p>
+
+  <pre class="code" style="width: 110%"><span class="js-keyword">function</span> <span class="js-variable">traverseDOM</span>(<span class="js-variabledef">start</span>){
+  <span class="js-keyword">var</span> <span class="js-variabledef">cc</span> = <span class="js-keyword">function</span>(){<span class="js-keyword">return</span> <span class="js-variable">scanNode</span>(<span class="js-localvariable">start</span>, <span class="js-variable">stop</span>);};
+  <span class="js-keyword">function</span> <span class="js-variabledef">stop</span>(){
+    <span class="js-localvariable">cc</span> = <span class="js-localvariable">stop</span>;
+    <span class="js-keyword">throw</span> <span class="js-variable">StopIteration</span>;
+  }
+  <span class="js-keyword">function</span> <span class="js-variabledef">yield</span>(<span class="js-variabledef">value</span>, <span class="js-variabledef">c</span>){
+    <span class="js-localvariable">cc</span> = <span class="js-localvariable">c</span>;
+    <span class="js-keyword">return</span> <span class="js-localvariable">value</span>;
+  }
+ 
+  <span class="js-keyword">function</span> <span class="js-variabledef">scanNode</span>(<span class="js-variabledef">node</span>, <span class="js-variabledef">c</span>){
+    <span class="js-keyword">if</span> (<span class="js-localvariable">node</span>.<span class="js-property">nextSibling</span>)
+      <span class="js-keyword">var</span> <span class="js-variabledef">nextc</span> = <span class="js-keyword">function</span>(){<span class="js-keyword">return</span> <span class="js-localvariable">scanNode</span>(<span class="js-localvariable">node</span>.<span class="js-property">nextSibling</span>, <span class="js-localvariable">c</span>);};
+    <span class="js-keyword">else</span> 
+      <span class="js-keyword">var</span> <span class="js-variabledef">nextc</span> = <span class="js-localvariable">c</span>;
+ 
+    <span class="js-keyword">if</span> (<span class="js-comment">/* node is proper span element */</span>)
+      <span class="js-keyword">return</span> <span class="js-localvariable">yield</span>(<span class="js-localvariable">node</span>.<span class="js-property">firstChild</span>.<span class="js-property">nodeValue</span>, <span class="js-localvariable">nextc</span>);
+    <span class="js-keyword">else</span> <span class="js-keyword">if</span> (<span class="js-comment">/* node is proper br element */</span>)
+      <span class="js-keyword">return</span> <span class="js-localvariable">yield</span>(<span class="js-string">&quot;\n&quot;</span>, <span class="js-localvariable">nextc</span>);
+    <span class="js-keyword">else</span> 
+      <span class="js-comment">/* flatten node, yield its textual content */</span>;
+  }
+ 
+  <span class="js-keyword">return</span> {<span class="js-property">next</span>: <span class="js-keyword">function</span>(){<span class="js-keyword">return</span> <span class="js-localvariable">cc</span>();}};
+}</pre> 
+
+  <p>The variable <code>c</code> stands for 'continuation', and <code>cc</code> for 'current
+  continuation' &#x2015; that last variable is used to store the function to
+  continue with, when yielding a value to the outside world. Every time
+  control leaves this function, it has to make sure that <code>cc</code> is set to
+  a suitable value, which is what <code>yield</code> and <code>stop</code> take care of.</p>
+
+  <p>The object that is returned contains a <code>next</code> method, which is
+  MochiKit's idea of an iterator, and the initial continuation just
+  throws a <code>StopIteration</code>, which is how MochiKit signals that an
+  iterator has reached its end.</p>
+
+  <p>The first lines of <code>scanNode</code> extend the continuation with the task of
+  scanning the next node, if there is a next node. The rest of the
+  function decides what kind of value to <code>yield</code>. Note that this is a
+  rather trivial example of this technique, since the process of going
+  through these nodes is basically linear (it was much, much more
+  complex in earlier versions), but still the trick with the
+  continuations makes the code shorter and, for those in the know,
+  clearer than the equivalent 'storing the iterator state in variables'
+  approach.</p>
+
+  <p>The next iterator that the input passes through is the
+  tokenizer. Well, actually, there is another iterator in between
+  that isolates the tokenizer from the fact that the DOM traversal
+  yields a bunch of separate strings, and presents them as a single
+  character stream (with a convenient <code>peek</code> operation),
+  but this is not a very interesting one. What the tokenizer returns
+  is a stream of token objects, each of which has a
+  <code>value</code>, its textual content, a <code>type</code>, like
+  <code>"variable"</code>, <code>"operator"</code>, or just itself,
+  <code>"{"</code> for example, in the case of significant
+  punctuation or special keywords. They also have a
+  <code>style</code>, which is used later by the highlighter to give
+  their <code>span</code> elements a class name (the parser will
+  still adjust this in some cases).</p>
+
+  <p>At first I assumed the parser would have to talk back to the
+  tokenizer about the current context, in order to be able to
+  distinguish those accursed regular expressions from divisions, but
+  it seems that regular expressions are only allowed if the previous
+  (non-whitespace, non-comment) token was either an operator, a
+  keyword like <code>new</code> or <code>throw</code>, or a specific
+  kind of punctuation (<code>"[{}(,;:"</code>) that indicates a new
+  expression can be started here. This made things considerably
+  easier, since the 'regexp or no regexp' question could stay
+  entirely within the tokenizer.</p>
+
+  <p>The next step, then, is the parser. It does not do a very
+  thorough job because, firstly, it has to be fast, and secondly, it
+  should not go to pieces when fed an incorrect program. So only
+  superficial constructs are recognized, keywords that resemble each
+  other in syntax, such as <code>while</code> and <code>if</code>,
+  are treated in precisely the same way, as are <code>try</code> and
+  <code>else</code> &#x2015; the parser doesn't mind if an
+  <code>else</code> appears without an <code>if</code>. Stuff that
+  binds variables, <code>var</code>, <code>function</code>, and
+  <code>catch</code> to be precise, is treated with more care,
+  because the parser wants to know about local variables.</p>
+
+  <p>Inside the parser, three kinds of context are stored. Firstly, a set
+  of known local variables, which is used to adjust the style of
+  variable tokens. Every time the parser enters a function, a new set of
+  variables is created. If there was already such a set (entering an
+  inner function), a pointer to the old one is stored in the new one. At
+  the end of the function, the current variable set is 'popped' off and
+  the previous one is restored.</p>
+
+  <p>The second kind of context is the lexical context, this keeps track of
+  whether we are inside a statement, block, or list. Like the variable
+  context, it also forms a stack of contexts, with each one containing a
+  pointer to the previous ones so that they can be popped off again when
+  they are finished. This information is used for indentation. Every
+  time the parser encounters a newline token, it attaches the current
+  lexical context and a 'copy' of itself (more about that later) to this
+  token.</p>
+
+  <p>The third context is a continuation context. This parser does not use
+  straight continuation style, instead it uses a stack of actions that
+  have to be performed. These actions are simple functions, a kind of
+  minilanguage, they act on tokens, and decide what kind of new actions
+  should be pushed onto the stack. Here are some examples:</p>
+
+  <pre class="code" style="width: 110%"><span class="js-keyword">function</span> <span class="js-variable">expression</span>(<span class="js-variabledef">type</span>){
+  <span class="js-keyword">if</span> (<span class="js-localvariable">type</span> in <span class="js-variable">atomicTypes</span>)
+    <span class="js-variable">cont</span>(<span class="js-variable">maybeoperator</span>);
+  <span class="js-keyword">else</span> <span class="js-keyword">if</span> (<span class="js-localvariable">type</span> == <span class="js-string">&quot;function&quot;</span>)
+    <span class="js-variable">cont</span>(<span class="js-variable">functiondef</span>);
+  <span class="js-keyword">else</span> <span class="js-keyword">if</span> (<span class="js-localvariable">type</span> == <span class="js-string">&quot;(&quot;</span>)
+    <span class="js-variable">cont</span>(<span class="js-variable">pushlex</span>(<span class="js-string">&quot;list&quot;</span>), <span class="js-variable">expression</span>, <span class="js-variable">expect</span>(<span class="js-string">&quot;)&quot;</span>), <span class="js-variable">poplex</span>);
+  <span class="js-keyword">else</span> <span class="js-keyword">if</span> (<span class="js-localvariable">type</span> == <span class="js-string">&quot;operator&quot;</span>)
+    <span class="js-variable">cont</span>(<span class="js-variable">expression</span>);
+  <span class="js-keyword">else</span> <span class="js-keyword">if</span> (<span class="js-localvariable">type</span> == <span class="js-string">&quot;[&quot;</span>)
+    <span class="js-variable">cont</span>(<span class="js-variable">pushlex</span>(<span class="js-string">&quot;list&quot;</span>), <span class="js-variable">commasep</span>(<span class="js-variable">expression</span>), <span class="js-variable">expect</span>(<span class="js-string">&quot;]&quot;</span>), <span class="js-variable">poplex</span>);
+  <span class="js-keyword">else</span> <span class="js-keyword">if</span> (<span class="js-localvariable">type</span> == <span class="js-string">&quot;{&quot;</span>)
+    <span class="js-variable">cont</span>(<span class="js-variable">pushlex</span>(<span class="js-string">&quot;list&quot;</span>), <span class="js-variable">commasep</span>(<span class="js-variable">objprop</span>), <span class="js-variable">expect</span>(<span class="js-string">&quot;}&quot;</span>), <span class="js-variable">poplex</span>);
+  <span class="js-keyword">else</span> <span class="js-keyword">if</span> (<span class="js-localvariable">type</span> == <span class="js-string">&quot;keyword c&quot;</span>)
+    <span class="js-variable">cont</span>(<span class="js-variable">expression</span>);
+}
+ 
+<span class="js-keyword">function</span> <span class="js-variable">block</span>(<span class="js-variabledef">type</span>){
+  <span class="js-keyword">if</span> (<span class="js-localvariable">type</span> == <span class="js-string">&quot;}&quot;</span>) <span class="js-variable">cont</span>();
+  <span class="js-keyword">else</span> <span class="js-variable">pass</span>(<span class="js-variable">statement</span>, <span class="js-variable">block</span>);
+}</pre>
+
+  <p>The function <code>cont</code> (for continue), will push the actions it is given
+  onto the stack (in reverse order, so that the first one will be popped
+  first). Actions such as <code>pushlex</code> and <code>poplex</code> merely adjust the
+  lexical environment, while others, such as <code>expression</code> itself, do
+  actual parsing. <code>pass</code>, as seen in <code>block</code>, is similar to <code>cont</code>, but
+  it does not 'consume' the current token, so the next action will again
+  see this same token. In <code>block</code>, this happens when the function
+  determines that we are not at the end of the block yet, so it pushes
+  the <code>statement</code> function which will interpret the current token as the
+  start of a statement.</p>
+
+  <p>These actions are called by a 'driver' function, which filters out the
+  whitespace and comments, so that the parser actions do not have to
+  think about those, and keeps track of some things like the indentation
+  of the current line and the column at which the current token ends,
+  which are stored in the lexical context and used for indentation.
+  After calling an action, if the action called <code>cont</code>, this driver
+  function will return the current token, if <code>pass</code> (or nothing) was
+  called, it will immediately continue with the next action.</p>
+
+  <p>This goes to show that it is viable to write a quite elaborate
+  minilanguage in a macro-less language like JavaScript. I don't think
+  it would be possible to do something like this without closures (or
+  similarly powerful abstraction) though, I've certainly never seen
+  anything like it in Java code.</p>
+
+  <p>The way a 'copy' of the parser was produced shows a nice usage
+  of closures. Like with the DOM transformer shown above, most of
+  the local state of the parser is held in a closure produced by
+  calling <code>parse(stream)</code>. The function
+  <code>copy</code>, which is local to the parser function, produces
+  a new closure, with copies of all the relevant variables:</p>
+
+  <pre class="code"><span class="js-keyword">function</span> <span class="js-variable">copy</span>(){
+  <span class="js-keyword">var</span> <span class="js-variabledef">_context</span> = <span class="js-variable">context</span>, <span class="js-variabledef">_lexical</span> = <span class="js-variable">lexical</span>,
+      <span class="js-variabledef">_actions</span> = <span class="js-variable">copyArray</span>(<span class="js-variable">actions</span>);
+ 
+  <span class="js-keyword">return</span> <span class="js-keyword">function</span>(<span class="js-variabledef">_tokens</span>){
+    <span class="js-variable">context</span> = <span class="js-localvariable">_context</span>;
+    <span class="js-variable">lexical</span> = <span class="js-localvariable">_lexical</span>;
+    <span class="js-variable">actions</span> = <span class="js-variable">copyArray</span>(<span class="js-localvariable">_actions</span>);
+    <span class="js-variable">tokens</span> = <span class="js-localvariable">_tokens</span>;
+    <span class="js-keyword">return</span> <span class="js-variable">parser</span>;
+  };
+}</pre>
+
+  <p>Where <code>parser</code> is the object that contains the <code>next</code> (driver)
+  function, and a reference to this <code>copy</code> function. When the function
+  that <code>copy</code> produces is called with a token stream as argument, it
+  updates the local variables in the parser closure, and returns the
+  corresponding iterator object.</p>
+
+  <p>Moving on, we get to the last stop in this chain of generators, the
+  actual highlighter. You can view this one as taking two streams as
+  input, on the one hand there is the stream of tokens from the parser,
+  and on the other hand there is the DOM tree as left by the DOM
+  transformer. If everything went correctly, these two should be
+  synchronized. The highlighter can look at the current token, see if
+  the <code>span</code> in the DOM tree corresponds to it (has the same text
+  content, and the correct class), and if not it can chop up the DOM
+  nodes to conform to the tokens.</p>
+
+  <p>Every time the parser yields a newline token, the highligher
+  encounters a <code>br</code> element in the DOM stream. It takes the copy of the
+  parser and the lexical context from this token and attaches them to
+  the DOM node. This way, a new highlighting process can be started from
+  that node by re-starting the copy of the parser with a new token
+  stream, which reads tokens from the DOM nodes starting at that <code>br</code>
+  element, and the indentation code can use the lexical context
+  information to determine the correct indentation at that point.</p>
+
+  <h2 id="selection">Selection woes</h2>
+
+  <p>All the above can be done using the DOM interface that all major
+  browsers have in common, and which is relatively free of weird bugs
+  and abberrations. However, when the user is typing in new code, this
+  must also be highlighted. For this to happen, the program must know
+  where the cursor currently is, and because it mucks up the DOM tree,
+  it has to restore this cursor position after doing the highlighting.</p>
+
+  <p>Re-highlighting always happens per line, because the copy of the
+  parser is stored only at the end of lines. Doing this every time the
+  user presses a key is terribly slow and obnoxious, so what I did was
+  keep a list of 'dirty' nodes, and as soon as the user didn't type
+  anyting for 300 milliseconds the program starts re-highlighting these
+  nodes. If it finds more than ten lines must be re-parsed, it does only
+  ten and waits another 300 milliseconds before it continues, this way
+  the browser never freezes up entirely.</p>
+
+  <p>As mentioned earlier, Internet Explorer's selection model is not the
+  most practical one. My attempts to build a wrapper that makes it look
+  like the W3C model all stranded. In the end I came to the conclusion
+  that I only needed two operations:</p>
+
+  <ul>
+    <li>Creating a selection 'snapshot' that can be restored after
+    highlighting, in such a way that it still works if some of the nodes
+    that were selected are replaced by other nodes with the same
+    size but a different structure.</li>
+    <li>Finding the top-level node around or before the cursor, to mark it
+    dirty or to insert indentation whitespace at the start of that line.</li>
+  </ul>
+
+  <p>It turns out that the pixel-based selection model that Internet
+  Explorer uses, which always seemed completely ludricrous to me, is
+  perfect for the first case. Since the DOM transformation (generally)
+  does not change the position of things, storing the pixel offsets of
+  the selection makes it possible to restore that same selection, never
+  mind what happened to the underlying DOM structure.</p>
+
+  <p>[Later addition: Note that this, due to the very random design
+  of the <a
+  href="http://msdn2.microsoft.com/en-us/library/ms535872(VS.85).aspx#">TextRange
+  interface</a>, only really works when the whole selection falls
+  within the visible part of the document.]</p>
+
+  <p>Doing the same with the W3C selection model is a lot harder. What I
+  ended up with was this:</p>
+
+  <ul>
+    <li>Create an object pointing to the nodes at the start and end of the
+    selection, and the offset within those nodes. This is basically the
+    information that the <code>Range</code> object gives you.</li>
+    <li>Make references from these nodes back to that object.</li>
+    <li>When replacing (part of) a node with another one, check for such a
+    reference, and when it is present, check whether this new node will
+    get the selection. If it does, move the reference from the old to the
+    new node, if it does not, adjust the offset in the selection object to
+    reflect the fact that part of the old node has been replaced.</li>
+  </ul>
+
+  <p>Now in the second case (getting the top-level node at the
+  cursor) the Internet Explorer cheat does not work. In the W3C
+  model this is rather easy, you have to do some creative parent-
+  and sibling-pointer following to arrive at the correct top-level
+  node, but nothing weird. In Internet Explorer, all we have to go
+  on is the <code>parentElement</code> method on a
+  <code>TextRange</code>, which gives the first element that
+  completely envelops the selection. If the cursor is inside a text
+  node, this is good, that text node tells us where we are. If the
+  cursor is between nodes, for example between two <code>br</code>
+  nodes, you get to top-level node itself back, which is remarkably
+  useless. In cases like this I stoop to a rather ugly hack (which
+  fortunately turned out to be acceptably fast) &#x2015; I create a
+  temporary empty <code>span</code> with an ID inside the selection,
+  get a reference to this <code>span</code> by ID, take its
+  <code>previousSibling</code>, and remove it again.</p>
+
+  <p>Unfortunately, Opera's selection implementation is buggy, and it
+  will give wildly incorrect <code>Range</code> objects when the cursor
+  is between two nodes. This is a bit of a showstopper, and until I find
+  a workaround for that or it gets fixed, the highlighter doesn't work
+  properly in Opera.</p>
+
+  <p>Also, when one presses enter in a <code>designMode</code>
+  document in Firefox or Opera, a <code>br</code> tag is inserted.
+  In Internet Explorer, pressing enter causes some maniacal gnome to
+  come out and start wrapping all the content before and after the
+  cursor in <code>p</code> tags. I suppose there is something to be
+  said for that, in principle, though if you saw the tag soup of
+  <code>font</code>s and nested paragraphs Internet Explorer
+  generates you would soon enough forget all about principle.
+  Anyway, getting unwanted <code>p</code> tags slowed the
+  highlighter down terribly &#x2015; it had to overhaul the whole
+  DOM tree to remove them again, every time the user pressed enter.
+  Fortunately I could fix this by capturing the enter presses and
+  manually inserting a <code>br</code> tag at the cursor.</p>
+
+  <p>On the subject of Internet Explorer's tag soup, here is an interesting
+  anecdote: One time, when testing the effect that modifying the content
+  of a selection had, I inspected the DOM tree and found a <code>"/B"</code>
+  element. This was not a closing tag, there are no closing tags in the
+  DOM tree, just elements. The <code>nodeName</code> of this element was actually
+  <code>"/B"</code>. That was when I gave up any notions of ever understanding the
+  profound mystery that is Internet Explorer.</p>
+
+  <h2 id="closing">Closing thoughts</h2>
+
+  <p>Well, I despaired at times, but I did end up with a working JavaScript
+  editor. I did not keep track of the amount of time I wasted on this,
+  but I would estimate it to be around fifty hours. Finding workarounds
+  for browser bugs can be a terribly nonlinear process. I just spent
+  half a day working on a weird glitch in Firefox that caused the cursor
+  in the editable frame to be displayed 3/4 line too high when it was at
+  the very end of the document. Then I found out that setting the
+  style.display of the iframe to "block" fixed this (why not?). I'm
+  amazed how often issues that seem hopeless do turn out to be
+  avoidable, even if it takes hours of screwing around and some truly
+  non-obvious ideas.</p>
+
+  <p>For a lot of things, JavaScript + DOM elements are a surprisingly
+  powerful platform. Simple interactive documents and forms can be
+  written in browsers with very little effort, generally less than with
+  most 'traditional' platforms (Java, Win32, things like WxWidgets).
+  Libraries like Dojo (and a similar monster I once wrote myself) even
+  make complex, composite widgets workable. However, when applications
+  go sufficiently beyond the things that browsers were designed for, the
+  available APIs do not give enough control, are nonstandard and buggy,
+  and are often poorly designed. Because of this, writing such
+  applications, when it is even possible, is <em>painful</em> process.</p>
+
+  <p>And who likes pain? Sure, when finding that crazy workaround,
+  subdueing the damn browser, and getting everything to work, there
+  is a certain macho thrill. But one can't help wondering how much
+  easier things like preventing the user from pasting pictures in
+  his source code would be on another platform. Maybe something like
+  Silverlight or whatever other new browser plugin gizmos people are
+  pushing these days will become the way to solve things like this
+  in the future. But, personally, I would prefer for those browser
+  companies to put some real effort into things like cleaning up and
+  standardising shady things like <code>designMode</code>, fixing
+  their bugs, and getting serious about ECMAScript 4.</p>
+
+  <p>Which is probably not realistically going to happen anytime soon.</p>
+
+  <hr/>
+
+  <p>Some interesting projects similar to this:</p>
+
+  <ul>
+    <li><a href="http://www.ymacs.org">Ymacs</a></li>
+    <li><a href="http://gpl.internetconnection.net/vi/">vi clone</a></li>
+    <li><a href="http://robrohan.com/projects/9ne/">Emacs clone</a></li>
+    <li><a href="http://codepress.sourceforge.net/">CodePress</a></li>
+    <li><a href="http://www.codeide.com">CodeIDE</a></li>
+    <li><a href="http://www.cdolivet.net/editarea">EditArea</a></li>
+  </ul>
+
+  <hr/>
+
+  <p>If you have any remarks, criticism, or hints related to the
+  above, drop me an e-mail at <a
+  href="mailto:marijnh@gmail.com">marijnh@gmail.com</a>. If you say
+  something generally interesting, I'll include your reaction here
+  at the bottom of this page.</p>
+
+</div><div class="rightsmall blk">
+
+  <p style="font-size: 80%">
+    <b>Topics</b>: JavaScript, advanced browser weirdness, cool programming techniques<br/>
+    <b>Audience</b>: Programmers, especially JavaScript programmers<br/>
+    <b>Author</b>: Marijn Haverbeke<br/>
+    <b>Date</b>: May 24th 2007
+  </p>
+
+  <h2>Contents</h2>
+
+  <ul>
+    <li><a href="#indent">Only Indentation</a></li>
+    <li><a href="#designmode"><code>designMode</code></a></li>
+    <li><a href="#parser">A Parser</a></li>
+    <li><a href="#dom">DOM Nodes</a></li>
+    <li><a href="#selection">Selection Woes</a></li>
+    <li><a href="#closing">Closing Thoughts</a></li>
+  </ul>
+
+  <h2>Site</h2>
+
+  <ul>
+    <li><a href="index.html">Front Page</a></li>
+    <li><a href="manual.html">User Manual</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="http://groups.google.com/group/codemirror">Google Group</a></li>
+    <li><a href="compress.html">Compression Helper</a></li>
+  </ul>
+
+</div></div>
+
+<div style="height: 2em">&nbsp;</div>
+
+<script type="text/javascript" src="css/font.js"></script>
+
+  </body>
+</html>

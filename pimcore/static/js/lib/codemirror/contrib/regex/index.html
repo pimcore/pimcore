@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CodeMirror Regex Highlighting</title>
+<script type="text/javascript" src="../../js/codemirror.js"></script>
+<script type="text/javascript">
+
+window.onload = function () {
+  var editor = CodeMirror.fromTextArea('regexp', {
+    noScriptCaching: true,
+    // continuousScanning: true,  // Normally Debugging only, but useful with regex
+    parserConfig: {
+        // flags: 'x',
+        //literal: true,
+        flavor: 'all',
+        regex_mode_modifier: true,
+        regex_max_levels:2,
+        regex_max_alternating:2,
+        regex_unicode_mode: 'store',
+        regex_inner_group_mode: 'uniform'
+    },
+    parserfile: ["../contrib/regex/js/parseregex.js", "../contrib/regex/js/parseregex-unicode.js"],
+    stylesheet: ["css/regexcolors.css"],
+    path: '../../js/',
+    height: 'dynamic',
+    minHeight: 20,
+
+    // Demonstrates Unicode tooltip features
+  /**/
+    activeTokens : (function () {
+        var charLimit = 500;
+        var lastEquivalent, rangeBegan, lastRangeHyphen;
+        
+        function _buildTitle (beginChar, endChar) {
+            var beginCode = beginChar.charCodeAt(0), endCode = endChar.charCodeAt(0);
+            var title = '';
+            if (endCode - beginCode <= charLimit) {
+                for (var i = beginCode; i <= endCode; i++) {
+                    title += String.fromCharCode(i);
+                }
+            }
+            return title;
+        }
+        
+        return function (spanNode, token, editor) {
+            var content = token.content;
+            if (lastEquivalent && token.style === 'regex-class-range-hyphen') {
+                rangeBegan = true;
+                lastRangeHyphen = spanNode;
+            }
+            else if (rangeBegan) {
+                var beginChar = lastEquivalent;
+                var endChar = (token.equivalent || content);
+                lastRangeHyphen.title = _buildTitle(beginChar, endChar);
+                rangeBegan = false;
+                lastEquivalent = null;
+            }
+            else if (content === ']') {
+                rangeBegan = false;
+            }
+            else {
+                rangeBegan = false;
+                // Fix: 'regex-unicode-class-inside' not supported and should not be since it wouldn't make sense as a starting range?
+                lastEquivalent = token.equivalent || content;
+            }
+            
+            if (token.display) {
+                spanNode.title = token.display;
+            }
+            else if (token.equivalent) {
+                if (token.unicode) {
+                    var range = /(.)-(.)/g;
+                    spanNode.title = token.equivalent.replace(range,
+                        function (n0, n1, n2) {
+                            return _buildTitle(n1, n2);
+                        }
+                    );
+                }
+                else {
+                    spanNode.title = token.equivalent;
+                }
+            }
+        };
+    }())
+    //*/
+  });
+};
+
+</script>
+</head>
+
+<body>
+<div>
+    <h1>CodeMirror Regex Code Editor Demonstration</h1>
+        <p>The Regex parser for CodeMirror allows syntax coloring on regular expressions with some beginning customizability by 
+        Regex flavor/language. For integrating styling of regular expression literals into JavaScript syntax highlighting, see this 
+        <a href="js-regex.html">JavaScript+Regex Demo</a>.</p>
+        <p>Styling ability is fine-grained, so any token should be distinctly stylable if so desired. Parenthetical groups can
+        be styled with the same styles for inner content, and the script also enables styling by nesting depth and sequence, 
+        including by imposing a limit such that styles will alternate.</p>
+        <p>Information can also be passed on (especially when the parseregex-unicode.js file is included) for use in CodeMirror's
+        activeTokens argument such as demonstrated below by tooltips which show which characters are present in a given
+        range or Unicode class.</p>
+        <p>Note that this editor does not support free-spacing mode, so it is not recommended to use multiple lines for input, but
+        for demonstration purposes, multiple lines are shown.</p>
+        <textarea id="regexp">(?ix)/some(group)and more(?:unnumbered)and(?=sth)but(?!not)
+(\k<named_$>b.ckref) (?#a comment) # some space
+fdd[^]aa[]ddf[\45-\55\67]sfa[\ca-\cb\cd]sdf\cdf\p{No}ddf[\a-\q]dffd[\u0033-\u0640\u0747]+?f*?df[\034-\038\u039]d
+[\xaf-\xbf]fdfe{1}dfsd{2,3}--fakj{3,}f[^ab]df\39d[^a-ze-]a076df[\u00a0-\u00f0][\u0010\49\077\xaf]ffa[--q]ds[*--]ad[-ad\qfw]fd\qad\p{^a}fdf\P{a}a[ab-cd]\x11\u0123\ca\34df/gi
+</textarea>
+        <!--<textarea id="replacements" cols="30" rows="1">{$&}</textarea>-->
+</div>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<?php 
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @package    Document
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+class Document_Link extends Document {
+
+    /**
+     * Contains the ID of the internal ID
+     *
+     * @var integer
+     */
+    public $internal;
+
+    /**
+     * Contains the ID of the internal ID
+     *
+     * @var string
+     */
+    public $internalType;
+
+    /**
+     * Contains object of linked Document|Asset
+     *
+     * @var Document | Asset
+     */
+    public $object;
+
+    /**
+     * Contains the direkt link as plain text
+     *
+     * @var string
+     */
+    public $direct = "";
+
+    /**
+     * Type of the link (internal/direct)
+     *
+     * @var string
+     */
+    public $linktype = "internal";
+
+    /**
+     * Target of the link
+     *
+     * @var string
+     */
+    public $target = "";
+
+    /**
+     * Name of the link
+     *
+     * @var string
+     */
+    public $name = "";
+
+    /**
+     * static type of this object
+     *
+     * @var string
+     */
+    public $type = "link";
+
+    /**
+     * path of the link
+     *
+     * @var string
+     */
+    public $href = "";
+
+
+    /**
+     * @var string
+     */
+    public $parameters = "";
+
+    /**
+     * @var string
+     */
+    public $anchor = "";
+
+    /**
+     * @var string
+     */
+    public $title = "";
+
+    /**
+     * @var string
+     */
+    public $accesskey = "";
+
+    /**
+     * @var string
+     */
+    public $rel = "";
+
+    /**
+     * @var string
+     */
+    public $tabindex = "";
+
+    /**
+     * Get the current name of the class
+     *
+     * @return string
+     */
+    public static function getClassName() {
+        return __CLASS__;
+    }
+
+
+    /**
+     * @see Document::resolveDependencies
+     * @return array
+     */
+    public function resolveDependencies() {
+
+        $dependencies = parent::resolveDependencies();
+
+        if ($this->getLinktype() == "internal") {
+            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
+                $key = $this->getInternalType() . "_" . $this->getObject()->getId();
+
+                $dependencies[$key] = array(
+                    "id" => $this->getObject()->getId(),
+                    "type" => $this->getInternalType()
+                );
+            }
+        }
+
+        return $dependencies;
+    }
+
+    /**
+     * Resolves dependencies and create tags for caching out of them
+     *
+     * @return array
+     */
+    public function getCacheTags($blockedTags = array()) {
+
+        $tags = parent::getCacheTags($blockedTags);
+        $blockedTags = array_merge($tags, $blockedTags);
+
+        if ($this->getLinktype() == "internal") {
+            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
+                if ($this->getObject()->getId() != $this->getId() and !in_array($this->getObject()->getCacheTag(), $blockedTags)) {
+                    $tags = array_merge($tags, $this->getObject()->getCacheTags($blockedTags));
+                }
+            }
+        }
+        return $tags;
+    }
+
+
+    /**
+     * Returns the plain text path of the link
+     *
+     * @return string
+     */
+    public function getHref() {
+        $path = "";
+        if ($this->getLinktype() == "internal") {
+            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
+                $path = $this->getObject()->getFullPath();
+            }
+        }
+        else {
+            $path = $this->getDirect();
+        }
+
+        if (strlen($this->getParameters()) > 0) {
+            $path .= "?" . str_replace("?", "", $this->getParameters());
+        }
+        if (strlen($this->getAnchor()) > 0) {
+            $path .= "#" . str_replace("#", "", $this->getAnchor());
+        }
+
+        $this->href = $path;
+        return $path;
+    }
+
+    /**
+     * Returns the target of the link
+     *
+     * @return string
+     */
+    public function getTarget() {
+        return $this->target;
+    }
+
+    /**
+     * @param string $target
+     * @return string
+     */
+    public function setTarget($target) {
+        $this->target = $target;
+    }
+
+    /**
+     * Returns the id of the internal document|asset which is linked
+     *
+     * @return integer
+     */
+    public function getInternal() {
+        return $this->internal;
+    }
+
+    /**
+     * Returns the direct link (eg. http://www.pimcore.org/test)
+     *
+     * @return string
+     */
+    public function getDirect() {
+        return $this->direct;
+    }
+
+    /**
+     * Returns the type of the link (internal/direct)
+     *
+     * @return string
+     */
+    public function getLinktype() {
+        return $this->linktype;
+    }
+
+    /**
+     * @param integer $internal
+     * @return void
+     */
+    public function setInternal($internal) {
+
+        if (!empty($internal)) {
+            $this->internal = $internal;
+            $this->setObjectFromId();
+        }
+        else {
+            $this->internal = null;
+        }
+    }
+
+    /**
+     * @param string $direct
+     * @return void
+     */
+    public function setDirect($direct) {
+        $this->direct = $direct;
+    }
+
+    /**
+     * @param string $linktype
+     * @return void
+     */
+    public function setLinktype($linktype) {
+        $this->linktype = $linktype;
+    }
+
+    /**
+     * Returns the name of the link
+     *
+     * @return string
+     */
+    public function getName() {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType() {
+        return $this->type;
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function setName($name) {
+        $this->name = $name;
+    }
+
+    /**
+     * @param string $type
+     * @return void
+     */
+    public function setType($type) {
+        $this->type = $type;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getInternalType() {
+        return $this->internalType;
+    }
+
+
+    /**
+     * @param string $type
+     * @return void
+     */
+    public function setInternalType($type) {
+        $this->internalType = $type;
+    }
+
+    /**
+     * @return Document|Asset
+     */
+    public function getObject() {
+        if ($this->object instanceof Document || $this->object instanceof Asset) {
+            return $this->object;
+        }
+        else {
+            if ($this->setObjectFromId()) {
+                return $this->object;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return void
+     */
+    public function setObject($object) {
+        $this->object = $object;
+    }
+
+    /**
+     * @return void
+     */
+    public function setObjectFromId() {
+        if ($this->internalType == "document") {
+            $this->object = Document::getById($this->internal);
+        }
+        else if ($this->internalType == "asset") {
+            $this->object = Asset::getById($this->internal);
+        }
+        return $this->object;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getParameters() {
+        return $this->parameters;
+    }
+
+    /**
+     * @param string $parameters
+     */
+    public function setParameters($parameters) {
+        $this->parameters = $parameters;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAnchor() {
+        return $this->anchor;
+    }
+
+    /**
+     * @param string $anchor
+     */
+    public function setAnchor($anchor) {
+        $this->anchor = $anchor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle() {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccesskey() {
+        return $this->accesskey;
+    }
+
+    /**
+     * @param string $accesskey
+     */
+    public function setAccesskey($accesskey) {
+        $this->accesskey = $accesskey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRel() {
+        return $this->rel;
+    }
+
+    /**
+     * @param string $rel
+     */
+    public function setRel($rel) {
+        $this->rel = $rel;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTabindex() {
+        return $this->tabindex;
+    }
+
+    /**
+     * @param string $tabindex
+     */
+    public function setTabindex($tabindex) {
+        $this->tabindex = $tabindex;
+    }
+
+    public function getHtml() {
+
+        $attributes = array("rel", "tabindex", "accesskey", "title", "name","target");
+        $attribs = array();
+        foreach ($attributes as $a) {
+            $attribs[] = $a . '="' . $this->$a . '"';
+        }
+
+        return '<a href="' . $this->getHref() . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->getName()) . '</a>';
+    }
+}

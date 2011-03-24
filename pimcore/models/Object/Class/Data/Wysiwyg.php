@@ -1,0 +1,213 @@
+<?php 
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @category   Pimcore
+ * @package    Object_Class
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+class Object_Class_Data_Wysiwyg extends Object_Class_Data {
+
+    /**
+     * Static type of this element
+     *
+     * @var string
+     */
+    public $fieldtype = "wysiwyg";
+
+    /**
+     * @var integer
+     */
+    public $width;
+
+    /**
+     * @var integer
+     */
+    public $height;
+
+    /**
+     * Type for the column to query
+     *
+     * @var string
+     */
+    public $queryColumnType = "longtext";
+
+    /**
+     * Type for the column
+     *
+     * @var string
+     */
+    public $columnType = "longtext";
+
+    /**
+     * Type for the generated phpdoc
+     *
+     * @var string
+     */
+    public $phpdocType = "string";
+
+    /**
+     * @return integer
+     */
+    public function getWidth() {
+        return $this->width;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getHeight() {
+        return $this->height;
+    }
+
+    /**
+     * @param integer $width
+     * @return void
+     */
+    public function setWidth($width) {
+        $this->width = $width;
+    }
+
+    /**
+     * @param integer $height
+     * @return void
+     */
+    public function setHeight($height) {
+        $this->height = $height;
+    }
+
+
+    /**
+     * @see Object_Class_Data::getDataForResource
+     * @param string $data
+     * @return string
+     */
+    public function getDataForResource($data) {
+        return $data;
+    }
+
+    /**
+     * @see Object_Class_Data::getDataFromResource
+     * @param string $data
+     * @return string
+     */
+    public function getDataFromResource($data) {
+        return Pimcore_Tool_Text::wysiwygText($data);
+    }
+
+    /**
+     * @see Object_Class_Data::getDataForQueryResource
+     * @param string $data
+     * @return string
+     */
+    public function getDataForQueryResource($data) {
+
+        $data = strip_tags($data, "<a><img>");
+        $data = str_replace("\r\n", " ", $data);
+        $data = str_replace("\n", " ", $data);
+        $data = str_replace("\r", " ", $data);
+        $data = str_replace("\t", "", $data);
+        $data = preg_replace ('#[ ]+#', ' ', $data);
+
+        return $data;
+    }
+
+
+    /**
+     * @see Object_Class_Data::getDataForEditmode
+     * @param string $data
+     * @return string
+     */
+    public function getDataForEditmode($data) {
+        return $this->getDataForResource($data);
+    }
+
+    /**
+     * @see Object_Class_Data::getDataFromEditmode
+     * @param string $data
+     * @return string
+     */
+    public function getDataFromEditmode($data) {
+        return $data;
+    }
+
+    /**
+     * @see Object_Class_Data::getVersionPreview
+     * @param string $data
+     * @return string
+     */
+    public function getVersionPreview($data) {
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     */
+    public function resolveDependencies($data) {
+        return Pimcore_Tool_Text::getDependenciesOfWysiwygText($data);
+    }
+    
+    /**
+     * @param mixed $data
+     * @param Object_Concrete $ownerObject
+     * @param array $blockedTags
+     */
+    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
+        return Pimcore_Tool_Text::getCacheTagsOfWysiwygText($data, $blockedTags);
+    }
+
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param boolean $omitMandatoryCheck
+     * @throws Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false){
+
+        if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
+           throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+        }
+        $dependencies = Pimcore_Tool_Text::getDependenciesOfWysiwygText($data);
+        if (is_array($dependencies)) {
+            foreach ($dependencies as $key => $value) {
+                $el = Element_Service::getElementById($value['type'], $value['id']);
+                if (!$el) {              
+                    throw new Exception(get_class($this) . ": invalid dependency in wysiwyg text");
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if data for this field is valid and removes broken dependencies
+     *
+     * @param Object_Abstract $object
+     * @return bool
+     */
+    public function sanityCheck($object) {
+        $key = $this->getName();
+        $originalText = $object->$key;
+        $sane = true;
+        $dependencies = Pimcore_Tool_Text::getDependenciesOfWysiwygText($object->$key);
+        $cleanedText = Pimcore_Tool_Text::cleanWysiwygTextOfDependencies($object->$key,$dependencies);
+        $object->$key = $cleanedText;
+        if($originalText!=$cleanedText){
+            $sane=false;
+            logger::notice(get_class($this).": Detected insane relation, removed invalid links in html");
+        }
+        return $sane;
+    }
+
+
+}

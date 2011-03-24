@@ -1,0 +1,14 @@
+
+
+####### PIMCORE RELEASE NOTES #######
+
+Version: 1.0.1
+
+
+Changes: 
+
+- Added Translation Support
+
+
+Install: 
+- Execute update.sql in mysql

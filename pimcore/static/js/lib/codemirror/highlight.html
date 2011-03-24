@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <script src="js/highlight.js" type="text/javascript"></script>
+    <script src="js/stringstream.js" type="text/javascript"></script>
+    <script src="js/tokenize.js" type="text/javascript"></script>
+    <script src="js/tokenizejavascript.js" type="text/javascript"></script>
+    <script src="js/parsejavascript.js" type="text/javascript"></script>
+    <title>CodeMirror: String highlight demonstration</title>
+    <link rel="stylesheet" type="text/css" href="css/jscolors.css"/>
+  </head>
+  <body style="padding: 20px;">
+
+<div style="border: 1px solid black; padding: .4em;">
+<textarea id="code" cols="120" rows="20" style="border-width: 0">
+// Demo for running a CodeMirror parser over a piece of code without
+// creating an actual editor.
+
+(function(){
+  function normaliseString(string) {
+    var tab = "";
+    for (var i = 0; i &lt; indentUnit; i++) tab += " ";
+
+    string = string.replace(/\t/g, tab).replace(/\u00a0/g, " ").replace(/\r\n?/g, "\n");
+    var pos = 0, parts = [], lines = string.split("\n");
+    for (var line = 0; line &lt; lines.length; line++) {
+      if (line != 0) parts.push("\n");
+      parts.push(lines[line]);
+    }
+
+    return {
+      next: function() {
+        if (pos &lt; parts.length) return parts[pos++];
+        else throw StopIteration;
+      }
+    };
+  }
+
+  window.highlightText = function(string, output, parser) {
+    var parser = (parser || Editor.Parser).make(stringStream(normaliseString(string)));
+    try {
+      while (true) {
+        var token = parser.next();
+        var span = document.createElement("SPAN");
+        span.className = token.style;
+        span.appendChild(document.createTextNode(token.value));
+        output.appendChild(span);
+      }
+    }
+    catch (e) {
+      if (e != StopIteration) throw e;
+    }
+  }
+})();
+</textarea>
+</div>
+
+<button onclick="highlight()">Run highlighter</button>
+
+<div>
+<div id="numbers" style="float: left; width: 2em; margin-right: .5em; text-align: right; font-family: monospace; color: #CCC;"></div>
+<pre id="output" style="font-family: monospace"></pre>
+</div>
+
+<script type="text/javascript">
+  // Simple hack to demonstrate adding line numbers. Just pass the DOM node as
+  // the second argument to highlightText when you don't need those
+  function highlight() {
+    var lineNo = 1, output = document.getElementById("output"), numbers = document.getElementById("numbers");
+    output.innerHTML = numbers.innerHTML = "";
+
+    function addLine(line) {
+      numbers.appendChild(document.createTextNode(String(lineNo++)));
+      numbers.appendChild(document.createElement("BR"));
+      for (var i = 0; i < line.length; i++) output.appendChild(line[i]);
+      output.appendChild(document.createElement("BR"));
+    }
+    highlightText(document.getElementById("code").value, addLine);
+  }
+</script>
+
+  </body>
+</html>

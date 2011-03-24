@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+  Test Harness for CodeMirror
+  This HTML file provides a minimal environment within which one can execute
+  JSUnit-style tests.
+-->
+
+<html>
+  <head>
+    <title>Test Harness for CodeMirror</title>
+
+    <script type="text/javascript" src="js/unittests.js"></script>
+
+    <script type="text/javascript">
+      // Counters for unit test results.
+      var test_good = 0;
+      var test_bad = 0;
+
+      // If expected and actual are the identical, print 'Ok', otherwise 'Fail!'
+      function assertEquals(msg, expected, actual) {
+        if (typeof actual == 'undefined') {
+          // msg is optional.
+          actual = expected;
+          expected = msg;
+          msg = 'Expected: \'' + expected + '\' Actual: \'' + actual + '\'';
+        }
+        var html;
+        if (expected === actual) {
+          html = '<FONT COLOR="#009900">Ok</FONT>';
+          test_good++;
+        } else {
+          html = '<FONT COLOR="#990000"><BIG>Fail!</BIG></FONT><BR>';
+          msg += ' Expected: \'' + expected + '\' Actual: \'' + actual + '\'';
+          msg = msg.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          msg = msg.replace(/\r\n/g, '&para;');
+          msg = msg.replace(/\n/g, '&para;');
+          msg = msg.replace(/\r/g, '&para;');
+          msg = msg.replace(/\u00A0/g, '&middot;');
+          html += '<code>' + msg + '</code>';
+          test_bad++;
+        }
+        printDiv(html);
+      }
+
+      // If expected and actual are the equivalent, pass the test.
+      function assertEquivalent(msg, expected, actual) {
+        if (typeof actual == 'undefined') {
+          // msg is optional.
+          actual = expected;
+          expected = msg;
+          msg = 'Expected: \'' + expected + '\' Actual: \'' + actual + '\'';
+        }
+        if (_equivalent(expected, actual)) {
+          assertEquals(msg, String.toString(expected), String.toString(actual));
+        } else {
+          assertEquals(msg, expected, actual);
+        }
+      }
+
+      // Are a and b the equivalent? -- Recursive.
+      function _equivalent(a, b) {
+        if (a == b) {
+          return true;
+        }
+        if (typeof a == 'object' && typeof b == 'object' && a !== null && b !== null) {
+          if (a.toString() != b.toString()) {
+            return false;
+          }
+          for (var p in a) {
+            if (!_equivalent(a[p], b[p])) {
+              return false;
+            }
+          }
+          for (var p in b) {
+            if (!_equivalent(a[p], b[p])) {
+              return false;
+            }
+          }
+          return true;
+        }
+        return false;
+      }
+
+      function runTests() {
+        for (var x = 0; x < tests.length; x++) {
+          printDiv('<H3>' + tests[x] + ':</H3>');
+          eval(tests[x] + '()');
+        }
+      }
+      function initTests() {
+        var startTime = (new Date()).getTime();
+        runTests();
+        var endTime = (new Date()).getTime();
+        var html = '<H3>Done.</H3>';
+        html += '<P>Tests passed: ' + test_good + '<BR>Tests failed: ' + test_bad + '</P>';
+        html += '<P>Total time: ' + (endTime - startTime) + ' ms</P>';
+        printDiv(html);
+      }
+
+      function printDiv(html) {
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        document.getElementById('testoutput').appendChild(div);
+      }
+    </script>
+  </head>
+
+  <body>
+    <h1>Test Harness for CodeMirror</h1>
+    <div id="testoutput"></div>
+    <hr>
+    <div style="border: 1px solid black;">
+    <textarea id="inputfield"></textarea>
+    </div>
+    <script type="text/javascript" src="js/codemirror.js"></script>
+    <script>
+      var editor = new CodeMirror(CodeMirror.replace(document.getElementById('inputfield')), {
+          parserfile: ["tokenizejavascript.js", "parsejavascript.js"],
+          path: "js/",
+          initCallback: initTests
+      });
+    </script>
+
+  </body>
+</html>

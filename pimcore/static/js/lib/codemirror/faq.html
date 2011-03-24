@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>CodeMirror: FAQ</title>
+    <link rel="stylesheet" type="text/css" href="css/docs.css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+
+<h1><span class="logo-braces">{ }</span> <a href="http://codemirror.net/">CodeMirror</a></h1>
+
+<pre class="grey">
+<img src="css/baboon.png" class="logo" alt="logo"/>/* Frequently asked
+   questions */
+</pre>
+
+<div class="clear"><div class="leftbig blk">
+
+    <h2 id="license">Q: Can I use CodeMirror in my such-and-such project?</h2>
+
+    <p>A: Yes. The <a href="LICENSE">license</a> is short, simple, and
+    permissive.</p>
+
+    <h2 id="cache">Q: You said you fixed this-and-this issue, but I'm
+    still seeing it.</h2>
+
+    <p>A: One possibility is that I screwed up, but a very real
+    alternative is that you're looking at a cached version of the
+    CodeMirror scripts. Because the scripts are loaded into an iframe,
+    the ctrl-f5 you issued on the outer page doesn't always cause them
+    to be reloaded (IE, Opera, and Firefox are the worst offenders
+    here). Clear your cache and re-try.</p>
+
+    <h2 id="textarea">Q: I can't put content containing
+    <code>&lt;/textarea></code> into CodeMirror!</h2>
+
+    <p>A: [Web-programming 101] The first <code>&lt;/textarea></code>
+    following a <code>&lt;textarea></code> tag will close the
+    textarea. This has nothing to do with CodeMirror. Sit down, and
+    spend ten minutes thinking about why HTML-escaping was
+    invented.</p>
+
+    <h2 id="debug">Q: I have this huge chunk of code that does not
+    work, can you debug it for me?</h2>
+
+    <p>A: Nope. If you can't be bothered isolate your problem in 20
+    lines of code or less, I can't be bothered to think about it.</p>
+
+    <h2 id="patch">Q: How do I submit patches for CodeMirror?</h2>
+
+    <p>A: Preferred way is to create a fork on <a
+    href="http://github.com/marijnh/CodeMirror">github</a>, add your
+    patch, and send me a pull request. Diffs (against the latest
+    version!) by mail are also cool.</p>
+
+
+</div><div class="rightsmall blk">
+
+  <h2>Questions</h2>
+
+  <ul>
+    <li><a href="#license">Licensing</a></li>
+    <li><a href="#cache">Cache Issues</a></li>
+    <li><a href="#textarea"><code>&lt;textarea></code></a></li>
+    <li><a href="#debug">Code Questions</a></li>
+    <li><a href="#patch">Submitting Patches</a></li>
+  </ul>
+
+  <h2>Site</h2>
+
+  <ul>
+    <li><a href="index.html">Front Page</a></li>
+    <li><a href="manual.html">User Manual</a></li>
+    <li><a href="http://groups.google.com/group/codemirror">Google Group</a></li>
+    <li><a href="compress.html">Compression Helper</a></li>
+    <li><a href="story.html">War Story</a></li>
+  </ul>
+
+</div></div>
+
+<div style="height: 2em">&nbsp;</div>
+
+<script type="text/javascript" src="css/font.js"></script>
+
+  </body>
+</html>

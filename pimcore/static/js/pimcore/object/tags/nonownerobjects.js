@@ -1,0 +1,328 @@
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+pimcore.registerNS("pimcore.object.tags.nonownerobjects");
+pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, {
+
+
+    removeObject: function (index, item) {
+
+        if (pimcore.globalmanager.exists("object_" + this.getStore().getAt(index).data.id) == false) {
+
+            Ext.Ajax.request({
+                url: "/admin/object/get/",
+                params: {id: this.getStore().getAt(index).data.id},
+                success: function(item, index, response) {
+                    this.data = Ext.decode(response.responseText);
+                    if (this.data.editlock) {
+                        var lockDate = new Date(this.data.editlock.date * 1000);
+                        var lockDetails = "<br /><br />";
+                        lockDetails += "<b>" + t("user") + ":</b> " + this.data.editlock.user.username + "<br />";
+                        lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
+                        lockDetails += "<br /><br />" + t("element_implicit_edit_question");
+
+                        Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails, function (lock, buttonValue) {
+                            if (buttonValue == "yes") {
+                                this.getStore().removeAt(index);
+                                if (item != null) {
+                                    item.parentMenu.destroy();
+                                }
+
+                            }
+                        }.bind(this, arguments));
+
+                    } else {
+                        Ext.Ajax.request({
+                            url: "/admin/misc/lock-element",
+                            params: {id: this.getStore().getAt(index).data.id, type: 'object'}
+                        });
+                        this.getStore().removeAt(index);
+                        if (item != null) {
+                            item.parentMenu.destroy();
+                        }
+                    }
+
+                }.bind(this, item, index)
+            });
+        } else {
+
+            var lockDetails = "<br /><br />" + t("element_implicit_edit_question");
+
+            Ext.MessageBox.confirm(t("element_is_open"), t("element_open_message") + lockDetails, function (lock, buttonValue) {
+                if (buttonValue == "yes") {
+                    this.getStore().removeAt(index);
+                    item.parentMenu.destroy();
+                }
+            }.bind(this, arguments));
+        }
+
+    },
+
+    actionColumnRemove: function (grid, rowIndex) {
+        var f = this.removeObject.bind(grid, rowIndex, null);
+        f();
+    },
+
+    getLayoutEdit: function () {
+
+        var autoHeight = false;
+        if (intval(this.layoutConf.height) < 15) {
+            autoHeight = true;
+        }
+
+        var cls = 'object_field';
+
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var record = classStore.getAt(classStore.find('id', this.layoutConf.ownerClassId));
+        var className = record.data.text;
+
+
+        this.grid = new Ext.grid.GridPanel({
+            plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
+            store: this.store,
+            colModel: new Ext.grid.ColumnModel({
+                defaults: {
+                    sortable: false
+                },
+                columns: [
+                    {header: 'ID', dataIndex: 'id', width: 50},
+                    {id: "path", header: t("path"), dataIndex: 'path', width: 200},
+                    {header: t("type"), dataIndex: 'type', width: 100},
+                    {
+                        xtype: 'actioncolumn',
+                        width: 30,
+                        items: [
+                            {
+                                tooltip: t('open'),
+                                icon: "/pimcore/static/img/icon/pencil_go.png",
+                                handler: function (grid, rowIndex) {
+                                    var data = grid.getStore().getAt(rowIndex);
+                                    pimcore.helpers.openObject(data.data.id, "object");
+                                }.bind(this)
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'actioncolumn',
+                        width: 30,
+                        items: [
+                            {
+                                tooltip: t('remove'),
+                                icon: "/pimcore/static/img/icon/cross.png",
+                                handler: this.actionColumnRemove.bind(this)
+                            }
+                        ]
+                    }
+                ]
+            }),
+            cls: cls,
+            autoExpandColumn: 'path',
+            width: this.layoutConf.width,
+            height: this.layoutConf.height,
+            tbar: [
+                {
+                    xtype: "tbtext",
+                    text: "<b>" + this.layoutConf.title + "</b>" + ' <span class="warning">' + t('nonownerobject_warning') + " | " + t('owner_class') + ':<b>' + ts(className) + "</b> " + t('owner_field') + ': <b>' + ts('this.layoutConf.ownerFieldName') + '</b></span>'
+                },
+                "->",
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    handler: this.empty.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                },
+                this.getCreateControl()
+            ],
+            autoHeight: autoHeight,
+            bodyCssClass: "pimcore_object_tag_objects"
+        });
+
+        this.grid.on("rowcontextmenu", this.onRowContextmenu);
+        this.grid.reference = this;
+
+        this.grid.on("afterrender", function () {
+
+            var dropTargetEl = this.grid.getEl();
+            var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
+                ddGroup    : 'element',
+                getTargetFromEvent: function(e) {
+                    return this.grid.getEl().dom;
+                    //return e.getTarget(this.grid.getView().rowSelector);
+                }.bind(this),
+                onNodeOver: function (overHtmlNode, ddSource, e, data) {
+
+                    if (data.node.attributes.elementType == "object" && this.dndAllowed(data)) {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    } else {
+                        return Ext.dd.DropZone.prototype.dropNotAllowed;
+                    }
+
+                }.bind(this),
+                onNodeDrop : function(target, dd, e, data) {
+
+                    if (data.node.attributes.elementType != "object") {
+                        return false;
+                    }
+
+                    if (this.dndAllowed(data)) {
+                        var initData = {
+                            id: data.node.attributes.id,
+                            fullpath: data.node.attributes.path,
+                            className: data.node.attributes.className
+                        };
+
+                        if (!this.objectAlreadyExists(initData.id) && initData.id != this.object.id) {
+                            this.addObject(initData);
+
+                        } else return false;
+                    } else return false;
+                }.bind(this)
+            });
+        }.bind(this));
+
+
+        return this.grid;
+    },
+
+
+    dndAllowed: function(data) {
+
+        // check if data is a treenode, if not allow drop because of the reordering
+        if (!this.sourceIsTreeNode(data)) {
+            return true;
+        }
+
+        // only allow objects not folders
+        if (data.node.attributes.type == "folder") {
+            return false;
+        }
+
+        //don't allow relation to myself
+        if (data.node.id == this.object.id) {
+            return false;
+        }
+
+        var classname = data.node.attributes.className;
+
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var record = classStore.getAt(classStore.find('text', classname));
+        var id = record.data.id;
+
+        if (this.layoutConf.ownerClassId == id) {
+            return true;
+        } else return false;
+
+
+    },
+
+    openSearchEditor: function () {
+        var allowedClasses = [];
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var record = classStore.getAt(classStore.find('id', this.layoutConf.ownerClassId));
+        allowedClasses.push(record.data.text);
+
+
+        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
+            type: ["object"],
+            subtype: [
+                {
+                    object: ["object"]
+                }
+            ],
+            specific: {
+                classes: allowedClasses
+            }
+        });
+    },
+
+    addObject: function(item) {
+
+        if (pimcore.globalmanager.exists("object_" + item.id) == false) {
+
+            Ext.Ajax.request({
+                url: "/admin/object/get/",
+                params: {id: item.id},
+                success: function(item, response) {
+                    this.data = Ext.decode(response.responseText);
+                    if (this.data.editlock) {
+                        var lockDate = new Date(this.data.editlock.date * 1000);
+                        var lockDetails = "<br /><br />";
+                        lockDetails += "<b>" + t("user") + ":</b> " + this.data.editlock.user.username + "<br />";
+                        lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
+                        lockDetails += "<br /><br />" + t("element_implicit_edit_question");
+
+                        Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails, function (lock, buttonValue) {
+                            if (buttonValue == "yes") {
+                                this.store.add(new this.store.recordType({
+                                    id: item.id,
+                                    path: item.fullpath,
+                                    type: item.classname
+                                }, this.store.getCount() + 1));
+                            }
+                        }.bind(this, arguments));
+
+                    } else {
+                        Ext.Ajax.request({
+                            url: "/admin/misc/lock-element",
+                            params: {id: item.id, type: 'object'}
+                        });
+                        this.store.add(new this.store.recordType({
+                            id: item.id,
+                            path: item.fullpath,
+                            type: item.classname
+                        }, this.store.getCount() + 1));
+                    }
+
+                }.bind(this, item)
+            });
+        } else {
+
+            var lockDetails = "<br /><br />" + t("element_implicit_edit_question");
+
+            Ext.MessageBox.confirm(t("element_is_open"), t("element_open_message") + lockDetails, function (item, buttonValue) {
+                if (buttonValue == "yes") {
+                    this.store.add(new this.store.recordType({
+                        id: item.id,
+                        path: item.fullpath,
+                        type: item.classname
+                    }, this.store.getCount() + 1));
+
+                }
+            }.bind(this, item));
+        }
+    },
+
+
+    addDataFromSelector: function (items) {
+
+        if (this.object.id == items.id) {
+            //cannot select myself!
+            Ext.MessageBox.show({
+                title:t('error'),
+                msg: t('nonownerobjects_self_selection'),
+                buttons: Ext.Msg.OK ,
+                icon: Ext.MessageBox.ERROR
+            });
+
+        } else if (!this.objectAlreadyExists(items.id)) {
+            this.addObject(items);
+        }
+
+    }
+
+});

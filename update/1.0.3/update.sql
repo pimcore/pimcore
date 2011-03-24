@@ -1,0 +1,1 @@
+INSERT INTO `users_permission_definitions` SET `key`='update', `translation`='permissions_update';

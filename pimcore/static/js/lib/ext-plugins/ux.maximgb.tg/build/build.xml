@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Phing (phing.info) build file -->
+<project name="ux.maximgb.tg" default="build" basedir=".">
+
+    <property name="output.file" value="../TreeGrid.js" />
+    <property name="output.file.packed" value="../TreeGrid.packed.js" />
+    <property name="yui.compressor" value="C:\Program Files\yuicompressor\build\yuicompressor-2.3.5.jar" />
+    <property name="source.list" 
+              value="../src/ExtOverride.js,
+                     ../src/NS.js,
+                     ../src/AbstractTreeStore.js,
+                     ../src/AdjacencyListStore.js,
+                     ../src/NestedSetStore.js,
+                     ../src/GridView.js,
+                     ../src/GridPanel.js,
+                     ../src/EditorGridPanel.js,
+                     ../src/PagingToolbar.js,
+                     ../src/XType.js"
+    />
+    
+    <target name="clean" description="Deletes output files.">
+        <if>
+            <available file="${output.file}" />
+            <then>
+                <delete file="${output.file}" />
+            </then>
+        </if>
+        
+        <if>
+            <available file="${output.file.packed}" />
+            <then>
+                <delete file="${output.file.packed}" />
+            </then>
+        </if>
+    </target>
+    
+    <target name="append" description="Internal task used by merge task.">
+        <php function="trim" returnProperty="merge.file.trimmed">
+            <param value="${merge.file}" />
+        </php>
+        <append destFile="${output.file}" file="${merge.file.trimmed}" />
+        <append destFile="${output.file}" text="&#13;&#10;" />
+    </target>
+    
+    <target name="merge" description="Merges files from /src folder into output file separating them with new line character sequence.">
+        <foreach list="${source.list}" param="merge.file" target="append" />
+    </target>
+    
+    <target name="pack" description="Packs output file with YUICompressor if one available.">
+        <if>
+            <available file="${yui.compressor}" />
+            <then>
+                <exec command="java -jar &quot;${yui.compressor}&quot; --type js --charset utf-8 --nomunge -o ${output.file.packed} ${output.file}"
+                      passthru="yes"
+                      checkreturn="true" 
+                />
+            </then>
+        </if>
+    </target>
+    
+    <target name="build" depends="clean,merge,pack" />
+</project>

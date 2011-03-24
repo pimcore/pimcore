@@ -1,0 +1,48 @@
+#help-panel
+{
+	margin: 1em;
+	margin-right: 1em;
+}
+
+#help-panel h1
+{
+	font-size: 14pt;
+	font-weight: bold;
+	margin-bottom: 1em;
+}
+
+#help-panel h2
+{
+	font-size: 12pt;
+	font-weight: bold;
+	margin-bottom: 1em;
+}
+
+#help-panel pre
+{
+	background: #F8F8F8 none repeat scroll 0%;
+	border-color: #E8E8E8;
+	border-style: solid;
+	border-width: 1px 1px 1px 8px;
+	font-size: 12px;
+	line-height: 14px;
+	margin: 1em 0px 1em 1em;
+	padding: 5px;
+}
+
+#help-panel p, #help-panel ul
+{
+	margin-bottom: 1em;
+}
+
+#help-panel a
+{
+	color: #183365;
+	text-decoration: none;
+}
+
+#help-panel a:hover
+{
+	color: red;
+	text-decoration: underline;	
+}
