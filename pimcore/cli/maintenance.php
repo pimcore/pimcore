@@ -30,14 +30,20 @@ $plugins = Pimcore_API_Plugin_Broker::getInstance()->getPlugins();
 foreach ($plugins as $plugin) {
     $id = get_class($plugin);
 
+    $jobRegistered = null;
+
     if(method_exists($plugin, "maintainance")) {
         //legacy hack
-        $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintainance"));
+        $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintainance"));
     } else  if(method_exists($plugin, "maintenance")) {
-        $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenance"));
+        $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenance"));
     }
 
-
+    if($jobRegistered === false) {
+        if(method_exists($plugin, "maintenanceForce")) {
+            $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenanceForce"), true);
+        }
+    }
 }
 
 $manager->run();

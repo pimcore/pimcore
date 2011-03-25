@@ -30,7 +30,10 @@ class Schedule_Manager_Procedural {
         if (!$job->isLocked() || $force) {
             $this->jobs[] = $job;
             $job->lock();
+
+            return true;
         }
+        return false;
     }
 
     public function run() {
