@@ -484,7 +484,8 @@ class Object_Concrete extends Object_Abstract {
      * @return array
      */
     public function getRelationData($fieldName,$forOwner,$remoteClassId){
-        return $this->getResource()->getRelationData($fieldName,$forOwner,$remoteClassId);
+        $relationData = $this->getResource()->getRelationData($fieldName,$forOwner,$remoteClassId);
+        return $relationData;
     }
 
 
