@@ -37,5 +37,13 @@ pimcore.object.tags.abstract = Class.create({
 
     setObject: function(object){
         this.object = object;
+    },
+
+    isDirty: function () {
+        if(this.layout && typeof this.layout.isDirty == "function") {
+            return this.layout.isDirty();
+        }
+
+        throw "isDirty() is not implemented";
     }
 });
