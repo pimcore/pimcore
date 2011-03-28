@@ -15,32 +15,39 @@
 
 class Pimcore_Resource_Mysql {
 
+    public static function getConnection () {
+
+        $conf = Zend_Registry::get("pimcore_config_system");
+
+        $db = Zend_Db::factory($conf->database);
+        $db->getConnection()->exec("SET NAMES UTF8");
+
+        return $db;
+    }
+
     public static function reset(){  
 
         try {
-                $conf = Zend_Registry::get("pimcore_config_system");
+            $db = self::getConnection();
 
-                $db = Zend_Db::factory($conf->database);
-                $db->getConnection()->exec("SET NAMES UTF8");
+            Zend_Registry::set("Pimcore_Resource_Mysql", $db);
 
-                Zend_Registry::set("Pimcore_Resource_Mysql", $db);
-                
-                if(PIMCORE_DEVMODE) {
-                    $profiler = new Pimcore_Resource_Mysql_Profiler('All DB Queries');
-                    $profiler->setEnabled(true);
-                    $db->setProfiler($profiler);
-                }
-                
-                return $db;
+            if(PIMCORE_DEVMODE) {
+                $profiler = new Pimcore_Resource_Mysql_Profiler('All DB Queries');
+                $profiler->setEnabled(true);
+                $db->setProfiler($profiler);
             }
-            catch (Exception $e) {
 
-                $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log";
+            return $db;
+        }
+        catch (Exception $e) {
 
-                Logger::emergency($errorMessage);
-                Logger::emergency($e);
-                die($errorMessage);
-            }
+            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log";
+
+            Logger::emergency($errorMessage);
+            Logger::emergency($e);
+            die($errorMessage);
+        }
     }
 
 

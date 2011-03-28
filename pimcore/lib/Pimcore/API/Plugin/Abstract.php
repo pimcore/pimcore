@@ -28,7 +28,8 @@ class Pimcore_API_Plugin_Abstract extends Pimcore_API_Abstract {
     }
 
     protected static function getDb() {
-        return Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource_Mysql::getConnection();
+        return $db;
     }
 
     function getJsPaths() {
@@ -40,7 +41,7 @@ class Pimcore_API_Plugin_Abstract extends Pimcore_API_Abstract {
         return $this->cssPaths;
     }
 
-    function __construct($jsPaths, $cssPaths) {
+    function __construct($jsPaths = null, $cssPaths = null) {
         if (!empty($jsPaths))
             $this->jsPaths = $jsPaths;
         if (!empty($cssPaths))
