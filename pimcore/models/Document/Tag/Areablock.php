@@ -106,7 +106,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
                     if(is_file($edit) && $editmode) {
                         echo '<div class="pimcore_area_edit_button"></div>';
-                        //$this->getView()->editmode = false;
+                        $this->getView()->editmode = false;
                     }
 
                     $this->getView()->template($view);
