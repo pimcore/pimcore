@@ -126,18 +126,11 @@ CREATE TABLE `documents_elements` (
 DROP TABLE IF EXISTS `documents_link`;
 CREATE TABLE `documents_link` (
   `id` int(11) unsigned NOT NULL default '0',
-  `name` varchar(255) default NULL,
   `internalType` enum('document','asset') character set utf8 collate utf8_bin default NULL,
   `internal` int(11) unsigned default NULL,
   `direct` varchar(255) default NULL,
   `linktype` enum('direct','internal') default NULL,
-  `target` varchar(50) default NULL,
-  `parameters` varchar(255) default NULL,
-  `anchor` varchar(255) default NULL,
   `title` varchar(255) default NULL,
-  `accesskey` varchar(255) default NULL,
-  `rel` varchar(255) default NULL,
-  `tabindex` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -147,7 +140,6 @@ CREATE TABLE `documents_page` (
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,

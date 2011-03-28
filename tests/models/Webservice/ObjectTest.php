@@ -151,7 +151,6 @@ class Webservice_ObjectTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue($wsDocument instanceof Webservice_Data_Object_Concrete_Out);
 
-
         $className = "Object_" . ucfirst($wsDocument->className);
         $this->assertTrue(class_exists($className));
         $object = new $className();

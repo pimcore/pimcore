@@ -246,69 +246,10 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                 bodyStyle:'padding:10px;',
                 region: "center",
                 items :[
-                    {
-                                xtype: "compositefield",
-                                items:  [{
-                                        fieldLabel: t('name_navigation'),
-                                        name: "name",
-                                        value: this.data.name,
-                                        xtype: "textfield",
-                                        width: 367
-                                    },
-                                    {
-                                        xtype: "button",
-                                        text: t('further_navigation_settings'),
-                                        disabled: !this.isAllowed("properties"),
-                                        handler: function(){
-                                               this.tabbar.activate(this.properties.getLayout());
-                                        }.bind(this)
-                                    }]
-                            },
                     pathField,
                     new Ext.Spacer({
                         height: 50
-                    })/*,
-                    {
-                        xtype: "combo",
-                        fieldLabel: t('target'),
-                        name: 'target',
-                        triggerAction: 'all',
-                        editable: true,
-                        valueField: "value",
-                        displayField: "label",
-                        store: ["","_blank","_self","_top","_parent"],
-                        value: this.data.target
-                    },
-                    {
-                        fieldLabel: t('parameters'),
-                        name: "parameters",
-                        value: this.data.parameters
-                    },
-                    {
-                        fieldLabel: t('anchor'),
-                        name: "anchor",
-                        value: this.data.anchor
-                    },
-                    {
-                        fieldLabel: t('title'),
-                        name: "title",
-                        value: this.data.title
-                    },
-                    {
-                        fieldLabel: t('accesskey'),
-                        name: "accesskey",
-                        value: this.data.accesskey
-                    },
-                    {
-                        fieldLabel: t('relation'),
-                        name: "rel",
-                        value: this.data.rel
-                    },
-                    {
-                        fieldLabel: t('tabindex'),
-                        name: "tabindex",
-                        value: this.data.tabindex
-                    } */
+                    })
                 ]
             });
         }

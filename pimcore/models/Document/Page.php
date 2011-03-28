@@ -17,12 +17,6 @@
 
 class Document_Page extends Document_PageSnippet {
 
-    /**
-     * Contains the name of the page
-     *
-     * @var string
-     */
-    public $name = "";
 
     /**
      * Contains the title of the page (meta-title)
@@ -76,18 +70,24 @@ class Document_Page extends Document_PageSnippet {
     }
 
     /**
+     * getProperty method should be used instead
+     *
+     * @deprecated
      * @return string
      */
     public function getName() {
-        return $this->name;
+        return $this->getProperty("navigation_name");
     }
 
     /**
+     * setProperty method should be used instead
+     *
+     * @deprecated
      * @param string $name
      * @return void
      */
     public function setName($name) {
-        $this->name = $name;
+        $this->setProperty("navigation_name","text",$name,false);
     }
 
     /**

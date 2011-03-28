@@ -15,7 +15,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Link extends Document {
+class Document_Link extends Document
+{
 
     /**
      * Contains the ID of the internal ID
@@ -52,19 +53,6 @@ class Document_Link extends Document {
      */
     public $linktype = "internal";
 
-    /**
-     * Target of the link
-     *
-     * @var string
-     */
-    public $target = "";
-
-    /**
-     * Name of the link
-     *
-     * @var string
-     */
-    public $name = "";
 
     /**
      * static type of this object
@@ -82,41 +70,12 @@ class Document_Link extends Document {
 
 
     /**
-     * @var string
-     */
-    public $parameters = "";
-
-    /**
-     * @var string
-     */
-    public $anchor = "";
-
-    /**
-     * @var string
-     */
-    public $title = "";
-
-    /**
-     * @var string
-     */
-    public $accesskey = "";
-
-    /**
-     * @var string
-     */
-    public $rel = "";
-
-    /**
-     * @var string
-     */
-    public $tabindex = "";
-
-    /**
      * Get the current name of the class
      *
      * @return string
      */
-    public static function getClassName() {
+    public static function getClassName()
+    {
         return __CLASS__;
     }
 
@@ -125,7 +84,8 @@ class Document_Link extends Document {
      * @see Document::resolveDependencies
      * @return array
      */
-    public function resolveDependencies() {
+    public function resolveDependencies()
+    {
 
         $dependencies = parent::resolveDependencies();
 
@@ -148,7 +108,8 @@ class Document_Link extends Document {
      *
      * @return array
      */
-    public function getCacheTags($blockedTags = array()) {
+    public function getCacheTags($blockedTags = array())
+    {
 
         $tags = parent::getCacheTags($blockedTags);
         $blockedTags = array_merge($tags, $blockedTags);
@@ -169,7 +130,8 @@ class Document_Link extends Document {
      *
      * @return string
      */
-    public function getHref() {
+    public function getHref()
+    {
         $path = "";
         if ($this->getLinktype() == "internal") {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
@@ -192,20 +154,26 @@ class Document_Link extends Document {
     }
 
     /**
-     * Returns the target of the link
+     * getProperty method should be used instead
      *
+     * @deprecated
      * @return string
      */
-    public function getTarget() {
-        return $this->target;
+    public function getTarget()
+    {
+        return $this->getProperty("navigation_target");
     }
 
     /**
+     * setProperty method should be used instead
+     *
+     * @deprecated
      * @param string $target
      * @return string
      */
-    public function setTarget($target) {
-        $this->target = $target;
+    public function setTarget($target)
+    {
+        $this->setProperty("navigation_target", "text", $target, false);
     }
 
     /**
@@ -213,7 +181,8 @@ class Document_Link extends Document {
      *
      * @return integer
      */
-    public function getInternal() {
+    public function getInternal()
+    {
         return $this->internal;
     }
 
@@ -222,7 +191,8 @@ class Document_Link extends Document {
      *
      * @return string
      */
-    public function getDirect() {
+    public function getDirect()
+    {
         return $this->direct;
     }
 
@@ -231,7 +201,8 @@ class Document_Link extends Document {
      *
      * @return string
      */
-    public function getLinktype() {
+    public function getLinktype()
+    {
         return $this->linktype;
     }
 
@@ -239,7 +210,8 @@ class Document_Link extends Document {
      * @param integer $internal
      * @return void
      */
-    public function setInternal($internal) {
+    public function setInternal($internal)
+    {
 
         if (!empty($internal)) {
             $this->internal = $internal;
@@ -254,7 +226,8 @@ class Document_Link extends Document {
      * @param string $direct
      * @return void
      */
-    public function setDirect($direct) {
+    public function setDirect($direct)
+    {
         $this->direct = $direct;
     }
 
@@ -262,39 +235,49 @@ class Document_Link extends Document {
      * @param string $linktype
      * @return void
      */
-    public function setLinktype($linktype) {
+    public function setLinktype($linktype)
+    {
         $this->linktype = $linktype;
     }
 
     /**
-     * Returns the name of the link
+     * getProperty method should be used instead
      *
+     * @deprecated
      * @return string
      */
-    public function getName() {
-        return $this->name;
+    public function getName()
+    {
+        return $this->getProperty("navigation_name");
     }
+
 
     /**
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
 
     /**
+     * setProperty method should be used instead
+     *
+     * @deprecated
      * @param string $name
      * @return void
      */
-    public function setName($name) {
-        $this->name = $name;
+    public function setName($name)
+    {
+        $this->setProperty("navigation_name", "text", $name, false);
     }
 
     /**
      * @param string $type
      * @return void
      */
-    public function setType($type) {
+    public function setType($type)
+    {
         $this->type = $type;
     }
 
@@ -302,7 +285,8 @@ class Document_Link extends Document {
     /**
      * @return string
      */
-    public function getInternalType() {
+    public function getInternalType()
+    {
         return $this->internalType;
     }
 
@@ -311,14 +295,16 @@ class Document_Link extends Document {
      * @param string $type
      * @return void
      */
-    public function setInternalType($type) {
+    public function setInternalType($type)
+    {
         $this->internalType = $type;
     }
 
     /**
      * @return Document|Asset
      */
-    public function getObject() {
+    public function getObject()
+    {
         if ($this->object instanceof Document || $this->object instanceof Asset) {
             return $this->object;
         }
@@ -333,14 +319,16 @@ class Document_Link extends Document {
     /**
      * @return void
      */
-    public function setObject($object) {
+    public function setObject($object)
+    {
         $this->object = $object;
     }
 
     /**
      * @return void
      */
-    public function setObjectFromId() {
+    public function setObjectFromId()
+    {
         if ($this->internalType == "document") {
             $this->object = Document::getById($this->internal);
         }
@@ -352,97 +340,140 @@ class Document_Link extends Document {
 
 
     /**
+     * getProperty method should be used instead
+     *
+     * @deprecated
      * @return string
      */
-    public function getParameters() {
-        return $this->parameters;
+    public function getParameters()
+    {
+        return $this->getProperty("navigation_parameters");
     }
 
     /**
+     * setProperty method should be used instead
+     *
+     * @deprecated
      * @param string $parameters
      */
-    public function setParameters($parameters) {
-        $this->parameters = $parameters;
+    public function setParameters($parameters)
+    {
+        $this->setProperty("navigation_parameters", "text", $parameters, false);
     }
 
     /**
+     * getProperty method should be used instead
+     *
+     * @deprecated
      * @return string
      */
-    public function getAnchor() {
-        return $this->anchor;
+    public function getAnchor()
+    {
+        return $this->getProperty("navigation_anchor");
     }
 
     /**
+     * setProperty method should be used instead
+     *
+     * @deprecated
      * @param string $anchor
      */
-    public function setAnchor($anchor) {
-        $this->anchor = $anchor;
+    public function setAnchor($anchor)
+    {
+        $this->setProperty("navigation_anchor", "text", $anchor, false);
     }
 
     /**
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
     /**
      * @param string $title
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
     }
 
     /**
+     * getProperty method should be used instead
+     *
+     * @deprecated
      * @return string
      */
-    public function getAccesskey() {
-        return $this->accesskey;
+    public function getAccesskey()
+    {
+        return $this->getProperty("accesskey");
     }
 
     /**
+     * setProperty method should be used instead
+     *
+     * @deprecated
      * @param string $accesskey
      */
-    public function setAccesskey($accesskey) {
-        $this->accesskey = $accesskey;
+    public function setAccesskey($accesskey)
+    {
+        $this->setProperty("accesskey", "text", $accesskey, false);
     }
 
     /**
+     * getProperty method should be used instead
+     *
+     * @deprecated
      * @return string
      */
-    public function getRel() {
-        return $this->rel;
+    public function getRel()
+    {
+        return $this->getProperty("navigation_relation");
     }
 
     /**
+     * setProperty method should be used instead
+     *
+     * @deprecated
      * @param string $rel
      */
-    public function setRel($rel) {
-        $this->rel = $rel;
+    public function setRel($rel)
+    {
+        $this->setProperty("navigation_relation", "text", $rel, false);
     }
 
     /**
+     * getProperty method should be used instead
+     *
+     * @deprecated
      * @return string
      */
-    public function getTabindex() {
-        return $this->tabindex;
+    public function getTabindex()
+    {
+        return $this->getProperty("tabindex");
     }
 
     /**
+     * setProperty method should be used instead
+     *
+     * @deprecated
      * @param string $tabindex
      */
-    public function setTabindex($tabindex) {
-        $this->tabindex = $tabindex;
+    public function setTabindex($tabindex)
+    {
+        $this->setProperty("navigation_tabindex", "text", $tabindex, false);
     }
 
-    public function getHtml() {
+    public function getHtml()
+    {
 
-        $attributes = array("rel", "tabindex", "accesskey", "title", "name","target");
+        $attributes = array("rel", "tabindex", "accesskey", "title", "name", "target");
         $attribs = array();
         foreach ($attributes as $a) {
             $attribs[] = $a . '="' . $this->$a . '"';
         }
 
-        return '<a href="' . $this->getHref() . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->getName()) . '</a>';
+        return '<a href="' . $this->getHref() . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->getProperty("navigation_name")) . '</a>';
     }
 }

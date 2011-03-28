@@ -16,7 +16,9 @@ pimcore.registerNS("pimcore.document.properties");
 pimcore.document.properties = Class.create(pimcore.settings.properties,{
 
 
-    disallowedKeys: ["language","navigation_title","navigation_relation","navigation_parameters","navigation_anchor","navigation_target","navigation_class"],
+    disallowedKeys: ["language","navigation_name","navigation_title","navigation_relation","navigation_parameters","navigation_anchor","navigation_target","navigation_class"],
+
+    inheritableKeys: ["language"],
 
     getPropertyData: function(name){
 
@@ -79,27 +81,10 @@ pimcore.document.properties = Class.create(pimcore.settings.properties,{
                 collapsible: true,
                 collapsed: false,
                 items :[{
-                            xtype: "compositefield",
-                            items: [{
-                                xtype: "displayfield",
-                                fieldLabel: t("name"),
-                                width: 100,
-                                value: this.element.data.name
-                            },
-                            {
-                                xtype:"button",
-                                iconCls: "pimcore_icon_edit",
-                                disabled: !this.element.isAllowed("settings"),
-                                handler: function(){
-                                    try{
-                                        //pages
-                                        this.element.tabbar.activate(this.element.settings.getLayout());
-                                    } catch (e){
-                                        //link
-                                        this.element.tabbar.activate(0);
-                                    }
-                                }.bind(this)
-                            }]
+                            xtype: "textfield",
+                            fieldLabel: t("name"),
+                            value: this.getPropertyData("navigation_name"),
+                            name: "navigation_name"
                         },{
                             xtype: "textfield",
                             fieldLabel: t('title'),
@@ -147,6 +132,18 @@ pimcore.document.properties = Class.create(pimcore.settings.properties,{
                             fieldLabel: t('relation'),
                             name: "navigation_relation",
                             value: this.getPropertyData("navigation_relation")
+                        },
+                        {
+                            xtype: "textfield",
+                            fieldLabel: t('accesskey'),
+                            name: "navigation_accesskey",
+                            value: this.getPropertyData("navigation_accesskey")
+                        },
+                        {
+                            xtype: "textfield",
+                            fieldLabel: t('tabindex'),
+                            name: "navigation_tabindex",
+                            value: this.getPropertyData("navigation_tabindex")
                         }]
 
             });
@@ -217,7 +214,7 @@ pimcore.document.properties = Class.create(pimcore.settings.properties,{
                     values[name] = {
                         data: systemValues[name],
                         type: "text",
-                        inheritable: true
+                        inheritable: in_array(name,this.inheritableKeys)
                     };
                 }
             }

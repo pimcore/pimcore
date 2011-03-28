@@ -324,6 +324,66 @@ class Element_ElementCreateTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param  $fieldDefintion
+     * @param string $language
+     * @param Asset $refAsset
+     * @return void
+     */
+    protected function getLocalizedFieldDataFor($fieldDefintion,$language,$refAsset){
+            $name = $fieldDefintion->getName();
+            $type = $fieldDefintion->getFieldType();
+
+            $class = "Object_Class_Data_" . ucfirst($type);
+
+            $this->assertTrue(class_exists($class));
+
+            $data = new $class();
+
+
+            if ($data instanceof Object_Class_Data_Checkbox) {
+                return true;
+            } else if ($data instanceof Object_Class_Data_Time) {
+                return "18:00";
+            } else if ($data instanceof Object_Class_Data_Password) {
+                return "verySecret_".$language;
+            } else if ($data instanceof Object_Class_Data_Input) {
+                return "simple input ".$language;
+            } else if ($data instanceof Object_Class_Data_Date) {
+                return new Zend_Date();
+            } else if ($data instanceof Object_Class_Data_Datetime) {
+                return new Zend_Date();
+            } else if ($data instanceof Object_Class_Data_Languagemultiselect){
+                return array("de","en");
+            }  else if ($data instanceof Object_Class_Data_Countrymultiselect){
+               return array("AT","AU");
+            } else if ($data instanceof Object_Class_Data_Multiselect) {
+                return array(1,2);
+            } else if ($data instanceof Object_Class_Data_Select) {
+                return 2;
+            }  else if ($data instanceof Object_Class_Data_Image) {
+                return $refAsset;
+            } else if ($data instanceof Object_Class_Data_Slider) {
+                return 6;
+            } else if ($data instanceof Object_Class_Data_Numeric) {
+                return 1000;
+            } else if ($data instanceof Object_Class_Data_Table) {
+                return array(array("eins ".$language, "zwei ".$language, "drei ".$language), array(1, 2, 3), array("a", "b", "c"));
+            } else if ($data instanceof Object_Class_Data_Textarea) {
+                return $language. " Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+            } else if ($data instanceof Object_Class_Data_Wysiwyg) {
+                return $language. "<p>This is some <strong>HTML</strong> content</p><ul><li>list one</li><li>list two</li></ul>";
+            } else if ($data instanceof Object_Class_Data_Link) {
+                $l = new Object_Data_Link();
+                $l->setPath("http://www.pimcore.org");
+                $l->setTitle($language. " pimcore.org");
+                $l->setText($language. " pimcore.org");
+                return $l;
+            }
+
+    }
+
+
+    /**
      * @param  $fd
      * @return void
      */
@@ -371,6 +431,8 @@ class Element_ElementCreateTest extends PHPUnit_Framework_TestCase
                 $object->$setter($data);
             } else if ($data instanceof Object_Class_Data_Fieldcollections) {
 
+
+
                 $items = new Object_Fieldcollection();
                 $collectionA = Object_Fieldcollection_Definition::getByKey("collectionA");
                 $itemDefinitions = $collectionA->getFieldDefinitions();
@@ -384,10 +446,30 @@ class Element_ElementCreateTest extends PHPUnit_Framework_TestCase
                 $object->$setter($items);
 
 
+            } else if ($data instanceof Object_Class_Data_Localizedfields) {
+
+                $getter = "get" . ucfirst($name);
+                $data = $object->getO_class()->getFieldDefinition("localizedfields");
+
+                $localizedData = array();
+                $validLanguages = Pimcore_Tool::getValidLanguages();
+                foreach($validLanguages as $language){
+
+                    foreach ($data->getFieldDefinitions() as $fd) {
+                        $fieldData = $this->getLocalizedFieldDataFor($fd,$language,$refAsset);
+                        $localizedData[$language][$fd->getName()] = $fieldData;
+                    }
+                }
+
+                $object->$setter(new Object_Localizedfield($localizedData));
+
+
             } else if ($data instanceof Object_Class_Data_Multihref) {
                 $data = array();
                 $data[] = Object_Abstract::getById($object->getId() - 1);
                 $data[] = $refAsset;
+                //dummy for checking if relation is saved twice
+                $data[] = Asset::getById($refAsset->getId());
                 $data[] = $refDocument;
 
                 $fd = $object->geto_Class()->getFieldDefinition($name);

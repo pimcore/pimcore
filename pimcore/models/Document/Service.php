@@ -149,11 +149,9 @@ class Document_Service extends Element_Service {
                 $target->setTitle($source->getTitle());
                 $target->setDescription($source->getDescription());
                 $target->setKeywords($source->getKeywords());
-                $target->setName($source->getName());
             }
         }
         else if ($source instanceof Document_Link) {
-            $target->setName($source->getName());
             $target->setInternalType($source->getInternalType());
             $target->setInternal($source->getInternal());
             $target->setDirect($source->getDirect());
@@ -185,7 +183,6 @@ class Document_Service extends Element_Service {
             $data["title"] = $document->getTitle();
             $data["description"] = $document->getDescription();
             $data["keywords"] = $document->getKeywords();
-            $data["name"] = $document->getName();
         } else {
             $data["title"] = "";
             $data["description"] = "";

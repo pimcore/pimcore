@@ -289,6 +289,36 @@ class Test_Tool
                 }
 
             }
+        } else if (method_exists($object, $getter) and $value instanceof Object_Class_Data_Localizedfields) {
+
+            $data = $object->$getter();
+            $lData = array();
+
+            if (!$data instanceof Object_Localizedfield) {
+                return array();
+            }
+
+            try {
+                $localeBak = Zend_Registry::get("Zend_Locale");
+            } catch (Exception $e) {
+                $localeBak = null;
+            }
+
+            foreach ($data->getItems() as $language => $values) {
+                foreach ($value->getFieldDefinitions() as $fd) {
+
+                    Zend_Registry::set("Zend_Locale", new Zend_Locale($language));
+
+                    $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(),$fd,$object);;
+
+                }
+            }
+            if ($localeBak) {
+                Zend_Registry::set("Zend_Locale", $localeBak);
+            }
+
+            return serialize($lData);
+
         } else if (method_exists($object, $getter) and $value instanceof Object_Class_Data_Link) {
             return serialize($value);
         } else if (method_exists($object, $getter) and !$value instanceof Object_Class_Data_Password and !$value instanceof Object_Class_Data_Nonownerobjects) {
@@ -351,7 +381,7 @@ class Test_Tool
 
             $id = uniqid();
 
-/*
+         /*
             $myFile = TESTS_PATH . "/output/object1-" . $id . ".txt";
             $fh = fopen($myFile, 'w') or die("can't open file");
             fwrite($fh, $o1Hash);

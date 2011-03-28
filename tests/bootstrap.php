@@ -23,7 +23,7 @@ $testConfig = $xml->toArray();
 
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
-$documentRoot = $testConfig["documentRoot"]; 
+$documentRoot = $testConfig["documentRoot"];
 
 if (!$skipInstall) {
 
@@ -81,6 +81,8 @@ define('TESTS_PATH', realpath(dirname(__FILE__)));
 @ini_set("display_errors", "On");
 @ini_set("display_startup_errors", "On");
 
+
+Pimcore::setSystemRequirements();
 Pimcore::initAutoloader();
 
 // insert db dump
@@ -108,12 +110,13 @@ if (!$skipInstall) {
 Pimcore::initConfiguration();
 sleep(4);
 
+Pimcore::setupFramework();
 // config is loaded now init the real logger
 Pimcore::initLogger();
 
-Pimcore::setSystemRequirements();
-Pimcore::initPlugins();
 Pimcore::initModules();
+Pimcore::initPlugins();
+
 
 //create admin
 if (!$skipInstall) {

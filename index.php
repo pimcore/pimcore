@@ -17,9 +17,9 @@ include_once("pimcore/config/startup.php");
 
 try {
 	Pimcore::run();
-	
+
 } catch (Exception $e) {
-    // handle exceptions, log to file 
+    // handle exceptions, log to file
     if(class_exists("Logger")) {
     	Logger::emerg($e);
     }

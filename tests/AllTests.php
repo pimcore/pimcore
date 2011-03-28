@@ -84,7 +84,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
     public static function suite() {
         $suite = new AllTests('Models');
 
-        $suite->addTest(User_AllTests::suite()); 
+        $suite->addTest(User_AllTests::suite());
         $suite->addTest(Element_AllTests::suite());
         $suite->addTest(Webservice_AllTests::suite());
 
