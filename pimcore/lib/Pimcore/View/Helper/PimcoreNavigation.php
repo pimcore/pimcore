@@ -74,7 +74,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
         if (is_array($childs)) {
             foreach ($childs as $child) {
 
-                if (($child instanceof Document_Page or $child instanceof Document_Link ) and $child->getProperty("navigation_name")) {
+                if (($child instanceof Document_Page or $child instanceof Document_Link ) and $child->getProperty("navigation_name") and !$child->getProperty("navigation_exclude")) {
 
                     $active = false;
                     if(strstr($this->_activeDocument->getFullPath(), $child->getFullPath())){

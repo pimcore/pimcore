@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.document.properties");
 pimcore.document.properties = Class.create(pimcore.settings.properties,{
 
 
-    disallowedKeys: ["language","navigation_name","navigation_title","navigation_relation","navigation_parameters","navigation_anchor","navigation_target","navigation_class"],
+    disallowedKeys: ["language","navigation_exclude","navigation_name","navigation_title","navigation_relation","navigation_parameters","navigation_anchor","navigation_target","navigation_class"],
 
     inheritableKeys: ["language"],
 
@@ -101,6 +101,12 @@ pimcore.document.properties = Class.create(pimcore.settings.properties,{
                             mode: "local",
                             width: 130,
                             listWidth: 200
+                        },{
+                            xtype: "checkbox",
+                            fieldLabel: t('navigation_exclude'),
+                            name: "navigation_exclude",
+                            checked: this.getPropertyData("navigation_exclude")
+
                 }]
 
             });

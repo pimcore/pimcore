@@ -8,6 +8,7 @@ update properties set name = "navigation_parameters_legacy" where name = "naviga
 update properties set name = "navigation_relation_legacy" where name = "navigation_relation";
 update properties set name = "navigation_anchor_legacy" where name = "navigation_anchor";
 update properties set name = "navigation_tabindex_legacy" where name = "navigation_tabindex";
+update properties set name = "navigation_exclude_legacy" where name = "navigation_exclude";
 
 insert into properties
 select p.id as cid,  "document" as ctype, concat(d.path, d.key) as cpath,"navigation_name" as name, "text" as `type`, p.name as  `data`, "0" as inheritable
@@ -52,6 +53,12 @@ left join documents d on p.id = d.id
 where p.anchor is not null  and p.anchor!="";
 
 insert into properties
+select p.id as cid, "document" as ctype, concat(d.path, d.key) as cpath, "navigation_title" as name, "text" as `type`, p.title as  `data`, "0" as inheritable
+from  documents_link p
+left join documents d on p.id = d.id
+where p.title is not null  and p.title!="";
+
+insert into properties
 select p.id as cid, "document" as ctype, concat(d.path, d.key) as cpath, "navigation_tabindex" as name, "text" as `type`, p.tabindex as  `data`, "0" as inheritable
 from  documents_link p
 left join documents d on p.id = d.id
@@ -65,6 +72,7 @@ alter table documents_link change accesskey DEPRECATED_accesskey varchar(255);
 alter table documents_link change parameters DEPRECATED_parameters varchar(255);
 alter table documents_link change rel DEPRECATED_rel varchar(255) ;
 alter table documents_link change anchor DEPRECATED_anchor varchar(255);
+alter table documents_link change title DEPRECATED_title varchar(255);
 alter table documents_link change tabindex DEPRECATED_tabindex varchar(255);
 
 ';
@@ -121,6 +129,7 @@ if(!$failure){
                     $properties["navigation_target"] = $dbDoc->getProperty("navigation_target");
                     $properties["navigation_parameters"] = $dbDoc->getProperty("navigation_parameters");
                     $properties["navigation_anchor"] = $dbDoc->getProperty("navigation_anchor");
+                    $properties["navigation_title"] = $dbDoc->getProperty("navigation_title");
                     $change = false;
                     foreach($properties as $key => $value){
                         if($value){

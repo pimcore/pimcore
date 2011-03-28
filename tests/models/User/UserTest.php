@@ -149,6 +149,7 @@ class User_UserTest extends PHPUnit_Framework_TestCase {
         }
 
         //cannot list documents, assts, objects because no permissions by now
+
         $documentRoot = Document::getById(1);
         $documentRoot->getPermissionsForUser($userGroup);
         $this->assertFalse($documentRoot->isAllowed("list"));

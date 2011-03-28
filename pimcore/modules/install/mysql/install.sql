@@ -130,7 +130,7 @@ CREATE TABLE `documents_link` (
   `internal` int(11) unsigned default NULL,
   `direct` varchar(255) default NULL,
   `linktype` enum('direct','internal') default NULL,
-  `title` varchar(255) default NULL,
+
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -140,7 +140,6 @@ CREATE TABLE `documents_page` (
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -477,7 +476,7 @@ CREATE TABLE `search_backend_data` (
 
 INSERT INTO `assets` VALUES (1,0,'folder','','/',NULL,0,0,1,1,NULL,NULL);
 INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,0,0,1,1,NULL);
-INSERT INTO `documents_page` VALUES (1,'','','','','','','');
+INSERT INTO `documents_page` VALUES (1,'','','','','');
 INSERT INTO `objects` VALUES (1,0,'folder','','/',0,1,0,0,1,1,NULL,NULL,NULL);
 
 INSERT INTO `users_permission_definitions` VALUES ('assets','permission_assets');

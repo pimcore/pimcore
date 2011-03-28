@@ -793,4 +793,4 @@
 "navigation_target","Target"
 "navigation_basic","Basic Navigation Settings"
 "further_navigation_settings","More Navigation Settings"
-"name_navigation","Name (used in Pimcore Navigation)"
+"navigation_exclude","Exclude from Navigation"
