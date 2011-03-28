@@ -107,7 +107,7 @@ pimcore.settings.properties = Class.create({
                     }
                 }
             }
- 
+
             var store = new Ext.data.GroupingStore({
                 autoDestroy: true,
                 data: {properties: storeData},
@@ -139,7 +139,7 @@ pimcore.settings.properties = Class.create({
                 }),
                 groupField: 'inherited'
             });
- 
+
             var checkColumn = new Ext.grid.CheckColumn({
                 header: t("inheritable"),
                 dataIndex: 'inheritable'

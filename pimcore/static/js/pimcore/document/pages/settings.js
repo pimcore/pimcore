@@ -48,12 +48,24 @@ pimcore.document.pages.settings = Class.create({
                         defaultType: 'textarea',
                         items :[
                             {
-                                fieldLabel: t('name'),
-                                name: 'name',
-                                xtype: "textfield",
-                                width: 300,
-                                value: this.page.data.name
+                                xtype: "compositefield",
+                                items:  [{
+                                        fieldLabel: t('name_navigation'),
+                                        name: 'name',
+                                        xtype: "textfield",
+                                        width: 300,
+                                        value: this.page.data.name
+                                    },
+                                    {
+                                        xtype: "button",
+                                        text: t('further_navigation_settings'),
+                                        disabled: !this.page.isAllowed("properties"),
+                                        handler: function(){
+                                               this.page.tabbar.activate(this.page.properties.getLayout());
+                                        }.bind(this)
+                                    }]
                             },
+
                             {
                                 fieldLabel: t('title'),
                                 name: 'title',

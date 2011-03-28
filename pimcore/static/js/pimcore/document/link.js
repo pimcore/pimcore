@@ -188,7 +188,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         }
         items.push(this.dependencies.getLayout());
         
-        var tabbar = new Ext.TabPanel({
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:false,
@@ -198,7 +198,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             activeTab: 0
         });
 
-        return tabbar;
+        return this.tabbar;
     },
 
     getLayoutForm: function () {
@@ -247,14 +247,27 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                 region: "center",
                 items :[
                     {
-                        fieldLabel: t('name'),
-                        name: "name",
-                        value: this.data.name
-                    },
+                                xtype: "compositefield",
+                                items:  [{
+                                        fieldLabel: t('name_navigation'),
+                                        name: "name",
+                                        value: this.data.name,
+                                        xtype: "textfield",
+                                        width: 367
+                                    },
+                                    {
+                                        xtype: "button",
+                                        text: t('further_navigation_settings'),
+                                        disabled: !this.isAllowed("properties"),
+                                        handler: function(){
+                                               this.tabbar.activate(this.properties.getLayout());
+                                        }.bind(this)
+                                    }]
+                            },
                     pathField,
                     new Ext.Spacer({
                         height: 50
-                    }),
+                    })/*,
                     {
                         xtype: "combo",
                         fieldLabel: t('target'),
@@ -295,7 +308,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                         fieldLabel: t('tabindex'),
                         name: "tabindex",
                         value: this.data.tabindex
-                    }
+                    } */
                 ]
             });
         }
