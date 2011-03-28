@@ -16,6 +16,7 @@ pimcore.registerNS("pimcore.object.tags.table");
 pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     type: "table",
+    dirty: false,
 
     initialize: function (data, layoutConf) {
 
@@ -135,14 +136,17 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                 },
                 {
                     iconCls: "pimcore_tag_table_empty",
-                    handler: this.initStore.bind(this, [
-                        [" "]
-                    ])
+                    handler: this.emptyStore.bind(this)
                 }
             ]
         });
         this.panel.add(this.grid);
         this.panel.doLayout();
+    },
+
+    emptyStore: function() {
+        this.dirty = true;
+        this.initStore([[" "]]);
     },
 
     initStore: function (data) {
@@ -160,6 +164,10 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         });
 
         this.store.loadData(data);
+
+        this.store.on("update", function() {
+            this.dirty = true;
+        }.bind(this));
         this.initGrid();
     },
 
@@ -172,6 +180,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         }
 
         this.initStore(currentData);
+        this.dirty = true;
     },
 
     addRow: function  () {
@@ -182,12 +191,14 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         }
 
         this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+        this.dirty = true;
     },
 
     deleteRow : function  () {
         var selected = this.grid.getSelectionModel();
         if (selected.selection) {
             this.store.remove(selected.selection.record);
+            this.dirty = true;
         }
     },
 
@@ -204,6 +215,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             }
 
             this.initStore(currentData);
+            this.dirty = true;
         }
     },
 
@@ -241,5 +253,10 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         if (this.panel) {
             this.panel.getEl().removeClass("object_mendatory_error");
         }
+    },
+
+    isDirty: function() {
+        return this.dirty;
     }
+
 });

@@ -486,5 +486,9 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         if (this.grid) {
             this.grid.getEl().removeClass("object_mendatory_error");
         }
+    },
+
+    isDirty: function() {
+        return this.dataChanged;
     }
 });

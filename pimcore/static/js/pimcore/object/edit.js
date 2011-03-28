@@ -111,9 +111,17 @@ pimcore.object.edit = Class.create({
                     }
 
                     var currentValue =  currentField.getValue();
+                    try {
+                        if(currentField.isDirty()) {
+                            console.log(currentField.layoutConf.name  + " changed.");
+                        }
+                    } catch(e) {
+                        console.log(currentField.layoutConf.name + "(" + currentField.type + "): " + e);
+                    }
+
                     //unloaded lazy fields must not be included in save response!
                     if(currentValue != false || !currentField.layoutConf.lazyLoading || currentField.dataChanged){
-                         values[currentField.getName()] =  currentValue;
+                        values[currentField.getName()] =  currentValue;
                     } 
                 }
             }

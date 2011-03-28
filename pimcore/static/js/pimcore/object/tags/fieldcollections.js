@@ -16,6 +16,7 @@ pimcore.registerNS("pimcore.object.tags.fieldcollections");
 pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract, {
 
     type: "fieldcollections",
+    dirty: false,
 
     initialize: function (data, layoutConf) {
 
@@ -49,6 +50,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         });
         
         this.fieldstore.load();
+
     },
 
     getLayoutEdit: function () {
@@ -73,7 +75,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             this.layout.add(this.getControls());
         } else {
             for (var i=0; i<this.data.length; i++) {
-                this.addBlockElement(i,this.data[i].type, this.data[i].data);
+                this.addBlockElement(i,this.data[i].type, this.data[i].data, true);
             }
         }
         
@@ -158,7 +160,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 break;
             }
         }
-        
         return index;
     },
     
@@ -178,6 +179,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.currentElements[key] = "deleted";
         
         this.layout.remove(blockElement);
+        this.dirty = true;
         
         // check for remaining elements
         if(this.layout.items.items.length < 1) {
@@ -209,6 +211,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.object.edit.layout.remove(blockElement,false);
         this.layout.insert(newIndex, blockElement);
         this.layout.doLayout();
+        this.dirty = true;
     },
     
     moveBlockDown: function (blockElement) {
@@ -226,9 +229,10 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.object.edit.layout.remove(blockElement,false);
         this.layout.insert(index+1, blockElement);
         this.layout.doLayout();
+        this.dirty = true;
     },
     
-    addBlockElement: function (index, type, blockData) {
+    addBlockElement: function (index, type, blockData, ignoreChange) {
         
         if(!type){
             return;
@@ -271,7 +275,11 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             fields: this.dataFields,
             type: type
         });
-        
+
+        if(!ignoreChange) {
+            this.dirty = true;
+        }
+
         this.dataFields = [];
         this.currentData = {};
     },
@@ -323,7 +331,11 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
     getName: function () {
         return this.layoutConf.name;
-    }
+    },
+
+    isDirty: function() {
+        return this.dirty;
+    }    
 });
 
 pimcore.object.tags.fieldcollections.addMethods(pimcore.object.helpers.edit);

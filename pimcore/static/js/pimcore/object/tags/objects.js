@@ -600,5 +600,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             this.grid.getEl().removeClass("object_mendatory_error");
         }
     }
+    ,
+    isDirty: function() {
+        return this.dataChanged;
+    }
 })
         ;

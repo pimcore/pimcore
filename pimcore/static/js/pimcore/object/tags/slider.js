@@ -75,6 +75,10 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         this.layout.on("afterrender", this.showValueInLabel.bind(this));
         this.layout.on("dragend", this.showValueInLabel.bind(this));
         this.layout.on("change", this.showValueInLabel.bind(this));
+
+        this.layout.on("change", function() {
+            this.dirty = true;
+        }.bind(this));
         
         return this.layout;
     },
@@ -106,5 +110,9 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
     isInvalidMandatory: function () {
         return false;
+    },
+
+    isDirty: function() {
+        return this.dirty;
     }
 });

@@ -16,6 +16,7 @@ pimcore.registerNS("pimcore.object.tags.geopolygon");
 pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
 
     type: "geopolygon",
+    dirty: false,
 
     initialize: function (data, layoutConf) {
         this.data = data;
@@ -42,6 +43,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                     handler: function () {
                         this.data = null;
                         this.updatePreviewImage();
+                        this.dirty = true;
                     }.bind(this)
                 },"->",{
                     xtype: "button",
@@ -208,6 +210,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                     }
                     
                     this.updatePreviewImage();
+                    this.dirty = true;
                     this.searchWindow.close();
                 }.bind(this)
             }],
@@ -308,5 +311,9 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
         }*/
         
         return true;
-    }
+    },
+
+    isDirty: function() {
+        return this.dirty;
+    }    
 });

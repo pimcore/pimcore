@@ -17,6 +17,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
 
     type: "geobounds",
 
+    dirty: false,
+
     initialize: function (data, layoutConf) {
         this.data = data;
         this.layoutConf = layoutConf;
@@ -49,6 +51,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
                     icon: "/pimcore/static/img/icon/bin.png",
                     handler: function () {
                         this.data = {};
+                        this.dirty = true;
                         this.updatePreviewImage();
                     }.bind(this)
                 },"->",{
@@ -179,6 +182,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
                     
                     this.data.ne = new GLatLng(this.NWmarker.getLatLng().y,this.SEmarker.getLatLng().x);
                     this.data.sw = new GLatLng(this.SEmarker.getLatLng().y,this.NWmarker.getLatLng().x);
+                    this.dirty = true;
                     
                     this.updatePreviewImage();
                     this.searchWindow.close();
@@ -350,5 +354,9 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
         }*/
         
         return true;
+    },
+
+    isDirty: function() {
+        return this.dirty;
     }
 });

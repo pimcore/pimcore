@@ -16,6 +16,7 @@ pimcore.registerNS("pimcore.object.tags.image");
 pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     type: "image",
+    dirty: false,
 
     initialize: function (data, layoutConf) {
         if (data) {
@@ -132,6 +133,9 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     onNodeDrop: function (target, dd, e, data) {
         if (data.node.attributes.type == "image") {
+            if(this.data != data.node.attributes.id) {
+                this.dirty = true;
+            }
             this.data = data.node.attributes.id;
 
             this.updateImage();
@@ -150,6 +154,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     
     addDataFromSelector: function (item) {
         if (item) {
+            if(this.data != item.id) {
+                this.dirty = true;
+            }
+            
             this.data = item.id;
 
             this.updateImage();
@@ -219,6 +227,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         this.getBody().setStyle({
             backgroundImage: "url(/pimcore/static/img/icon/drop-40.png)"
         });
+        this.dirty = true;
         this.getBody().repaint();
     },
     
@@ -235,5 +244,9 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             return false;
         }
         return true;
+    },
+
+    isDirty: function() {
+        return this.dirty;
     }
 });
