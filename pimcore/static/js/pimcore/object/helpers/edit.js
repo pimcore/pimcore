@@ -12,6 +12,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+
+/**
+ * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection, pimcore.object.tags.localizedfields
+ */
+
 pimcore.registerNS("pimcore.object.helpers.edit");
 pimcore.object.helpers.edit = {
 
