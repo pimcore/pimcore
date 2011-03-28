@@ -13,9 +13,11 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Admin_MiscController extends Pimcore_Controller_Action_Admin {
+class Admin_MiscController extends Pimcore_Controller_Action_Admin
+{
 
-    public function jsonTranslationsAdminAction() {
+    public function jsonTranslationsAdminAction()
+    {
         $language = $this->_getParam("language");
 
         $list = new Translation_Admin_List();
@@ -30,7 +32,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         $this->view->translations = $translations;
     }
 
-    public function jsonTranslationsSystemAction() {
+    public function jsonTranslationsSystemAction()
+    {
 
         $language = $this->_getParam("language");
 
@@ -54,7 +57,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         $this->view->translations = $translations;
     }
 
-    public function jsonTransliterationAction () {
+    public function jsonTransliterationAction()
+    {
 
         $translitTable = Pimcore_Tool_Transliteration::getTransliterationTable();
 
@@ -73,7 +77,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
     }
 
 
-    public function scriptProxyAction() {
+    public function scriptProxyAction()
+    {
         $this->removeViewRenderer();
 
         $scripts = explode(",", $this->_getParam("scripts"));
@@ -95,7 +100,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         echo $scriptsContent;
     }
 
-    public function adminCssAction() {
+    public function adminCssAction()
+    {
         // customviews config
         $cvData = Pimcore_Tool::getCustomViewConfig();
         $this->view->customviews = $cvData;
@@ -104,7 +110,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         $this->getResponse()->setHeader("Content-Type", "text/css; charset=UTF-8", true);
     }
 
-    public function pingAction() {
+    public function pingAction()
+    {
 
         $response = array(
             "success" => true
@@ -114,17 +121,20 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($response);
     }
 
-    public function lockElementAction() {
+    public function lockElementAction()
+    {
         Element_Editlock::lock($this->_getParam("id"), $this->_getParam("type"));
         exit;
     }
 
-    public function unlockElementAction() {
+    public function unlockElementAction()
+    {
         Element_Editlock::unlock($this->_getParam("id"), $this->_getParam("type"));
         exit;
     }
 
-    public function availableLanguagesAction () {
+    public function availableLanguagesAction()
+    {
         $languages = Zend_Locale::getTranslationList('language');
 
 
@@ -142,33 +152,34 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
     }
 
     /* FILEEXPLORER */
-    
-    public function fileexplorerTreeAction () {
 
-        $path = preg_replace("/^\/fileexplorer/","",$this->_getParam("node"));
+    public function fileexplorerTreeAction()
+    {
+
+        $path = preg_replace("/^\/fileexplorer/", "", $this->_getParam("node"));
         $referencePath = PIMCORE_DOCUMENT_ROOT . $path;
 
         $items = scandir($referencePath);
         $contents = array();
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
 
-            if($item == "." || $item == "..") {
+            if ($item == "." || $item == "..") {
                 continue;
             }
 
             $file = $referencePath . "/" . $item;
-            $file = str_replace("//","/",$file);
+            $file = str_replace("//", "/", $file);
 
-            if(is_dir($file) || is_file($file)) {
+            if (is_dir($file) || is_file($file)) {
                 $itemConfig = array(
-                    "id" => "/fileexplorer" . str_replace(PIMCORE_DOCUMENT_ROOT,"",$file),
+                    "id" => "/fileexplorer" . str_replace(PIMCORE_DOCUMENT_ROOT, "", $file),
                     "text" => $item,
                     "leaf" => true,
                     "writeable" => is_writable($file)
                 );
 
-                if(is_dir($file)) {
+                if (is_dir($file)) {
                     $itemConfig["leaf"] = false;
                     $itemConfig["type"] = "folder";
                 } else if (is_file($file)) {
@@ -182,14 +193,15 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($contents);
     }
 
-    public function fileexplorerContentAction () {
+    public function fileexplorerContentAction()
+    {
 
         $success = false;
         $writeable = false;
-        $path = preg_replace("/^\/fileexplorer/","",$this->_getParam("path"));
+        $path = preg_replace("/^\/fileexplorer/", "", $this->_getParam("path"));
         $file = PIMCORE_DOCUMENT_ROOT . $path;
-        if(is_file($file)) {
-            if(is_readable($file)) {
+        if (is_file($file)) {
+            if (is_readable($file)) {
                 $content = file_get_contents($file);
                 $success = true;
                 $writeable = is_writeable($file);
@@ -197,20 +209,21 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         }
 
         $this->_helper->json(array(
-            "success" => $success,
-            "content" => $content,
-            "writeable" => $writeable,
-            "path" => $path
-        ));
+                                  "success" => $success,
+                                  "content" => $content,
+                                  "writeable" => $writeable,
+                                  "path" => $path
+                             ));
     }
 
-    public function fileexplorerContentSaveAction () {
+    public function fileexplorerContentSaveAction()
+    {
 
         $success = false;
 
-        if($this->_getParam("content") && $this->_getParam("path")) {
+        if ($this->_getParam("content") && $this->_getParam("path")) {
             $file = PIMCORE_DOCUMENT_ROOT . $this->_getParam("path");
-            if(is_file($file) && is_writeable($file)) {
+            if (is_file($file) && is_writeable($file)) {
                 file_put_contents($file, $this->_getParam("content"));
 
                 $success = true;
@@ -218,18 +231,19 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         }
 
         $this->_helper->json(array(
-            "success" => $success
-        ));
+                                  "success" => $success
+                             ));
     }
 
-    public function fileexplorerAddAction () {
+    public function fileexplorerAddAction()
+    {
         $success = false;
 
-        if($this->_getParam("filename") && $this->_getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/","",$this->_getParam("path"));
+        if ($this->_getParam("filename") && $this->_getParam("path")) {
+            $path = preg_replace("/^\/fileexplorer/", "", $this->_getParam("path"));
             $file = PIMCORE_DOCUMENT_ROOT . $path . "/" . $this->_getParam("filename");
 
-            if(is_writeable(dirname($file))) {
+            if (is_writeable(dirname($file))) {
                 file_put_contents($file, "");
 
                 $success = true;
@@ -237,18 +251,19 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         }
 
         $this->_helper->json(array(
-            "success" => $success
-        ));
+                                  "success" => $success
+                             ));
     }
 
-    public function fileexplorerAddFolderAction () {
+    public function fileexplorerAddFolderAction()
+    {
         $success = false;
 
-        if($this->_getParam("filename") && $this->_getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/","",$this->_getParam("path"));
+        if ($this->_getParam("filename") && $this->_getParam("path")) {
+            $path = preg_replace("/^\/fileexplorer/", "", $this->_getParam("path"));
             $file = PIMCORE_DOCUMENT_ROOT . $path . "/" . $this->_getParam("filename");
 
-            if(is_writeable(dirname($file))) {
+            if (is_writeable(dirname($file))) {
                 mkdir($file);
 
                 $success = true;
@@ -256,54 +271,56 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin {
         }
 
         $this->_helper->json(array(
-            "success" => $success
-        ));
+                                  "success" => $success
+                             ));
     }
 
-    public function fileexplorerDeleteAction () {
+    public function fileexplorerDeleteAction()
+    {
 
-        if($this->_getParam("path")) {
-            $path = preg_replace("/^\/fileexplorer/","",$this->_getParam("path"));
+        if ($this->_getParam("path")) {
+            $path = preg_replace("/^\/fileexplorer/", "", $this->_getParam("path"));
             $file = PIMCORE_DOCUMENT_ROOT . $path;
-            if(is_writeable($file)) {
+            if (is_writeable($file)) {
                 unlink($file);
                 $success = true;
             }
         }
 
         $this->_helper->json(array(
-            "success" => $success
-        ));
+                                  "success" => $success
+                             ));
     }
 
-    public function maintenanceAction () {
+    public function maintenanceAction()
+    {
 
         $file = PIMCORE_CONFIGURATION_DIRECTORY . "/maintenance.xml";
 
-        if($this->_getParam("activate")) {
+        if ($this->_getParam("activate")) {
 
             $config = new Zend_Config(array(
-                "sessionId" => session_id()
-            ), true);
+                                           "sessionId" => session_id()
+                                      ), true);
 
             $writer = new Zend_Config_Writer_Xml(array(
-                "config" => $config,
-                "filename" => $file
-            ));
+                                                      "config" => $config,
+                                                      "filename" => $file
+                                                 ));
             $writer->write();
-            chmod($file,0777); // so it can be removed also via FTP, ...
+            chmod($file, 0777); // so it can be removed also via FTP, ...
         }
 
-        if($this->_getParam("deactivate")) {
+        if ($this->_getParam("deactivate")) {
             unlink($file);
         }
 
         exit;
     }
 
-    public function testAction() {
+    public function testAction()
+    {
 
-        Element_Service::runSanityCheck();
 
         die("done");
     }
