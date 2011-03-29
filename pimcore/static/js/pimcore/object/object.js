@@ -108,7 +108,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         for (var i = 0; i < dataKeys.length; i++) {
             var field = dataKeys[i];
-            if(this.data.metaData[field].inherited == true) {
+            if(this.data.metaData && this.data.metaData[field] && this.data.metaData[field].inherited == true) {
                 if (this.edit.dataFields[field] && typeof this.edit.dataFields[field] == "object") {
                     currentField = this.edit.dataFields[field];
 

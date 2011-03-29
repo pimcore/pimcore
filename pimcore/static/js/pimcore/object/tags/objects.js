@@ -585,24 +585,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             isAllowedClass = true;
         }
         return isAllowedClass;
-    }
-    ,
+    },
 
-    markMandatory: function () {
-        if (this.grid) {
-            this.grid.getEl().addClass("object_mendatory_error");
-        }
-    }
-    ,
-
-    unmarkMandatory: function () {
-        if (this.grid) {
-            this.grid.getEl().removeClass("object_mendatory_error");
-        }
-    }
-    ,
     isDirty: function() {
         return this.dataChanged;
     }
-})
-        ;
+});

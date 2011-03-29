@@ -180,6 +180,7 @@ pimcore.object.helpers.edit = {
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
 
                 field.setObject(this.object);
+                field.setName(l.name);
 
                 this.addToDataFields(field, l.name);
 

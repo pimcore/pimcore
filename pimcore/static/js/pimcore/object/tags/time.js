@@ -57,13 +57,5 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
             return true;
         }
         return false;
-    },
-
-    markMandatory: function () {
-        this.layout.getEl().addClass("object_mendatory_error");
-    },
-
-    unmarkMandatory: function () {
-        this.layout.getEl().removeClass("object_mendatory_error");
     }
 });

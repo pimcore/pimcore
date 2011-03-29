@@ -243,18 +243,6 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         return this.layoutConf.name;
     },
 
-    markMandatory: function () {
-        if (this.panel) {
-            this.panel.getEl().addClass("object_mendatory_error");
-        }
-    },
-
-    unmarkMandatory: function () {
-        if (this.panel) {
-            this.panel.getEl().removeClass("object_mendatory_error");
-        }
-    },
-
     isDirty: function() {
         return this.dirty;
     }
