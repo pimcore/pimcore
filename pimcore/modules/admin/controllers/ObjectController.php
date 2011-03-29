@@ -570,35 +570,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["data"] = $this->objectData;
             $objectData["metaData"] = $this->metaData;
 
-//           $objectData["data"] =  array();
-//            foreach ($object->getClass()->getFieldDefinitions() as $key => $def) {
-//                if ($object->$key !== null) {
-//                    $objectData["data"][$key] = $def->getDataForEditmode($object->$key);
-//                } else if (method_exists($def, "getLazyLoading") and $def->getLazyLoading()) {
-//
-//                    //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
-//                    if ($def->isRemoteOwner()) {
-//                        $refKey = $def->getOwnerFieldName();
-//                        $refId = $def->getOwnerClassId();
-//                    } else $refKey = $key;
-//                    $relations = $object->getRelationData($refKey, !$def->isRemoteOwner(), $refId);
-//                    $data = array();
-//
-//                    if ($def instanceof Object_Class_Data_Href) {
-//                        $data = $relations[0];
-//                    } else {
-//                        foreach ($relations as $rel) {
-//                            if ($def instanceof Object_Class_Data_Objects) {
-//                                $data[] = array($rel["id"], $rel["path"], $rel["subtype"]);
-//                            } else {
-//                                $data[] = array($rel["id"], $rel["path"], $rel["type"], $rel["subtype"]);
-//                            }
-//                        }
-//                    }
-//                    $objectData["data"][$key] = $data;
-//                }
-//            }
-
             $objectData["general"] = array();
             $allowedKeys = array("o_published", "o_key", "o_id", "o_modificationDate", "o_classId", "o_className", "o_locked");
 
@@ -632,24 +603,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     private $metaData;
     
     private function getDataForObject(Object_Concrete $object) {
-//        $inAdmin = false;
-//        if($includeInherited) {
-//            if(Pimcore::inAdmin()) {
-//                $inAdmin = true;
-//            }
-//            Pimcore::unsetAdminMode();
-//        }
-
-        $objectData = array();
         foreach ($object->getClass()->getFieldDefinitions() as $key => $def) {
             $this->getDataForField($object, $key, $def);
         }
-
-//        if($includeInherited && $inAdmin) {
-//            Pimcore::setAdminMode();
-//        }
-
-//        return $objectData;
     }
 
     /**
@@ -661,8 +617,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
      * @return void
      */
     private function getDataForField($object, $key, $fielddefinition, $level = 0) {
-       // p_r($def);
-        $parent = $this->hasObjectParent($object);
+        $parent = Object_Service::hasInheritableParentObject($object); 
         $getter = "get" . ucfirst($key);
         if (method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading()) {
 
@@ -706,19 +661,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
         }
     }
-
-    private function hasObjectParent(Object_Concrete $object) {
-        if($object->getO_class()->getAllowInherit()) {
-            if ($object->getO_parent() instanceof Object_Abstract) {
-                if ($object->getO_parent()->getO_type() == "object") {
-                    if ($object->getO_parent()->getO_classId() == $object->getO_classId()) {
-                        return $object->getO_parent();
-                    }
-                }
-            }
-        }
-    }
-
 
     public function lockAction()
     {

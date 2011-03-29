@@ -196,24 +196,26 @@ class Object_Service extends Element_Service {
 
         if ($object instanceof Object_Concrete) {
             $data["classname"] = $object->geto_ClassName();
-            foreach ($object->getclass()->getFieldDefinitions() as $key => $value) {
+            $data['inheritedFields'] = array();
+            foreach ($object->getclass()->getFieldDefinitions() as $key => $def) {
                 // some of the not editable field require a special response
 
                 $getter = "get".ucfirst($key);
 
                 //relation type fields with remote owner do not have a getter
-                if(method_exists($object,$getter)){
-
-                    if ($value->getFieldType() == "href") {
-                        if ($object->$getter() instanceof Element_Interface) {
-                            $data[$key] = $object->$getter()->getFullPath();
+                if(method_exists($object,$getter)) {
+                    $valueObject = self::getValueForObject($object, $getter);
+                    $data['inheritedFields'][$key] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
+                    if ($def->getFieldType() == "href") {
+                        if ($valueObject->value instanceof Element_Interface) {
+                            $data[$key] = $valueObject->value->getFullPath();
                         }
                         continue;
                     }
-                    else if ($value->getFieldType() == "objects" || $value->getFieldType() == "multihref") {
-                        if (is_array($object->$getter())) {
+                    else if ($def->getFieldType() == "objects" || $def->getFieldType() == "multihref") {
+                        if (is_array($valueObject->value)) {
                             $pathes = array();
-                            foreach ($object->$getter() as $eo) {
+                            foreach ($valueObject->value as $eo) {
                                 if ($eo instanceof Element_Interface) {
                                     $pathes[] = $eo->getFullPath();
                                 }
@@ -222,26 +224,60 @@ class Object_Service extends Element_Service {
                         }
                         continue;
                     }
-                    else if ($value->getFieldType() == "date" || $value->getFieldType() == "datetime") {
-                        if ($object->$getter() instanceof Zend_Date) {
-                            $data[$key] = $object->$getter()->getTimestamp();
+                    else if ($def->getFieldType() == "date" || $def->getFieldType() == "datetime") {
+                        if ($valueObject->value instanceof Zend_Date) {
+                            $data[$key] = $valueObject->value->getTimestamp();
                         }
                         else {
                             $data[$key] = null;
                         }
                         continue;
-                    } else if ($value->getFieldType() == "localizedfields") {
-                        foreach ($value->getFieldDefinitions() as $fd) {
+                    } else if ($def->getFieldType() == "localizedfields") {
+                        foreach ($def->getFieldDefinitions() as $fd) {
                             $data[$fd->getName()] = $object->{"get".ucfirst($fd->getName())}();
                         }
                        continue;
                     }
-                    $data[$key] = $object->$getter();
+                    $data[$key] = $valueObject->value;
+
 
                 }
             }
         }
         return $data;
+    }
+
+    /**
+     * gets value for given object and getter, including inherited values
+     *
+     * @static
+     * @return stdclass, value and objectid where the value comes from
+     */
+    private static function getValueForObject($object, $getter) {
+        $value = $object->$getter();
+        if(empty($value)) {
+            $parent = self::hasInheritableParentObject($object);
+            if(!empty($parent)) {
+                return self::getValueForObject($parent, $getter);
+            }
+        }
+
+        $result = new stdClass();
+        $result->value = $value;
+        $result->objectid = $object->getId();
+        return $result;
+    }
+
+    public static function hasInheritableParentObject(Object_Concrete $object) {
+        if($object->getO_class()->getAllowInherit()) {
+            if ($object->getO_parent() instanceof Object_Abstract) {
+                if ($object->getO_parent()->getO_type() == "object") {
+                    if ($object->getO_parent()->getO_classId() == $object->getO_classId()) {
+                        return $object->getO_parent();
+                    }
+                }
+            }
+        }
     }
 
 

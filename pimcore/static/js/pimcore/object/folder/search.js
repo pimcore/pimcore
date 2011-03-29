@@ -120,6 +120,7 @@ pimcore.object.search = Class.create({
         readerFields.push({name: "published", allowBlank: true});
         readerFields.push({name: "creationDate", allowBlank: true});
         readerFields.push({name: "modificationDate", allowBlank: true});
+        readerFields.push({name: "inheritedFields", allowBlank: false});
         for (var i = 0; i < fields.length; i++) {
             readerFields.push({name: fields[i].key, allowBlank: true});
         }
@@ -264,7 +265,14 @@ pimcore.object.search = Class.create({
                 else if (fields[i].type == "checkbox") {
                     cm = new Ext.grid.CheckColumn({
                         header: ts(fields[i].label),
-                        dataIndex: fields[i].key
+                        dataIndex: fields[i].key,
+                        renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
+                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                                metaData.css += " grid_value_inherited";
+                            }
+                            metaData.css += ' x-grid3-check-col-td';
+                            return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
+                        }.bind(this, fields[i].key)
                     });
                     gridColumns.push(cm);
                     plugins.push(cm);
@@ -275,89 +283,130 @@ pimcore.object.search = Class.create({
                         width: 500,
                         height: 300
                     });
-                    gridColumns.push({header: ts(fields[i].label), width: 500, sortable: true, dataIndex: fields[i].key, editor: editor});
+                    gridColumns.push({header: ts(fields[i].label), width: 500, sortable: true, dataIndex: fields[i].key, editor: editor, renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
+                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                                metaData.css += " grid_value_inherited";
+                            }
+                            return value;
+                        }.bind(this, fields[i].key)
+                    });
                     editor = null;
                 }
                 // IMAGE 
                 else if (fields[i].type == "image") {
-                    gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (record) {
-                        if (record && record.id) {
-                            return '<img src="/admin/asset/get-image-thumbnail/id/' + record.id + '/width/88/aspectratio/true" />';
+                    gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
                         }
-                    }});
+
+                        if (value && value.id) {
+                            return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id + '/width/88/aspectratio/true" />';
+                        }
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
                 // GEOPOINT
                 else if (fields[i].type == "geopoint") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (record) {
+                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
 
-                        if (record) {
-                            if (record.latitude && record.longitude) {
+                        if (value) {
+                            if (value.latitude && value.longitude) {
 
                                 var width = 140;
                                 var mapZoom = 10;
-                                var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + record.longitude + "," + record.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + record.longitude + "," + record.latitude + ",pointImagePattern:red";
+                                var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + value.longitude + "," + value.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + value.longitude + "," + value.latitude + ",pointImagePattern:red";
                                 if (pimcore.settings.google_maps_api_key) {
-                                    mapUrl = "http://maps.google.com/staticmap?center=" + record.latitude + "," + record.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + record.latitude + "," + record.longitude + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
+                                    mapUrl = "http://maps.google.com/staticmap?center=" + value.latitude + "," + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + value.latitude + "," + value.longitude + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
                                 }
 
                                 return '<img src="' + mapUrl + '" />';
                             }
                         }
-                    }});
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
                 // HREF
                 else if (fields[i].type == "href") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false});
+                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
+                        return value;
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
                 // MULTIHREF & OBJECTS
                 else if (fields[i].type == "multihref" || fields[i].type == "objects") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (record) {
-
-                        if (record.length > 0) {
-                            return record.join("<br />");
+                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
                         }
-                    }});
+
+                        if (value.length > 0) {
+                            return value.join("<br />");
+                        }
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
                 // SLIDER
                 else if (fields[i].type == "slider") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false});
+                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
+                        return value;
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
                 // PASSWORD
                 else if (fields[i].type == "password") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (record) {
+                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
+
                         return "**********";
-                    }});
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
                 // LINK
                 else if (fields[i].type == "link") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false});
+                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
+                        return value;
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
                 // MULTISELECT
                 else if (fields[i].type == "multiselect") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (record) {
-                        if (record!=null && record.length > 0) {
-                            return record.join(",");
+                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
                         }
-                    }});
+                        if (value!=null && value.length > 0) {
+                            return value.join(",");
+                        }
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
                 // TABLE
                 else if (fields[i].type == "table") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (record) {
+                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
 
-                        if (record && record.length > 0) {
+                        if (value && value.length > 0) {
                             var table = '<table cellpadding="2" cellspacing="0" border="1">';
-                            for (var i = 0; i < record.length; i++) {
+                            for (var i = 0; i < value.length; i++) {
                                 table += '<tr>';
-                                for (var c = 0; c < record[i].length; c++) {
-                                    table += '<td>' + record[i][c] + '</td>';
+                                for (var c = 0; c < value[i].length; c++) {
+                                    table += '<td>' + value[i][c] + '</td>';
                                 }
                                 table += '</tr>';
                             }
@@ -365,13 +414,19 @@ pimcore.object.search = Class.create({
                             return table;
                         }
                         return "";
-                    }});
+                    }.bind(this, fields[i].key)});
                     editor = null;
                 }
 
                 // add column
                 if (editor) {
-                    gridColumns.push({header: ts(fields[i].label), sortable: true, dataIndex: fields[i].key, editor: editor});
+                    gridColumns.push({header: ts(fields[i].label), sortable: true, dataIndex: fields[i].key, editor: editor, renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
+                        return value;
+                    }.bind(this, fields[i].key)
+                    });
                 }
                 
                 // is visible or not   
