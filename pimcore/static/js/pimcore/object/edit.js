@@ -52,6 +52,10 @@ pimcore.object.edit = Class.create({
         return this.object.data.data[name];
     },
 
+    getMetaDataForField: function (name) {
+        return this.object.data.metaData[name];
+    },
+
     addToDataFields: function (field, name) {
         this.dataFields[name] = field;
     },
@@ -98,7 +102,6 @@ pimcore.object.edit = Class.create({
             try {
                 if (this.dataFields[dataKeys[i]] && typeof this.dataFields[dataKeys[i]] == "object") {
                     currentField = this.dataFields[dataKeys[i]];
-                    
                     if (currentField.layoutConf.mandatory == true && this.object.ignoreMandatoryFields != true) {
                         if (currentField.isInvalidMandatory()) {
                             Ext.MessageBox.alert(t("error"), t("mandatory_field_empty"));
@@ -111,18 +114,16 @@ pimcore.object.edit = Class.create({
                     }
 
                     var currentValue =  currentField.getValue();
-                    try {
-                        if(currentField.isDirty()) {
-                            console.log(currentField.layoutConf.name  + " changed.");
-                        }
-                    } catch(e) {
-                        console.log(currentField.layoutConf.name + "(" + currentField.type + "): " + e);
+
+                    //only include changed values in save response.
+                    if(currentField.isDirty()) {
+                        values[currentField.getName()] =  currentValue;
                     }
 
                     //unloaded lazy fields must not be included in save response!
-                    if(currentValue != false || !currentField.layoutConf.lazyLoading || currentField.dataChanged){
-                        values[currentField.getName()] =  currentValue;
-                    } 
+//                    if(currentValue != false || !currentField.layoutConf.lazyLoading || currentField.dataChanged){
+//                        values[currentField.getName()] =  currentValue;
+//                    } 
                 }
             }
             catch (e) {

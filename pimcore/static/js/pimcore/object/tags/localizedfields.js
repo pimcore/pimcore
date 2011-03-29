@@ -124,6 +124,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         return;
     },
 
+    getMetaDataForField: function(name) {
+        return null;
+    },
+
     addToDataFields: function (field, name) {
         this.languageElements[this.currentLanguage].push(field);
     },

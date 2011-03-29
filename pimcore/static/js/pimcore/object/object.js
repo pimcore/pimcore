@@ -61,13 +61,68 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             } catch (e) {
             }
             
-            this.startChangeDetector();            
+            this.startChangeDetector();
+            this.startInheritanceDetector();
         }
         catch (e) {
             console.log(e);
             pimcore.helpers.closeObject(this.id);
         }
     },
+
+    inheritedFields: {},
+    startInheritanceDetector: function () {
+
+        var dataKeys = Object.keys(this.data.metaData);
+        for (var i = 0; i < dataKeys.length; i++) {
+            if(this.data.metaData[dataKeys[i]].inherited == true) {
+                this.inheritedFields[dataKeys[i]] = true;
+            }
+        }
+
+        this.tab.on("deactivate", this.stopInheritanceDetector.bind(this));
+        this.tab.on("activate", this.startInheritanceDetector.bind(this));
+        this.tab.on("destroy", this.stopInheritanceDetector.bind(this));
+        
+        if(!this.inheritanceDetectorInterval) {
+            this.inheritanceDetectorInterval = window.setInterval(this.checkForInheritance.bind(this),1000);
+        }
+    },
+
+    stopInheritanceDetector: function () {
+        window.clearInterval(this.inheritanceDetectorInterval);
+        this.inheritanceDetectorInterval = null;
+    },
+
+    checkForInheritance: function () {
+        if (!this.edit.layout.rendered) {
+            throw "edit not available";
+        }
+
+        var dataKeys = Object.keys(this.inheritedFields);
+        var currentField;
+
+        if(dataKeys.length == 0) {
+            this.stopInheritanceDetector();
+        }
+
+        for (var i = 0; i < dataKeys.length; i++) {
+            var field = dataKeys[i];
+            if(this.data.metaData[field].inherited == true) {
+                if (this.edit.dataFields[field] && typeof this.edit.dataFields[field] == "object") {
+                    currentField = this.edit.dataFields[field];
+
+                    if(currentField.isDirty()) {
+                        currentField.unmarkInherited();
+                        this.data.metaData[field].inherited = false;
+                        delete this.inheritedFields[field];
+                    }
+                }
+            }
+
+        }
+    },
+
 
     addTab: function () {
 

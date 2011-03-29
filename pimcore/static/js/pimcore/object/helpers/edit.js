@@ -151,6 +151,7 @@ pimcore.object.helpers.edit = {
             if (pimcore.object.tags[l.fieldtype]) {
                 var dLayout;
                 var data;
+                var metaData;
 
                 try {
                     if (typeof this.getDataForField(l.name) != "function") {
@@ -158,6 +159,15 @@ pimcore.object.helpers.edit = {
                     }
                 } catch (e) {
                     data = null;
+                    console.log(e);
+                }
+
+                try {
+                    if (typeof this.getMetaDataForField(l.name) != "function") {
+                        metaData = this.getMetaDataForField(l.name);
+                    }
+                } catch (e) {
+                    metaData = null;
                     console.log(e);
                 }
 
@@ -183,6 +193,19 @@ pimcore.object.helpers.edit = {
                 }
                 else {
                     dLayout = field.getLayoutEdit();
+                }
+
+
+                try {
+                    dLayout.on("render", function (metaData) {
+                        if(metaData && metaData.inherited) {
+                            this.markInherited();
+                        }
+                    }.bind(field, metaData));
+                }
+                catch (e) {
+                    console.log(l.name + " event render not supported (tag type: " + l.fieldtype + ")");
+                    console.log(e);
                 }
 
                 // set styling

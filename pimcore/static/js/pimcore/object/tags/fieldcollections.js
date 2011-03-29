@@ -288,6 +288,10 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         return this.currentData[name];
     },
 
+    getMetaDataForField: function(name) {
+        return null;
+    },
+
     addToDataFields: function (field, name) {
         this.dataFields.push(field);
     },

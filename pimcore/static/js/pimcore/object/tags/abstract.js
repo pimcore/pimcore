@@ -28,6 +28,30 @@ pimcore.object.tags.abstract = Class.create({
         }
     },
 
+    markInherited: function () {
+        if (this.layout) {
+            this.layout.getEl().addClass("object_value_inherited");
+        }
+        if(this.grid) {
+            this.grid.getEl().addClass("object_value_inherited");
+        }
+        if(this.panel) {
+            this.panel.getEl().addClass("object_value_inherited");
+        }
+    },
+
+    unmarkInherited: function () {
+        if (this.layout) {
+            this.layout.getEl().removeClass("object_value_inherited");
+        }
+        if(this.grid) {
+            this.grid.getEl().removeClass("object_value_inherited");
+        }
+        if(this.panel) {
+            this.panel.getEl().removeClass("object_value_inherited");
+        }
+    },
+
     isInvalidMandatory: function () {
         if (this.getValue().length < 1) {
             return true;
