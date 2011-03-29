@@ -144,7 +144,29 @@ class Object_Concrete extends Object_Abstract {
                 try {
                     $fd->checkValidity($value, $omitMandatoryCheck);
                 } catch (Exception $e) {
-                    throw new Exception($e->getMessage() . " fieldname=" . $fd->getName());
+
+                    if($this->getO_class()->getAllowInherit()) {
+                        //try again with parent data when inheritance in activated
+                        try {
+                            $inAdmin = false;
+                            if(Pimcore::inAdmin()) {
+                                $inAdmin = true;
+                            }
+                            Pimcore::unsetAdminMode();
+
+                            $value = $this->$getter();
+                            $fd->checkValidity($value, $omitMandatoryCheck);
+
+                            if($inAdmin) {
+                                Pimcore::setAdminMode();
+                            }
+
+                        } catch(Exception $e) {
+                            throw new Exception($e->getMessage() . " fieldname=" . $fd->getName());
+                        }
+                    } else {
+                        throw new Exception($e->getMessage() . " fieldname=" . $fd->getName());
+                    }
                 }
             }
 

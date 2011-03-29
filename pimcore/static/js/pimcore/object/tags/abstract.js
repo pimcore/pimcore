@@ -15,15 +15,15 @@
 pimcore.registerNS("pimcore.object.tags.abstract");
 pimcore.object.tags.abstract = Class.create({
 
-    myObject: null,
-    myName: null,
+    object: null,
+    myName: null, 
 
     setObject: function (object) {
-        this.myObject = object;
+        this.object = object;
     },
 
     getObject: function () {
-        return this.myObject;
+        return this.object;
     },
 
     setName: function (name) {
