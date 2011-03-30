@@ -36,18 +36,19 @@ class Search_Backend_Data_List_Resource_Mysql extends Pimcore_Model_List_Resourc
              } else {
                 logger::err(get_class($this).": unknown maintype ");
              }
-
-            $entry = new Search_Backend_Data();
-            $entry->setId(new Search_Backend_Data_Id($element));
-            $entry->setFullPath($entryData['fullpath']);
-            $entry->setType($entryData['type']);
-            $entry->setSubtype($entryData['subtype']);
-            $entry->setUserOwner($entryData['userowner']);
-            $entry->setUserModification($entryData['usermodification']);
-            $entry->setCreationDate($entryData['creationdate']);
-            $entry->setModificationDate($entryData['modificationdate']);
-            $entry->setPublished($entryData['published']=== 0 ? false : true);
-            $entries[]=$entry;
+            if($element){
+                $entry = new Search_Backend_Data();
+                $entry->setId(new Search_Backend_Data_Id($element));
+                $entry->setFullPath($entryData['fullpath']);
+                $entry->setType($entryData['type']);
+                $entry->setSubtype($entryData['subtype']);
+                $entry->setUserOwner($entryData['userowner']);
+                $entry->setUserModification($entryData['usermodification']);
+                $entry->setCreationDate($entryData['creationdate']);
+                $entry->setModificationDate($entryData['modificationdate']);
+                $entry->setPublished($entryData['published']=== 0 ? false : true);
+                $entries[]=$entry;
+            }
         }
         $this->model->setEntries($entries);
         return $entries;
