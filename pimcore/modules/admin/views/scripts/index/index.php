@@ -192,6 +192,7 @@
             "pimcore/element/selector/abstract.js",
             "pimcore/element/selector/document.js",
             "pimcore/element/selector/asset.js",
+            "pimcore/object/helpers/grid.js",
             "pimcore/element/selector/object.js",
 
             //element importer, exporter

@@ -236,269 +236,276 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     
     initClassStore: function (selectedClass, response) {
         
-        var fields = Ext.decode(response.responseText);
-        var validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","link","multiselect","password","slider","user"];
+//        var fields = Ext.decode(response.responseText);
+//        var validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","link","multiselect","password","slider","user"];
+//
+//        // the store
+//        var readerFields = [];
+//        readerFields.push({name: "id", allowBlank: true});
+//        readerFields.push({name: "fullpath", allowBlank: true});
+//        readerFields.push({name: "published", allowBlank: true});
+//        readerFields.push({name: "type", allowBlank: true});
+//        readerFields.push({name: "subtype", allowBlank: true});
+//        readerFields.push({name: "filename", allowBlank: true});
+//        readerFields.push({name: "classname", allowBlank: true});
+//        readerFields.push({name: "creationDate", allowBlank: true});
+//        readerFields.push({name: "modificationDate", allowBlank: true});
+//        readerFields.push({name: "inheritedFields", allowBlank: false});
+//
+//        for (var i = 0; i < fields.length; i++) {
+//            readerFields.push({name: fields[i].key, allowBlank: true});
+//        }
+//
+//        var proxy = new Ext.data.HttpProxy({
+//            url: "/admin/search/search/find"
+//        });
+//        var reader = new Ext.data.JsonReader({
+//            totalProperty: 'total',
+//            successProperty: 'success',
+//            root: 'data'
+//        }, readerFields);
+//
+//        this.store = new Ext.data.Store({
+//            restful: false,
+//            idProperty: 'id',
+//            remoteSort: true,
+//            proxy: proxy,
+//            reader: reader,
+//            baseParams: {
+//                limit: 15,
+//                "class": selectedClass
+//            }
+//        });
+//
+//        // get current class
+//        var classStore = pimcore.globalmanager.get("object_types_store");
+//        var klassIndex = classStore.findExact("text",selectedClass);
+//        var klass = classStore.getAt(klassIndex);
+//        var propertyVisibility = klass.get("propertyVisibility");
+//
+//        // init grid-columns
+//        var gridColumns = [
+//            {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+//                return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+//            }},
+//            {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: !propertyVisibility.search.id},
+//            {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: !propertyVisibility.search.published},
+//            {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath', hidden: !propertyVisibility.search.path},
+//            {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: !propertyVisibility.search.path},
+//            {header: t("class"), width: 200, sortable: true, dataIndex: 'classname',renderer: function(v){return ts(v);}, hidden: true},
+//            {header: t("creationdate") + " (System)", width: 200, sortable: true, dataIndex: "creationDate", editable: false, renderer: function(d) {
+//                var date = new Date(d * 1000);
+//                return date.format("Y-m-d H:i:s");
+//            }, hidden: !propertyVisibility.search.creationDate},
+//            {header: t("modificationdate") + " (System)", width: 200, sortable: true, dataIndex: "modificationDate", editable: false, renderer: function(d) {
+//                var date = new Date(d * 1000);
+//                return date.format("Y-m-d H:i:s");
+//            }, hidden: !propertyVisibility.search.modificationDate}
+//        ];
+//
+//        for (var i = 0; i < fields.length; i++) {
+//            if (in_array(fields[i].type, validFieldTypes)) {
+//
+//                cm = null;
+//                store = null;
+//
+//                // DATE
+//                if (fields[i].type == "date") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
+//                        if (record) {
+//                            var timestamp = intval(record) * 1000;
+//                            var date = new Date(timestamp);
+//
+//                            return date.format("Y-m-d");
+//                        }
+//                        return "";
+//                    }});
+//                }
+//                // DATETIME
+//                else if (fields[i].type == "datetime") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
+//                        if (record) {
+//                            var timestamp = intval(record) * 1000;
+//                            var date = new Date(timestamp);
+//
+//                            return date.format("Y-m-d H:i");
+//                        }
+//                        return "";
+//                    }});
+//                }
+//                // IMAGE
+//                else if (fields[i].type == "image") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
+//                        if (record && record.id) {
+//                            return '<img src="/admin/asset/get-image-thumbnail/id/' + record.id + '/width/88/aspectratio/true" />';
+//                        }
+//                    }});
+//                }
+//                // GEOPOINT
+//                else if (fields[i].type == "geopoint") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
+//
+//                        if (record) {
+//                            if (record.latitude && record.longitude) {
+//
+//                                var width = 140;
+//                                var mapZoom = 10;
+//                                var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + record.longitude + "," + record.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + record.longitude + "," + record.latitude + ",pointImagePattern:red";
+//                                if (pimcore.settings.google_maps_api_key) {
+//                                    mapUrl = "http://maps.google.com/staticmap?center=" + record.latitude + "," + record.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + record.latitude + "," + record.longitude + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
+//                                }
+//
+//                                return '<img src="' + mapUrl + '" />';
+//                            }
+//                        }
+//                    }});
+//                }
+//                // HREF
+//                else if (fields[i].type == "href") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key});
+//                }
+//                // MULTIHREF & OBJECTS
+//                else if (fields[i].type == "multihref" || fields[i].type == "objects") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
+//
+//                        if (record.length > 0) {
+//                            return record.join("<br />");
+//                        }
+//                    }});
+//                }
+//                // PASSWORD
+//                else if (fields[i].type == "password") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
+//                        return "**********";
+//                    }});
+//                }
+//                // LINK
+//                else if (fields[i].type == "link") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key});
+//                }
+//                // MULTISELECT
+//                else if (fields[i].type == "multiselect") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
+//                        if (record.length > 0) {
+//                            return record.join(",");
+//                        }
+//                    }});
+//                }
+//                // TABLE
+//                else if (fields[i].type == "table") {
+//                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
+//
+//                        if (record && record.length > 0) {
+//                            var table = '<table cellpadding="2" cellspacing="0" border="1">';
+//                            for (var i = 0; i < record.length; i++) {
+//                                table += '<tr>';
+//                                for (var c = 0; c < record[i].length; c++) {
+//                                    table += '<td>' + record[i][c] + '</td>';
+//                                }
+//                                table += '</tr>';
+//                            }
+//                            table += '</table>';
+//                            return table;
+//                        }
+//                        return "";
+//                    }});
+//                }
+//                // DEFAULT
+//                else {
+//                    gridColumns.push({header: ts(fields[i].label), sortable: true, dataIndex: fields[i].key});
+//                }
+//
+//                // is visible or not
+//                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleSearch;
+//            }
+//        }
+//
+//        // filters
+//        // add filters
+//        var selectFilterFields;
+//        var configuredFilters = [];
+//
+//        for (var i = 0; i < fields.length; i++) {
+//            if (in_array(fields[i].type, validFieldTypes)) {
+//                store = null;
+//                selectFilterFields = null;
+//
+//                if (fields[i].type == "input" || fields[i].type == "textarea" || fields[i].type == "wysiwyg") {
+//                    configuredFilters.push({
+//                        type: 'string',
+//                        dataIndex: fields[i].key
+//                    });
+//                } else if (fields[i].type == "numeric" || fields[i].type == "slider") {
+//                    configuredFilters.push({
+//                        type: 'numeric',
+//                        dataIndex: fields[i].key
+//                    });
+//                } else if (fields[i].type == "date" || fields[i].type == "datetime") {
+//                    configuredFilters.push({
+//                        type: 'date',
+//                        dataIndex: fields[i].key
+//                    });
+//                } else if (fields[i].type == "select" || fields[i].type == "country" || fields[i].type == "language") {
+//                    selectFilterFields = [];
+//
+//                    store = new Ext.data.JsonStore({
+//                        autoDestroy: true,
+//                        root: 'store',
+//                        fields: ['key',"value"],
+//                        data: fields[i].config
+//                    });
+//
+//                    store.each(function (rec) {
+//                        selectFilterFields.push(rec.data.value);
+//                    });
+//
+//                    configuredFilters.push({
+//                        type: 'list',
+//                        dataIndex: fields[i].key,
+//                        options: selectFilterFields
+//                    });
+//                } else if (fields[i].type == "checkbox") {
+//                    configuredFilters.push({
+//                        type: 'boolean',
+//                        dataIndex: fields[i].key
+//                    });
+//                } else if (fields[i].type == "multiselect") {
+//                    selectFilterFields = [];
+//
+//                    store = new Ext.data.JsonStore({
+//                        autoDestroy: true,
+//                        root: 'options',
+//                        fields: ['key',"value"],
+//                        data: fields[i].layout
+//                    });
+//
+//                    store.each(function (rec) {
+//                        selectFilterFields.push(rec.data.value);
+//                    });
+//
+//                    configuredFilters.push({
+//                        type: 'list',
+//                        dataIndex: fields[i].key,
+//                        options: selectFilterFields
+//                    });
+//                }
+//            }
+//        }
+//
+//        // filters
+//        var gridfilters = new Ext.ux.grid.GridFilters({
+//            encode: true,
+//            local: false,
+//            filters: configuredFilters
+//        });
         
-        // the store
-        var readerFields = [];
-        readerFields.push({name: "id", allowBlank: true});
-        readerFields.push({name: "fullpath", allowBlank: true});
-        readerFields.push({name: "published", allowBlank: true});
-        readerFields.push({name: "type", allowBlank: true});
-        readerFields.push({name: "subtype", allowBlank: true});
-        readerFields.push({name: "filename", allowBlank: true});
-        readerFields.push({name: "classname", allowBlank: true});
-        readerFields.push({name: "creationDate", allowBlank: true});
-        readerFields.push({name: "modificationDate", allowBlank: true});
-        
-        for (var i = 0; i < fields.length; i++) {
-            readerFields.push({name: fields[i].key, allowBlank: true});
-        }
-        
-        var proxy = new Ext.data.HttpProxy({
-            url: "/admin/search/search/find"
-        });
-        var reader = new Ext.data.JsonReader({
-            totalProperty: 'total',
-            successProperty: 'success',
-            root: 'data'
-        }, readerFields);
 
-        this.store = new Ext.data.Store({
-            restful: false,
-            idProperty: 'id',
-            remoteSort: true,
-            proxy: proxy,
-            reader: reader,
-            baseParams: {
-                limit: 15,
-                "class": selectedClass
-            }
-        });
-        
-        // get current class
-        var classStore = pimcore.globalmanager.get("object_types_store");
-        var klassIndex = classStore.findExact("text",selectedClass);
-        var klass = classStore.getAt(klassIndex);
-        var propertyVisibility = klass.get("propertyVisibility");
-        
-        // init grid-columns
-        var gridColumns = [
-            {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
-            }},
-            {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: !propertyVisibility.search.id},
-            {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: !propertyVisibility.search.published},
-            {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath', hidden: !propertyVisibility.search.path},
-            {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: !propertyVisibility.search.path},
-            {header: t("class"), width: 200, sortable: true, dataIndex: 'classname',renderer: function(v){return ts(v);}, hidden: true},
-            {header: t("creationdate") + " (System)", width: 200, sortable: true, dataIndex: "creationDate", editable: false, renderer: function(d) {
-                var date = new Date(d * 1000);
-                return date.format("Y-m-d H:i:s");
-            }, hidden: !propertyVisibility.search.creationDate},
-            {header: t("modificationdate") + " (System)", width: 200, sortable: true, dataIndex: "modificationDate", editable: false, renderer: function(d) {
-                var date = new Date(d * 1000);
-                return date.format("Y-m-d H:i:s");
-            }, hidden: !propertyVisibility.search.modificationDate}
-        ];
-        
-        for (var i = 0; i < fields.length; i++) {
-            if (in_array(fields[i].type, validFieldTypes)) {
+        var gridHelper = new pimcore.object.helpers.grid(selectedClass, response, "/admin/search/search/find");
+        this.store = gridHelper.getStore();
+        var gridColumns = gridHelper.getGridColumns();
+        var gridfilters = gridHelper.getGridFilters();
 
-                cm = null;
-                store = null;
-                
-                // DATE
-                if (fields[i].type == "date") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
-                        if (record) {
-                            var timestamp = intval(record) * 1000;
-                            var date = new Date(timestamp);
 
-                            return date.format("Y-m-d");
-                        }
-                        return "";
-                    }});
-                }
-                // DATETIME
-                else if (fields[i].type == "datetime") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
-                        if (record) {
-                            var timestamp = intval(record) * 1000;
-                            var date = new Date(timestamp);
-
-                            return date.format("Y-m-d H:i");
-                        }
-                        return "";
-                    }});
-                }
-                // IMAGE
-                else if (fields[i].type == "image") {
-                    gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
-                        if (record && record.id) {
-                            return '<img src="/admin/asset/get-image-thumbnail/id/' + record.id + '/width/88/aspectratio/true" />';
-                        }
-                    }});
-                }
-                // GEOPOINT
-                else if (fields[i].type == "geopoint") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
-
-                        if (record) {
-                            if (record.latitude && record.longitude) {
-
-                                var width = 140;
-                                var mapZoom = 10;
-                                var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + record.longitude + "," + record.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + record.longitude + "," + record.latitude + ",pointImagePattern:red";
-                                if (pimcore.settings.google_maps_api_key) {
-                                    mapUrl = "http://maps.google.com/staticmap?center=" + record.latitude + "," + record.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + record.latitude + "," + record.longitude + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
-                                }
-
-                                return '<img src="' + mapUrl + '" />';
-                            }
-                        }
-                    }});
-                }
-                // HREF
-                else if (fields[i].type == "href") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key});
-                }
-                // MULTIHREF & OBJECTS
-                else if (fields[i].type == "multihref" || fields[i].type == "objects") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
-
-                        if (record.length > 0) {
-                            return record.join("<br />");
-                        }
-                    }});
-                }
-                // PASSWORD
-                else if (fields[i].type == "password") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
-                        return "**********";
-                    }});
-                }
-                // LINK
-                else if (fields[i].type == "link") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key});
-                }
-                // MULTISELECT
-                else if (fields[i].type == "multiselect") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
-                        if (record.length > 0) {
-                            return record.join(",");
-                        }
-                    }});
-                }
-                // TABLE
-                else if (fields[i].type == "table") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, renderer: function (record) {
-
-                        if (record && record.length > 0) {
-                            var table = '<table cellpadding="2" cellspacing="0" border="1">';
-                            for (var i = 0; i < record.length; i++) {
-                                table += '<tr>';
-                                for (var c = 0; c < record[i].length; c++) {
-                                    table += '<td>' + record[i][c] + '</td>';
-                                }
-                                table += '</tr>';
-                            }
-                            table += '</table>';
-                            return table;
-                        }
-                        return "";
-                    }});
-                }
-                // DEFAULT
-                else {
-                    gridColumns.push({header: ts(fields[i].label), sortable: true, dataIndex: fields[i].key});
-                }
-                
-                // is visible or not   
-                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleSearch;
-            }
-        }
-        
-        // filters
-        // add filters
-        var selectFilterFields;
-        var configuredFilters = [];
-        
-        for (var i = 0; i < fields.length; i++) {
-            if (in_array(fields[i].type, validFieldTypes)) {
-                store = null;
-                selectFilterFields = null;
-                
-                if (fields[i].type == "input" || fields[i].type == "textarea" || fields[i].type == "wysiwyg") {
-                    configuredFilters.push({
-                        type: 'string',
-                        dataIndex: fields[i].key
-                    });
-                } else if (fields[i].type == "numeric" || fields[i].type == "slider") {
-                    configuredFilters.push({
-                        type: 'numeric',
-                        dataIndex: fields[i].key
-                    });
-                } else if (fields[i].type == "date" || fields[i].type == "datetime") {     
-                    configuredFilters.push({
-                        type: 'date',
-                        dataIndex: fields[i].key
-                    });
-                } else if (fields[i].type == "select" || fields[i].type == "country" || fields[i].type == "language") {
-                    selectFilterFields = [];
-                    
-                    store = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        root: 'store',
-                        fields: ['key',"value"],
-                        data: fields[i].config
-                    });
-                    
-                    store.each(function (rec) {
-                        selectFilterFields.push(rec.data.value);                                                               
-                    });                   
-                                                            
-                    configuredFilters.push({
-                        type: 'list',
-                        dataIndex: fields[i].key,
-                        options: selectFilterFields
-                    });
-                } else if (fields[i].type == "checkbox") {
-                    configuredFilters.push({
-                        type: 'boolean',
-                        dataIndex: fields[i].key
-                    });
-                } else if (fields[i].type == "multiselect") {
-                    selectFilterFields = [];
-                    
-                    store = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        root: 'options',
-                        fields: ['key',"value"],
-                        data: fields[i].layout
-                    });
-                    
-                    store.each(function (rec) {
-                        selectFilterFields.push(rec.data.value);                                                               
-                    });                   
-                                                            
-                    configuredFilters.push({
-                        type: 'list',
-                        dataIndex: fields[i].key,
-                        options: selectFilterFields
-                    });
-                }
-            }
-        }
-        
-        // filters
-        var gridfilters = new Ext.ux.grid.GridFilters({
-            encode: true,
-            local: false,
-            filters: configuredFilters
-        });
-        
-        
         this.getGridPanel(gridColumns, gridfilters);
     },
     
