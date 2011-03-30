@@ -1435,7 +1435,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 $objects[] = $o;
             }
-
             $this->_helper->json(array("data" => $objects, "success" => true, "total" => $list->getTotalCount()));
         }
 
