@@ -81,8 +81,13 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                        $active=true;
                     }
 
+                    $path = $child->getFullPath();
+                    if($child instanceof Document_Link){
+                        $path = $child->getHref();
+                    }
+
                     $page = new Pimcore_Navigation_Page_Uri();
-                    $page->setUri($child->getFullPath().$child->getProperty("navigation_parameters").$child->getProperty("navigation_anchor"));
+                    $page->setUri($path.$child->getProperty("navigation_parameters").$child->getProperty("navigation_anchor"));
                     $page->setLabel($child->getProperty("navigation_name"));
                     $page->setActive($active);
                     $page->setId($child->getId());
