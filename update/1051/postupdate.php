@@ -1,7 +1,7 @@
 <?php
 
-$sql = "ALTER TABLE pimcore.objects CHANGE o_type o_type ENUM('object', 'folder','variant'); ";
-$sql .= "ALTER TABLE pimcore.classes ADD allowVariants TINYINT(1) DEFAULT '0' AFTER propertyVisibility;";
+$sql = "ALTER TABLE objects CHANGE o_type o_type ENUM('object', 'folder','variant'); ";
+$sql .= "ALTER TABLE classes ADD allowVariants TINYINT(1) DEFAULT '0' AFTER propertyVisibility;";
 
 // get db connection
 $db = Pimcore_Resource_Mysql::get();
