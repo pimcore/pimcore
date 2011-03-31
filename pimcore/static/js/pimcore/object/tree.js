@@ -515,6 +515,9 @@ pimcore.object.tree = Class.create({
     addFolderCreate: function (button, value, object) {
 
         if (button == "ok") {
+
+            
+
             Ext.Ajax.request({
                 url: "/admin/object/add-folder",
                 params: {
@@ -546,6 +549,18 @@ pimcore.object.tree = Class.create({
             pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error");
         }
         this.reload();
+    },
+
+
+    isExistingKeyInLevel: function (parentNode, key, node) {
+        var parentChilds = parentNode.childNodes;
+        for (var i = 0; i < parentChilds.length; i++) {
+            if (parentChilds[i].text == key && node != parentChilds[i]) {
+                Ext.MessageBox.alert(t('edit_key'), t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                return true;
+            }
+        }
+        return false;
     },
 
     remove : function () {

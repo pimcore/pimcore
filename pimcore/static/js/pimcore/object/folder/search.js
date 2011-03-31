@@ -148,7 +148,13 @@ pimcore.object.search = Class.create({
             },
             listeners: {
                 write : function(store, action, result, response, rs) {
-                }
+                },
+                exception: function (conn, mode, action, request, response, store) {
+                    if(action == "update") {
+                        Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
+                        this.store.rejectChanges();
+                    }
+                }.bind(this)
             }
         });
         this.store.load();

@@ -480,7 +480,7 @@
 }
 
 .pimcore_icon_fieldset {
-	background: url(/pimcore/static/img/icon/application_form.png) left center no-repeat !important;
+	background: url(/pimcore/static/img/icon/application_form.png) no-repeat !important;
 }
 
 .pimcore_icon_panel {

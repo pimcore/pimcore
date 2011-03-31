@@ -644,6 +644,12 @@ pimcore.document.tree = Class.create({
 
     addDocumentCreate : function (type, docTypeId, button, value, object) {
         if (button == "ok") {
+
+            // check for ident filename in current level
+            if(this.attributes.reference.isExistingKeyInLevel(this, value)) {
+                return;
+            }
+
             Ext.Ajax.request({
                 url: "/admin/document/add/",
                 params: {
@@ -686,14 +692,9 @@ pimcore.document.tree = Class.create({
         if (button == "ok") {
 
             // check for ident filename in current level
-            var parentChilds = this.parentNode.childNodes;
-            for (var i = 0; i < parentChilds.length; i++) {
-                if (parentChilds[i].text == value && this != parentChilds[i]) {
-                    Ext.MessageBox.alert(t('edit_key'), t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
-                    return;
-                }
+            if(this.attributes.reference.isExistingKeyInLevel(this.parentNode, value, this)) {
+                return;
             }
-
 
             value = pimcore.helpers.getValidFilename(value);
 
@@ -729,6 +730,17 @@ pimcore.document.tree = Class.create({
                 }
             }.bind(this));
         }
+    },
+
+    isExistingKeyInLevel: function (parentNode, key, node) {
+        var parentChilds = parentNode.childNodes;
+        for (var i = 0; i < parentChilds.length; i++) {
+            if (parentChilds[i].text == key && node != parentChilds[i]) {
+                Ext.MessageBox.alert(t('edit_key'), t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                return true;
+            }
+        }
+        return false;
     },
 
     updateDocument: function (id, data, callback) {
