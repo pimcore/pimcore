@@ -22,15 +22,19 @@ pimcore.object.helpers.grid = Class.create({
 
     limit: 15,
     baseParams: {},
+    showSubtype: true,
+    showKey: true,
 
-    initialize: function(selectedClass, response, url, baseParams) {
+    initialize: function(selectedClass, fields, url, baseParams) {
         this.selectedClass = selectedClass;
-        this.fields =  Ext.decode(response.responseText);
+        this.fields = fields;
         this.validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","link","multiselect","password","slider","user"];
 
         this.url = url;
         if(baseParams) {
             this.baseParams = baseParams;
+        } else {
+            this.baseParams = {};
         }
 
         if(!this.baseParams.limit) {
@@ -69,6 +73,7 @@ pimcore.object.helpers.grid = Class.create({
             root: 'data'
         }, readerFields);
 
+
         store = new Ext.data.Store({
             restful: false,
             idProperty: 'id',
@@ -89,15 +94,21 @@ pimcore.object.helpers.grid = Class.create({
         var klass = classStore.getAt(klassIndex);
         var propertyVisibility = klass.get("propertyVisibility");
 
+
+        var showKey = propertyVisibility.search.path;
+        if(this.showKey) {
+            showKey = true;
+        }
+
         // init grid-columns
         var gridColumns = [
-            {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+            {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', hidden: !this.showSubtype, renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                 return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
             }},
             {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: !propertyVisibility.search.id},
             {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: !propertyVisibility.search.published},
             {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath', hidden: !propertyVisibility.search.path},
-            {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: !propertyVisibility.search.path},
+            {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: !showKey},
             {header: t("class"), width: 200, sortable: true, dataIndex: 'classname',renderer: function(v){return ts(v);}, hidden: true},
             {header: t("creationdate") + " (System)", width: 200, sortable: true, dataIndex: "creationDate", editable: false, renderer: function(d) {
                 var date = new Date(d * 1000);

@@ -93,7 +93,7 @@ class Document_Tag_Href extends Document_Tag {
     public function frontend() {
 
         //don't give unpublished elements in frontend
-        if (!Pimcore::inAdmin() and !Element_Service::isPublished($this->element)) {
+        if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return "";
         }
 
@@ -158,7 +158,7 @@ class Document_Tag_Href extends Document_Tag {
     public function getElement() {
 
         //don't give unpublished elements in frontend
-        if (!Pimcore::inAdmin() and !Element_Service::isPublished($this->element)) {
+        if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return false;
         }
 
@@ -173,7 +173,7 @@ class Document_Tag_Href extends Document_Tag {
     public function getFullPath() {
 
         //don't give unpublished elements in frontend
-        if (!Pimcore::inAdmin() and !Element_Service::isPublished($this->element)) {
+        if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return false;
         }
         if ($this->element instanceof Element_Interface) {

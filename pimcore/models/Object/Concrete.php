@@ -148,18 +148,14 @@ class Object_Concrete extends Object_Abstract {
                     if($this->getO_class()->getAllowInherit()) {
                         //try again with parent data when inheritance in activated
                         try {
-                            $inAdmin = false;
-                            if(Pimcore::inAdmin()) {
-                                $inAdmin = true;
-                            }
-                            Pimcore::unsetAdminMode();
+
+                            $getInheritedValues = Object_Abstract::doGetInheritedValues();
+                            Object_Abstract::setGetInheritedValues(true);
 
                             $value = $this->$getter();
                             $fd->checkValidity($value, $omitMandatoryCheck);
 
-                            if($inAdmin) {
-                                Pimcore::setAdminMode();
-                            }
+                            Object_Abstract::setGetInheritedValues($getInheritedValues);
 
                         } catch(Exception $e) {
                             throw new Exception($e->getMessage() . " fieldname=" . $fd->getName());
@@ -476,7 +472,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function getValueFromParent($key) {
         if ($this->getO_parent() instanceof Object_Abstract) {
-            if ($this->getO_parent()->getO_type() == "object") {
+            if ($this->getO_parent()->getO_type() == "object" || $this->getO_parent()->getO_type() == "variant") {
                 if ($this->getO_parent()->getO_classId() == $this->getO_classId()) {
                     $method = "get" . $key;
                     if (method_exists($this->getO_parent(), $method)) {

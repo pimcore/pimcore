@@ -38,7 +38,7 @@ pimcore.element.selector.selector = Class.create({
             subtype: {
                 document: ["page", "snippet","folder"],
                 asset: ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"],
-                object: ["object", "folder"]
+                object: ["object", "folder", "variant"]
             },
             specific: {
                 classes: possibleClassRestrictions // put here all classes from global class store ...

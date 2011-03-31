@@ -378,6 +378,9 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                 $this->published = true;
             } else if ($element instanceof Object_Abstract){
                 if ($element instanceof Object_Concrete) {
+                    $getInheritedValues = Object_Abstract::doGetInheritedValues();
+                    Object_Abstract::setGetInheritedValues(true);
+
                     $this->published = $element->isPublished();
                     foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
                         // Object_Class_Data_Fieldcollections is special because it doesn't support the csv export
@@ -392,6 +395,8 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                             $this->data.=$value->getForCsvExport($element)." ";
                         }
                     }
+                    Object_Abstract::setGetInheritedValues($getInheritedValues);
+                    
                 } else if ($element instanceof Object_Folder){
                     $this->data=$element->getKey();
                     $this->published = true;

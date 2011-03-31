@@ -164,6 +164,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $configuration["name"] = "pimcore_root";
 
         $class->setValues($values);
+
         $layout = Object_Class_Service::generateLayoutTreeFromArray($configuration);
 
         $class->setLayoutDefinitions($layout);

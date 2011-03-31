@@ -124,7 +124,7 @@ class Document_Tag_Link extends Document_Tag {
         if ($this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 if ($doc = Document::getById($this->data["internalId"])) {
-                    if (Pimcore::inAdmin() || $doc->isPublished()) {
+                    if (!Document::doHideUnpublished() || $doc->isPublished()) {
                         $this->data["path"] = $doc->getFullPath();
                     } else {
                         $this->data["path"] = "";

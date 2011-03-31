@@ -593,17 +593,6 @@ class Pimcore {
     }
 
     /**
-     * switches back to the non admin mode, where unpublished elements are invisible
-     * @static
-     * @return void
-     */
-    public static function resetAdminMode() {
-        self::$adminMode = null;
-    }
-
-        
-
-    /**
      * check if the process is currently in admin mode or not
      * @static
      * @return bool
@@ -614,9 +603,6 @@ class Pimcore {
             return self::$adminMode;
         }
 
-        if(defined("PIMCORE_ADMIN")) {
-            return PIMCORE_ADMIN;
-        }
         return false;
     }
 

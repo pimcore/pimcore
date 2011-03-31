@@ -630,6 +630,10 @@
 	background: url(/pimcore/static/img/icon/group_key.png) left center no-repeat !important;
 }
 
+.pimcore_icon_tab_variants {
+	background: url(/pimcore/static/img/icon/database_copy.png) left center no-repeat !important;
+}
+
 
 .pimcore_icon_menu_seemode {
 	background: url(/pimcore/static/img/icon/eye.png) left center no-repeat !important;

@@ -428,7 +428,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
             }
         }
 
-        if(!Pimcore::inAdmin() and is_array($data)) {
+        if(Object_Abstract::doHideUnpublished() and is_array($data)) {
             $publishedList = array();
             foreach($data as $listElement){
                 if(Element_Service::isPublished($listElement)){

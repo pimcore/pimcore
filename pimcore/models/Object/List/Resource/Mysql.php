@@ -53,12 +53,12 @@ class Object_List_Resource_Mysql extends Pimcore_Model_List_Resource_Mysql_Abstr
 
     protected function getCondition() {
         if ($cond = $this->model->getCondition()) {
-            if (!Pimcore::inAdmin() && !$this->model->getUnpublished()) {
+            if (Object_Abstract::doHideUnpublished() && !$this->model->getUnpublished()) {
                 return " WHERE (" . $cond . ") AND o_published = 1";
             }
             return " WHERE " . $cond . " ";
         }
-        else if (!Pimcore::inAdmin() && !$this->model->getUnpublished()) {
+        else if (Object_Abstract::doHideUnpublished() && !$this->model->getUnpublished()) {
             return " WHERE o_published = 1";
         }
         return "";

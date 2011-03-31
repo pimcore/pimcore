@@ -488,7 +488,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
             }
         }
 
-        if(!Pimcore::inAdmin() and ($data instanceof Element_Interface)) {
+        if(Object_Abstract::doHideUnpublished() and ($data instanceof Element_Interface)) {
             if(!Element_Service::isPublished($data)){
                 return null;
             }

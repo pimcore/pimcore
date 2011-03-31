@@ -60,6 +60,11 @@ class Object_Class extends Pimcore_Model_Abstract {
     public $allowInherit = false;
 
     /**
+     * @var boolean
+     */
+    public $allowVariants = false;
+
+    /**
      * @var array
      */
     public $fieldDefinitions;
@@ -520,6 +525,13 @@ class Object_Class extends Pimcore_Model_Abstract {
     }
 
     /**
+     * @return boolean
+     */
+    public function getAllowVariants() {
+        return $this->allowVariants;
+    }
+
+    /**
      * @param string $parentClass
      * @return void
      */
@@ -533,6 +545,14 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setAllowInherit($allowInherit) {
         $this->allowInherit = (bool) $allowInherit;
+    }
+
+    /**
+     * @param boolean $allowVariants
+     * @return void
+     */
+    public function setAllowVariants($allowVariants) {
+        $this->allowVariants = (bool) $allowVariants;
     }
 
     /**

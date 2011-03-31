@@ -392,8 +392,8 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
      *
      * @return boolean
      */
-    public function hasChilds() {
-        $c = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_parentId = '" . $this->model->getO_id() . "'");
+    public function hasChilds($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
+        $c = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_parentId = '" . $this->model->getO_id() . "' AND o_type IN ('" . implode("','", $objectTypes) . "')");
 
         $state = false;
         if ($c["o_id"]) {
@@ -410,8 +410,8 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
      *
      * @return integer
      */
-    public function getChildAmount() {
-        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = '" . $this->model->getO_id() . "'");
+    public function getChildAmount($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
+        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = '" . $this->model->getO_id() . "' AND o_type IN ('" . implode("','", $objectTypes) . "')");
         return $c["count"];
     }
 

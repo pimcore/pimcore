@@ -575,7 +575,7 @@ abstract class Object_Class_Data {
 
         // insert this line if inheritance from parent objects is allowed
         if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if(!$data && !Pimcore::inAdmin()) { return $this->getValueFromParent("' . $key . '");}' . "\n";
+            $code .= "\t" . 'if(!$data && Object_Abstract::doGetInheritedValues()) { return $this->getValueFromParent("' . $key . '");}' . "\n";
         }
 
         $code .= "\t return " . '$data' . ";\n";

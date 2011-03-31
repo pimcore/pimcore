@@ -241,7 +241,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
             type: ["object"],
             subtype: [
                 {
-                    object: ["object"]
+                    object: ["object", "variant"]
                 }
             ],
             specific: {

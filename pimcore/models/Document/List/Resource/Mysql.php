@@ -39,12 +39,12 @@ class Document_List_Resource_Mysql extends Pimcore_Model_List_Resource_Mysql_Abs
 
     protected function getCondition() {
         if ($cond = $this->model->getCondition()) {
-            if (!Pimcore::inAdmin() && !$this->model->getUnpublished()) {
+            if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
                 return " WHERE (" . $cond . ") AND published = 1";
             }
             return " WHERE " . $cond . " ";
         }
-        else if (!Pimcore::inAdmin() && !$this->model->getUnpublished()) {
+        else if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
             return " WHERE published = 1";
         }
         return "";

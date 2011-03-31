@@ -70,7 +70,10 @@ class Webservice_SoapController extends Pimcore_Controller_Action {
             echo $wsdl;
         } else {
 
-            define("PIMCORE_ADMIN", true);
+            Pimcore::setAdminMode();
+            Document::setHideUnpublished(false);
+            Object_Abstract::setHideUnpublished(false);
+            Object_Abstract::setGetInheritedValues(false);
 
             try {
                 $server = new Zend_Soap_Server($wsdlFile, array(

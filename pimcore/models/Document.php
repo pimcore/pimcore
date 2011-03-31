@@ -24,6 +24,16 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public static $types = array("folder", "page", "snippet", "link");
 
+    
+    private static $hidePublished = false;
+    public static function setHideUnpublished($hidePublished) {
+        self::$hidePublished = $hidePublished;
+    }
+    public static function doHideUnpublished() {
+        return self::$hidePublished;
+    }
+
+
     /**
      * ID of the document
      *

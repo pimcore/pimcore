@@ -17,11 +17,33 @@
 
 class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interface {
 
+    const OBJECT_TYPE_FOLDER = "folder";
+    const OBJECT_TYPE_OBJECT = "object";
+    const OBJECT_TYPE_VARIANT = "variant";
+
     /**
      * possible types of a document
      * @var array
      */
-    public static $types = array("folder", "object");
+    public static $types = array(self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT);
+
+
+    private static $hidePublished = false;
+    public static function setHideUnpublished($hidePublished) {
+        self::$hidePublished = $hidePublished;
+    }
+    public static function doHideUnpublished() {
+        return self::$hidePublished;
+    }
+
+    private static $getInheritedValues = false;
+    public static function setGetInheritedValues($getInheritedValues) {
+        self::$getInheritedValues = $getInheritedValues;
+    }
+    public static function doGetInheritedValues() {
+        return self::$getInheritedValues;
+    }
+
 
     /**
      * @var integer
@@ -170,7 +192,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                     $object = new Object_Abstract();
                     $typeInfo = $object->getResource()->getTypeById($id);
 
-                    if ($typeInfo["o_type"] == "object" || $typeInfo["o_type"] == "folder") {
+                    if ($typeInfo["o_type"] == "object" || $typeInfo["o_type"] == "variant" || $typeInfo["o_type"] == "folder") {
 
                         if($typeInfo["o_type"] == "folder") {
                             $concreteClassName = "Object_Folder";
@@ -300,17 +322,22 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         return $tags;
     }
 
+
+    private $lastGetChildsObjectTypes = array();
+
     /**
      * @return array
      */
-    public function getO_childs() {
+    public function getO_childs($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
 
-        if ($this->o_childs === null) {
+        if ($this->o_childs === null || $this->lastGetChildsObjectTypes != $objectTypes) {
+            $this->lastGetChildsObjectTypes = $objectTypes;
 
             $list = new Object_List(true);
             $list->setCondition("o_parentId = '" . $this->getO_id() . "'");
             $list->setOrderKey("o_key");
             $list->setOrder("asc");
+            $list->setObjectTypes($objectTypes);
             $this->o_childs = $list->load();
         } 
 
@@ -320,8 +347,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     /**
      * @return array
      */
-    public function getChilds () {
-        return $this->getO_childs();
+    public function getChilds ($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
+        return $this->getO_childs($objectTypes);
     }
     
     /**
@@ -338,15 +365,15 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     /**
      * @return boolean
      */
-    public function hasChilds() {
+    public function hasChilds($objectTypes = array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER)) {
         if(is_bool($this->o_hasChilds)){
             if(($this->o_hasChilds and empty($this->o_childs)) or (!$this->o_hasChilds and !empty($this->o_childs))){
-                return $this->getResource()->hasChilds();
+                return $this->getResource()->hasChilds($objectTypes);
             } else {
                 return $this->o_hasChilds;
             }
         }
-        return $this->getResource()->hasChilds();
+        return $this->getResource()->hasChilds($objectTypes);
     }
 
     /**
@@ -436,9 +463,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         Pimcore_API_Plugin_Broker::getInstance()->preDeleteObject($this);
 
         // delete childs
-        if ($this->hasChilds()) {
-
-            foreach ($this->getO_childs() as $value) {
+        if ($this->hasChilds(array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT))) {
+            foreach ($this->getO_childs(array(self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT)) as $value) {
                 $value->delete();
             }
         }

@@ -208,7 +208,7 @@ DROP TABLE IF EXISTS `objects`;
 CREATE TABLE `objects` (
   `o_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `o_parentId` int(11) unsigned DEFAULT NULL,
-  `o_type` enum('object','folder') DEFAULT NULL,
+  `o_type` enum('object','folder','variant') DEFAULT NULL,
   `o_key` varchar(255) default '',
   `o_path` varchar(255) DEFAULT NULL,
   `o_index` int(11) unsigned DEFAULT '0',

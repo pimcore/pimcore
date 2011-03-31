@@ -26,6 +26,9 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
      * @var boolean
      */
     public $unpublished = false;
+
+
+    public $objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER);
     
     /**
      * @var array
@@ -95,6 +98,21 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
     public function setUnpublished($unpublished) {
         $this->unpublished = (bool) $unpublished;
     }
+
+    /**
+     * @param  $objectTypes
+     * @return void
+     */
+    public function setObjectTypes($objectTypes) {
+        $this->objectTypes = $objectTypes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getObjectTypes() {
+        return $this->objectTypes;
+    }
     
 
     /**
@@ -148,4 +166,19 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
         $var = $this->current() !== false;
         return $var;
     }
+
+
+    public function getCondition() {
+        $condition = parent::getCondition();
+
+        if(!empty($this->objectTypes)) {
+            if(!empty($condition)) {
+                $condition .= " AND ";
+            }
+            $condition .= " o_type IN ('" . implode("','", $this->objectTypes) . "')";
+        }
+        
+        return $condition;
+    }
+
 }

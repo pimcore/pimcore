@@ -461,7 +461,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
             type: ["object"],
             subtype: {
-                object: ["object", "folder"]
+                object: ["object", "folder","variant"]
             },
             specific: { 
                 classes: allowedClasses

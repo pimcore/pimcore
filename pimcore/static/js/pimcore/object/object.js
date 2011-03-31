@@ -31,6 +31,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.permissions = new pimcore.object.permissions(this);
         this.dependencies = new pimcore.settings.dependencies(this, "object");
         this.reports = new pimcore.report.panel("object_concrete", this);
+        this.variants = new pimcore.object.variantsTab(this);
         this.getData();
     },
 
@@ -196,7 +197,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         if(reportLayout) {
             items.push(reportLayout);
         }
-        
+
+
+        if(this.data.allowedClasses.allowVariants) {
+            items.push(this.variants.getLayout());
+        }
+
         var tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',

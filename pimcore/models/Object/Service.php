@@ -275,7 +275,7 @@ class Object_Service extends Element_Service {
     public static function hasInheritableParentObject(Object_Concrete $object) {
         if($object->getO_class()->getAllowInherit()) {
             if ($object->getO_parent() instanceof Object_Abstract) {
-                if ($object->getO_parent()->getO_type() == "object") {
+                if ($object->getO_parent()->getO_type() == "object" || $object->getO_parent()->getO_type() == "variant") {
                     if ($object->getO_parent()->getO_classId() == $object->getO_classId()) {
                         return $object->getO_parent();
                     }

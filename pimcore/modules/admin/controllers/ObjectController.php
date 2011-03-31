@@ -726,6 +726,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $parent = Object_Abstract::getById($this->_getParam("parentId"));
         $parent->getPermissionsForUser($this->getUser());
 
+        $message = ""; 
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getFullPath() . "/" . $this->_getParam("key");
             $equalObject = Object_Abstract::getByPath($intendedPath);
@@ -742,6 +743,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $object->setUserModification($this->getUser()->getId());
                 $object->setPublished(false);
 
+                if($this->_getParam("objecttype") == Object_Abstract::OBJECT_TYPE_OBJECT || $this->_getParam("objecttype") == Object_Abstract::OBJECT_TYPE_VARIANT) {
+                    $object->setO_type($this->_getParam("objecttype"));
+                }
+
                 try {
 
                     $object->save();
@@ -751,23 +756,26 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 }
 
             } else {
-
+                $message = "prevented creating object because object with same path+key already exists";
                 Logger::debug(get_class($this) . ": prevented creating object because object with same path+key [ $intendedPath ] already exists");
             }
         } else {
-            Logger::debug(get_class($this) . ": prevented adding object because of missing permissions");
+            $message = "prevented adding object because of missing permissions";
+            Logger::debug(get_class($this) . ": " . $message);
         }
 
         if ($success) {
             $this->_helper->json(array(
                                       "success" => $success,
                                       "id" => $object->getId(),
-                                      "type" => $object->getType()
+                                      "type" => $object->getType(),
+                                      "message" => $message
                                  ));
         }
         else {
             $this->_helper->json(array(
-                                      "success" => $success
+                                      "success" => $success,
+                                      "message" => $message
                                  ));
         }
     }

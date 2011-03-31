@@ -41,7 +41,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         };
         
         // check for restrictions
-        var possibleRestrictions = ["folder", "object"];
+        var possibleRestrictions = ["folder", "object", "variant"];
         var filterStore = [];
         var selectedStore = [];
         for (var i=0; i<possibleRestrictions.length; i++) {
@@ -499,8 +499,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 //            filters: configuredFilters
 //        });
         
-
-        var gridHelper = new pimcore.object.helpers.grid(selectedClass, response, "/admin/search/search/find");
+        var fields = Ext.decode(response.responseText);
+        var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find");
         this.store = gridHelper.getStore();
         var gridColumns = gridHelper.getGridColumns();
         var gridfilters = gridHelper.getGridFilters();

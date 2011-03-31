@@ -43,7 +43,11 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         }
         catch (Exception $e) {
             // general definitions
-            define("PIMCORE_ADMIN", true);
+//            define("PIMCORE_ADMIN", true);
+            Document::setHideUnpublished(false);
+            Object_Abstract::setHideUnpublished(false);
+            Object_Abstract::setGetInheritedValues(false);
+            Pimcore::setAdminMode();
 
             // init session
             self::initSession();

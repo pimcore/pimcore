@@ -290,7 +290,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     allowedSpecific.classes.push(this.layoutConf.classes[i].classes);
                 }
             } else {
-                allowedSubtypes.object = ["object","folder"];
+                allowedSubtypes.object = ["object","folder","variant"];
             }
         }
         if (this.layoutConf.assetsAllowed) {

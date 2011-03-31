@@ -408,6 +408,34 @@ pimcore.object.classes.klass = Class.create({
     },
 
     getRootPanel: function () {
+        this.allowInheritance = new Ext.form.Checkbox({
+            xtype: "checkbox",
+            fieldLabel: t("allow_inherit"),
+            name: "allowInherit",
+            checked: this.data.allowInherit,
+            listeners: {
+                "check": function(field, checked) {
+                    if(checked == true) {
+                        this.allowVariants.setDisabled(false);
+                    } else {
+                        this.allowVariants.setValue(false);
+                        this.allowVariants.setDisabled(true);
+                    }
+                    console.log("blaaa");
+                }.bind(this)
+            }
+        });
+
+
+        this.allowVariants = new Ext.form.Checkbox({
+            xtype: "checkbox",
+            fieldLabel: t("allow_variants"),
+            name: "allowVariants",
+            checked: this.data.allowVariants,
+            disabled: !this.data.allowInherit
+        });
+
+
 
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
@@ -422,12 +450,8 @@ pimcore.object.classes.klass = Class.create({
                     width: 300,
                     value: this.data.name
                 },
-                {
-                    xtype: "checkbox",
-                    fieldLabel: t("allow_inherit"),
-                    name: "allowInherit",
-                    checked: this.data.allowInherit
-                },
+                this.allowInheritance,
+                this.allowVariants,
                 {
                     xtype: "textfield",
                     fieldLabel: t("parent_class"),
