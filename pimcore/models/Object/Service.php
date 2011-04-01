@@ -205,7 +205,7 @@ class Object_Service extends Element_Service {
                 //relation type fields with remote owner do not have a getter
                 if(method_exists($object,$getter)) {
                     $valueObject = self::getValueForObject($object, $getter);
-                    $data['inheritedFields'][$key] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid, "value" => $valueObject->value);
+                    $data['inheritedFields'][$key] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
                     if ($def->getFieldType() == "href") {
                         if ($valueObject->value instanceof Element_Interface) {
                             $data[$key] = $valueObject->value->getFullPath();

@@ -29,7 +29,7 @@ class Object_List_Concrete_Resource_Mysql extends Object_List_Resource_Mysql {
         $objects = array();
 
         try {
-            $objectsData = $this->db->fetchAll("SELECT o_id,o_type FROM " . $this->getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+            $objectsData = $this->db->fetchAll("SELECT DISTINCT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -83,30 +83,81 @@ class Object_List_Concrete_Resource_Mysql extends Object_List_Resource_Mysql {
         throw $e;
     }
 
+    private $tableName = null; 
     protected function getTableName () {
 
-        // check for a localized fields
-        if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields")) {
-            $language = "default";
+        if(empty($this->tableName)) {
+            // check for a localized fields
+            if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields")) {
+                $language = "default";
 
-            if(!$this->model->getIgnoreLocale()) {
-                if($this->model->getLocale()) {
-                    if(Pimcore_Tool::isValidLanguage((string) $this->model->getLocale())) {
-                        $language = (string) $this->model->getLocale();
+                if(!$this->model->getIgnoreLocale()) {
+                    if($this->model->getLocale()) {
+                        if(Pimcore_Tool::isValidLanguage((string) $this->model->getLocale())) {
+                            $language = (string) $this->model->getLocale();
+                        }
                     }
+
+                    try {
+                        $locale = Zend_Registry::get("Zend_Locale");
+                        if(Pimcore_Tool::isValidLanguage((string) $locale) && $language == "default") {
+                            $language = (string) $locale;
+                        }
+                    } catch (Exception $e) {}
                 }
 
-                try {
-                    $locale = Zend_Registry::get("Zend_Locale");
-                    if(Pimcore_Tool::isValidLanguage((string) $locale) && $language == "default") {
-                        $language = (string) $locale;
+                $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
+            } else {
+                $this->tableName = "object_" . $this->model->getClassId();
+            }
+        }
+        return $this->tableName;
+    }
+
+    protected function getJoins() {
+        $join = ""; 
+
+        $fieldCollections = $this->model->getFieldCollections();
+        if(!empty($fieldCollections)) {
+            foreach($fieldCollections as $fc) {
+                $join .= " LEFT JOIN object_collection_" . $fc['type'] . "_" . $this->model->getClassId();
+
+                $name = $fc['type'];
+                if(!empty($fc['fieldname'])) {
+                    $name .= "~" . $fc['fieldname'];
+                }
+
+
+                $join .= " `" . $name . "`";
+                $join .= " ON `" . $name . "`.o_id = `" . $this->getTableName() . "`.o_id";
+            }
+        }
+        return $join;
+    }
+
+    protected function getCondition() {
+        $condition = parent::getCondition();
+
+        $fieldCollections = $this->model->getFieldCollections();
+        if(!empty($fieldCollections)) {
+            foreach($fieldCollections as $fc) {
+                if(!empty($fc['fieldname'])) {
+                    $name = $fc['type'];
+                    if(!empty($fc['fieldname'])) {
+                        $name .= "~" . $fc['fieldname'];
                     }
-                } catch (Exception $e) {}
+
+
+                    if(!empty($condition)) {
+                        $condition .= " AND ";
+                    }
+                    $condition .= "`" . $name . "`.fieldname = '" . $fc['fieldname'] . "'";
+
+
+                }
             }
 
-            return "object_localized_" . $this->model->getClassId() . "_" . $language;
         }
-
-        return "object_" . $this->model->getClassId();
+        return $condition;
     }
 }

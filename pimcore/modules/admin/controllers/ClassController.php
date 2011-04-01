@@ -238,7 +238,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
 
         $fc->save();
-        
+
         $this->_helper->json(array("success" => true));
     }
 

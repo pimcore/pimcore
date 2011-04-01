@@ -126,4 +126,33 @@ abstract class Object_List_Concrete extends Object_List {
         return $this->ignoreLocale;
     }
 
+
+    //field collection queries
+    private $fieldCollectionConfigs = array();
+
+    public function addFieldCollection($type, $fieldname = null) {
+
+        if(empty($type)) {
+            throw new Exception("No fieldcollectiontype given");
+        }
+
+        Object_Fieldcollection_Definition::getByKey($type);
+        $this->fieldCollectionConfigs[] = array("type" => $type, "fieldname" => $fieldname);  ;
+    }
+
+    public function setFieldCollections($fieldCollections) {
+        foreach($fieldCollections as $fc) {
+            $this->addFieldCollection($fc['type'], $fc['fieldname']);
+        }
+    }
+
+    public function getFieldCollections() {
+        return $this->fieldCollectionConfigs;
+    }
+
+
+    
+
+
+
 }
