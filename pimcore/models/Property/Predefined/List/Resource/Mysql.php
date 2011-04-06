@@ -34,4 +34,15 @@ class Property_Predefined_List_Resource_Mysql extends Pimcore_Model_List_Resourc
         return $properties;
     }
 
+    public function getTotalCount() {
+
+        try {
+            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM properties_predefined " . $this->getCondition());
+        } catch (Exception $e) {
+
+        }
+
+        return $amount["amount"];
+    }
+
 }

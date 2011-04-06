@@ -74,7 +74,7 @@ pimcore.settings.redirects = Class.create({
         ]);
         var writer = new Ext.data.JsonWriter();
 
-        var itemsPerPage = 10;
+        var itemsPerPage = 20;
 
         this.store = new Ext.data.Store({
             id: 'redirects_store',

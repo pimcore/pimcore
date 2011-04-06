@@ -76,17 +76,77 @@ pimcore.settings.property.predefined = Class.create({
 
         var writer = new Ext.data.JsonWriter();
 
-        var store = new Ext.data.Store({
+        var itemsPerPage = 10;
+
+        this.store = new Ext.data.Store({
             id: 'properties',
             restful: false,
             proxy: proxy,
             reader: reader,
             writer: writer,
+            baseParams: {
+                limit: itemsPerPage,
+                filter: ""
+            },
             listeners: {
                 write : function(store, action, result, response, rs) {
                 }
             }
         });
+
+        this.store.load();
+
+
+        this.filterField = new Ext.form.TextField({
+            xtype: "textfield",
+            width: 200,
+            style: "margin: 0 10px 0 0;",
+            enableKeyEvents: true,
+            listeners: {
+                "keydown" : function (field, key) {
+                    if (key.getKey() == key.ENTER) {
+                        var input = field;
+                        this.store.baseParams.filter = input.getValue();
+                        this.store.load();
+                    }
+                }.bind(this)
+            }
+        });
+
+        this.pagingtoolbar = new Ext.PagingToolbar({
+            pageSize: itemsPerPage,
+            store: this.store,
+            displayInfo: true,
+            displayMsg: '{0} - {1} / {2}',
+            emptyMsg: t("no_objects_found")
+        });
+
+        // add per-page selection
+        this.pagingtoolbar.add("-");
+
+        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
+            text: t("items_per_page")
+        }));
+        this.pagingtoolbar.add(new Ext.form.ComboBox({
+            store: [
+                [10, "10"],
+                [20, "20"],
+                [40, "40"],
+                [60, "60"],
+                [80, "80"],
+                [100, "100"]
+            ],
+            mode: "local",
+            width: 50,
+            value: 20,
+            triggerAction: "all",
+            listeners: {
+                select: function (box, rec, index) {
+                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
+                    this.pagingtoolbar.moveFirst();
+                }.bind(this)
+            }
+        }));
 
         var propertiesColumns = [
             {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
@@ -140,20 +200,19 @@ pimcore.settings.property.predefined = Class.create({
             }
         ];
 
-        store.load();
-
 
         this.editor = new Ext.ux.grid.RowEditor();
 
         this.grid = new Ext.grid.GridPanel({
             frame: false,
             autoScroll: true,
-            store: store,
+            store: this.store,
             columnLines: true,
             stripeRows: true,
             plugins: [this.editor],
             columns : propertiesColumns,
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+            bbar: this.pagingtoolbar,
             tbar: [
                 {
                     text: t('add'),
@@ -166,7 +225,12 @@ pimcore.settings.property.predefined = Class.create({
                     handler: this.onDelete.bind(this),
                     iconCls: "pimcore_icon_delete"
                 },
-                '-'
+                '-',"->",{
+                  text: t("filter") + "/" + t("search"),
+                  xtype: "tbtext",
+                  style: "margin: 0 10px 0 0;"
+                },
+                this.filterField
             ],
             viewConfig: {
                 forceFit: true

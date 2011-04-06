@@ -66,7 +66,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // get list of types
 
             $list = new Property_Predefined_List();
-            $test = $list->load();
+            $list->setLimit($this->_getParam("limit"));
+            $list->setOffset($this->_getParam("start"));
+            $list->setOrderKey("name");
+            $list->setOrder("ASC");
+
+            if($this->_getParam("filter")) {
+                $list->setCondition("`name` LIKE '%".$this->_getParam("filter")."%' OR `description` LIKE '%".$this->_getParam("filter")."%'");
+            }
+
+            $list->load();
 
             $properties = array();
             if (is_array($list->getProperties())) {
@@ -75,7 +84,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 }
             }
 
-            $this->_helper->json(array("data" => $properties, "success" => true, "total" => count($properties)));
+            $this->_helper->json(array("data" => $properties, "success" => true, "total" => $list->getTotalCount()));
         }
     }
 
