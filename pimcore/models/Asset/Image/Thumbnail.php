@@ -28,6 +28,11 @@ class Asset_Image_Thumbnail extends Pimcore_Model_Abstract {
     public $name;
 
     /**
+     * @var string
+     */
+    public $description;
+
+    /**
      * @var integer
      */
     public $width = 0;
@@ -246,5 +251,22 @@ class Asset_Image_Thumbnail extends Pimcore_Model_Abstract {
      */
     public function getCover() {
         return $this->cover;
+    }
+
+    /**
+     * @param string $description
+     * @return void
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

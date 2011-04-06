@@ -64,6 +64,7 @@ pimcore.settings.thumbnails = Class.create({
         }, [
             {name: 'id'},
             {name: 'name', allowBlank: false},
+            {name: 'description', allowBlank: true},
             {name: 'width', allowBlank: true},
             {name: 'height', allowBlank: true},
             {name: 'quality', allowBlank: false},
@@ -92,6 +93,13 @@ pimcore.settings.thumbnails = Class.create({
 
         var typesColumns = [
             {header: t("name"), sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
+            {header: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}), renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                if(empty(value)) {
+                    return "";
+                }
+                return nl2br(value);
+            }
+            },
             {header: t("width"), width: 30, sortable: false, dataIndex: 'width', editor: new Ext.ux.form.SpinnerField({})},
             {header: t("height"), width: 30, sortable: false, dataIndex: 'height', editor: new Ext.ux.form.SpinnerField({})},
             {header: t("aspect_ratio"), width: 40, sortable: false, dataIndex: 'aspectratio', editor: new Ext.form.Checkbox({})},

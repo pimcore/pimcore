@@ -348,6 +348,7 @@ DROP TABLE IF EXISTS `thumbnails`;
 CREATE TABLE `thumbnails` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
+  `description` text,
   `width` int(11) unsigned DEFAULT NULL,
   `height` int(11) unsigned DEFAULT NULL,
   `aspectratio` tinyint(1) unsigned DEFAULT '0',
