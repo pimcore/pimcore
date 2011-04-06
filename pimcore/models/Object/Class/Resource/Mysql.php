@@ -366,14 +366,22 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
         $this->db->delete("objects", "o_classId = '" . $this->model->getId() . "'");
         $this->logSql("DELETE FROM objects WHERE o_classId = '" . $this->model->getId() . "';"); // only for logging
         
-        // removefieldcollection tables
+        // remove fieldcollection tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_collection_%_" . $this->model->getId() . "'");
-        $tables = array();
-        
         foreach ($allTables as $table) {
             $collectionTable = current($table);
-            $this->dbexec("DROP TABLE `".$collectionTable."`");
+            $this->dbexec("DROP TABLE IF EXISTS `".$collectionTable."`");
         }
+
+        // remove localized fields tables and views
+        $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object_localized_" . $this->model->getId() . "_%'");
+        foreach ($allViews as $view) {
+            $localizedView = current($view);
+            $this->dbexec("DROP VIEW IF EXISTS `".$localizedView."`");
+        }
+        $this->dbexec("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
+
+
         
         @unlink(PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf");
     }

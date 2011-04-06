@@ -125,7 +125,7 @@ pimcore.settings.backup = Class.create({
             this.window.removeAll();
             this.window.add(new Ext.Panel({
                 bodyStyle: "padding: 20px;",
-                html: "The backupfile on the server is located at: " + this.lastResponse.filesystem + '<br />Please use a (S)FTP client to download the backup'
+                html: "The backupfile on the server is located at:<br /><b>" + this.lastResponse.filesystem + '</b><br />Please use a (S)FTP client to download the backup'
             }));
             this.window.doLayout();
         }
