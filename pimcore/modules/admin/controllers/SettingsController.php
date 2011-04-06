@@ -962,6 +962,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // get list of routes
 
             $list = new Redirect_List();
+            $list->setLimit($this->_getParam("limit"));
+            $list->setOffset($this->_getParam("start"));
+            $list->setOrderKey("source");
+            $list->setOrder("ASC");
+
+            if($this->_getParam("filter")) {
+                $list->setCondition("`source` LIKE '%".$this->_getParam("filter")."%' OR `target` LIKE '%".$this->_getParam("filter")."%'");
+            }
+            
+
             $list->load();
 
             $redirects = array();
@@ -978,7 +988,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $redirects[] = $redirect;
             }
 
-            $this->_helper->json(array("data" => $redirects, "success" => true, "total" => count($redirects)));
+            $this->_helper->json(array("data" => $redirects, "success" => true, "total" => $list->getTotalCount()));
         }
 
         $this->_helper->json(false);

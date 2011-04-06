@@ -35,4 +35,15 @@ class Redirect_List_Resource_Mysql extends Pimcore_Model_List_Resource_Mysql_Abs
         return $redirects;
     }
 
+    public function getTotalCount() {
+
+        try {
+            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM redirects " . $this->getCondition());
+        } catch (Exception $e) {
+
+        }
+
+        return $amount["amount"];
+    }
+
 }

@@ -58,6 +58,13 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("redirects")) {
+            extrasItems.push({
+                text: t("redirects"),
+                iconCls: "pimcore_icon_redirects",
+                handler: this.editRedirects
+            });
+        }
 
         if (user.isAllowed("plugins")) {
             extrasItems.push({
@@ -234,6 +241,12 @@ pimcore.layout.toolbar = Class.create({
                 });
 
                 objectMenu.menu.push({
+                    text: t("object_bricks"),
+                    iconCls: "pimcore_icon_objectbricks",
+                    handler: this.editObjectBricks
+                });
+
+                objectMenu.menu.push({
                     text: t("custom_views"),
                     iconCls: "pimcore_icon_custom_views",
                     handler: this.editCustomViews
@@ -248,13 +261,6 @@ pimcore.layout.toolbar = Class.create({
                 text: t("static_routes"),
                 iconCls: "pimcore_icon_routes",
                 handler: this.editRoutes
-            });
-        }
-        if (user.isAllowed("redirects")) {
-            settingsItems.push({
-                text: t("redirects"),
-                iconCls: "pimcore_icon_redirects",
-                handler: this.editRedirects
             });
         }
 
@@ -606,6 +612,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("fieldcollections", new pimcore.object.fieldcollection());
+        }
+    },
+
+    editObjectBricks: function () {
+        try {
+            pimcore.globalmanager.get("objectbricks").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
         }
     },
 
