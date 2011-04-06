@@ -348,7 +348,7 @@ class Pimcore_Backup {
 
         return array(
             "success" => true,
-            "download" => "/admin/backup/download",
+            "download" => str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getBackupFile()),
             "filesystem" => $this->getBackupFile()
         );
     }
