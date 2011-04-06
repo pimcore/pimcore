@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Fieldcollection_Data_Abstract extends Pimcore_Model_Abstract {
+abstract class Object_Fieldcollection_Data_Abstract extends Pimcore_Model_Abstract {
     
     public $index;
     public $fieldname;    

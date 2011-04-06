@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
 </head>
 
-<body onunload="pimcore.helpers.unload();">
+<body>
     
     <div id="pimcore_logo" style="display: none;">
         <img src="/pimcore/static/img/logo.png"/>
@@ -258,6 +258,7 @@
             "pimcore/object/classes/data/geobounds.js",
             "pimcore/object/classes/data/geopolygon.js",
             "pimcore/object/classes/data/fieldcollections.js",
+            "pimcore/object/classes/data/objectbricks.js",
             "pimcore/object/classes/data/localizedfields.js",
             "pimcore/object/classes/data/countrymultiselect.js",
             "pimcore/object/classes/data/languagemultiselect.js",
@@ -271,6 +272,8 @@
             "pimcore/object/classes/layout/text.js",
             "pimcore/object/fieldcollection.js",
             "pimcore/object/fieldcollections/field.js",
+            "pimcore/object/objectbrick.js",
+            "pimcore/object/objectbricks/field.js",
             "pimcore/object/tags/abstract.js",
             "pimcore/object/tags/date.js",
             "pimcore/object/tags/datetime.js",

@@ -1159,6 +1159,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $data = Zend_Json::decode($this->_getParam("data"));
 
+        // convert all special characters to their entities to ensure that Zend_Config can write it
+        foreach ($data as &$setting) {
+            $setting["data"] = htmlentities($setting["data"]);
+        }
+
         $config = new Zend_Config($data, true);
         $writer = new Zend_Config_Writer_Xml(array(
             "config" => $config,

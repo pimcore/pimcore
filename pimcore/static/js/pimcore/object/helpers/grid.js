@@ -40,8 +40,8 @@ pimcore.object.helpers.grid = Class.create({
         if(!this.baseParams.limit) {
             this.baseParams.limit = this.limit;
         }
-        if(!this.baseParams.class) {
-            this.baseParams.class = this.selectedClass;
+        if(!this.baseParams["class"]) {
+            this.baseParams["class"] = this.selectedClass;
         }
     },
 

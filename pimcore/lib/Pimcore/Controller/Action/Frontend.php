@@ -29,6 +29,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
         // general definitions
 //        define("PIMCORE_ADMIN", false);
+        Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
         Object_Abstract::setHideUnpublished(true);
         Object_Abstract::setGetInheritedValues(true);
@@ -36,7 +37,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         $adminSession = null;
 
         // assign variables
-        $this->view->controller = $this;
+        $this->view->controller = $this; 
         
         // init website config
         $config = Pimcore_Tool_Frontend::getWebsiteConfig();

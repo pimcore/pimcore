@@ -513,7 +513,7 @@ class Object_Concrete extends Object_Abstract {
     public static function __callStatic ($method, $arguments) {
 
         // check for custom static getters like Object::getByMyfield()
-        $propertyName = strtolower(preg_replace("/^getBy/i","",$method));
+        $propertyName = lcfirst(preg_replace("/^getBy/i","",$method));
         $tmpObj = new static();
 
         // get real fieldname (case sensitive)
