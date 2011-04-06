@@ -35,4 +35,15 @@ class Element_Recyclebin_Item_List_Resource_Mysql extends Pimcore_Model_List_Res
         return $items;
     }
 
+    public function getTotalCount() {
+
+        try {
+            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM recyclebin " . $this->getCondition());
+        } catch (Exception $e) {
+
+        }
+
+        return $amount["amount"];
+    }
+
 }

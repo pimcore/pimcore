@@ -22,21 +22,21 @@ pimcore.settings.translations = Class.create({
     initialize: function (filter) {
 
         this.filterField = new Ext.form.TextField({
-                    xtype: "textfield",
-                    width: 200,
-                    style: "margin: 0 10px 0 0;",
-                    enableKeyEvents: true,
-                    value: this.preconfiguredFilter,
-                    listeners: {
-                        "keydown" : function (field, key) {
-                            if (key.getKey() == key.ENTER) {
-                            var input = field;
-                                this.store.baseParams.filter = input.getValue();
-                                this.store.load();
-                                }
-                        }.bind(this)
+            xtype: "textfield",
+            width: 200,
+            style: "margin: 0 10px 0 0;",
+            enableKeyEvents: true,
+            value: this.preconfiguredFilter,
+            listeners: {
+                "keydown" : function (field, key) {
+                    if (key.getKey() == key.ENTER) {
+                        var input = field;
+                        this.store.baseParams.filter = input.getValue();
+                        this.store.load();
                     }
-                });
+                }.bind(this)
+            }
+        });
 
         this.preconfiguredFilter = filter;
         this.filterField.setValue(filter);

@@ -77,7 +77,7 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
         foreach ($languages as $language) {
             try {
 
-                $this->dbexec('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` WHERE `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
+                $this->dbexec('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` AND `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
             }
             catch (Exception $e) {
                 Logger::error($e);

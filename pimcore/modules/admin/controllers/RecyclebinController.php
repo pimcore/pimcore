@@ -25,9 +25,18 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
         }
         else {
             $list = new Element_Recyclebin_Item_List();
+            $list->setLimit($this->_getParam("limit"));
+            $list->setOffset($this->_getParam("start"));
+            $list->setOrderKey("path");
+            $list->setOrder("ASC");
+
+            if($this->_getParam("filter")) {
+                $list->setCondition("path LIKE '%".$this->_getParam("filter")."%'");
+            }
+            
             $items = $list->load();
-    
-            $this->_helper->json(array("data" => $items)); 
+            
+            $this->_helper->json(array("data" => $items, "success" => true, "total" => $list->getTotalCount()));
         }
     }
     
