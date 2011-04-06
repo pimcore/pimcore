@@ -31,8 +31,17 @@ pimcore.settings.properties = Class.create({
  
             var predefinedProperiesStore = new Ext.data.JsonStore({
                 url: '/admin/' + this.type + '/get-predefined-properties',
-                fields: ["id","name","key","type","data","config","inheritable",{name:"translatedName",convert: function(v, rec){
+                fields: ["id","name","description","key","type","data","config","inheritable",{name:"translatedName",convert: function(v, rec){
+
                     return ts(rec.name);
+
+                    /*
+                    var text = "<b>" + ts(rec.name) + "</b>";
+                    if(!empty(rec.description)) {
+                        text += ts(rec.description);
+                    }
+                    return text;
+                    */
                 }}],
                 root: "properties"
             });
@@ -46,7 +55,8 @@ pimcore.settings.properties = Class.create({
                 editable: false,
                 triggerAction: 'all',
                 listWidth: 200,
-                emptyText: t("select_a_property")
+                emptyText: t("select_a_property"),
+                listClass: "pimcore_predefined_property_select"
             });
 
 

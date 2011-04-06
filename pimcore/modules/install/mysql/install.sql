@@ -273,6 +273,7 @@ DROP TABLE IF EXISTS `properties_predefined`;
 CREATE TABLE `properties_predefined` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
   `key` varchar(255) DEFAULT NULL,
   `type` enum('text','document','asset','bool','select','object') DEFAULT NULL,
   `data` text,

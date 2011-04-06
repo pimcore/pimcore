@@ -65,6 +65,7 @@ pimcore.settings.property.predefined = Class.create({
         }, [
             {name: 'id'},
             {name: 'name', allowBlank: false},
+            {name: 'description', allowBlank: true},
             {name: 'key', allowBlank: false},
             {name: 'type', allowBlank: false},
             {name: 'data', allowBlank: true},
@@ -89,6 +90,13 @@ pimcore.settings.property.predefined = Class.create({
 
         var propertiesColumns = [
             {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
+            {header: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}), renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                if(empty(value)) {
+                    return "";
+                }
+                return nl2br(value);
+            }
+            },
             {header: t("key"), width: 50, sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({})},
             {header: t("type"), width: 50, sortable: false, dataIndex: 'type', editor: new Ext.form.ComboBox({
                 triggerAction: 'all',

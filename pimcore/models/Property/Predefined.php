@@ -30,6 +30,11 @@ class Property_Predefined extends Pimcore_Model_Abstract {
     /**
      * @var string
      */
+    public $description;
+
+    /**
+     * @var string
+     */
     public $key;
 
     /**
@@ -210,5 +215,22 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setInheritable($inheritable) {
         $this->inheritable = (bool) $inheritable;
+    }
+
+    /**
+     * @param string $description
+     * @return void
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }
