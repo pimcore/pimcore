@@ -127,6 +127,7 @@ pimcore.settings.systemlog = Class.create({
             this.lastScrollposition = this.getScrollPosition();
         }
         catch (e) {
+            clearInterval(this.interval);
             console.log(e);
         }
 
