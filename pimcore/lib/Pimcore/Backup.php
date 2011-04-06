@@ -221,7 +221,7 @@ class Pimcore_Backup {
                         }
                     }
 
-                    if (!$exclude) {
+                    if (!$exclude && is_file($file)) {
                         $this->getArchive()->addString($relPath, file_get_contents($file));
                     }
                     else {

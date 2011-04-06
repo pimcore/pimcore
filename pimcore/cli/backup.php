@@ -13,22 +13,36 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+echo "\n";
+
 include_once("startup.php");
 
-$opts = new Zend_Console_Getopt(array(
-    'filename|f=s'    => 'filename for the backup (default: backup_m-d-Y_H-i) .tar is added automatically',
-    'directory|d=s'   => 'target directory (absolute path without trailing slash) for the backup-file (default: ' . PIMCORE_BACKUP_DIRECTORY . ')',
-    'overwrite|o' => 'overwrite existing backup with the same filename, default: true',
-    'cleanup|c=s' => 'in days, backups in the target directory which are older than the given days will be deleted, default 7, use false to disable it',
-    'verbose|v' => 'show detailed information during the backup',
-    'help|h' => 'display this help'
-));
+try {
+    $opts = new Zend_Console_Getopt(array(
+        'filename|f=s'    => 'filename for the backup (default: backup_m-d-Y_H-i) .tar is added automatically',
+        'directory|d=s'   => 'target directory (absolute path without trailing slash) for the backup-file (default: ' . PIMCORE_BACKUP_DIRECTORY . ')',
+        'overwrite|o' => 'overwrite existing backup with the same filename, default: true',
+        'cleanup|c=s' => 'in days, backups in the target directory which are older than the given days will be deleted, default 7, use false to disable it',
+        'verbose|v' => 'show detailed information during the backup',
+        'help|h' => 'display this help'
+    ));
+} catch (Exception $e) {
+    echo "There's a problem with your commandline interface, I will now create a backup with the default configuration.";
+    echo "\n";
+    echo "For details, see the error below:";
+    echo "\n";
+    echo $e->getMessage();
+}
 
 
 try {
     $opts->parse();
 } catch (Zend_Console_Getopt_Exception $e) {
-    
+    echo "There's a problem with your configuration, I will now create a backup with the default configuration.";
+    echo "\n";
+    echo "For details, see the error below:";
+    echo "\n";
+    echo $e->getMessage();
 }
 
 
