@@ -322,7 +322,7 @@ CREATE TABLE `schedule_tasks` (
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `domains` varchar(255) DEFAULT NULL,
+  `domains` text,
   `rootId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`)
