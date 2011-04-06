@@ -37,13 +37,6 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public $height;
 
     /**
-     * Set of allowed classes
-     *
-     * @var array
-     */
-    public $classes;
-
-    /**
      * Type for the column to query
      *
      * @var string
@@ -62,22 +55,6 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @var boolean
      */
     public $relationType = true;
-
-
-    /**
-     * @return array
-     */
-    public function getClasses() {
-        return $this->classes;
-    }
-
-    /**
-     * @param array
-     * @return void $classes
-     */
-    public function setClasses($classes) {
-        $this->classes = $classes;
-    }
 
 
     /**

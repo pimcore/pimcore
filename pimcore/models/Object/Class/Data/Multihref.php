@@ -63,14 +63,6 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public $objectsAllowed;
 
     /**
-     * Set of allowed classes
-     *
-     * @var array
-     */
-    public $classes;
-
-
-    /**
      *
      * @var boolean
      */
@@ -112,23 +104,6 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setObjectsAllowed($objectsAllowed)
     {
         $this->objectsAllowed = $objectsAllowed;
-    }
-
-    /**
-     * @return array
-     */
-    public function getClasses()
-    {
-        return $this->classes;
-    }
-
-    /**
-     * @param array
-     * @return void $classes
-     */
-    public function setClasses($classes)
-    {
-        $this->classes = $classes;
     }
 
     /**

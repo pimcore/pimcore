@@ -28,6 +28,40 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
      */
     public $lazyLoading;
 
+    /**
+     * Set of allowed classes
+     *
+     * @var array
+     */
+    public $classes;
+
+    /**
+     * @return array
+     */
+    public function getClasses() {
+        $this->classes = $this->correctClasses($this->classes);
+        return $this->classes;
+    }
+
+    /**
+     * @param array
+     * @return void $classes
+     */
+    public function setClasses($classes) {
+        $this->classes = $this->correctClasses($classes);
+    }
+
+    /**
+     * this is a hack for import see: http://www.pimcore.org/issues/browse/PIMCORE-790
+     * @param array
+     * @return array
+     */
+    protected function correctClasses ($classes) {
+        if(is_array($classes) && array_key_exists("classes",$classes)) {
+            $classes = array($classes);
+        }
+        return $classes;
+    }
 
     /**
      * @return boolean
