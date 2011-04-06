@@ -1067,6 +1067,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // get list of routes
 
             $list = new Glossary_List();
+            $list->setLimit($this->_getParam("limit"));
+            $list->setOffset($this->_getParam("start"));
+            $list->setOrderKey("text");
+            $list->setOrder("ASC");
+
+            if($this->_getParam("filter")) {
+                $list->setCondition("`text` LIKE '%".$this->_getParam("filter")."%'");
+            }
+
             $list->load();
 
             $glossaries = array();
@@ -1083,7 +1092,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $glossaries[] = $glossary;
             }
 
-            $this->_helper->json(array("data" => $glossaries, "success" => true, "total" => count($glossaries)));
+            $this->_helper->json(array("data" => $glossaries, "success" => true, "total" => $list->getTotalCount()));
         }
 
         $this->_helper->json(false);

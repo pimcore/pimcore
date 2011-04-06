@@ -39,4 +39,15 @@ class Glossary_List_Resource_Mysql extends Pimcore_Model_List_Resource_Mysql_Abs
         $glossarysData = $this->db->fetchAll("SELECT * FROM glossary" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
         return $glossarysData;
     }
+
+    public function getTotalCount() {
+
+        try {
+            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM glossary " . $this->getCondition());
+        } catch (Exception $e) {
+
+        }
+
+        return $amount["amount"];
+    }
 }
