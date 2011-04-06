@@ -22,6 +22,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
         if (!options) {
             options = {};
+            options = {};
         }
 
         this.options = options;
@@ -58,7 +59,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
             toolbar.push(this.urlField);
             toolbar.push({
                 xtype: "button",
-                text: "OK",
+                iconCls: "pimcore_icon_apply",
                 handler: function () {
                     this.data.id = this.urlField.getValue();
                     this.reloadDocument();
@@ -66,6 +67,15 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
             });
         }
 
+
+        toolbar.push({
+            xtype: "button",
+            iconCls: "pimcore_icon_empty",
+            handler: function () {
+                this.data = null;
+                this.reloadDocument();
+            }.bind(this)
+        });
 
         this.element = new Ext.Panel({
             width: this.options.width,
