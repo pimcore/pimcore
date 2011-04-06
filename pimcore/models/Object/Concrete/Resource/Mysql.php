@@ -471,10 +471,10 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
      * @return array
      */
     public function getLatestVersion() {
-        $versionId = $this->db->fetchRow("SELECT id FROM versions WHERE cid = '" . $this->model->getO_Id() . "' AND ctype='object' ORDER BY `id` DESC LIMIT 1");
+        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = '" . $this->model->getO_Id() . "' AND ctype='object' ORDER BY `id` DESC LIMIT 1");
 
-        if ($versionId["id"]) {
-            $version = Version::getById($versionId["id"]);
+        if ($versionData["id"]  && $versionData["date"] != $this->model->getO_modificationDate()) {
+            $version = Version::getById($versionData["id"]);
             return $version;
         }
         return;
