@@ -86,10 +86,18 @@ pimcore.object.classes.klass = Class.create({
             handler: this.save.bind(this)
         });
 
+
+        var name = "";
+        if(this.data.name) {
+            name = this.data.name + " ( ID: " + displayId + ")";
+        } else {
+            name = "ID: " + displayId;
+        }
+
         this.panel = new Ext.Panel({
             border: false,
             layout: "border",
-            title: this.data.name + " ( ID: " + displayId + ")",
+            title: name,
             items: [
                 {
                     region: "west",

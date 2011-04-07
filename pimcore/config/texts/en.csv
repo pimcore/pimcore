@@ -1,4 +1,3 @@
-"auto_reload","Auto Reload"
 "cannot_save_object_please_try_to_edit_the_object_in_detail_view","<b>Cannot save object!</b><br />Please try to edit the object in the detail view."
 "size","Size"
 "select_a_file","Select a file"
@@ -805,3 +804,4 @@
 "remove_variant_text","Do you really want to remove this variant"
 "error_creating_variant","Error creating variant"
 "prevented creating object because object with same path+key already exists","Creating was not possible because variant or object with same path+key already exists"
+"allowed_class_field","Allowed class/field"
