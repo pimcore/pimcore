@@ -44,31 +44,11 @@ pimcore.settings.maintenance = Class.create({
     },
 
     activate: function () {
-
-        Ext.Ajax.request({
-            url: "/admin/misc/maintenance/activate/true"
-        });
-
         this.window.close();
-
-        this.toolbar = pimcore.globalmanager.get("layout_toolbar").toolbar;
-
-        this.deactivateButton = new Ext.Button({
-            text: "DEACTIVATE MAINTENANCE",
-            iconCls: "pimcore_icon_maintenance",
-            cls: "pimcore_main_menu",
-            handler: this.deactivate.bind(this)
-        });
-        this.toolbar.insertButton(5, [this.deactivateButton]);
-        this.toolbar.doLayout();
+        pimcore.helpers.activateMaintenance();
     },
 
     deactivate: function () {
-        Ext.Ajax.request({
-            url: "/admin/misc/maintenance/deactivate/true"
-        });
-
-        this.toolbar.remove(this.deactivateButton);
-        this.toolbar.doLayout();
+        pimcore.helpers.deactivateMaintenance();
     }
 });

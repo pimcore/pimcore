@@ -14,28 +14,28 @@
  */
 
 class Update_IndexController extends Pimcore_Controller_Action_Admin {
-    
-    
+
+
     public function checkFilePermissionsAction () {
         
         $success = false;
         if(Pimcore_Update::isWriteable()) {
             $success = true;
         }
-        
+
         $this->_helper->json(array(
             "success" => $success
         ));
     }
     
     public function getAvailableUpdatesAction () {
-        
+
         $availableUpdates = Pimcore_Update::getAvailableUpdates();
         $this->_helper->json($availableUpdates);
     }
     
     public function getJobsAction () {
-        
+
         $jobs = Pimcore_Update::getJobs($this->_getParam("toRevision"));
         
         $this->_helper->json($jobs);

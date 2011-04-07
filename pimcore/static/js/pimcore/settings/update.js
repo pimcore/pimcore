@@ -232,7 +232,9 @@ pimcore.settings.update = Class.create({
         }));
         this.window.doLayout();        
         
-        
+
+        pimcore.helpers.activateMaintenance();
+
         Ext.Ajax.request({
             url: "/admin/update/index/get-jobs",
             success: this.prepareJobs.bind(this),
@@ -403,7 +405,7 @@ pimcore.settings.update = Class.create({
     },
     
     finished: function () {
-        
+
         var message = "<b>Update complete!</b><br />Now it's time to reload pimcore.<br /><br />";
         if(this.proceduralJobsMessages.length > 0) {
             message += '<b>Upgrade Notes</b><br /><div class="pimcore_update_message">';
@@ -420,7 +422,9 @@ pimcore.settings.update = Class.create({
             html: message
         }));
         this.window.doLayout();   
-        
+
+
+        pimcore.helpers.deactivateMaintenance();
         
         window.setTimeout(function () {
             Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {

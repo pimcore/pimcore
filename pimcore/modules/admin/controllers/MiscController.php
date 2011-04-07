@@ -294,29 +294,16 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function maintenanceAction()
     {
-
-        $file = PIMCORE_CONFIGURATION_DIRECTORY . "/maintenance.xml";
-
         if ($this->_getParam("activate")) {
-
-            $config = new Zend_Config(array(
-                   "sessionId" => session_id()
-            ), true);
-
-            $writer = new Zend_Config_Writer_Xml(array(
-                  "config" => $config,
-                  "filename" => $file
-            ));
-            $writer->write();
-            chmod($file, 0777); // so it can be removed also via FTP, ...
+            Pimcore_Tool_Admin::activateMaintenanceMode();
         }
 
         if ($this->_getParam("deactivate")) {
-            unlink($file);
+            Pimcore_Tool_Admin::deactivateMaintenanceMode();
         } 
 
         $this->_helper->json(array(
-              "success" => $success
+              "success" => true
         ));
     }
 
