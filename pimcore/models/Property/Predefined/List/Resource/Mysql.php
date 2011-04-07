@@ -24,6 +24,7 @@ class Property_Predefined_List_Resource_Mysql extends Pimcore_Model_List_Resourc
      */
     public function load() {
 
+        $properties = array();
         $propertiesData = $this->db->fetchAll("SELECT id FROM properties_predefined" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
         foreach ($propertiesData as $propertyData) {
