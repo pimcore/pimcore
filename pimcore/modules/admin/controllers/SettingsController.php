@@ -549,6 +549,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // get list of routes
 
             $list = new Staticroute_List();
+
+            $list->setLimit($this->_getParam("limit"));
+            $list->setOffset($this->_getParam("start"));
+            $list->setOrderKey("name");
+            $list->setOrder("ASC");
+
+            if($this->_getParam("filter")) {
+                $list->setCondition("`name` LIKE '%".$this->_getParam("filter")."%' OR `pattern` LIKE '%".$this->_getParam("filter")."%' OR `reverse` LIKE '%".$this->_getParam("filter")."%' OR `controller` LIKE '%".$this->_getParam("filter")."%' OR `action` LIKE '%".$this->_getParam("filter")."%'");
+            }
+            
             $list->load();
 
             $routes = array();
