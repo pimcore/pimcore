@@ -27,19 +27,62 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public static $types = array(self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT);
 
-
+    /**
+     * @var bool
+     */
     private static $hidePublished = false;
+
+    /**
+     * @var bool
+     */
+    private static $getInheritedValues = false;
+
+    /**
+     * @static
+     * @return bool
+     */
+    public static function getHideUnpublished() {
+        return self::$hidePublished;
+    }
+
+    /**
+     * @static
+     * @param  $hidePublished
+     * @return void
+     */
     public static function setHideUnpublished($hidePublished) {
         self::$hidePublished = $hidePublished;
     }
+
+    /**
+     * @static
+     * @return bool
+     */
     public static function doHideUnpublished() {
         return self::$hidePublished;
     }
 
-    private static $getInheritedValues = false;
+    /**
+     * @static
+     * @param  $getInheritedValues
+     * @return void
+     */
     public static function setGetInheritedValues($getInheritedValues) {
         self::$getInheritedValues = $getInheritedValues;
     }
+
+    /**
+     * @static
+     * @return bool
+     */
+    public static function getGetInheritedValues() {
+        return self::$getInheritedValues;
+    }
+
+    /**
+     * @static
+     * @return bool
+     */
     public static function doGetInheritedValues() {
         return self::$getInheritedValues;
     }
@@ -495,6 +538,10 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function save() {
 
+        // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
+        $hideUnpublishedBackup = self::getHideUnpublished();
+        self::setHideUnpublished(false);
+
         if(!Pimcore_Tool::isValidKey($this->getKey())){
             throw new Exception("invalid key for object with id [ ".$this->getId()." ]");
         }
@@ -509,6 +556,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
             $this->update();
         }
+
+        self::setHideUnpublished($hideUnpublishedBackup);
     }
     
     

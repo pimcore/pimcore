@@ -112,7 +112,7 @@ class Object_Concrete extends Object_Abstract {
     /**
      * @return void
      */
-    public function update() {
+    protected function update() {
 
 
         $fieldDefintions = $this->getO_class()->getFieldDefinitions();
