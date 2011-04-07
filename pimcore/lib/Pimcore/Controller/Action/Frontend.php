@@ -199,7 +199,21 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     $translate = new Pimcore_Translate($locale);
                     Pimcore_Model_Cache::save($translate, $cacheKey, array("translator","translator_website","translate"));
                 }
-                $translate->setLocale($locale);
+
+                if(Pimcore_Tool::isValidLanguage($locale)) {
+                    $translate->setLocale($locale);    
+                } else {
+                    Logger::error("You want to use an invalid language which is not defined in the system settings: " . $locale);
+                    // fall back to the first (default) language defined
+                    $languages = Pimcore_Tool::getValidLanguages();
+                    if($languages[0]) {
+                        Logger::error("Using '" . $languages[0] . "' as a fallback, because the language '".$locale."' is not defined in system settings");
+                        $translate->setLocale($languages[0]);
+                    } else {
+                        throw new Exception("You have not defined a language in the system settings (Website -> Frontend-Languages), please add at least one language.");
+                    }
+                }
+
 
                 // register the translator in Zend_Registry with the key "Zend_Translate" to use the translate helper for Zend_View
                 Zend_Registry::set("Zend_Translate", $translate);
