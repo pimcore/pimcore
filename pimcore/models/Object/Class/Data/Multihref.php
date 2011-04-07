@@ -192,26 +192,10 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
 
             $counter = 1;
             foreach ($data as $object) {
-                if ($object instanceof Object_Abstract) {
-                    $return[] = array(
-                        "dest_id" => $object->getO_id(),
-                        "type" => "object",
-                        "fieldname" => $this->getName(),
-                        "index" => $counter
-                    );
-                }
-                if ($object instanceof Asset) {
+                if ($object instanceof Element_Interface) {
                     $return[] = array(
                         "dest_id" => $object->getId(),
-                        "type" => "asset",
-                        "fieldname" => $this->getName(),
-                        "index" => $counter
-                    );
-                }
-                if ($object instanceof Document) {
-                    $return[] = array(
-                        "dest_id" => $object->getId(),
-                        "type" => "document",
+                        "type" => Element_Service::getElementType($object),
                         "fieldname" => $this->getName(),
                         "index" => $counter
                     );

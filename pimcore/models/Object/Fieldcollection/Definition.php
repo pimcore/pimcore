@@ -16,10 +16,6 @@
  */
 
 class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
-
-    protected static $psfFolder = "fieldcollections";
-
-
     
     /**
      * @var string
@@ -141,7 +137,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
     
     
     public static function getByKey ($key) {
-        $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/" . self::$psfFolder;
+        $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
         
         $fieldFile = $fieldCollectionFolder . "/" . $key . ".psf";
         if(is_file($fieldFile)) {
@@ -160,7 +156,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
             throw new Exception("A field-collection needs a key to be saved!");
         }
         
-        $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/" . self::$psfFolder;
+        $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
         
         // create folder if not exist
         if(!is_dir($fieldCollectionFolder)) {

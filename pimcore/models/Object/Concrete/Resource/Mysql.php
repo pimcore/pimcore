@@ -90,7 +90,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
      */
     public function getRelationIds($fieldName) {
         $relations = array();
-        $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getO_classId() . " WHERE fieldname = ? AND src_id = ? ORDER BY `index` ASC", array($fieldName, $this->model->getO_id()));
+        $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getO_classId() . " WHERE fieldname = ? AND src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", array($fieldName, $this->model->getO_id()));
         foreach ($allRelations as $relation) {
             $relations[] = $relation["dest_id"];
         }
@@ -123,6 +123,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
         $relations = $this->db->fetchAll("SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index
             FROM objects o, object_relations_" . $classId . " r
             WHERE r.fieldname= ?
+            AND r.ownertype = 'object'
             AND r." . $src . " = ?
             AND o.o_id = r." . $dest . "
             AND r.type='object'
@@ -130,6 +131,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
             UNION SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index
             FROM assets a, object_relations_" . $classId . " r
             WHERE r.fieldname= ?
+            AND r.ownertype = 'object'
             AND r." . $src . " = ?
             AND a.id = r." . $dest . "
             AND r.type='asset'
@@ -137,6 +139,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
             UNION SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index
             FROM documents d, object_relations_" . $classId . " r
             WHERE r.fieldname= ?
+            AND r.ownertype = 'object'
             AND r." . $src . " = ?
             AND d.id = r." . $dest . "
             AND r.type='document'
@@ -158,7 +161,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
 
         $data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getO_classId() . ' WHERE oo_id = ?', $this->model->getO_id());
 
-        $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getO_classId() . " WHERE src_id = ? ORDER BY `index` ASC", $this->model->getO_id());
+        $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getO_classId() . " WHERE src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", $this->model->getO_id());
 
         foreach ($this->model->geto_class()->getFieldDefinitions() as $key => $value) {
 
@@ -282,9 +285,9 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
         // update data for store table
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
-            $this->db->delete("object_relations_" . $this->model->getO_classId(), "src_id = '" . $this->model->getO_id() . "' AND fieldname not in (" . $untouchables . ")");
+            $this->db->delete("object_relations_" . $this->model->getO_classId(), "src_id = '" . $this->model->getO_id() . "' AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'");
         } else {
-            $this->db->delete("object_relations_" . $this->model->getO_classId(), "src_id = '" . $this->model->getO_id() . "'");
+            $this->db->delete("object_relations_" . $this->model->getO_classId(), "src_id = '" . $this->model->getO_id() . "' AND ownertype = 'object'");
         }
 
         $data = array();
@@ -300,6 +303,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
                 if (is_array($relations) && !empty($relations)) {
                     foreach ($relations as $relation) {
                         $relation["src_id"] = $this->model->getId();
+                        $relation["ownertype"] = "object";
 
                         /*relation needs to be an array with src_id, dest_id, type, fieldname*/
                         try {

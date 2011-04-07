@@ -89,6 +89,10 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
     private $active = true;
 
 
+    public function __construct() {
+        $this->init();
+    }
+
     /**
      * @return integer
      */
@@ -299,7 +303,7 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
     /**
      * initializes user object
      */
-    private function init() {
+    public function init() {
 
         //set parent
         if ($this->getParentId() > 0) {

@@ -156,15 +156,27 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
 			  PRIMARY KEY  (`oo_id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
 
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
-			  `src_id` int(11) NOT NULL default '0',
-			  `dest_id` int(11) NOT NULL default '0',
-			  `type` varchar(20) NOT NULL default '0',
-			  `fieldname` varchar(255) NOT NULL default '0',
-              `index` int(11) unsigned NOT NULL default '0',
-			  PRIMARY KEY  (`src_id`, `dest_id`, `type`, `fieldname`),
-              INDEX `index` (`index`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+            $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
+              `src_id` int(11) NOT NULL DEFAULT '0',
+              `dest_id` int(11) NOT NULL DEFAULT '0',
+              `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
+              `fieldname` varchar(255) NOT NULL DEFAULT '0',
+              `index` int(11) unsigned NOT NULL DEFAULT '0',
+              `ownertype` enum('object','fieldcollection','localizedfield') NOT NULL DEFAULT 'object',
+              `ownername` varchar(70) NOT NULL DEFAULT '',
+              `position` int(11) NOT NULL DEFAULT '0',
+              PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`),
+              KEY `index` (`index`),
+              KEY `src_id` (`src_id`),
+              KEY `dest_id` (`dest_id`),
+              KEY `fieldname` (`fieldname`),
+              KEY `position` (`position`),
+              KEY `ownertype` (`ownertype`),
+              KEY `type` (`type`),
+              KEY `ownername` (`ownername`)
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+
+
 
 
         $existingColumns = $this->getValidTableColumns($objectTable, false); // no caching of table definition
@@ -236,9 +248,11 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
                     
                     if($emptyRelations) {
                         $tableRelation = "object_relations_" . $this->model->getId();
-                        $this->db->delete($tableRelation, "fieldname = '" . $value . "'");
-                        $this->logSql("DELETE FROM ".$tableRelation." WHERE fieldname = '" . $value . "';"); // only for logging
+                        $this->db->delete($tableRelation, "fieldname = '" . $value . "' AND ownertype = 'object'");
+                        $this->logSql("DELETE FROM ".$tableRelation." WHERE fieldname = '" . $value . "' AND ownertype = 'object';"); // only for logging
                     }
+
+                    // @TODO: remove localized fields and fieldcollections
                 }
             }
         }
@@ -381,7 +395,12 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
         }
         $this->dbexec("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
 
-
+        // objectbrick tables
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_brick_%_" . $this->model->getId() . "'");
+        foreach ($allTables as $table) {
+            $brickTable = current($table);
+            $this->dbexec("DROP TABLE `".$brickTable."`");
+        }
         
         @unlink(PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf");
     }

@@ -288,8 +288,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-                                  "success" => $success
-                             ));
+              "success" => $success
+        ));
     }
 
     public function maintenanceAction()
@@ -300,22 +300,24 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         if ($this->_getParam("activate")) {
 
             $config = new Zend_Config(array(
-                                           "sessionId" => session_id()
-                                      ), true);
+                   "sessionId" => session_id()
+            ), true);
 
             $writer = new Zend_Config_Writer_Xml(array(
-                                                      "config" => $config,
-                                                      "filename" => $file
-                                                 ));
+                  "config" => $config,
+                  "filename" => $file
+            ));
             $writer->write();
             chmod($file, 0777); // so it can be removed also via FTP, ...
         }
 
         if ($this->_getParam("deactivate")) {
             unlink($file);
-        }
+        } 
 
-        exit;
+        $this->_helper->json(array(
+              "success" => $success
+        ));
     }
 
     public function testAction()

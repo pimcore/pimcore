@@ -323,4 +323,133 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("fieldcollections" => $list));
     }
 
+
+
+    /**
+     * OBJECT BRICKS
+     */
+
+    public function objectbrickGetAction() {
+        $fc = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
+        $this->_helper->json($fc);
+    }
+
+    public function objectbrickUpdateAction() {
+
+
+        $fc = new Object_Objectbrick_Definition();
+        $fc->setKey($this->_getParam("key"));
+
+        if ($this->_getParam("values")) {
+            $values = Zend_Json::decode($this->_getParam("values"));
+
+            $fc->setParentClass($values["parentClass"]);
+            $fc->setClassDefinitions($values["classDefinitions"]);
+        }
+
+        if ($this->_getParam("configuration")) {
+            $configuration = Zend_Json::decode($this->_getParam("configuration"));
+
+            $configuration["datatype"] = "layout";
+            $configuration["fieldtype"] = "panel";
+
+            $layout = Object_Class_Service::generateLayoutTreeFromArray($configuration);
+            $fc->setLayoutDefinitions($layout);
+        }
+
+
+        $fc->save();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function importObjectbrickAction() {
+
+        $objectBrick = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
+
+        $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+        $conf = new Zend_Config_Xml($data);
+        $importData = $conf->toArray();
+
+        $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+        $objectBrick->setLayoutDefinitions($layout);
+        $objectBrick->save();
+
+        $this->removeViewRenderer();
+
+        $this->_helper->json(array(
+            "success" => true
+        ));
+
+    }
+
+    public function exportObjectbrickAction() {
+
+        $this->removeViewRenderer();
+        $objectBrick = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
+        if (!$objectBrick instanceof Object_Objectbrick_Definition) {
+            $errorMessage = ": Object-Brick with id [ " . $this->_getParam("id") . " not found. ]";
+            Logger::error(get_class($this) . $errorMessage);
+            echo $errorMessage;
+        } else {
+            $xml = Object_Class_Service::generateFieldCollectionXml($objectBrick);
+            header("Content-type: application/xml");
+            header("Content-Disposition: attachment; filename=\"class_" . $objectBrick->getKey() . "_export.xml\"");
+            echo $xml;
+        }
+
+    }
+
+    public function objectbrickDeleteAction() {
+        $fc = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
+        $fc->delete();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function objectbrickTreeAction() {
+        $list = new Object_Objectbrick_Definition_List();
+        $list = $list->load();
+
+        $items = array();
+
+        foreach ($list as $fc) {
+            $items[] = array(
+                "id" => $fc->getKey(),
+                "text" => $fc->getKey()
+            );
+        }
+
+        $this->_helper->json($items);
+    }
+
+    public function objectbrickListAction() {
+        $list = new Object_Objectbrick_Definition_List();
+        $list = $list->load();
+
+        if ($this->_hasParam("class_id") && $this->_hasParam("field_name")) {
+            $filteredList = array();
+            $classId = $this->_getParam("class_id");
+            $fieldname = $this->_getParam("field_name");
+            foreach ($list as $type) {
+                $clsDefs = $type->getClassDefinitions();
+                if(!empty($clsDefs)) {
+                    foreach($clsDefs as $cd) {
+
+                        if($cd["classname"] == $classId && $cd["fieldname"] == $fieldname) {
+                            $filteredList[] = $type;
+                            continue;
+                        }
+
+                    }
+
+                }
+            }
+
+            $list = $filteredList;
+        }
+        $this->_helper->json(array("objectbricks" => $list));
+    }
+
+
 }

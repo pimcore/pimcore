@@ -112,5 +112,21 @@ class Pimcore_Tool_Admin {
         return $dialect;
     }
 
-    
+    /**
+     * Activates the maintenance mode, this means that only
+     *
+     * @static
+     * @param  $sessionId
+     * @return void
+     */
+    public static function maintenanceModeActivate ($sessionId) {
+
+    }
+
+    /*
+     *
+     */
+    public static function maintenanceModeDeactivate () {
+
+    }
 }

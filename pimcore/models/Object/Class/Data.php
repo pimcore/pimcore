@@ -606,4 +606,26 @@ abstract class Object_Class_Data {
 
         return $code;
     }
+
+
+
+    //todo Needed for ObjectBricks in ObjectController - maybe there is an other, better solution for this
+    /**
+     * @var Object_Concrete
+     */
+    private $object;
+    public function setObject($object)
+    {
+        $this->object = $object;
+    }
+
+    public function getObject()
+    {
+        return $this->object;
+    }
+
+
+
+
+
 }

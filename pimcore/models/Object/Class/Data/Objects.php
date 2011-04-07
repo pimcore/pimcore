@@ -79,7 +79,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
                 if ($object instanceof Object_Concrete) {
                     $return[] = array(
                         "dest_id" => $object->getO_id(), 
-                        "type" => "object", 
+                        "type" => "object",
                         "fieldname" => $this->getName(),
                         "index" => $counter
                     );

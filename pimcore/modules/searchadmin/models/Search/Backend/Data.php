@@ -326,6 +326,9 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setDataFromElement($element){
+
+            $this->data = null;
+
             $this->id = new Search_Backend_Data_Id($element);
             $this->fullPath = $element->getFullPath();
             $this->creationDate=$element->getCreationDate();

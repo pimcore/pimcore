@@ -71,7 +71,7 @@ class Object_Fieldcollection_Definition_Resource_Mysql extends Pimcore_Model_Res
     }
     
     // @TODO the following methods dublicates Object_Class_Resource_Mysql
-    private function getDefaultValueAndNullableForField ($field) {
+    protected function getDefaultValueAndNullableForField ($field) {
         
         $nullable = "NULL";
         if ($field->getMandatory()) {
@@ -88,7 +88,7 @@ class Object_Fieldcollection_Definition_Resource_Mysql extends Pimcore_Model_Res
         return array($defaultvalue, $nullable);
     }
     
-    private function addIndexToField ($field, $table) {
+    protected function addIndexToField ($field, $table) {
         
         if ($field->getIndex()) {
             if (is_array($field->getColumnType())) {
@@ -125,9 +125,10 @@ class Object_Fieldcollection_Definition_Resource_Mysql extends Pimcore_Model_Res
         }
     }
     
-    private function addModifyColumn ($table, $colName, $type, $default, $null) {
+    protected function addModifyColumn ($table, $colName, $type, $default, $null) {
         
         $existingColumns = $this->getValidTableColumns($table, false);
+
         $existingColName = null;
 
         // check for existing column case insensitive eg a rename from myInput to myinput
@@ -135,15 +136,15 @@ class Object_Fieldcollection_Definition_Resource_Mysql extends Pimcore_Model_Res
         if(is_array($matchingExisting) && !empty($matchingExisting)) {
             $existingColName = current($matchingExisting);
         }
-
         if ($existingColName === null) {
             $this->dbexec('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         } else {
             $this->dbexec('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         }
+
     }
     
-    private function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns) {
+    protected function removeUnusedColumns ($table, $columnsToRemove, $protectedColumns) {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {
@@ -154,12 +155,12 @@ class Object_Fieldcollection_Definition_Resource_Mysql extends Pimcore_Model_Res
         }
     }
     
-    private function dbexec($sql) {
+    protected function dbexec($sql) {
         $this->db->exec($sql);
         $this->logSql($sql);
     }
     
-    private function logSql ($sql) {
+    protected function logSql ($sql) {
         $this->_sqlChangeLog[] = $sql;
     }
     

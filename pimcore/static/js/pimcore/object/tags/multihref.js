@@ -34,6 +34,9 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 }.bind(this),
                 remove: function() {
                     this.dataChanged = true;
+                }.bind(this),
+                clear: function () {
+                    this.dataChanged = true;
                 }.bind(this)
             },
             fields: [
