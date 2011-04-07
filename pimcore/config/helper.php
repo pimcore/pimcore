@@ -14,7 +14,7 @@
  */
 
 function object2array($node) {
-    // dirty hack
+    // dirty hack, should be replaced
     $paj = @Zend_Json::encode($node);
     return @Zend_Json::decode($paj);
 }
