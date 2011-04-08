@@ -353,7 +353,6 @@ pimcore.settings.redirects = Class.create({
         var values = this.wizardForm.getForm().getFieldValues();
         var pattern = preg_quote(values.pattern);
         pattern = str_replace("/","\\/",pattern);
-        console.log(pattern);
 
         if(values.mode == "begin") {
             source = "/^" + pattern + "/";
