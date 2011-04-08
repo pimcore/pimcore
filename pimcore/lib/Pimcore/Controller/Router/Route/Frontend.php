@@ -214,6 +214,8 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         }
 
                         $matchFound = true;
+                        Staticroute::setCurrentRoute($route);
+
                         break;
                     }
                 }

@@ -62,6 +62,17 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public $priority;
 
+
+    private static $_currentRoute;
+
+    public static function setCurrentRoute($route) {
+        self::$_currentRoute = $route;
+    }
+
+    public static function getCurrentRoute() {
+        return self::$_currentRoute;
+    }
+
     /**
      * @param integer $id
      * @return Staticroute

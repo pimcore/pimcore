@@ -18,11 +18,37 @@
 class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
     
     
-    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    public function url($urlOptions = array(), $name = null, $reset = false, $encode = true)
     {
-        if($route = Staticroute::getByName($name)) {
+        if(!$urlOptions) {
+            $urlOptions = array();
+        }
+
+        if(!$name) {
+            if(Staticroute::getCurrentRoute() instanceof Staticroute) {
+                $name = Staticroute::getCurrentRoute()->getName();
+            }
+        }
+
+        if($name && $route = Staticroute::getByName($name)) {
             return $route->assemble($urlOptions, $reset, $encode);
         }
+
+
+        // this is to add support for arrays as values for the default Zend_View_Helper_Url
+        $unset = array(); 
+        foreach ($urlOptions as $optionName => $optionValues) {
+            if (is_array($optionValues)) {
+                foreach ($optionValues as $key => $value) {
+                    $urlOptions[$optionName . "[" . $key . "]"] = $value;
+                }
+                $unset[] = $optionName;
+            }
+        }
+        foreach ($unset as $optionName) {
+            unset($urlOptions[$optionName]);
+        }
+
         
         return parent::url($urlOptions, $name, $reset, $encode);
     }    
