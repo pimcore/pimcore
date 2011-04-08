@@ -193,7 +193,8 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
             return Element_Service::getElementById($data[$this->getName()."__type"],$data[$this->getName()."__id"]);        
         }        
         
-        // data from relation table                
+        // data from relation table
+        $data = is_array($data) ? $data : array();
         $data = current($data);
 
         if ($data["dest_id"] && $data["type"]) {

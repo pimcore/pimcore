@@ -24,6 +24,8 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
     public function save () {
         $this->delete();
 
+        $object = $this->model->getObject();
+
         foreach ($this->model->getItems() as $language => $items) {
 
             $insertData = array(
@@ -32,7 +34,28 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
             );
 
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
-                $insertData[$fd->getName()] = $fd->getDataForResource($items[$fd->getName()]);
+                if($fd->isRelationType()) {
+
+                    $relations = $fd->getDataForResource($items[$fd->getName()]);
+
+                    if (is_array($relations) && !empty($relations)) {
+                        foreach ($relations as $relation) {
+                            $relation["src_id"] = $object->getId();
+                            $relation["ownertype"] = "localizedfield";
+                            $relation["ownername"] = "localizedfield";
+                            $relation["position"] = $language;
+
+                            /*relation needs to be an array with src_id, dest_id, type, fieldname*/
+                            try {
+                                $this->db->insert("object_relations_" . $object->getO_classId(), $relation);
+                            } catch (Exception $e) {
+                                Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
+                            }
+                        }
+                    }
+                } else {
+                    $insertData[$fd->getName()] = $fd->getDataForResource($items[$fd->getName()]);
+                }
             }
             
             $this->db->insert($this->getTableName(), $insertData);
@@ -46,6 +69,9 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
         } catch (Exception $e) {
             $this->createUpdateTable();
         }
+
+        // remove relations
+        $this->db->delete("object_relations_" . $this->model->getObject()->getO_classId(), "ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = '".$this->model->getObject()->getId()."'");
     }
 
     public function load () {
@@ -56,6 +82,23 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
         foreach ($data as $row) {
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
                 $items[$row["language"]][$fd->getName()] = $fd->getDataFromResource($row[$fd->getName()]);
+            }
+        }
+
+        // fill relations
+        $relData = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getObject()->getO_classId() . " WHERE ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = '".$this->model->getObject()->getId()."'");
+        $relations = array();
+        foreach ($relData as $rel) {
+            $relations[$rel["position"]][$rel["fieldname"]][] = $rel;
+        }
+
+        foreach ($relations as $language => $fields) {
+            foreach ($fields as $name => $value) {
+                $fd = $this->model->getClass()->getFielddefinition("localizedfields")->getFieldDefinition($name);
+                if(!is_array($value)) {
+                    $value = array();
+                }
+                $items[$language][$name] = $fd->getDataFromResource($value);
             }
         }
 
@@ -86,7 +129,10 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
 
         $concats = array();
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
-            $concats[] = "group_concat(" . $this->getTableName() . "." . $fd->getName() . ") AS `" . $fd->getName() . "`";
+            // only add non-relational fields to the group-concat
+            if(!$fd->isRelationType()) {
+                $concats[] = "group_concat(" . $this->getTableName() . "." . $fd->getName() . ") AS `" . $fd->getName() . "`";
+            }
         }
 
         // and now the default view for query where the locale is missing
@@ -109,6 +155,11 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
         $protectedColums = array("ooo_id", "language");
 
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $value) {
+
+            // continue to the next field if the current one is a relational field
+            if($value->isRelationType()) {
+                continue;
+            }
 
             $key = $value->getName();
 
