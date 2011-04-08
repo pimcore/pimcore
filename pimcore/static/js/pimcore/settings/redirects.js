@@ -207,9 +207,19 @@ pimcore.settings.redirects = Class.create({
             bbar: this.pagingtoolbar,
             tbar: [
                 {
+                    xtype: "splitbutton",
                     text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
+                    iconCls: "pimcore_icon_add",
+                    handler: this.openWizard.bind(this),
+                    menu: [{
+                        iconCls: "pimcore_icon_add",
+                        text: t("add_expert_mode"),
+                        handler: this.onAdd.bind(this)
+                    },{
+                        iconCls: "pimcore_icon_add",
+                        text: t("add_beginner_mode"),
+                        handler: this.openWizard.bind(this)
+                    }]
                 },
                 '-',
                 {
@@ -272,7 +282,7 @@ pimcore.settings.redirects = Class.create({
 
     onAdd: function (btn, ev) {
         var u = new this.grid.store.recordType({
-            name: t('/')
+            source: ""
         });
         this.grid.store.insert(0, u);
 
@@ -289,6 +299,80 @@ pimcore.settings.redirects = Class.create({
 
 
         this.updateRows();
+    },
+
+    openWizard: function () {
+
+        this.wizardForm = new Ext.form.FormPanel({
+            xtype: "form",
+            bodyStyle: "padding:10px;",
+            items: [{
+                xtype:"compositefield",
+                items: [{
+                    xtype: "combo",
+                    name: "mode",
+                    store: [
+                        ["begin", t("beginning_with")],
+                        ["exact", t("matching_exact")],
+                        ["contain", t("contain")],
+                        ["begin_end_slash", t("beginning_with_ending_with_optional_slash")]
+                    ],
+                    mode: "local",
+                    typeAhead: false,
+                    editable: false,
+                    forceSelection: true,
+                    triggerAction: "all",
+                    emptyText: t("select")
+                }, {
+                    xtype: "textfield",
+                    name: "pattern",
+                    fieldLabel: t("pattern"),
+                    width: 320,
+                    emptyText: "/some/example/path"
+                }]
+            }]
+        });
+
+        this.wizardWindow = new Ext.Window({
+            width: 650,
+            modal:true,
+            items: [this.wizardForm],
+            buttons: [{
+                text: t("save"),
+                iconCls: "pimcore_icon_accept",
+                handler: this.saveWizard.bind(this)
+            }]
+        });
+
+        this.wizardWindow.show();
+    },
+
+    saveWizard: function () {
+
+        var source = "";
+        var values = this.wizardForm.getForm().getFieldValues();
+        var pattern = preg_quote(values.pattern);
+        pattern = str_replace("/","\\/",pattern);
+        console.log(pattern);
+
+        if(values.mode == "begin") {
+            source = "/^" + pattern + "/";
+        } else if (values.mode == "exact") {
+            source = "/^" + pattern + "$";
+        } else if (values.mode == "contain") {
+            source = "/" + pattern + "/";
+        } else if (values.mode == "begin_end_slash") {
+            source = "/^" + pattern + "[\\/]?$/";
+        }
+
+        var u = new this.grid.store.recordType({
+            source: source
+        });
+        this.grid.store.insert(0, u);
+
+		this.updateRows();
+
+        this.wizardWindow.close();
     }
 
 });
