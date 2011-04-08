@@ -56,6 +56,8 @@ pimcore.object.classes.data.data = Class.create({
                 fieldLabel: t("name"),
                 name: "name",
                 width: 300,
+                maxLength: 70,
+                autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
                 enableKeyEvents: true,
                 value: this.datax.name
             },
