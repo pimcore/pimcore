@@ -338,6 +338,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     isDirty: function() {
+        return true;
         return this.dirty;
     }    
 });

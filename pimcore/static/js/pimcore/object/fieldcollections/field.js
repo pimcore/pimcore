@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.object.fieldcollections.field");
 pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klass, {
 
-    disallowedDataTypes: ["multihref","objects","nonownerobjects","user","fieldcollections","href","localizedfields"],
+    disallowedDataTypes: ["nonownerobjects","user","fieldcollections","localizedfields"],
     uploadUrl: '/admin/class/import-fieldcollection/',
     exportUrl: "/admin/class/export-fieldcollection",
 

@@ -601,7 +601,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
     private $objectData;
     private $metaData;
-    
+
     private function getDataForObject(Object_Concrete $object) {
         foreach ($object->getClass()->getFieldDefinitions() as $key => $def) {
             $this->getDataForField($object, $key, $def);
@@ -617,7 +617,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
      * @return void
      */
     private function getDataForField($object, $key, $fielddefinition, $level = 0) {
-        $parent = Object_Service::hasInheritableParentObject($object); 
+        $parent = Object_Service::hasInheritableParentObject($object);
         $getter = "get" . ucfirst($key);
         if (method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading()) {
 
@@ -726,7 +726,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $parent = Object_Abstract::getById($this->_getParam("parentId"));
         $parent->getPermissionsForUser($this->getUser());
 
-        $message = ""; 
+        $message = "";
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getFullPath() . "/" . $this->_getParam("key");
             $equalObject = Object_Abstract::getByPath($intendedPath);
@@ -935,7 +935,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $object->setUserModification($this->getUser()->getId());
 
         // data
-        if ($this->_getParam("data")) {
+        if ($this->_getParam("data")) {  
 
             $data = Zend_Json::decode($this->_getParam("data"));
             foreach ($data as $key => $value) {
@@ -1346,10 +1346,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 // currently not supported
 
                 /*$id = Zend_Json::decode($this->_getParam("data"));
- 
+
                 $object = Object_Abstract::getById($id);
                 $object->delete();
- 
+
                 $this->_helper->json(array("success" => true, "data" => array()));
                 */
             }

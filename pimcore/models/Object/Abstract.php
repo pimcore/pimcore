@@ -249,7 +249,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                         $object = new $concreteClassName();
                         Zend_Registry::set($cacheKey, $object);
                         $object->getResource()->getById($id);
-                        
+
                         Pimcore_Model_Cache::save($object, $cacheKey);
                     }
                     else {
@@ -281,7 +281,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         if(!$object) {
             return null;
         }
-        
+
         return $object;
     }
 

@@ -30,12 +30,36 @@ class Object_Fieldcollection_Data_Resource_Mysql extends Pimcore_Model_Resource_
             
             foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
                 $getter = "get" . ucfirst($fd->getName());
-                
-                if (is_array($fd->getColumnType())) {
-                    $insertDataArray = $fd->getDataForResource($this->model->$getter());
-                    $data = array_merge($data, $insertDataArray);
+
+                if ($fd->isRelationType()) {
+
+                    if (method_exists($this->model, $getter)) {
+                        $relations = $fd->getDataForResource($this->model->$getter());
+                    }
+
+                    if (is_array($relations) && !empty($relations)) {
+                        foreach ($relations as $relation) {
+                            $relation["src_id"] = $object->getId();
+                            $relation["ownertype"] = "fieldcollection";
+                            $relation["ownername"] = $this->model->getFieldname();
+                            $relation["position"] = $this->model->getIndex();
+
+                            /*relation needs to be an array with src_id, dest_id, type, fieldname*/
+                            try {
+                                $this->db->insert("object_relations_" . $object->getO_classId(), $relation);
+                            } catch (Exception $e) {
+                                Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
+                            }
+                        }
+                    }
                 } else {
-                    $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter());
+
+                    if (is_array($fd->getColumnType())) {
+                        $insertDataArray = $fd->getDataForResource($this->model->$getter());
+                        $data = array_merge($data, $insertDataArray);
+                    } else {
+                        $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter());
+                    }
                 }
             }
             

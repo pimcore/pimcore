@@ -278,7 +278,7 @@ pimcore.object.classes.klass = Class.create({
             button: [],
             text: [],
             root: ["panel","region","tabpanel","accordion","text"],
-            localizedfields: ["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg","textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect", "countrymultiselect","languagemultiselect"]
+            localizedfields: ["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg","textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect", "countrymultiselect","languagemultiselect","objects","multihref","href"]
         };
 
         var parentType = "root";

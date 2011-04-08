@@ -379,8 +379,10 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         $tags = array();
         
         if ($data instanceof Document || $data instanceof Asset || $data instanceof Object_Abstract) {
-            if ($data->getId() != $ownerObject->getId() and !in_array($data->getCacheTag(), $blockedTags)) {
-                $tags = array_merge($tags, $data->getCacheTags($blockedTags));
+            if (!in_array($data->getCacheTag(), $blockedTags)) {
+                if(!$ownerObject instanceof Element_Interface || $data->getId() != $ownerObject->getId()) {
+                    $tags = array_merge($tags, $data->getCacheTags($blockedTags));
+                }
             }
         }
         

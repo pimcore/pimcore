@@ -40,7 +40,9 @@ class Object_Fieldcollection_Resource_Mysql extends Pimcore_Model_Resource_Mysql
                 $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = '".$object->getId()."' AND fieldname = '".$this->model->getFieldname()."' ORDER BY `index` ASC");
             } catch (Exception $e) {
                 $results = array();
-            }            
+            }
+
+            $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'fieldcollection' AND ownername = '" . $this->model->getFieldname() . "' ORDER BY `index` ASC", $object->getO_id());
             
             $fieldDefinitions = $definition->getFieldDefinitions();
             $collectionClass = "Object_Fieldcollection_Data_" . ucfirst($type);
@@ -53,19 +55,32 @@ class Object_Fieldcollection_Resource_Mysql extends Pimcore_Model_Resource_Mysql
                 $collection->setFieldname($result["fieldname"]);
                 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if (is_array($fd->getColumnType())) {
-                        $multidata = array();
-                        foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                            $multidata[$key . "__" . $fkey] = $result[$key . "__" . $fkey];
+
+                    if ($fd->isRelationType()) {
+                        
+                        $relations = array();
+                        foreach ($allRelations as $relation) {
+                            if ($relation["fieldname"] == $key && $relation["position"] == $result["index"]) {
+                                $relations[] = $relation;
+                            }
                         }
-                        $collection->setValue(
-                            $key,
-                            $fd->getDataFromResource($multidata));
-    
+
+                        $collection->setValue( $key, $fd->getDataFromResource($relations));
                     } else {
-                        $collection->setValue(
-                            $key,
-                            $fd->getDataFromResource($result[$key]));
+                        if (is_array($fd->getColumnType())) {
+                            $multidata = array();
+                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
+                                $multidata[$key . "__" . $fkey] = $result[$key . "__" . $fkey];
+                            }
+                            $collection->setValue(
+                                $key,
+                                $fd->getDataFromResource($multidata));
+
+                        } else {
+                            $collection->setValue(
+                                $key,
+                                $fd->getDataFromResource($result[$key]));
+                        }
                     }
                 }
                 
@@ -106,5 +121,8 @@ class Object_Fieldcollection_Resource_Mysql extends Pimcore_Model_Resource_Mysql
                 $definition->createUpdateTable($object->getClass());
             }
         }
+
+        // empty relation table
+        $this->db->delete("object_relations_" . $object->getO_classId(), "ownertype = 'fieldcollection' AND ownername = '".$this->model->getFieldname()."' AND src_id = '".$object->getId()."'");
     }
 }

@@ -505,9 +505,11 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
-                if ($element->getId() != $ownerObject->getId() and !in_array($element->getCacheTag(), $blockedTags)) {
-                    $tags = array_merge($tags, $element->getCacheTags($blockedTags));
-                    $blockedTags = array_merge($tags, $blockedTags);
+                if (!in_array($element->getCacheTag(), $blockedTags)) {
+                    if(!$ownerObject instanceof Element_Interface || $element->getId() != $ownerObject->getId()) {
+                        $tags = array_merge($tags, $element->getCacheTags($blockedTags));
+                        $blockedTags = array_merge($tags, $blockedTags);
+                    }
                 }
             }
         }

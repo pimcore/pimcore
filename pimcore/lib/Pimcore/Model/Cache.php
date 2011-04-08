@@ -248,26 +248,33 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function write () {
-        
+
+
         $processedKeys = array();
         $count = 0;
         foreach (self::$saveStack as $conf) {
-            
+
             if(in_array($conf[1],$processedKeys)) {
                 continue;
             }
-            
-            forward_static_call_array(array(__CLASS__, "storeToCache"),$conf);
+
+            try {
+                forward_static_call_array(array(__CLASS__, "storeToCache"),$conf);
+            } catch (Exception $e) {
+                Logger::error("Unable to put element " . $conf[1] . " to cache because of the following reason: ");
+                Logger::error($e);
+            }
+
             $processedKeys[] = $conf[1]; // index 1 is the key for the cache item
-            
+
             // only add $maxWriteToCacheItems items att once to the cache for performance issues
             $count++;
             if($count > self::$maxWriteToCacheItems) {
                 break;
             }
         }
-        
-        // reset        
+
+        // reset
         self::$saveStack = array();
         self::$clearStack = array();
     }
