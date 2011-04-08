@@ -357,7 +357,7 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
     /**
      * Deletes object from database
      *
-     * @return void
+     * @return voidy
      */
     public function delete() {
 
@@ -394,6 +394,14 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
             $this->dbexec("DROP VIEW IF EXISTS `".$localizedView."`");
         }
         $this->dbexec("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
+
+        // objectbrick tables
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_brick_%_" . $this->model->getId() . "'");
+        foreach ($allTables as $table) {
+            $brickTable = current($table);
+            $this->dbexec("DROP TABLE `".$brickTable."`");
+        }
+
 
         // objectbrick tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_brick_%_" . $this->model->getId() . "'");
