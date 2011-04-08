@@ -18,7 +18,7 @@
 class Object_Objectbrick_Data_Abstract extends Pimcore_Model_Abstract {
     
     public $fieldname;
-    
+    public $doDelete;
     
     public function getFieldname () {
         return $this->fieldname;
@@ -36,4 +36,16 @@ class Object_Objectbrick_Data_Abstract extends Pimcore_Model_Abstract {
         $definition = Object_Objectbrick_Definition::getByKey($this->getType());
         return $definition;
     }
+
+    public function setDoDelete($doDelete)
+    {
+        $this->doDelete = $doDelete;
+    }
+
+    public function getDoDelete()
+    {
+        return $this->doDelete;
+    }
+
+
 }

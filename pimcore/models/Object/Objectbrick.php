@@ -71,12 +71,13 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
         if(is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
                 if($brick instanceof Object_Objectbrick_Data_Abstract) {
-//                    if(in_array($brick->getType(),$allowedTypes)) {
+                    if($brick->getDoDelete()) {
+                        $brick->delete($object);
+                    } else  {
                         $brick->setFieldname($this->getFieldname());
                         $brick->save($object);
-//                    } else {
-//                        throw new Exception("Objectbrick of type " . $brick->getType() . " is not allowed in field: " . $this->getFieldname());
-//                    }
+                    }
+
                 }
             }
         }

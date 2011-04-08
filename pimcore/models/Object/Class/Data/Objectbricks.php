@@ -51,7 +51,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      */
     public function getDataForEditmode($data)
     {
-
         $editmodeData = array();
 
         if ($data instanceof Object_Fieldcollection) {
@@ -110,23 +109,26 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                 $collectionData = array();
                 $collectionDef = Object_Objectbrick_Definition::getByKey($collectionRaw["type"]);
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if ($collectionRaw["data"][$fd->getName()]) {
-                        $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()]);
-                    }
-                }
 
                 $collectionClass = "Object_Objectbrick_Data_" . ucfirst($collectionRaw["type"]);
                 $collection = new $collectionClass;
-                $collection->setValues($collectionData);
-//                $collection->setIndex($count);
-                $collection->setFieldname($this->getName());
+
+                if($collectionRaw["data"] == "deleted") {
+                    $collection->setDoDelete(true); 
+                } else {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        if ($collectionRaw["data"][$fd->getName()]) {
+                            $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()]);
+                        }
+                    }
+                    $collection->setValues($collectionData);
+                    $collection->setFieldname($this->getName());
+                }
 
                 $setter = "set" . ucfirst($collectionRaw["type"]);
                 $container->$setter($collection);
             }
         }
-
 //        $container = new Object_Fieldcollection($values, $this->getName());
         return $container;
     }
@@ -173,19 +175,15 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
     public function load($object)
     {
-        $container = new Object_Fieldcollection(null, $this->getName());
+        $container = new Object_Objectbrick($object, $this->getName());
         $container->load($object);
-
-        if ($container->isEmpty()) {
-            return null;
-        }
 
         return $container;
     }
 
     public function delete($object)
     {
-        $container = new Object_Fieldcollection(null, $this->getName());
+        $container = new Object_Objectbrick(null, $this->getName());
         $container->delete($object);
     }
 

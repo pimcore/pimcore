@@ -267,19 +267,20 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         var element;
         var elementData = {};
 
-        console.log(this.currentElements);
+//        console.log(this.currentElements);
 
         var types = Object.keys(this.currentElements);
         for(var t=0; t < types.length; t++) {
 //        for(var s=0; s<this.layout.items.items.length; s++) {
             elementData = {};
 //            if(this.currentElements[this.layout.items.items[s].key]) {
-            if(this.currentElements[types[t].key]) {
+            if(this.currentElements[types[t]]) {
 //                element = this.currentElements[this.layout.items.items[s].key];
-                element = this.currentElements[types[t].key];
+                element = this.currentElements[types[t]];
 
                 if(element.action == "deleted") {
-                    elementData[element.fields[u].getName()] = "deleted";
+//                    console.log(elementData);
+                    elementData = "deleted";
                 } else {
                     for (var u=0; u<element.fields.length; u++) {
                         if(element.fields[u].isDirty()) {
@@ -295,6 +296,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 });
             }
         }
+
+//        console.log(data);
         
         return data;
     },
@@ -304,7 +307,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
-        console.log(this.dirty)
+//        console.log(this.dirty)
         return this.dirty;
     }    
 });
