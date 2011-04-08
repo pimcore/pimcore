@@ -460,7 +460,7 @@ class Element_Service
         }
         $userCondition = "( userId= " . $user->getId();
         if (count($parentIds) > 0) {
-            $userCondition .= " OR " . implode("or", $parentIds) . ")";
+            $userCondition .= " OR " . implode(" or ", $parentIds) . ")";
         } else $userCondition .= ")";
 
 
