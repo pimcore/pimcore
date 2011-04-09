@@ -22,8 +22,23 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
 //    }
     
     public function load (Object_Concrete $object) {
-        
+
+        $fieldName = $this->model->getFieldname();
+
+//        p_r($this->model);
+
+        $className = $object->getClass()->getName();
+
+        $containerClass = "Object_" . ucfirst($className) . "_" . ucfirst($fieldName);
+        $container = new $containerClass($object, $fieldName);
+        p_r($container->getItems());
+        echo $containerClass;
+
+
+
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
+        p_r($fieldDef);
+        die("meins");
         $values = array();
 
         
@@ -86,6 +101,7 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
     }
     
     public function delete (Object_Concrete $object) {
+        throw new Exception("Not implemented yet");
         // empty or create all relevant tables 
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         
