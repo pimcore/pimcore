@@ -310,6 +310,26 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         if(!empty($this->classDefinitions)) {
             foreach($this->classDefinitions as $cl) {
                 $containerDefinition[$cl['classname']][$cl['fieldname']][] = $this->key;
+
+                $class = Object_Class::getById($cl['classname']);
+
+//                foreach ($class->getFieldDefinitions() as $fieldDef) {
+//                    if($fieldDef instanceof Object_Class_Data_Objectbricks) {
+//                        if(in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+//
+//                            //remove objectbrick from class
+//
+//                            //$this->getResource()->delete($class);
+//                            break;
+//                        }
+//                    }
+//                }
+
+                $fd = $class->getFieldDefinition($cl['fieldname']);
+
+                p_r($fd);
+                die();
+
             }
         }
 
@@ -328,7 +348,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
 
         foreach($containerDefinition as $classId => $cd) {
-           $class = Object_Class::getById($classId);
+             $class = Object_Class::getById($classId);
 
             foreach($cd as $fieldname => $brickKeys) {
                 $className = $this->getContainerClassName($class->getName(), $fieldname);
@@ -412,6 +432,26 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                     $processedClasses[$cl['classname']] = true;
                 }
 
+            }
+        }
+
+
+        // update classes
+        $classList = new Object_Class_List();
+        $classes = $classList->load();
+        if(is_array($classes)){
+            foreach($classes as $class){
+                foreach ($class->getFieldDefinitions() as $fieldDef) {
+                    if($fieldDef instanceof Object_Class_Data_Objectbricks) {
+                        if(in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
+
+                            //remove objectbrick from class
+
+                            //$this->getResource()->delete($class);
+                            break;
+                        }
+                    }
+                }
             }
         }
         
