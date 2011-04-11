@@ -53,15 +53,16 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     {
         $editmodeData = array();
 
-        if ($data instanceof Object_Fieldcollection) {
-            foreach ($data as $item) {
+        if ($data instanceof Object_Objectbrick) {
+            $items = $data->getItems();
+            foreach ($items as $item) {
 
-                if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
+                if (!$item instanceof Object_Objectbrick_Data_Abstract) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object_Fieldcollection_Definition::getByKey($item->getType());
+                    $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
                 } catch (Exception $e) {
                     continue;
                 }
@@ -90,10 +91,16 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     public function getDataFromEditmode($data)
     {
 
-        $className = $this->getObject()->getClass()->getName();
+        $getter = "get" . ucfirst($this->getName());
 
-        $containerClass = "Object_" . ucfirst($className) . "_" . ucfirst($this->getName());
-        $container = new $containerClass($this->getObject(), $this->getName());
+        $container = $this->getObject()->$getter();
+
+        if(empty($container)) {
+            $className = $this->getObject()->getClass()->getName();
+
+            $containerClass = "Object_" . ucfirst($className) . "_" . ucfirst($this->getName());
+            $container = new $containerClass($this->getObject(), $this->getName());
+        }
 
 //        p_r($this);
 //        p_r($this->getName());
@@ -110,25 +117,31 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 $collectionData = array();
                 $collectionDef = Object_Objectbrick_Definition::getByKey($collectionRaw["type"]);
 
-                $collectionClass = "Object_Objectbrick_Data_" . ucfirst($collectionRaw["type"]);
-                $collection = new $collectionClass;
+                $getter = "get" . ucfirst($collectionRaw["type"]);
+                $brick = $container->$getter();
+                if(empty($brick)) {
+                    $brickClass = "Object_Objectbrick_Data_" . ucfirst($collectionRaw["type"]);
+                    $brick = new $brickClass;
+                }
+
 
                 if($collectionRaw["data"] == "deleted") {
-                    $collection->setDoDelete(true); 
+                    $brick->setDoDelete(true);
                 } else {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         if ($collectionRaw["data"][$fd->getName()]) {
                             $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()]);
                         }
                     }
-                    $collection->setValues($collectionData);
-                    $collection->setFieldname($this->getName());
+                    $brick->setValues($collectionData);
+                    $brick->setFieldname($this->getName());
                 }
 
                 $setter = "set" . ucfirst($collectionRaw["type"]);
-                $container->$setter($collection);
+                $container->$setter($brick);
             }
         }
+
 //        $container = new Object_Fieldcollection($values, $this->getName());
         return $container;
     }
@@ -175,10 +188,16 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
     public function load($object)
     {
-        $container = new Object_Objectbrick($object, $this->getName());
-        $container->load($object);
+        $classname = "Object_" . ucfirst($object->getClass()->getName()) . "_" . ucfirst($this->getName());
 
-        return $container;
+        if(class_exists($classname)) {
+            $container = new $classname($object, $this->getName());
+            $container->load($object);
+
+            return $container;
+        } else {
+            return null;
+        }
     }
 
     public function delete($object)
@@ -223,11 +242,11 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         $data = $object->$getter();
         $wsData = array();
 
-        if ($data instanceof Object_Fieldcollection) {
+        if ($data instanceof Object_Objectbrick) {
             foreach ($data as $item) {
 
 
-                if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
+                if (!$item instanceof Object_Objectbrick_Data_Abstract) {
                     continue;
                 }
 
@@ -236,7 +255,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 $wsDataItem->type = $item->getType();
 
                 try {
-                    $collectionDef = Object_Fieldcollection_Definition::getByKey($item->getType());
+                    $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
                 } catch (Exception $e) {
                     continue;
                 }
@@ -271,6 +290,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     public function getFromWebserviceImport($data)
     {
 
+        throw new Exception("not supported yet");
 
         $values = array();
         $count = 0;
@@ -279,25 +299,25 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             foreach ($data as $collectionRaw) {
                 if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
-                    throw new Exception("invalid data in fieldcollections [" . $this->getName() . "]");
+                    throw new Exception("invalid data in objectbrick [" . $this->getName() . "]");
                 }
 
                 $fieldcollection = $collectionRaw->type;
                 $collectionData = array();
-                $collectionDef = Object_Fieldcollection_Definition::getByKey($fieldcollection);
+                $collectionDef = Object_Objectbrick_Definition::getByKey($fieldcollection);
 
                 if (!$collectionDef) {
-                    throw new Exception("Unknown fieldcollection in webservice import [" . $fieldcollection . "]");
+                    throw new Exception("Unknown objectbrick in webservice import [" . $fieldcollection . "]");
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     foreach ($collectionRaw->value as $field) {
                         if (!$field instanceof Webservice_Data_Object_Element) {
-                            throw new Exception("invalid data in fieldcollections [" . $this->getName() . "]");
+                            throw new Exception("invalid data in objectbricks [" . $this->getName() . "]");
                         } else if ($field->name == $fd->getName()) {
 
                             if ($field->type != $fd->getFieldType()) {
-                                throw new Exception("Type mismatch for fieldcollection field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
+                                throw new Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
                             }
                             $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value);
                             break;
@@ -308,7 +328,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                 }
 
-                $collectionClass = "Object_Fieldcollection_Data_" . ucfirst($fieldcollection);
+                $collectionClass = "Object_Objectbrick_Data_" . ucfirst($fieldcollection);
                 $collection = new $collectionClass;
                 $collection->setValues($collectionData);
                 $collection->setIndex($count);
@@ -329,7 +349,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
     public function preSetData($object, $value)
     {
-        if ($value instanceof Object_Fieldcollection) {
+        if ($value instanceof Object_Objectbrick) {
             $value->setFieldname($this->getName());
         }
         return $value;
@@ -343,15 +363,15 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     {
         $dependencies = array();
 
-        if ($data instanceof Object_Fieldcollection) {
-            foreach ($data as $item) {
-
-                if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
+        if ($data instanceof Object_Objectbrick) {
+            $items = $data->getItems();
+            foreach ($items as $item) {
+                if (!$item instanceof Object_Objectbrick_Data_Abstract) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object_Fieldcollection_Definition::getByKey($item->getType());
+                    $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
                 } catch (Exception $e) {
                     continue;
                 }
@@ -377,15 +397,16 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         $tags = array();
 
 
-        if ($data instanceof Object_Fieldcollection) {
-            foreach ($data as $item) {
+        if ($data instanceof Object_Objectbrick) {
+            $items = $data->getItems();
+            foreach ($items as $item) {
 
-                if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
+                if (!$item instanceof Object_Objectbrick_Data_Abstract) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object_Fieldcollection_Definition::getByKey($item->getType());
+                    $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
                 } catch (Exception $e) {
                     continue;
                 }

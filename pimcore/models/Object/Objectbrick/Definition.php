@@ -275,6 +275,22 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                 $class = Object_Class::getById($cl['classname']);
                 $path = $this->getContainerClassFolder($class->getName());
                 @unlink($path . "/" . ucfirst($cl['fieldname'] . ".php"));
+
+
+                foreach ($class->getFieldDefinitions() as $fieldDef) {
+                    if($fieldDef instanceof Object_Class_Data_Objectbricks) {
+                        $allowedTypes = $fieldDef->getAllowedTypes();
+                        $idx = array_search($this->getKey(), $allowedTypes);
+                        if($idx !== false) {
+                            echo "remove";
+                            array_splice($allowedTypes, $idx, 1);
+                        }
+                        $fieldDef->setAllowedTypes($allowedTypes);
+                    }
+                }
+
+                $class->save();
+
             }
         }
     }
@@ -299,6 +315,20 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
             foreach($this->oldClassDefinitions as $cl) {
                 $class = Object_Class::getById($cl);
                 $this->getResource()->delete($class);
+
+                foreach ($class->getFieldDefinitions() as $fieldDef) {
+                    if($fieldDef instanceof Object_Class_Data_Objectbricks) {
+                        $allowedTypes = $fieldDef->getAllowedTypes();
+                        $idx = array_search($this->getKey(), $allowedTypes);
+                        if($idx !== false) {
+                            echo "remove";
+                            array_splice($allowedTypes, $idx, 1);
+                        }
+                        $fieldDef->setAllowedTypes($allowedTypes);
+                    }
+                }
+
+                $class->save();
             }
         }
 
@@ -313,22 +343,13 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
                 $class = Object_Class::getById($cl['classname']);
 
-//                foreach ($class->getFieldDefinitions() as $fieldDef) {
-//                    if($fieldDef instanceof Object_Class_Data_Objectbricks) {
-//                        if(in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
-//
-//                            //remove objectbrick from class
-//
-//                            //$this->getResource()->delete($class);
-//                            break;
-//                        }
-//                    }
-//                }
-
                 $fd = $class->getFieldDefinition($cl['fieldname']);
-
-                p_r($fd);
-                die();
+                $allowedTypes = $fd->getAllowedTypes();
+                if(!in_array($this->key, $allowedTypes)) {
+                    $allowedTypes[] = $this->key;
+                }
+                $fd->setAllowedTypes($allowedTypes);
+                $class->save();
 
             }
         }
@@ -430,6 +451,21 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                     $class = Object_Class::getById($cl['classname']);
                     $this->getResource()->delete($class);
                     $processedClasses[$cl['classname']] = true;
+
+
+                    foreach ($class->getFieldDefinitions() as $fieldDef) {
+                        if($fieldDef instanceof Object_Class_Data_Objectbricks) {
+                            $allowedTypes = $fieldDef->getAllowedTypes();
+                            $idx = array_search($this->getKey(), $allowedTypes);
+                            if($idx !== false) {
+                                array_splice($allowedTypes, $idx, 1);
+                            }
+                            $fieldDef->setAllowedTypes($allowedTypes);
+                        }
+                    }
+
+                    $class->save();
+
                 }
 
             }

@@ -30,41 +30,38 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
         $className = $object->getClass()->getName();
 
         $containerClass = "Object_" . ucfirst($className) . "_" . ucfirst($fieldName);
-        $container = new $containerClass($object, $fieldName);
-        p_r($container->getItems());
-        echo $containerClass;
+//        $container = new $containerClass($object, $fieldName);
+//        p_r($container->getItems());
+//        echo $containerClass;
 
 
 
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
-        p_r($fieldDef);
-        die("meins");
         $values = array();
 
         
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
-                $definition = Object_Fieldcollection_Definition::getByKey($type);
+                $definition = Object_Objectbrick_Definition::getByKey($type);
             } catch (Exception $e) {
                 continue;
             }
             
-            $tableName = $definition->getTableName($object->getClass());
+            $tableName = $definition->getTableName($object->getClass(), false);
             
             try {
-                $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = '".$object->getId()."' AND fieldname = '".$this->model->getFieldname()."' ORDER BY `index` ASC");
+                $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = '".$object->getId()."' AND fieldname = '".$this->model->getFieldname()."'");
             } catch (Exception $e) {
                 $results = array();
-            }            
-            
+            }
+
             $fieldDefinitions = $definition->getFieldDefinitions();
-            $collectionClass = "Object_ObjectBrick_Data_" . ucfirst($type);
+            $collectionClass = "Object_Objectbrick_Data_" . ucfirst($type);
             
             
             foreach ($results as $result) {
                 
                 $collection = new $collectionClass();
-                $collection->setIndex($result["index"]);
                 $collection->setFieldname($result["fieldname"]);
                 
                 foreach ($fieldDefinitions as $key => $fd) {
@@ -76,28 +73,30 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
                         $collection->setValue(
                             $key,
                             $fd->getDataFromResource($multidata));
-    
+
                     } else {
                         $collection->setValue(
                             $key,
                             $fd->getDataFromResource($result[$key]));
                     }
                 }
-                
+
+                $setter = "set" . ucfirst($type);
+                $this->model->$setter($collection);
+
                 $values[] = $collection;
             }
         }
-        
-        $orderedValues = array();
-        foreach ($values as $value) {
-            $orderedValues[$value->getIndex()] = $value;
-        }
-        
-        ksort($orderedValues);
-        
-        $this->model->setItems($orderedValues);
+
+//        $orderedValues = array();
+//        foreach ($values as $value) {
+//            $orderedValues[$value->getIndex()] = $value;
+//        }
+//
+//        ksort($orderedValues);
+//        $this->model->setItems($orderedValues);
                 
-        return $orderedValues;
+        return $values;
     }
     
     public function delete (Object_Concrete $object) {

@@ -163,6 +163,8 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
 
         $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getO_classId() . " WHERE src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", $this->model->getO_id());
 
+//        p_r($this->model->geto_class()->getFieldDefinitions()); die();
+
         foreach ($this->model->geto_class()->getFieldDefinitions() as $key => $value) {
 
             if ($value->isRelationType()) {

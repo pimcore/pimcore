@@ -307,7 +307,24 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
-//        console.log(this.dirty)
+        if(!this.dirty) {
+            var types = Object.keys(this.currentElements);
+            for(var t=0; t < types.length; t++) {
+                elementData = {};
+                if(this.currentElements[types[t]]) {
+                    element = this.currentElements[types[t]];
+                    for (var u=0; u<element.fields.length; u++) {
+                        if(element.fields[u].isDirty()) {
+                            this.dirty = true;
+                            return this.dirty;
+                        }
+                    }
+                }
+            }
+
+        }
+
+//        console.log("Dirty: " + this.dirty);
         return this.dirty;
     }    
 });

@@ -15,6 +15,14 @@
 
 class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
 
+public function testAction() {
+
+    $class = Object_Class::getById(230);
+//    $class = Object_Class::getById(229);
+    p_r($class);
+    die("mneuin");
+
+}
 
     public function updateKeyAction() {
         $id = $this->_getParam("id");
