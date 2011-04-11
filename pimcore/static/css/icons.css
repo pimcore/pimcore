@@ -196,6 +196,10 @@
 	background: url(/pimcore/static/img/icon/plugin.png) left center no-repeat !important;
 }
 
+.pimcore_icon_extensionmanager {
+    background: url(/pimcore/static/img/icon/plugin.png) left center no-repeat !important;
+}
+
 .pimcore_icon_menu_plugin_download {
 	background: url(/pimcore/static/img/icon/plugin_go.png) no-repeat !important;
 }

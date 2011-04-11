@@ -32,7 +32,7 @@ pimcore.extensionmanager.share = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_extensionmanager_share",
-                title: t("extensions_share"),
+                title: t("share_extension"),
                 iconCls: "pimcore_icon_extension_share",
                 border: false,
                 layout: "fit",
