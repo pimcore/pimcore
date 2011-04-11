@@ -19,7 +19,11 @@ class Pimcore_File {
         
         $name = strtolower($name);
         $parts = explode(".", $name);
-        return strtolower($parts[count($parts) - 1]);
+
+        if(count($parts) > 1) {
+            return strtolower($parts[count($parts) - 1]);
+        }
+        return "";
     }
 
     public static function getValidFilename($tmpFilename) {
