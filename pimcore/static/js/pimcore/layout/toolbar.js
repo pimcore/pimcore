@@ -74,6 +74,18 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("plugins")) {
+            extrasItems.push({
+                text: t("extensions"),
+                iconCls: "pimcore_icon_extensionmanager",
+                hideOnClick: false,
+                menu: [{
+                    text: t("share_extension"),
+                    handler: this.extensionShare
+                }]
+            });
+        }
+
         
         if (user.isAllowed("system_settings")) {
             extrasItems.push({
@@ -660,5 +672,14 @@ pimcore.layout.toolbar = Class.create({
 
     showMaintenance: function () {
         new pimcore.settings.maintenance();
+    },
+
+    extensionShare: function () {
+        try {
+            pimcore.globalmanager.get("extensionmanager_share").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("extensionmanager_share", new pimcore.extensionmanager.share());
+        }
     }
 });

@@ -185,6 +185,7 @@
             "pimcore/settings/fileexplorer/file.js",
             "pimcore/settings/fileexplorer/explorer.js",
             "pimcore/settings/maintenance.js",
+            "pimcore/settings/liveconnect.js",
 
             // element
             "pimcore/element/abstract.js",
@@ -339,6 +340,9 @@
             "pimcore/report/webmastertools/keywords.js",
             "pimcore/report/webmastertools/crawling.js",
             "pimcore/report/websiteoptimizer/abcreate.js",
+
+            // extension manager
+            "pimcore/extensionmanager/share.js",
 
             // layout
             "pimcore/layout/portal.js",
