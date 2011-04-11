@@ -17,6 +17,7 @@ pimcore.settings.liveconnect = {
 
     token: "",
     callback: null,
+    failure: null,
     loginWindow: null,
 
     loginPrompt: function () {
@@ -25,26 +26,41 @@ pimcore.settings.liveconnect = {
             width: 300,
             height: 220,
             modal: true,
+            closeAction: "close",
+            listeners: {
+                "close": function () {
+                    if(typeof this.failure == "function") {
+                        this.failure();
+                    }
+                }.bind(this)
+            },
             html: '<iframe id="pimcore_liveconnect_iframe" allowTransparency="true" src="http://www.pimcore.org/liveconnect/?source=' + urlencode(window.location.href) + '" width="280" height="180" frameborder="0"></iframe>'
         });
+
 
         this.loginWindow.show();
     },
 
     loginCallback: function (token) {
-        this.setToken(token);
-        this.loginWindow.close();
 
-        if(typeof this.callback == "function") {
-            this.callback();
+        if(token) {
+            this.setToken(token);
+            this.loginWindow.close();
+
+            if(typeof this.callback == "function") {
+                this.callback();
+            }
+
+            this.addToStatusBar();
         }
     },
 
-    login: function (callback) {
+    login: function (callback, failure) {
         if(empty(this.token)) {
             this.loginPrompt();
 
             this.callback = callback;
+            this.failure = failure;
         } else {
             callback();
         }
@@ -56,5 +72,12 @@ pimcore.settings.liveconnect = {
 
     setToken: function (token) {
         this.token = token;
+    },
+
+    addToStatusBar: function () {
+        var statusbar = Ext.getCmp("statusbar");
+        statusbar.insert(1, '-');
+        statusbar.insert(2, '<div class="pimcore_statusbar_liveconnect">Live Connect</div>');
+        statusbar.doLayout();
     }
 };

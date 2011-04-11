@@ -17,7 +17,9 @@ pimcore.extensionmanager.share = Class.create({
 
     initialize: function () {
 
-        pimcore.settings.liveconnect.login(this.getTabPanel.bind(this));
+        pimcore.settings.liveconnect.login(this.getTabPanel.bind(this), function () {
+            pimcore.globalmanager.remove("extensionmanager_share");
+        });
     },
 
     activate: function () {

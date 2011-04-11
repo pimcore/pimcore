@@ -19,11 +19,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     public function liveconnectAction () {
         
         $token = $this->_getParam("token");
-
-        // add to admin session
-        $adminSession = new Zend_Session_Namespace("pimcore_admin");
-        $adminSession->liveconnectToken = $token;
-
+        Pimcore_Liveconnect::setToken($token);
         $this->view->token = $token;
     }
 

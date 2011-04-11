@@ -379,7 +379,8 @@
             customviews: <?php echo Zend_Json::encode($this->customview_config) ?>,
             language: '<?php echo $this->language; ?>',
             websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
-            google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>"
+            google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
+            liveconnectToken: "<?php echo $this->liveconnectToken; ?>"
         };
     </script>
     

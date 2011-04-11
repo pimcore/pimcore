@@ -224,7 +224,12 @@ Ext.onReady(function() {
     
     statusbar.add("->");
     statusbar.add('Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
-    
+
+    if (!empty(pimcore.settings.liveconnectToken)) {
+        pimcore.settings.liveconnect.setToken(pimcore.settings.liveconnectToken);
+        pimcore.settings.liveconnect.addToStatusBar();
+    }
+
     // check for updates
     window.setTimeout(function () {
         var script = document.createElement("script");
