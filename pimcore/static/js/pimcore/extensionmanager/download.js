@@ -12,28 +12,28 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.extensionmanager.share");
-pimcore.extensionmanager.share = Class.create({
+pimcore.registerNS("pimcore.extensionmanager.download");
+pimcore.extensionmanager.download = Class.create({
 
     initialize: function () {
 
         pimcore.settings.liveconnect.login(this.getTabPanel.bind(this), function () {
-            pimcore.globalmanager.remove("extensionmanager_share");
+            pimcore.globalmanager.remove("extensionmanager_download");
         });
     },
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_extensionmanager_share");
+        tabPanel.activate("pimcore_extensionmanager_download");
     },
 
     getTabPanel: function () {
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id: "pimcore_extensionmanager_share",
-                title: t("share_extension"),
-                iconCls: "pimcore_icon_extensionmanager_share",
+                id: "pimcore_extensionmanager_download",
+                title: t("download_extension"),
+                iconCls: "pimcore_icon_extensionmanager_download",
                 border: false,
                 layout: "fit",
                 closable:true,
@@ -42,11 +42,11 @@ pimcore.extensionmanager.share = Class.create({
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.activate("pimcore_extensionmanager_share");
+            tabPanel.activate("pimcore_extensionmanager_download");
 
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("extensionmanager_share");
+                pimcore.globalmanager.remove("extensionmanager_download");
             }.bind(this));
 
             pimcore.layout.refresh();

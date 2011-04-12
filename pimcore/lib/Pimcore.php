@@ -124,6 +124,14 @@ class Pimcore {
                 "action" => "index"
             )
         );
+        $routeExtensions = new Zend_Controller_Router_Route(
+            'admin/extensionmanager/:controller/:action/*',
+            array(
+                'module' => 'extensionmanager',
+                "controller" => "index",
+                "action" => "index"
+            )
+        );
         $routeReports = new Zend_Controller_Router_Route(
             'admin/reports/:controller/:action/*',
             array(
@@ -171,6 +179,7 @@ class Pimcore {
             $router->addRoute('admin', $routeAdmin);
             $router->addRoute('update', $routeUpdate);
             $router->addRoute('plugins', $routePlugins);
+            $router->addRoute('extensionmanager', $routeExtensions);
             $router->addRoute('reports', $routeReports);
             $router->addRoute('searchadmin', $routeSearchAdmin);
             if ($conf instanceof Zend_Config and $conf->webservice and $conf->webservice->enabled) {
@@ -365,7 +374,7 @@ class Pimcore {
 
         try {
 
-            $pluginConfigs = self::getPluginConfigs();
+            $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
             if (!empty($pluginConfigs)) {
 
                 $includePaths = array(
@@ -375,6 +384,10 @@ class Pimcore {
                 //adding plugin include paths and namespaces
                 if (count($pluginConfigs) > 0) {
                     foreach ($pluginConfigs as $p) {
+
+                        if(!Pimcore_ExtensionManager::isEnabled("plugin", $p["plugin"]["pluginName"])){
+                            continue;
+                        }
 
                         if (is_array($p['plugin']['pluginIncludePaths']['path'])) {
                             foreach ($p['plugin']['pluginIncludePaths']['path'] as $path) {
@@ -396,13 +409,17 @@ class Pimcore {
 
                 }
 
-                //p_r($includePaths);
                 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
                 $broker = Pimcore_API_Plugin_Broker::getInstance();
 
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
+
+                    if(!Pimcore_ExtensionManager::isEnabled("plugin", $p["plugin"]["pluginName"])){
+                        continue;
+                    }
+
                     $jsPaths = array();
                     if (is_array($p['plugin']['pluginJsPaths']['path'])) {
                         $jsPaths = $p['plugin']['pluginJsPaths']['path'];
@@ -459,31 +476,6 @@ class Pimcore {
             Logger::alert($e);
         }
 
-    }
-
-    /**
-     * @return Array $pluginConfigs
-     */
-    public static function getPluginConfigs() {
-
-        $pluginConfigs = array();
-
-        if (is_dir(PIMCORE_PLUGINS_PATH) && is_readable(PIMCORE_PLUGINS_PATH)) {
-            $pluginDirs = scandir(PIMCORE_PLUGINS_PATH);
-            if (is_array($pluginDirs)) {
-                foreach ($pluginDirs as $d) {
-                    if ($d != "." and $d != ".." and is_dir(PIMCORE_PLUGINS_PATH . "//" . $d)) {
-                        if (file_exists(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml")) {
-                            $pluginConf = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml");
-                            if ($pluginConf != null) {
-                                $pluginConfigs[] = $pluginConf->toArray();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $pluginConfigs;
     }
 
     public static function initAutoloader() {

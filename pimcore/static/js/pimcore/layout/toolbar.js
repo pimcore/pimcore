@@ -80,7 +80,16 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: "pimcore_icon_extensionmanager",
                 hideOnClick: false,
                 menu: [{
+                    text: t("manage_extensions"),
+                    iconCls: "pimcore_icon_extensionmanager_admin",
+                    handler: this.extensionAdmin
+                },{
+                    text: t("download_extension"),
+                    iconCls: "pimcore_icon_extensionmanager_download",
+                    handler: this.extensionDownload
+                },{
                     text: t("share_extension"),
+                    iconCls: "pimcore_icon_extensionmanager_share",
                     handler: this.extensionShare
                 }]
             });
@@ -680,6 +689,24 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("extensionmanager_share", new pimcore.extensionmanager.share());
+        }
+    },
+
+    extensionAdmin: function () {
+        try {
+            pimcore.globalmanager.get("extensionmanager_admin").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("extensionmanager_admin", new pimcore.extensionmanager.admin());
+        }
+    },
+
+    extensionDownload: function () {
+        try {
+            pimcore.globalmanager.get("extensionmanager_download").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("extensionmanager_download", new pimcore.extensionmanager.download());
         }
     }
 });

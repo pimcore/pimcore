@@ -60,7 +60,7 @@ class Pluginadmin_AdminController extends Pimcore_Controller_Action_Admin {
             die();
         }
 
-        $pluginConfigs = Pimcore::getPluginConfigs();
+        $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
 
         $counter = 0;
         foreach ($pluginConfigs as $config) {

@@ -342,6 +342,8 @@
             "pimcore/report/websiteoptimizer/abcreate.js",
 
             // extension manager
+            "pimcore/extensionmanager/admin.js",
+            "pimcore/extensionmanager/download.js",
             "pimcore/extensionmanager/share.js",
 
             // layout

@@ -1,3 +1,8 @@
+"enable","Enable"
+"disable","Disable"
+"configure","Configure"
+"download_extension","Download Extensions"
+"manage_extensions","Manage Extensions"
 "share_extension","Share Extensions"
 "beginning_with_ending_with_optional_slash","Beginning with, ... and ending with an optional slash"
 "beginning_with","Beginning with"

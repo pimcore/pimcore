@@ -88,7 +88,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
         //add plugin editmode JS and CSS
         try {
-            $pluginConfigs = Pimcore::getPluginConfigs();
+            $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
             $jsPaths = array();
             $cssPaths = array();
 

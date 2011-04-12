@@ -342,7 +342,7 @@ class Pimcore_Update {
     
                     if ($success) {
                         //do plugins
-                        $pluginConfigs = Pimcore::getPluginConfigs();
+                        $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
                         $counter = 0;
                         foreach ($pluginConfigs as $config) {
                             try {
@@ -421,7 +421,7 @@ class Pimcore_Update {
 
         $languages = Pimcore_Tool_Admin::getLanguages();
 
-        $pluginConfigs = Pimcore::getPluginConfigs();
+        $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
         $counter = 0;
         $returnSuccess=true;
         foreach ($pluginConfigs as $config) {
