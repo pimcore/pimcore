@@ -31,9 +31,8 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
 
         $configurations = array();
 
+        // plugins
         $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
-
-        $counter = 0;
         foreach ($pluginConfigs as $config) {
             $className = $config["plugin"]["pluginClassName"];
             if (!empty($className)) {
@@ -75,23 +74,33 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $id = $this->_getParam("id");
 
         if($type == "plugin") {
-            $className = $this->_getParam("className");
-            $plugin = $this->_getParam("name");
-            $message = $className::install();
 
+            try {
+                $config = Pimcore_ExtensionManager::getPluginConfig($id);
+                $className = $config["plugin"]["pluginClassName"];
 
-            $success = Pimcore_Update::downloadPluginLanguages($plugin);
-            if(!$success){
-                $message.="could not download all plugin translations";
+                $message = $className::install();
+                $success = Pimcore_Update::downloadPluginLanguages($id);
+                if(!$success){
+                    $message.="\ncould not download all plugin translations";
+                }
+
+                $this->_helper->json(array(
+                    "message" => $message,
+                    "reload" => $className::needsReloadAfterInstall(),
+                    "status" => array(
+                        "installed" => $className::isInstalled()
+                    ),
+                    "success" => true
+                ));
+            } catch (Exception $e) {
+                Logger::error($e);
+
+                $this->_helper->json(array(
+                    "message" => $e->getMessage(),
+                    "success" => false
+                ));
             }
-
-            $this->_helper->json(array(
-                "message" => $message,
-                "reload" => $className::needsReloadAfterInstall(),
-                "status" => array(
-                    "installed" => $className::isInstalled()
-                )
-            ));
         }
     }
 
@@ -101,11 +110,39 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $id = $this->_getParam("id");
 
         if($type == "plugin") {
-            $className = $this->_getParam("className");
-            $message = $className::uninstall();
-            echo Zend_Json::encode(array("message" => $message, "pluginJsClassName" => $className::getJsClassName(), "status" => array("installed" => $className::isInstalled())));
 
-            $this->_helper->json(array("success" => true));
+            try {
+                $config = Pimcore_ExtensionManager::getPluginConfig($id);
+                $className = $config["plugin"]["pluginClassName"];
+
+                $message = $className::uninstall();
+
+                $this->_helper->json(array(
+                    "message" => $message,
+                    "pluginJsClassName" => $className::getJsClassName(),
+                    "status" => array(
+                        "installed" => $className::isInstalled()
+                    ),
+                    "success" => true
+                ));
+            } catch (Exception $e) {
+                $this->_helper->json(array(
+                    "message" => $e->getMessage(),
+                    "success" => false
+                ));
+            }
         }
+    }
+
+    public function deleteAction () {
+
+        $type = $this->_getParam("type");
+        $id = $this->_getParam("id");
+
+        Pimcore_ExtensionManager::delete($id, $type);
+
+        $this->_helper->json(array(
+            "success" => true
+        ));
     }
 }

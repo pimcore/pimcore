@@ -994,6 +994,6 @@
     background: url(/pimcore/static/img/icon/decline.png) left center no-repeat !important;
 }
 
-.pimcore_icon_delete {
-	background: url(/pimcore/static/img/icon/delete.png) left center no-repeat !important;
+.pimcore_icon_disable {
+    background: url(/pimcore/static/img/icon/delete.png) left center no-repeat !important;
 }

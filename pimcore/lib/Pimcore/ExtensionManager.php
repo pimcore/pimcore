@@ -15,8 +15,15 @@
 
 class Pimcore_ExtensionManager {
 
+    /**
+     * @var Zend_Config
+     */
     private static $config;
 
+    /**
+     * @static
+     * @return Zend_Config
+     */
     public static function getConfig () {
         if(!self::$config) {
             try {
@@ -29,6 +36,11 @@ class Pimcore_ExtensionManager {
         return self::$config;
     }
 
+    /**
+     * @static
+     * @param Zend_Config $config
+     * @return void
+     */
     public static function setConfig (Zend_Config $config) {
 
         self::$config = $config;
@@ -40,11 +52,23 @@ class Pimcore_ExtensionManager {
         $writer->write();
     }
 
+    /**
+     * @static
+     * @param  $type
+     * @param  $id
+     * @return bool
+     */
     public static function isEnabled ($type, $id) {
         $config = self::getConfig();
         return (bool) $config->$type->$id;
     }
 
+    /**
+     * @static
+     * @param  $type
+     * @param  $id
+     * @return void
+     */
     public static function enable ($type, $id) {
         $config = self::getConfig();
         if(!isset($config->$type)) {
@@ -54,6 +78,12 @@ class Pimcore_ExtensionManager {
         self::setConfig($config);
     }
 
+    /**
+     * @static
+     * @param  $type
+     * @param  $id
+     * @return void
+     */
     public static function disable ($type, $id) {
         $config = self::getConfig();
         if(!isset($config->$type)) {
@@ -87,5 +117,36 @@ class Pimcore_ExtensionManager {
             }
         }
         return $pluginConfigs;
+    }
+
+    /**
+     * @static
+     * @throws Exception
+     * @param  $id
+     * @return array
+     */
+    public static function getPluginConfig ($id) {
+
+        $pluginConfigs = self::getPluginConfigs();
+
+        foreach ($pluginConfigs as $config) {
+            if($config["plugin"]["pluginName"] == $id) {
+                return $config;
+            }
+        }
+
+        throw new Exception("Plugin with id: " . $id . " does not exists");
+    }
+
+
+    public static function delete ($id, $type) {
+        if($type == "plugin") {
+            $pluginDir = PIMCORE_PLUGINS_PATH . "/" . $id;
+            if(is_writeable($pluginDir)) {
+                recursiveDelete($pluginDir,true);
+            }
+        } else if ($type == "brick") {
+            
+        }
     }
 }

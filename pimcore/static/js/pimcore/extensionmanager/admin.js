@@ -120,7 +120,7 @@ pimcore.extensionmanager.admin = Class.create({
                         if(rec.get("installed") == null) {
                             return "";
                         } else if(rec.get("installed")) {
-                            class += "pimcore_icon_delete ";
+                            class += "pimcore_icon_disable ";
                         } else {
                             class += "pimcore_icon_add ";
                         }
@@ -129,17 +129,58 @@ pimcore.extensionmanager.admin = Class.create({
                     handler: function (grid, rowIndex) {
 
                         var rec = grid.getStore().getAt(rowIndex);
-                        var method = rec.get("active") ? "disable" : "enable";
+                        var method = rec.get("installed") ? "uninstall" : "install";
 
                         Ext.Ajax.request({
-                            url: "/admin/extensionmanager/admin/toggle-extension-state",
+                            url: "/admin/extensionmanager/admin/" + method,
                             params: {
-                                method: method,
                                 id: rec.get("id"),
                                 type: rec.get("type")
                             },
-                            success: this.reload.bind(this)
+                            success: function (transport) {
+                                var res = Ext.decode(transport.responseText);
+
+                                if(!empty(res.message)) {
+                                    Ext.Msg.alert(" ", res.message);
+                                }
+
+                                if(res.reload) {
+                                    window.location.reload();
+                                }
+
+                                this.reload();
+                            }.bind(this)
                         });
+                    }.bind(this)
+                }]
+            },
+            {
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [{
+                    tooltip: t('configure'),
+                    getClass: function (v, meta, rec) {
+                        var class = "pimcore_action_column ";
+                        if(rec.get("configuration") && rec.get("active") && rec.get("installed")) {
+                            class += "pimcore_icon_edit ";
+                        } else {
+                            return "";
+                        }
+                        return class;
+                    },
+                    handler: function (grid, rowIndex) {
+
+                        var rec = grid.getStore().getAt(rowIndex);
+                        var id = rec.get("id");
+                        var type = rec.get("type");
+                        var iframeSrc = rec.get("configuration");
+
+                        try {
+                            pimcore.globalmanager.get("extension_settings_" + id + "_" + type).activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add("extension_settings_" + id + "_" + type, new pimcore.extensionmanager.settings(id, type, iframeSrc));
+                        }
                     }.bind(this)
                 }]
             },
@@ -150,19 +191,7 @@ pimcore.extensionmanager.admin = Class.create({
                     tooltip: t('update'),
                     icon: "/pimcore/static/img/icon/disconnect.png",
                     handler: function (grid, rowIndex) {
-
-                        //grid.getStore().removeAt(rowIndex);
-                    }.bind(this)
-                }]
-            },
-            {
-                xtype: 'actioncolumn',
-                width: 30,
-                items: [{
-                    tooltip: t('configure'),
-                    icon: "/pimcore/static/img/icon/bullet_edit.png",
-                    handler: function (grid, rowIndex) {
-
+                        alert("not implemented");
                         //grid.getStore().removeAt(rowIndex);
                     }.bind(this)
                 }]
@@ -172,10 +201,27 @@ pimcore.extensionmanager.admin = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('delete'),
-                    icon: "/pimcore/static/img/icon/cross.png",
+                    getClass: function (v, meta, rec) {
+                        var class = "pimcore_action_column ";
+                        if(rec.get("active") != true && rec.get("installed") != true) {
+                            class += "pimcore_icon_delete ";
+                        } else {
+                            return "";
+                        }
+                        return class;
+                    },
                     handler: function (grid, rowIndex) {
 
-                        //grid.getStore().removeAt(rowIndex);
+                        Ext.Ajax.request({
+                            url: "/admin/extensionmanager/admin/delete",
+                            params: {
+                                id: rec.get("id"),
+                                type: rec.get("type")
+                            },
+                            success: function (transport) {
+                                this.reload();
+                            }.bind(this)
+                        });
                     }.bind(this)
                 }]
             }
@@ -190,6 +236,7 @@ pimcore.extensionmanager.admin = Class.create({
             trackMouseOver: true,
             columnLines: true,
             stripeRows: true,
+            tbar: ["<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"],
             viewConfig: {
                 forceFit: true
             }
