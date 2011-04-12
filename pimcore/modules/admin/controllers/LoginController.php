@@ -34,10 +34,15 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                 if ($user->isActive()) {
                     if ($user->getEmail()) {
                         $token = Pimcore_Tool_Authentication::generateToken($username, $user->getPassword(), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB);
-                        $uri = str_replace("lostpassword", "", $_SERVER['SCRIPT_URI']);
-                        $loginUrl = $uri . "/login/?username=" . $username . "&token=" . $token;
-                        $loginUrl = str_replace("//", "/", $loginUrl);
+                        $protocol = "http://";
+                        if(strpos(strtolower($_SERVER["SERVER_PROTOCOL"]),"https")===0){
+                            $protocol = "https://";
+                        }
+                        $uri = $protocol.$_SERVER['SERVER_NAME'];
+                        $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token;
+                        
                         try {
+                            
                             $mail = Pimcore_Tool::getMail(array($user->getEmail()), "Pimcore lost password service");
                             $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
                             $mail->send();
@@ -88,6 +93,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             if ($user instanceof User) {
                 if ($user->isActive()) {
                     $authenticated = false;
+
                     if ($user->getPassword() == Pimcore_Tool_Authentication::getPasswordHash($this->_getParam("username"), $this->_getParam("password"))) {
                         $authenticated = true;
 
