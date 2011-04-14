@@ -108,7 +108,7 @@ class Document_Page extends Document_PageSnippet {
      * @return string
      */
     public function getTitle() {
-        return str_replace("\n"," ",$this->title);
+        return Pimcore_Tool_Text::removeLineBreaks($this->title);
     }
 
     /**

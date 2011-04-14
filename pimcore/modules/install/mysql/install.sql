@@ -479,7 +479,7 @@ CREATE TABLE `search_backend_data` (
 
 INSERT INTO `assets` VALUES (1,0,'folder','','/',NULL,0,0,1,1,NULL,NULL);
 INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,0,0,1,1,NULL);
-INSERT INTO `documents_page` VALUES (1,'','','','','');
+INSERT INTO `documents_page` VALUES (1,'','','','','','');
 INSERT INTO `objects` VALUES (1,0,'folder','','/',0,1,0,0,1,1,NULL,NULL,NULL);
 
 INSERT INTO `users_permission_definitions` VALUES ('assets','permission_assets');
