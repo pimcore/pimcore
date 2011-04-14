@@ -52,8 +52,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
         $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/getExtensionInfo.php?data=" . base64_encode(serialize($remoteConfig)));
 
         if(!$rawData) {
-            //header('HTTP/1.1 403 Forbidden');
-            echo $rawData;
+            header('HTTP/1.1 403 Forbidden');
             exit;
         }
 

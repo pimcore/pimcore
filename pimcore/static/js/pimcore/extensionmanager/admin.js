@@ -60,7 +60,7 @@ pimcore.extensionmanager.admin = Class.create({
             url: '/admin/extensionmanager/admin/get-extensions',
             restful: false,
             root: "extensions",
-            fields: ["id","type", "name", "description", "icon", "installed", "active", "configuration"]
+            fields: ["id","type", "name", "description", "installed", "active", "configuration"]
         });
         this.store.load();
 

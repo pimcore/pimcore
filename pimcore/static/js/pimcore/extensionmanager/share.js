@@ -63,7 +63,7 @@ pimcore.extensionmanager.share = Class.create({
             url: '/admin/extensionmanager/share/get-extensions',
             restful: false,
             root: "extensions",
-            fields: ["id","type", "name", "description", "icon", "exists"]
+            fields: ["id","type", "name", "description", "exists"]
         });
         this.store.load();
 
