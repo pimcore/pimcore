@@ -212,6 +212,7 @@ pimcore.extensionmanager.admin = Class.create({
                     },
                     handler: function (grid, rowIndex) {
 
+                        var rec = grid.getStore().getAt(rowIndex);
                         Ext.Ajax.request({
                             url: "/admin/extensionmanager/admin/delete",
                             params: {

@@ -1,3 +1,8 @@
+"share","Share"
+"publish_update","Publish Update"
+"collecting_update_information","Collecting Update Informations.<br />Please wait ..."
+"extensions_upload_agree_text","If you share this extension this will not be automatically public to everyone. First you have the possibility to edit some details, permissions and dependencies for the plugin. After that it's on you if the extension goes public or not."
+"extension_upload_proceed","I've read the above. Proceed with the upload now!"
 "please_dont_forget_to_reload_pimcore_after_modifications","Please don't forget to reload pimcore, after your modifications"
 "enable","Enable"
 "disable","Disable"

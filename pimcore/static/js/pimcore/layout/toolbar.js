@@ -66,13 +66,13 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.isAllowed("plugins")) {
+        /*if (user.isAllowed("plugins")) {
             extrasItems.push({
                 text: t("plugins"),
                 iconCls: "pimcore_icon_plugin",
                 handler: this.pluginsOverview
             });
-        }
+        }*/
 
         if (user.isAllowed("plugins")) {
             extrasItems.push({
@@ -106,7 +106,7 @@ pimcore.layout.toolbar = Class.create({
         if (user.isAllowed("system_settings")) {
             extrasItems.push({
                 text: t("backup"),
-                iconCls: "pimcore_icon_menu_backup",
+                iconCls: "pimcore_icon_backup",
                 handler: this.backup
             });
         }
@@ -114,7 +114,7 @@ pimcore.layout.toolbar = Class.create({
         if (user.isAllowed("update")) {
             extrasItems.push({
                 text: t("update"),
-                iconCls: "pimcore_icon_menu_update",
+                iconCls: "pimcore_icon_update",
                 handler: function () {
                     var update = new pimcore.settings.update();
                 }
@@ -606,7 +606,7 @@ pimcore.layout.toolbar = Class.create({
         }
     },
     
-    pluginsOverview: function () {
+    /*pluginsOverview: function () {
 
         try {
             pimcore.globalmanager.get("plugins_overview").activate();
@@ -616,7 +616,7 @@ pimcore.layout.toolbar = Class.create({
 
 
         }
-    },
+    },*/
 
     editClasses: function () {
         try {

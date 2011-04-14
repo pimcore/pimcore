@@ -221,7 +221,7 @@
 	background: url(/pimcore/static/img/icon/page_copy.png) left center no-repeat !important;
 }
 
-.pimcore_icon_menu_update {
+.pimcore_icon_update {
 	background: url(/pimcore/static/img/icon/connect.png) no-repeat !important;
 }
 
@@ -254,7 +254,7 @@
 	background: url(/pimcore/static/img/icon/package.png) no-repeat !important;
 }
 
-.pimcore_icon_menu_backup {
+.pimcore_icon_backup {
 	background: url(/pimcore/static/img/icon/drive.png) no-repeat !important;
 }
 

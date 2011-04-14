@@ -72,6 +72,20 @@ pimcore.settings.liveconnect = {
 
     setToken: function (token) {
         this.token = token;
+
+        try {
+            window.clearTimeout(this.timeout);
+        } catch (e) {
+            // no timeout registered yet
+        }
+
+        // timeout is 5 minutes (300000)
+        this.timeout = window.setTimeout(function () {
+            this.setToken(null);
+            this.removeFromStatusBar();
+
+            window.clearTimeout(this.timeout);
+        }.bind(this), 300000);
     },
 
     addToStatusBar: function () {
@@ -79,5 +93,12 @@ pimcore.settings.liveconnect = {
         statusbar.insert(1, '-');
         statusbar.insert(2, '<div class="pimcore_statusbar_liveconnect">Live Connect</div>');
         statusbar.doLayout();
+    },
+
+    removeFromStatusBar: function () {
+        var statusbar = Ext.getCmp("statusbar");
+        
+        statusbar.remove(statusbar.get(2));
+        statusbar.remove(statusbar.get(1));
     }
 };

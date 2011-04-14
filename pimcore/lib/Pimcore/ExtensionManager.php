@@ -30,7 +30,7 @@ class Pimcore_ExtensionManager {
                 self::$config = new Zend_Config_Xml(PIMCORE_CONFIGURATION_DIRECTORY . "/extensions.xml", null, array("allowModifications" => true));
             }
             catch (Exception $e) {
-                self::$config = new Zend_Config(array(), null, array("allowModifications" => true));
+                self::$config = new Zend_Config(array(), true);
             }
         }
         return self::$config;

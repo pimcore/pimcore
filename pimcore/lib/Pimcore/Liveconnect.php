@@ -23,10 +23,19 @@ class Pimcore_Liveconnect {
     public static function setToken ($token) {
         $session = self::getSession();
         $session->liveconnectToken = $token;
+        $session->liveconnectLastUpdate = time();
     }
 
     public static function getToken () {
         $session = self::getSession();
+
+        $timeout = 300;
+        if($session->liveconnectLastUpdate < (time()-$timeout)) {
+            $session->liveconnectToken = null;
+        } else {
+            $session->liveconnectLastUpdate = time();
+        }
+
         return $session->liveconnectToken;
     }
 }

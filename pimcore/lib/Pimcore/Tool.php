@@ -33,6 +33,11 @@ class Pimcore_Tool {
         return true;
     }
 
+    /**
+     * @static
+     * @param  $path
+     * @return bool
+     */
     public static function isValidPath($path) {
         if (preg_match("/[a-zA-Z0-9_~.\-\/]+/", $path, $matches)) {
             if ($matches[0] == $path) {
@@ -42,6 +47,11 @@ class Pimcore_Tool {
         return false;
     }
 
+    /**
+     * @static
+     * @param  $element
+     * @return string
+     */
     public static function getIdPathForElement($element) {
 
         $path = "";
@@ -70,6 +80,11 @@ class Pimcore_Tool {
         return $path;
     }
 
+    /**
+     * @static
+     * @param  $language
+     * @return bool
+     */
     public static function isValidLanguage($language) {
 
         $languages = self::getValidLanguages();
@@ -86,6 +101,10 @@ class Pimcore_Tool {
         return false;
     }
 
+    /**
+     * @static
+     * @return array
+     */
     public static function getValidLanguages() {
 
         $validLanguages = strval(Zend_Registry::get("pimcore_config_system")->general->validLanguages);
@@ -104,6 +123,10 @@ class Pimcore_Tool {
         return $languages;
     }
 
+    /**
+     * @static
+     * @return array
+     */
     public static function getRoutingDefaults() {
 
         try {
@@ -133,6 +156,10 @@ class Pimcore_Tool {
     }
 
 
+    /**
+     * @static
+     * @return bool
+     */
     public static function isFrontend() {
         $excludePatterns = array(
             "/^\/admin.*/",
@@ -149,6 +176,11 @@ class Pimcore_Tool {
         return true;
     }
 
+    /**
+     * @static
+     * @param Zend_Controller_Request_Abstract $request
+     * @return bool
+     */
     public static function useFrontendOutputFilters(Zend_Controller_Request_Abstract $request) {
 
         // check for module
@@ -181,10 +213,18 @@ class Pimcore_Tool {
         return true;
     }
 
+    /**
+     * @static
+     * @return string
+     */
     public static function getHostname() {
         return $_SERVER["HTTP_HOST"];
     }
 
+    /**
+     * @static
+     * @return array|bool
+     */
     public static function getCustomViewConfig() {
         $cvConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . "/customviews.xml";
         $cvData = array();
@@ -260,7 +300,13 @@ class Pimcore_Tool {
         $mail->setSubject($subject);
         return $mail;
     }
-    
+
+
+    /**
+     * @static
+     * @param Zend_Controller_Response_Abstract $response
+     * @return bool
+     */
     public static function isHtmlResponse (Zend_Controller_Response_Abstract $response) {
         // check if response is html
         $headers = $response->getHeaders();
@@ -275,7 +321,12 @@ class Pimcore_Tool {
         return true;
     }
     
-    
+    /**
+     * @static
+     * @throws Exception
+     * @param string $type
+     * @return Zend_Http_Client
+     */
     public static function getHttpClient ($type = "Zend_Http_Client") {
 
         $clientConfig = Zend_Registry::get("pimcore_config_system")->httpclient->toArray();
@@ -290,7 +341,12 @@ class Pimcore_Tool {
 
         return $client;
     }
-    
+
+    /**
+     * @static
+     * @param  $url
+     * @return bool|string
+     */
     public static function getHttpData($url) {
         
         $client = self::getHttpClient();
