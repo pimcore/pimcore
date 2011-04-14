@@ -200,6 +200,41 @@ pimcore.extensionmanager.share = Class.create({
 
         this.updateshareWindow.removeAll();
         this.updateshareWindow.add({
+            xtype: "form",
+            id: "share-form",
+            title: t("settings"),
+            bodyStyle: "padding:10px;",
+            items: [{
+                xtype: "textarea",
+                name: "exclude",
+                height: 60,
+                width: 300,
+                fieldLabel: t("exclude_files") + " (" + t("regular_expression") + ")"
+            },{
+                xtype: "displayfield",
+                hideLabel: true,
+                width: 300,
+                value: t("one_expression_per_line"),
+                cls: "pimcore_extra_label_bottom",
+                style: "padding-bottom:0;"
+            }],
+            buttons: [{
+                text: t("next"),
+                handler: this.uploadInfos.bind(this, rec)
+            }]
+        });
+
+        this.updateshareWindow.doLayout();
+    },
+
+    uploadInfos: function (rec) {
+
+        var params = Ext.getCmp("share-form").getForm().getFieldValues();
+        params.id = this.currentExtension.get("id");
+        params.type = this.currentExtension.get("type");
+
+        this.updateshareWindow.removeAll();
+        this.updateshareWindow.add({
             bodyStyle: "padding:10px;",
             html: t("collecting_update_information")
         });
@@ -208,10 +243,8 @@ pimcore.extensionmanager.share = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/extensionmanager/share/get-update-information",
-            params: {
-                id: rec.get("id"),
-                type: rec.get("type")
-            },
+            params: params,
+            method: "post",
             success: this.uploadStart.bind(this)
         });
     },

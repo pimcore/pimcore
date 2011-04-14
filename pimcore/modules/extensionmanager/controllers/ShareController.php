@@ -96,6 +96,10 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
         $id = $this->_getParam("id");
         $type = $this->_getParam("type");
+        $excludes = explode("\n", $this->_getParam("exclude"));
+        if(!$excludes[0]) {
+            $excludes = array();
+        }
 
         $steps = array();
 
@@ -121,6 +125,18 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
         foreach ($files as $file) {
             if(is_file($file)) {
+
+                // check for excludes
+                try {
+                    foreach ($excludes as $regexp) {
+                        if (@preg_match($regexp, str_replace($pathPrefix,"",$file), $matches)) {
+                            throw new Exception("Not allowed because of the regular expressions.");
+                        }
+                    }
+                } catch (Exception $e) {
+                    continue;
+                }
+
                 $steps[] = array(
                     "action" => "upload-file",
                     "params" => array(
