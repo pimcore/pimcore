@@ -87,13 +87,13 @@ pimcore.extensionmanager.share = Class.create({
                 items: [{
                     tooltip: t('share') + " / " + t("push_update"),
                     getClass: function (v, meta, rec) {
-                        var class = "pimcore_action_column ";
+                        var klass = "pimcore_action_column ";
                         if(rec.get("exists")) {
-                            class += "pimcore_icon_update ";
+                            klass += "pimcore_icon_update ";
                         } else {
-                            class += "pimcore_icon_extensionmanager_share ";
+                            klass += "pimcore_icon_extensionmanager_share ";
                         }
-                        return class;
+                        return klass;
                     },
                     handler: function (grid, rowIndex) {
 
