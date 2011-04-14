@@ -59,7 +59,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
         $hubInfos = Zend_Json::decode($rawData);
 
-        // create configuration for plguins
+        // create configuration for plugins
         foreach ($pluginConfigs as $config) {
             $plugin = array(
                 "id" => $config["plugin"]["pluginName"],

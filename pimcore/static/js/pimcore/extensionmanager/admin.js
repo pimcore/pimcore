@@ -208,11 +208,15 @@ pimcore.extensionmanager.admin = Class.create({
                     tooltip: t('delete'),
                     getClass: function (v, meta, rec) {
                         var class = "pimcore_action_column ";
-                        if(rec.get("active") != true && rec.get("installed") != true) {
+
+                        if(rec.get("active") != true && rec.get("type") == "brick") {
                             class += "pimcore_icon_delete ";
-                        } else {
-                            return "";
                         }
+
+                        if(rec.get("active") != true && rec.get("installed") != true && rec.get("type") == "plugin") {
+                            class += "pimcore_icon_delete ";
+                        }
+
                         return class;
                     },
                     handler: function (grid, rowIndex) {
