@@ -42,14 +42,28 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                     "type" => "plugin",
                     "name" => $config["plugin"]["pluginNiceName"],
                     "description" => $config["plugin"]["pluginDescription"],
-                    "icon" => $config["plugin"]["pluginIcon"],
-                    "version" => $config["plugin"]["pluginVersion"],
                     "installed" => $isEnabled ? $className::isInstalled() : null,
                     "active" => $isEnabled,
                     "configuration" => $config["plugin"]["pluginIframeSrc"]
                 );
                 $configurations[] = $plugin;
             }
+        }
+
+        // bricks
+        $brickConfigs = Pimcore_ExtensionManager::getBrickConfigs();
+        // get repo state of bricks
+        foreach ($brickConfigs as $id => $config) {
+            $isEnabled = Pimcore_ExtensionManager::isEnabled("brick", $id);
+            $brick = array(
+                "id" => $id,
+                "type" => "brick",
+                "name" => $config->name,
+                "description" => $config->description,
+                "installed" => true,
+                "active" => $isEnabled
+            );
+            $configurations[] = $brick;
         }
 
         $this->_helper->json(array("extensions" => $configurations));

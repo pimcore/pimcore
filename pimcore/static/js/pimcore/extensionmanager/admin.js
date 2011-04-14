@@ -60,7 +60,7 @@ pimcore.extensionmanager.admin = Class.create({
             url: '/admin/extensionmanager/admin/get-extensions',
             restful: false,
             root: "extensions",
-            fields: ["id","type", "name", "description", "icon", "version", "installed", "active", "configuration"]
+            fields: ["id","type", "name", "description", "icon", "installed", "active", "configuration"]
         });
         this.store.load();
 
@@ -78,7 +78,6 @@ pimcore.extensionmanager.admin = Class.create({
             {header: "ID", width: 100, sortable: true, dataIndex: 'id'},
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name'},
             {header: t("description"), id: "extension_description", width: 200, sortable: true, dataIndex: 'description'},
-            {header: t("version"), width: 50, sortable: true, dataIndex: 'version'},
             {
                 xtype: 'actioncolumn',
                 width: 30,
@@ -117,6 +116,12 @@ pimcore.extensionmanager.admin = Class.create({
                     tooltip: t('install') + "/" + t("uninstall"),
                     getClass: function (v, meta, rec) {
                         var class = "pimcore_action_column ";
+
+                        // bricks don't have an install state
+                        if(rec.get("type") == "brick") {
+                            return class;
+                        }
+
                         if(rec.get("installed") == null) {
                             return "";
                         } else if(rec.get("installed")) {

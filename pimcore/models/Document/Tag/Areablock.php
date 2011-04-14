@@ -64,7 +64,13 @@ class Document_Tag_Areablock extends Document_Tag {
         foreach ($this->indices as $index) {
             
             $this->current = $count;
-            
+
+            // don't show disabled bricks
+            if(!Pimcore_ExtensionManager::isEnabled("brick", $index["type"])) {
+                $count++;
+                continue;
+            }
+
             if($count > 0) {
                 $this->blockEnd();
             }
@@ -73,7 +79,7 @@ class Document_Tag_Areablock extends Document_Tag {
             
             if($this->getView() instanceof Zend_View) {
                 
-                $areas = $this->getAreaDirs();
+                $areas = Pimcore_ExtensionManager::getBrickDirectories();
                 
                 $view = $areas[$index["type"]] . "/view.php";
                 $action = $areas[$index["type"]] . "/action.php";
@@ -298,7 +304,7 @@ class Document_Tag_Areablock extends Document_Tag {
     public function setOptions($options) {
                
         // read available types
-        $areas = $this->getAreaDirs();
+        $areaConfigs = Pimcore_ExtensionManager::getBrickConfigs();
         $availableAreas = array();
         $availableAreasSort = array();
         
@@ -306,10 +312,14 @@ class Document_Tag_Areablock extends Document_Tag {
             $options["allowed"] = array();
         }
         
-        foreach ($areas as $areaName => $path) {
-            $areaConfig = new Zend_Config_Xml($path . "/area.xml");
-            
-            if(empty($options["allowed"]) || in_array($areaName,$options["allowed"])) {                    
+        foreach ($areaConfigs as $areaName => $areaConfig) {
+
+            // don't show disabled bricks
+            if(!Pimcore_ExtensionManager::isEnabled("brick", $areaName)) {
+                 continue;
+            }
+
+            if(empty($options["allowed"]) || in_array($areaName,$options["allowed"])) {
                 $availableAreasSort[$this->view->translateAdmin((string) $areaConfig->name)] = array(
                     "name" => $this->view->translateAdmin((string) $areaConfig->name),
                     "description" => $this->view->translateAdmin((string) $areaConfig->description),
@@ -389,34 +399,4 @@ class Document_Tag_Areablock extends Document_Tag {
         throw new Exception("It's not possible to set areas via the webservice");
     }
     
-    
-    
-    public function getAreaDirs() {
-        
-        $areas = array();
-        $areaRepositories = array(
-            PIMCORE_WEBSITE_PATH . "/views/areas",
-            PIMCORE_WEBSITE_PATH . "/var/areas"
-        );
-        
-        // add plugin support here
-        
-       
-        foreach ($areaRepositories as $respository) {
-
-            if(is_dir($respository) && is_readable($respository)) {
-                $blockDirs = scandir($respository);
-
-                foreach ($blockDirs as $blockDir) {
-                    if(is_dir($respository . "/" . $blockDir)) {
-                        if(is_file($respository . "/" . $blockDir . "/area.xml")) {
-                            $areas[$blockDir] = $respository . "/" . $blockDir;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return $areas;
-    }
 }

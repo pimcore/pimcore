@@ -139,6 +139,43 @@ class Pimcore_ExtensionManager {
     }
 
 
+    public static function getBrickDirectories () {
+        $areas = array();
+        $areaRepositories = array(
+            PIMCORE_WEBSITE_PATH . "/views/areas",
+            PIMCORE_WEBSITE_PATH . "/var/areas"
+        );
+
+        // get directories
+        foreach ($areaRepositories as $respository) {
+
+            if(is_dir($respository) && is_readable($respository)) {
+                $blockDirs = scandir($respository);
+
+                foreach ($blockDirs as $blockDir) {
+                    if(is_dir($respository . "/" . $blockDir)) {
+                        if(is_file($respository . "/" . $blockDir . "/area.xml")) {
+                            $areas[$blockDir] = $respository . "/" . $blockDir;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $areas;
+    }
+
+    public static function getBrickConfigs() {
+
+        $configs = array();
+        
+        foreach (self::getBrickDirectories() as $areaName => $path) {
+            $configs[$areaName] = new Zend_Config_Xml($path . "/area.xml");
+        }
+
+        return $configs;
+    }
+
     public static function delete ($id, $type) {
         if($type == "plugin") {
             $pluginDir = PIMCORE_PLUGINS_PATH . "/" . $id;
@@ -146,7 +183,12 @@ class Pimcore_ExtensionManager {
                 recursiveDelete($pluginDir,true);
             }
         } else if ($type == "brick") {
-            
+            $brickDirs = Pimcore_ExtensionManager::getBrickDirectories();
+            $brickDir = $brickDirs[$id];
+
+            if(is_writeable($brickDir)) {
+                recursiveDelete($brickDir,true);
+            }
         }
     }
 }

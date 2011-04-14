@@ -63,7 +63,7 @@ pimcore.extensionmanager.share = Class.create({
             url: '/admin/extensionmanager/share/get-extensions',
             restful: false,
             root: "extensions",
-            fields: ["id","type", "name", "description", "icon", "version", "exists"]
+            fields: ["id","type", "name", "description", "icon", "exists"]
         });
         this.store.load();
 
@@ -81,7 +81,6 @@ pimcore.extensionmanager.share = Class.create({
             {header: "ID", width: 100, sortable: true, dataIndex: 'id'},
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name'},
             {header: t("description"), id: "extension_description", width: 200, sortable: true, dataIndex: 'description'},
-            {header: t("version"), width: 50, sortable: true, dataIndex: 'version'},
             {
                 xtype: 'actioncolumn',
                 width: 30,
@@ -129,10 +128,30 @@ pimcore.extensionmanager.share = Class.create({
     },
 
     reload: function () {
+
+        if(!this.checkLiveConnect()) {
+            return;
+        }
+
         this.store.reload();
     },
 
+    checkLiveConnect: function () {
+        if(!pimcore.settings.liveconnect.isConnected()) {
+            pimcore.settings.liveconnect.login();
+
+            return false;
+        }
+
+        return true;
+    },
+
     openUpdateWindow: function (rec) {
+
+        if(!this.checkLiveConnect()) {
+            return;
+        }
+
         this.updateshareWindow = new Ext.Window({
             modal: true,
             width: 500,
@@ -149,6 +168,10 @@ pimcore.extensionmanager.share = Class.create({
     },
 
     openShareWindow: function (rec) {
+
+        if(!this.checkLiveConnect()) {
+            return;
+        }
 
         this.updateshareWindow = new Ext.Window({
             modal: true,
@@ -172,6 +195,9 @@ pimcore.extensionmanager.share = Class.create({
     },
 
     uploadPrepare: function (rec) {
+
+        this.currentExtension = rec;
+
         this.updateshareWindow.removeAll();
         this.updateshareWindow.add({
             bodyStyle: "padding:10px;",
@@ -254,20 +280,22 @@ pimcore.extensionmanager.share = Class.create({
             });
         }
         else {
-            //this.window.close();
+
             this.updateshareWindow.removeAll();
             this.updateshareWindow.add({
                 bodyStyle: "padding: 20px;",
-                html: "Complete",
-                buttons: [{
+                html: "Your extension was successfully submitted to the extension repository. <br />Please click on the following link to complete the upload and add some additional information to your extension.<br /><br /><b><a href='http://www.pimcore.org/extensions/edit?token=" + pimcore.settings.liveconnect.getToken() + "&id=" + this.currentExtension.get("id") + "&finish=1' target='_blank'>Click here to proceed</a></b>"
+                /*buttons: [{
                     text: t("close"),
                     iconCls: "pimcore_icon_apply",
                     handler: function () {
                         this.updateshareWindow.close();
                     }.bind(this)
-                }]
+                }]*/
             });
             this.updateshareWindow.doLayout();
+
+            this.currentExtension = null;
         }
     },
 

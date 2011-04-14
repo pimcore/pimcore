@@ -62,7 +62,9 @@ pimcore.settings.liveconnect = {
             this.callback = callback;
             this.failure = failure;
         } else {
-            callback();
+            if(typeof callback == "function") {
+                callback();
+            }
         }
     },
 
@@ -86,6 +88,14 @@ pimcore.settings.liveconnect = {
 
             window.clearTimeout(this.timeout);
         }.bind(this), 300000);
+    },
+
+    isConnected: function () {
+        if(this.getToken()) {
+            return true;
+        }
+
+        return false;
     },
 
     addToStatusBar: function () {

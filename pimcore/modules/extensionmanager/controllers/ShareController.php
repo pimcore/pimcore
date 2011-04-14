@@ -38,8 +38,14 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             );
         }
 
+        $brickConfigs = Pimcore_ExtensionManager::getBrickConfigs();
         // get repo state of bricks
-        // @TODO
+        foreach ($brickConfigs as $id => $config) {
+            $remoteConfig["extensions"][] = array(
+                "id" => $id,
+                "type" => "brick"
+            );
+        }
 
 
         $remoteConfig["token"] = Pimcore_Liveconnect::getToken();
@@ -61,7 +67,6 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
                 "name" => $config["plugin"]["pluginNiceName"],
                 "description" => $config["plugin"]["pluginDescription"],
                 "icon" => $config["plugin"]["pluginIcon"],
-                "version" => $config["plugin"]["pluginVersion"],
                 "exists" => (bool) $hubInfos["extensions"][$config["plugin"]["pluginName"]]["existing"]
             );
 
@@ -71,7 +76,19 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
         }
 
         // create configuration für bricks
-        // @TODO
+        foreach ($brickConfigs as $id => $config) {
+            $brick = array(
+                "id" => $id,
+                "type" => "brick",
+                "name" => $config->name,
+                "description" => $config->description,
+                "exists" => (bool) $hubInfos["extensions"][$id]["existing"]
+            );
+
+            if($hubInfos["extensions"][$id]["allowed"]) {
+                $configurations[] = $brick;
+            }
+        }
 
         $this->_helper->json(array("extensions" => $configurations));
     }
@@ -92,22 +109,31 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
         );
 
         if($type == "plugin") {
-            $pluginDir = PIMCORE_PLUGINS_PATH . "/" . $id . "/";
-            $files = rscandir($pluginDir);
+            $extensionDir = PIMCORE_PLUGINS_PATH . "/" . $id . "/";
+            $pathPrefix = PIMCORE_PLUGINS_PATH;
+        } else if ($type == "brick") {
+            $brickDirs = Pimcore_ExtensionManager::getBrickDirectories();
+            $extensionDir = $brickDirs[$id] . "/";
+            $tmpSplit = explode("areas/".$id."/", $extensionDir);
+            $pathPrefix = $tmpSplit[0]."areas";
+        }
+        
+        $files = rscandir($extensionDir);
 
-            foreach ($files as $file) {
-                if(is_file($file)) {
-                    $steps[] = array(
-                        "action" => "upload-file",
-                        "params" => array(
-                            "path" => str_replace(PIMCORE_PLUGINS_PATH,"",$file),
-                            "id" => $id,
-                            "type" => $type
-                        )
-                    );
-                }
+        foreach ($files as $file) {
+            if(is_file($file)) {
+                $steps[] = array(
+                    "action" => "upload-file",
+                    "params" => array(
+                        "path" => $file,
+                        "pathPrefix" => $pathPrefix,
+                        "id" => $id,
+                        "type" => $type
+                    )
+                );
             }
         }
+
 
         $steps[] = array(
             "action" => "verify-upload",
@@ -142,14 +168,14 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             "id" => $this->_getParam("id"),
             "type" => $this->_getParam("type"),
             "token" => Pimcore_Liveconnect::getToken(),
-            "path" => $this->_getParam("path"),
-            "data" => base64_encode(file_get_contents(PIMCORE_PLUGINS_PATH . $this->_getParam("path")))
+            "path" => str_replace($this->_getParam("pathPrefix"),"",$this->_getParam("path")),
+            "data" => base64_encode(file_get_contents($this->_getParam("path")))
         ))));
         $client->setUri("http://extensions.pimcore.org/addFile.php");
 
         $response = $client->request(Zend_Http_Client::POST);
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(array("success" => true, "response" => $response->getBody()));
     }
 
     public function verifyUploadAction () {
