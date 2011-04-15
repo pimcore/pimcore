@@ -121,7 +121,12 @@ pimcore.extensionmanager.share = Class.create({
             stripeRows: true,
             viewConfig: {
                 forceFit: true
-            }
+            },
+            tbar: [{
+                text: t("refresh"),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this)
+            }]
         });
 
         return this.grid;
@@ -129,16 +134,16 @@ pimcore.extensionmanager.share = Class.create({
 
     reload: function () {
 
-        if(!this.checkLiveConnect()) {
+        if(!this.checkLiveConnect(this.reload.bind(this))) {
             return;
         }
 
         this.store.reload();
     },
 
-    checkLiveConnect: function () {
+    checkLiveConnect: function (callback) {
         if(!pimcore.settings.liveconnect.isConnected()) {
-            pimcore.settings.liveconnect.login();
+            pimcore.settings.liveconnect.login(callback);
 
             return false;
         }
@@ -148,7 +153,7 @@ pimcore.extensionmanager.share = Class.create({
 
     openUpdateWindow: function (rec) {
 
-        if(!this.checkLiveConnect()) {
+        if(!this.checkLiveConnect(this.openUpdateWindow.bind(this))) {
             return;
         }
 
@@ -169,7 +174,7 @@ pimcore.extensionmanager.share = Class.create({
 
     openShareWindow: function (rec) {
 
-        if(!this.checkLiveConnect()) {
+        if(!this.checkLiveConnect(this.openShareWindow.bind(this))) {
             return;
         }
 
@@ -209,12 +214,12 @@ pimcore.extensionmanager.share = Class.create({
                 name: "exclude",
                 height: 60,
                 width: 300,
-                fieldLabel: t("exclude_files") + " (" + t("regular_expression") + ")"
+                fieldLabel: t("exclude_files")
             },{
                 xtype: "displayfield",
                 hideLabel: true,
                 width: 300,
-                value: t("one_expression_per_line"),
+                value: t("share_extension_description"),
                 cls: "pimcore_extra_label_bottom",
                 style: "padding-bottom:0;"
             }],
@@ -245,11 +250,42 @@ pimcore.extensionmanager.share = Class.create({
             url: "/admin/extensionmanager/share/get-update-information",
             params: params,
             method: "post",
-            success: this.uploadStart.bind(this)
+            success: this.uploadSummary.bind(this)
         });
     },
 
-    uploadStart: function (transport) {
+    uploadSummary: function (transport) {
+        var updateInfo = Ext.decode(transport.responseText);
+        this.steps = updateInfo.steps;
+        this.stepAmount = this.steps.length;
+
+        var content = "<b>" + t("share_extension_upload_summary") + "</b>";
+        content += "<br /><br />";
+        content += "<b>" + t("number_of_files") + "</b>: " + updateInfo.files.length;
+        content += "<br /><br />";
+        content += "<b>" + t("files") + "</b>: <br />";
+
+        for (var i=0; i<updateInfo.files.length; i++) {
+            content += updateInfo.files[i] + "<br />";
+        }
+
+        this.updateshareWindow.removeAll();
+        this.updateshareWindow.add({
+            bodyStyle: "padding:10px;",
+            html: content,
+            autoScroll: true,
+            height: 170,
+            buttons: [{
+                text: t("next"),
+                iconCls: "pimcore_icon_apply",
+                handler: this.uploadStart.bind(this)
+            }]
+        });
+
+        this.updateshareWindow.doLayout();
+    },
+
+    uploadStart: function () {
 
         this.updateshareWindow.removeAll();
 
@@ -265,11 +301,6 @@ pimcore.extensionmanager.share = Class.create({
         this.updateshareWindow.add(this.progressBar);
 
         this.updateshareWindow.doLayout();
-
-
-        var updateInfo = Ext.decode(transport.responseText);
-        this.steps = updateInfo.steps;
-        this.stepAmount = this.steps.length;
 
         window.setTimeout(this.processStep.bind(this), 500);
     },
@@ -300,7 +331,7 @@ pimcore.extensionmanager.share = Class.create({
                     try {
                         if (r.success) {
                             this.lastResponse = r;
-                            window.setTimeout(this.processStep.bind(this), 500);
+                            window.setTimeout(this.processStep.bind(this), 100);
                         }
                         else {
                             this.error(job);

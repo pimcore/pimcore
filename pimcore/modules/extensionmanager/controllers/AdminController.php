@@ -35,6 +35,13 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
         foreach ($pluginConfigs as $config) {
             $className = $config["plugin"]["pluginClassName"];
+            $updateable = false;
+
+            $revisionFile = PIMCORE_PLUGINS_PATH . "/" . $config["plugin"]["pluginName"] . "/.pimcore_extension_revision";
+            if(is_file($revisionFile)) {
+                $updateable = true;
+            }
+            
             if (!empty($className)) {
                 $isEnabled = Pimcore_ExtensionManager::isEnabled("plugin", $config["plugin"]["pluginName"]);
                 $plugin = array(
@@ -44,7 +51,8 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                     "description" => $config["plugin"]["pluginDescription"],
                     "installed" => $isEnabled ? $className::isInstalled() : null,
                     "active" => $isEnabled,
-                    "configuration" => $config["plugin"]["pluginIframeSrc"]
+                    "configuration" => $config["plugin"]["pluginIframeSrc"],
+                    "updateable" => $updateable
                 );
                 $configurations[] = $plugin;
             }
@@ -54,6 +62,14 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $brickConfigs = Pimcore_ExtensionManager::getBrickConfigs();
         // get repo state of bricks
         foreach ($brickConfigs as $id => $config) {
+
+            $updateable = false;
+            
+            $revisionFile = PIMCORE_WEBSITE_PATH . "/var/areas/" . $id . "/.pimcore_extension_revision";
+            if(is_file($revisionFile)) {
+                $updateable = true;
+            }
+
             $isEnabled = Pimcore_ExtensionManager::isEnabled("brick", $id);
             $brick = array(
                 "id" => $id,
@@ -61,7 +77,8 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                 "name" => $config->name,
                 "description" => $config->description,
                 "installed" => true,
-                "active" => $isEnabled
+                "active" => $isEnabled,
+                "updateable" => $updateable
             );
             $configurations[] = $brick;
         }

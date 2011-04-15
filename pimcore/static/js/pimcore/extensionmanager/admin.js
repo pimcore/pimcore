@@ -60,7 +60,7 @@ pimcore.extensionmanager.admin = Class.create({
             url: '/admin/extensionmanager/admin/get-extensions',
             restful: false,
             root: "extensions",
-            fields: ["id","type", "name", "description", "installed", "active", "configuration"]
+            fields: ["id","type", "name", "description", "installed", "active", "configuration","updateable"]
         });
         this.store.load();
 
@@ -194,10 +194,17 @@ pimcore.extensionmanager.admin = Class.create({
                 width: 30,
                 items: [{
                     tooltip: t('update'),
-                    icon: "/pimcore/static/img/icon/disconnect.png",
+                    getClass: function (v, meta, rec) {
+
+                        if(rec.get("updateable")) {
+                            return"pimcore_action_column pimcore_icon_update";
+                        }
+
+                        return "";
+                    },
                     handler: function (grid, rowIndex) {
-                        alert("not implemented");
-                        //grid.getStore().removeAt(rowIndex);
+                        var rec = grid.getStore().getAt(rowIndex);
+                        this.openUpdateWindow(rec);
                     }.bind(this)
                 }]
             },
@@ -246,7 +253,11 @@ pimcore.extensionmanager.admin = Class.create({
             trackMouseOver: true,
             columnLines: true,
             stripeRows: true,
-            tbar: ["<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"],
+            tbar: [{
+                text: t("refresh"),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this)
+            }, "->" , "<b>" + t("please_dont_forget_to_reload_pimcore_after_modifications") + "!</b>"],
             viewConfig: {
                 forceFit: true
             }
@@ -257,5 +268,160 @@ pimcore.extensionmanager.admin = Class.create({
 
     reload: function () {
         this.store.reload();
+    },
+
+    checkLiveConnect: function (callback) {
+        if(!pimcore.settings.liveconnect.isConnected()) {
+            pimcore.settings.liveconnect.login(callback);
+
+            return false;
+        }
+
+        return true;
+    },
+
+    openUpdateWindow: function (rec) {
+        if(!this.checkLiveConnect(this.openUpdateWindow.bind(this, rec))) {
+            return;
+        }
+
+        this.updateRecord = rec;
+
+        this.updateWindow = new Ext.Window({
+            modal: true,
+            width: 500,
+            height: 200,
+            items: [{
+                html: t("collecting_update_information"),
+                bodyStyle: "padding: 10px;"
+            }]
+        });
+
+        this.updateWindow.show();
+
+        Ext.Ajax.request({
+            url: "/admin/extensionmanager/update/get-update-information",
+            params: {
+                id: this.updateRecord.get("id"),
+                type: this.updateRecord.get("type")
+            },
+            success: this.showUpdateSummary.bind(this)
+        });
+
+    },
+
+    showUpdateSummary: function (transport) {
+
+        var data = Ext.decode(transport.responseText);
+        this.stepAmount = data.steps.length;
+        this.steps = data.steps;
+
+        this.updateWindow.removeAll();
+
+        if(this.stepAmount > 0) {
+            var content = t("update_information");
+            content += "<br /><br />";
+            content += t("number_of_files") + ": " + data.fileAmount;
+
+            this.updateWindow.add({
+                bodyStyle: "padding: 20px;",
+                html: content,
+                buttons: [{
+                    text: t("next"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function () {
+
+                        this.updateWindow.removeAll();
+
+                        this.progressBar = new Ext.ProgressBar({
+                            text: t('initializing'),
+                            style: "margin: 10px;"
+                        });
+                        this.updateWindow.add({
+                            style: "margin: 30px 10px 0 10px",
+                            bodyStyle: "padding: 10px;",
+                            html: t("please_wait")
+                        });
+                        this.updateWindow.add(this.progressBar);
+
+                        this.updateWindow.doLayout();
+
+
+                        window.setTimeout(this.processStep.bind(this), 100);
+                    }.bind(this)
+                }]
+            });
+        } else {
+            this.updateWindow.add({
+                bodyStyle: "padding: 20px;",
+                html: t("extension_is_up_to_date"),
+                buttons: [{
+                    text: t("close"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function () {
+                        this.updateWindow.close();
+                    }.bind(this)
+                }]
+            });
+        }
+
+        this.updateWindow.doLayout();
+    },
+
+    processStep: function (definedJob) {
+
+        var status = (1 - (this.steps.length / this.stepAmount));
+        var percent = Math.ceil(status * 100);
+
+        this.progressBar.updateProgress(status, percent + "%");
+
+        if (this.steps.length > 0) {
+
+            var nextJob;
+            if (typeof definedJob == "object") {
+                nextJob = definedJob;
+            }
+            else {
+                nextJob = this.steps.shift();
+            }
+
+            console.log(nextJob);
+
+            Ext.Ajax.request({
+                url: "/admin/extensionmanager/" + nextJob.controller + "/" + nextJob.action,
+                params: nextJob.params,
+                success: function (job, response) {
+                    var r = Ext.decode(response.responseText);
+
+                    try {
+                        if (r.success) {
+                            this.lastResponse = r;
+                            window.setTimeout(this.processStep.bind(this), 100);
+                        }
+                        else {
+                            this.error(job);
+                        }
+                    }
+                    catch (e) {
+                        this.error(job);
+                    }
+                }.bind(this, nextJob)
+            });
+        }
+        else {
+
+            this.updateWindow.removeAll();
+            this.updateWindow.add({
+                bodyStyle: "padding: 20px;",
+                html: ""
+            });
+            this.updateWindow.doLayout();
+        }
+    },
+
+    error: function (job) {
+        this.updateWindow.close();
+        Ext.MessageBox.alert(t('error'), "Error");
     }
+
 });

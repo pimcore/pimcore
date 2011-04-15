@@ -124,6 +124,11 @@ pimcore.extensionmanager.download = Class.create({
             trackMouseOver: true,
             columnLines: true,
             stripeRows: true,
+            tbar: [{
+                text: t("refresh"),
+                iconCls: "pimcore_icon_reload",
+                handler: this.reload.bind(this)
+            }],
             viewConfig: {
                 forceFit: true
             }
@@ -173,8 +178,6 @@ pimcore.extensionmanager.download = Class.create({
     },
 
     downloadPrepare: function (rec) {
-
-        this.currentExtension = rec;
 
         this.downloadWindow.removeAll();
         this.downloadWindow.add({
@@ -272,8 +275,6 @@ pimcore.extensionmanager.download = Class.create({
                 }]
             });
             this.downloadWindow.doLayout();
-
-            this.currentExtension = null;
         }
     },
 

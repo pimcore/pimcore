@@ -97,14 +97,6 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
             );
         }
 
-        $steps[] = array(
-            "action" => "check-update-script",
-            "params" => array(
-                "id" => $id,
-                "type" => $type
-            )
-        );
-
         $this->_helper->json(array("steps" => $steps));
     }
 
@@ -142,30 +134,10 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
 
         file_put_contents($fileDestPath, base64_decode($file["content"]));
 
+        // write revision information
+        file_put_contents($parentPath . "/" . $id .  "/.pimcore_extension_revision", $revision);
+
         $this->_helper->json(array("success" => true));
-    }
-
-    public function checkUpdateScriptAction () {
-
-        $id = $this->_getParam("id");
-        $type = $this->_getParam("type");
-
-        if($type == "plugin") {
-            $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;
-        } else if ($type = "brick") {
-            $extensionPath = PIMCORE_WEBSITE_PATH . "/var/areas/" . $id;
-        }
-
-        $updateFile = $extensionPath."/"."update.php";
-        if(is_file($updateFile)) {
-            ob_start();
-            include($updateFile);
-            $message = ob_get_clean();
-
-            unlink($updateFile);
-        }
-
-        $this->_helper->json(array("success" => true, "message" => $message));
     }
 
     public function emptyExtensionDirAction () {

@@ -101,7 +101,11 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             $excludes = array();
         }
 
+        // always exclude the revision information
+        $excludes[] = "/pimcore_extension_revision/";
+
         $steps = array();
+        $filesTransferred = array();
 
         $steps[] = array(
             "action" => "start-upload",
@@ -146,6 +150,8 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
                         "type" => $type
                     )
                 );
+
+                $filesTransferred[] = str_replace($pathPrefix,"",$file);
             }
         }
 
@@ -158,7 +164,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             )
         );
 
-        $this->_helper->json(array("steps" => $steps));
+        $this->_helper->json(array("steps" => $steps, "files" => $filesTransferred));
     }
 
     public function startUploadAction () {
