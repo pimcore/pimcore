@@ -13,7 +13,7 @@
  */
 
 pimcore.registerNS("pimcore.object.objectbricks.field");
-pimcore.object.objectbricks.field = Class.create(pimcore.object.fieldcollections.field, {
+pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     disallowedDataTypes: ["multihref","objects","nonownerobjects","user","fieldcollections","href","localizedfields"],
     uploadUrl: '/admin/class/import-objectbrick/',
@@ -38,18 +38,22 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.fieldcollections
                 name: "parentClass",
                 fieldLabel: t("parent_class"),
                 value: this.data.parentClass
-            }, this.getClassDefinitionPanel()]
+            }
+                , this.getClassDefinitionPanel()
+            ]
         });
 
         return this.rootPanel;
     },
 
     getClassDefinitionPanel: function() {
-        this.classDefinitionsItems = new Ext.form.FormPanel({
+        this.classDefinitionsItems = new Ext.Panel({
             title: t("class_definitions"),
             style: "margin-top: 20px",
             layout: "pimcoreform",
-            items: [this.getAddControl()]
+            items: [
+                this.getAddControl()
+            ]
         });
 
         for(var i = 0; i < this.data.classDefinitions.length; i++) {
@@ -78,7 +82,6 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.fieldcollections
     },
 
     getAddControl: function() {
-
         var classMenu = [];
 
         var classIds = Object.keys(this.baseStore);

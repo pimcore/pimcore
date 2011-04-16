@@ -20,10 +20,11 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
     public $items = array();
     public $fieldname;
 
-    private $object = null;
+    protected $__object = null;
+    protected $brickGetters = array();
 
     public function __construct ($object, $fieldname = null) {
-        $this->object = $object;
+        $this->__object = $object;
         if($fieldname) {
             $this->setFieldname($fieldname);
         }
@@ -31,8 +32,6 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
     
     public function getItems () {
         if(empty($this->items)) {
-//            p_r(get_object_vars($this));die();
-
             foreach(get_object_vars($this) as $var) {
                 if($var instanceof Object_Objectbrick_Data_Abstract) {
                     $this->items[] = $var;
@@ -53,6 +52,14 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
     public function setFieldname ($fieldname) {
         $this->fieldname = $fieldname;
     }
+
+    public function getBrickGetters() {
+        $getters = array();
+        foreach($this->brickGetters as $bg) {
+            $getters[] = "get" . ucfirst($bg);
+        }
+        return $getters;
+    }
     
     public function getItemDefinitions () {
         $definitions = array();
@@ -64,10 +71,6 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
     }
     
     public function save ($object) {
-        
-//        $this->getResource()->save($object);
-//        $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
-        
         if(is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
                 if($brick instanceof Object_Objectbrick_Data_Abstract) {
@@ -78,6 +81,21 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
                         $brick->save($object);
                     }
 
+                }
+            }
+        }
+    }
+
+    public function getObject() {
+        return $this->__object;
+    }
+
+    public function delete(Object_Concrete $object) {
+        if(is_array($this->getItems())) {
+
+            foreach ($this->getItems() as $brick) {
+                if($brick instanceof Object_Objectbrick_Data_Abstract) {
+                    $brick->delete($object);
                 }
             }
         }

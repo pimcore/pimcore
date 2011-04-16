@@ -652,7 +652,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         } else {
             $value = $fielddefinition->getDataForEditmode($object->$getter());
-            if(empty($value) && !empty($parent)) {
+            if(empty($value) && !empty($parent) && $this->isInheritableField($fielddefinition)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $level + 1);
             } else {
                 $this->objectData[$key] = $value;
@@ -660,6 +660,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $this->metaData[$key]['inherited'] = $level != 0;
             }
         }
+    }
+
+    private function isInheritableField(Object_Class_Data $fielddefinition) {
+        if($fielddefinition instanceof Object_Class_Data_Fieldcollections ||
+           $fielddefinition instanceof Object_Class_Data_Localizedfields) {
+            return false;
+        }
+        return true;
     }
 
     public function lockAction()

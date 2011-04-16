@@ -67,13 +67,13 @@ pimcore.object.tags.abstract = Class.create({
         this.removeInheritanceSourceButton();
     },
 
-    markInherited: function () {
+    markInherited: function (metaData) {
 
         var el = this.getEl();
         if (el) {
             el.addClass("object_value_inherited");
         }
-        this.addInheritanceSourceButton();
+        this.addInheritanceSourceButton(metaData);
     },
 
     getWrappingEl: function () {
@@ -90,7 +90,7 @@ pimcore.object.tags.abstract = Class.create({
         return el;
     },
 
-    addInheritanceSourceButton: function () {
+    addInheritanceSourceButton: function (metaData) {
 
         var el = this.getWrappingEl();
         if(el) {
@@ -98,17 +98,21 @@ pimcore.object.tags.abstract = Class.create({
             el.insertHtml("afterBegin", '<div class="pimcore_open_inheritance_source"></div>');
             var button = Ext.get(el.query(".pimcore_open_inheritance_source")[0]);
             if(button) {
-                button.addListener("click", function () {
+                button.addListener("click", function (metaData) {
+                    console.log("Click");
 
                     var myName = this.getName();
                     var myObject = this.getObject();
-                    var metaData = null;
-                    if(myObject.data.metaData && myObject.data.metaData[myName]) {
+
+                    if(!metaData && myObject.data.metaData && myObject.data.metaData[myName]) {
                         metaData = myObject.data.metaData[myName];
+                    }
+
+                    if(metaData) {
                         pimcore.helpers.openObject(metaData.objectid, "object");
                     }
 
-                }.bind(this));
+                }.bind(this, metaData));
             }
         }
     },

@@ -19,6 +19,11 @@ class Object_Objectbrick_Data_Abstract extends Pimcore_Model_Abstract {
     
     public $fieldname;
     public $doDelete;
+    protected $__object;
+
+    public function __construct(Object_Concrete $object) {
+        $this->__object = $object;
+    }
     
     public function getFieldname () {
         return $this->fieldname;
@@ -45,6 +50,29 @@ class Object_Objectbrick_Data_Abstract extends Pimcore_Model_Abstract {
     public function getDoDelete()
     {
         return $this->doDelete;
+    }
+
+    public function getBaseObject() {
+        return $this->__object;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getValueFromParent($key) {
+
+        $parent = Object_Service::hasInheritableParentObject($this->getBaseObject());
+
+        if(!empty($parent)) {
+            $containerGetter = "get" . ucfirst($this->fieldname);
+            $brickGetter = "get" . ucfirst($this->getType());
+            $getter = "get" . ucfirst($key);
+
+            return $parent->$containerGetter()->$brickGetter()->$getter();
+        }
+
+        return null;
     }
 
 

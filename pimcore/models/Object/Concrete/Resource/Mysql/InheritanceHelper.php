@@ -21,16 +21,37 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
     const STORE_TABLE = "object_store_";
     const QUERY_TABLE = "object_query_";
     const RELATION_TABLE = "object_relations_";
+    const ID_FIELD = "oo_id";
 
-    public function __construct($classId) {
+    public function __construct($classId, $idField = null, $storetable = null, $querytable = null, $relationtable = null) {
         $this->db = Pimcore_Resource_Mysql::get();
         $this->fields = array();
         $this->relations = array();
         $this->fieldIds = array();
 
-        $this->storetable = self::STORE_TABLE . $classId;
-        $this->querytable = self::QUERY_TABLE . $classId;
-        $this->relationtable = self::RELATION_TABLE . $classId;
+        if($storetable == null) {
+            $this->storetable = self::STORE_TABLE . $classId;
+        } else {
+            $this->storetable = $storetable;
+        }
+
+        if($querytable == null) {
+            $this->querytable = self::QUERY_TABLE . $classId;
+        } else {
+            $this->querytable = $querytable;
+        }
+
+        if($relationtable == null) {
+            $this->relationtable = self::RELATION_TABLE . $classId;
+        } else {
+            $this->relationtable = $relationtable;
+        }
+
+        if($idField == null) {
+            $this->idField = self::ID_FIELD;
+        } else {
+            $this->idField = $idField;
+        }
     }
 
     public function resetFieldsToCheck() {  
@@ -55,7 +76,7 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
     }
 
     public function doUpdate($oo_id) {
-//        p_r($this->fields);
+//        p_r($this->fields); die();
 //        p_r($this->relations);
 
         if(empty($this->fields) && empty($this->relations)) {
@@ -70,7 +91,7 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
             $fields = ", `" . $fields . "`";
         }
 
-        $result = $this->db->fetchRow("SELECT oo_id AS id" . $fields . " FROM " . $this->storetable . " WHERE oo_id = " . $oo_id);
+        $result = $this->db->fetchRow("SELECT " . $this->idField . " AS id" . $fields . " FROM " . $this->storetable . " WHERE " . $this->idField . " = " . $oo_id);
         $o = new stdClass();
         $o->id = $result['id'];
         $o->values = $result;
@@ -81,6 +102,7 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
                 foreach($o->childs as $c) {
                     $this->getIdsToUpdateForValuefields($c, $fieldname);
                 }
+
                 $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $fieldname);
             }
         }
@@ -106,7 +128,7 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
 
 
     private function buildTree($currentParentId, $fields) {
-        $result = $this->db->fetchAll("SELECT oo_id AS id $fields FROM " . $this->storetable . " a INNER JOIN objects b ON a.oo_id = b.o_id WHERE o_parentId = " . $currentParentId);
+        $result = $this->db->fetchAll("SELECT a." . $this->idField . " AS id $fields FROM " . $this->storetable . " a INNER JOIN objects b ON a." . $this->idField . " = b.o_id WHERE o_parentId = " . $currentParentId);
 
         $objects = array();
 
@@ -160,8 +182,8 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
 
     private function updateQueryTable($oo_id, $ids, $fieldname) {
         if(!empty($ids)) {
-            $value = $this->db->fetchCol("SELECT `$fieldname` FROM " . $this->querytable . " WHERE oo_id = " . $oo_id);
-            $this->db->update($this->querytable, array($fieldname => $value[0]), "oo_id IN (" . implode(",", $ids) . ")");
+            $value = $this->db->fetchCol("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = " . $oo_id);
+            $this->db->update($this->querytable, array($fieldname => $value[0]), $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
 

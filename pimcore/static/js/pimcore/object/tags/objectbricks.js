@@ -80,7 +80,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             this.layout.add(this.getControls());
         } else {
             for (var i=0; i<this.data.length; i++) {
-                this.addBlockElement(i,this.data[i].type, this.data[i].data, true);
+                this.addBlockElement(i,this.data[i].type, this.data[i], true);
             }
         }
         
@@ -183,9 +183,11 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         this.dataFields = [];
         this.currentData = {};
+        this.currentMetaData = {};
         
         if(blockData) {
-            this.currentData = blockData;
+            this.currentData = blockData.data;
+            this.currentMetaData = blockData.metaData;
         }
 
         var blockElement = new Ext.Panel({
@@ -207,20 +209,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             blockElement.insert(0, control);
         }
         
-        blockElement.key = type; //this.currentElements.length;
+        blockElement.key = type; 
         blockElement.fieldtype = type;
         this.layout.add(blockElement);
         this.layout.insert(0, this.getControls());
 
 
         this.layout.doLayout();
-        
-        
-//        this.currentElements.push({
-//            container: blockElement,
-//            fields: this.dataFields,
-//            type: type
-//        });
 
         this.currentElements[type] = null;
         this.currentElements[type] = {
@@ -235,6 +230,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
         this.dataFields = [];
         this.currentData = {};
+        this.currentMetaData = {};
     },
 
     getDataForField: function (name) {
@@ -242,7 +238,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     getMetaDataForField: function(name) {
-        return null;
+        return this.currentMetaData[name];
     },
 
     addToDataFields: function (field, name) {
@@ -284,6 +280,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 } else {
                     for (var u=0; u<element.fields.length; u++) {
                         if(element.fields[u].isDirty()) {
+                            element.fields[u].unmarkInherited();
                             elementData[element.fields[u].getName()] = element.fields[u].getValue();
                         }
                     }

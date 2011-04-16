@@ -200,7 +200,7 @@ pimcore.object.helpers.edit = {
                 try {
                     dLayout.on("render", function (metaData) {
                         if(metaData && metaData.inherited) {
-                            this.markInherited();
+                            this.markInherited(metaData);
                         }
                     }.bind(field, metaData));
                 }

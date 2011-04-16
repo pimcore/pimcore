@@ -38,9 +38,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     public $allowedTypes = array();
 
     public function getPhpdocType() {
-        return "hugo";
-
-
+        return "";
     }
 
 
@@ -54,33 +52,110 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         $editmodeData = array();
 
         if ($data instanceof Object_Objectbrick) {
-            $items = $data->getItems();
-            foreach ($items as $item) {
+            $getters = $data->getBrickGetters();
 
-                if (!$item instanceof Object_Objectbrick_Data_Abstract) {
-                    continue;
-                }
-
-                try {
-                    $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
-                } catch (Exception $e) {
-                    continue;
-                }
-
-                $collectionData = array();
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()});
-                }
-
-                $editmodeData[] = array(
-                    "data" => $collectionData,
-                    "type" => $item->getType()
-                );
+            foreach ($getters as $getter) {
+                $editmodeData[] = $this->doGetDataForEditmode($data, $getter);
             }
         }
 
+//        p_r($editmodeData); die();
         return $editmodeData;
+    }
+
+    private function doGetDataForEditmode($data, $getter, $level = 0) {
+//        p_r($data); die();
+        $parent = Object_Service::hasInheritableParentObject($data->getObject());
+        $item = $data->$getter();
+        if(!$item && !empty($parent)) {
+            $data = $parent->{"get" . ucfirst($this->getName())}();
+            return $this->doGetDataForEditmode($data, $getter, $level + 1);
+        }
+
+        if (!$item instanceof Object_Objectbrick_Data_Abstract) {
+            return null;
+        }
+
+        try {
+            $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
+        } catch (Exception $e) {
+            return null;
+        }
+
+        $brickData = array();
+        $brickMetaData = array();
+
+        foreach ($collectionDef->getFieldDefinitions() as $fd) {
+            $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter); //$fd->getDataForEditmode($item->{$fd->getName()});
+            $brickData[$fd->getName()] = $fieldData->objectData;
+            $brickMetaData[$fd->getName()] = $fieldData->metaData;
+        }
+
+        $editmodeDataItem = array(
+            "data" => $brickData,
+            "type" => $item->getType(),
+            "metaData" => $brickMetaData
+        );
+        return $editmodeDataItem;
+    }
+
+
+    /**
+     * gets recursively attribute data from parent and fills objectData and metaData
+     *
+     * @param  $object
+     * @param  $key
+     * @param  $fielddefinition
+     * @return void
+     */
+    private function getDataForField($item, $key, $fielddefinition, $level = 0, $baseObject, $getter) {
+        $result = new stdClass();
+        $parent = Object_Service::hasInheritableParentObject($baseObject);
+        $valueGetter = "get" . ucfirst($key);
+        if (method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading()) {
+
+            //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
+            if ($fielddefinition->isRemoteOwner()) {
+                $refKey = $fielddefinition->getOwnerFieldName();
+                $refId = $fielddefinition->getOwnerClassId();
+            } else {
+                $refKey = $key;
+            }
+            $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+            if(empty($relations) && !empty($parent)) {
+                $parentItem = $parent->{"get" . ucfirst($this->getName())}();
+                return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
+            } else {
+                $data = array();
+
+                if ($fielddefinition instanceof Object_Class_Data_Href) {
+                    $data = $relations[0];
+                } else {
+                    foreach ($relations as $rel) {
+                        if ($fielddefinition instanceof Object_Class_Data_Objects) {
+                            $data[] = array($rel["id"], $rel["path"], $rel["subtype"]);
+                        } else {
+                            $data[] = array($rel["id"], $rel["path"], $rel["type"], $rel["subtype"]);
+                        }
+                    }
+                }
+                $result->objectData = $data;
+                $result->metaData['objectid'] = $baseObject->getId();
+                $result->metaData['inherited'] = $level != 0;
+            }
+
+        } else {
+            $value = $fielddefinition->getDataForEditmode($item->$valueGetter());
+            if(empty($value) && !empty($parent)) {
+                $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
+                return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
+            } else {
+                $result->objectData = $value;
+                $result->metaData['objectid'] = $baseObject->getId();
+                $result->metaData['inherited'] = $level != 0;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -121,7 +196,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 $brick = $container->$getter();
                 if(empty($brick)) {
                     $brickClass = "Object_Objectbrick_Data_" . ucfirst($collectionRaw["type"]);
-                    $brick = new $brickClass;
+                    $brick = new $brickClass($this->getObject());
                 }
 
 
@@ -129,7 +204,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     $brick->setDoDelete(true);
                 } else {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        if ($collectionRaw["data"][$fd->getName()]) {
+                        if (array_key_exists($fd->getName(), $collectionRaw["data"])) {
                             $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()]);
                         }
                     }
@@ -141,6 +216,8 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 $container->$setter($brick);
             }
         }
+
+//        p_R($container); die();
 
 //        $container = new Object_Fieldcollection($values, $this->getName());
         return $container;
@@ -202,7 +279,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
     public function delete($object)
     {
-        $container = new Object_Objectbrick(null, $this->getName());
+        $container = $this->load($object);
         $container->delete($object);
     }
 
@@ -423,6 +500,44 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         return $tags;
     }
 
+
+    public function getGetterCode ($class) {
+        // getter
+
+        $key = $this->getName();
+        $code = "";
+
+        $code .= '/**' . "\n";
+        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= "public function get" . ucfirst($key) . " () {\n";
+
+        $code .= "\t" . '$data = $this->' . $key . ";\n";
+        $code .= "\t" . 'if(!$data) { ' . "\n";
+
+        $classname = "Object_" . ucfirst($class->getName()) . "_" . ucfirst($this->getName());
+
+        $code .= "\t\t" . 'if(class_exists("' . $classname . '")) { ' . "\n";
+        $code .= "\t\t\t" . '$data = new ' . $classname . '($this);' . "\n";
+        $code .= "\t\t" . '} else {' . "\n";
+        $code .= "\t\t\t" . 'return null;' . "\n";
+        $code .= "\t\t" . '}' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+
+        if(method_exists($this,"preGetData")) {
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        }
+
+        // adds a hook preGetValue which can be defined in an extended class
+        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
+        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+
+        $code .= "\t return " . '$data' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
 
     //TODO: validity and sanity check
 }

@@ -19,6 +19,12 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
 
 
     /**
+     * @var Object_Concrete_Resource_Mysql_InheritanceHelper
+     */
+    protected $inheritanceHelper = null;    
+
+    
+    /**
      * create data rows for query table and for the store table
      *
      * @return void
@@ -41,14 +47,22 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
 
     public function save (Object_Concrete $object) {
 
+        $storetable = $this->model->getDefinition()->getTableName($object->getClass(), false);
+        $querytable = $this->model->getDefinition()->getTableName($object->getClass(), true);
+
+
+        $this->inheritanceHelper = new Object_Concrete_Resource_Mysql_InheritanceHelper($object->getClassId(), "o_id", $storetable, $querytable);
+
         $this->createDataRows($object);
 
 
-//        $data = array(
-//            "o_id" => $object->getId(),
-//            "fieldname" => $this->model->getFieldname()
-//        );
+        //        $data = array(
+        //            "o_id" => $object->getId(),
+        //            "fieldname" => $this->model->getFieldname()
+        //        );
 
+
+        //        p_r($this->model); die();
 
         $fd = $this->model->getDefinition()->getFieldDefinitions();
         $untouchable = array();
@@ -65,11 +79,11 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
 
 
         // update data for store table
-        $tableName = $this->model->getDefinition()->getTableName($object->getClass(), false);
+        //        $tableName = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $data = array();
         $data["o_id"] = $object->getId();
         $data["fieldname"] = $this->model->getFieldname();
-        
+
         foreach ($fd as $key => $value) {
             if ($value->getColumnType()) {
                 if (is_array($value->getColumnType())) {
@@ -85,11 +99,11 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
             }
         }
 
-        $this->db->update($tableName, $data, "o_id = " . $object->getId());
+        $this->db->update($storetable, $data, "o_id = " . $object->getId());
 
 
         // get data for query table
-        $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
+        //        $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
         // this is special because we have to call each getter to get the inherited values from a possible parent object
 
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
@@ -101,8 +115,8 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
         $data = array();
         $data["o_id"] = $object->getId();
         $data["fieldname"] = $this->model->getFieldname();
-//        $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow("SELECT * FROM " . $tableName . " WHERE o_id = ?", $object->getId());
+        $this->inheritanceHelper->resetFieldsToCheck();
+        $oldData = $this->db->fetchRow("SELECT * FROM " . $querytable . " WHERE o_id = ?", $object->getId());
 
         foreach ($objectVars as $key => $value) {
             $fd = $this->model->getDefinition()->getFieldDefinition($key);
@@ -113,6 +127,7 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
                     if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
                         $method = "get" . $key;
                         $insertData = $fd->getDataForQueryResource($this->model->$method());
+//                        p_R($this->model->$method());
                         if (is_array($insertData)) {
                             $data = array_merge($data, $insertData);
                         }
@@ -125,23 +140,25 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
                         if (is_array($insertData)) {
                             foreach($insertData as $insertDataKey => $insertDataValue) {
                                 if($oldData[$insertDataKey] != $insertDataValue) {
-//                                    $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                    $this->inheritanceHelper->addFieldToCheck($insertDataKey);
                                 }
                             }
                         } else {
                             if($oldData[$key] != $insertData) {
-//                                $this->inheritanceHelper->addFieldToCheck($key);
+                                $this->inheritanceHelper->addFieldToCheck($key);
                             }
                         }
 
                     } else {
-                        logger::debug(get_class($this) . ": Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                        logger::debug(get_class($this) . ": Excluding untouchable query value for object - objectbrick [ " . $object->getId() . " ]  key [ $key ] because it has not been loaded");
                     }
                 }
             }
         }
+        $this->db->update($querytable, $data, "o_id = " . $object->getId());
 
-        $this->db->update($tableName, $data, "o_id = " . $object->getId());
+        $this->inheritanceHelper->doUpdate($object->getId());
+        $this->inheritanceHelper->resetFieldsToCheck();
 
         // HACK: see a few lines above!
         Object_Abstract::setGetInheritedValues($inheritedValues);

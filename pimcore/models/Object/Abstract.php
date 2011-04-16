@@ -83,7 +83,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @static
      * @return bool
      */
-    public static function doGetInheritedValues() {
+    public static function doGetInheritedValues(Object_Concrete $object = null) {
+        if(self::$getInheritedValues && $object !== null) {
+            $class = $object->getClass();
+            return $class->getAllowInherit();
+        }
+
         return self::$getInheritedValues;
     }
 

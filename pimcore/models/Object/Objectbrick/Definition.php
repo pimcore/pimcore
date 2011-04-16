@@ -232,6 +232,11 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                 $cd .= '* @return ' . $def->getPhpdocType() . "\n";
                 $cd .= '*/' . "\n";
                 $cd .= "public function get" . ucfirst($key) . " () {\n";
+
+                $cd .= "\t" . 'if(!$this->' . $key . ' && Object_Abstract::doGetInheritedValues($this->getBaseObject())) {' . "\n";
+                $cd .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+                $cd .= "\t" . '}' . "\n";
+
                 $cd .= "\t return " . '$this->' . $key . ";\n";
                 $cd .= "}\n\n";
 
@@ -381,18 +386,20 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                 $cd .= "\n\n";
 
                 $cd .= "\n\n";
+                $cd .= 'protected $brickGetters = array(' . "'" . implode("','", $brickKeys) . "');\n";
+                $cd .= "\n\n";
 
                 foreach($brickKeys as $brickKey) {
                     $cd .= 'public $' . $brickKey . " = null;\n\n";
 
                     $cd .= '/**' . "\n";
-                    $cd .= '* @return Object_Objectbrick_Data_' . $brickKey . "\n";
+                    $cd .= '* @return Object_Objectbrick_Data_' . $brickKey . "\n"; 
                     $cd .= '*/' . "\n";
                     $cd .= "public function get" . ucfirst($brickKey) . "() { \n";
 
                     if($class->getAllowInherit()) {
-                        $cd .= '   if(!$this->' . $brickKey . " && Object_Abstract::doGetInheritedValues()) { \n";
-                        $cd .= '      return $this->object->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
+                        $cd .= '   if(!$this->' . $brickKey . ' && Object_Abstract::doGetInheritedValues($this->__object)) { ' . "\n";
+                        $cd .= '      return $this->__object->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
                         $cd .= "   }\n";
                     }
                     $cd .= '   return $this->' . $brickKey . "; \n";

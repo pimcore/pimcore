@@ -264,8 +264,6 @@ class Object_Service extends Element_Service {
             }
         }
 
-
-
         $result = new stdClass();
         $result->value = $value;
         $result->objectid = $object->getId();
@@ -283,7 +281,6 @@ class Object_Service extends Element_Service {
             }
         }
     }
-
 
     /**
      * call the getters of each object field, in case some of the are lazy loading and we need the data to be loaded
