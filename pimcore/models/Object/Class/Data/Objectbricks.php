@@ -59,7 +59,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             }
         }
 
-//        p_r($editmodeData); die();
         return $editmodeData;
     }
 
@@ -85,16 +84,21 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         $brickData = array();
         $brickMetaData = array();
 
+        $inherited = false;
         foreach ($collectionDef->getFieldDefinitions() as $fd) {
             $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter); //$fd->getDataForEditmode($item->{$fd->getName()});
             $brickData[$fd->getName()] = $fieldData->objectData;
             $brickMetaData[$fd->getName()] = $fieldData->metaData;
+            if($fieldData->metaData['inherited'] == true) {
+                $inherited = true;
+            }
         }
 
         $editmodeDataItem = array(
             "data" => $brickData,
             "type" => $item->getType(),
-            "metaData" => $brickMetaData
+            "metaData" => $brickMetaData,
+            "inherited" => $inherited
         );
         return $editmodeDataItem;
     }
@@ -145,7 +149,10 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             }
 
         } else {
-            $value = $fielddefinition->getDataForEditmode($item->$valueGetter());
+            $value = null;
+            if(!empty($item)) {
+                $value = $fielddefinition->getDataForEditmode($item->$valueGetter());
+            }
             if(empty($value) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
                 return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
@@ -165,7 +172,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      */
     public function getDataFromEditmode($data)
     {
-
         $getter = "get" . ucfirst($this->getName());
 
         $container = $this->getObject()->$getter();
@@ -176,15 +182,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             $containerClass = "Object_" . ucfirst($className) . "_" . ucfirst($this->getName());
             $container = new $containerClass($this->getObject(), $this->getName());
         }
-
-//        p_r($this);
-//        p_r($this->getName());
-//
-//
-//        p_r($data);
-
-//        $values = array();
-//        $count = 0;
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
@@ -217,9 +214,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             }
         }
 
-//        p_R($container); die();
-
-//        $container = new Object_Fieldcollection($values, $this->getName());
         return $container;
     }
 
@@ -518,7 +512,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         $classname = "Object_" . ucfirst($class->getName()) . "_" . ucfirst($this->getName());
 
         $code .= "\t\t" . 'if(class_exists("' . $classname . '")) { ' . "\n";
-        $code .= "\t\t\t" . '$data = new ' . $classname . '($this);' . "\n";
+        $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
         $code .= "\t\t" . '} else {' . "\n";
         $code .= "\t\t\t" . 'return null;' . "\n";
         $code .= "\t\t" . '}' . "\n";

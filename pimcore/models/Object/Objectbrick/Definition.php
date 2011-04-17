@@ -30,126 +30,6 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         return $this->classDefinitions;
     }
 
-
-//    /**
-//     * @var string
-//     */
-//    public $key;
-//
-//    /**
-//     * @var string
-//     */
-//    public $parentClass;
-//
-//    /**
-//     * @var array
-//     */
-//    public $layoutDefinitions;
-//
-//
-//    /**
-//     * @return string
-//     */
-//    public function getKey() {
-//        return $this->key;
-//    }
-//
-//    /**
-//     * @param string $key
-//     * @return void
-//     */
-//    public function setKey($key) {
-//        $this->key = $key;
-//    }
-//
-//    /**
-//     * @return string
-//     */
-//    public function getParentClass() {
-//        return $this->parentClass;
-//    }
-//
-//    /**
-//     * @param string $parentClass
-//     * @return void
-//     */
-//    public function setParentClass($parentClass) {
-//        $this->parentClass = $parentClass;
-//    }
-//
-//    /**
-//     * @return array
-//     */
-//    public function getLayoutDefinitions() {
-//        return $this->layoutDefinitions;
-//    }
-//
-//    /**
-//     * @param array $layoutDefinitions
-//     * @return void
-//     */
-//    public function setLayoutDefinitions($layoutDefinitions) {
-//        $this->layoutDefinitions = $layoutDefinitions;
-//
-//        $this->fieldDefinitions = array();
-//        $this->extractDataDefinitions($this->layoutDefinitions);
-//    }
-//
-//    /**
-//     * @return array
-//     */
-//    public function getFieldDefinitions() {
-//        return $this->fieldDefinitions;
-//    }
-//
-//    /**
-//     * @param array $fieldDefinitions
-//     * @return void
-//     */
-//    public function setFieldDefinitions($fieldDefinitions) {
-//        $this->fieldDefinitions = $fieldDefinitions;
-//    }
-//
-//    /**
-//     * @param string $key
-//     * @param Object_Class_Data $data
-//     * @return void
-//     */
-//    public function setFieldDefinition($key, $data) {
-//        $this->fieldDefinitions[$key] = $data;
-//    }
-//
-//    /**
-//     * @return Object_Data
-//     */
-//    public function getFieldDefinition($key) {
-//
-//        if (array_key_exists($key, $this->fieldDefinitions)) {
-//            return $this->fieldDefinitions[$key];
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * @param array|Object_Class_Layout|Object_Class_Data $def
-//     * @return void
-//     */
-//    public function extractDataDefinitions($def) {
-//
-//        if ($def instanceof Object_Class_Layout) {
-//            if ($def->hasChilds()) {
-//                foreach ($def->getChilds() as $child) {
-//                    $this->extractDataDefinitions($child);
-//                }
-//            }
-//        }
-//
-//        if ($def instanceof Object_Class_Data) {
-//            $this->setFieldDefinition($def->getName(), $def);
-//        }
-//    }
-    
-    
     public static function getByKey ($key) {
         $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
         
@@ -398,9 +278,12 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                     $cd .= "public function get" . ucfirst($brickKey) . "() { \n";
 
                     if($class->getAllowInherit()) {
-                        $cd .= '   if(!$this->' . $brickKey . ' && Object_Abstract::doGetInheritedValues($this->__object)) { ' . "\n";
-                        $cd .= '      return $this->__object->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
-                        $cd .= "   }\n";
+                        $cd .= "\t" . 'if(!$this->' . $brickKey . ' && Object_Abstract::doGetInheritedValues($this->__object)) { ' . "\n";
+                        $cd .= "\t\t" . '$brick = $this->__object->getValueFromParent("' . $fieldname . '");' . "\n";
+                        $cd .= "\t\t" . 'if(!empty($brick)) {' . "\n";
+                        $cd .= "\t\t\t" . 'return $this->__object->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
+                        $cd .= "\t\t" . "}\n";
+                        $cd .= "\t" . "}\n";
                     }
                     $cd .= '   return $this->' . $brickKey . "; \n";
 

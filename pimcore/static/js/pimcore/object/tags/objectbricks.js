@@ -21,6 +21,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     preventDelete: {},
 
     initialize: function (data, layoutConf) {
+
         this.addedTypes = {};
         this.preventDelete = {};
 
@@ -76,11 +77,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     
     initData: function () {
         
-        if(this.data.length < 1) {
-            this.layout.add(this.getControls());
-        } else {
+        this.layout.add(this.getControls());
+        if(this.data.length > 0) {
             for (var i=0; i<this.data.length; i++) {
-                this.addBlockElement(i,this.data[i].type, this.data[i], true);
+                if(this.data[i] != null) {
+                    this.preventDelete[this.data[i].type] = this.data[i].inherited;
+                    this.addBlockElement(i,this.data[i].type, this.data[i], true);
+                }
             }
         }
         
@@ -132,7 +135,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     getDeleteControl: function(type, blockElement) {
-        if(!this.preventDelete.type) {
+        if(!this.preventDelete[type]) {
             var items = [];
             items.push({
                 cls: "pimcore_block_button_minus",

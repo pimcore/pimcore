@@ -23,7 +23,7 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
     protected $__object = null;
     protected $brickGetters = array();
 
-    public function __construct ($object, $fieldname = null) {
+    public function __construct ($object, $fieldname) {
         $this->__object = $object;
         if($fieldname) {
             $this->setFieldname($fieldname);
@@ -71,6 +71,53 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
     }
     
     public function save ($object) {
+
+        $getters = $this->getBrickGetters();
+        foreach($getters as $getter) {
+            $brick = $this->$getter();
+            if($brick instanceof Object_Objectbrick_Data_Abstract) {
+                if($brick->getDoDelete()) {
+                    $brick->delete($object);
+                } else  {
+                    $brick->setFieldname($this->getFieldname());
+                    $brick->save($object);
+                }
+
+            } else {
+//                $parent = Object_Service::hasInheritableParentObject($object);
+
+                if($brick == null) {
+                    $inheritanceModeBackup = Object_Abstract::getGetInheritedValues(); Object_Abstract::setGetInheritedValues(true);
+                    $parentBrick = $this->$getter();
+                    Object_Abstract::setGetInheritedValues($inheritanceModeBackup);
+
+                    //                    $containerGetter = "get" . ucfirst($this->getFieldname());
+//                    $parentContainer = $parent->$containerGetter();
+
+//                    p_r($parentBrick); die("blup");
+                    if(!empty($parentBrick)) {
+//                        $parentBrick = $parentContainer->$getter();
+//                        if(!empty($parentBrick)) {
+
+                            $brickType = "Object_Objectbrick_Data_" . ucfirst($parentBrick->getType());
+
+
+
+                            $brick = new $brickType($object);
+                            $brick->setFieldname($this->getFieldname());
+                            $brick->save($object);
+//                        }
+
+                    }
+
+
+                }
+
+            }
+
+
+        }
+
         if(is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
                 if($brick instanceof Object_Objectbrick_Data_Abstract) {
