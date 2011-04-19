@@ -302,6 +302,14 @@ class Element_Import_Service
                                         $collectionItem->value = Pimcore_Tool_Text::replaceWysiwygTextRelationIds($idMapping, $collectionItem->value);
                                     } else if ($collectionItem->type == "link" and $collectionItem->value["internalType"]) {
                                         $collectionItem->value["internal"] = $idMapping[$collectionItem->value["internalType"]][$collectionItem->value["internal"]];
+                                    } else if ($collectionItem->type == "href" and $collectionItem->value["id"]){
+                                        $collectionItem->value["id"] = $idMapping[$collectionItem->value["type"]][$collectionItem->value["id"]];
+                                    } else if (($collectionItem->type == "objects" or $collectionItem->type == "multihref") and is_array($collectionItem->value) and count($collectionItem->value)>0){
+                                        for($i=0; $i < count($collectionItem->value);$i++){
+                                            if($collectionItem->value[$i]["id"]){
+                                                $collectionItem->value[$i]["id"] = $idMapping[$collectionItem->value[$i]["type"]][$collectionItem->value[$i]["id"]];
+                                            }
+                                        }
                                     }
                                 }
                             }

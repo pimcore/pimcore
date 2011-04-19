@@ -235,8 +235,6 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                     $el->value = $fd->getForWebserviceExport($item);
 
                     $wsDataItem->value[] = $el;
-                    //$wsData[$item->getType()."_".$fd->getName()]=$el;
-                    //$wsData[]=$el;
 
                 }
 
