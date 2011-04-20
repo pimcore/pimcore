@@ -186,12 +186,12 @@ class User_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
         $this->db->delete("assets_permissions", $this->db->quoteInto("userId = ?", $userId));
 
         // classes
-        $this->db->update("classes", array("userOwner" => null), $this->db->quoteInto("userOwner = '?", $userId));
+        $this->db->update("classes", array("userOwner" => null), $this->db->quoteInto("userOwner = ?", $userId));
         $this->db->update("classes", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId));
 
         // documents
-        $this->db->update("documents", array("userOwner" => null), $this->db->quoteInto("userOwner = '?", $userId));
-        $this->db->update("documents", array("userModification" => null), $this->db->quoteInto("userModification = '?", $userId . "'"));
+        $this->db->update("documents", array("userOwner" => null), $this->db->quoteInto("userOwner = ?", $userId));
+        $this->db->update("documents", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId . "'"));
         $this->db->delete("documents_permissions", $this->db->quoteInto("userId = ?", $userId ));
 
         // objects

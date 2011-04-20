@@ -164,7 +164,7 @@ class Document_Link_Resource_Mysql extends Document_Resource_Mysql {
      */
     public function delete() {
         try {
-            $this->db->delete("documents_link", $this->db->quoteInto("id = '?", $this->model->getId()));
+            $this->db->delete("documents_link", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
         }
         catch (Exception $e) {

@@ -24,7 +24,7 @@ class User_Permission_List_Resource_Mysql extends Pimcore_Model_Resource_Mysql_A
      */
     public function load($user) {
 
-        $permissionNames = $this->db->fetchAll("SELECT name FROM users_permissions WHERE userId=?", $user->getId());
+        $permissionNames = $this->db->fetchAll("SELECT name FROM users_permissions WHERE userId = ?", $user->getId());
 
         if (count($permissionNames) > 0) {
             foreach ($permissionNames as $permissionName) {
@@ -42,7 +42,7 @@ class User_Permission_List_Resource_Mysql extends Pimcore_Model_Resource_Mysql_A
      */
     public function deleteForUser($user) {
         try {
-            $this->db->delete("users_permissions", "userId = ?", $user->getId());
+            $this->db->delete("users_permissions", $this->db->quoteInto("userId = ?", $user->getId()));
             Logger::info("dropped all permissions for user " . $user->getId());
         }
         catch (Exception $e) {
@@ -85,7 +85,7 @@ class User_Permission_List_Resource_Mysql extends Pimcore_Model_Resource_Mysql_A
                     }
                     foreach ($oldPermissionNames as $oldpermissionName) {
                         if (!in_array($oldpermissionName, $user->getUserPermissionList()->getPermissionNames())) {
-                            $this->db->delete("users_permissions", "userId='" . $user->getId() . "' AND name='" . $oldpermissionName . "'");
+                            $this->db->delete("users_permissions", $this->db->quoteInto("userId= ?", $user->getId()) . " AND " . $this->db->quoteInto("name = ?", $oldpermissionName ));
                             Logger::debug("dropped permission " . $permissionName . " for user " . $user->getId());
                         }
                     }
