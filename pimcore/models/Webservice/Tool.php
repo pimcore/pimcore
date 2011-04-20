@@ -27,7 +27,7 @@ class Webservice_Tool {
         $modelsDir = PIMCORE_PATH."/models/";
         $files = rscandir($modelsDir);
         $includePatterns = array(
-            "/Webservice\/Data/"
+            "/Webservice".preg_quote(DIRECTORY_SEPARATOR)."Data/"
         );
 
         foreach ($files as $file) {
