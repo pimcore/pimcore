@@ -163,10 +163,12 @@ class Asset_Image extends Asset {
             return "/pimcore/static/img/image-not-supported.png";
         }
 
+        copy($this->getFileSystemPath(), $fsPath);
+
         if ($thumbnail->getCover()) {
             // return original image if this is smaller than the thumb dimensions
             if ($width < $thumbnail->getWidth() && $height < $thumbnail->getHeight()) {
-                return $this->getRelativeFileSystemPath();
+                return $path;
             }
             
             $image->fitOnCanvas($thumbnail->getWidth(), $thumbnail->getHeight());
@@ -174,7 +176,7 @@ class Asset_Image extends Asset {
         else if ($thumbnail->getContain()) {
             // return original image if this is smaller than the thumb dimensions
             if ($width < $thumbnail->getWidth() && $height < $thumbnail->getHeight()) {
-                return $this->getRelativeFileSystemPath();
+                return $path;
             }
             
             $image->fit($thumbnail->getWidth(), $thumbnail->getHeight());
@@ -183,11 +185,11 @@ class Asset_Image extends Asset {
             
             // return original image if this is smaller than the thumb dimensions
             if ($width < $thumbnail->getWidth() && $thumbnail->getWidth() > 0) {
-                return $this->getRelativeFileSystemPath();
+                return $path;
             }
         
             if ($height < $thumbnail->getHeight() && $thumbnail->getHeight() > 0) {
-                return $this->getRelativeFileSystemPath();
+                return $path;
             }
             
             if ($thumbnail->getHeight() > 0 && $thumbnail->getWidth() > 0) {
