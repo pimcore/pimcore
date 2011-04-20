@@ -65,20 +65,20 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
     public function delete () {
 
         try {
-            $this->db->delete($this->getTableName(), "ooo_id = '" . $this->model->getObject()->getId() . "'");
+            $this->db->delete($this->getTableName(), $this->db->quoteInto("ooo_id = ?", $this->model->getObject()->getId()));
         } catch (Exception $e) {
             $this->createUpdateTable();
         }
 
         // remove relations
-        $this->db->delete("object_relations_" . $this->model->getObject()->getO_classId(), "ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = '".$this->model->getObject()->getId()."'");
+        $this->db->delete("object_relations_" . $this->model->getObject()->getO_classId(), $this->db->quoteInto("ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = ?", $this->model->getObject()->getId()));
     }
 
     public function load () {
 
         $items = array();
 
-        $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = '" . $this->model->getObject()->getId() . "'");
+        $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ?", $this->model->getObject()->getId());
         foreach ($data as $row) {
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
                 $items[$row["language"]][$fd->getName()] = $fd->getDataFromResource($row[$fd->getName()]);
@@ -86,7 +86,7 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
         }
 
         // fill relations
-        $relData = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getObject()->getO_classId() . " WHERE ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = '".$this->model->getObject()->getId()."'");
+        $relData = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getObject()->getO_classId() . " WHERE ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = ?", $this->model->getObject()->getId());
         $relations = array();
         foreach ($relData as $rel) {
             $relations[$rel["position"]][$rel["fieldname"]][] = $rel;

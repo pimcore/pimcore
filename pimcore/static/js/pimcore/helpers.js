@@ -57,6 +57,11 @@ pimcore.helpers.closeDocument = function (id) {
 pimcore.helpers.openObject = function (id, type) {
     if (pimcore.globalmanager.exists("object_" + id) == false) {
         pimcore.helpers.addTreeNodeLoadingIndicator("object", id);
+
+        if(type != "folder" && type != "variant" && type != "object") {
+            type = "object";
+        }
+
         pimcore.globalmanager.add("object_" + id, new pimcore.object[type](id));
     }
     else {

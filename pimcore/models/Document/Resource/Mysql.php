@@ -66,7 +66,7 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
             if (substr($path, -1) == "/" and strlen($path) > 1) {
                 $path = substr($path, 0, count($path) - 2);
             }
-            $data = $this->db->fetchRow("SELECT * FROM documents WHERE CONCAT(path,`key`) = '" . $path . "'");
+            $data = $this->db->fetchRow("SELECT * FROM documents WHERE CONCAT(path,`key`) = ?", $path);
 
             if ($data["id"]) {
                 $this->assignVariablesToModel($data);
@@ -139,7 +139,7 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
                 $this->db->insert("documents", $data);
             }
             catch (Exception $e) {
-                $this->db->update("documents", $data, "id='" . $this->model->getId() . "'");
+                $this->db->update("documents", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
             }
         }
         catch (Exception $e) {
@@ -154,7 +154,7 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
      */
     public function delete() {
         try {
-            $this->db->delete("documents", "id='" . $this->model->getId() . "'");
+            $this->db->delete("documents", $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
         catch (Exception $e) {
             throw $e;
@@ -163,16 +163,16 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
 
     public function updateChildsPaths($oldPath) {
         //get documents to empty their cache
-        $documents = $this->db->fetchAll("SELECT id,path FROM documents WHERE path LIKE '" . $oldPath . "%'");
+        $documents = $this->db->fetchAll("SELECT id,path FROM documents WHERE path LIKE ?", $oldPath . "%");
 
         //update documents child paths
-        $this->db->exec("update documents set path = replace(path,'" . $oldPath . "','" . $this->model->getFullPath() . "') where path like '" . $oldPath . "/%';");
+        $this->db->exec("update documents set path = replace(path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where path like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update documents child permission paths
-        $this->db->exec("update documents_permissions set cpath = replace(cpath,'" . $oldPath . "','" . $this->model->getFullPath() . "') where cpath like '" . $oldPath . "/%';");
+        $this->db->exec("update documents_permissions set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") .";");
 
         //update documents child properties paths
-        $this->db->exec("update properties set cpath = replace(cpath,'" . $oldPath . "','" . $this->model->getFullPath() . "') where cpath like '" . $oldPath . "/%';");
+        $this->db->exec("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%" ) . ";");
 
 
         foreach ($documents as $document) {
@@ -219,12 +219,12 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "cpath = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "cpath = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
 
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = '" . $this->model->getId() . "')  AND ctype='document' ORDER BY cpath ASC");
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = ?)  AND ctype='document' ORDER BY cpath ASC", $this->model->getId());
 
         foreach ($propertiesRaw as $propertyRaw) {
 
@@ -271,7 +271,7 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
      * @return void
      */
     public function deleteAllProperties() {
-        $this->db->delete("properties", "cid = '" . $this->model->getId() . "' AND ctype = 'document'");
+        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'document'", $this->model->getId()));
     }
 
     /**
@@ -287,20 +287,20 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "cpath = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "cpath = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
         }
         $pathCondition = implode(" OR ", $pathConditionParts);
-        $permissionRaw = $this->db->fetchRow("SELECT id FROM documents_permissions WHERE (" . $pathCondition . ") AND userId='" . $user->getId() . "' ORDER BY cpath DESC LIMIT 1");
+        $permissionRaw = $this->db->fetchRow("SELECT id FROM documents_permissions WHERE (" . $pathCondition . ") AND userId = ? ORDER BY cpath DESC LIMIT 1", $user->getId());
 
         //path condition for parent document
         $parentDocumentPathParts = array_slice($pathParts, 0, -1);
         $parentDocumentPathConditionParts[] = "cpath = '/'";
         foreach ($parentDocumentPathParts as $parentDocumentPathPart) {
             $parentDocumentTmpPaths[] = $parentDocumentPathPart;
-            $parentDocumentPathConditionParts[] = "cpath = '/" . implode("/", $parentDocumentTmpPaths) . "'";
+            $parentDocumentPathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $parentDocumentTmpPaths));
         }
         $parentDocumentPathCondition = implode(" OR ", $parentDocumentPathConditionParts);
-        $parentDocumentPermissionRaw = $this->db->fetchRow("SELECT id FROM documents_permissions WHERE (" . $parentDocumentPathCondition . ") AND userId='" . $user->getId() . "' ORDER BY cpath DESC LIMIT 1");
+        $parentDocumentPermissionRaw = $this->db->fetchRow("SELECT id FROM documents_permissions WHERE (" . $parentDocumentPathCondition . ") AND userId = ? ORDER BY cpath DESC LIMIT 1", $user->getId());
         $parentDocumentPermissions = new Document_Permissions();
         if ($parentDocumentPermissionRaw["id"]) {
             $parentDocumentPermissions = Document_Permissions::getById($parentDocumentPermissionRaw["id"]);
@@ -381,7 +381,7 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
 
         $permissions = array();
 
-        $permissionsRaw = $this->db->fetchAll("SELECT id FROM documents_permissions WHERE cid='" . $this->model->getId() . "' ORDER BY cpath ASC");
+        $permissionsRaw = $this->db->fetchAll("SELECT id FROM documents_permissions WHERE cid = ? ORDER BY cpath ASC", $this->model->getId());
 
         $userIdMappings = array();
         foreach ($permissionsRaw as $permissionRaw) {
@@ -398,14 +398,14 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
      * @return void
      */
     public function deleteAllPermissions() {
-        $this->db->delete("documents_permissions", "cid='" . $this->model->getId() . "'");
+        $this->db->delete("documents_permissions", $this->db->quoteInto("cid = ?", $this->model->getId()));
     }
 
     /**
      * @return void
      */
     public function deleteAllTasks() {
-        $this->db->delete("schedule_tasks", "cid='" . $this->model->getId() . "' AND ctype='document'");
+        $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='document'", $this->model->getId()));
     }
 
     /**
@@ -414,7 +414,7 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
      * @return boolean
      */
     public function hasChilds() {
-        $c = $this->db->fetchRow("SELECT id FROM documents WHERE parentId = '" . $this->model->getId() . "'");
+        $c = $this->db->fetchRow("SELECT id FROM documents WHERE parentId = ?", $this->model->getId());
 
         $state = false;
         if ($c["id"]) {
@@ -432,14 +432,14 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
      * @return integer
      */
     public function getChildAmount() {
-        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM documents WHERE parentId = '" . $this->model->getId() . "'");
+        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM documents WHERE parentId = ?", $this->model->getId());
         return $c["count"];
     }
     
     public function isLocked () {
         
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchRow("SELECT id FROM documents WHERE path LIKE '".$this->model->getFullpath()."%' AND locked IS NOT NULL AND locked != '';");
+        $belowLocks = $this->db->fetchRow("SELECT id FROM documents WHERE path LIKE ? AND locked IS NOT NULL AND locked != '';", $this->model->getFullpath()."%");
         
         if(is_array($belowLocks) && count($belowLocks) > 0) {
             return true;
@@ -452,7 +452,7 @@ class Document_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "CONCAT(path,`key`) = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "CONCAT(path,`key`) = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("CONCAT(path,`key`) = ?", "/" . implode("/", $tmpPathes));
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);

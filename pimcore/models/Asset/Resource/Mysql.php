@@ -62,7 +62,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
             $path = substr($path, 0, count($path) - 2);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM assets WHERE CONCAT(path,`filename`) = '" . $path . "'");
+        $data = $this->db->fetchRow("SELECT * FROM assets WHERE CONCAT(path,`filename`) = " . $this->db->quote($path));
 
         if ($data["id"]) {
             $this->assignVariablesToModel($data);
@@ -125,7 +125,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
                 $this->db->insert("assets", $data);
             }
             catch (Exception $e) {
-                $this->db->update("assets", $data, "id='" . $this->model->getId() . "'");
+                $this->db->update("assets", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
         }
         catch (Exception $e) {
@@ -140,7 +140,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
      */
     public function delete() {
         try {
-            $this->db->delete("assets", "id='" . $this->model->getId() . "'");
+            $this->db->delete("assets", $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;
@@ -149,16 +149,16 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
 
     public function updateChildsPaths($oldPath) {
         //get assets to empty their cache
-        $assets = $this->db->fetchAll("SELECT id,path FROM assets WHERE path LIKE '" . $oldPath . "%'");
+        $assets = $this->db->fetchAll("SELECT id,path FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
 
         //update assets child paths
-        $this->db->exec("update assets set path = replace(path,'" . $oldPath . "','" . $this->model->getFullPath() . "') where path like '" . $oldPath . "/%';");
+        $this->db->exec("update assets set path = replace(path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where path like " . $this->db->quote($oldPath . "/%")  . ";");
 
         //update assets child permission paths
-        $this->db->exec("update assets_permissions set cpath = replace(cpath,'" . $oldPath . "','" . $this->model->getFullPath() . "') where cpath like '" . $oldPath . "/%';");
+        $this->db->exec("update assets_permissions set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update assets child properties paths
-        $this->db->exec("update properties set cpath = replace(cpath,'" . $oldPath . "','" . $this->model->getFullPath() . "') where cpath like '" . $oldPath . "/%';");
+        $this->db->exec("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
         foreach ($assets as $asset) {
@@ -187,12 +187,12 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "cpath = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "cpath = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
 
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = '" . $this->model->getId() . "')  AND ctype='asset' ORDER BY cpath ASC");
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset' ORDER BY cpath ASC", $this->model->getId());
 
         foreach ($propertiesRaw as $propertyRaw) {
             
@@ -239,7 +239,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
      * @return void
      */
     public function deleteAllProperties() {
-        $this->db->delete("properties", "cid = '" . $this->model->getId() . "' AND ctype = 'asset'");
+        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'asset'", $this->model->getId()));
     }
 
     /**
@@ -248,7 +248,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
      * @return array
      */
     public function getVersions() {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = '" . $this->model->getId() . "' AND ctype='asset' ORDER BY `id` DESC");
+        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC", $this->model->getId());
 
         $versions = array();
         foreach ($versionIds as $versionId) {
@@ -273,21 +273,21 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "cpath = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "cpath = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
-        $permissionRaw = $this->db->fetchRow("SELECT id FROM assets_permissions WHERE (" . $pathCondition . ") AND userId='" . $user->getId() . "' ORDER BY cpath DESC LIMIT 1");
+        $permissionRaw = $this->db->fetchRow("SELECT id FROM assets_permissions WHERE (" . $pathCondition . ") AND userId = ? ORDER BY cpath DESC LIMIT 1", $user->getId());
 
         //path condition for parent asset
         $parentAssetPathParts = array_slice($pathParts, 0, -1);
         $parentAssetPathConditionParts[] = "cpath = '/'";
         foreach ($parentAssetPathParts as $parentAssetPathPart) {
             $parentAssetTmpPaths[] = $parentAssetPathPart;
-            $parentAssetPathConditionParts[] = "cpath = '/" . implode("/", $parentAssetTmpPaths) . "'";
+            $parentAssetPathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $parentAssetTmpPaths));
         }
         $parentAssetPathCondition = implode(" OR ", $parentAssetPathConditionParts);
-        $parentAssetPermissionRaw = $this->db->fetchRow("SELECT id FROM assets_permissions WHERE (" . $parentAssetPathCondition . ") AND userId='" . $user->getId() . "' ORDER BY cpath DESC LIMIT 1");
+        $parentAssetPermissionRaw = $this->db->fetchRow("SELECT id FROM assets_permissions WHERE (" . $parentAssetPathCondition . ") AND userId = ? ORDER BY cpath DESC LIMIT 1", $user->getId());
         $parentAssetPermissions = new Asset_Permissions();
         if ($parentAssetPermissionRaw["id"]) {
 
@@ -371,7 +371,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
 
         $permissions = array();
 
-        $permissionsRaw = $this->db->fetchAll("SELECT id FROM assets_permissions WHERE cid='" . $this->model->getId() . "' ORDER BY cpath ASC");
+        $permissionsRaw = $this->db->fetchAll("SELECT id FROM assets_permissions WHERE cid = ? ORDER BY cpath ASC", $this->model->getId());
 
         $userIdMappings = array();
         foreach ($permissionsRaw as $permissionRaw) {
@@ -389,7 +389,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
      * @return void
      */
     public function deleteAllPermissions() {
-        $this->db->delete("assets_permissions", "cid='" . $this->model->getId() . "'");
+        $this->db->delete("assets_permissions", $this->db->quoteInto("cid = ?", $this->model->getId()));
     }
 
 
@@ -397,7 +397,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
      * @return void
      */
     public function deleteAllTasks() {
-        $this->db->delete("schedule_tasks", "cid='" . $this->model->getId() . "' AND ctype='asset'");
+        $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='asset'", $this->model->getId()));
     }
 
     /**
@@ -422,7 +422,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
      * @return boolean
      */
     public function hasChilds() {
-        $c = $this->db->fetchRow("SELECT id FROM assets WHERE parentId = '" . $this->model->getId() . "'");
+        $c = $this->db->fetchRow("SELECT id FROM assets WHERE parentId = ?", $this->model->getId());
 
         $state = false;
         if ($c["id"]) {
@@ -440,7 +440,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
      * @return integer
      */
     public function getChildAmount() {
-        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM assets WHERE parentId = '" . $this->model->getId() . "'");
+        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM assets WHERE parentId = ?", $this->model->getId());
         return $c["count"];
     }
     
@@ -448,7 +448,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
     public function isLocked () {
         
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchRow("SELECT id FROM assets WHERE path LIKE '".$this->model->getFullpath()."%' AND locked IS NOT NULL AND locked != '';");
+        $belowLocks = $this->db->fetchRow("SELECT id FROM assets WHERE path LIKE ? AND locked IS NOT NULL AND locked != '';", $this->model->getFullpath() . "%");
         
         if(is_array($belowLocks) && count($belowLocks) > 0) {
             return true;
@@ -461,7 +461,7 @@ class Asset_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "CONCAT(path,`filename`) = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "CONCAT(path,`filename`) = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("CONCAT(path,`filename`) = ?", "/" . implode("/", $tmpPathes));
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);

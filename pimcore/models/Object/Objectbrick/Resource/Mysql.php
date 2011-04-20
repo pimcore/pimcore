@@ -46,7 +46,7 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
             $tableName = $definition->getTableName($object->getClass(), false);
             
             try {
-                $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = '".$object->getId()."' AND fieldname = '".$this->model->getFieldname()."'");
+                $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = ? AND fieldname = ?", array($object->getId(), $this->model->getFieldname()));
             } catch (Exception $e) {
                 $results = array();
             }
@@ -102,7 +102,7 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
             $tableName = $definition->getTableName($object->getClass());
             
             try {
-                $this->db->delete($tableName, "o_id = '".$object->getId()."' AND fieldname = '".$this->model->getFieldname()."'");
+                $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
             } catch (Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());

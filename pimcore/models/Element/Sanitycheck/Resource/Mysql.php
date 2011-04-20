@@ -66,7 +66,7 @@ class Element_Sanitycheck_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Ab
      * @return void
      */
     public function delete() {
-        $this->db->delete("sanitycheck", "id='" . $this->model->getId() . "' AND type = '".$this->model->getType()."'");
+        $this->db->delete("sanitycheck", $this->db->quoteInto("id = ?", $this->model->getId()) . " AND " . $this->db->quoteInto("type = ?", $this->model->getType()));
     }
 
     public  function getNext(){

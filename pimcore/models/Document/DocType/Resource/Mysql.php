@@ -67,7 +67,7 @@ class Document_DocType_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstr
      * @return void
      */
     public function delete() {
-        $this->db->delete("documents_doctypes", "id=" . $this->model->getId());
+        $this->db->delete("documents_doctypes", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -85,7 +85,7 @@ class Document_DocType_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstr
                 }
             }
 
-            $this->db->update("documents_doctypes", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("documents_doctypes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;

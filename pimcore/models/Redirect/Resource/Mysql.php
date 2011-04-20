@@ -67,7 +67,7 @@ class Redirect_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("redirects", "id=" . $this->model->getId());
+        $this->db->delete("redirects", $this->db->quoteInto("id = ?", $this->model->getId()));
         
         $this->model->clearDependedCache();
     }
@@ -87,7 +87,7 @@ class Redirect_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
                 }
             }
 
-            $this->db->update("redirects", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("redirects", $data, $this->db->quoteInto("id = ?", $this->model->getId() . "'"));
         }
         catch (Exception $e) {
             throw $e;

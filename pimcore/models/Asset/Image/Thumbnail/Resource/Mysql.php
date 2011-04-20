@@ -57,7 +57,7 @@ class Asset_Image_Thumbnail_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
      * @return void
      */
     public function getByName($name) {
-        $data = $this->db->fetchRow("SELECT * FROM thumbnails WHERE name = '" . $name . "'");
+        $data = $this->db->fetchRow("SELECT * FROM thumbnails WHERE name = ?", $name);
 
         if (strlen($data["name"]) < 1) {
             $m = "there is no thumbnail for the requested name " . $name;
@@ -111,7 +111,7 @@ class Asset_Image_Thumbnail_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
             }
         }
 
-        $this->db->update("thumbnails", $data, "id = '" . $this->model->getId() . "'");
+        $this->db->update("thumbnails", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -120,7 +120,7 @@ class Asset_Image_Thumbnail_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
      * @return void
      */
     public function delete() {
-        $this->db->delete("thumbnails", "id='" . $this->model->getId() . "'");
+        $this->db->delete("thumbnails", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
 }

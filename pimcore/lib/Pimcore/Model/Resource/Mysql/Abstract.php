@@ -15,21 +15,46 @@
 
 abstract class Pimcore_Model_Resource_Mysql_Abstract implements Pimcore_Model_Resource_Interface {
 
+    /**
+     * @var Pimcore_Model_Abstract
+     */
     protected $model;
+
+    /**
+     * @var Zend_Db_Adapter_Abstract
+     */
     protected $db;
 
+    /**
+     * @param Pimcore_Model_Abstract $model
+     * @return void
+     */
     public function setModel($model) {
         $this->model = $model;
     }
 
+    /**
+     * @param Zend_Db_Adapter_Abstract $conf
+     * @return void
+     */
     public function configure($conf) {
         $this->db = $conf;
     }
 
+    /**
+     * @param array $data
+     * @return void
+     */
     protected function assignVariablesToModel($data) {
         $this->model->setValues($data);
     }
-    
+
+
+    /**
+     * @param string $table
+     * @param bool $cache
+     * @return array|mixed
+     */
     protected function getValidTableColumns ($table, $cache = true) {
         
         $cacheKey = "system_mysql_columns_" . $table;

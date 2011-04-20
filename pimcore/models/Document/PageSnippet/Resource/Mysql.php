@@ -23,7 +23,7 @@ abstract class Document_PageSnippet_Resource_Mysql extends Document_Resource_Mys
      * @return void
      */
     public function deleteAllElements() {
-        $this->db->delete("documents_elements", "documentId = '" . $this->model->getId() . "'");
+        $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId() ));
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class Document_PageSnippet_Resource_Mysql extends Document_Resource_Mys
      * @return array
      */
     public function getVersions() {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = '" . $this->model->getId() . "' AND ctype='document' ORDER BY `id` DESC");
+        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC", $this->model->getId());
 
         $versions = array();
         foreach ($versionIds as $versionId) {
@@ -74,7 +74,7 @@ abstract class Document_PageSnippet_Resource_Mysql extends Document_Resource_Mys
      * @return array
      */
     public function getLatestVersion() {
-        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = '" . $this->model->getId() . "' AND ctype='document' ORDER BY `id` DESC LIMIT 1");
+        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
         
         if($versionData["id"] && $versionData["date"] != $this->model->getModificationDate()) {
             $version = Version::getById($versionData["id"]);
@@ -92,7 +92,7 @@ abstract class Document_PageSnippet_Resource_Mysql extends Document_Resource_Mys
     public function delete() {
         try {
             parent::delete();
-            $this->db->delete("documents_elements", "documentId='" . $this->model->getId() . "'");
+            $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getId() ));
         }
         catch (Exception $e) {
             throw $e;

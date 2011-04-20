@@ -66,7 +66,7 @@ class Staticroute_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT * FROM staticroutes WHERE name = '".$this->model->getName()."'");
+        $data = $this->db->fetchRow("SELECT * FROM staticroutes WHERE name = ?", $this->model->getName());
         
         if($data["name"]) {
             $this->assignVariablesToModel($data);
@@ -93,7 +93,7 @@ class Staticroute_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("staticroutes", "id=" . $this->model->getId());
+        $this->db->delete("staticroutes", $this->db->quoteInto("id = ?", $this->model->getId()));
         
         $this->model->clearDependedCache();
     }
@@ -113,7 +113,7 @@ class Staticroute_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
                 }
             }
 
-            $this->db->update("staticroutes", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("staticroutes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;

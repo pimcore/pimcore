@@ -69,7 +69,7 @@ class Document_Permissions_Resource_MySql extends Pimcore_Model_Resource_Mysql_A
      * @return void
      */
     public function delete() {
-        $this->db->delete("documents_permissions", "id=" . $this->model->getId());
+        $this->db->delete("documents_permissions", $this->db->quoteInto("id = ?" , $this->model->getId()));
     }
 
 
@@ -91,7 +91,7 @@ class Document_Permissions_Resource_MySql extends Pimcore_Model_Resource_Mysql_A
                 }
             }
 
-            $this->db->update("documents_permissions", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("documents_permissions", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
         catch (Exception $e) {
             throw $e;

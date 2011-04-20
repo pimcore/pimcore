@@ -99,7 +99,7 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
             }
         }
 
-        $this->db->update($storetable, $data, "o_id = " . $object->getId());
+        $this->db->update($storetable, $data, $this->db->quoteInto("o_id = ?", $object->getId()));
 
 
         // get data for query table
@@ -168,11 +168,11 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
     public function delete(Object_Concrete $object) {
         // update data for store table
         $tableName = $this->model->getDefinition()->getTableName($object->getClass(), false);
-        $this->db->delete($tableName, "o_id = " . $object->getId());
+        $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()));
 
         // update data for query table
         $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
-        $this->db->delete($tableName, "o_id = " . $object->getId());
+        $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()));
     }
 
 

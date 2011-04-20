@@ -15,8 +15,14 @@
 
 abstract class Pimcore_Model_Abstract {
 
+    /**
+     * @var Pimcore_Model_Resource_Mysql_Abstract
+     */
     protected $resource;
 
+    /**
+     * @return Pimcore_Model_Resource_Mysql_Abstract
+     */
     public function getResource() {
 
         if (!$this->resource) {
@@ -25,10 +31,19 @@ abstract class Pimcore_Model_Abstract {
         return $this->resource;
     }
 
+    /**
+     * @param  $resource
+     * @return void
+     */
     public function setResource($resource) {
         $this->resource = $resource;
     }
 
+    /**
+     * @throws Exception
+     * @param string $key
+     * @return void
+     */
     protected function initResource($key = null) {
 
         if (!$key) {
@@ -85,6 +100,10 @@ abstract class Pimcore_Model_Abstract {
         }
     }
 
+    /**
+     * @param  $class
+     * @return array
+     */
     protected function getParentClasses ($class) {
 
         $classes = array();
@@ -98,6 +117,10 @@ abstract class Pimcore_Model_Abstract {
         return $classes;
     }
 
+    /**
+     * @param array $data
+     * @return void
+     */
     public function setValues($data = array()) {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
@@ -106,6 +129,11 @@ abstract class Pimcore_Model_Abstract {
         }
     }
 
+    /**
+     * @param  $key
+     * @param  $value
+     * @return void
+     */
     public function setValue($key, $value) {
         $method = "set" . $key;
         if (method_exists($this, $method)) {
@@ -118,7 +146,12 @@ abstract class Pimcore_Model_Abstract {
         }
     }
 
+    /**
+     * @return array
+     */
     public function __sleep() {
+
+        $finalVars = array();
         $blockedVars = array("resource","_fulldump"); // _fulldump is a temp var wich is used to trigger a full serialized dump in __sleep eg. in Document, Object_Abstract
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
@@ -129,6 +162,12 @@ abstract class Pimcore_Model_Abstract {
         return $finalVars;
     }
 
+    /**
+     * @throws Exception
+     * @param  $method
+     * @param  $args
+     * @return mixed
+     */
     public function __call($method, $args) {
 
         // check if the method is defined in resource
@@ -148,6 +187,9 @@ abstract class Pimcore_Model_Abstract {
         }
     }
 
+    /**
+     * @return void
+     */
     public function __clone() {
         $this->resource = null;
     }

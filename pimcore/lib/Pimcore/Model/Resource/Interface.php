@@ -14,7 +14,18 @@
  */
 
 interface Pimcore_Model_Resource_Interface {
+
+    /**
+     * @abstract
+     * @param Pimcore_Model_Abstract $model
+     * @return void
+     */
     public function setModel($model);
 
+    /**
+     * @abstract
+     * @param  $conf
+     * @return void
+     */
     public function configure($conf);
 }

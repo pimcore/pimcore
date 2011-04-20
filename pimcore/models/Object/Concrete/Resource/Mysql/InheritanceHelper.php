@@ -91,7 +91,7 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
             $fields = ", `" . $fields . "`";
         }
 
-        $result = $this->db->fetchRow("SELECT " . $this->idField . " AS id" . $fields . " FROM " . $this->storetable . " WHERE " . $this->idField . " = " . $oo_id);
+        $result = $this->db->fetchRow("SELECT " . $this->idField . " AS id" . $fields . " FROM " . $this->storetable . " WHERE " . $this->idField . " = ?", $oo_id);
         $o = new stdClass();
         $o->id = $result['id'];
         $o->values = $result;
@@ -128,7 +128,7 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
 
 
     private function buildTree($currentParentId, $fields) {
-        $result = $this->db->fetchAll("SELECT a." . $this->idField . " AS id $fields FROM " . $this->storetable . " a INNER JOIN objects b ON a." . $this->idField . " = b.o_id WHERE o_parentId = " . $currentParentId);
+        $result = $this->db->fetchAll("SELECT a." . $this->idField . " AS id $fields FROM " . $this->storetable . " a INNER JOIN objects b ON a." . $this->idField . " = b.o_id WHERE o_parentId = ?", $currentParentId);
 
         $objects = array();
 
@@ -138,7 +138,7 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
             $o->values = $r;
             $o->childs = $this->buildTree($r['id'], $fields);
 
-            $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = " . $r['id'] . " AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;");
+            $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", $r['id']);
 
             $objectRelations = array();
             if(!empty($objectRelationsResult)) {
@@ -182,7 +182,7 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
 
     private function updateQueryTable($oo_id, $ids, $fieldname) {
         if(!empty($ids)) {
-            $value = $this->db->fetchCol("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = " . $oo_id);
+            $value = $this->db->fetchCol("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
             $this->db->update($this->querytable, array($fieldname => $value[0]), $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }

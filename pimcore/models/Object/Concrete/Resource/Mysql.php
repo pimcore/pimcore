@@ -73,7 +73,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
             $path = substr($path, 0, count($path) - 2);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM objects WHERE CONCAT(o_path,`o_key`) = '" . $path . "'");
+        $data = $this->db->fetchRow("SELECT * FROM objects WHERE CONCAT(o_path,`o_key`) = ?", $path);
 
         if ($data["id"]) {
             $this->assignVariablesToModel($data);
@@ -287,9 +287,9 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
         // update data for store table
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
-            $this->db->delete("object_relations_" . $this->model->getO_classId(), "src_id = '" . $this->model->getO_id() . "' AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'");
+            $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'", $this->model->getO_id()));
         } else {
-            $this->db->delete("object_relations_" . $this->model->getO_classId(), "src_id = '" . $this->model->getO_id() . "' AND ownertype = 'object'");
+            $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND ownertype = 'object'",  $this->model->getO_id()));
         }
 
         $data = array();
@@ -339,7 +339,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
             $this->db->insert("object_store_" . $this->model->getO_classId(), $data);
         }
         catch (Exception $e) {
-            $this->db->update("object_store_" . $this->model->getO_classId(), $data, "oo_id = " . $this->model->getO_id());
+            $this->db->update("object_store_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
         }
 
 
@@ -419,7 +419,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
             $this->db->insert("object_query_" . $this->model->getO_classId(), $data);
         }
         catch (Exception $e) {
-            $this->db->update("object_query_" . $this->model->getO_classId(), $data, "oo_id = " . $this->model->getO_id());
+            $this->db->update("object_query_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
         }
 
         // HACK: see a few lines above!
@@ -438,10 +438,10 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
      * @return void
      */
     public function delete() {
-        $this->db->delete("object_query_" . $this->model->getO_classId(), "oo_id = '" . $this->model->getO_id() . "'");
-        $this->db->delete("object_store_" . $this->model->getO_classId(), "oo_id = '" . $this->model->getO_id() . "'");
-        $this->db->delete("object_relations_" . $this->model->getO_classId(), "src_id = '" . $this->model->getO_id() . "'");
-        $this->db->delete("object_relations_" . $this->model->getO_classId(), "dest_id = '" . $this->model->getO_id() . "'");
+        $this->db->delete("object_query_" . $this->model->getO_classId(), $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
+        $this->db->delete("object_store_" . $this->model->getO_classId(), $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
+        $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ?", $this->model->getO_id()));
+        $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("dest_id = ?", $this->model->getO_id()));
 
         // delete fields wich have their own delete algorithm
         foreach ($this->model->geto_class()->getFieldDefinitions() as $fd) {
@@ -459,7 +459,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
      * @return array
      */
     public function getVersions() {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = '" . $this->model->getO_Id() . "' AND ctype='object' ORDER BY `id` DESC");
+        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC", $this->model->getO_Id());
 
         $versions = array();
         foreach ($versionIds as $versionId) {
@@ -477,7 +477,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
      * @return array
      */
     public function getLatestVersion() {
-        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = '" . $this->model->getO_Id() . "' AND ctype='object' ORDER BY `id` DESC LIMIT 1");
+        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getO_Id());
 
         if ($versionData["id"]  && $versionData["date"] != $this->model->getO_modificationDate()) {
             $version = Version::getById($versionData["id"]);
@@ -491,5 +491,6 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
      */
     public function deleteAllTasks() {
         $this->db->delete("schedule_tasks", "cid='" . $this->model->getO_Id() . "' AND ctype='object'");
+        $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='object'", $this->model->getO_Id()));
     }
 }

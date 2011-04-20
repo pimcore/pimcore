@@ -68,7 +68,7 @@ class Asset_Permissions_Resource_MySql extends Pimcore_Model_Resource_Mysql_Abst
      * @return void
      */
     public function delete() {
-        $this->db->delete("assets_permissions", "id=" . $this->model->getId());
+        $this->db->delete("assets_permissions", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -89,7 +89,7 @@ class Asset_Permissions_Resource_MySql extends Pimcore_Model_Resource_Mysql_Abst
                 }
             }
 
-            $this->db->update("assets_permissions", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("assets_permissions", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;

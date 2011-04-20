@@ -42,7 +42,7 @@ class User_Permission_List_Resource_Mysql extends Pimcore_Model_Resource_Mysql_A
      */
     public function deleteForUser($user) {
         try {
-            $this->db->delete("users_permissions", "userId='" . $user->getId() . "'");
+            $this->db->delete("users_permissions", "userId = ?", $user->getId());
             Logger::info("dropped all permissions for user " . $user->getId());
         }
         catch (Exception $e) {

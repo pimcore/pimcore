@@ -65,7 +65,7 @@ abstract class Translation_Abstract_Resource_Mysql extends Pimcore_Model_Resourc
                     $this->db->insert(static::getTableName() , $data);
                 } catch (Exception $e) {
                     if (!empty($data["text"])) {
-                        $this->db->update(static::getTableName() , $data, "`key` = '" . $this->model->getKey() . "' AND language = '" . $language . "'");
+                        $this->db->update(static::getTableName() , $data, $this->db->quoteInto("`key` = ?", $this->model->getKey()) . " AND " . $this->db->quoteInto("language = ?", $language));
                     }
                 }
             }
@@ -81,7 +81,7 @@ abstract class Translation_Abstract_Resource_Mysql extends Pimcore_Model_Resourc
      * @return void
      */
     public function delete() {
-        $this->db->delete(static::getTableName() , "`key`='" . $this->model->getKey() . "'");
+        $this->db->delete(static::getTableName() , $this->db->quoteInto("`key`= ?", $this->model->getKey()));
 
         $this->model->clearDependedCache();
     }

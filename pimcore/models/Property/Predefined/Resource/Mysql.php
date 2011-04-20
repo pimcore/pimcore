@@ -62,7 +62,7 @@ class Property_Predefined_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Ab
             $this->model->setKey($key);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM properties_predefined WHERE `key` = '" . $this->model->getKey() . "'");
+        $data = $this->db->fetchRow("SELECT * FROM properties_predefined WHERE `key` = ?", $this->model->getKey());
         $this->assignVariablesToModel($data);
     }
 
@@ -84,7 +84,7 @@ class Property_Predefined_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Ab
      * @return void
      */
     public function delete() {
-        $this->db->delete("properties_predefined", "id=" . $this->model->getId());
+        $this->db->delete("properties_predefined", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -105,7 +105,7 @@ class Property_Predefined_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Ab
                 }
             }
 
-            $this->db->update("properties_predefined", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("properties_predefined", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
         catch (Exception $e) {
             throw $e;

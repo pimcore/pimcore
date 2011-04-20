@@ -50,7 +50,7 @@ class Dependency_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
         }
 
         // requires
-        $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE sourceid = '" . $this->model->getSourceId() . "' AND sourcetype = '" . $this->model->getSourceType() . "'");
+        $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE sourceid = ? AND sourcetype = ?", array($this->model->getSourceId(), $this->model->getSourceType()));
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
@@ -60,7 +60,7 @@ class Dependency_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
 
         // required by
         $data = array();
-        $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = '" . $this->model->getSourceId() . "' AND targettype = '" . $this->model->getSourceType() . "'");
+        $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?", array($this->model->getSourceId(), $this->model->getSourceType()));
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
@@ -83,7 +83,7 @@ class Dependency_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
             $type = Element_Service::getElementType($element);
 
             //schedule for sanity check
-            $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = '" . $id . "' AND targettype = '" . $type . "'");
+            $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?", array($id, $type));
             if (is_array($data)) {
                 foreach ($data as $row) {
                     $sanityCheck = new Element_Sanitycheck();
@@ -93,8 +93,8 @@ class Dependency_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
                 }
             }
 
-            $this->db->delete("dependencies", "sourceid = '" . $id . "' AND sourcetype = '" . $type . "'");
-            $this->db->delete("dependencies", "targetid = '" . $id . "' AND targettype = '" . $type . "'");
+            $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $id) . " AND " . $this->db->quoteInto("sourcetype = ?", $type));
+            $this->db->delete("dependencies", $this->db->quoteInto("targetid = ?", $id) . " AND " . $this->db->quoteInto("targettype = ?", $type));
         }
         catch (Exception $e) {
             Logger::error($e);
@@ -110,7 +110,7 @@ class Dependency_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
     public function clear() {
 
         try {
-            $this->db->delete("dependencies", "sourceid = '" . $this->model->getSourceId() . "' AND sourcetype = '" . $this->model->getSourceType() . "'");
+            $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $this->model->getSourceId()) . " AND " . $this->db->quoteInto("sourcetype = ?", $this->model->getSourceType()));
         }
         catch (Exception $e) {
             Logger::error($e);

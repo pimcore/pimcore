@@ -81,7 +81,7 @@ class Document_Link_Resource_Mysql extends Document_Resource_Mysql {
             if (substr($path, -1) == "/" and strlen($path) > 1) {
                 $path = substr($path, 0, count($path) - 2);
             }
-            $data = $this->db->fetchRow("SELECT * FROM documents LEFT JOIN documents_link ON documents.id = documents_link.id WHERE CONCAT(path,`key`) = '" . $this->db->quote($this->model->getPath()) . "'");
+            $data = $this->db->fetchRow("SELECT * FROM documents LEFT JOIN documents_link ON documents.id = documents_link.id WHERE CONCAT(path,`key`) = ?", $this->model->getPath());
 
             if ($data["id"]) {
                 $this->assignVariablesToModel($data);
@@ -143,13 +143,13 @@ class Document_Link_Resource_Mysql extends Document_Resource_Mysql {
                 $this->db->insert("documents", $dataDocument);
             }
             catch (Exception $e) {
-                $this->db->update("documents", $dataDocument, "id='" . $this->model->getId() . "'");
+                $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
             try {
                 $this->db->insert("documents_link", $dataLink);
             }
             catch (Exception $e) {
-                $this->db->update("documents_link", $dataLink, "id='" . $this->model->getId() . "'");
+                $this->db->update("documents_link", $dataLink, $this->db->quoteInto("id = ?", $this->model->getId()));
             }            
         }
         catch (Exception $e) {
@@ -164,7 +164,7 @@ class Document_Link_Resource_Mysql extends Document_Resource_Mysql {
      */
     public function delete() {
         try {
-            $this->db->delete("documents_link", "id='" . $this->model->getId() . "'");
+            $this->db->delete("documents_link", $this->db->quoteInto("id = '?", $this->model->getId()));
             parent::delete();
         }
         catch (Exception $e) {

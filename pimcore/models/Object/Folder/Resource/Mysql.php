@@ -20,7 +20,7 @@ class Object_Folder_Resource_Mysql extends Object_Abstract_Resource_Mysql {
 
     public function getClasses() {
 
-        $classIds = $this->db->fetchAll("SELECT o_classId FROM objects WHERE o_path LIKE '" . $this->model->getFullPath() . "%' AND o_type = 'object' GROUP BY o_classId");
+        $classIds = $this->db->fetchAll("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->model->getFullPath() . "%");
 
         $classes = array();
         foreach ($classIds as $classId) {

@@ -37,12 +37,12 @@ class Object_Fieldcollection_Resource_Mysql extends Pimcore_Model_Resource_Mysql
             $tableName = $definition->getTableName($object->getClass());
             
             try {
-                $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = '".$object->getId()."' AND fieldname = '".$this->model->getFieldname()."' ORDER BY `index` ASC");
+                $results = $this->db->fetchAll("SELECT * FROM " . $tableName . " WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC", array($object->getId(), $this->model->getFieldname()));
             } catch (Exception $e) {
                 $results = array();
             }
 
-            $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'fieldcollection' AND ownername = '" . $this->model->getFieldname() . "' ORDER BY `index` ASC", $object->getO_id());
+            $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'fieldcollection' AND ownername = ? ORDER BY `index` ASC", array($object->getO_id(), $this->model->getFieldname()));
             
             $fieldDefinitions = $definition->getFieldDefinitions();
             $collectionClass = "Object_Fieldcollection_Data_" . ucfirst($type);
@@ -115,7 +115,7 @@ class Object_Fieldcollection_Resource_Mysql extends Pimcore_Model_Resource_Mysql
             $tableName = $definition->getTableName($object->getClass());
             
             try {
-                $this->db->delete($tableName, "o_id = '".$object->getId()."' AND fieldname = '".$this->model->getFieldname()."'");
+                $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
             } catch (Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
@@ -123,6 +123,6 @@ class Object_Fieldcollection_Resource_Mysql extends Pimcore_Model_Resource_Mysql
         }
 
         // empty relation table
-        $this->db->delete("object_relations_" . $object->getO_classId(), "ownertype = 'fieldcollection' AND ownername = '".$this->model->getFieldname()."' AND src_id = '".$object->getId()."'");
+        $this->db->delete("object_relations_" . $object->getO_classId(), "ownertype = 'fieldcollection' AND " . $this->db->quoteInto("ownername = ?", $this->model->getFieldname()) . " AND " . $this->db->quoteInto("src_id = ?", $object->getId()));
     }
 }

@@ -15,43 +15,96 @@
 
 abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
 
+    /**
+     * @var string|array
+     */
     protected $order;
+
+    /**
+     * @var string|array
+     */
     protected $orderKey;
+
+    /**
+     * @var integer
+     */
     protected $limit;
+
+    /**
+     * @var integer
+     */
     protected $offset;
+
+    /**
+     * @var string
+     */
     protected $condition;
+
+    /**
+     * @var string
+     */
     protected $groupBy;
+
+    /**
+     * @var array
+     */
     protected $validOrders = array(
         "ASC",
         "DESC"
     );
 
+    /**
+     * @abstract
+     * @param  $key
+     * @return bool
+     */
     abstract public function isValidOrderKey($key);
 
+    /**
+     * @return int
+     */
     public function getLimit() {
         return $this->limit;
     }
 
+    /**
+     * @return int
+     */
     public function getOffset() {
         return $this->offset;
     }
 
+    /**
+     * @return array|string
+     */
     public function getOrder() {
         return $this->order;
     }
 
+    /**
+     * @param  $limit
+     * @return void
+     */
     public function setLimit($limit) {
         if (intval($limit) > 0) {
             $this->limit = intval($limit);
         }
     }
 
+    /**
+     * @param  $offset
+     * @return void
+     */
     public function setOffset($offset) {
         if (intval($offset) > 0) {
             $this->offset = intval($offset);
         }
     }
 
+    /**
+     * @param  $order
+     * @return void
+     */
     public function setOrder($order) {
 
         $this->order = array();
@@ -73,10 +126,18 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         }
     }
 
+    /**
+     * @return array|string
+     */
     public function getOrderKey() {
         return $this->orderKey;
     }
 
+    /**
+     * @param string|array $orderKey
+     * @param bool $quote
+     * @return void
+     */
     public function setOrderKey($orderKey, $quote = true) {
 
         $this->orderKey = array();
@@ -103,10 +164,17 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         }
     }
 
+    /**
+     * @return string
+     */
     public function getCondition() {
         return $this->condition;
     }
 
+    /**
+     * @param string $condition
+     * @return void
+     */
     public function setCondition($condition) {
         $this->condition = $condition;
     }

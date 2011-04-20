@@ -73,7 +73,7 @@ class Version_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
             $this->model->setId($this->db->lastInsertId());
         }
         catch (Exception $e) {
-            $this->db->update("versions", $data, "id = '" . $this->model->getId() . "'");
+            $this->db->update("versions", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
 
         return $this->model->getId();
@@ -85,7 +85,7 @@ class Version_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("versions", "id='" . $this->model->getId() . "'");
+        $this->db->delete("versions", $this->db->quoteInto("id = ?", $this->model->getId() ));
     }
 
     /**
@@ -96,7 +96,7 @@ class Version_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
         $versions = array();
         $deadline = time() - (intval($days) * 86400);
 
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid='" . $this->model->getCid() . "' and ctype='" . $this->model->getCtype() . "' AND date < '" . $deadline . "'");
+        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", array($this->model->getCid(), $this->model->getCtype(), $deadline));
 
         foreach ($versionIds as $versionId) {
             $versions[] = $versionId["id"];
@@ -112,7 +112,7 @@ class Version_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
     public function getOutdatedVersionsSteps($steps) {
 
         $versions = array();
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid='" . $this->model->getCid() . "' and ctype='" . $this->model->getCtype() . "' ORDER BY date DESC LIMIT " . intval($steps) . ",100000");
+        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",100000", array($this->model->getCid(), $this->model->getCtype()));
 
         foreach ($versionIds as $versionId) {
             $versions[] = $versionId["id"];

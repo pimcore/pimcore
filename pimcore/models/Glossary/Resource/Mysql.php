@@ -67,7 +67,7 @@ class Glossary_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("glossary", "id=" . $this->model->getId());
+        $this->db->delete("glossary", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -85,7 +85,7 @@ class Glossary_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
                 }
             }
 
-            $this->db->update("glossary", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("glossary", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;

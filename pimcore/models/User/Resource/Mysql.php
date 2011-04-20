@@ -60,7 +60,7 @@ class User_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
      */
     public function getByName($username) {
         try {
-            $data = $this->db->fetchRow("SELECT * FROM users WHERE username = '" . $username . "'");
+            $data = $this->db->fetchRow("SELECT * FROM users WHERE username = ?", $username);
 
             if ($data["id"]) {
                 $this->assignVariablesToModel($data);
@@ -117,7 +117,7 @@ class User_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
      * @return boolean
      */
     public function hasChilds() {
-        $c = $this->db->fetchRow("SELECT id FROM users WHERE parentId = '" . $this->model->getId() . "'");
+        $c = $this->db->fetchRow("SELECT id FROM users WHERE parentId = ?",  $this->model->getId());
 
         $state = false;
         if ($c["id"]) {
@@ -149,7 +149,7 @@ class User_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
             $data["active"] = intval($this->model->getActive());
             $data["hasCredentials"] = intval($this->model->getHasCredentials());
 
-            $this->db->update("users", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("users", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
             if ($this->model->getUserPermissionList() != null) {
                 $this->model->getUserPermissionList()->update($this->model);
             }
@@ -171,7 +171,7 @@ class User_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
         Logger::debug("delete user with ID: " . $userId);
 
         try {
-            $this->db->delete("users", "id='" . $userId . "'");
+            $this->db->delete("users", $this->db->quoteInto("id = ?", $userId ));
             $this->model->getUserPermissionList()->deleteForUser($this->model);
         }
         catch (Exception $e) {
@@ -181,26 +181,26 @@ class User_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
         // cleanup system
 
         // assets
-        $this->db->update("assets", array("userOwner" => null), "userOwner = '" . $userId . "'");
-        $this->db->update("assets", array("userModification" => null), "userModification = '" . $userId . "'");
-        $this->db->delete("assets_permissions", "userId='" . $userId . "'");
+        $this->db->update("assets", array("userOwner" => null), $this->db->quoteInto("userOwner = ?", $userId));
+        $this->db->update("assets", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId));
+        $this->db->delete("assets_permissions", $this->db->quoteInto("userId = ?", $userId));
 
         // classes
-        $this->db->update("classes", array("userOwner" => null), "userOwner = '" . $userId . "'");
-        $this->db->update("classes", array("userModification" => null), "userModification = '" . $userId . "'");
+        $this->db->update("classes", array("userOwner" => null), $this->db->quoteInto("userOwner = '?", $userId));
+        $this->db->update("classes", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId));
 
         // documents
-        $this->db->update("documents", array("userOwner" => null), "userOwner = '" . $userId . "'");
-        $this->db->update("documents", array("userModification" => null), "userModification = '" . $userId . "'");
-        $this->db->delete("documents_permissions", "userId='" . $userId . "'");
+        $this->db->update("documents", array("userOwner" => null), $this->db->quoteInto("userOwner = '?", $userId));
+        $this->db->update("documents", array("userModification" => null), $this->db->quoteInto("userModification = '?", $userId . "'"));
+        $this->db->delete("documents_permissions", $this->db->quoteInto("userId = ?", $userId ));
 
         // objects
-        $this->db->update("objects", array("o_userOwner" => null), "o_userOwner = '" . $userId . "'");
-        $this->db->update("objects", array("o_userModification" => null), "o_userModification = '" . $userId . "'");
-        $this->db->delete("objects_permissions", "userId='" . $userId . "'");
+        $this->db->update("objects", array("o_userOwner" => null), $this->db->quoteInto("o_userOwner = ?", $userId ));
+        $this->db->update("objects", array("o_userModification" => null), $this->db->quoteInto("o_userModification = ?", $userId));
+        $this->db->delete("objects_permissions", $this->db->quoteInto("userId= ?", $userId ));
 
         // versions
-        $this->db->update("versions", array("userId" => null), "userId = '" . $userId . "'");
+        $this->db->update("versions", array("userId" => null), $this->db->quoteInto("userId = ?", $userId));
     }
 
 }

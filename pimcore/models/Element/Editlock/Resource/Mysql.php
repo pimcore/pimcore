@@ -41,7 +41,7 @@ class Element_Editlock_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstr
      * @return void
      */
     public function getByElement($cid, $ctype) {
-        $data = $this->db->fetchRow("SELECT * FROM edit_lock WHERE cid = '" . $cid . "' AND ctype = '" . $ctype . "'");
+        $data = $this->db->fetchRow("SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?", array($cid, $ctype));
 
         if (!$data["id"]) {
             throw new Exception("Lock with cid " . $cid . " and ctype " . $ctype . " not found");
@@ -70,7 +70,7 @@ class Element_Editlock_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstr
             $this->model->setId($this->db->lastInsertId());
         }
         catch (Exception $e) {
-            $this->db->update("edit_lock", $data, "id = '" . $this->model->getId() . "'");
+            $this->db->update("edit_lock", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
 
         return true;
@@ -82,6 +82,6 @@ class Element_Editlock_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstr
      * @return void
      */
     public function delete() {
-        $this->db->delete("edit_lock", "id='" . $this->model->getId() . "'");
+        $this->db->delete("edit_lock", $this->db->quoteInto("id = ?", $this->model->getId() ));
     }
 }

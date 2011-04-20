@@ -40,7 +40,7 @@ class Element_Recyclebin_Item_Resource_Mysql extends Pimcore_Model_Resource_Mysq
      * @return void
      */
     public function getById($id) {
-        $data = $this->db->fetchRow("SELECT * FROM recyclebin WHERE id = '" . $id . "'");
+        $data = $this->db->fetchRow("SELECT * FROM recyclebin WHERE id = ?", $id);
 
         if (!$data["id"]) {
             throw new Exception("Recyclebin item with id " . $id . " not found");
@@ -81,6 +81,6 @@ class Element_Recyclebin_Item_Resource_Mysql extends Pimcore_Model_Resource_Mysq
      * @return void
      */
     public function delete() {
-        $this->db->delete("recyclebin", "id='" . $this->model->getId() . "'");
+        $this->db->delete("recyclebin", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 }

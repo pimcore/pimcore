@@ -80,7 +80,7 @@ class Document_Page_Resource_Mysql extends Document_PageSnippet_Resource_Mysql {
             if (substr($path, -1) == "/" and strlen($path) > 1) {
                 $path = substr($path, 0, count($path) - 2);
             }
-            $data = $this->db->fetchRow("SELECT * FROM documents LEFT JOIN documents_page ON documents.id = documents_page.id WHERE CONCAT(path,`key`) = " . $this->db->quote($this->model->getPath()) . "");
+            $data = $this->db->fetchRow("SELECT * FROM documents LEFT JOIN documents_page ON documents.id = documents_page.id WHERE CONCAT(path,`key`) = ?", $this->model->getPath());
 
             if ($data["id"]) {
                 $this->model->setId($data["id"]);
@@ -142,13 +142,13 @@ class Document_Page_Resource_Mysql extends Document_PageSnippet_Resource_Mysql {
                 $this->db->insert("documents", $dataDocument);
             }
             catch (Exception $e) {
-                $this->db->update("documents", $dataDocument, "id='" . $this->model->getId() . "'");
+                $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
             try {
                 $this->db->insert("documents_page", $dataPage);
             }
             catch (Exception $e) {
-                $this->db->update("documents_page", $dataPage, "id='" . $this->model->getId() . "'");
+                $this->db->update("documents_page", $dataPage, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
         }
         catch (Exception $e) {
@@ -165,7 +165,7 @@ class Document_Page_Resource_Mysql extends Document_PageSnippet_Resource_Mysql {
         try {
             $this->deleteAllProperties();
 
-            $this->db->delete("documents_page", "id='" . $this->model->getId() . "'");
+            $this->db->delete("documents_page", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
         }
         catch (Exception $e) {

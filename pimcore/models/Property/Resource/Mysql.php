@@ -68,7 +68,7 @@ class Property_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
             $this->db->insert("properties", $saveData);
         }
         catch (Exception $e) {
-            $this->db->update("properties", $saveData, "name = '" . $this->model->getName() . "' AND cid = '" . $this->model->getCid() . "' AND ctype = '" . $this->model->getCtype() . "'");
+            $this->db->update("properties", $saveData, $this->db->quoteInto("name = ?", $this->model->getName()) . " AND " . $this->db->quoteInto("cid = ?", $this->model->getCid()) . " AND " . $this->db->quoteInto("ctype = ?", $this->model->getCtype()));
         }
     }
 }

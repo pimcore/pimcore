@@ -47,7 +47,7 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
             $id = $this->model->getId();
         }
 
-        $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE id='" . $id . "'");
+        $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE id = ?", $id);
         $this->assignVariablesToModel($classRaw);
         
         $this->model->setPropertyVisibility(unserialize($classRaw["propertyVisibility"]));
@@ -67,7 +67,7 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
             $name = $this->model->getName();
         }
 
-        $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE name='" . $name . "'");
+        $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE name = ?", $name);
         $this->assignVariablesToModel($classRaw);
 
         $this->model->setPropertyVisibility(unserialize($classRaw["propertyVisibility"]));
@@ -121,13 +121,13 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
             }
         }
 
-        $this->db->update("classes", $data, "id = '" . $this->model->getId() . "'");
+        $this->db->update("classes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         // only for logging
         $setsql = array();
         foreach ($data as $key => $value) {
             $setsql[] = "`" . $key . "` = '" . $value . "'";
         }
-        $this->logSql("UPDATE classes SET ". implode(",",$setsql) ." WHERE id = '" . $this->model->getId() . "';");
+        $this->logSql("UPDATE classes SET ". implode(",",$setsql) ." WHERE id = '" . $this->db->quote($this->model->getId()) . "';");
         
         
          // save definition as a serialized file
@@ -248,8 +248,8 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
                     
                     if($emptyRelations) {
                         $tableRelation = "object_relations_" . $this->model->getId();
-                        $this->db->delete($tableRelation, "fieldname = '" . $value . "' AND ownertype = 'object'");
-                        $this->logSql("DELETE FROM ".$tableRelation." WHERE fieldname = '" . $value . "' AND ownertype = 'object';"); // only for logging
+                        $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
+                        $this->logSql("DELETE FROM ".$tableRelation." WHERE fieldname = " . $this->db->quote($value) . " AND ownertype = 'object';"); // only for logging
                     }
 
                     // @TODO: remove localized fields and fieldcollections
@@ -345,7 +345,7 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
     public function create() {
         $this->db->insert("classes", array("name" => $this->model->getName()));
         // only for logging
-        $this->logSql("INSERT INTO `classes` SET `name`='".$this->model->getName()."';");
+        $this->logSql("INSERT INTO `classes` SET `name`=".$this->db->quote($this->model->getName()).";");
         
         $this->model->setId($this->db->lastInsertId());
         $this->model->setCreationDate(time());
@@ -361,9 +361,9 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
      */
     public function delete() {
 
-        $this->db->delete("classes", "id = '" . $this->model->getId() . "'");
+        $this->db->delete("classes", $this->db->quoteInto("id = ?", $this->model->getId()));
         // only for logging
-        $this->logSql("DELETE FROM classes WHERE id = '" . $this->model->getId() . "';");
+        $this->logSql("DELETE FROM classes WHERE id = " . $this->db->quote($this->model->getId()) . ";");
 
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
@@ -377,7 +377,7 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
         $this->dbexec('DROP VIEW `object_' . $this->model->getId() . '`');
         
         // delete data
-        $this->db->delete("objects", "o_classId = '" . $this->model->getId() . "'");
+        $this->db->delete("objects", $this->db->quoteInto("o_classId = ?", $this->model->getId()));
         $this->logSql("DELETE FROM objects WHERE o_classId = '" . $this->model->getId() . "';"); // only for logging
         
         // remove fieldcollection tables
@@ -413,15 +413,15 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
     public function updateClassNameInObjects($newName) {
         $this->db->update("objects", array(
             "o_className" => $newName
-        ), "o_classId = '" . $this->model->getId() . "'");
+        ), $this->db->quoteInto("o_classId = ?", $this->model->getId()));
         // only for logging 
-        $this->logSql("UPDATE objects SET `o_className` = '".$newName."' WHERE o_classId = '" . $this->model->getId() . "';");
+        $this->logSql("UPDATE objects SET `o_className` = ".$this->db->quote($newName)." WHERE o_classId = " . $this->db->quote($this->model->getId()) . ";");
         
         $this->db->update("object_query_" . $this->model->getId(), array(
             "oo_className" => $newName
         ));
         // only for logging
-        $this->logSql("UPDATE object_query_" . $this->model->getId() . " SET `oo_className` = '" . $newName . "'");
+        $this->logSql("UPDATE object_query_" . $this->model->getId() . " SET `oo_className` = " . $this->db->quote($newName));
     }
     
     private function dbexec($sql) {

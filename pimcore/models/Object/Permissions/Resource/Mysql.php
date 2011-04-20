@@ -67,7 +67,7 @@ class Object_Permissions_Resource_MySql extends Pimcore_Model_Resource_Mysql_Abs
      * @return void
      */
     public function delete() {
-        $this->db->delete("objects_permissions", "id=" . $this->model->getId());
+        $this->db->delete("objects_permissions", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -88,7 +88,7 @@ class Object_Permissions_Resource_MySql extends Pimcore_Model_Resource_Mysql_Abs
                 }
             }
 
-            $this->db->update("objects_permissions", $data, "id='" . $this->model->getId() . "'");
+            $this->db->update("objects_permissions", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;

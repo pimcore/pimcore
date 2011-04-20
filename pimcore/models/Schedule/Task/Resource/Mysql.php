@@ -94,7 +94,7 @@ class Schedule_Task_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract
             }
         }
 
-        $this->db->update("schedule_tasks", $data, "id = '" . $this->model->getId() . "'");
+        $this->db->update("schedule_tasks", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
     }
 
     /**
@@ -103,6 +103,6 @@ class Schedule_Task_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract
      * @return void
      */
     public function delete() {
-        $this->db->delete("schedule_tasks", "id='" . $this->model->getId() . "'");
+        $this->db->delete("schedule_tasks", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 }

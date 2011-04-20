@@ -69,7 +69,7 @@ class Site_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
      * @return void
      */
     public function getByDomain($domain) {
-        $data = $this->db->fetchRow("SELECT * FROM sites WHERE domains LIKE '%\"" . $domain . "\"%'");
+        $data = $this->db->fetchRow("SELECT * FROM sites WHERE domains LIKE ?", "%\"" . $domain . "\"%");
         if (!$data["id"]) {
             throw new Exception("there is no site for the requested domain");
         }
@@ -118,7 +118,7 @@ class Site_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
             }
         }
 
-        $this->db->update("sites", $data, "id = '" . $this->model->getId() . "'");
+        $this->db->update("sites", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         
         $this->model->clearDependedCache();
     }
@@ -129,7 +129,7 @@ class Site_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("sites", "id='" . $this->model->getId() . "'");
+        $this->db->delete("sites", $this->db->quoteInto("id = ?", $this->model->getId()));
         
         $this->model->clearDependedCache();
     }

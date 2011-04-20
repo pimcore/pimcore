@@ -37,12 +37,12 @@ class Document_Tag_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
             $this->db->insert("documents_elements", $element);
         }
         catch (Exception $e) {
-            $this->db->update("documents_elements", $element, "documentId = '" . $this->model->getDocumentId() . "' AND name = '" . $this->model->getName() . "'");
+            $this->db->update("documents_elements", $element, $this->db->quoteInto("documentId = ?", $this->model->getDocumentId()) . " AND " .  $this->db->quoteInto("name = ?", $this->model->getName()));
         }
     }
     
     public function delete () {
-        $this->db->delete("documents_elements", "documentId = '" . $this->model->getDocumentId() . "' AND name = '" . $this->model->getName() . "'");
+        $this->db->delete("documents_elements", $this->db->quoteInto("documentId = ?", $this->model->getDocumentId()) . " AND " . $this->db->quoteInto("name = ?", $this->model->getName()));
     }
 
 }

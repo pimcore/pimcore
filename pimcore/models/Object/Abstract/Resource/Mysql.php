@@ -60,7 +60,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
         if (substr($path, -1) == "/" and strlen($path) > 1) {
             $path = substr($path, 0, count($path) - 2);
         }
-        $data = $this->db->fetchRow("SELECT * FROM objects WHERE CONCAT(o_path,`o_key`) = '" . $path . "'");
+        $data = $this->db->fetchRow("SELECT * FROM objects WHERE CONCAT(o_path,`o_key`) = ?", $path);
 
         if ($data["o_id"]) {
             $this->assignVariablesToModel($data);
@@ -126,7 +126,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
 
         }
         catch (Exception $e) {
-            $this->db->update("objects", $data, "o_id = '" . $this->model->getO_id() . "'");
+            $this->db->update("objects", $data, $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
 
         }
     }
@@ -137,7 +137,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
      * @return void
      */
     public function delete() {
-        $this->db->delete("objects", "o_id = '" . $this->model->getO_id() . "'");
+        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
     }
 
     /**
@@ -148,16 +148,16 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
      */
     public function updateChildsPaths($oldPath) {
         //get objects to empty their cache
-        $objects = $this->db->fetchAll("SELECT o_id,o_path FROM objects WHERE o_path LIKE '" . $oldPath . "%'");
+        $objects = $this->db->fetchAll("SELECT o_id,o_path FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
         //update object child paths
-        $this->db->exec("update objects set o_path = replace(o_path,'" . $oldPath . "','" . $this->model->getFullPath() . "') where o_path like '" . $oldPath . "/%';");
+        $this->db->exec("update objects set o_path = replace(o_path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where o_path like " . $this->db->quote($oldPath . "/%") .";");
 
         //update object child permission paths
-        $this->db->exec("update objects_permissions set cpath = replace(cpath,'" . $oldPath . "','" . $this->model->getFullPath() . "') where cpath like '" . $oldPath . "/%';");
+        $this->db->exec("update objects_permissions set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update object child properties paths
-        $this->db->exec("update properties set cpath = replace(cpath,'" . $oldPath . "','" . $this->model->getFullPath() . "') where cpath like '" . $oldPath . "/%';");
+        $this->db->exec("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
         foreach ($objects as $object) {
@@ -178,7 +178,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
      * @return void
      */
     public function deleteAllProperties() {
-        $this->db->delete("properties", "cid = '" . $this->model->getId() . "' AND ctype = 'object'");
+        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'object'", $this->model->getId()));
     }
 
     /**
@@ -210,12 +210,12 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "cpath = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "cpath = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
 
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = '" . $this->model->getId() . "')  AND ctype='object' ORDER BY cpath ASC");
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = ?)  AND ctype='object' ORDER BY cpath ASC", $this->model->getId());
 
         foreach ($propertiesRaw as $propertyRaw) {
 
@@ -265,7 +265,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
 
         $permissions = array();
 
-        $permissionsRaw = $this->db->fetchAll("SELECT id FROM objects_permissions WHERE cid='" . $this->model->geto_Id() . "' ORDER BY cpath ASC");
+        $permissionsRaw = $this->db->fetchAll("SELECT id FROM objects_permissions WHERE cid = ? ORDER BY cpath ASC", $this->model->geto_Id());
 
         $userIdMappings = array();
         foreach ($permissionsRaw as $permissionRaw) {
@@ -284,7 +284,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
      * @return void
      */
     public function deleteAllPermissions() {
-        $this->db->delete("objects_permissions", "cid='" . $this->model->getO_Id() . "'");
+        $this->db->delete("objects_permissions", $this->db->quoteInto("cid = ?", $this->model->getO_Id()));
     }
 
     /**
@@ -301,22 +301,22 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "cpath = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "cpath = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
 
-        $permissionRaw = $this->db->fetchRow("SELECT id FROM objects_permissions WHERE (" . $pathCondition . ") AND userId='" . $user->getId() . "' ORDER BY cpath DESC LIMIT 1");
+        $permissionRaw = $this->db->fetchRow("SELECT id FROM objects_permissions WHERE (" . $pathCondition . ") AND userId = ? ORDER BY cpath DESC LIMIT 1",  $user->getId());
 
         //path condition for parent object
         $parentObjectPathParts = array_slice($pathParts, 0, -1);
         $parentObjectPathConditionParts[] = "cpath = '/'";
         foreach ($parentObjectPathParts as $parentObjectPathPart) {
             $parentObjectTmpPaths[] = $parentObjectPathPart;
-            $parentObjectPathConditionParts[] = "cpath = '/" . implode("/", $parentObjectTmpPaths) . "'";
+            $parentObjectPathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $parentObjectTmpPaths));
         }
         $parentObjectPathCondition = implode(" OR ", $parentObjectPathConditionParts);
-        $parentObjectPermissionRaw = $this->db->fetchRow("SELECT id FROM objects_permissions WHERE (" . $parentObjectPathCondition . ") AND userId='" . $user->getId() . "' ORDER BY cpath DESC LIMIT 1");
+        $parentObjectPermissionRaw = $this->db->fetchRow("SELECT id FROM objects_permissions WHERE (" . $parentObjectPathCondition . ") AND userId = ? ORDER BY cpath DESC LIMIT 1", $user->getId());
         $parentObjectPermissions = new Object_Permissions();
         if ($parentObjectPermissionRaw["id"]) {
             $parentObjectPermissions = Object_Permissions::getById($parentObjectPermissionRaw["id"]);
@@ -393,7 +393,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
      * @return boolean
      */
     public function hasChilds($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
-        $c = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_parentId = '" . $this->model->getO_id() . "' AND o_type IN ('" . implode("','", $objectTypes) . "')");
+        $c = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
 
         $state = false;
         if ($c["o_id"]) {
@@ -411,7 +411,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
      * @return integer
      */
     public function getChildAmount($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
-        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = '" . $this->model->getO_id() . "' AND o_type IN ('" . implode("','", $objectTypes) . "')");
+        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
         return $c["count"];
     }
 
@@ -426,7 +426,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
     public function isLocked () {
         
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_path LIKE '".$this->model->getFullpath()."%' AND o_locked IS NOT NULL AND o_locked != '';");
+        $belowLocks = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_path LIKE ? AND o_locked IS NOT NULL AND o_locked != '';", $this->model->getFullpath()."%");
         
         if(is_array($belowLocks) && count($belowLocks) > 0) {
             return true;
@@ -439,7 +439,7 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
         $pathConditionParts[] = "CONCAT(o_path,`o_key`) = '/'";
         foreach ($pathParts as $pathPart) {
             $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = "CONCAT(o_path,`o_key`) = '/" . implode("/", $tmpPathes) . "'";
+            $pathConditionParts[] = $this->db->quoteInto("CONCAT(o_path,`o_key`) = ?", "/" . implode("/", $tmpPathes));
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
