@@ -649,9 +649,10 @@ class Webservice_Service
      * @param string $offset
      * @param string $limit
      * @param string $groupBy
+     * @param string $objectClass
      * @return Webservice_Data_Object_List_Item[]
      */
-    public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null)
+    public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null)
     {
         try {
             $params = array();
@@ -663,8 +664,15 @@ class Webservice_Service
             if (!empty($limit)) $params["limit"] = $limit;
             if (!empty($groupBy)) $params["groupBy"] = $groupBy;
 
+            $listClassName = "Object_Abstract";
+            if(!empty($objectClass)) {
+                $listClassName = "Object_" . ucfirst($objectClass);
+                if(!class_exists($listClassName)) {
+                    $listClassName = "Object_Abstract";
+                }
+            }
 
-            $list = Object_Abstract::getList($params);
+            $list = $listClassName::getList($params);
 
             $items = array();
             foreach ($list as $object) {
