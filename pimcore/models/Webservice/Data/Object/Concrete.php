@@ -63,7 +63,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
         }
 
         //must be after generic setters above!!
-        parent::reverseMap($object);
+        parent::reverseMap($object, $disableMappingExceptions);
 
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
