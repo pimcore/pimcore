@@ -52,7 +52,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
         }
     }
 
-    public function reverseMap($object) {
+    public function reverseMap($object, $disableMappingExceptions = false) {
 
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
@@ -80,10 +80,14 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
 
                         
                     } else {
-                        throw new Exception("Unable to reverse map element [ " . $element->name . " ] of type [ " . $element->type . " ]. Setter not found");
+                        if(!$disableMappingExceptions) {
+                            throw new Exception("Unable to reverse map element [ " . $element->name . " ] of type [ " . $element->type . " ]. Setter not found");
+                        }
                     }
                 } else {
-                    throw new Exception("Unable to reverse map element [ " . $element->name . " ] of type [ " . $element->type . " ]. Object_Class_Data type not found. ");
+                    if(!$disableMappingExceptions) {
+                        throw new Exception("Unable to reverse map element [ " . $element->name . " ] of type [ " . $element->type . " ]. Object_Class_Data type not found. ");
+                    }
                 }
             }
         }

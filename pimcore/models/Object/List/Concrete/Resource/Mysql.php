@@ -45,7 +45,7 @@ class Object_List_Concrete_Resource_Mysql extends Object_List_Resource_Mysql {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM " . $this->getTableName() . $this->getCondition() . $this->getGroupBy());
+            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -59,7 +59,7 @@ class Object_List_Concrete_Resource_Mysql extends Object_List_Resource_Mysql {
         }
 
         try {
-            $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM " . $this->getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+            $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
