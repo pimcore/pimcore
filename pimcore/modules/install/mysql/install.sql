@@ -365,35 +365,27 @@ CREATE TABLE `thumbnails` (
 
 DROP TABLE IF EXISTS `translations_website`;
 CREATE TABLE `translations_website` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `tid` int(11) unsigned NOT NULL default '0',
-  `key` varchar(255) character set utf8 collate utf8_bin NOT NULL default '',
-  `language` varchar(10) character set utf8 collate utf8_bin default NULL,
-  `text` text character set utf8 collate utf8_bin,
-  `date` bigint(20) unsigned default NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `tid_language` (`tid`,`language`),
-  UNIQUE KEY `key_language` (`key`,`language`),
+  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `language` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `text` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `date` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
-  KEY `key` (`key`),
-  KEY `tid` (`tid`)
+  KEY `key` (`key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `tid` int(11) unsigned NOT NULL default '0',
-  `key` varchar(255) character set utf8 collate utf8_bin NOT NULL default '',
-  `language` varchar(10) character set utf8 collate utf8_bin default NULL,
-  `text` text character set utf8 collate utf8_bin,
-  `date` bigint(20) unsigned default NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `tid_language` (`tid`,`language`),
-  UNIQUE KEY `key_language` (`key`,`language`),
+  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `language` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `text` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `date` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
-  KEY `key` (`key`),
-  KEY `tid` (`tid`)
+  KEY `key` (`key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
