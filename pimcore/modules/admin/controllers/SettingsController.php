@@ -313,6 +313,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "validLanguages" => $values["general.validLanguages"],
                     "theme" => $values["general.theme"],
                     "debug" => $values["general.debug"],
+                    "debug_ip" => $values["general.debug_ip"],
                     "firephp" => $values["general.firephp"],
                     "loglevel" => array(
                         "debug" => $values["general.loglevel.debug"],

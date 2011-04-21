@@ -528,7 +528,17 @@ class Pimcore {
             $conf = new Zend_Config_Xml(PIMCORE_CONFIGURATION_SYSTEM);
             Zend_Registry::set("pimcore_config_system", $conf);
 
-            if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", (bool) $conf->general->debug);
+            $debug = (bool) $conf->general->debug;
+
+            // enable debug mode only for one IP
+            if($conf->general->debug_ip && $conf->general->debug) {
+                $debug = false;
+                if($_SERVER["REMOTE_ADDR"] == trim($conf->general->debug_ip)) {
+                    $debug = true;
+                }
+            }
+            
+            if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", $debug);
             if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
 
             return true;
