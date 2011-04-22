@@ -447,6 +447,7 @@ pimcore.settings.user.panel = Class.create({
 
     updatePermissionsPanelsOnly: function(transport) {
 
+        this.forceReloadOnSave = false;
 
         this.currentUser = Ext.decode(transport.responseText);
         var user = pimcore.globalmanager.get("user");
@@ -469,6 +470,7 @@ pimcore.settings.user.panel = Class.create({
 
     addSettingsPanel: function (transport) {
 
+        this.forceReloadOnSave = false;
         this.data = Ext.decode(transport.responseText);
         this.currentUser = this.data.user;
         this.wsenabled = this.data.wsenabled;
@@ -545,8 +547,17 @@ pimcore.settings.user.panel = Class.create({
             valueField: 'language',
             forceSelection: true,
             triggerAction: 'all',
-            hiddenName: 'language'
+            hiddenName: 'language',
+            listeners: {
+                change: function () {
+                    this.forceReloadOnSave = true;
+                }.bind(this),
+                select: function () {
+                    this.forceReloadOnSave = true;
+                }.bind(this)
+            }
         }));
+
         generalItems.push(new Array({
             xtype: "checkbox",
             fieldLabel: t("admin"),
@@ -1293,7 +1304,19 @@ pimcore.settings.user.panel = Class.create({
                 try{
                     var res = Ext.decode(transport.responseText);
                     if (res.success) {
+                        if(this.forceReloadOnSave) {
+                            this.forceReloadOnSave = false;
 
+                            // only if the current user is equal to the edited user
+                            var user = pimcore.globalmanager.get("user");
+                            if(this.currentUser.id == user.id) {
+                                Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                                    if (buttonValue == "yes") {
+                                        window.location.reload();
+                                    }
+                                }.bind(this));
+                            }
+                        }
                         pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));

@@ -70,6 +70,7 @@ pimcore.settings.profile.panel = Class.create({
 
     addUserPanel: function () {
 
+        this.forceReloadOnSave = false;
         this.currentUser = pimcore.currentuser;
         if (this.userPanel) {
             this.editPanel.remove(this.userPanel);
@@ -127,7 +128,15 @@ pimcore.settings.profile.panel = Class.create({
             valueField: 'language',
             forceSelection: true,
             triggerAction: 'all',
-            hiddenName: 'language'
+            hiddenName: 'language',
+            listeners: {
+                change: function () {
+                    this.forceReloadOnSave = true;
+                }.bind(this),
+                select: function () {
+                    this.forceReloadOnSave = true;
+                }.bind(this)
+            }
         }));
 
         var userItems = new Array();
@@ -174,6 +183,17 @@ pimcore.settings.profile.panel = Class.create({
                 try{
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
+
+                        if(this.forceReloadOnSave) {
+                            this.forceReloadOnSave = false;
+
+                            Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                                if (buttonValue == "yes") {
+                                    window.location.reload();
+                                }
+                            }.bind(this));
+                        }
+
                         pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));
@@ -181,7 +201,7 @@ pimcore.settings.profile.panel = Class.create({
                 } catch (e){
                     pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");    
                 }
-            }
+            }.bind(this)
         });
     },
 
