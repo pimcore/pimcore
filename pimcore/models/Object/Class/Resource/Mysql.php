@@ -131,7 +131,11 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
         
         
          // save definition as a serialized file
-        file_put_contents(PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf", serialize($this->model->layoutDefinitions));
+        $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
+        if(!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+            throw new Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
+        }
+        file_put_contents($definitionFile, serialize($this->model->layoutDefinitions));
            
                     
         $objectTable = "object_query_" . $this->model->getId();

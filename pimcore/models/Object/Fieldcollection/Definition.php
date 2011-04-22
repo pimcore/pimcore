@@ -164,8 +164,14 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         }
         
         $serialized = serialize($this);
-        
-        file_put_contents($fieldCollectionFolder . "/" . $this->getKey() . ".psf",$serialized);
+
+        $definitionFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";
+
+        if(!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+            throw new Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
+        }
+
+        file_put_contents($definitionFile,$serialized);
         
         $extendClass = "Object_Fieldcollection_Data_Abstract";
         if ($this->getParentClass()) {
@@ -219,8 +225,14 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         if(!is_dir($fieldClassFolder)) {
             mkdir($fieldClassFolder,0755,true);
         }
-        
-        file_put_contents($fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php",$cd);
+
+
+        $classFile = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
+        if(!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
+            throw new Exception("Cannot write definition file in: " . $classFile . " please check write permission on this directory.");
+        }
+
+        file_put_contents($classFile,$cd);
         
         // update classes
         $classList = new Object_Class_List();
