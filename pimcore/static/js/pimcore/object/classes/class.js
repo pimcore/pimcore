@@ -185,11 +185,7 @@ pimcore.object.classes.klass = Class.create({
     },
 
     reload: function(response) {
-        console.log("reload");
-        //this.data = Ext.decode(response.responseText);
-        //this.addLayout();
-        //this.initLayoutFields();
-        //pimcore.layout.refresh();
+        
     },
 
     initLayoutFields: function () {

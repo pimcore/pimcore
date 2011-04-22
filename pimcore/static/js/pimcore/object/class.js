@@ -162,7 +162,7 @@ pimcore.object.klass = Class.create({
     addClassComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z]+/);
-        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource","concrete","interface"];
+        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource","concrete","interface", "service", "fieldcollection", "localizedfield", "objectbrick"];
 
         if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
             Ext.Ajax.request({
