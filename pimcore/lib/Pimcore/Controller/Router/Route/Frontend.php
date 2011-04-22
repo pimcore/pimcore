@@ -81,8 +81,8 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         
         // you can also call a page by it's ID /?pimcore_document=XXXX
         if (!$matchFound) {
-            if(!empty($params["pimcore_document"])) {
-                $doc = Document::getById($params["pimcore_document"]);
+            if(!empty($params["pimcore_document"]) || !empty($params["pdid"])) {
+                $doc = Document::getById($params["pimcore_document"] ? $params["pimcore_document"] : $params["pdid"]);
                 if($doc instanceof Document) {
                     $path = $doc->getFullPath();
                 }
