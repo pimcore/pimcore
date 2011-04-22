@@ -29,14 +29,14 @@ class Object_Class_Data_Date extends Object_Class_Data {
      *
      * @var string
      */
-    public $queryColumnType = "int(11)";
+    public $queryColumnType = "bigint(20)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "int(11)";
+    public $columnType = "bigint(20)"; 
 
     /**
      * Type for the generated phpdoc
