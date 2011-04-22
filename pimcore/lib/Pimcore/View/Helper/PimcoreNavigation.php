@@ -43,10 +43,13 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
 
     protected $_navigationContainer;
 
-    public function getNavigation($activeDocument,$navigationRootDocument = null)
+    protected $_htmlMenuIdPrefix;
+
+    public function getNavigation($activeDocument,$navigationRootDocument = null, $htmlMenuIdPrefix = null)
     {
 
         $this->_activeDocument = $activeDocument;
+        $this->_htmlMenuIdPrefix = $htmlMenuIdPrefix;
 
         $this->_navigationContainer = new Zend_Navigation();
 
@@ -90,7 +93,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                     $page->setUri($path.$child->getProperty("navigation_parameters").$child->getProperty("navigation_anchor"));
                     $page->setLabel($child->getProperty("navigation_name"));
                     $page->setActive($active);
-                    $page->setId($child->getId());
+                    $page->setId($this->_htmlMenuIdPrefix.$child->getId());
                     $page->setClass($child->getProperty("navigation_class"));
                     $page->setTarget($child->getProperty("navigation_target"));
                     $page->setTitle($child->getProperty("navigation_title"));
