@@ -26,5 +26,10 @@ Pimcore::initLogger();
 Pimcore::initModules();
 Pimcore::initPlugins();
 
+//Activate Inheritance for cli-scripts
+Pimcore::unsetAdminMode();
+Document::setHideUnpublished(true);
+Object_Abstract::setHideUnpublished(true);
+Object_Abstract::setGetInheritedValues(true);
 
 ?>

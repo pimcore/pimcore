@@ -81,6 +81,7 @@ pimcore.extensionmanager.download = Class.create({
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name'},
             {header: t("description"), id: "extension_description", width: 200, sortable: true, dataIndex: 'description'},
             {
+                header: t('details'),
                 xtype: 'actioncolumn',
                 width: 30,
                 items: [{
@@ -97,6 +98,7 @@ pimcore.extensionmanager.download = Class.create({
                 }]
             },
             {
+                header: t('download'),
                 xtype: 'actioncolumn',
                 width: 30,
                 items: [{

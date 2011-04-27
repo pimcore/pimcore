@@ -191,4 +191,18 @@ class Pimcore_ExtensionManager {
             }
         }
     }
+
+    public static function getPathForExtension($id, $type) {
+
+        $extensionDir = "";
+
+        if($type == "plugin") {
+            $extensionDir = PIMCORE_PLUGINS_PATH . "/" . $id;
+        } else if ($type == "brick") {
+            $brickDirs = self::getBrickDirectories();
+            $extensionDir = $brickDirs[$id];
+        }
+
+        return $extensionDir;
+    }
 }

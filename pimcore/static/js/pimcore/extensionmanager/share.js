@@ -82,6 +82,7 @@ pimcore.extensionmanager.share = Class.create({
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name'},
             {header: t("description"), id: "extension_description", width: 200, sortable: true, dataIndex: 'description'},
             {
+                header: t('share') + " / " + t("push_update"),
                 xtype: 'actioncolumn',
                 width: 30,
                 items: [{

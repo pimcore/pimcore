@@ -32,19 +32,23 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
         // get remote repo state of plugins
         $remoteConfig = array();
         foreach ($pluginConfigs as $config) {
-            $remoteConfig["extensions"][] = array(
-                "id" => $config["plugin"]["pluginName"],
-                "type" => "plugin"
-            );
+            if(!is_file(Pimcore_ExtensionManager::getPathForExtension($config["plugin"]["pluginName"], "plugin") . "/.pimcore_extension_revision")) {
+                $remoteConfig["extensions"][] = array(
+                    "id" => $config["plugin"]["pluginName"],
+                    "type" => "plugin"
+                );
+            }
         }
 
         $brickConfigs = Pimcore_ExtensionManager::getBrickConfigs();
         // get repo state of bricks
         foreach ($brickConfigs as $id => $config) {
-            $remoteConfig["extensions"][] = array(
-                "id" => $id,
-                "type" => "brick"
-            );
+            if(!is_file(Pimcore_ExtensionManager::getPathForExtension($id, "brick") . "/.pimcore_extension_revision")) {
+                $remoteConfig["extensions"][] = array(
+                    "id" => $id,
+                    "type" => "brick"
+                );
+            }
         }
 
 
@@ -74,7 +78,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             }
         }
 
-        // create configuration für bricks
+        // create configuration for bricks
         foreach ($brickConfigs as $id => $config) {
             $brick = array(
                 "id" => $id,
@@ -115,12 +119,12 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             )
         );
 
+        $extensionDir = Pimcore_ExtensionManager::getPathForExtension($id, $type);
+        $extensionDir .= "/"; // add trailing slash
+        
         if($type == "plugin") {
-            $extensionDir = PIMCORE_PLUGINS_PATH . "/" . $id . "/";
             $pathPrefix = PIMCORE_PLUGINS_PATH;
         } else if ($type == "brick") {
-            $brickDirs = Pimcore_ExtensionManager::getBrickDirectories();
-            $extensionDir = $brickDirs[$id] . "/";
             $tmpSplit = explode("areas/".$id."/", $extensionDir);
             $pathPrefix = $tmpSplit[0]."areas";
         }
