@@ -283,6 +283,9 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
             }
         }
 
+        // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
+        $inheritedValues = Object_Abstract::doGetInheritedValues();
+        Object_Abstract::setGetInheritedValues(false);
 
         // update data for store table
         if (count($untouchable) > 0) {
@@ -346,8 +349,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
         // get data for query table
         // this is special because we have to call each getter to get the inherited values from a possible parent object
 
-        // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
-        $inheritedValues = Object_Abstract::doGetInheritedValues();
+
         Object_Abstract::setGetInheritedValues(true);
         
         $object = get_object_vars($this->model);
