@@ -136,7 +136,13 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
         }
 
         // and now the default view for query where the locale is missing
-        $this->dbexec('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.*, ' . implode(",",$concats) . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
+
+        $furtherSelects = implode(",",$concats);
+        if(!empty($furtherSelects)) {
+            $furtherSelects = "," . $furtherSelects;
+        }
+
+        $this->dbexec('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.* ' . $furtherSelects . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
     }
 
     public function createUpdateTable () {
