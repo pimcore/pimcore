@@ -270,12 +270,6 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.debug")
                             },
                             {
-                                fieldLabel: t("only_for_ip"),
-                                xtype: "textfield",
-                                name: "general.debug_ip",
-                                value: this.getValue("general.debug_ip")
-                            },
-                            {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
@@ -998,7 +992,8 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t("image_datauri_filter"),
                                 xtype: "checkbox",
                                 name: "outputfilters.imagedatauri",
-                                checked: this.getValue("outputfilters.imagedatauri")
+                                checked: this.getValue("outputfilters.imagedatauri"),
+                                style: "margin-bottom: 15px;"
                             },
                             {
                                 fieldLabel: "LESS",
@@ -1007,10 +1002,18 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("outputfilters.less")
                             },
                             {
+                                fieldLabel: t("path_to_lessc_optional"),
+                                xtype: "textfield",
+                                name: "outputfilters.lesscpath",
+                                value: this.getValue("outputfilters.lesscpath"),
+                                style: "margin-bottom: 15px;"
+                            },
+                            {
                                 fieldLabel: t("minify_css"),
                                 xtype: "checkbox",
                                 name: "outputfilters.cssminify",
-                                checked: this.getValue("outputfilters.cssminify")
+                                checked: this.getValue("outputfilters.cssminify"),
+                                style: "margin-bottom: 15px;"
                             },
                             {
                                 fieldLabel: t("minify_javascript"),
@@ -1030,13 +1033,15 @@ pimcore.settings.system = Class.create({
                                     ["yuicompressor", "YUI Compressor (Java required)"]
                                 ],
                                 mode: "local",
-                                triggerAction: "all"
+                                triggerAction: "all",
+                                style: "margin-bottom: 15px;"
                             },
                             {
                                 fieldLabel: t("minify_html"),
                                 xtype: "checkbox",
                                 name: "outputfilters.htmlminify",
-                                checked: this.getValue("outputfilters.htmlminify")
+                                checked: this.getValue("outputfilters.htmlminify"),
+                                style: "margin-bottom: 15px;"
                             },
                             {
                                 fieldLabel: t("cdn"),

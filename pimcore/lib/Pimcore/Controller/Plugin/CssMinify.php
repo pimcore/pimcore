@@ -69,7 +69,9 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
                         }
     
                         if (is_file("file://".$path)) {
-                            $stylesheetContent .= file_get_contents($path);
+                            $content = file_get_contents($path);
+                            $content = $this->correctReferences($source,$content);
+                            $stylesheetContent .= $content;
                             $style->outertext = "";
                         }
                     }
@@ -94,6 +96,74 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
             $body = $html->save();
             $this->getResponse()->setBody($body);
         }
+    }
+
+
+    protected function correctReferences ($base, $content) {
+
+        // check for url references
+        preg_match_all("/url\((.*)\)/iU", $content, $matches);
+        foreach ($matches[1] as $ref) {
+
+            // do some corrections
+            $ref = str_replace('"',"",$ref);
+            $ref = str_replace(' ',"",$ref);
+            $ref = str_replace("'","",$ref);
+
+            $path = $this->correctUrl($ref, $base);
+
+            //echo $ref . " - " . $path . " - " . $url . "<br />";
+
+            $content = str_replace($ref,$path,$content);
+        }
+
+        // check for @import references
+        preg_match_all("/\@import(.*);/iU", $content, $matches);
+        foreach ($matches[1] as $ref) {
+
+            // do some corrections
+            $ref = str_replace('"',"",$ref);
+            $ref = str_replace(' ',"",$ref);
+            $ref = str_replace("'","",$ref);
+
+            $path = $this->correctUrl($ref, $base);
+
+            //echo $ref . " - " . $path . " - " . $url . "<br />";
+
+            $content = str_replace($ref,$path,$content);
+        }
+
+
+        return $content;
+    }
+
+
+    protected function correctUrl ($rel, $base) {
+        /* return if already absolute URL */
+        if (parse_url($rel, PHP_URL_SCHEME) != '') return $rel;
+
+        /* queries and anchors */
+        if ($rel[0]=='#' || $rel[0]=='?') return $base.$rel;
+
+        /* parse base URL and convert to local variables:
+           $scheme, $host, $path */
+        extract(parse_url($base));
+
+        /* remove non-directory element from path */
+        $path = preg_replace('#/[^/]*$#', '', $path);
+
+        /* destroy path if relative url points to root */
+        if ($rel[0] == '/') $path = '';
+
+        /* dirty absolute URL */
+        $abs = "$path/$rel";
+
+        /* replace '//' or '/./' or '/foo/../' with '/' */
+        $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+        for($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
+
+        /* absolute URL is ready! */
+        return $abs;
     }
 }
 
