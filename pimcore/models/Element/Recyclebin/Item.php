@@ -45,7 +45,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         
         $raw = file_get_contents($this->getStoreageFile());
         $element = unserialize($raw);
-        
+
         // check for element with the same name
         if($element instanceof Document) {
             $indentElement = Document::getByPath($element->getFullpath());
@@ -130,7 +130,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
             }
         }
         else if ($element instanceof Object_Abstract) {
-            
+
         }
         
         // for all
@@ -143,7 +143,13 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $element->_fulldump = true;
         
         if(method_exists($element,"getChilds")) {
-            $childs = $element->getChilds();
+            if($element instanceof Object_Abstract) {
+                // because we also want variants
+                $childs = $element->getChilds(array(Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT, Object_Abstract::OBJECT_TYPE_OBJECT));
+            } else {
+                $childs = $element->getChilds();
+            }
+
             foreach ($childs as $child) {
                 $this->loadChilds($child);
             }
@@ -154,7 +160,12 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $element->save();
         
         if(method_exists($element,"getChilds")) {
-            $childs = $element->getChilds();
+            if($element instanceof Object_Abstract) {
+                // don't use the getter because this will return an empty array (variants are excluded by default)
+                $childs = $element->o_childs;
+            } else {
+                $childs = $element->getChilds();
+            }
             foreach ($childs as $child) {
                 $this->restoreChilds($child);
             }

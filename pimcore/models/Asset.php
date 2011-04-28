@@ -1249,8 +1249,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $parentVars = parent::__sleep();
 
         if(isset($this->_fulldump)) {
-            // this is if we want to make a full dump of the object (eg. for a new version)
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions", "childs", "data");
+            // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
+            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {

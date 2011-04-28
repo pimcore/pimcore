@@ -123,11 +123,9 @@ class Object_Abstract_Resource_Mysql extends Element_Resource_Mysql {
         // first try to insert a new record, this is because of the recyclebin restore
         try {
             $this->db->insert("objects", $data);
-
         }
         catch (Exception $e) {
             $this->db->update("objects", $data, $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
-
         }
     }
 

@@ -1043,8 +1043,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $parentVars = parent::__sleep();
         
         if(isset($this->_fulldump)) {
-            // this is if we want to make a full dump of the object (eg. for a new version)
-            $blockedVars = array("dependencies", "userPermissions", "permissions", "childs", "hasChilds", "_oldPath", "versions", "scheduledTasks");
+            // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
+            $blockedVars = array("dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions", "scheduledTasks");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
