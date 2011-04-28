@@ -351,6 +351,8 @@ pimcore.extensionmanager.admin = Class.create({
 
                         this.updateWindow.doLayout();
 
+                        this.updateMessages = [];
+
 
                         window.setTimeout(this.processStep.bind(this), 100);
                     }.bind(this)
@@ -390,8 +392,6 @@ pimcore.extensionmanager.admin = Class.create({
                 nextJob = this.steps.shift();
             }
 
-            console.log(nextJob);
-
             Ext.Ajax.request({
                 url: "/admin/extensionmanager/" + nextJob.controller + "/" + nextJob.action,
                 params: nextJob.params,
@@ -400,7 +400,9 @@ pimcore.extensionmanager.admin = Class.create({
 
                     try {
                         if (r.success) {
-                            this.lastResponse = r;
+                            if(typeof r.message == "string") {
+                                this.updateMessages.push(r.message);
+                            }
                             window.setTimeout(this.processStep.bind(this), 100);
                         }
                         else {
@@ -418,7 +420,14 @@ pimcore.extensionmanager.admin = Class.create({
             this.updateWindow.removeAll();
             this.updateWindow.add({
                 bodyStyle: "padding: 20px;",
-                html: ""
+                html: this.updateMessages.join("<br /><br />"),
+                buttons: [{
+                    text: t("close"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function () {
+                        this.updateWindow.close();
+                    }.bind(this)
+                }]
             });
             this.updateWindow.doLayout();
         }
