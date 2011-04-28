@@ -17,6 +17,9 @@
 
 class Object_Class_Service  {
 
+
+
+
     /**
      * @static
      * @param  Object_Class $class
@@ -25,12 +28,22 @@ class Object_Class_Service  {
     public static function generateClassDefinitionXml($class){
         $classJson = Zend_Json::encode($class);
         $data = Zend_Json::decode($classJson);
+
+
+
         unset($data["id"]);
         unset($data["name"]);
         unset($data["creationDate"]);
         unset($data["modificationDate"]);
         unset($data["userOwner"]);
         unset($data["userModification"]);
+
+
+        $referenceFunction =  function(&$value,$key){
+            $value = htmlspecialchars($value);
+        };
+        array_walk_recursive($data,$referenceFunction);
+
 
         $config = new Zend_Config($data, true);
         $writer = new Zend_Config_Writer_Xml(array(
