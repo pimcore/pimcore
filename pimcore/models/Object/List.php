@@ -42,19 +42,6 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
     );
 
     /**
-     * @var boolean
-     */
-    public $objectTypeObject;
-
-    /**
-     * @param boolean $objectTypeObject
-     * @return void
-     */
-    public function __construct($objectTypeObject = false) {
-        $this->objectTypeObject = $objectTypeObject;
-    }
-
-    /**
      * @param string $key
      * @return boolean
      */
@@ -65,6 +52,19 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
               return true;
           }
           return false;*/
+    }
+
+    public function getCondition() {
+        $condition = parent::getCondition();
+
+        if(!empty($this->objectTypes)) {
+            if(!empty($condition)) {
+                $condition .= " AND ";
+            }
+            $condition .= " o_type IN ('" . implode("','", $this->objectTypes) . "')";
+        }
+
+        return $condition;
     }
 
     /**
@@ -166,19 +166,4 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
         $var = $this->current() !== false;
         return $var;
     }
-
-
-    public function getCondition() {
-        $condition = parent::getCondition();
-
-        if(!empty($this->objectTypes)) {
-            if(!empty($condition)) {
-                $condition .= " AND ";
-            }
-            $condition .= " o_type IN ('" . implode("','", $this->objectTypes) . "')";
-        }
-        
-        return $condition;
-    }
-
 }

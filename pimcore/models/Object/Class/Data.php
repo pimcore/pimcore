@@ -564,14 +564,15 @@ abstract class Object_Class_Data {
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
 
-        $code .= "\t" . '$data = $this->' . $key . ";\n";
-        if(method_exists($this,"preGetData")) {
-            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-        }
-
         // adds a hook preGetValue which can be defined in an extended class
         $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
         $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+
+        if(method_exists($this,"preGetData")) {
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
 
         // insert this line if inheritance from parent objects is allowed
         if ($class->getAllowInherit()) {
