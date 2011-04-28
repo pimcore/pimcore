@@ -33,4 +33,20 @@ abstract class Document_Tag_Area_Abstract {
     public function getConfig() {
         return $this->config;
     }
+
+    public function getParam($key) {
+        return $this->getView()->getParam($key);
+    }
+
+    public function getAllParams () {
+        return $this->getView()->getAllParams();
+    }
+
+    public function _getParam($key) {
+        return $this->getParam($key);
+    }
+
+    public function _getAllParams () {
+        return $this->getAllParams();
+    }
 }
