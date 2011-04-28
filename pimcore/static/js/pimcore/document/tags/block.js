@@ -17,12 +17,16 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
 
     initialize: function(id, name, options, data) {
 
+        if (!options) {
+            options = {};
+        }
+
         this.id = id;
         this.name = name;
         this.elements = [];
+        this.options = options;
 
         var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
-
         this.elements = Ext.get(id).query("." + name);
 
         if (this.elements.length < 1) {
@@ -34,10 +38,11 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
 
 
                 // amount selection
+
                 amountDiv = Ext.get(this.elements[i]).query(".pimcore_block_amount")[0];
                 amountBox = new Ext.form.ComboBox({
                     cls: "pimcore_block_amount_select",
-                    store: [1,2,3,4,5,6,7,8,9,10],
+                    store: this.getAmountValues(),
                     value: 1,
                     mode: "local",
                     triggerAction: "all",
@@ -90,14 +95,34 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                 downButton.render(downDiv);
                 
                 
-                if(this.elements.length >= options.limit) {
+                if(typeof options.limit != "undefined" && this.elements.length >= options.limit) {
                    Ext.get(id).addClass("pimcore_block_limitreached");
                 }
             }
         }
     },
 
-    createInitalControls: function () {
+    getAmountValues: function () {
+        var amountValues = [];
+
+        if(typeof this.options.limit != "undefined") {
+            var maxAddValues = intval(this.options.limit) - this.elements.length;
+            if(maxAddValues > 10) {
+                maxAddValues = 10;
+            }
+            for (var a=1; a<=maxAddValues; a++) {
+                amountValues.push(a);
+            }
+        }
+
+        if(amountValues.length < 1) {
+            amountValues = [1,2,3,4,5,6,7,8,9,10];
+        }
+
+        return amountValues;
+    },
+
+    createInitalControls: function (amountValues) {
         var amountEl = document.createElement("div");
         amountEl.setAttribute("class", "pimcore_block_amount");
 
@@ -114,7 +139,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
         // amount selection
         amountBox = new Ext.form.ComboBox({
             cls: "pimcore_block_amount_select",
-            store: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+            store: this.getAmountValues(),
             mode: "local",
             triggerAction: "all",
             value: 1,
