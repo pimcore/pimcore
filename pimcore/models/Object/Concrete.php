@@ -587,11 +587,6 @@ class Object_Concrete extends Object_Abstract {
 
         }
 
-        // empty information about loaded lazy fields
-        if(!isset($this->_fulldump)) {
-            $this->setO__loadedLazyFields(array());
-        }
-
         return $finalVars;
     }
 }

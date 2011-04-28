@@ -1282,7 +1282,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("o_userPermissions","o_dependencies","o_permissions","o_childs","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_properties");
+            $blockedVars = array("o_userPermissions","o_dependencies","o_permissions","o_childs","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_properties","o___loadedLazyFields");
         }
         
 
