@@ -253,11 +253,11 @@ pimcore.extensionmanager.download = Class.create({
                             window.setTimeout(this.processStep.bind(this), 500);
                         }
                         else {
-                            this.error(job);
+                            this.error(job, response);
                         }
                     }
                     catch (e) {
-                        this.error(job);
+                        this.error(job, response);
                     }
                 }.bind(this, nextJob)
             });
@@ -280,8 +280,8 @@ pimcore.extensionmanager.download = Class.create({
         }
     },
 
-    error: function (job) {
+    error: function (job, response) {
         this.downloadWindow.close();
-        Ext.MessageBox.alert(t('error'), "Error");
+        Ext.MessageBox.alert(t('error'), "Error: <br />" + response.responseText);
     }
 });

@@ -406,11 +406,11 @@ pimcore.extensionmanager.admin = Class.create({
                             window.setTimeout(this.processStep.bind(this), 100);
                         }
                         else {
-                            this.error(job);
+                            this.error(job, response);
                         }
                     }
                     catch (e) {
-                        this.error(job);
+                        this.error(job, response);
                     }
                 }.bind(this, nextJob)
             });
@@ -433,9 +433,9 @@ pimcore.extensionmanager.admin = Class.create({
         }
     },
 
-    error: function (job) {
+    error: function (job, response) {
         this.updateWindow.close();
-        Ext.MessageBox.alert(t('error'), "Error");
+        Ext.MessageBox.alert(t('error'), "Error: <br />" + response.responseText);
     }
 
 });
