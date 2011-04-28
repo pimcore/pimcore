@@ -283,7 +283,7 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
             }
         }
 
-        // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
+        // HACK
         $inheritedValues = Object_Abstract::doGetInheritedValues();
         Object_Abstract::setGetInheritedValues(false);
 
@@ -298,9 +298,10 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
         $data = array();
         $data["oo_id"] = $this->model->getO_id();
         foreach ($fd as $key => $value) {
-            if ($value->isRelationType()) {
 
-                $getter = "get" . ucfirst($key);
+            $getter = "get" . ucfirst($key);
+
+            if ($value->isRelationType()) {
                 if (method_exists($this->model, $getter)) {
                     $relations = $value->getDataForResource($this->model->$getter());
                 }
@@ -325,10 +326,10 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
 
             } else if ($value->getColumnType()) {
                 if (is_array($value->getColumnType())) {
-                    $insertDataArray = $value->getDataForResource($this->model->$key);
+                    $insertDataArray = $value->getDataForResource($this->model->$getter());
                     $data = array_merge($data, $insertDataArray);
                 } else {
-                    $insertData = $value->getDataForResource($this->model->$key);
+                    $insertData = $value->getDataForResource($this->model->$getter());
                     $data[$key] = $insertData;
                 }
             } else if (method_exists($value, "save")) {
