@@ -578,13 +578,21 @@ pimcore.object.tree = Class.create({
         try {
             var res = Ext.decode(response.responseText);
             var rm = this.attributes.reference.deleteObjectFromServer.bind(this);
+            var message = t('delete_message');
             if (res.hasDependencies) {
-                var dialog = confirm(t('there_are_dependencies_continue'));
-                if (!dialog) {
-                    return;
-                }
+                var message = t('delete_message_dependencies');
             }
-            rm();
+            Ext.MessageBox.show({
+                    title:t('delete'),
+                    msg: message,
+                    buttons: Ext.Msg.OKCANCEL ,
+                    icon: Ext.MessageBox.INFO ,
+                    fn: function(buttonId){
+                        if(buttonId == "ok"){
+                            rm();
+                        }
+                    }
+                });
         }
         catch (e) {
         }

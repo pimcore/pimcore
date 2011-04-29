@@ -478,7 +478,6 @@
 "object","Object"
 "remove","Remove "
 "your_object_has_been_saved","Your object has been saved"
-"there_are_dependencies_continue","There are dependencies, continue anyway?"
 "hidden_dependencies","There are additional dependencies your user does not have the permissions to see."
 "loading","Loading"
 "open","Open"
@@ -861,3 +860,5 @@
 "swf_upload_error_invalid_filetype","Invalid filetype selected."
 "swf_upload_error_file_not_found","File not found 404."
 "swf_upload_error_security_error","Security Error. Not allowed to post to different url"
+"delete_message_dependencies","There are dependencies, delete anyway?"
+"delete_message","Do you really want to delete this element?"
