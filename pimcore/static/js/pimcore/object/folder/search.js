@@ -96,7 +96,7 @@ pimcore.object.search = Class.create({
     setEditableGrid: function (response) {
 
         var itemsPerPage = 20;
-        var validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","link","multiselect","password","slider","user"];
+        var validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","time","link","multiselect","password","slider","user"];
         var editableFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","country","language","user"]
 
         var fields = Ext.decode(response.responseText);
@@ -244,6 +244,11 @@ pimcore.object.search = Class.create({
                         }
                         return "";
                     }});
+                    editor = null;
+                }
+                // TIME
+                else if (fields[i].type == "time") {
+                    gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, editable: false});
                     editor = null;
                 }
                 // SELECT & COUNTRY & LANGUAGE & USER
@@ -456,7 +461,7 @@ pimcore.object.search = Class.create({
                 store = null;
                 selectFilterFields = null;
                 
-                if (fields[i].type == "input" || fields[i].type == "textarea" || fields[i].type == "wysiwyg") {
+                if (fields[i].type == "input" || fields[i].type == "textarea" || fields[i].type == "wysiwyg" || fields[i].type == "time") {
                     configuredFilters.push({
                         type: 'string',
                         dataIndex: fields[i].key

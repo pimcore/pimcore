@@ -25,10 +25,11 @@ pimcore.object.helpers.grid = Class.create({
     showSubtype: true,
     showKey: true,
 
-    initialize: function(selectedClass, fields, url, baseParams) {
+    initialize: function(selectedClass, fields, url, baseParams, isSearch) {
         this.selectedClass = selectedClass;
         this.fields = fields;
-        this.validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","link","multiselect","password","slider","user"];
+        this.validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","time","link","multiselect","password","slider","user"];
+        this.isSearch = isSearch;
 
         this.url = url;
         if(baseParams) {
@@ -168,6 +169,11 @@ pimcore.object.helpers.grid = Class.create({
                         return "";
                     }.bind(this, fields[i].key)});
                 }
+                // TIME
+                else if (fields[i].type == "time") {
+                    gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, editable: false});
+                    editor = null;
+                }
                 // IMAGE
                 else if (fields[i].type == "image") {
                     gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, renderer: function (key, value, metaData, record) {
@@ -274,7 +280,12 @@ pimcore.object.helpers.grid = Class.create({
                 }
 
                 // is visible or not
-                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleSearch;
+                if(this.isSearch) {
+                    gridColumns[gridColumns.length-1].hidden = !fields[i].visibleSearch;
+                } else {
+                    gridColumns[gridColumns.length-1].hidden = !fields[i].visibleGridView;
+                }
+
 
             }
         }
@@ -296,7 +307,7 @@ pimcore.object.helpers.grid = Class.create({
                 store = null;
                 selectFilterFields = null;
 
-                if (fields[i].type == "input" || fields[i].type == "textarea" || fields[i].type == "wysiwyg") {
+                if (fields[i].type == "input" || fields[i].type == "textarea" || fields[i].type == "wysiwyg" || fields[i].type == "time") {
                     configuredFilters.push({
                         type: 'string',
                         dataIndex: fields[i].key
