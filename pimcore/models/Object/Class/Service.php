@@ -62,6 +62,11 @@ class Object_Class_Service  {
         $data = Zend_Json::decode($FieldCollectionJson);
         unset($data["key"]);
 
+        $referenceFunction =  function(&$value,$key){
+            $value = htmlspecialchars($value);
+        };
+        array_walk_recursive($data,$referenceFunction);
+
         $config = new Zend_Config($data, true);
         $writer = new Zend_Config_Writer_Xml(array(
             "config" => $config
