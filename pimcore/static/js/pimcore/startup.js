@@ -205,7 +205,7 @@ Ext.onReady(function() {
         statusbar.add("-");
     }
     // check for maintenance
-    if (!pimcore.settings.maintenance) {
+    if (!pimcore.settings.maintenance_active) {
         statusbar.add('<div class="pimcore_statusbar_maintenance">' + t("maintenance_not_active") + "</div>");
         statusbar.add("-");
     }

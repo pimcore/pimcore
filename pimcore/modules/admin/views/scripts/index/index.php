@@ -376,7 +376,7 @@
             sessionId: "<?php echo $_COOKIE["pimcore_admin_sid"] ?>",
             version: "<?php echo Pimcore_Version::getVersion() ?>",
             build: "<?php echo Pimcore_Version::$revision ?>",
-            maintenance: <?php echo $this->maintenance_enabled; ?>,
+            maintenance_active: <?php echo $this->maintenance_enabled; ?>,
             mail: <?php echo $this->mail_settings_incomplete ?>,
             welcomescreen: <?php echo $this->config->general->welcomescreen ? "true" : "false"; ?>,
             debug: <?php echo $this->config->general->debug ? "true" : "false"; ?>,
@@ -434,7 +434,7 @@
     <?php foreach ($modifiedPlugins as $scriptUrl) { ?>
         <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <?php } ?>
-    
+
     <?php // load plugin scripts ?>
     <?php
         try {
