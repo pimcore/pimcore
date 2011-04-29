@@ -486,12 +486,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         }
     }
 
-    /**
-     * @return boolean
-     */
-    public function getAllowParent() {
-        return $this->allowParent;
-    }
+
 
     /**
      * @return mixed
@@ -500,13 +495,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         return $this->parent;
     }
 
-    /**
-     * @param boolean $allowParent
-     * @return void
-     */
-    public function setAllowParent($allowParent) {
-        $this->allowParent = (bool) $allowParent;
-    }
+
 
     /**
      * @param mixed $parent

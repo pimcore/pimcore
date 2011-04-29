@@ -104,6 +104,7 @@ class Element_Import_Service
 
         $existingElement = $className::getByPath($fullPath);
         if ($overwrite && $existingElement) {
+            $apiElement->parentId = $existingElement->getParentId();
             return $existingElement;
         }
 

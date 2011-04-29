@@ -41,8 +41,8 @@ abstract class Object_List_Concrete extends Object_List {
      * @return void
      */
     public function __construct() {
-        parent::__construct(true);
 
+        $this->objectTypeObject = true;
         $this->initResource("Object_List_Concrete");
 
     }

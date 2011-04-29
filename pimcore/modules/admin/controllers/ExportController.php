@@ -29,18 +29,14 @@ class Admin_ExportController extends Pimcore_Controller_Action_Admin
 
             $exportSession->type = $this->_getParam("type");
             $exportSession->id = $this->_getParam("id");
-            $exportSession->skipRoot = (bool)$this->_getParam("skipRoot");
             $exportSession->includeRelations = (bool)$this->_getParam("includeRelations");
             $exportSession->recursive = (bool)$this->_getParam("recursive");
+            $exportSession->counter = 0;
 
             $element = Element_Service::getElementById($exportSession->type, $exportSession->id);
 
+            $exportSession->rootPath = $element->getPath();
 
-            if ($exportSession->skipRoot) {
-                $exportSession->rootPath = $element->getFullPath();
-            } else {
-                $exportSession->rootPath = $element->getPath();
-            }
 
             $exportSession->rootType = Element_Service::getType($element);
 
@@ -99,17 +95,10 @@ class Admin_ExportController extends Pimcore_Controller_Action_Admin
             $apiElement = $apiElementIn;
             $key = Element_Service::getType($element) . "_" . $element->getId();
 
-            if(!$exportSession->skipRoot or $element->getFullPath()!=$exportSession->rootPath ){
-                //this is the root element we need to skip
-                $exportSession->apiElements[$key] = array("element" => $apiElement, "path" => $path);
-                file_put_contents($exportDir . "/" . $key, serialize(array("element" => $apiElement, "path" => $path)));
+            $exportSession->apiElements[$key] = array("element" => $apiElement, "path" => $path);
+            file_put_contents($exportDir . "/" .$exportSession->counter."_". $key, serialize(array("element" => $apiElement, "path" => $path)));
 
-                $exportSession->elements = array_merge($exportSession->elements, $exportSession->foundRelations);
-
-            } else if($exportSession->skipRoot and $element->getFullPath()==$exportSession->rootPath){
-                $exportSession->elements = $exportSession->foundRelations;
-            }
-
+            $exportSession->elements = array_merge($exportSession->elements, $exportSession->foundRelations);
 
 
 
@@ -137,7 +126,7 @@ class Admin_ExportController extends Pimcore_Controller_Action_Admin
                 $zip->close();
             }
             }
-
+            $exportSession->counter++;
             $this->_helper->json(array("more"=>count($exportSession->elements)!=0, "totalElementsDone"=>count($exportSession->apiElements), "totalElementsFound"=>count($exportSession->foundRelations) ));
 
 

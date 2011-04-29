@@ -113,4 +113,9 @@ interface Element_Interface {
      */
     public function isLocked();
 
+    /**
+     * @return integer
+     */
+    public function getParentId();
+
 }

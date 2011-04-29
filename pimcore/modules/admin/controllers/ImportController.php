@@ -60,11 +60,13 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
         $dh = opendir($extractDir);
         while ($file = readdir($dh)) {
             if ($file != '.' && $file != '..') {
-                $files[] = $file;
+                $fileNameParts = explode("_", $file);
+                $files[$fileNameParts[0]] = $file;
             }
         }
         closedir($dh);
 
+        ksort($files);
 
         foreach ($files as $file) {
             $jobs[] = array("file" => $file, "task" => "create");
@@ -88,7 +90,7 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
     public function doImportJobsAction()
     {
 
-          $importSession = new Zend_Session_Namespace("element_import");
+        $importSession = new Zend_Session_Namespace("element_import");
         if (!$importSession->elementCounter) {
             $importSession->elementCounter = 0;
         }
@@ -105,10 +107,10 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
         $parentId = $this->_getParam("parentId");
         $type = $this->_getParam("type");
         $overwrite = $this->_getParam("overwrite");
-        if($overwrite==1){
-            $overwrite=true;
+        if ($overwrite == 1) {
+            $overwrite = true;
         } else {
-            $overwrite=false;
+            $overwrite = false;
         }
 
 
@@ -144,22 +146,18 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
 
             $importSession->elementCounter++;
 
-            file_put_contents($importDir . "/" . $file,serialize($apiData));
+            file_put_contents($importDir . "/" . $file, serialize($apiData));
 
         }
 
 
-        //second run - all elements have been created, now replace ids
+            //second run - all elements have been created, now replace ids
         else if ($task == "resolveRelations") {
 
+
             $apiElement = $apiData["element"];
-            if ($apiElement instanceof Webservice_Data_Asset) {
-                $type = "asset";
-            } else if ($apiElement instanceof Webservice_Data_Object) {
-                $type = "object";
-            } else if ($apiElement instanceof Webservice_Data_Document) {
-                $type = "document";
-            }
+
+            $type = $this->findElementType($apiElement);
 
             $importService->correctElementIdRelations($apiElement, $type, $importSession->idMapping);
 
@@ -174,7 +172,7 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
                 $apiElement->target = $importSession->idMapping[$apiElement->internalType][$apiElement->target];
             }
 
-            file_put_contents($importDir . "/" . $file,serialize($apiData));
+            file_put_contents($importDir . "/" . $file, serialize($apiData));
         }
 
 
@@ -182,24 +180,16 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
         else if ($task == "update") {
             $apiElement = $apiData["element"];
 
-            if ($apiElement instanceof Webservice_Data_Asset_File) {
-                $importService->getWebService()->updateAssetFile($apiElement);
-            } else if ($apiElement instanceof Webservice_Data_Asset_Folder) {
-                $importService->getWebService()->updateAssetFolder($apiElement);
-            } else if ($apiElement instanceof Webservice_Data_Object_Folder) {
-                $importService->getWebService()->updateObjectFolder($apiElement);
-            } else if ($apiElement instanceof Webservice_Data_Object_Concrete) {
-                $importService->getWebService()->updateObjectConcrete($apiElement);
-            } else if ($apiElement instanceof Webservice_Data_Document_Folder) {
-                $importService->getWebService()->updateDocumentFolder($apiElement);
-            } else if ($apiElement instanceof Webservice_Data_Document_Page) {
-                $importService->getWebService()->updateDocumentPage($apiElement);
-            } else if ($apiElement instanceof Webservice_Data_Document_Snippet) {
-                $importService->getWebService()->updateDocumentSnippet($apiElement);
-            } else if ($apiElement instanceof Webservice_Data_Document_Link) {
-                $importService->getWebService()->updateDocumentLink($apiElement);
-            } else {
-                throw new Exception("Unknown import element in third run");
+            try {
+                $this->updateImportElement($apiElement, $importService);
+            } catch (Exception $e) {
+
+                $type = $this->findElementType($apiElement);
+                $parent = Element_Service::getElementById($type, $apiElement->parentId);
+                $apiElement->key = $this->getImportCopyName($parent->getFullPath(), $apiElement->key, $apiElement->id,$type);
+                //try again with different key
+                $this->updateImportElement($apiElement, $importService);
+
             }
         }
 
@@ -215,6 +205,58 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
         //p_r($importService->getImportInfo());
 
 
+    }
+
+    /**
+     * @param  Webservice_Data $apiElement
+     * @return string
+     */
+    protected function findElementType($apiElement){
+        if ($apiElement instanceof Webservice_Data_Asset) {
+                $type = "asset";
+            } else if ($apiElement instanceof Webservice_Data_Object) {
+                $type = "object";
+            } else if ($apiElement instanceof Webservice_Data_Document) {
+                $type = "document";
+            }
+        return $type;
+    }
+
+    protected function updateImportElement($apiElement, $importService)
+    {
+        if ($apiElement instanceof Webservice_Data_Asset_File) {
+            $importService->getWebService()->updateAssetFile($apiElement);
+        } else if ($apiElement instanceof Webservice_Data_Asset_Folder) {
+            $importService->getWebService()->updateAssetFolder($apiElement);
+        } else if ($apiElement instanceof Webservice_Data_Object_Folder) {
+            $importService->getWebService()->updateObjectFolder($apiElement);
+        } else if ($apiElement instanceof Webservice_Data_Object_Concrete) {
+            $importService->getWebService()->updateObjectConcrete($apiElement);
+        } else if ($apiElement instanceof Webservice_Data_Document_Folder) {
+            $importService->getWebService()->updateDocumentFolder($apiElement);
+        } else if ($apiElement instanceof Webservice_Data_Document_Page) {
+            $importService->getWebService()->updateDocumentPage($apiElement);
+        } else if ($apiElement instanceof Webservice_Data_Document_Snippet) {
+            $importService->getWebService()->updateDocumentSnippet($apiElement);
+        } else if ($apiElement instanceof Webservice_Data_Document_Link) {
+            $importService->getWebService()->updateDocumentLink($apiElement);
+        } else {
+            throw new Exception("Unknown import element in third run");
+        }
+    }
+
+    protected function getImportCopyName($intendedPath, $key, $objectId,$type)
+    {
+
+        $equalObject = Element_Service::getElementByPath($type,str_replace("//","/",$intendedPath . "/" . $key));
+        while ($equalObject and $equalObject->getId() != $objectId) {
+            $key .= "_importcopy";
+            $equalObject = Element_Service::getElementByPath($type,str_replace("//","/",$intendedPath . "/" . $key));
+            if (!$equalObject) {
+                break;
+            }
+        }
+        return $key;
     }
 
     public function importAction()
@@ -257,12 +299,12 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
             $zip->close();
         }
 
-        $importService->doImport($tmpDirectory,$rootElement,$overwrite);
+        $importService->doImport($tmpDirectory, $rootElement, $overwrite);
 
         p_r($importService->getImportInfo());
 
         // cleanup
-        recursiveDelete($tmpDirectory); 
+        recursiveDelete($tmpDirectory);
 
     }
 

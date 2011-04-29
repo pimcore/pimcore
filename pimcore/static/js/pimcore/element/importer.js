@@ -110,8 +110,8 @@ pimcore.element.importer = Class.create({
                                 itemCls: 'x-check-group-alt',
                                 columns: 1,
                                 items: [
-                                    {boxLabel: t('element_import_import'), name: 'overwrite', inputValue: "0", checked: true},
-                                    {boxLabel: t('element_import_overwrite'), name: 'overwrite', inputValue: "1"}
+                                    {boxLabel: t('element_import_import'), name: 'overwrite', inputValue: 0, checked: true},
+                                    {boxLabel: t('element_import_overwrite'), name: 'overwrite', inputValue: 1}
                                 ]
                             },{
                                 xtype: "hidden",

@@ -35,11 +35,6 @@ pimcore.element.exporter = Class.create({
             items:[
                 {
                     xtype: "checkbox",
-                    fieldLabel: t('element_export_skip_root'),
-                    name: 'skipRoot'
-                },
-                {
-                    xtype: "checkbox",
                     fieldLabel: t('element_export_include_relations'),
                     name: 'includeRelations'
                 },
