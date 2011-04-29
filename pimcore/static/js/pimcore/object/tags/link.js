@@ -95,7 +95,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
 
         this.fieldPath = new Ext.form.TextField({
-            fieldLabel: "Path",
+            fieldLabel: t("path"),
             value: this.data.path,
             name: "path",
             cls: "pimcore_droptarget_input"
@@ -137,13 +137,13 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
                     border: false,
                     items: [
                         {
-                            title:'Basic',
+                            title:t('basic'),
                             layout:'form',
                             border: false,
                             defaultType: 'textfield',
                             items: [
                                 {
-                                    fieldLabel: 'Text',
+                                    fieldLabel: t('text'),
                                     name: 'text',
                                     value: this.data.text
                                 },
@@ -157,7 +157,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
                                 },
                                 {
                                     xtype:'fieldset',
-                                    title: 'Properties',
+                                    title: t('properties'),
                                     collapsible: false,
                                     autoHeight:true,
                                     defaultType: 'textfield',
@@ -172,17 +172,17 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
                                             value: this.data.target
                                         },
                                         {
-                                            fieldLabel: 'Parameters',
+                                            fieldLabel: t('parameters'),
                                             name: 'parameters',
                                             value: this.data.parameters
                                         },
                                         {
-                                            fieldLabel: 'Anchor',
+                                            fieldLabel: t('anchor'),
                                             name: 'anchor',
                                             value: this.data.anchor
                                         },
                                         {
-                                            fieldLabel: 'Title',
+                                            fieldLabel: t('title'),
                                             name: 'title',
                                             value: this.data.title
                                         }
@@ -191,23 +191,23 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
                             ]
                         },
                         {
-                            title:'Advanced',
+                            title:t('advanced'),
                             layout:'form',
                             defaultType: 'textfield',
                             border: false,
                             items: [
                                 {
-                                    fieldLabel: 'Accesskey',
+                                    fieldLabel: t('accesskey'),
                                     name: 'accesskey',
                                     value: this.data.accesskey
                                 },
                                 {
-                                    fieldLabel: 'Relation',
+                                    fieldLabel: t('relation'),
                                     name: 'rel',
                                     value: this.data.rel
                                 },
                                 {
-                                    fieldLabel: 'Tabindex',
+                                    fieldLabel: t('tabindex'),
                                     name: 'tabindex',
                                     value: this.data.tabindex
                                 }
