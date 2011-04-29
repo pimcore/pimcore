@@ -43,7 +43,7 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
 
             foreach ($revision["files"] as $file) {
                 $steps[] = array(
-                    "action" => "download",
+                    "action" => $file["action"],
                     "controller" => "download",
                     "params" => array(
                         "id" => $id,

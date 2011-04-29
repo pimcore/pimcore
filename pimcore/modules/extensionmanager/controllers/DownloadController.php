@@ -119,7 +119,7 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
 
         if($type == "plugin") {
             $parentPath = PIMCORE_PLUGINS_PATH;
-        } else if ($type = "brick") {
+        } else if ($type == "brick") {
             $parentPath = PIMCORE_WEBSITE_PATH . "/var/areas";
         }
 
@@ -133,6 +133,36 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         }
 
         file_put_contents($fileDestPath, base64_decode($file["content"]));
+
+        // write revision information
+        file_put_contents($parentPath . "/" . $id .  "/.pimcore_extension_revision", $revision);
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function deleteAction () {
+        $id = $this->_getParam("id");
+        $type = $this->_getParam("type");
+        $path = $this->_getParam("path");
+        $revision = $this->_getParam("revision");
+
+
+        if($type == "plugin") {
+            $parentPath = PIMCORE_PLUGINS_PATH;
+        } else if ($type == "brick") {
+            $parentPath = PIMCORE_WEBSITE_PATH . "/var/areas";
+        }
+
+        if(!is_dir($parentPath)) {
+            mkdir($parentPath, 0755, true);
+        }
+
+        $fileDestPath = $parentPath . $path;
+        if(!is_dir(dirname($fileDestPath))) {
+            mkdir(dirname($fileDestPath), 0755, true);
+        }
+
+        @unlink($fileDestPath);
 
         // write revision information
         file_put_contents($parentPath . "/" . $id .  "/.pimcore_extension_revision", $revision);
