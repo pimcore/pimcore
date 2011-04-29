@@ -876,12 +876,16 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $object = Object_Abstract::getById($this->_getParam("id"));
         $object->getPermissionsForUser($this->getUser());
 
+        $values = Zend_Json::decode($this->_getParam("values"));
+
         if ($object->isAllowed("settings")) {
 
-            $values = Zend_Json::decode($this->_getParam("values"));
 
-            if ($values["key"]) {
+
+            if ($values["key"] && $object->isAllowed("rename")) {
                 $object->setKey($values["key"]);
+            } else if ($values["key"]!= $object->getKey()){
+                Logger::debug(get_class($this) . ": prevented renaming object because of missing permissions ");
             }
 
             if ($values["parentId"]) {
@@ -921,8 +925,16 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             else {
                 Logger::debug(get_class($this) . ": prevented move of object, object with same path+key alredy exists in this location.");
             }
-        }
-        else {
+        } else if ($object->isAllowed("rename") &&  $values["key"] ) {
+            //just rename
+            try {
+                    $object->setKey($values["key"]);
+                    $object->save();
+                    $success = true;
+                } catch (Exception $e) {
+                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                }
+        } else {
             Logger::debug(get_class($this) . ": prevented update object because of missing permissions.");
         }
 

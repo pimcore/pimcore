@@ -520,6 +520,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 }
 
                 $blockedVars = array("controller", "action");
+
+                if(!$document->isAllowed("rename") && $this->_getParam("key")){
+                    $blockedVars[]="key";
+                    Logger::debug(get_class($this) . ": prevented renaming document because of missing permissions ");
+                }
+
                 foreach ($this->_getAllParams() as $key => $value) {
                     if (!in_array($key, $blockedVars)) {
                         $document->setValue($key, $value);
@@ -556,6 +562,15 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             else {
                 Logger::debug(get_class($this) . ": Prevented moving document, because document with same path+key already exists.");
             }
+        } else if ($document->isAllowed("rename") &&  $this->_getParam("key") ) {
+            //just rename
+            try {
+                    $document->setKey($this->_getParam("key") );
+                    $document->save();
+                    $success = true;
+                } catch (Exception $e) {
+                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                }
         }
         else {
             Logger::debug(get_class($this) . ": Prevented update document, because of missing permissions.");

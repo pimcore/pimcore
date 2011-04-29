@@ -718,6 +718,11 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     $asset->getData();
                 }
 
+                if($this->_getParam("filename") != $asset->getFilename() and !$asset->isAllowed("rename")){
+                    unset($updateData["filename"]);
+                    Logger::debug(get_class($this) . ": prevented renaming asset because of missing permissions ");
+                }
+
                 $asset->setValues($updateData);
 
 
@@ -733,8 +738,16 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             else {
                 Logger::debug(get_class($this) . ": prevented moving asset, asset with same path+key already exists at target location ");
             }
-        }
-        else {
+        } else if ($asset->isAllowed("rename") &&  $this->_getParam("filename")  ) {
+            //just rename
+            try {
+                    $asset->setFilename($this->_getParam("filename"));
+                    $asset->save();
+                    $success = true;
+            } catch (Exception $e) {
+                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+            }
+        } else {
             Logger::debug(get_class($this) . ": prevented update asset because of missing permissions ");
         }
 
