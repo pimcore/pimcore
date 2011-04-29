@@ -67,7 +67,7 @@ pimcore.settings.thumbnails = Class.create({
             {name: 'description', allowBlank: true},
             {name: 'width', allowBlank: true},
             {name: 'height', allowBlank: true},
-            {name: 'quality', allowBlank: false},
+            {name: 'quality', allowBlank: true},
             {name: 'aspectratio', allowBlank: true},
             {name: 'cover', allowBlank: true},
             {name: 'contain', allowBlank: true},
