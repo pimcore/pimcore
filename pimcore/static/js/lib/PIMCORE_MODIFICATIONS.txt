@@ -18,7 +18,10 @@
     /ext/examples/
 
     
+
+# EXT PLUGINS
+- SwfUploadPanel added translation function to labels
+
 - change date format in ext-lang-en.js in Ext.form.DateField.format
 from "m/d/y" to "m/d/Y"
-
 

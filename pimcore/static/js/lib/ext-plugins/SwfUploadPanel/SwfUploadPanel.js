@@ -28,34 +28,34 @@ Ext.ux.SwfUploadPanel = Ext.extend(Ext.grid.GridPanel, {
      * All strings used by Ext.ux.SwfUploadPanel
      */
     strings: {
-        text_add: 'Add File(s)',
-        text_upload: 'Upload File(s)',
-        text_cancel: 'Cancel Upload',
-        text_clear: 'Clear Queue',
-        text_progressbar: 'Progress Bar',
-        text_remove: 'Remove File',
-        text_remove_sure: 'Are you sure you wish to remove this file from queue?',
-        text_error: 'Error',
-        text_uploading: 'Uploading file: {0} ({1} of {2})',
-        header_filename: 'Filename',
-        header_size: 'Size',
-        header_status: 'Status',
+        text_add: t('swf_upload_text_add'),
+        text_upload: t("swf_upload_text_upload"),
+        text_cancel: t("swf_upload_text_cancel"),
+        text_clear: t("swf_upload_text_clear"),
+        text_progressbar: t("swf_upload_text_progressbar"),
+        text_remove: t("swf_upload_text_remove"),
+        text_remove_sure: t("swf_upload_text_remove_sure"),
+        text_error: t("swf_upload_text_error"),
+        text_uploading: t("swf_upload_text_uploading"),
+        header_filename: t("swf_upload_header_filename"),
+        header_size: t("swf_upload_header_size"),
+        header_status: t("swf_upload_header_status"),
         status: {
-            0: 'Queued',
-            1: 'Uploading...',
-            2: 'Completed',
-            3: 'Error',
-            4: 'Cancelled'
+            0: t("swf_upload_status_queued"),
+            1: t("swf_upload_status_uploading"),
+            2: t("swf_upload_status_completed"),
+            3: t("swf_upload_status_error"),
+            4: t("swf_upload_status_cancelled")
         },
-        error_queue_exceeded: 'The selected file(s) exceed(s) the maximum number of {0} queued files.',
-        error_queue_slots_0: 'There is no slot left',
-        error_queue_slots_1: 'There is only one slot left',
-        error_queue_slots_2: 'There are only {0} slots left',
-        error_size_exceeded: 'The selected files size exceeds the allowed limit of {0}.',
-        error_zero_byte_file: 'Zero byte file selected.',
-        error_invalid_filetype: 'Invalid filetype selected.',
-        error_file_not_found: 'File not found 404.',
-        error_security_error: 'Security Error. Not allowed to post to different url.'
+        error_queue_exceeded: t("swf_upload_error_queue_exceeded"),
+        error_queue_slots_0: t("swf_upload_error_queue_slots_0"),
+        error_queue_slots_1: t("swf_upload_error_queue_slots_1"),
+        error_queue_slots_2: t("swf_upload_error_queue_slots_2"),
+        error_size_exceeded: t("swf_upload_error_size_exceeded"),
+        error_zero_byte_file: t("swf_upload_error_zero_byte_file"),
+        error_invalid_filetype: t("swf_upload_error_invalid_filetype"),
+        error_file_not_found: t("swf_upload_error_file_not_found"),
+        error_security_error: t("swf_upload_error_security_error")
     },
     
     /**
@@ -126,6 +126,7 @@ Ext.ux.SwfUploadPanel = Ext.extend(Ext.grid.GridPanel, {
         
     // private
     initComponent: function() {
+
        var grid = this; 
         this.addEvents(
             /**

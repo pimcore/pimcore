@@ -94,8 +94,7 @@
             $scriptExtAdapter,
             
             $scriptExt,
-            "lib/ext-plugins/SwfUploadPanel/swfupload.js",
-            "lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.js",
+
             "lib/ext-plugins/Notification/Ext.ux.Notification.js",
             "lib/ext-plugins/PagingTreeLoader/PagingTreeLoader.js",
             "lib/ext-plugins/GridRowOrder/roworder.js",
@@ -361,6 +360,12 @@
             "pimcore/layout/treepanelmanager.js",
             "pimcore/document/seemode.js"
         );
+
+        $modifiedPlugins = array(
+            "lib/ext-plugins/SwfUploadPanel/swfupload.js",
+            "lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.js"
+        );
+
     ?>
     
     <!-- some javascript -->
@@ -424,8 +429,11 @@
         ?>
         <script type="text/javascript" src="<?php echo Pimcore_Tool_Admin::getMinimizedScriptPath($scriptContents) ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <?php } ?>
-    
-    
+
+    <!-- modified plugins -->
+    <?php foreach ($modifiedPlugins as $scriptUrl) { ?>
+        <script type="text/javascript" src="/pimcore/static/js/<?php echo $scriptUrl ?>?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <?php } ?>
     
     <?php // load plugin scripts ?>
     <?php
