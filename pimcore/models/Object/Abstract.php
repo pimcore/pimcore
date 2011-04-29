@@ -1108,6 +1108,11 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return Object_Abstract
      */
     public function getO_parent() {
+
+        if($this->o_parent === null) {
+            $this->setO_parent(Object_Abstract::getById($this->getO_parentId()));
+        }
+
         return $this->o_parent;
     }
 

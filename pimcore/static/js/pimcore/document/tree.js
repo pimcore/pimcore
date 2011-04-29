@@ -792,6 +792,7 @@ pimcore.document.tree = Class.create({
                 });
         }
         catch (e) {
+            console.log(e);
         }
     },
 
