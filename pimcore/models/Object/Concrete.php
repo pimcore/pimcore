@@ -132,10 +132,10 @@ class Object_Concrete extends Object_Abstract {
 
                 $omitMandatoryCheck = false;
                 $timeSinceCreation = (time()-$this->getCreationDate());
-                if($timeSinceCreation<=1){
+                if($timeSinceCreation <= 5){
                     // legacy hack: in previous version there was no check for mandatory fields,
                     // and everybody uses the save method for new object creation - so now let's evict the mandatory check
-                    // if the object was created within the last second
+                    // if the object was created within the last 5 seconds
                     $omitMandatoryCheck=true;
                     logger::debug(get_class($this).": executing mandatory fields check for object [ ".$this->getId()." ]");
                 }

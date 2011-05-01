@@ -349,7 +349,7 @@ pimcore.extensionmanager.share = Class.create({
             this.updateshareWindow.removeAll();
             this.updateshareWindow.add({
                 bodyStyle: "padding: 20px;",
-                html: "Your extension was successfully submitted to the extension repository. <br />Please click on the following link to complete the upload and add some additional information to your extension.<br /><br /><b><a href='http://www.pimcore.org/extensions/edit?token=" + pimcore.settings.liveconnect.getToken() + "&id=" + this.currentExtension.get("id") + "&finish=1' target='_blank'>Click here to proceed</a></b>"
+                html: "Your extension was successfully submitted to the extension repository. <br />Please click on the following link to complete the upload and add some additional information to your extension.<br /><br /><b><a href='http://www.pimcore.org/resources/extensions/edit?token=" + pimcore.settings.liveconnect.getToken() + "&id=" + this.currentExtension.get("id") + "&finish=1' target='_blank'>Click here to proceed</a></b>"
                 /*buttons: [{
                     text: t("close"),
                     iconCls: "pimcore_icon_apply",
