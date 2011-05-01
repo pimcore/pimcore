@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>
-            Release Notes for Ext JS 3.3.1
+            Release Notes for Ext JS 3.3.3
         </title>
         <style type="text/css">
 
@@ -40,99 +40,45 @@
             <a href="http://www.sencha.com/" id="logo" name="logo"><img src="http://www.sencha.com/assets/images/logo-sencha-sm.png" alt=""></a>
         </p>
         <h1>
-            Release Notes for <a href="http://www.sencha.com/products/js/">Ext JS</a> 3.3.1
+            Release Notes for <a href="http://www.sencha.com/products/js/">Ext JS</a> 3.3.3
         </h1>
         <p class="notes">
-            Release Date: November 30, 2010<br>
-            Current Version: 3.3.1 (rev 7296/265)<br>
-            Previous Version: 3.3.0 (rev 7233/263)
+            Release Date: April 8, 2011<br>
+            Current Version: 3.3.3 (rev 7389/286)<br>
+            Previous Version: 3.3.2 (rev 7374/277)
         </p>
         <h2 class="new">
             Changes
         </h2>
         <h3>
-            Forms
+            Menu
         </h3>
         <ul>
-            <li>Added a null check before trying to access getGroupValue.
+            <li>Incorrect menu width on IE9
             </li>
-            <li>Ext.form.updateRecord() now checks for null value from getValue().
-            </li>
-                <li>Ext.form.updateRecord() now checks for null value from getValue().
-                </li>Combobox now returns correct value when non-unique display fields are used.
-        </ul>
-        <h3>
-            CSS
-        </h3>
-        <ul>
-            <li>Remove :hover pseudo on color-palette.
-            </li>
-            <li>Update CSS to fix tab panel under IE8.
-            </li>
-            <li>Fix TwinTriggerField rendering in WebKit browsers.
-            </li>
-            <li>Add missing sort indicator image for the gray theme (for listview).
-            </li>
-            <li>Fix border layout collapsed icon position for IE in quirks mode.
-            </li>
-            <li>Pivot panel now works with the gray theme.
+            <li>Fix Reorderable example
             </li>
         </ul>
         <h3>
-            Data
+            Form/Field
         </h3>
         <ul>
-            <li>For XmlReader, added the ability to use a function for a mapping, same as JsonReader.
+            <li>Trigger fields are now flushed with fields on IE9
             </li>
-            <li>Cleanup variables in store.
+            <li>Fix field width in IE9
             </li>
-        </ul>
-        <h3>
-            Date
-        </h3>
-        <ul>
-            <li>Fix a that causes date parsing to fail when AM/PM is included before the time part.
+            <li>Fix fieldset header checkboxes in IE9 quirks
             </li>
-        </ul>
-        <h3>
-            Grid
-        </h3>
-        <ul>
-            <li>Fix issues relating to correctly restoring grid state.
-            </li>
-            <li>For GridView, update the event to ensure it passes the grid, not the view.
-            </li>
-                <li>rowsinserted event now properly fires after the insert is complete.
-                </li>
         </ul>
         <h3>
             Misc
         </h3>
         <ul>
-            <li>Added changelog.html to distribution.
+            <li>Apply additional css classes for IE9 (ext-ie9 and x-quirks)
             </li>
-            <li>Removed redundant field labels from CompositeField example.
+            <li>Apply additional boolean flags for IE9 (Ext.isIE9 and Ext.isIEQuirks)
             </li>
-            <li>In case of an action, defaults are now applied to the initialConfig and not to the action itself.
-            </li>
-            <li>Container's resizeEvent event is now removed on destroy.
-            </li>
-            <li>Fix an issue where rows would be selected by the editor even if checkOnly was set to true.
-            </li>
-            <li>A disabled spinner will no longer spin.
-            </li>
-            <li>Added missing panel tools: x-tool-(prev|next|expand|collapse).
-            </li>
-        </ul>
-        <h3>
-            Locale
-        </h3>
-        <ul>
-            <li>For French, Ext.util.Format.plural now considers 0 to be singular.
-            </li>
-            <li>Adds startDay to DateField.prototype for locale files having startDay already defined for DatePicker.prototype.
-            </li>
-            <li>Added Amharic (Ethopian) language support ext-lang-am.js.
+            <li>Add support to insertHTML method to prevent createContextualFragment errors with IE9
             </li>
         </ul>
     </body>

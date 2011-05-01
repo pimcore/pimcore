@@ -3,9 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, nofollow" />
-    <meta http-equiv="X-UA-Compatible" content="IE=8" />
     
-    <title><?php echo $_SERVER["HTTP_HOST"] ?> :: Pimcore</title>
+    <title><?php echo $_SERVER["HTTP_HOST"] ?> :: pimcore</title>
 
     <!-- load in head because of the progress bar at loading -->
     <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
