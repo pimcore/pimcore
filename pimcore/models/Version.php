@@ -394,8 +394,12 @@ class Version extends Pimcore_Model_Abstract {
 
                 if($element instanceof Element_Interface) {
                     if($element->getModificationDate() > $version->getDate()) {
+                        // delete version if it is outdated
                         $version->delete();
                     }
+                } else {
+                    // delete version if the correspondening element doesn't exist anymore
+                    $version->delete();
                 }
             }
         }
