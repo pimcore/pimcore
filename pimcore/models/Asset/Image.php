@@ -232,19 +232,7 @@ class Asset_Image extends Asset {
     
     public function getDimensions() {
 
-        // try to use ImageMagick
-        $image = Image_Transform::factory('Imagick3');
-        if($image instanceof PEAR_Error){
-            // use (php) build-in GD
-            $image = Image_Transform::factory('GD');
-        }
-
-        if(!$image instanceof Image_Transform){
-            if($image instanceof PEAR_Error){
-                Logger::error($image->getMessage());
-                throw new Exception($image->getMessage());
-            } else throw new Exception("failed to get thumbnail. Could not transform image.");
-        }
+        $image = self::getImageTransformInstance();
 
         $status = $image->load($this->getFileSystemPath());
         if($status !== true) {
