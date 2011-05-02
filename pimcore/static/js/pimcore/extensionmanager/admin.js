@@ -87,9 +87,9 @@ pimcore.extensionmanager.admin = Class.create({
                     getClass: function (v, meta, rec) {
                         var klass = "pimcore_action_column ";
                         if(rec.get("active")) {
-                            klass += "pimcore_icon_decline ";
+                            klass += "pimcore_icon_disable ";
                         } else {
-                            klass += "pimcore_icon_accept ";
+                            klass += "pimcore_icon_add ";
                         }
                         return klass;
                     },
