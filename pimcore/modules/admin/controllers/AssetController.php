@@ -947,15 +947,17 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $format = strtolower($thumbnail->getFormat());
         if ($format == "source") {
+            $thumbnail->setFormat("PNG");
             $format = "png";
         }
 
+        
         $this->getResponse()->setHeader("Content-Type", "image/" . $format, true);
 
         if($this->_getParam("download")) {
             $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $image->getFilename() . '"');
         }
-
+        
         readfile(PIMCORE_DOCUMENT_ROOT . $image->getThumbnail($thumbnail));
 
         $this->removeViewRenderer();

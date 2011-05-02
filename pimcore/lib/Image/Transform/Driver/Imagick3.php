@@ -109,6 +109,84 @@ class Image_Transform_Driver_Imagick3 extends Image_Transform
         return true;
     }
 
+
+
+
+    /**
+     * Sets the image type (in lowercase letters), the image height and width.
+     *
+     * @return mixed TRUE or PEAR_error
+     * @access protected
+     * @see PHP_Compat::image_type_to_mime_type()
+     * @link http://php.net/getimagesize
+     */
+    function _get_image_details($image)
+    {
+
+        // get width and height
+        $dimensions = $this->imagick->getImageGeometry();
+        $this->img_x = $this->new_x = $dimensions["width"];
+        $this->img_y = $this->new_y = $dimensions["height"];
+
+        $type = $this->imagick->getImageType();
+
+        switch ($type) {
+            case IMAGETYPE_GIF:
+                $type = 'gif';
+                break;
+            case IMAGETYPE_JPEG:
+                $type = 'jpeg';
+                break;
+            case IMAGETYPE_PNG:
+                $type = 'png';
+                break;
+            case IMAGETYPE_SWF:
+                $type = 'swf';
+                break;
+            case IMAGETYPE_PSD:
+                $type = 'psd';
+                break;
+            case IMAGETYPE_BMP:
+                $type = 'bmp';
+                break;
+            case IMAGETYPE_TIFF_II:
+            case IMAGETYPE_TIFF_MM:
+                $type = 'tiff';
+                break;
+            case IMAGETYPE_JPC:
+                $type = 'jpc';
+                break;
+            case IMAGETYPE_JP2:
+                $type = 'jp2';
+                break;
+            case IMAGETYPE_JPX:
+                $type = 'jpx';
+                break;
+            case IMAGETYPE_JB2:
+                $type = 'jb2';
+                break;
+            case IMAGETYPE_SWC:
+                $type = 'swc';
+                break;
+            case IMAGETYPE_IFF:
+                $type = 'iff';
+                break;
+            case IMAGETYPE_WBMP:
+                $type = 'wbmp';
+                break;
+            case IMAGETYPE_XBM:
+                $type = 'xbm';
+                break;
+            default:
+                return PEAR::raiseError("Cannot recognize image format",
+                    IMAGE_TRANSFORM_ERROR_UNSUPPORTED);
+        }
+        $this->type  = $type;
+
+        return true;
+    }
+
+
     /**
      * Resizes the image
      *

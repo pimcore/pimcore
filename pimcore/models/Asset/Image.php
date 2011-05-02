@@ -54,15 +54,6 @@ class Asset_Image extends Asset {
     /**
      * @param  $config
      * @return Asset_Image_Thumbnail|bool|Thumbnail
-     * @deprecated  misspelled function name, will be removed soon
-     */
-    public function getThumnailConfig ($config) {
-        return $this->getThumbnailConfig($config);
-    }
-
-    /**
-     * @param  $config
-     * @return Asset_Image_Thumbnail|bool|Thumbnail
      */
     public function getThumbnailConfig ($config) {
         
@@ -139,32 +130,26 @@ class Asset_Image extends Asset {
         }
 
         // check dimensions
-        list($width, $height) = $this->getDimensions();
+        $width = $this->getWidth();
+        $height = $this->getHeight();
         
   
         // transform image 
-        
-        // try to use ImageMagick
-        $image = Image_Transform::factory('Imagick3');
-        if($image instanceof PEAR_Error){
-            // use (php) build-in GD
-            $image = Image_Transform::factory('GD');
-        }
-
-        if(!$image instanceof Image_Transform){
-            if($image instanceof PEAR_Error){
-                Logger::error($image->getMessage());
-                throw new Exception($image->getMessage());
-            } else throw new Exception("failed to get thumbnail. Could not transform image.");   
-        }
+        $image = self::getImageTransformInstance();
 
         $status = $image->load($this->getFileSystemPath());
         if($status !== true) {
             return "/pimcore/static/img/image-not-supported.png";
         }
 
-        copy($this->getFileSystemPath(), $fsPath);
+        // create image with original dimensions, as a fallback
+        $imageFallback = self::getImageTransformInstance();
+        $imageFallback->load($this->getFileSystemPath());
+        $imageFallback->resize($width, $height);
+        $imageFallback->save($fsPath, $format, $thumbnail->getQuality());
 
+
+        // now try to resize
         if ($thumbnail->getCover()) {
             // return original image if this is smaller than the thumb dimensions
             if ($width < $thumbnail->getWidth() && $height < $thumbnail->getHeight()) {
@@ -210,6 +195,24 @@ class Asset_Image extends Asset {
         return $path;
     }
 
+    public static function getImageTransformInstance () {
+        // try to use ImageMagick
+        $image = Image_Transform::factory('Imagick3');
+        if($image instanceof PEAR_Error){
+            // use (php) build-in GD
+            $image = Image_Transform::factory('GD');
+        }
+
+        if(!$image instanceof Image_Transform){
+            if($image instanceof PEAR_Error){
+                Logger::error($image->getMessage());
+                throw new Exception($image->getMessage());
+            } else throw new Exception("failed to get create instance of Image_Transform. Could not transform image.");
+        }
+
+        return $image;
+    }
+
     public function getFormat() {
         if ($this->getWith() > $this->getHeight()) {
             return "landscape";
@@ -228,16 +231,41 @@ class Asset_Image extends Asset {
     }
     
     public function getDimensions() {
-        return getimagesize($this->getFileSystemPath());
+
+        // try to use ImageMagick
+        $image = Image_Transform::factory('Imagick3');
+        if($image instanceof PEAR_Error){
+            // use (php) build-in GD
+            $image = Image_Transform::factory('GD');
+        }
+
+        if(!$image instanceof Image_Transform){
+            if($image instanceof PEAR_Error){
+                Logger::error($image->getMessage());
+                throw new Exception($image->getMessage());
+            } else throw new Exception("failed to get thumbnail. Could not transform image.");
+        }
+
+        $status = $image->load($this->getFileSystemPath());
+        if($status !== true) {
+            return;
+        }
+
+        $dimensions = array(
+            "width" => $image->getImageWidth(),
+            "height" => $image->getImageHeight()
+        );
+
+        return $dimensions;
     }
 
     public function getWidth() {
-        list($width, $height) = $this->getDimensions();
-        return $width;
+        $dimensions = $this->getDimensions();
+        return $dimensions["width"];
     }
 
     public function getHeight() {
-        list($width, $height) = $this->getDimensions();
-        return $height;
+        $dimensions = $this->getDimensions();
+        return $dimensions["height"];
     }
 }

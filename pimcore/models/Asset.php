@@ -460,27 +460,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->setMimetype($mimetype);
 
             // set type
-            if (strstr($mimetype, "image")) {
-                $this->setType("image");
-            }
-            else if (strstr($mimetype, "text")) {
-                $this->setType("text");
-            }
-            else if (strstr($mimetype, "audio")) {
-                $this->setType("audio");
-            }
-            else if (strstr($mimetype, "video")) {
-                $this->setType("video");
-            }
-            else if (strstr($mimetype, "msword") || strstr($mimetype, "pdf") || strstr($mimetype, "powerpoint") || strstr($mimetype, "office") || strstr($mimetype, "excel") || strstr($mimetype, "opendocument")) {
-                $this->setType("document");
-            }
-            else if (strstr($mimetype, "zip") || strstr($mimetype, "tar")) {
-                $this->setType("archive");
-            }
-            else {
-                $this->setType("unknown");
-            }
+            $this->setTypeFromMapping();
 
             // update scheduled tasks
             $this->saveScheduledTasks();
@@ -556,6 +536,46 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         Pimcore_API_Plugin_Broker::getInstance()->postUpdateAsset($this);
     }
 
+
+    /**
+     * detects the pimcore internal asset type based on the mime-type and file extension
+     *
+     * @return void
+     */
+    public function setTypeFromMapping () {
+
+        $found = false;
+
+        $mappings = array(
+            "image" => array("/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"),
+            "text" => array("/text/"),
+            "audio" => array("/audio/"),
+            "video" => array("/video/"),
+            "document" => array("/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"),
+            "archive" => array("/zip/","/tar/")
+        );
+
+        foreach ($mappings as $type => $patterns) {
+            foreach ($patterns as $pattern) {
+                if(preg_match($pattern,$this->getMimetype() . " .". Pimcore_File::getFileExtension($this->getFilename()))) {
+                    $this->setType($type);
+                    $found = true;
+                    break;
+                }
+            }
+
+            // break at first match
+            if($found) {
+                break;
+            }
+        }
+
+        // default is unknown
+        if(!$found) {
+            $this->setType("unknown");    
+        }
+    }
+
     /**
      * Returns the full path of the document including the filename
      *
@@ -566,9 +586,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         return $path;
     }
-
-
-
 
     
     /**
