@@ -173,8 +173,13 @@ Ext.ux.grid.filter.DateFilter = Ext.extend(Ext.ux.grid.filter.Filter, {
         field.setChecked(true);
         
         if (field == fields.on) {
-            fields.before.setChecked(false, true);
-            fields.after.setChecked(false, true);
+            if(fields.before){
+                fields.before.setChecked(false, true);
+            }
+            if(fields.after){
+                fields.after.setChecked(false, true);
+            }
+
         } else {
             fields.on.setChecked(false, true);
             if (field == fields.after && fields.before.menu.picker.value < value) {
