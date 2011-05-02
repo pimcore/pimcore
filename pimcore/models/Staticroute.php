@@ -318,10 +318,12 @@ class Staticroute extends Pimcore_Model_Abstract {
             }
         }
 
+        $urlEncodeEscapeCharacters = "~|urlencode|~";
+
         // replace named variables
         foreach ($parametersInReversePattern as $key => $value) {
             if(!empty($value)) {
-                $url = str_replace("%".$key, urlencode($value), $url);
+                $url = str_replace("%".$key, str_replace("%",$urlEncodeEscapeCharacters,urlencode($value)), $url);
             }
         }
 
@@ -329,7 +331,7 @@ class Staticroute extends Pimcore_Model_Abstract {
         // not named parameters
         $o = array();
         foreach ($parametersNotNamed as $option) {
-            $o[] = urlencode($option);
+            $o[] = str_replace("%",$urlEncodeEscapeCharacters,urlencode($option));
         }
 
         // remove optional parts
@@ -348,6 +350,10 @@ class Staticroute extends Pimcore_Model_Abstract {
             $url .= "?" . $getParams;
         }
 
+        // convert tmp urlencode escape char back to real escape char
+        $url = str_replace($urlEncodeEscapeCharacters, "%",$url);
+
+        
         return $url;
     }
     
