@@ -1,6 +1,6 @@
 /*!
- * Ext JS Library 3.3.1
- * Copyright(c) 2006-2010 Sencha Inc.
+ * Ext JS Library 3.3.3
+ * Copyright(c) 2006-2011 Sencha Inc.
  * licensing@sencha.com
  * http://www.sencha.com/license
  */
@@ -1206,9 +1206,11 @@ Ext.ux.form.FileUploadField = Ext.extend(Ext.form.TextField,  {
     },
     
     reset : function(){
-        this.fileInput.remove();
-        this.createFileInput();
-        this.bindListeners();
+        if (this.rendered) {
+            this.fileInput.remove();
+            this.createFileInput();
+            this.bindListeners();
+        }
         Ext.ux.form.FileUploadField.superclass.reset.call(this);
     },
 
@@ -5469,6 +5471,7 @@ Ext.ux.grid.LockingGridView = Ext.extend(Ext.grid.GridView, {
             cs[i] = {
                 name : (!Ext.isDefined(name) ? this.ds.fields.get(i).name : name),
                 renderer : cm.getRenderer(i),
+                scope : cm.getRendererScope(i),
                 id : cm.getColumnId(i),
                 style : this.getColumnStyle(i),
                 locked : cm.isLocked(i)
@@ -5623,7 +5626,7 @@ Ext.ux.grid.LockingGridView = Ext.extend(Ext.grid.GridView, {
                     this.onDenyColumnLock();
                     return undefined;
                 }
-                cm.setLocked(index, true);
+                cm.setLocked(index, true, llen != index);
                 if(llen != index){
                     cm.moveColumn(index, llen);
                     this.grid.fireEvent('columnmove', index, llen);
@@ -5678,10 +5681,10 @@ Ext.ux.grid.LockingGridView = Ext.extend(Ext.grid.GridView, {
             csize = this.grid.getGridEl().getSize(true),
             lp = Ext.isBorderBox ? 0 : this.lockedBorderWidth,
             rp = Ext.isBorderBox ? 0 : this.rowBorderWidth,
-            vw = (csize.width - lw - lp - rp) + 'px',
+            vw = Math.max(csize.width - lw - lp - rp, 0) + 'px',
             so = this.getScrollOffset();
         if(!this.grid.autoHeight){
-            var vh = (csize.height - this.mainHd.getHeight()) + 'px';
+            var vh = Math.max(csize.height - this.mainHd.getHeight(), 0) + 'px';
             this.lockedScroller.dom.style.height = vh;
             this.scroller.dom.style.height = vh;
         }
@@ -5777,7 +5780,8 @@ Ext.ux.grid.LockingColumnModel = Ext.extend(Ext.grid.ColumnModel, {
 
         Ext.ux.grid.LockingColumnModel.superclass.moveColumn.apply(this, arguments);
     }
-});Ext.ns('Ext.ux.form');
+});
+Ext.ns('Ext.ux.form');
 
 /**
  * @class Ext.ux.form.MultiSelect
@@ -5934,6 +5938,7 @@ Ext.ux.form.MultiSelect = Ext.extend(Ext.form.Field,  {
         fs.body.addClass('ux-mselect');
 
         this.view = new Ext.ListView({
+            selectedClass: 'ux-mselect-selected',
             multiSelect: true,
             store: this.store,
             columns: [{ header: 'Value', width: 1, dataIndex: this.displayField }],
@@ -7048,6 +7053,8 @@ Ext.ux.grid.RowEditor = Ext.extend(Ext.Panel, {
             });
             r.endEdit();
             this.fireEvent('afteredit', this, changes, r, this.rowIndex);
+        } else {
+            this.fireEvent('canceledit', this, false);
         }
         this.hide();
     },
@@ -7925,6 +7932,8 @@ Ext.ux.form.SelectBox = Ext.extend(Ext.form.ComboBox, {
 			}
 			this.onViewClick();
 		}, this);
+                this.mun(this.view, 'containerclick', this.onViewClick, this);
+                this.mun(this.view, 'click', this.onViewClick, this);
 
 		this.innerList.on('mouseover', function(e, target, options) {
 			if( target.id && target.id == this.innerList.id ) {

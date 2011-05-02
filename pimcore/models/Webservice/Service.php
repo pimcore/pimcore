@@ -792,13 +792,6 @@ class Webservice_Service
 
             $wsDocument->reverseMap($object);
             $object->save();
-
-            if(method_exists($object,"getTest")) {
-                $items = $object->getTest()->getItems();
-
-            }
-
-
             return true;
         } else if ($object instanceof Object_Folder and $object->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($object);

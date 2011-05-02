@@ -1,6 +1,6 @@
 /*!
- * Ext JS Library 3.3.1
- * Copyright(c) 2006-2010 Sencha Inc.
+ * Ext JS Library 3.3.3
+ * Copyright(c) 2006-2011 Sencha Inc.
  * licensing@sencha.com
  * http://www.sencha.com/license
  */
@@ -622,6 +622,7 @@ Ext.ux.grid.LockingGridView = Ext.extend(Ext.grid.GridView, {
             cs[i] = {
                 name : (!Ext.isDefined(name) ? this.ds.fields.get(i).name : name),
                 renderer : cm.getRenderer(i),
+                scope : cm.getRendererScope(i),
                 id : cm.getColumnId(i),
                 style : this.getColumnStyle(i),
                 locked : cm.isLocked(i)
@@ -776,7 +777,7 @@ Ext.ux.grid.LockingGridView = Ext.extend(Ext.grid.GridView, {
                     this.onDenyColumnLock();
                     return undefined;
                 }
-                cm.setLocked(index, true);
+                cm.setLocked(index, true, llen != index);
                 if(llen != index){
                     cm.moveColumn(index, llen);
                     this.grid.fireEvent('columnmove', index, llen);
@@ -831,10 +832,10 @@ Ext.ux.grid.LockingGridView = Ext.extend(Ext.grid.GridView, {
             csize = this.grid.getGridEl().getSize(true),
             lp = Ext.isBorderBox ? 0 : this.lockedBorderWidth,
             rp = Ext.isBorderBox ? 0 : this.rowBorderWidth,
-            vw = (csize.width - lw - lp - rp) + 'px',
+            vw = Math.max(csize.width - lw - lp - rp, 0) + 'px',
             so = this.getScrollOffset();
         if(!this.grid.autoHeight){
-            var vh = (csize.height - this.mainHd.getHeight()) + 'px';
+            var vh = Math.max(csize.height - this.mainHd.getHeight(), 0) + 'px';
             this.lockedScroller.dom.style.height = vh;
             this.scroller.dom.style.height = vh;
         }

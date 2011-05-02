@@ -144,6 +144,7 @@ pimcore.object.tags.abstract = Class.create({
             if(dirty) {
                 this.layout["__pimcore_dirty"] = true;
             }
+
             return dirty;
         }
 

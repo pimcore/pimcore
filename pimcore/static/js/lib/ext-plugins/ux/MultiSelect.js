@@ -1,6 +1,6 @@
 /*!
- * Ext JS Library 3.3.1
- * Copyright(c) 2006-2010 Sencha Inc.
+ * Ext JS Library 3.3.3
+ * Copyright(c) 2006-2011 Sencha Inc.
  * licensing@sencha.com
  * http://www.sencha.com/license
  */
@@ -161,6 +161,7 @@ Ext.ux.form.MultiSelect = Ext.extend(Ext.form.Field,  {
         fs.body.addClass('ux-mselect');
 
         this.view = new Ext.ListView({
+            selectedClass: 'ux-mselect-selected',
             multiSelect: true,
             store: this.store,
             columns: [{ header: 'Value', width: 1, dataIndex: this.displayField }],

@@ -142,6 +142,19 @@ class Document_Link extends Document
             $path = $this->getDirect();
         }
 
+        $this->href = $path;
+        return $path;
+    }
+
+
+    /**
+     * Returns the path of the link including the anchor and parameters
+     *
+     * @return string
+     */
+    public function getLink () {
+        $path = $this->getHref();
+
         if (strlen($this->getParameters()) > 0) {
             $path .= "?" . str_replace("?", "", $this->getParameters());
         }
@@ -149,9 +162,9 @@ class Document_Link extends Document
             $path .= "#" . str_replace("#", "", $this->getAnchor());
         }
 
-        $this->href = $path;
         return $path;
     }
+
 
     /**
      * getProperty method should be used instead
@@ -465,6 +478,11 @@ class Document_Link extends Document
         $this->setProperty("navigation_tabindex", "text", $tabindex, false);
     }
 
+    /**
+     * returns the ready-use html for this link
+     *
+     * @return string
+     */
     public function getHtml()
     {
 
@@ -474,6 +492,6 @@ class Document_Link extends Document
             $attribs[] = $a . '="' . $this->$a . '"';
         }
 
-        return '<a href="' . $this->getHref() . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->getProperty("navigation_name")) . '</a>';
+        return '<a href="' . $this->getLink() . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->getProperty("navigation_name")) . '</a>';
     }
 }
