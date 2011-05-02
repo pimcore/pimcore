@@ -168,7 +168,7 @@ pimcore.document.properties = Class.create(pimcore.settings.properties,{
                 title: t("system_properties"),
                 width: 300,
                 region: "east",
-
+                autoScroll: true,
                 collapsible: true,
                 items: [this.languagesPanel,this.navigationPanel]
             });
