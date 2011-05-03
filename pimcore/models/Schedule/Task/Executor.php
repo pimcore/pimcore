@@ -25,101 +25,108 @@ class Schedule_Task_Executor {
 
         foreach ($tasks as $task) {
 
-            if ($task->getCtype() == "document") {
+            try {
 
-                $document = Document::getById($task->getCid());
+                if ($task->getCtype() == "document") {
+
+                    $document = Document::getById($task->getCid());
 
 
-                if ($document instanceof Document) {
-                    if ($task->getAction() == "publish-version" && $task->getVersion()) {
-                        try{
-                            $version = Version::getById($task->getVersion());
-                            $document = $version->getData();
-                            if($document instanceof Document){
-                                $document->setPublished(true);
-                                $document->save();
-                            } else {
-                                Logger::err("Schedule_Task_Executor: Could not restore document from version data.");
+                    if ($document instanceof Document) {
+                        if ($task->getAction() == "publish-version" && $task->getVersion()) {
+                            try{
+                                $version = Version::getById($task->getVersion());
+                                $document = $version->getData();
+                                if($document instanceof Document){
+                                    $document->setPublished(true);
+                                    $document->save();
+                                } else {
+                                    Logger::err("Schedule_Task_Executor: Could not restore document from version data.");
+                                }
+
+                            } catch(Exception $e){
+                                Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
                             }
 
-                        } catch(Exception $e){
-                            Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
                         }
-
-                    }
-                    else if ($task->getAction() == "publish") {
-                        $document->setPublished(true);
-                        $document->save();
-                    }
-                    else if ($task->getAction() == "unpublish") {
-                        $document->setPublished(false);
-                        $document->save();
-                    }
-                    else if ($task->getAction() == "delete") {
-                        $document->delete();
+                        else if ($task->getAction() == "publish") {
+                            $document->setPublished(true);
+                            $document->save();
+                        }
+                        else if ($task->getAction() == "unpublish") {
+                            $document->setPublished(false);
+                            $document->save();
+                        }
+                        else if ($task->getAction() == "delete") {
+                            $document->delete();
+                        }
                     }
                 }
-            }
-            else if ($task->getCtype() == "asset") {
+                else if ($task->getCtype() == "asset") {
 
-                $asset = Asset::getById($task->getCid());
+                    $asset = Asset::getById($task->getCid());
 
-                if ($asset instanceof Asset) {
-                    if ($task->getAction() == "publish-version" && $task->getVersion()) {
-                        try{
-                            $version = Version::getById($task->getVersion());
-                            $asset = $version->getData();
-                            if($asset instanceof Asset){
-                                $asset->save();
-                            } else {
-                                Logger::err("Schedule_Task_Executor: Could not restore asset from version data.");
+                    if ($asset instanceof Asset) {
+                        if ($task->getAction() == "publish-version" && $task->getVersion()) {
+                            try{
+                                $version = Version::getById($task->getVersion());
+                                $asset = $version->getData();
+                                if($asset instanceof Asset){
+                                    $asset->save();
+                                } else {
+                                    Logger::err("Schedule_Task_Executor: Could not restore asset from version data.");
+                                }
+
+                            } catch(Exception $e){
+                                Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
                             }
-
-                        } catch(Exception $e){
-                            Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
+                        }
+                        else if ($task->getAction() == "delete") {
+                            $asset->delete();
                         }
                     }
-                    else if ($task->getAction() == "delete") {
-                        $asset->delete();
+                }
+                else if ($task->getCtype() == "object") {
+
+                    $object = Object_Abstract::getById($task->getCid());
+
+                    if ($object instanceof Object_Abstract) {
+                        if ($task->getAction() == "publish-version" && $task->getVersion()) {
+                            try{
+                                $version = Version::getById($task->getVersion());
+                                $object = $version->getData();
+                                if($object instanceof Object_Abstract){
+                                    $object->setO_Published(true);
+                                    $object->save();
+                                } else {
+                                    Logger::err("Schedule_Task_Executor: Could not restore object from version data.");
+                                }
+
+                            } catch(Exception $e){
+                                Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
+                            }
+                        }
+                        else if ($task->getAction() == "publish") {
+                            $object->setO_Published(true);
+                            $object->save();
+                        }
+                        else if ($task->getAction() == "unpublish") {
+                            $object->setO_Published(false);
+                            $object->save();
+                        }
+                        else if ($task->getAction() == "delete") {
+                            $object->delete();
+                        }
                     }
                 }
-            }
-            else if ($task->getCtype() == "object") {
+
+                $task->setActive(false);
+                $task->save();
                 
-                $object = Object_Abstract::getById($task->getCid());
-                
-                if ($object instanceof Object_Abstract) {
-                    if ($task->getAction() == "publish-version" && $task->getVersion()) {
-                        try{
-                            $version = Version::getById($task->getVersion());
-                            $object = $version->getData();
-                            if($object instanceof Object_Abstract){
-                                $object->setO_Published(true);
-                                $object->save();
-                            } else {
-                                Logger::err("Schedule_Task_Executor: Could not restore object from version data.");
-                            }
-
-                        } catch(Exception $e){
-                            Logger::err("Schedule_Task_Executor: Version [ ".$task->getVersion()." ] does not exist.");
-                        }
-                    }
-                    else if ($task->getAction() == "publish") {
-                        $object->setO_Published(true);
-                        $object->save();
-                    }
-                    else if ($task->getAction() == "unpublish") {
-                        $object->setO_Published(false);
-                        $object->save();
-                    }
-                    else if ($task->getAction() == "delete") {
-                        $object->delete();
-                    }
-                }
+            } catch (Exception $e) {
+                Logger::err("There was a problem with the scheduled task ID: " . $task->getId());
+                Logger::err($e);
             }
-
-            $task->setActive(false);
-            $task->save();
         }
     }
 }
