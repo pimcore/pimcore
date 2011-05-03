@@ -108,7 +108,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 "documents" => array(
                     "versions" => array(
                         "days" => "",
-                        "steps" => "20"
+                        "steps" => "10"
                     ),
                     "default_controller" => "default",
                     "default_action" => "default",
@@ -119,7 +119,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 "objects" => array(
                     "versions" => array(
                         "days" => "",
-                        "steps" => "20"
+                        "steps" => "10"
                     )
                 ),
                 "assets" => array(
@@ -128,7 +128,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
                     ),
                     "versions" => array(
                         "days" => "",
-                        "steps" => "20"
+                        "steps" => "10"
                     )
                 ),
                 "services" => array(
