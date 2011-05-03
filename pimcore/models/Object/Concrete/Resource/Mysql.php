@@ -432,6 +432,8 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
 
         } catch (Exception $e) {
             $this->db->rollBack();
+            Pimcore_Model_Cache::clearAll(); // clear the cache, to be sure that the rollback state is also in the cache
+            
             throw $e;
         }
 
