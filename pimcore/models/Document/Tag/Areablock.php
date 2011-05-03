@@ -84,7 +84,20 @@ class Document_Tag_Areablock extends Document_Tag {
                 $view = $areas[$index["type"]] . "/view.php";
                 $action = $areas[$index["type"]] . "/action.php";
                 $edit = $areas[$index["type"]] . "/edit.php";
-                
+                $options = $this->getOptions();
+                $params = array();
+                if(is_array($options["params"]) && array_key_exists($index["type"], $options["params"])) {
+                    if(is_array($options["params"][$index["type"]])) {
+                        $params = $options["params"][$index["type"]];
+                    }
+                }
+
+                // assign parameters to view
+                foreach ($params as $key => $value) {
+                    $this->getView()->assign($key, $value);
+                }
+
+                // check for action file
                 if(is_file($action)) {
                     include_once($action);
                     
@@ -97,6 +110,10 @@ class Document_Tag_Areablock extends Document_Tag {
                             
                             $areaConfig = new Zend_Config_Xml($areas[$index["type"]] . "/area.xml");
                             $actionObj->setConfig($areaConfig);
+
+                            // params
+                            $params = array_merge($this->view->getAllParams(), $params);
+                            $actionObj->setParams($params);
                             
                             if(method_exists($actionObj,"action")) {
                                 $actionObj->action();

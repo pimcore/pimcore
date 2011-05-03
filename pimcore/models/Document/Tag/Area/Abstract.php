@@ -17,6 +17,7 @@ abstract class Document_Tag_Area_Abstract {
     
     protected $view;
     protected $config;
+    protected $params = array();
     
     public function setView ($view) {
         $this->view = $view;
@@ -35,11 +36,14 @@ abstract class Document_Tag_Area_Abstract {
     }
 
     public function getParam($key) {
-        return $this->getView()->getParam($key);
+        if(array_key_exists($key, $this->params)) {
+            return $this->params[$key];
+        }
+        return;
     }
 
     public function getAllParams () {
-        return $this->getView()->getAllParams();
+        return $this->params;
     }
 
     public function _getParam($key) {
@@ -48,5 +52,13 @@ abstract class Document_Tag_Area_Abstract {
 
     public function _getAllParams () {
         return $this->getAllParams();
+    }
+
+    public function addParam ($key, $value) {
+        $this->params[$key] = $value;
+    }
+
+    public function setParams ($params) {
+        $this->params = $params;
     }
 }
