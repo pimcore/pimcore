@@ -154,7 +154,7 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
 		  `language` varchar(5) default NULL,
           INDEX `ooo_id` (`ooo_id`),
           INDEX `language` (`language`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;

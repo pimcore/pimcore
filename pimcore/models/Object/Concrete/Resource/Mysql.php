@@ -268,161 +268,171 @@ class Object_Concrete_Resource_Mysql extends Object_Abstract_Resource_Mysql {
     public function update() {
         parent::update();
 
-        $this->createDataRows();
+        $this->db->beginTransaction();
 
-        $fd = $this->model->geto_class()->getFieldDefinitions();
-        $untouchable = array();
-        foreach ($fd as $key => $value) {
-            if ($value->isRelationType()) {
-                if ($value->getLazyLoading()) {
-                    if (!in_array($key, $this->model->getLazyLoadedFields())) {
-                        //this is a relation subject to lazy loading - it has not been loaded
-                        $untouchable[] = $key;
-                    }
-                }
-            }
-        }
-
-        // HACK
-        $inheritedValues = Object_Abstract::doGetInheritedValues();
-        Object_Abstract::setGetInheritedValues(false);
-
-        // update data for store table
-        if (count($untouchable) > 0) {
-            $untouchables = "'" . implode("','", $untouchable) . "'";
-            $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'", $this->model->getO_id()));
-        } else {
-            $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND ownertype = 'object'",  $this->model->getO_id()));
-        }
-
-        $data = array();
-        $data["oo_id"] = $this->model->getO_id();
-        foreach ($fd as $key => $value) {
-
-            $getter = "get" . ucfirst($key);
-
-            if ($value->isRelationType()) {
-                if (method_exists($this->model, $getter)) {
-                    $relations = $value->getDataForResource($this->model->$getter());
-                }
-
-                if (is_array($relations) && !empty($relations)) {
-                    foreach ($relations as $relation) {
-                        $relation["src_id"] = $this->model->getId();
-                        $relation["ownertype"] = "object";
-
-                        /*relation needs to be an array with src_id, dest_id, type, fieldname*/
-                        try {
-                            $this->db->insert("object_relations_" . $this->model->getO_classId(), $relation);
-                        } catch (Exception $e) {
-                            Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
-                        }
-                    }
-                }
-
-                if (in_array($key, $untouchable) and $relations===null) {
-                    logger::debug(get_class($this) . ": Excluding untouchable relation value for object [ " . $this->model->getId() . " ] key [ $key ] because it has not been loaded");
-                }
-
-            } else if ($value->getColumnType()) {
-                if (is_array($value->getColumnType())) {
-                    $insertDataArray = $value->getDataForResource($this->model->$getter());
-                    $data = array_merge($data, $insertDataArray);
-                } else {
-                    $insertData = $value->getDataForResource($this->model->$getter());
-                    $data[$key] = $insertData;
-                }
-            } else if (method_exists($value, "save")) {
-                // for fieldtypes which have their own save algorithm eg. fieldcollections
-                $value->save($this->model);
-            }
-        }
-
-        // first try to insert a new record, this is because of the recyclebin restore
         try {
-            $this->db->insert("object_store_" . $this->model->getO_classId(), $data);
-        }
-        catch (Exception $e) {
-            $this->db->update("object_store_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
-        }
+            $this->createDataRows();
 
-
-        // get data for query table
-        // this is special because we have to call each getter to get the inherited values from a possible parent object
-
-
-        Object_Abstract::setGetInheritedValues(true);
-        
-        $object = get_object_vars($this->model);
-
-        $data = array();
-        $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow("SELECT * FROM object_query_" . $this->model->getO_classId() . " WHERE oo_id = ?", $this->model->getId());
-
-        foreach ($object as $key => $value) {
-            $fd = $this->model->geto_class()->getFieldDefinition($key);
-
-            if ($fd) {
-                if ($fd->getQueryColumnType()) {
-                    //exclude untouchables if value is not an array - this means data has not been loaded
-                    if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
-                        $method = "get" . $key;
-                        $insertData = $fd->getDataForQueryResource($this->model->$method());
-                        if (is_array($insertData)) {
-                            $data = array_merge($data, $insertData);
+            $fd = $this->model->geto_class()->getFieldDefinitions();
+            $untouchable = array();
+            foreach ($fd as $key => $value) {
+                if ($value->isRelationType()) {
+                    if ($value->getLazyLoading()) {
+                        if (!in_array($key, $this->model->getLazyLoadedFields())) {
+                            //this is a relation subject to lazy loading - it has not been loaded
+                            $untouchable[] = $key;
                         }
-                        else {
-                            $data[$key] = $insertData;
-                        }
+                    }
+                }
+            }
 
-                        
-                        //get changed fields for inheritance
-                        if($fd->isRelationType()) {
+            // HACK
+            $inheritedValues = Object_Abstract::doGetInheritedValues();
+            Object_Abstract::setGetInheritedValues(false);
+
+            // update data for store table
+            if (count($untouchable) > 0) {
+                $untouchables = "'" . implode("','", $untouchable) . "'";
+                $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'", $this->model->getO_id()));
+            } else {
+                $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND ownertype = 'object'",  $this->model->getO_id()));
+            }
+
+            $data = array();
+            $data["oo_id"] = $this->model->getO_id();
+            foreach ($fd as $key => $value) {
+
+                $getter = "get" . ucfirst($key);
+
+                if ($value->isRelationType()) {
+                    if (method_exists($this->model, $getter)) {
+                        $relations = $value->getDataForResource($this->model->$getter());
+                    }
+
+                    if (is_array($relations) && !empty($relations)) {
+                        foreach ($relations as $relation) {
+                            $relation["src_id"] = $this->model->getId();
+                            $relation["ownertype"] = "object";
+
+                            /*relation needs to be an array with src_id, dest_id, type, fieldname*/
+                            try {
+                                $this->db->insert("object_relations_" . $this->model->getO_classId(), $relation);
+                            } catch (Exception $e) {
+                                Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
+                            }
+                        }
+                    }
+
+                    if (in_array($key, $untouchable) and $relations===null) {
+                        logger::debug(get_class($this) . ": Excluding untouchable relation value for object [ " . $this->model->getId() . " ] key [ $key ] because it has not been loaded");
+                    }
+
+                } else if ($value->getColumnType()) {
+                    if (is_array($value->getColumnType())) {
+                        $insertDataArray = $value->getDataForResource($this->model->$getter());
+                        $data = array_merge($data, $insertDataArray);
+                    } else {
+                        $insertData = $value->getDataForResource($this->model->$getter());
+                        $data[$key] = $insertData;
+                    }
+                } else if (method_exists($value, "save")) {
+                    // for fieldtypes which have their own save algorithm eg. fieldcollections
+                    $value->save($this->model);
+                }
+            }
+
+            // first try to insert a new record, this is because of the recyclebin restore
+            try {
+                $this->db->insert("object_store_" . $this->model->getO_classId(), $data);
+            }
+            catch (Exception $e) {
+                $this->db->update("object_store_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
+            }
+
+
+            // get data for query table
+            // this is special because we have to call each getter to get the inherited values from a possible parent object
+
+
+            Object_Abstract::setGetInheritedValues(true);
+
+            $object = get_object_vars($this->model);
+
+            $data = array();
+            $this->inheritanceHelper->resetFieldsToCheck();
+            $oldData = $this->db->fetchRow("SELECT * FROM object_query_" . $this->model->getO_classId() . " WHERE oo_id = ?", $this->model->getId());
+
+            foreach ($object as $key => $value) {
+                $fd = $this->model->geto_class()->getFieldDefinition($key);
+
+                if ($fd) {
+                    if ($fd->getQueryColumnType()) {
+                        //exclude untouchables if value is not an array - this means data has not been loaded
+                        if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                            $method = "get" . $key;
+                            $insertData = $fd->getDataForQueryResource($this->model->$method());
                             if (is_array($insertData)) {
-                                $doInsert = false;
-                                foreach($insertData as $insertDataKey => $insertDataValue) {
-                                    if($oldData[$insertDataKey] != $insertDataValue) {
-                                        $doInsert = true;
+                                $data = array_merge($data, $insertData);
+                            }
+                            else {
+                                $data[$key] = $insertData;
+                            }
+
+
+                            //get changed fields for inheritance
+                            if($fd->isRelationType()) {
+                                if (is_array($insertData)) {
+                                    $doInsert = false;
+                                    foreach($insertData as $insertDataKey => $insertDataValue) {
+                                        if($oldData[$insertDataKey] != $insertDataValue) {
+                                            $doInsert = true;
+                                        }
+                                    }
+
+                                    if($doInsert) {
+                                        $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
+                                    }
+                                } else {
+                                    if($oldData[$key] != $insertData) {
+                                        $this->inheritanceHelper->addRelationToCheck($key);
                                     }
                                 }
 
-                                if($doInsert) {
-                                    $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
-                                }
                             } else {
-                                if($oldData[$key] != $insertData) {
-                                    $this->inheritanceHelper->addRelationToCheck($key);
+                                if (is_array($insertData)) {
+                                    foreach($insertData as $insertDataKey => $insertDataValue) {
+                                        if($oldData[$insertDataKey] != $insertDataValue) {
+                                            $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                        }
+                                    }
+                                } else {
+                                    if($oldData[$key] != $insertData) {
+                                        $this->inheritanceHelper->addFieldToCheck($key);
+                                    }
                                 }
                             }
 
                         } else {
-                            if (is_array($insertData)) {
-                                foreach($insertData as $insertDataKey => $insertDataValue) {
-                                    if($oldData[$insertDataKey] != $insertDataValue) {
-                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey);
-                                    }
-                                }
-                            } else {
-                                if($oldData[$key] != $insertData) {
-                                    $this->inheritanceHelper->addFieldToCheck($key);
-                                }
-                            }
+                            logger::debug(get_class($this) . ": Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                         }
-
-                    } else {
-                        logger::debug(get_class($this) . ": Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                     }
                 }
-            } 
-        }
-        $data["oo_id"] = $this->model->getO_id();
+            }
+            $data["oo_id"] = $this->model->getO_id();
 
-        // first try to insert a new record, this is because of the recyclebin restore
-        try {
-            $this->db->insert("object_query_" . $this->model->getO_classId(), $data);
-        }
-        catch (Exception $e) {
-            $this->db->update("object_query_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
+            // first try to insert a new record, this is because of the recyclebin restore
+            try {
+                $this->db->insert("object_query_" . $this->model->getO_classId(), $data);
+            }
+            catch (Exception $e) {
+                $this->db->update("object_query_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
+            }
+
+            $this->db->commit();
+
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
         }
 
         // HACK: see a few lines above!

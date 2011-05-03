@@ -38,7 +38,7 @@ class Object_Fieldcollection_Definition_Resource_Mysql extends Pimcore_Model_Res
           INDEX `o_id` (`o_id`),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`)
-		) ENGINE=MyISAM DEFAULT CHARSET=utf8;"); 
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
         
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;

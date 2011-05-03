@@ -174,7 +174,7 @@ class Search_Backend_Tool
                        `localizeddata` LONGTEXT ,
                        `properties` TEXT ,
                              PRIMARY KEY  (`id`,`maintype`)
-                           ) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+                           ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
 
         $additionalColumns = "";
