@@ -53,7 +53,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
 
         $remoteConfig["token"] = Pimcore_Liveconnect::getToken();
-        $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/getExtensionInfo.php?data=" . base64_encode(serialize($remoteConfig)));
+        $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/share/getExtensions.php?data=" . base64_encode(serialize($remoteConfig)));
 
         if(!$rawData) {
             header('HTTP/1.1 403 Forbidden');
@@ -179,7 +179,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             "type" => $this->_getParam("type"),
             "token" => Pimcore_Liveconnect::getToken()
         ))));
-        $client->setUri("http://extensions.pimcore.org/createNewRevision.php");
+        $client->setUri("http://extensions.pimcore.org/share/startUpload.php");
 
         $response = $client->request(Zend_Http_Client::POST);
 
@@ -196,7 +196,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             "path" => str_replace($this->_getParam("pathPrefix"),"",$this->_getParam("path")),
             "data" => base64_encode(file_get_contents($this->_getParam("path")))
         ))));
-        $client->setUri("http://extensions.pimcore.org/addFile.php");
+        $client->setUri("http://extensions.pimcore.org/share/uploadFile.php");
 
         $response = $client->request(Zend_Http_Client::POST);
 
@@ -211,7 +211,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             "type" => $this->_getParam("type"),
             "token" => Pimcore_Liveconnect::getToken()
         ))));
-        $client->setUri("http://extensions.pimcore.org/complete.php");
+        $client->setUri("http://extensions.pimcore.org/share/verifyUpload.php");
 
         $response = $client->request(Zend_Http_Client::POST);
 

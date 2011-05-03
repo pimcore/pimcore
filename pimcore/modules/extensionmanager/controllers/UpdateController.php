@@ -28,7 +28,7 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
             "revision" => trim(file_get_contents($extensionPath."/.pimcore_extension_revision"))
         );
 
-        $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/getUpdateInfo.php?data=" . base64_encode(serialize($remoteConfig)));
+        $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/update/getUpdateInformation.php?data=" . base64_encode(serialize($remoteConfig)));
 
         if(!$rawData) {
             header('HTTP/1.1 403 Forbidden');
