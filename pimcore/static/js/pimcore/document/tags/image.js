@@ -209,6 +209,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.altBar.setStyle({
             display: "none"
         });
+        this.reloadDocument();
     },
 
     getBody: function () {
