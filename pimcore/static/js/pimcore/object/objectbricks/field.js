@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.object.objectbricks.field");
 pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
-    disallowedDataTypes: ["multihref","objects","nonownerobjects","user","fieldcollections","href","localizedfields"],
+    disallowedDataTypes: ["nonownerobjects","user","fieldcollections","localizedfields", "objectbricks"],
     uploadUrl: '/admin/class/import-objectbrick/',
     exportUrl: "/admin/class/export-objectbrick",
 

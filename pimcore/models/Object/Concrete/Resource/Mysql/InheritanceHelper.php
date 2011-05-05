@@ -76,8 +76,8 @@ class Object_Concrete_Resource_Mysql_InheritanceHelper {
     }
 
     public function doUpdate($oo_id) {
-//        p_r($this->fields); die();
-//        p_r($this->relations);
+//        p_r($this->fields);
+//        p_r($this->relations); die();
 
         if(empty($this->fields) && empty($this->relations)) {
             return;

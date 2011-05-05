@@ -60,7 +60,7 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
         }
         return $getters;
     }
-    
+
     public function getItemDefinitions () {
         $definitions = array();
         foreach ($this->getItems() as $item) {
@@ -75,38 +75,50 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
         $getters = $this->getBrickGetters();
         foreach($getters as $getter) {
             $brick = $this->$getter();
+
+//            var_dump($brick);
+
             if($brick instanceof Object_Objectbrick_Data_Abstract) {
                 if($brick->getDoDelete()) {
                     $brick->delete($object);
+
+//                    echo $getter . "<br/>";
+ 
+                    $setter = "s" . substr($getter, 1);
+                    $this->$setter(null);
+
+                    //check if parent object has brick, and if so, create an empty brick to enable inheritance
+                    $inheritanceModeBackup = Object_Abstract::getGetInheritedValues();
+                    Object_Abstract::setGetInheritedValues(true);
+                    $parentBrick = $this->$getter();
+                    Object_Abstract::setGetInheritedValues($inheritanceModeBackup);
+
+                    if(!empty($parentBrick)) {
+                        $brickType = "Object_Objectbrick_Data_" . ucfirst($parentBrick->getType());
+                        $brick = new $brickType($object);
+                        $brick->setFieldname($this->getFieldname());
+                        $brick->save($object);
+                        $this->$setter($brick);
+                    }
+
+
                 } else  {
                     $brick->setFieldname($this->getFieldname());
                     $brick->save($object);
                 }
 
             } else {
-//                $parent = Object_Service::hasInheritableParentObject($object);
-
                 if($brick == null) {
-                    $inheritanceModeBackup = Object_Abstract::getGetInheritedValues(); Object_Abstract::setGetInheritedValues(true);
+                    $inheritanceModeBackup = Object_Abstract::getGetInheritedValues();
+                    Object_Abstract::setGetInheritedValues(true);
                     $parentBrick = $this->$getter();
                     Object_Abstract::setGetInheritedValues($inheritanceModeBackup);
 
-                    //                    $containerGetter = "get" . ucfirst($this->getFieldname());
-//                    $parentContainer = $parent->$containerGetter();
-
-//                    p_r($parentBrick); die("blup");
                     if(!empty($parentBrick)) {
-//                        $parentBrick = $parentContainer->$getter();
-//                        if(!empty($parentBrick)) {
-
-                            $brickType = "Object_Objectbrick_Data_" . ucfirst($parentBrick->getType());
-
-
-
-                            $brick = new $brickType($object);
-                            $brick->setFieldname($this->getFieldname());
-                            $brick->save($object);
-//                        }
+                        $brickType = "Object_Objectbrick_Data_" . ucfirst($parentBrick->getType());
+                        $brick = new $brickType($object);
+                        $brick->setFieldname($this->getFieldname());
+                        $brick->save($object);
 
                     }
 
@@ -114,15 +126,32 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
                 }
 
             }
-
+  
 
         }
 
-        if(is_array($this->getItems())) {
+//        p_r($this);
+
+       /* if(is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
                 if($brick instanceof Object_Objectbrick_Data_Abstract) {
                     if($brick->getDoDelete()) {
                         $brick->delete($object);
+
+                        //check if parent object has brick, and if so, create an empty brick to enable inheritance
+                        $inheritanceModeBackup = Object_Abstract::getGetInheritedValues();
+                        Object_Abstract::setGetInheritedValues(true);
+                        $parentBrick = $this->$getter();
+                        Object_Abstract::setGetInheritedValues($inheritanceModeBackup);
+
+                        if(!empty($parentBrick)) {
+                            $brickType = "Object_Objectbrick_Data_" . ucfirst($parentBrick->getType());
+                            $brick = new $brickType($object);
+                            $brick->setFieldname($this->getFieldname());
+                            $brick->save($object);
+                            $this->$setter($brick);
+                        }
+
                     } else  {
                         $brick->setFieldname($this->getFieldname());
                         $brick->save($object);
@@ -130,7 +159,7 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
 
                 }
             }
-        }
+        }*/
     }
 
     public function getObject() {
@@ -139,7 +168,6 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
 
     public function delete(Object_Concrete $object) {
         if(is_array($this->getItems())) {
-
             foreach ($this->getItems() as $brick) {
                 if($brick instanceof Object_Objectbrick_Data_Abstract) {
                     $brick->delete($object);

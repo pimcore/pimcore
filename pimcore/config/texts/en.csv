@@ -862,3 +862,7 @@
 "swf_upload_error_security_error","Security Error. Not allowed to post to different url"
 "delete_message_dependencies","There are dependencies, delete anyway?"
 "delete_message","Do you really want to delete this element?"
+"objectbricks","Objectbricks"
+"add_objectbrick","Add Objectbrick"
+"class_definitions","Class definitions"
+"enter_the_name_of_the_new_objectbrick","Enter the name of the new Objectbrick"

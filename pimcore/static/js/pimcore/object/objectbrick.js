@@ -20,7 +20,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_objectbricks",
-                title: t("object_bricks"),
+                title: t("objectbricks"),
                 iconCls: "pimcore_icon_objectbricks",
                 border: false,
                 layout: "border",

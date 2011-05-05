@@ -484,6 +484,14 @@
     background: url(/pimcore/static/img/icon/table_multiple.png) no-repeat !important;
 }
 
+.pimcore_icon_objectbricks {
+    background: url(/pimcore/static/img/icon/bricks.png) no-repeat !important;
+}
+
+.pimcore_icon_objectbrick_add {
+    background: url(/pimcore/static/img/icon/brick_add.png) no-repeat !important;
+}
+
 .pimcore_icon_multihref {
 	background: url(/pimcore/static/img/icon/text_list_bullets.png) no-repeat !important;
 }

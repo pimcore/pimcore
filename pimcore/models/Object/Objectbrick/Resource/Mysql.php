@@ -51,6 +51,8 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
                 $results = array();
             }
 
+            $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'objectbrick' AND ownername = ?", array($object->getO_id(), $this->model->getFieldname()));
+
             $fieldDefinitions = $definition->getFieldDefinitions();
             $brickClass = "Object_Objectbrick_Data_" . ucfirst($type);
             
@@ -60,20 +62,34 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
                 $brick->setFieldname($result["fieldname"]);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if (is_array($fd->getColumnType())) {
-                        $multidata = array();
-                        foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                            $multidata[$key . "__" . $fkey] = $result[$key . "__" . $fkey];
-                        }
-                        $brick->setValue(
-                            $key,
-                            $fd->getDataFromResource($multidata));
 
+                    if ($fd->isRelationType()) {
+
+                        $relations = array();
+                        foreach ($allRelations as $relation) {
+                            if ($relation["fieldname"] == $key) {
+                                $relations[] = $relation;
+                            }
+                        }
+
+                        $brick->setValue( $key, $fd->getDataFromResource($relations));
                     } else {
-                        $brick->setValue(
-                            $key,
-                            $fd->getDataFromResource($result[$key]));
+                        if (is_array($fd->getColumnType())) {
+                            $multidata = array();
+                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
+                                $multidata[$key . "__" . $fkey] = $result[$key . "__" . $fkey];
+                            }
+                            $brick->setValue(
+                                $key,
+                                $fd->getDataFromResource($multidata));
+
+                        } else {
+                            $brick->setValue(
+                                $key,
+                                $fd->getDataFromResource($result[$key]));
+                        }
                     }
+
                 }
 
                 $setter = "set" . ucfirst($type);
@@ -89,24 +105,24 @@ class Object_Objectbrick_Resource_Mysql extends Object_Fieldcollection_Resource_
     public function delete (Object_Concrete $object) {
         throw new Exception("Not implemented yet");
         // empty or create all relevant tables 
-        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
-        
-        foreach ($fieldDef->getAllowedTypes() as $type) {
-            
-            try {
-                $definition = Object_ObjectBrick_Definition::getByKey($type);
-            } catch (Exception $e) {
-                continue;
-            }
-              
-            $tableName = $definition->getTableName($object->getClass());
-            
-            try {
-                $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
-            } catch (Exception $e) {
-                // create definition if it does not exist
-                $definition->createUpdateTable($object->getClass());
-            }
-        }
+//        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
+//
+//        foreach ($fieldDef->getAllowedTypes() as $type) {
+//
+//            try {
+//                $definition = Object_ObjectBrick_Definition::getByKey($type);
+//            } catch (Exception $e) {
+//                continue;
+//            }
+//
+//            $tableName = $definition->getTableName($object->getClass());
+//
+//            try {
+//                $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
+//            } catch (Exception $e) {
+//                // create definition if it does not exist
+//                $definition->createUpdateTable($object->getClass());
+//            }
+//        }
     }
 }

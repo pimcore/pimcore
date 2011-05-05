@@ -166,7 +166,7 @@ class Object_Class_Resource_Mysql extends Pimcore_Model_Resource_Mysql_Abstract 
               `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
               `fieldname` varchar(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
-              `ownertype` enum('object','fieldcollection','localizedfield') NOT NULL DEFAULT 'object',
+              `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
               `ownername` varchar(70) NOT NULL DEFAULT '',
               `position` varchar(11) NOT NULL DEFAULT '0',
               PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`),

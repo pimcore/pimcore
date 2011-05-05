@@ -151,7 +151,28 @@ abstract class Object_List_Concrete extends Object_List {
     }
 
 
-    
+    //object brick queries
+    private $objectBrickConfigs = array();
+
+    public function addObjectbrick($type) {
+
+        if(empty($type)) {
+            throw new Exception("No objectbrick given");
+        }
+
+        Object_Objectbrick_Definition::getByKey($type);
+        $this->objectBrickConfigs[] = $type;  ;
+    }
+
+    public function setObjectbricks($objectbricks) {
+        foreach($objectbricks as $ob) {
+            $this->addObjectbrick($ob);
+        }
+    }
+
+    public function getObjectbricks() {
+        return $this->objectBrickConfigs;
+    }
 
 
 

@@ -513,6 +513,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
         $code .= "\t\t" . 'if(class_exists("' . $classname . '")) { ' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
+        $code .= "\t\t\t" . '$this->' . $key . ' = $data;' . "\n";
         $code .= "\t\t" . '} else {' . "\n";
         $code .= "\t\t\t" . 'return null;' . "\n";
         $code .= "\t\t" . '}' . "\n";

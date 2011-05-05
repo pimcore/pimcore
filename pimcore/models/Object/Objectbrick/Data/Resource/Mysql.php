@@ -47,6 +47,9 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
 
     public function save (Object_Concrete $object) {
 
+        // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
+        $inheritedValues = Object_Abstract::doGetInheritedValues();
+
         $storetable = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $querytable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
@@ -56,13 +59,7 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
         $this->createDataRows($object);
 
 
-        //        $data = array(
-        //            "o_id" => $object->getId(),
-        //            "fieldname" => $this->model->getFieldname()
-        //        );
-
-
-        //        p_r($this->model); die();
+        Object_Abstract::setGetInheritedValues(false);
 
         $fd = $this->model->getDefinition()->getFieldDefinitions();
         $untouchable = array();
@@ -78,24 +75,53 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
         }
 
 
-        // update data for store table
-        //        $tableName = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $data = array();
         $data["o_id"] = $object->getId();
         $data["fieldname"] = $this->model->getFieldname();
 
         foreach ($fd as $key => $value) {
-            if ($value->getColumnType()) {
-                if (is_array($value->getColumnType())) {
-                    $insertDataArray = $value->getDataForResource($this->model->$key);
-                    $data = array_merge($data, $insertDataArray);
-                } else {
-                    $insertData = $value->getDataForResource($this->model->$key);
-                    $data[$key] = $insertData;
+            $getter = "get" . ucfirst($value->getName());
+            if ($value->isRelationType()) {
+
+                $relations = null;
+                if (method_exists($this->model, $getter)) {
+                    $relations = $value->getDataForResource($this->model->$getter());
                 }
-            } else if (method_exists($value, "save")) {
-                // for fieldtypes which have their own save algorithm eg. fieldcollections
-                $value->save($this->model);
+
+
+                try {
+                    $this->db->delete("object_relations_" . $object->getO_classId(), "src_id = " . $object->getId() . " AND fieldname = '" . $value->getName() . "' AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "'");
+                } catch(Exception $e) {
+                    Logger::warning("Error during removing old relations: " . $e);
+                }
+
+                if (is_array($relations) && !empty($relations)) {
+                    foreach ($relations as $relation) {
+                        $relation["src_id"] = $object->getId();
+                        $relation["ownertype"] = "objectbrick";
+                        $relation["ownername"] = $this->model->getFieldname();
+
+                        /*relation needs to be an array with src_id, dest_id, type, fieldname*/
+                        try {
+                            $this->db->insert("object_relations_" . $object->getO_classId(), $relation);
+                        } catch (Exception $e) {
+                            Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
+                        }
+                    }
+                }
+            } else {
+                if ($value->getColumnType()) {
+                    if (is_array($value->getColumnType())) {
+                        $insertDataArray = $value->getDataForResource($this->model->$getter());
+                        $data = array_merge($data, $insertDataArray);
+                    } else {
+                        $insertData = $value->getDataForResource($this->model->$getter());
+                        $data[$key] = $insertData;
+                    }
+                } else if (method_exists($value, "save")) {
+                    // for fieldtypes which have their own save algorithm eg. fieldcollections
+                    $value->save($this->model);
+                }
             }
         }
 
@@ -106,8 +132,7 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
         //        $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
         // this is special because we have to call each getter to get the inherited values from a possible parent object
 
-        // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
-        $inheritedValues = Object_Abstract::doGetInheritedValues();
+
         Object_Abstract::setGetInheritedValues(true);
 
         $objectVars = get_object_vars($this->model);
@@ -137,15 +162,35 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
 
 
                         //get changed fields for inheritance
-                        if (is_array($insertData)) {
-                            foreach($insertData as $insertDataKey => $insertDataValue) {
-                                if($oldData[$insertDataKey] != $insertDataValue) {
-                                    $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                        if($fd->isRelationType()) {
+                            if (is_array($insertData)) {
+                                $doInsert = false;
+                                foreach($insertData as $insertDataKey => $insertDataValue) {
+                                    if($oldData[$insertDataKey] != $insertDataValue) {
+                                        $doInsert = true;
+                                    }
+                                }
+
+                                if($doInsert) {
+                                    $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
+                                }
+                            } else {
+                                if($oldData[$key] != $insertData) {
+                                    $this->inheritanceHelper->addRelationToCheck($key);
                                 }
                             }
+
                         } else {
-                            if($oldData[$key] != $insertData) {
-                                $this->inheritanceHelper->addFieldToCheck($key);
+                            if (is_array($insertData)) {
+                                foreach($insertData as $insertDataKey => $insertDataValue) {
+                                    if($oldData[$insertDataKey] != $insertDataValue) {
+                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                    }
+                                }
+                            } else {
+                                if($oldData[$key] != $insertData) {
+                                    $this->inheritanceHelper->addFieldToCheck($key);
+                                }
                             }
                         }
 
@@ -156,6 +201,7 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
             }
         }
         $this->db->update($querytable, $data, "o_id = " . $object->getId());
+        //p_r($data); die();
 
         $this->inheritanceHelper->doUpdate($object->getId());
         $this->inheritanceHelper->resetFieldsToCheck();
@@ -173,6 +219,9 @@ class Object_Objectbrick_Data_Resource_Mysql extends Pimcore_Model_Resource_Mysq
         // update data for query table
         $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
         $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()));
+
+        //update data for relations table
+        $this->db->delete("object_relations_" . $object->getO_classId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "'");
     }
 
 

@@ -262,7 +262,7 @@ pimcore.layout.toolbar = Class.create({
                 });
 
                 objectMenu.menu.push({
-                    text: t("object_bricks"),
+                    text: t("objectbricks"),
                     iconCls: "pimcore_icon_objectbricks",
                     handler: this.editObjectBricks
                 });

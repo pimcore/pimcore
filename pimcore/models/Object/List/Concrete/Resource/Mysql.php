@@ -132,6 +132,19 @@ class Object_List_Concrete_Resource_Mysql extends Object_List_Resource_Mysql {
                 $join .= " ON `" . $name . "`.o_id = `" . $this->getTableName() . "`.o_id";
             }
         }
+
+        $objectbricks = $this->model->getObjectbricks();
+        if(!empty($objectbricks)) {
+            foreach($objectbricks as $ob) {
+                $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $this->model->getClassId();
+
+                $name = $ob;
+
+                $join .= " `" . $name . "`";
+                $join .= " ON `" . $name . "`.o_id = `" . $this->getTableName() . "`.o_id";
+            }
+        }
+
         return $join;
     }
 

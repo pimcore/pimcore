@@ -56,6 +56,10 @@ class Object_Objectbrick_Data_Abstract extends Pimcore_Model_Abstract {
         return $this->__object;
     }
 
+    public function delete($object) {
+        $this->doDelete = true;
+        parent::delete($object);
+    }
 
     /**
      * @return mixed
