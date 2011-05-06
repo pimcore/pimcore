@@ -270,6 +270,12 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.debug")
                             },
                             {
+                                fieldLabel: t("only_for_ip"),
+                                xtype: "textfield",
+                                name: "general.debug_ip",
+                                value: this.getValue("general.debug_ip")
+                            },
+                            {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
