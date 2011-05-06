@@ -34,7 +34,9 @@ var editableNames = [];
 var dndManager;
 
 Ext.onReady(function () {
-    
+
+    Ext.QuickTips.init();
+
     // i18n
     pimcore_system_i18n = parent.pimcore_system_i18n;
     
