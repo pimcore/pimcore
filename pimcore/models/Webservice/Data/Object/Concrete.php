@@ -75,7 +75,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
                         if($class instanceof Object_Class_Data_Fieldcollections){
                             $object->$setter($tag->getFromWebserviceImport($element->fieldcollection));
                         } else {
-                            $object->$setter($tag->getFromWebserviceImport($element->value));
+                            $object->$setter($tag->getFromWebserviceImport($element->value, $object));
                         }
 
                         

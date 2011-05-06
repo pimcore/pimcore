@@ -73,7 +73,10 @@ class Object_Objectbrick_Data_Abstract extends Pimcore_Model_Abstract {
             $brickGetter = "get" . ucfirst($this->getType());
             $getter = "get" . ucfirst($key);
 
-            return $parent->$containerGetter()->$brickGetter()->$getter();
+            if($parent->$containerGetter()->$brickGetter()) {
+                return $parent->$containerGetter()->$brickGetter()->$getter();
+            }
+
         }
 
         return null;

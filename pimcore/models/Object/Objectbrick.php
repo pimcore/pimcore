@@ -73,10 +73,11 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
     public function save ($object) {
 
         $getters = $this->getBrickGetters();
+
         foreach($getters as $getter) {
             $brick = $this->$getter();
 
-//            var_dump($brick);
+//            var_dump($object); die();
 
             if($brick instanceof Object_Objectbrick_Data_Abstract) {
                 if($brick->getDoDelete()) {

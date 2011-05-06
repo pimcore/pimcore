@@ -248,10 +248,8 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
     public function save($object)
     {
-
         $getter = "get" . ucfirst($this->getName());
         $container = $object->$getter();
-
         if ($container instanceof Object_Objectbrick) {
             $container->save($object);
         }
@@ -338,8 +336,6 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     $el->value = $fd->getForWebserviceExport($item);
 
                     $wsDataItem->value[] = $el;
-                    //$wsData[$item->getType()."_".$fd->getName()]=$el;
-                    //$wsData[]=$el;
 
                 }
 
@@ -358,62 +354,59 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($data)
+    public function getFromWebserviceImport($data, $object)
     {
-
-        throw new Exception("not supported yet");
-
-        $values = array();
-        $count = 0;
+        $containerName = "Object_" . ucfirst($object->getClass()->getName()) . "_" . ucfirst($this->getName());
+        $container = new $containerName($object, $this->getName());
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
-                if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
+                if($collectionRaw != null) {
+                    if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
-                    throw new Exception("invalid data in objectbrick [" . $this->getName() . "]");
-                }
+                        throw new Exception("invalid data in objectbrick [" . $this->getName() . "]");
+                    }
 
-                $fieldcollection = $collectionRaw->type;
-                $collectionData = array();
-                $collectionDef = Object_Objectbrick_Definition::getByKey($fieldcollection);
+                    $brick = $collectionRaw->type;
+                    $collectionData = array();
+                    $collectionDef = Object_Objectbrick_Definition::getByKey($brick);
 
-                if (!$collectionDef) {
-                    throw new Exception("Unknown objectbrick in webservice import [" . $fieldcollection . "]");
-                }
+                    if (!$collectionDef) {
+                        throw new Exception("Unknown objectbrick in webservice import [" . $brick . "]");
+                    }
 
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    foreach ($collectionRaw->value as $field) {
-                        if (!$field instanceof Webservice_Data_Object_Element) {
-                            throw new Exception("invalid data in objectbricks [" . $this->getName() . "]");
-                        } else if ($field->name == $fd->getName()) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        foreach ($collectionRaw->value as $field) {
+                            if (!$field instanceof Webservice_Data_Object_Element) {
+                                throw new Exception("invalid data in objectbricks [" . $this->getName() . "]");
+                            } else if ($field->name == $fd->getName()) {
 
-                            if ($field->type != $fd->getFieldType()) {
-                                throw new Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
+                                if ($field->type != $fd->getFieldType()) {
+                                    throw new Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
+                                }
+                                $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value);
+                                break;
                             }
-                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value);
-                            break;
-                        }
 
+
+                        }
 
                     }
 
+                    $collectionClass = "Object_Objectbrick_Data_" . ucfirst($brick);
+                    $collection = new $collectionClass($object);
+                    $collection->setValues($collectionData);
+                    $collection->setFieldname($this->getName());
+
+                    $setter = "set" . ucfirst($brick);
+
+                    $container->$setter($collection);
                 }
 
-                $collectionClass = "Object_Objectbrick_Data_" . ucfirst($fieldcollection);
-                $collection = new $collectionClass;
-                $collection->setValues($collectionData);
-                $collection->setIndex($count);
-                $collection->setFieldname($this->getName());
-
-                $values[] = $collection;
-
-                $count++;
             }
         }
 
-        $container = new Object_Fieldcollection($values, $this->getName());
         return $container;
-
 
     }
 
