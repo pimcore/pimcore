@@ -152,6 +152,7 @@ class Object_Localizedfield_Resource_Mysql extends Pimcore_Model_Resource_Mysql_
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `ooo_id` int(11) NOT NULL default '0',
 		  `language` varchar(5) default NULL,
+		  PRIMARY KEY (`ooo_id`,`language`),
           INDEX `ooo_id` (`ooo_id`),
           INDEX `language` (`language`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8;");

@@ -34,7 +34,8 @@ class Object_Fieldcollection_Definition_Resource_Mysql extends Pimcore_Model_Res
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `o_id` int(11) NOT NULL default '0',
 		  `index` int(11) default '0',
-          `fieldname` varchar(255) default NULL, 
+          `fieldname` varchar(255) default NULL,
+          PRIMARY KEY (`o_id`,`index`,`fieldname`(255)),
           INDEX `o_id` (`o_id`),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`)
