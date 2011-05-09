@@ -15,6 +15,10 @@
 
 class Pimcore_Resource_Mysql {
 
+    public static function getType () {
+        return "mysql";
+    }
+
     public static function getConnection () {
 
         $conf = Zend_Registry::get("pimcore_config_system");

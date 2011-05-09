@@ -46,6 +46,8 @@ abstract class Pimcore_Model_Abstract {
      */
     protected function initResource($key = null) {
 
+        $supportedResources = array("mysql","pgsql");
+
         if (!$key) {
 
             $classes = $this->getParentClasses(get_class($this));
@@ -56,19 +58,19 @@ abstract class Pimcore_Model_Abstract {
                 $className = null;
 
                 for ($i = 0; $i < $length; $i++) {
+
+                    // check for a specialized resource adapter for the current DBMS
+                    $tmpClassName = implode("_", $classParts) . "_Resource_" . ucfirst(Pimcore_Resource::getType());
+                    if($className = $this->determineResourceClass($tmpClassName)) {
+                        break;
+                    }
+
+                    // check for a general DBMS resource adapter
                     $tmpClassName = implode("_", $classParts) . "_Resource";
-                    
-                    $fileToInclude = str_replace("_", "/", $tmpClassName) . ".php";
-                    if (is_includeable($fileToInclude)) {
-                        include_once($fileToInclude);
-                        if(class_exists($tmpClassName)) {
-                            $className = $tmpClassName;
-                            break;
-                        }
+                    if($className = $this->determineResourceClass($tmpClassName)) {
+                        break;
                     }
-                    else {
-                        Logger::debug("Couldn't find resource implementation " . $tmpClassName . " for " . get_class($this));
-                    }
+
                     array_pop($classParts);
                 }
 
@@ -98,6 +100,20 @@ abstract class Pimcore_Model_Abstract {
         if (method_exists($this->resource, "init")) {
             $this->resource->init();
         }
+    }
+
+
+    protected function determineResourceClass ($className) {
+        $fileToInclude = str_replace("_", "/", $className) . ".php";
+        if (is_includeable($fileToInclude)) {
+            include_once($fileToInclude);
+            if(class_exists($className)) {
+                return $className;
+            }
+        } else {
+            Logger::debug("Couldn't find resource implementation " . $className . " for " . get_class($this));
+        }
+        return;
     }
 
     /**
