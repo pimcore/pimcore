@@ -106,7 +106,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             }
         }
         $user->setPassword(null);
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
         $this->_helper->json(array("wsenabled"=>$conf->webservice->enabled,"user" => $user->getIterator(), "objectDependencies" => array("hasHidden" => $hasHidden, "dependencies" => $userObjectData)));
     }
 

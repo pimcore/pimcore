@@ -31,7 +31,7 @@ class Pimcore_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Erro
                 // enable error handler
                 $front->setParam('noErrorHandler', false);
 
-                $errorPath = Zend_Registry::get("pimcore_config_system")->documents->error_page;
+                $errorPath = Pimcore_Config::getSystemConfig()->documents->error_page;
 
                 $document = Document::getByPath($errorPath);
 

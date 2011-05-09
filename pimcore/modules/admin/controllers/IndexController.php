@@ -33,7 +33,7 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
         $this->view->maintenance_enabled = Zend_Json::encode($maintenance_enabled);
 
         // configuration
-        $this->view->config = Zend_Registry::get("pimcore_config_system");
+        $this->view->config = Pimcore_Config::getSystemConfig();
 
         //mail settings
         $mailIncomplete = false;

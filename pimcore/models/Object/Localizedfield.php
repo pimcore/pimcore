@@ -115,7 +115,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
             throw new Exception("Not supported language");
         } catch (Exception $e) {
             // try to get default from system settings
-            $conf = Zend_Registry::get("pimcore_config_system");
+            $conf = Pimcore_Config::getSystemConfig();
             if($conf->general->validLanguages) {
                 $languages = explode(",",$conf->general->validLanguages);
                 return $languages[0];

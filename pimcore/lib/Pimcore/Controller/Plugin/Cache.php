@@ -32,7 +32,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         }
 
         try {
-            $conf = Zend_Registry::get("pimcore_config_system");
+            $conf = Pimcore_Config::getSystemConfig();
             if ($conf->cache) {
 
                 $conf = $conf->cache;

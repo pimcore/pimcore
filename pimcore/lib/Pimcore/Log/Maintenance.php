@@ -17,7 +17,7 @@ class Pimcore_Log_Maintenance {
 
     public function execute() {
 
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
         if (!empty($conf->general->logrecipient)) {
             logger::debug(get_class($this).": detected log recipient:".$conf->general->logrecipient);
             $user = User::getById($conf->general->logrecipient);

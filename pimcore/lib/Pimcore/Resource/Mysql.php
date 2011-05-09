@@ -21,7 +21,7 @@ class Pimcore_Resource_Mysql {
 
     public static function getConnection () {
 
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
 
         $db = Zend_Db::factory($conf->database);
         $db->getConnection()->exec("SET NAMES UTF8");

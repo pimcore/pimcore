@@ -50,7 +50,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
     public function match($path, $partial = false) {
                 
         $matchFound = false;
-        $config = Zend_Registry::get("pimcore_config_system");
+        $config = Pimcore_Config::getSystemConfig();
 
         $routeingDefaults = Pimcore_Tool::getRoutingDefaults();
 

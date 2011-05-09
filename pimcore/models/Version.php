@@ -162,13 +162,13 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function cleanHistory() {
         if ($this->getCtype() == "document") {
-            $conf = Zend_Registry::get("pimcore_config_system")->documents->versions;
+            $conf = Pimcore_Config::getSystemConfig()->documents->versions;
         }
         else if ($this->getCtype() == "asset") {
-            $conf = Zend_Registry::get("pimcore_config_system")->assets->versions;
+            $conf = Pimcore_Config::getSystemConfig()->assets->versions;
         }
         else if ($this->getCtype() == "object") {
-            $conf = Zend_Registry::get("pimcore_config_system")->objects->versions;
+            $conf = Pimcore_Config::getSystemConfig()->objects->versions;
         }
         else {
             return;
@@ -363,9 +363,9 @@ class Version extends Pimcore_Model_Abstract {
     
     public function maintenanceCleanUp () {
         
-        $conf["document"] = Zend_Registry::get("pimcore_config_system")->documents->versions;
-        $conf["asset"] = Zend_Registry::get("pimcore_config_system")->assets->versions;
-        $conf["object"] = Zend_Registry::get("pimcore_config_system")->objects->versions;
+        $conf["document"] = Pimcore_Config::getSystemConfig()->documents->versions;
+        $conf["asset"] = Pimcore_Config::getSystemConfig()->assets->versions;
+        $conf["object"] = Pimcore_Config::getSystemConfig()->objects->versions;
         
         $types = array();
         

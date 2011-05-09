@@ -107,7 +107,8 @@ class Pimcore_Tool {
      */
     public static function getValidLanguages() {
 
-        $validLanguages = strval(Zend_Registry::get("pimcore_config_system")->general->validLanguages);
+        $config = Pimcore_Config::getSystemConfig();
+        $validLanguages = strval($config->general->validLanguages);
 
         if (empty($validLanguages)) {
             return array();
@@ -129,9 +130,9 @@ class Pimcore_Tool {
      */
     public static function getRoutingDefaults() {
 
-        try {
-            $config = Zend_Registry::get("pimcore_config_system");
+        $config = Pimcore_Config::getSystemConfig();
 
+        if($config) {
             // system default
             $routeingDefaults = array(
                 "controller" => "default",
@@ -149,8 +150,7 @@ class Pimcore_Tool {
             }
 
             return $routeingDefaults;
-        }
-        catch (Exception $e) {
+        } else {
             return array();
         }
     }
@@ -262,7 +262,7 @@ class Pimcore_Tool {
      */
     public static function getMail($recipients,$subject) {
 
-        $values = Zend_Registry::get("pimcore_config_system");
+        $values = Pimcore_Config::getSystemConfig();
         $valueArray = $values->toArray();
         $emailSettings = $valueArray["email"];
 
@@ -329,7 +329,8 @@ class Pimcore_Tool {
      */
     public static function getHttpClient ($type = "Zend_Http_Client") {
 
-        $clientConfig = Zend_Registry::get("pimcore_config_system")->httpclient->toArray();
+        $config = Pimcore_Config::getSystemConfig();
+        $clientConfig = $config->httpclient->toArray();
         $clientConfig["maxredirects"] = 0;
         $clientConfig["timeout"] = 3600;
 

@@ -29,7 +29,7 @@
     
     <?php // define stylesheets ?>
     <?php
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
         
         $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css";
         if ($conf->general->theme) {

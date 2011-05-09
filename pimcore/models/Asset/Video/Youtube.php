@@ -112,8 +112,8 @@ class Asset_Video_Youtube {
     
     
     public static function getYoutubeCredentials () {
-        $googleCredentials = Zend_Registry::get("pimcore_config_system")->services->google;
-        $youtubeConf = Zend_Registry::get("pimcore_config_system")->services->youtube;
+        $googleCredentials = Pimcore_Config::getSystemConfig()->services->google;
+        $youtubeConf = Pimcore_Config::getSystemConfig()->services->youtube;
         
         if (!self::validateYoutubeConf($googleCredentials, $youtubeConf)) {
             return;

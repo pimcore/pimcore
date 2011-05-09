@@ -22,7 +22,7 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
 
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
 
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
         if (!$conf->outputfilters) {
             return $this->disable();
         }

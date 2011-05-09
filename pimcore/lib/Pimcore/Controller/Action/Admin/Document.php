@@ -140,7 +140,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
     public function translateAction () {
 
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
         $key  = $conf->services->translate->apikey;
         $locale = new Zend_Locale($this->_getParam("language"));
         $language = $locale->getLanguage();

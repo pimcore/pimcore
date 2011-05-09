@@ -424,7 +424,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $this->setModificationDate(time());
 
         // save data
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
 
         // create foldertree
         $destinationPath = $this->getFileSystemPath();
@@ -1036,7 +1036,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function getTemporaryFile() {
 
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
         $destinationPath = PIMCORE_TEMPORARY_DIRECTORY . "/asset_" . $this->getId() . "_" . md5(microtime());
 
         $f = fopen($destinationPath, "w+");

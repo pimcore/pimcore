@@ -104,10 +104,10 @@ class Document_Tag_Date extends Document_Tag {
             date_default_timezone_set("UTC");
 
             $this->date = new Pimcore_Date($data, Zend_Date::ISO_8601);
-            $this->date->setTimezone(Zend_Registry::get("pimcore_config_system")->general->timezone);
+            $this->date->setTimezone(Pimcore_Config::getSystemConfig()->general->timezone);
 
             // set default timezone
-            date_default_timezone_set(Zend_Registry::get("pimcore_config_system")->general->timezone);
+            date_default_timezone_set(Pimcore_Config::getSystemConfig()->general->timezone);
         }
     }
     

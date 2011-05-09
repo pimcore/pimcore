@@ -37,10 +37,8 @@ class Pimcore {
         $frontend = Pimcore_Tool::isFrontend();
 
 
-        try {
-            $conf = Zend_Registry::get("pimcore_config_system");
-        } catch (Exception $e) {
-
+        $conf = Pimcore_Config::getSystemConfig();
+        if(!$conf) {
             // redirect to installer if configuration isn't present
             if (!preg_match("/^\/install.*/", $_SERVER["REQUEST_URI"])) {
                 header("Location: /install/");
@@ -236,17 +234,15 @@ class Pimcore {
     public static function initLogger() {
 
         // try to load configuration
-        try {
-            $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
 
+        if($conf) {
             //firephp logger
             if($conf->general->firephp) {
                 $writerFirebug = new Zend_Log_Writer_Firebug();
                 $loggerFirebug = new Zend_Log($writerFirebug);
                 Logger::addLogger($loggerFirebug);
             }
-        } catch (Exception $e) {
-            // config isn't available (eg. installer)
         }
 
 
@@ -304,9 +300,8 @@ class Pimcore {
 
 
            
-            try {
-                $conf = Zend_Registry::get("pimcore_config_system");
-
+            $conf = Pimcore_Config::getSystemConfig();
+            if($conf) {
                 //email logger
                 if(!empty($conf->general->logrecipient)){
                     $user = User::getById($conf->general->logrecipient);
@@ -325,9 +320,6 @@ class Pimcore {
 
                     }
                 }
-
-            } catch (Exception $e) {
-                // config isn't available (eg. installer)
             }
 
         }
@@ -525,8 +517,7 @@ class Pimcore {
                
         // init configuration
         try {
-            $conf = new Zend_Config_Xml(PIMCORE_CONFIGURATION_SYSTEM);
-            Zend_Registry::set("pimcore_config_system", $conf);
+            $conf = Pimcore_Config::getSystemConfig();
 
             $debug = (bool) $conf->general->debug;
 
@@ -618,6 +609,7 @@ class Pimcore {
         $protectedItems = array(
             "pimcore_config_system",
             "Pimcore_Resource",
+            "Pimcore_Resource_Mysql",
             "Zend_Locale",
             "pimcore_tag_block_current",
             "pimcore_tag_block_numeration",

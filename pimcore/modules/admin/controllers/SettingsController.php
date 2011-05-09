@@ -168,7 +168,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function getSystemAction() {
         if ($this->getUser()->isAllowed("system_settings")) {
-            $values = Zend_Registry::get("pimcore_config_system");
+            $values = Pimcore_Config::getSystemConfig();
 
             $timezoneData = new Zend_Config_Xml(PIMCORE_PATH . "/config/supplementalData.xml");
             $timezoneData = $timezoneData->timezoneData->mapTimezones->toArray();
@@ -281,7 +281,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         if ($this->getUser()->isAllowed("system_settings")) {
             $values = Zend_Json::decode($this->_getParam("data"));
 
-            $oldConfig = Zend_Registry::get("pimcore_config_system");
+            $oldConfig = Pimcore_Config::getSystemConfig();
             $oldValues = $oldConfig->toArray();
             $smtpPassword = $values["email.smtp.auth.password"];
             if (empty($smtpPassword)) {

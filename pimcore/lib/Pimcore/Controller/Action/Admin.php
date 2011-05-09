@@ -32,7 +32,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 $this->setLanguage($this->_getParam("language"));
             }
             else {
-                $this->setLanguage(Zend_Registry::get("pimcore_config_system")->general->language);
+                $config = Pimcore_Config::getSystemConfig();
+                $this->setLanguage($config->general->language);
             }
         }
 

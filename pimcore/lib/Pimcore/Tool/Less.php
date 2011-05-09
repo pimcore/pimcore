@@ -84,7 +84,7 @@ class Pimcore_Tool_Less {
 
     public static function compile ($path) {
 
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
 
         // use the original less compiler if configured
         if($conf->outputfilters->lesscpath) {

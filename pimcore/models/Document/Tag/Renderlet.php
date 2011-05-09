@@ -90,8 +90,8 @@ class Document_Tag_Renderlet extends Document_Tag {
     public function frontend() {
 
         if (!$this->options["controller"] && !$this->options["action"]) {
-            $this->options["controller"] = Zend_Registry::get("pimcore_config_system")->documents->default_controller;
-            $this->options["action"] = Zend_Registry::get("pimcore_config_system")->documents->default_action;
+            $this->options["controller"] = Pimcore_Config::getSystemConfig()->documents->default_controller;
+            $this->options["action"] = Pimcore_Config::getSystemConfig()->documents->default_action;
         }
 
         $document = null;

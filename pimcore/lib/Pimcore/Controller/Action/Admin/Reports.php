@@ -44,8 +44,8 @@ class Pimcore_Controller_Action_Admin_Reports extends Pimcore_Controller_Action_
                 "password" => $conf->password
             ); 
         }
-        
-        $conf = Zend_Registry::get("pimcore_config_system")->services->google;
+
+        $conf = Pimcore_Config::getSystemConfig()->services->google;
         if($conf->username && $conf->password) {
             return array(
                 "username" => $conf->username,
@@ -66,8 +66,8 @@ class Pimcore_Controller_Action_Admin_Reports extends Pimcore_Controller_Action_
                 "password" => $conf->password
             ); 
         }
-        
-        $conf = Zend_Registry::get("pimcore_config_system")->services->google;
+
+        $conf = Pimcore_Config::getSystemConfig()->services->google;
         if($conf->username && $conf->password) {
             return array(
                 "username" => $conf->username,

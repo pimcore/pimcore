@@ -37,7 +37,7 @@ class Pluginadmin_DownloadController extends Pimcore_Controller_Action_Admin {
             die();
         }
 
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
 
         $downloadInfos = array();
 

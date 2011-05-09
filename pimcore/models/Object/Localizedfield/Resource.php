@@ -110,7 +110,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
     public function createLocalizedViews () {
 
         $languages = array();
-        $conf = Zend_Registry::get("pimcore_config_system");
+        $conf = Pimcore_Config::getSystemConfig();
         if($conf->general->validLanguages) {
             $languages = explode(",",$conf->general->validLanguages);
         }

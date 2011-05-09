@@ -24,7 +24,7 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
 
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
 
-        $this->conf = Zend_Registry::get("pimcore_config_system");
+        $this->conf = Pimcore_Config::getSystemConfig();
         if (!$this->conf->outputfilters) {
             return $this->disable();
         }
