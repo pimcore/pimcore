@@ -44,7 +44,7 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
           INDEX `fieldname` (`fieldname`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+		) DEFAULT CHARSET=utf8;");
 
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $tableQuery . "` (
 		  `o_id` int(11) NOT NULL default '0',
@@ -52,7 +52,7 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
           INDEX `fieldname` (`fieldname`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+		) DEFAULT CHARSET=utf8;");
 
 
         

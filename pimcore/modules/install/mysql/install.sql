@@ -18,7 +18,7 @@ CREATE TABLE `assets` (
   KEY `filename` (`filename`),
   KEY `path` (`path`),
   KEY `locked` (`locked`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `assets_permissions`;
 CREATE TABLE `assets_permissions` (
@@ -40,7 +40,7 @@ CREATE TABLE `assets_permissions` (
   KEY `cid` (`cid`),
   KEY `cpath` (`cpath`),
   KEY `userId` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
@@ -66,7 +66,7 @@ CREATE TABLE `classes` (
   `propertyVisibility` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `dependencies` ;
 CREATE TABLE `dependencies` (
@@ -77,7 +77,7 @@ CREATE TABLE `dependencies` (
   PRIMARY KEY (`sourcetype`,`sourceid`,`targetid`,`targettype`),
   KEY `sourceid` (`sourceid`),
   KEY `targetid` (`targetid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
@@ -99,7 +99,7 @@ CREATE TABLE `documents` (
   KEY `path` (`path`),
   KEY `published` (`published`),
   KEY `locked` (`locked`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_doctypes`;
 CREATE TABLE `documents_doctypes` (
@@ -112,7 +112,7 @@ CREATE TABLE `documents_doctypes` (
   `priority` int(3) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_elements` ;
 CREATE TABLE `documents_elements` (
@@ -122,7 +122,7 @@ CREATE TABLE `documents_elements` (
   `data` longtext,
   PRIMARY KEY (`documentId`,`name`),
   KEY `documentId` (`documentId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_link`;
 CREATE TABLE `documents_link` (
@@ -133,7 +133,7 @@ CREATE TABLE `documents_link` (
   `linktype` enum('direct','internal') default NULL,
 
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (
@@ -145,7 +145,7 @@ CREATE TABLE `documents_page` (
   `description` varchar(255) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_permissions`;
 CREATE TABLE `documents_permissions` (
@@ -169,7 +169,7 @@ CREATE TABLE `documents_permissions` (
   KEY `cid` (`cid`),
   KEY `cpath` (`cpath`),
   KEY `userId` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
@@ -178,7 +178,7 @@ CREATE TABLE `documents_snippet` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `edit_lock`;
 CREATE TABLE `edit_lock` (
@@ -192,7 +192,7 @@ CREATE TABLE `edit_lock` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `glossary`;
 CREATE TABLE `glossary` (
@@ -204,7 +204,7 @@ CREATE TABLE `glossary` (
   `acronym` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `objects`;
 CREATE TABLE `objects` (
@@ -228,7 +228,7 @@ CREATE TABLE `objects` (
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
   KEY `o_locked` (`o_locked`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `objects_permissions`;
 CREATE TABLE `objects_permissions` (
@@ -253,7 +253,7 @@ CREATE TABLE `objects_permissions` (
   KEY `cid` (`cid`),
   KEY `cpath` (`cpath`),
   KEY `userId` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
@@ -269,7 +269,7 @@ CREATE TABLE `properties` (
   KEY `inheritable` (`inheritable`),
   KEY `ctype` (`ctype`),
   KEY `cid` (`cid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `properties_predefined`;
 CREATE TABLE `properties_predefined` (
@@ -283,7 +283,7 @@ CREATE TABLE `properties_predefined` (
   `ctype` enum('document','asset','object') DEFAULT NULL,
   `inheritable` tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `recyclebin`;
 CREATE TABLE `recyclebin` (
@@ -294,7 +294,7 @@ CREATE TABLE `recyclebin` (
   `amount` int(3) default NULL,
   `date` bigint(20) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `redirects`;
 CREATE TABLE `redirects` (
@@ -305,7 +305,7 @@ CREATE TABLE `redirects` (
   `priority` int(2) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `schedule_tasks`;
 CREATE TABLE `schedule_tasks` (
@@ -320,7 +320,7 @@ CREATE TABLE `schedule_tasks` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `active` (`active`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
@@ -329,7 +329,7 @@ CREATE TABLE `sites` (
   `rootId` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS  `staticroutes`;
 CREATE TABLE `staticroutes` (
@@ -345,7 +345,7 @@ CREATE TABLE `staticroutes` (
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `thumbnails`;
 CREATE TABLE `thumbnails` (
@@ -362,7 +362,7 @@ CREATE TABLE `thumbnails` (
   `format` enum('PNG','JPEG','GIF','SOURCE') DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `translations_website`;
 CREATE TABLE `translations_website` (
@@ -373,7 +373,7 @@ CREATE TABLE `translations_website` (
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
   KEY `key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `translations_admin`;
@@ -385,7 +385,7 @@ CREATE TABLE `translations_admin` (
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
   KEY `key` (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `users`;
@@ -404,7 +404,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `parentId` (`parentId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 INSERT INTO  `users` (parentId,username,admin,hasCredentials,active) values (0,'system',1,1,1);
 UPDATE  `users` SET id = 0 WHERE username = 'system';
@@ -415,14 +415,14 @@ CREATE TABLE `users_permission_definitions` (
   `key` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '',
   `translation` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `users_permissions`;
 CREATE TABLE `users_permissions` (
   `userId` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`userId`,`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `versions`;
@@ -438,14 +438,14 @@ CREATE TABLE `versions` (
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `sanitycheck`;
 CREATE TABLE `sanitycheck` (
   `id` int(11) unsigned NOT NULL,
   `type` enum('document','asset','object') NOT NULL,
   PRIMARY KEY  (`id`,`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 
 DROP TABLE IF EXISTS `search_backend_data`;
@@ -465,12 +465,13 @@ CREATE TABLE `search_backend_data` (
    `localizeddata` LONGTEXT ,
    `properties` TEXT ,
   PRIMARY KEY  (`id`,`maintype`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 
 /* ------ DON'T REMOVE OR MODIFY THE FOLLOWING COMMENT, IT IS REQUIRED FOR BACKUPS ------ */
 /* ------ INSERT_DATA ------ */
 
+/*
 INSERT INTO `assets` VALUES (1,0,'folder','','/',NULL,0,0,1,1,NULL,NULL);
 INSERT INTO `documents` VALUES (1,0,'page','','/',999999,1,0,0,1,1,NULL);
 INSERT INTO `documents_page` VALUES (1,'','','','','','');
@@ -496,3 +497,5 @@ INSERT INTO `users_permission_definitions` VALUES ('redirects','permissions_redi
 INSERT INTO `users_permission_definitions` VALUES ('glossary','permissions_glossary');
 INSERT INTO `users_permission_definitions` VALUES ('forms','permission_forms');
 INSERT INTO `users_permission_definitions` VALUES ('reports','permissions_reports_marketing');
+
+*/

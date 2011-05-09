@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   PRIMARY KEY  (`message_id`),
   UNIQUE KEY `message_handle` (`handle`),
   KEY `message_queueid` (`queue_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `queue` (
   `queue_name` varchar(100) NOT NULL,
   `timeout` smallint(5) unsigned NOT NULL default '30',
   PRIMARY KEY  (`queue_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 --
 -- Constraints for dumped tables

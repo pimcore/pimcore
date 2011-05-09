@@ -25,6 +25,7 @@ class Pimcore_Resource_Mysql {
 
         $db = Zend_Db::factory($conf->database);
         $db->getConnection()->exec("SET NAMES UTF8");
+        $db->getConnection()->exec("SET storage_engine=InnoDB;");
 
         return $db;
     }

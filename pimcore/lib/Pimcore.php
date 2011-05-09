@@ -328,12 +328,14 @@ class Pimcore {
     public static function setSystemRequirements() {
         // try to set system-internal variables
 
+        $maxExecutionTime = 240;
         error_reporting(E_ALL ^ E_NOTICE);
         @ini_set("memory_limit", "1024M");
-        @ini_set("max_execution_time", "240");
+        @ini_set("max_execution_time", $maxExecutionTime);
         @ini_set("short_open_tag", 1);
         @ini_set("magic_quotes_gpc", 0);
         @ini_set("magic_quotes_runtime", 0);
+        set_time_limit($maxExecutionTime);
 
         // check some system variables
         if (version_compare(PHP_VERSION, '5.3.0', "<")) {

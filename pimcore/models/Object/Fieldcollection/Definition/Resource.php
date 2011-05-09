@@ -39,7 +39,7 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
           INDEX `o_id` (`o_id`),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+		) DEFAULT CHARSET=utf8;");
         
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;

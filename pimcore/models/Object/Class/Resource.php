@@ -153,12 +153,12 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 			  `oo_classId` int(11) default '" . $this->model->getId() . "',
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
 			  PRIMARY KEY  (`oo_id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+			) DEFAULT CHARSET=utf8;");
 
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+			) DEFAULT CHARSET=utf8;");
 
             $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
               `src_id` int(11) NOT NULL DEFAULT '0',
@@ -178,7 +178,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
               KEY `ownertype` (`ownertype`),
               KEY `type` (`type`),
               KEY `ownername` (`ownername`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            ) DEFAULT CHARSET=utf8;");
 
 
 

@@ -155,7 +155,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 		  PRIMARY KEY (`ooo_id`,`language`),
           INDEX `ooo_id` (`ooo_id`),
           INDEX `language` (`language`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+		) DEFAULT CHARSET=utf8;");
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
