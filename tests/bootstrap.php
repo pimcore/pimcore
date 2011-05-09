@@ -127,8 +127,154 @@ if (!$skipInstall) {
     $db->getConnection()->exec("CREATE DATABASE pimcore_phpunit CHARACTER SET utf8");
     $db = new Zend_Db_Adapter_Pdo_Mysql($dbConfig);
     $db->getConnection();
+
+    $db->getConnection()->exec("SET NAMES UTF8");
+    $db->getConnection()->exec("SET storage_engine=InnoDB;");
+
     //use the install.sql from the original development pimcore,
     $db->getConnection()->exec(file_get_contents($pimcoreRoot . "/pimcore/modules/install/mysql/install.sql"));
+
+
+
+
+
+    // wait while dump is inserted, the PDO driver executes the SQL unbuffered so this this asynchronous
+    $tables = array();
+    $requiredTables = 32;
+    while (count($tables) < $requiredTables) {
+        $tables = $db->fetchAll("SHOW FULL TABLES");
+    }
+
+    // insert data into database
+    $db->insert("assets", array(
+        "id" => 1,
+        "parentId" => 0,
+        "type" => "folder",
+        "filename" => "",
+        "path" => "/",
+        "creationDate" => time(),
+        "modificationDate" => time(),
+        "userOwner" => 1,
+        "userModification" => 1
+    ));
+    $db->insert("documents", array(
+        "id" => 1,
+        "parentId" => 0,
+        "type" => "page",
+        "key" => "",
+        "path" => "/",
+        "index" => 999999,
+        "published" => 1,
+        "creationDate" => time(),
+        "modificationDate" => time(),
+        "userOwner" => 1,
+        "userModification" => 1
+    ));
+    $db->insert("documents_page", array(
+        "id" => 1,
+        "controller" => "",
+        "action" => "",
+        "template" => "",
+        "title" => "",
+        "description" => "",
+        "keywords" => ""
+    ));
+    $db->insert("objects", array(
+        "o_id" => 1,
+        "o_parentId" => 0,
+        "o_type" => "folder",
+        "o_key" => "",
+        "o_path" => "/",
+        "o_index" => 999999,
+        "o_published" => 1,
+        "o_creationDate" => time(),
+        "o_modificationDate" => time(),
+        "o_userOwner" => 1,
+        "o_userModification" => 1
+    ));
+
+    $userPermissions = array(
+        array(
+            "key" =>            "assets",
+            "translation" =>    "permission_assets"
+        ),
+        array(
+            "key" =>            "classes",
+            "translation" =>    "permission_classes"
+        ),
+        array(
+            "key" =>            "clear_cache",
+            "translation" =>    "permission_clear_cache"
+        ),
+        array(
+            "key" =>            "clear_temp_files",
+            "translation" =>    "permission_clear_temp_files"
+        ),
+        array(
+            "key" =>            "document_types",
+            "translation" =>    "permission_document_types"
+        ),
+        array(
+            "key" =>            "documents",
+            "translation" =>    "permission_documents"
+        ),
+        array(
+            "key" =>            "objects",
+            "translation" =>    "permission_objects"
+        ),
+        array(
+            "key" =>            "plugins",
+            "translation" =>    "permission_plugins"
+        ),
+        array(
+            "key" =>            "predefined_properties",
+            "translation" =>    "permission_predefined_properties"
+        ),
+        array(
+            "key" =>            "routes",
+            "translation" =>    "permission_routes"
+        ),
+        array(
+            "key" =>            "seemode",
+            "translation" =>    "permission_seemode"
+        ),
+        array(
+            "key" =>            "system_settings",
+            "translation" =>    "permission_system_settings"
+        ),
+        array(
+            "key" =>            "thumbnails",
+            "translation" =>    "permission_thumbnails"
+        ),
+        array(
+            "key" =>            "translations",
+            "translation" =>    "permission_translations"
+        ),
+        array(
+            "key" =>            "users",
+            "translation" =>    "permission_users"
+        ),
+        array(
+            "key" =>            "update",
+            "translation" =>    "permissions_update"
+        ),
+        array(
+            "key" =>            "redirects",
+            "translation" =>    "permissions_redirects"
+        ),array(
+            "key" =>            "glossary",
+            "translation" =>    "permissions_glossary"
+        ),
+        array(
+            "key" =>            "reports",
+            "translation" =>    "permissions_reports_marketing"
+        )
+    );
+    foreach ($userPermissions as $up) {
+        $db->insert("users_permission_definitions", $up);
+    }
+
+
 }
 
 // complete the pimcore starup tasks (config, framework, modules, plugins ...)

@@ -190,8 +190,6 @@ class Install_IndexController extends Pimcore_Controller_Action {
             // insert db dump
             $db = Pimcore_Resource::get();
             $db->getConnection()->exec(file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql"));
-            $db->closeConnection();
-
 
             // wait while dump is inserted, the PDO driver executes the SQL unbuffered so this this asynchronous
             $tables = array();
@@ -237,7 +235,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
             $db->insert("objects", array(
                 "o_id" => 1,
                 "o_parentId" => 0,
-                "o_type" => "page",
+                "o_type" => "folder",
                 "o_key" => "",
                 "o_path" => "/",
                 "o_index" => 999999,
