@@ -72,7 +72,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list->setOrder("ASC");
 
             if($this->_getParam("filter")) {
-                $list->setCondition("`name` LIKE '%".$this->_getParam("filter")."%' OR `description` LIKE '%".$this->_getParam("filter")."%'");
+                $list->setCondition("`name` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
             }
 
             $list->load();
@@ -558,7 +558,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list->setOrder("ASC");
 
             if($this->_getParam("filter")) {
-                $list->setCondition("`name` LIKE '%".$this->_getParam("filter")."%' OR `pattern` LIKE '%".$this->_getParam("filter")."%' OR `reverse` LIKE '%".$this->_getParam("filter")."%' OR `controller` LIKE '%".$this->_getParam("filter")."%' OR `action` LIKE '%".$this->_getParam("filter")."%'");
+                $list->setCondition("`name` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `pattern` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `reverse` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `controller` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `action` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
             }
             
             $list->load();
@@ -867,7 +867,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $list->setLimit($this->_getParam("limit"));
                 $list->setOffset($this->_getParam("start"));
                 if ($this->_getParam("filter")) {
-                    $list->setCondition("lower(`key`) LIKE '%" . strtolower($this->_getParam("filter")) . "%'");
+                    $list->setCondition("lower(`key`) LIKE " . $list->quote("%".strtolower($this->_getParam("filter"))."%"));
                 }
                 $list->load();
 
@@ -989,7 +989,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list->setOrder("ASC");
 
             if($this->_getParam("filter")) {
-                $list->setCondition("`source` LIKE '%".$this->_getParam("filter")."%' OR `target` LIKE '%".$this->_getParam("filter")."%'");
+                $list->setCondition("`source` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `target` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
             }
             
 
@@ -1104,7 +1104,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list->setOrder("ASC");
 
             if($this->_getParam("filter")) {
-                $list->setCondition("`text` LIKE '%".$this->_getParam("filter")."%'");
+                $list->setCondition("`text` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
             }
 
             $list->load();

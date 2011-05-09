@@ -212,4 +212,13 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
     public function setValidOrders($validOrders) {
         $this->validOrders = $validOrders;
     }
+
+    /**
+     * @param  $value
+     * @return void
+     */
+    public function quote ($value, $type = null) {
+        $db = Pimcore_Resource_Mysql::get();
+        return $db->quote($value, $type);
+    }
 }

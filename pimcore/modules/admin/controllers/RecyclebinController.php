@@ -31,7 +31,7 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
             $list->setOrder("ASC");
 
             if($this->_getParam("filter")) {
-                $list->setCondition("path LIKE '%".$this->_getParam("filter")."%'");
+                $list->setCondition("path LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
             }
             
             $items = $list->load();
