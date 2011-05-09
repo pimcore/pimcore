@@ -144,6 +144,11 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     "click": this.removeBlock.bind(this, blockElement)
                 }
             });
+            items.push({
+                xtype: "tbtext",
+                text: type
+            });
+
             var toolbar = new Ext.Toolbar({
                 items: items
             });

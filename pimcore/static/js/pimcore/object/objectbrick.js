@@ -68,7 +68,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                         allowDrop: false,
                         allowChildren: false,
                         isTarget: false,
-                        iconCls: "pimcore_icon_objectbrick",
+                        iconCls: "pimcore_icon_objectbricks",
                         leaf: true
                     }
                 }),
