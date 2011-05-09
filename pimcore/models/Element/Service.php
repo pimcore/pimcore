@@ -479,7 +479,7 @@ class Element_Service
                 ORDER BY cpath DESC ) temp WHERE list = 0";
 
         //logger::log($condition);
-        $db = Pimcore_Resource_Mysql::get("database");
+        $db = Pimcore_Resource::get();
         $data = $db->fetchAll($condition);
         $forbidden = array();
 

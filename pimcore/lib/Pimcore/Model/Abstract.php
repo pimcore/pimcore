@@ -16,12 +16,12 @@
 abstract class Pimcore_Model_Abstract {
 
     /**
-     * @var Pimcore_Model_Resource_Mysql_Abstract
+     * @var Pimcore_Model_Resource_Abstract
      */
     protected $resource;
 
     /**
-     * @return Pimcore_Model_Resource_Mysql_Abstract
+     * @return Pimcore_Model_Resource_Abstract
      */
     public function getResource() {
 
@@ -56,7 +56,7 @@ abstract class Pimcore_Model_Abstract {
                 $className = null;
 
                 for ($i = 0; $i < $length; $i++) {
-                    $tmpClassName = implode("_", $classParts) . "_Resource_Mysql";
+                    $tmpClassName = implode("_", $classParts) . "_Resource";
                     
                     $fileToInclude = str_replace("_", "/", $tmpClassName) . ".php";
                     if (is_includeable($fileToInclude)) {
@@ -80,7 +80,7 @@ abstract class Pimcore_Model_Abstract {
             }
         }
         else {
-            $resource = $key . "_Resource_Mysql";
+            $resource = $key . "_Resource";
         }
 
         if(!$resource) {
@@ -91,7 +91,7 @@ abstract class Pimcore_Model_Abstract {
         $this->resource = new $resource();
         $this->resource->setModel($this);
 
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
 
         $this->resource->configure($db);
 

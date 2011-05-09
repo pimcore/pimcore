@@ -363,7 +363,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function clearDependedCache() {
         
-        // this is mostly called in Staticroute_Resource_Mysql not here
+        // this is mostly called in Staticroute_Resource not here
         try {
             Pimcore_Model_Cache::clearTag("staticroute");
         }

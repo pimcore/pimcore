@@ -32,7 +32,7 @@ class Search_Backend_Tool
 
         $queries = array();
 
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         $fieldcollectionQueries = array();
         $localizedQueries = array();
 

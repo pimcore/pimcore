@@ -91,7 +91,7 @@ class Pimcore_Backup {
         $steps = array();
 
         // get available tables
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         $tables = $db->fetchAll("SHOW FULL TABLES");
 
 
@@ -244,7 +244,7 @@ class Pimcore_Backup {
     }
     
     public function mysqlTables () {
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
 
         $tables = $db->fetchAll("SHOW FULL TABLES");
 
@@ -283,7 +283,7 @@ class Pimcore_Backup {
     }
     
     public function mysqlData ($name, $type) {
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
 
 
 

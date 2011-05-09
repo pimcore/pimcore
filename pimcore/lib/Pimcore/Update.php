@@ -157,7 +157,7 @@ class Pimcore_Update {
     
     public static function downloadData ($revision, $url) {
         
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         
         $db->exec("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
           `revision` int(11) NULL DEFAULT NULL,
@@ -207,7 +207,7 @@ class Pimcore_Update {
     
     public static function installData ($revision) {
         
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = " . $revision);
         
         foreach ($files as $file) { 
@@ -263,7 +263,7 @@ class Pimcore_Update {
     public static function cleanup () {
         
         // remove database tmp table
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         $db->exec("DROP TABLE IF EXISTS `" . self::$tmpTable . "`");
         
         //delete tmp data

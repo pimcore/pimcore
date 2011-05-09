@@ -146,9 +146,6 @@ class Install_IndexController extends Pimcore_Controller_Action {
                         "password" => ""
                     )
                 ),
-                "plugins" => array(
-                    "repositories" => "plugins.pimcore.org"
-                ),
                 "cache" => array(
                     "enabled" => "",
                     "excludePatterns" => "",

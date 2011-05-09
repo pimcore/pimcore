@@ -218,7 +218,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
      * @return void
      */
     public function quote ($value, $type = null) {
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         return $db->quote($value, $type);
     }
 }

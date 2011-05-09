@@ -617,7 +617,7 @@ class Pimcore {
 
         $protectedItems = array(
             "pimcore_config_system",
-            "Pimcore_Resource_Mysql",
+            "Pimcore_Resource",
             "Zend_Locale",
             "pimcore_tag_block_current",
             "pimcore_tag_block_numeration",
@@ -651,7 +651,7 @@ class Pimcore {
             Zend_Registry::set($key, $value);
         }
 
-        Pimcore_Resource_Mysql::reset();
+        Pimcore_Resource::reset();
     }
 
     /**

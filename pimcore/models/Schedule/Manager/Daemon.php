@@ -101,7 +101,7 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
             //Forked child
             try {
                 Logger::debug(get_class($this) . ": Executing job [ " . $job->getId() . " ] as forked child");
-                Pimcore_Resource_Mysql::reset();
+                Pimcore_Resource::reset();
                 $job->execute();
             } catch (Exception $e) {
                 Logger::error($e);

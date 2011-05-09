@@ -190,7 +190,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function clearDependedCache() {
         
-        // this is mostly called in Site_Resource_Mysql not here
+        // this is mostly called in Site_Resource not here
         try {
             Pimcore_Model_Cache::clearTag("site");
         }

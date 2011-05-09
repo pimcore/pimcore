@@ -103,7 +103,7 @@
      */
     public function getTotalSearchMatches($queryStr, $webResourceType, $type, $subtype, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $classname = null){
         $this->createBackendSearchQuery($queryStr, $webResourceType, $type, $subtype, $modifiedRange, $createdRange, $userOwner, $userModification,$classname,true);
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         $result =  $db->fetchRow($this->backendQuery,$this->backendQueryParams);
         if($result['count']){
             return $result['count'];
@@ -123,7 +123,7 @@
     public function findInDb($queryStr, $type=null, $subtype=null, $classname = null, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $offset=0, $limit=25) {
 
         $this->createBackendSearchQuery($queryStr, $type, $subtype, $classname, $modifiedRange, $createdRange, $userOwner, $userModification,false);
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         return $db->fetchAll($this->backendQuery,$this->backendQueryParams);
     }
 

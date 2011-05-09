@@ -56,20 +56,6 @@ pimcore.settings.system = Class.create({
                         fields: ['language', 'display']
                     });
                 }
-                //plugin repositories
-                try {
-                    this.pluginRepositoriesStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        data: this.data.values.plugins,
-                        root: 'repositoriesArray',
-                        fields: ['value']
-                    });
-                } catch(e) {
-                    this.pluginRepositoriesStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        fields: ['value']
-                    });
-                }
 
                 //cdn patterns
                 try {
@@ -859,55 +845,6 @@ pimcore.settings.system = Class.create({
                                 name: 'services.translate.apikey',
                                 value: this.getValue("services.translate.apikey"),
                                 width: 650
-                            }
-                        ]
-                    },
-                    {
-                        xtype:'fieldset',
-                        title: t('plugins'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight:true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 500},
-                        items :[
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("plugin_repositories_description"),
-                                cls: "pimcore_extra_label"
-                            },
-                            {
-                                xtype: 'superboxselect',
-                                allowBlank:true,
-                                queryDelay: 100,
-                                triggerAction: 'all',
-                                resizable: true,
-                                mode: 'local',
-                                anchor:'100%',
-                                minChars: 2,
-                                fieldLabel: t('plugin_repositories'),
-                                name: 'plugins.repositories',
-                                value: this.getValue("plugins.repositories"),
-                                emptyText: t("superselectbox_empty_text"),
-                                store: this.pluginRepositoriesStore,
-                                fields: ['value'],
-                                displayField: 'value',
-                                valueField: 'value',
-                                allowAddNewData: true,
-                                ctCls: 'superselect-no-drop-down',
-                                listeners: {
-                                    newitem: function(bs, v, f) {
-                                        v = v + '';
-                                        var newObj = {
-                                            value: v
-                                        };
-                                        bs.addNewItem(newObj);
-                                    }
-                                }
-
                             }
                         ]
                     },

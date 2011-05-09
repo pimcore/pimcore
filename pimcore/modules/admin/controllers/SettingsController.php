@@ -212,15 +212,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 }
             }
 
-            //plugin repositories - add as array
-            if (!empty($valueArray['plugins']['repositories'])) {
-                $repositories = explode(",", $valueArray['plugins']['repositories']);
-                if (is_array($repositories)) {
-                    foreach ($repositories as $repository) {
-                        $valueArray['plugins']['repositoriesArray'][] = array("value" => $repository);
-                    }
-                }
-            }
             //cdn hosts - add as array
             if (!empty($valueArray['outputfilters']['cdnhostnames'])) {
                 $hostNames = explode(",", $valueArray['outputfilters']['cdnhostnames']);
@@ -289,15 +280,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function setSystemAction() {
         if ($this->getUser()->isAllowed("system_settings")) {
             $values = Zend_Json::decode($this->_getParam("data"));
-
-
-            $valueArray = explode(",", $values["plugins.repositories"]);
-            if (is_array($valueArray)) {
-                for ($i = 0; $i < count($valueArray); $i++) {
-                    $valueArray[$i] = trim($valueArray[$i]);
-                }
-                $values["plugins.repositories"] = implode(",", $valueArray);
-            }
 
             $oldConfig = Zend_Registry::get("pimcore_config_system");
             $oldValues = $oldConfig->toArray();
@@ -370,9 +352,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "username" => $values["services.google.username"],
                         "password" => $values["services.google.password"]
                     )
-                ),
-                "plugins" => array(
-                    "repositories" => $values["plugins.repositories"]
                 ),
                 "cache" => array(
                     "enabled" => $values["cache.enabled"],

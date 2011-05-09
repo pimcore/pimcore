@@ -20,7 +20,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
     
     private function getDb () {
         if(!$this->db) {
-            $this->db = Pimcore_Resource_Mysql::get();
+            $this->db = Pimcore_Resource::get();
         }
         return $this->db;
     }

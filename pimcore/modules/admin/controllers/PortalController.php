@@ -256,7 +256,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
     
     public function portletModificationStatisticsAction () {
         
-        $db = Pimcore_Resource_Mysql::get();
+        $db = Pimcore_Resource::get();
         
         $days = 31;
         $startDate = mktime(23,59,59,date("m"),date("d"),date("Y"));

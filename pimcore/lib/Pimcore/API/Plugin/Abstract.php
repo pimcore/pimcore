@@ -28,7 +28,7 @@ class Pimcore_API_Plugin_Abstract extends Pimcore_API_Abstract {
     }
 
     protected static function getDb() {
-        $db = Pimcore_Resource_Mysql::getConnection();
+        $db = Pimcore_Resource::getConnection();
         return $db;
     }
 
