@@ -192,6 +192,8 @@ class Install_IndexController extends Pimcore_Controller_Action {
             $db->getConnection()->exec(file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql"));
 
             // wait while dump is inserted, the PDO driver executes the SQL unbuffered so this this asynchronous
+            // and you have to create a new database connection
+            $db = Pimcore_Resource::reset();
             $tables = array();
             $requiredTables = 32;
             while (count($tables) < $requiredTables) {
