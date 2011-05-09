@@ -24,11 +24,13 @@ pimcore.object.helpers.grid = Class.create({
     baseParams: {},
     showSubtype: true,
     showKey: true,
+    enableEditor: false,
 
     initialize: function(selectedClass, fields, url, baseParams, isSearch) {
         this.selectedClass = selectedClass;
         this.fields = fields;
         this.validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","time","link","multiselect","password","slider","user"];
+        this.editableFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","country","language","user"]
         this.isSearch = isSearch;
 
         this.url = url;
@@ -66,7 +68,8 @@ pimcore.object.helpers.grid = Class.create({
         }
 
         var proxy = new Ext.data.HttpProxy({
-            url: this.url
+            url: this.url,
+            method: 'post'
         });
         var reader = new Ext.data.JsonReader({
             totalProperty: 'total',
@@ -74,6 +77,18 @@ pimcore.object.helpers.grid = Class.create({
             root: 'data'
         }, readerFields);
 
+        var writer = null;
+        var listeners = {};
+        if(this.enableEditor) {
+            writer = new Ext.data.JsonWriter();
+            listeners.write = function(store, action, result, response, rs) {};
+            listeners.exception = function (conn, mode, action, request, response, store) {
+                    if(action == "update") {
+                        Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
+                        this.store.rejectChanges();
+                    }
+                }.bind(this);
+        }
 
         store = new Ext.data.Store({
             restful: false,
@@ -81,11 +96,21 @@ pimcore.object.helpers.grid = Class.create({
             remoteSort: true,
             proxy: proxy,
             reader: reader,
+            writer: writer,
+            listeners: listeners,
             baseParams: this.baseParams
         });
 
         return store;
 
+    },
+
+    selectionColumn: null,
+    getSelectionColumn: function() {
+        if(this.selectionColumn == null) {
+            this.selectionColumn = new Ext.grid.CheckboxSelectionModel();
+        }
+        return this.selectionColumn;
     },
 
     getGridColumns: function() {
@@ -95,39 +120,62 @@ pimcore.object.helpers.grid = Class.create({
         var klass = classStore.getAt(klassIndex);
         var propertyVisibility = klass.get("propertyVisibility");
 
-
-        var showKey = propertyVisibility.search.path;
+        if(this.isSearch) {
+            propertyVisibility = propertyVisibility.search;
+        } else {
+            propertyVisibility = propertyVisibility.grid;
+        }
+        var showKey = propertyVisibility.path;
         if(this.showKey) {
             showKey = true;
         }
 
         // init grid-columns
-        var gridColumns = [
-            {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', hidden: !this.showSubtype, renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
-            }},
-            {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: !propertyVisibility.search.id},
-            {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: !propertyVisibility.search.published},
-            {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath', hidden: !propertyVisibility.search.path},
-            {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: !showKey},
-            {header: t("class"), width: 200, sortable: true, dataIndex: 'classname',renderer: function(v){return ts(v);}, hidden: true},
-            {header: t("creationdate") + " (System)", width: 200, sortable: true, dataIndex: "creationDate", editable: false, renderer: function(d) {
-                var date = new Date(d * 1000);
-                return date.format("Y-m-d H:i:s");
-            }, hidden: !propertyVisibility.search.creationDate},
-            {header: t("modificationdate") + " (System)", width: 200, sortable: true, dataIndex: "modificationDate", editable: false, renderer: function(d) {
-                var date = new Date(d * 1000);
-                return date.format("Y-m-d H:i:s");
-            }, hidden: !propertyVisibility.search.modificationDate}
-        ];
+        var gridColumns = [];
 
+        var editor = null;
+        if(this.enableEditor) {
+            var selectionColumn = this.getSelectionColumn();
+            gridColumns.push(selectionColumn);
+        }
+
+        gridColumns.push({header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', hidden: !this.showSubtype, renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+            }});
+        gridColumns.push({header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: !propertyVisibility.id});
+        gridColumns.push({header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: !propertyVisibility.published});
+        gridColumns.push({header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath', hidden: !propertyVisibility.path});
+        gridColumns.push({header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: !showKey});
+        gridColumns.push({header: t("class"), width: 200, sortable: true, dataIndex: 'classname',renderer: function(v){return ts(v);}, hidden: true});
+        gridColumns.push({header: t("creationdate") + " (System)", width: 200, sortable: true, dataIndex: "creationDate", editable: false, renderer: function(d) {
+                            var date = new Date(d * 1000);
+                            return date.format("Y-m-d H:i:s");
+                        }, hidden: !propertyVisibility.creationDate});
+        gridColumns.push({header: t("modificationdate") + " (System)", width: 200, sortable: true, dataIndex: "modificationDate", editable: false, renderer: function(d) {
+                            var date = new Date(d * 1000);
+                            return date.format("Y-m-d H:i:s");
+                        }, hidden: !propertyVisibility.modificationDate});
 
         var fields = this.fields;
         for (var i = 0; i < fields.length; i++) {
             if (in_array(fields[i].type, this.validFieldTypes)) {
 
-                var cm = null;
-                var store = null;
+//                var columnWidth = null;
+//
+//                if (fields[i].config) {
+//                    if (fields[i].config.width) {
+//                        if (parseInt(fields[i].config.width) > 10) {
+//                            editorConfig.width = fields[i].config.width;
+//                            columnWidth = fields[i].config.width;
+//                        }
+//                    }
+//                }
+
+                var editor = null;
+                if(this.enableEditor) {
+                    editor = this.getEditor(fields[i]);
+                }
+
 
                 var defaultRenderer = function(key, value, metaData, record) {
                     if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
@@ -172,7 +220,21 @@ pimcore.object.helpers.grid = Class.create({
                 // TIME
                 else if (fields[i].type == "time") {
                     gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, editable: false});
-                    editor = null;
+                }
+                else if (fields[i].type == "checkbox") {
+                    var cm = new Ext.grid.CheckColumn({
+                        header: ts(fields[i].label),
+                        dataIndex: fields[i].key,
+                        renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
+                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                                metaData.css += " grid_value_inherited";
+                            }
+                            metaData.css += ' x-grid3-check-col-td';
+                            return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
+                        }.bind(this, fields[i].key)
+                    });
+                    gridColumns.push(cm);
+//                    plugins.push(cm);
                 }
                 // IMAGE
                 else if (fields[i].type == "image") {
@@ -276,7 +338,7 @@ pimcore.object.helpers.grid = Class.create({
                 }
                 // DEFAULT
                 else {
-                    gridColumns.push({header: ts(fields[i].label), sortable: true, dataIndex: fields[i].key, renderer: defaultRenderer});
+                    gridColumns.push({header: ts(fields[i].label), sortable: true, dataIndex: fields[i].key, renderer: defaultRenderer, editor: editor});
                 }
 
                 // is visible or not
@@ -285,7 +347,7 @@ pimcore.object.helpers.grid = Class.create({
                 } else {
                     gridColumns[gridColumns.length-1].hidden = !fields[i].visibleGridView;
                 }
-
+                gridColumns[gridColumns.length-1].layout = fields[i];
 
             }
         }
@@ -294,12 +356,82 @@ pimcore.object.helpers.grid = Class.create({
         return gridColumns;
     },
 
+    getEditor: function(field) {
+
+        var editorConfig = {};
+
+
+        if (field.config) {
+            if (field.config.width) {
+                if (parseInt(field.config.width) > 10) {
+                    editorConfig.width = field.config.width;
+                }
+            }
+        }
+
+        if(field.layout.noteditable && in_array(field.type,this.editableFieldTypes)) {
+            return null;
+        }
+        //INPUT
+        if (field.type == "input") {
+            return new Ext.form.TextField(editorConfig);
+        }
+        // NUMERIC
+        if (field.type == "numeric") {
+            editorConfig.decimalPrecision = 20;
+            return new Ext.ux.form.SpinnerField(editorConfig);
+        }
+        // TEXTAREA
+        if (field.type == "textarea") {
+           return new Ext.form.TextArea(editorConfig);
+        }
+
+        // SELECT & COUNTRY & LANGUAGE & USER
+        if (field.type == "select" || field.type == "country" || field.type == "language" || field.type == "user") {
+
+            store = new Ext.data.JsonStore({
+                autoDestroy: true,
+                root: 'store',
+                fields: ['key',"value"],
+                data: field.config
+            });
+
+            editorConfig = Object.extend(editorConfig, {
+                store: store,
+                triggerAction: "all",
+                editable: false,
+                mode: "local",
+                valueField: 'value',
+                displayField: 'key'
+            });
+
+            return new Ext.form.ComboBox(editorConfig);
+        }
+
+        // WYSIWYG
+        if (field.type == "wysiwyg") {
+            return new Ext.form.HtmlEditor({
+                width: 500,
+                height: 300
+            });
+        }
+
+    },
+
 
     getGridFilters: function() {
         // filters
         // add filters
         var selectFilterFields;
-        var configuredFilters = [];
+//        var configuredFilters = [];
+
+        var configuredFilters = [{
+            type: "date",
+            dataIndex: "creationDate"
+        },{
+            type: "date",
+            dataIndex: "modificationDate"
+        }];
 
         var fields = this.fields;
         for (var i = 0; i < fields.length; i++) {

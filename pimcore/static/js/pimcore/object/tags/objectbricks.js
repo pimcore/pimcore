@@ -307,7 +307,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
-        if(!this.dirty) {
+//        if(!this.dirty) {
             var types = Object.keys(this.currentElements);
             for(var t=0; t < types.length; t++) {
                 elementData = {};
@@ -315,6 +315,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     element = this.currentElements[types[t]];
                     for (var u=0; u<element.fields.length; u++) {
                         if(element.fields[u].isDirty()) {
+                            element.fields[u].unmarkInherited();
                             this.dirty = true;
                             return this.dirty;
                         }
@@ -322,7 +323,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-        }
+//        }
 
 //        console.log("Dirty: " + this.dirty);
         return this.dirty;

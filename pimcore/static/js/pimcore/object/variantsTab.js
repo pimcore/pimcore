@@ -43,7 +43,7 @@ pimcore.object.variantsTab = Class.create({
 
     createGrid: function(response) {
         var fields = Ext.decode(response.responseText);
-        var gridHelper = new pimcore.object.helpers.grid(this.selectedClass, fields, "/admin/variants/get-variants",false);
+        var gridHelper = new pimcore.object.helpers.grid(this.selectedClass, fields, "/admin/variants/get-variants", null, false);
         gridHelper.showSubtype = false;
         gridHelper.showKey = true;
         gridHelper.baseParams.objectId = this.element.id;

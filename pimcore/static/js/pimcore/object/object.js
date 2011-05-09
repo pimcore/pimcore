@@ -96,6 +96,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     checkForInheritance: function () {
+//        console.log("check");
         if (!this.edit.layout.rendered) {
             throw "edit not available";
         }

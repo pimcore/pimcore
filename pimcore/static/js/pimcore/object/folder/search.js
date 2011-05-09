@@ -96,439 +96,38 @@ pimcore.object.search = Class.create({
     setEditableGrid: function (response) {
 
         var itemsPerPage = 20;
-        var validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","time","link","multiselect","password","slider","user"];
-        var editableFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","country","language","user"]
 
         var fields = Ext.decode(response.responseText);
-        var editor;
         var plugins = [];
-        var cm;
-        var gridColumns = [];
-        var store;
-        var editorConfig;
-        var columnWidth;
-        
+
         // get current class
         var classStore = pimcore.globalmanager.get("object_types_store");
         var klass = classStore.getById(this.classId);
-        var propertyVisibility = klass.get("propertyVisibility");
-        
-        // the store
-        var readerFields = [];
-        readerFields.push({name: "id", allowBlank: true});
-        readerFields.push({name: "fullpath", allowBlank: true});
-        readerFields.push({name: "published", allowBlank: true});
-        readerFields.push({name: "creationDate", allowBlank: true});
-        readerFields.push({name: "modificationDate", allowBlank: true});
-        readerFields.push({name: "inheritedFields", allowBlank: false});
-        for (var i = 0; i < fields.length; i++) {
-            readerFields.push({name: fields[i].key, allowBlank: true});
-        }
-        
-        var proxy = new Ext.data.HttpProxy({
-            url: '/admin/object/grid-proxy/classId/' + this.classId + "/folderId/" + this.object.id,
-            method: 'post'
-        });
-        var reader = new Ext.data.JsonReader({
-            totalProperty: 'total',
-            successProperty: 'success',
-            root: 'data'
-        }, readerFields);
-        var writer = new Ext.data.JsonWriter();
 
-        this.store = new Ext.data.Store({
-            restful: false,
-            idProperty: 'id',
-            remoteSort: true,
-            proxy: proxy,
-            reader: reader,
-            writer: writer,
-            baseParams: {
-                limit: itemsPerPage
-            },
-            listeners: {
-                write : function(store, action, result, response, rs) {
-                },
-                exception: function (conn, mode, action, request, response, store) {
-                    if(action == "update") {
-                        Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
-                        this.store.rejectChanges();
-                    }
-                }.bind(this)
-            }
-        });
+        var gridHelper = new pimcore.object.helpers.grid(
+                klass.data.text,
+                fields,
+                "/admin/object/grid-proxy/classId/" + this.classId + "/folderId/" + this.object.id,
+                null,
+                false
+        );
+
+        gridHelper.showSubtype = false;
+        gridHelper.enableEditor = true;
+        gridHelper.limit = itemsPerPage;
+
+
+        var propertyVisibility = klass.get("propertyVisibility");
+
+        this.store = gridHelper.getStore();
         this.store.load();
         
-        // configure grid columns
-        var selectionColumn = new Ext.grid.CheckboxSelectionModel();
-        gridColumns.push(selectionColumn);
+        var gridColumns = gridHelper.getGridColumns();
         
-        gridColumns.push({header: "ID (System)", width: 60, sortable: true, dataIndex: "id", editable: false, hidden: !propertyVisibility.grid.id});
-        gridColumns.push({header: t("path") + " (System)", width: 200, sortable: true, dataIndex: "fullpath", editable: false, hidden: !propertyVisibility.grid.path});
-        cm = new Ext.grid.CheckColumn({
-            header: t("published") + " (System)",
-            dataIndex: "published",
-            sortable:true,
-            hidden: !propertyVisibility.grid.published
-        });
-        gridColumns.push(cm);
-        plugins.push(cm);
-        gridColumns.push({header: t("creationdate") + " (System)", width: 200, sortable: true, dataIndex: "creationDate", editable: false, renderer: function(d) {
-            var date = new Date(d * 1000);
-            return date.format("Y-m-d H:i:s");
-        }, hidden: !propertyVisibility.grid.creationDate});
-        gridColumns.push({header: t("modificationdate") + " (System)", width: 200, sortable: true, dataIndex: "modificationDate", editable: false, renderer: function(d) {
-            var date = new Date(d * 1000);
-            return date.format("Y-m-d H:i:s");
-        }, hidden: !propertyVisibility.grid.modificationDate});
 
-        for (var i = 0; i < fields.length; i++) {
-            if (in_array(fields[i].type, validFieldTypes)) {
-
-                editor = null;
-                cm = null;
-                store = null;
-                editorConfig = {};
-                columnWidth = null;
-
-                if (fields[i].config) {
-                    if (fields[i].config.width) {
-                        if (parseInt(fields[i].config.width) > 10) {
-                            editorConfig.width = fields[i].config.width;
-                            columnWidth = fields[i].config.width;
-                        }
-                    }
-                }
-                
-                if(fields[i].layout.noteditable && in_array(fields[i].type,editableFieldTypes)) {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, hidden: !fields[i].visibleGridView});
-                    editor = null;
-                    continue;
-                }
-                
-
-                // INPUT
-                if (fields[i].type == "input") {
-                    editor = new Ext.form.TextField(editorConfig);
-                }
-                // NUMERIC
-                else if (fields[i].type == "numeric") {
-                    editorConfig.decimalPrecision = 20;
-                    editor = new Ext.ux.form.SpinnerField(editorConfig);
-                }
-                // TEXTAREA
-                else if (fields[i].type == "textarea") {
-                    editor = new Ext.form.TextArea(editorConfig);
-                }
-                // DATE
-                else if (fields[i].type == "date") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (record) {
-                        if (record) {
-                            var timestamp = intval(record) * 1000;
-                            var date = new Date(timestamp);
-
-                            return date.format("Y-m-d");
-                        }
-                        return "";
-                    }});
-                    editor = null;
-                }
-                // DATETIME
-                else if (fields[i].type == "datetime") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (record) {
-                        if (record) {
-                            var timestamp = intval(record) * 1000;
-                            var date = new Date(timestamp);
-
-                            return date.format("Y-m-d H:i");
-                        }
-                        return "";
-                    }});
-                    editor = null;
-                }
-                // TIME
-                else if (fields[i].type == "time") {
-                    gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, editable: false});
-                    editor = null;
-                }
-                // SELECT & COUNTRY & LANGUAGE & USER
-                else if (fields[i].type == "select" || fields[i].type == "country" || fields[i].type == "language" || fields[i].type == "user") {
-
-                    store = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        root: 'store',
-                        fields: ['key',"value"],
-                        data: fields[i].config
-                    });
-
-                    editorConfig = Object.extend(editorConfig, {
-                        store: store, 
-                        triggerAction: "all",
-                        editable: false,
-                        mode: "local",
-                        valueField: 'value',
-                        displayField: 'key'
-                    });
-
-                    editor = new Ext.form.ComboBox(editorConfig);
-                }
-                // CHECKBOX
-                else if (fields[i].type == "checkbox") {
-                    cm = new Ext.grid.CheckColumn({
-                        header: ts(fields[i].label),
-                        dataIndex: fields[i].key,
-                        renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
-                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                                metaData.css += " grid_value_inherited";
-                            }
-                            metaData.css += ' x-grid3-check-col-td';
-                            return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
-                        }.bind(this, fields[i].key)
-                    });
-                    gridColumns.push(cm);
-                    plugins.push(cm);
-                }
-                // WYSIWYG
-                else if (fields[i].type == "wysiwyg") {
-                    editor = new Ext.form.HtmlEditor({
-                        width: 500,
-                        height: 300
-                    });
-                    gridColumns.push({header: ts(fields[i].label), width: 500, sortable: true, dataIndex: fields[i].key, editor: editor, renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
-                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                                metaData.css += " grid_value_inherited";
-                            }
-                            return value;
-                        }.bind(this, fields[i].key)
-                    });
-                    editor = null;
-                }
-                // IMAGE 
-                else if (fields[i].type == "image") {
-                    gridColumns.push({header: ts(fields[i].label), width: 100, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-
-                        if (value && value.id) {
-                            return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id + '/width/88/aspectratio/true" />';
-                        }
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-                // GEOPOINT
-                else if (fields[i].type == "geopoint") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-
-                        if (value) {
-                            if (value.latitude && value.longitude) {
-
-                                var width = 140;
-                                var mapZoom = 10;
-                                var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + value.longitude + "," + value.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + value.longitude + "," + value.latitude + ",pointImagePattern:red";
-                                if (pimcore.settings.google_maps_api_key) {
-                                    mapUrl = "http://maps.google.com/staticmap?center=" + value.latitude + "," + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + value.latitude + "," + value.longitude + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
-                                }
-
-                                return '<img src="' + mapUrl + '" />';
-                            }
-                        }
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-                // HREF
-                else if (fields[i].type == "href") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-                        return value;
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-                // MULTIHREF & OBJECTS
-                else if (fields[i].type == "multihref" || fields[i].type == "objects") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-
-                        if (value.length > 0) {
-                            return value.join("<br />");
-                        }
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-                // SLIDER
-                else if (fields[i].type == "slider") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-                        return value;
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-                // PASSWORD
-                else if (fields[i].type == "password") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-
-                        return "**********";
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-                // LINK
-                else if (fields[i].type == "link") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-                        return value;
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-                // MULTISELECT
-                else if (fields[i].type == "multiselect") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-                        if (value!=null && value.length > 0) {
-                            return value.join(",");
-                        }
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-                // TABLE
-                else if (fields[i].type == "table") {
-                    gridColumns.push({header: ts(fields[i].label), width: 150, sortable: false, dataIndex: fields[i].key, editable: false, renderer: function (key, value, metaData, record) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-
-                        if (value && value.length > 0) {
-                            var table = '<table cellpadding="2" cellspacing="0" border="1">';
-                            for (var i = 0; i < value.length; i++) {
-                                table += '<tr>';
-                                for (var c = 0; c < value[i].length; c++) {
-                                    table += '<td>' + value[i][c] + '</td>';
-                                }
-                                table += '</tr>';
-                            }
-                            table += '</table>';
-                            return table;
-                        }
-                        return "";
-                    }.bind(this, fields[i].key)});
-                    editor = null;
-                }
-
-                // add column
-                if (editor) {
-                    gridColumns.push({header: ts(fields[i].label), sortable: true, dataIndex: fields[i].key, editor: editor, renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
-                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                            metaData.css += " grid_value_inherited";
-                        }
-                        return value;
-                    }.bind(this, fields[i].key)
-                    });
-                }
-                
-                // is visible or not   
-                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleGridView;
-                gridColumns[gridColumns.length-1].layout = fields[i];
-            }
-        }
-        
         // add filters
-        var selectFilterFields;
-        var configuredFilters = [{
-            type: "date",
-            dataIndex: "creationDate"
-        },{
-            type: "date",
-            dataIndex: "modificationDate"
-        }];
-        
-        for (var i = 0; i < fields.length; i++) {
-            if (in_array(fields[i].type, validFieldTypes)) {
-                store = null;
-                selectFilterFields = null;
-                
-                if (fields[i].type == "input" || fields[i].type == "textarea" || fields[i].type == "wysiwyg" || fields[i].type == "time") {
-                    configuredFilters.push({
-                        type: 'string',
-                        dataIndex: fields[i].key
-                    });
-                } else if (fields[i].type == "numeric" || fields[i].type == "slider") {
-                    configuredFilters.push({
-                        type: 'numeric',
-                        dataIndex: fields[i].key
-                    });
-                } else if (fields[i].type == "date" || fields[i].type == "datetime") {     
-                    configuredFilters.push({
-                        type: 'date',
-                        dataIndex: fields[i].key
-                    });
-                } else if (fields[i].type == "select" || fields[i].type == "country" || fields[i].type == "language") {
-                    selectFilterFields = [];
-                    
-                    store = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        root: 'store',
-                        fields: ['key',"value"],
-                        data: fields[i].config
-                    });
-                    
-                    store.each(function (rec) {
-                        selectFilterFields.push(rec.data.value);                                                               
-                    });                   
-                                                            
-                    configuredFilters.push({
-                        type: 'list',
-                        dataIndex: fields[i].key,
-                        options: selectFilterFields
-                    });
-                } else if (fields[i].type == "checkbox") {
-                    configuredFilters.push({
-                        type: 'boolean',
-                        dataIndex: fields[i].key
-                    });
-                } else if (fields[i].type == "multiselect") {
-                    selectFilterFields = [];
-                    
-                    store = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        root: 'options',
-                        fields: ['key',"value"],
-                        data: fields[i].layout
-                    });
-                    
-                    store.each(function (rec) {
-                        selectFilterFields.push(rec.data.value);                                                               
-                    });                   
-                                                            
-                    configuredFilters.push({
-                        type: 'list',
-                        dataIndex: fields[i].key,
-                        options: selectFilterFields
-                    });
-                }
-            }
-        }
-        
-        // filters
-        this.gridfilters = new Ext.ux.grid.GridFilters({
-            encode: true,
-            local: false,
-            filters: configuredFilters
-        });
+        this.gridfilters = gridHelper.getGridFilters();
+
         plugins.push(this.gridfilters);
         
         
@@ -588,7 +187,7 @@ pimcore.object.search = Class.create({
             stripeRows: true,
             plugins: plugins,
             border: true,
-            sm: selectionColumn,
+            sm: gridHelper.getSelectionColumn(),
             trackMouseOver: true,
             loadMask: true,
             viewConfig: {
