@@ -131,19 +131,26 @@ if (!$skipInstall) {
     $db->getConnection()->exec("SET NAMES UTF8");
     $db->getConnection()->exec("SET storage_engine=InnoDB;");
 
-    //use the install.sql from the original development pimcore,
-    $db->getConnection()->exec(file_get_contents($pimcoreRoot . "/pimcore/modules/install/mysql/install.sql"));
 
+    // insert db dump
+    //$db = Pimcore_Resource::get();
+    $mysqlInstallScript = file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql");
 
+    // remove comments in SQL script
+    $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/","",$mysqlInstallScript);
 
+    // get every command as single part
+    $mysqlInstallScripts = explode(";",$mysqlInstallScript);
 
-
-    // wait while dump is inserted, the PDO driver executes the SQL unbuffered so this this asynchronous
-    $tables = array();
-    $requiredTables = 32;
-    while (count($tables) < $requiredTables) {
-        $tables = $db->fetchAll("SHOW FULL TABLES");
+    // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..."
+    foreach ($mysqlInstallScripts as $m) {
+        $sql = trim($m);
+        if(strlen($sql) > 0) {
+            $sql .= ";";
+            $db->exec($m);
+        }
     }
+
 
     // insert data into database
     $db->insert("assets", array(

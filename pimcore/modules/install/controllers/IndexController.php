@@ -197,7 +197,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
             // get every command as single part
             $mysqlInstallScripts = explode(";",$mysqlInstallScript);
 
-            // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..."
+            // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..." seems to be a PDO bug after some googling
             foreach ($mysqlInstallScripts as $m) {
                 $sql = trim($m);
                 if(strlen($sql) > 0) {
