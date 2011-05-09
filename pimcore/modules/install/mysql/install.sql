@@ -114,7 +114,7 @@ CREATE TABLE `documents_doctypes` (
   KEY `priority` (`priority`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `documents_elements` ;
+DROP TABLE IF EXISTS `documents_elements`;
 CREATE TABLE `documents_elements` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL DEFAULT '',

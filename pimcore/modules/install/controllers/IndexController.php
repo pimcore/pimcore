@@ -189,16 +189,25 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
             // insert db dump
             $db = Pimcore_Resource::get();
-            $db->getConnection()->exec(file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql"));
+            $mysqlInstallScript = file_get_contents(PIMCORE_PATH . "/modules/install/mysql/install.sql");
 
-            // wait while dump is inserted, the PDO driver executes the SQL unbuffered so this this asynchronous
-            // and you have to create a new database connection
-            $db = Pimcore_Resource::reset();
-            $tables = array();
-            $requiredTables = 32;
-            while (count($tables) < $requiredTables) {
-                $tables = $db->fetchAll("SHOW FULL TABLES");
+            // remove comments in SQL script
+            $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/","",$mysqlInstallScript);
+
+            // get every command as single part
+            $mysqlInstallScripts = explode(";",$mysqlInstallScript);
+
+            // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..."
+            foreach ($mysqlInstallScripts as $m) {
+                $sql = trim($m);
+                if(strlen($sql) > 0) {
+                    $sql .= ";";
+                    $db->exec($m);
+                }
             }
+
+            // get a new database connection
+            $db = Pimcore_Resource::reset();
 
             // insert data into database
             $db->insert("assets", array(
