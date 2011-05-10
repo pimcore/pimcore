@@ -14,8 +14,5 @@
  */
 
 class Pimcore_Resource extends Pimcore_Resource_Mysql {
-
-
     
-
 }
