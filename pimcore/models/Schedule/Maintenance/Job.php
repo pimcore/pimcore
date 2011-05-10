@@ -76,6 +76,7 @@ class Schedule_Maintenance_Job {
      */
     public function lock() {
         file_put_contents($this->getLockFile(), time());
+        chmod($this->getLockFile(), 0766);
     }
 
     /**

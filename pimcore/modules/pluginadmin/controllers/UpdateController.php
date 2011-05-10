@@ -140,6 +140,7 @@ class Pluginadmin_UpdateController extends Pimcore_Controller_Action_Admin {
                     chmod(dirname($revDir . $file->path), 0755);
                 }
                 file_put_contents($revDir . $file->path, base64_decode($file->content));
+                chmod($revDir . $file->path, 0766);
             }
         }
 

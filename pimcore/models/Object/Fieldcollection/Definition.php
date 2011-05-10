@@ -172,6 +172,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         }
 
         file_put_contents($definitionFile,$serialized);
+        chmod($definitionFile, 0766);
         
         $extendClass = "Object_Fieldcollection_Data_Abstract";
         if ($this->getParentClass()) {
@@ -233,9 +234,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         }
 
         file_put_contents($classFile,$cd);
-
-
-
+        chmod($classFile,0766);
         
         
         // update classes

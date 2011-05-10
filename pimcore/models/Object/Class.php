@@ -248,6 +248,7 @@ class Object_Class extends Pimcore_Model_Abstract {
             throw new Exception("Cannot write class file in " . $classFile . " please check the rights on this directory");
         }
         file_put_contents($classFile,$cd);
+        chmod($classFile, 0766);
 
         // create list class
 
@@ -272,7 +273,7 @@ class Object_Class extends Pimcore_Model_Abstract {
             throw new Exception("Cannot write class file in " . $classListFile . " please check the rights on this directory");
         }
         file_put_contents($classListFile,$cd);
-
+        chmod($classListFile, 0766);
 
         // empty object cache
         try {

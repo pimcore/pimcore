@@ -62,6 +62,7 @@ class Webservice_SoapController extends Pimcore_Controller_Action {
         $wsdl = str_replace("Webservice_Data_", "", $wsdl); // normalize classnames
         $wsdlFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/wsdl.xml";
         file_put_contents($wsdlFile, $wsdl);
+        chmod($wsdlFile, 0766);
 
 
         // let's go

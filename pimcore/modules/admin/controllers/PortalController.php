@@ -61,6 +61,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         }
         
         file_put_contents($this->getConfigFile(), serialize($config));
+        chmod($this->getConfigFile(), 0766);
     }
     
     public function getConfigurationAction () {

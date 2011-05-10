@@ -133,9 +133,13 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         }
 
         file_put_contents($fileDestPath, base64_decode($file["content"]));
+        chmod($fileDestPath, 0766);
 
         // write revision information
-        file_put_contents($parentPath . "/" . $id .  "/.pimcore_extension_revision", $revision);
+        $revisionFile = $parentPath . "/" . $id .  "/.pimcore_extension_revision";
+        file_put_contents($revisionFile, $revision);
+        chmod($revisionFile, 0766);
+
 
         $this->_helper->json(array("success" => true));
     }
@@ -165,7 +169,9 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         @unlink($fileDestPath);
 
         // write revision information
-        file_put_contents($parentPath . "/" . $id .  "/.pimcore_extension_revision", $revision);
+        $revisionFile = $parentPath . "/" . $id .  "/.pimcore_extension_revision";
+        file_put_contents($revisionFile, $revision);
+        chmod($revisionFile, 0766);
 
         $this->_helper->json(array("success" => true));
     }

@@ -128,6 +128,7 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
         if(!is_file($scriptPath)) {
             $scriptContent = $this->minify($scriptContent);
             file_put_contents($scriptPath, $scriptContent);
+            chmod($scriptPath, 0766);
         }
         return $scriptPath;
     }

@@ -87,6 +87,7 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
                     
                     // put minified contents into one single file
                     file_put_contents($stylesheetPath, $stylesheetContent);
+                    chmod($stylesheetPath, 0766);
                 }
                 
                 $head = $html->find("head",0);

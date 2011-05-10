@@ -568,8 +568,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $tmpData = iconv($encoding, "UTF-8", $tmpData);
                 }
                 //store data for further usage
-                file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations", $tmpData);
-                file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original", $tmpData);
+                $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations";
+                file_put_contents($importFile, $tmpData);
+                chmod($importFile, 0766);
+
+                $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original";
+                file_put_contents($importFileOriginal, $tmpData);
+                chmod($importFileOriginal, 0766);
 
                 // determine csv type
                 $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original");

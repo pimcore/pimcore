@@ -136,7 +136,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             throw new Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
         }
         file_put_contents($definitionFile, serialize($this->model->layoutDefinitions));
-           
+        chmod($definitionFile,0766);
                     
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
@@ -450,6 +450,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             }
             
             file_put_contents($file, $log);
+            chmod($file, 0766);
         }
     }
 }

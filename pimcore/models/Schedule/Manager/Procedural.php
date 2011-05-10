@@ -58,6 +58,7 @@ class Schedule_Manager_Procedural {
 
     public  function setLastExecution() {
         file_put_contents($this->getPidFile(), time());
+        chmod($this->getPidFile(), 0766);
     }
 
     public  function getLastExecution() {

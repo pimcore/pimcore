@@ -232,6 +232,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $file = PIMCORE_DOCUMENT_ROOT . $this->_getParam("path");
             if (is_file($file) && is_writeable($file)) {
                 file_put_contents($file, $this->_getParam("content"));
+                chmod($file, 0766);
 
                 $success = true;
             }
@@ -252,6 +253,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
             if (is_writeable(dirname($file))) {
                 file_put_contents($file, "");
+                chmod($file, 0766);
 
                 $success = true;
             }

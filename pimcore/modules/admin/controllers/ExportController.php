@@ -96,7 +96,9 @@ class Admin_ExportController extends Pimcore_Controller_Action_Admin
             $key = Element_Service::getType($element) . "_" . $element->getId();
 
             $exportSession->apiElements[$key] = array("element" => $apiElement, "path" => $path);
-            file_put_contents($exportDir . "/" .$exportSession->counter."_". $key, serialize(array("element" => $apiElement, "path" => $path)));
+            $exportFile = $exportDir . "/" .$exportSession->counter."_". $key;
+            file_put_contents($exportFile, serialize(array("element" => $apiElement, "path" => $path)));
+            chmod($exportFile, 0766);
 
             $exportSession->elements = array_merge($exportSession->elements, $exportSession->foundRelations);
 

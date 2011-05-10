@@ -178,6 +178,7 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
             }
             
             file_put_contents($file, $log);
+            chmod($file, 0766);
         }
     }
 }

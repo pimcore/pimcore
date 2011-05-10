@@ -146,8 +146,9 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
 
             $importSession->elementCounter++;
 
-            file_put_contents($importDir . "/" . $file, serialize($apiData));
-
+            $importFile = $importDir . "/" . $file;
+            file_put_contents($importFile, serialize($apiData));
+            chmod($importFile, 0766);
         }
 
 
@@ -172,7 +173,9 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
                 $apiElement->target = $importSession->idMapping[$apiElement->internalType][$apiElement->target];
             }
 
-            file_put_contents($importDir . "/" . $file, serialize($apiData));
+            $importFile = $importDir . "/" . $file;
+            file_put_contents($importFile, serialize($apiData));
+            chmod($importFile, 0766);
         }
 
 

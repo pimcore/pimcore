@@ -190,7 +190,9 @@ class Pimcore_Update {
                 if($file->type == "file") {
                     if ($file->action == "update" || $file->action == "add") {
                         $newPath = str_replace("/","~~~",$file->path);
-                        file_put_contents($filesDir."/".$newPath, base64_decode((string) $file->content));
+                        $newFile = $filesDir."/".$newPath;
+                        file_put_contents($newFile, base64_decode((string) $file->content));
+                        chmod($newFile, 0766);
                     }
                     
                     $db->insert(self::$tmpTable, array(
@@ -199,7 +201,9 @@ class Pimcore_Update {
                         "action" => (string)$file->action
                     ));
                 } else if ($file->type == "script") {
-                    file_put_contents($scriptsDir. $file->path, base64_decode((string) $file->content));
+                    $newScript = $scriptsDir. $file->path;
+                    file_put_contents($newScript, base64_decode((string) $file->content));
+                    chmod($newScript, 0766);
                 }
             }
         }

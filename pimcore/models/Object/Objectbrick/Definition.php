@@ -80,6 +80,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
 
         file_put_contents($serializedFilename, $serialized);
+        chmod($serializedFilename, 0766);
 
         $extendClass = "Object_Objectbrick_Data_Abstract";
         if ($this->getParentClass()) {
@@ -139,7 +140,9 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
             mkdir($fieldClassFolder,0766,true);
         }
 
-        file_put_contents($fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php",$cd);
+        $fieldClassFile = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
+        file_put_contents($fieldClassFile,$cd);
+        chmod($fieldClassFile, 0766);
 
         $this->createContainerClasses();
         $this->updateDatabase(); 
@@ -307,7 +310,9 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                     mkdir($folder,0766,true);
                 }
 
-                file_put_contents($folder . "/" . ucfirst($fieldname) . ".php",$cd);
+                $file = $folder . "/" . ucfirst($fieldname) . ".php";
+                file_put_contents($file,$cd);
+                chmod($file, 0766);
             }
         }
 

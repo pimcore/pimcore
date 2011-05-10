@@ -73,6 +73,7 @@ class Pimcore_Tool_Admin {
         if(!is_file($scriptPath)) {
             $scriptContent = JSMin::minify($scriptContent);
             file_put_contents($scriptPath, $scriptContent);
+            chmod($scriptPath, 0766);
         }
 
         return str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath);
@@ -86,6 +87,7 @@ class Pimcore_Tool_Admin {
 
             // put minified contents into one single file
             file_put_contents($stylesheetPath, $stylesheetContent);
+            chmod($stylesheetPath, 0766);
         }
 
         return str_replace(PIMCORE_DOCUMENT_ROOT,"",$stylesheetPath);

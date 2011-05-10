@@ -300,6 +300,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             }
 
             file_put_contents($file, $log);
+            chmod($file, 0766);
         }
     }
 }

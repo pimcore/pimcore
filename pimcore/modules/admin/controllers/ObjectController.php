@@ -1062,6 +1062,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     mkdir($configDir, 0755, true);
                 }
                 file_put_contents($configFile, serialize($gridConfig));
+                chmod($configFile, 0766);
 
 
                 $object->save();
@@ -1678,12 +1679,17 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $data = iconv($encoding, "UTF-8", $data);
         }
 
-        file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->_getParam("id"), $data);
-        file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->_getParam("id") . "_original", $data);
+        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->_getParam("id");
+        file_put_contents($importFile, $data);
+        chmod($importFile, 0766);
+
+        $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->_getParam("id") . "_original";
+        file_put_contents($importFileOriginal, $data);
+        chmod($importFileOriginal, 0766);
 
         $this->_helper->json(array(
-                                  "success" => true
-                             ));
+            "success" => true
+        ));
     }
 
     public function importGetFileInfoAction()

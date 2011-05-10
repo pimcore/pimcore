@@ -168,7 +168,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
         if (!is_file($logfile)) {
             file_put_contents($logfile, "");
-            chmod($logfile, 0755);
+            chmod($logfile, 0766);
         }
 
         if (!is_writable($logfile)) {
@@ -244,6 +244,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         }
 
         file_put_contents($logfile, implode("\n", $lines));
+        chmod($logfile, 0766);
     }
 
     protected function getRemoteHost() {
