@@ -17,7 +17,7 @@
 
 class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
-    public static $chmod = 0755;
+    public static $chmod = 0766;
 
     /**
      * possible types of an asset
@@ -1039,10 +1039,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $conf = Pimcore_Config::getSystemConfig();
         $destinationPath = PIMCORE_TEMPORARY_DIRECTORY . "/asset_" . $this->getId() . "_" . md5(microtime());
 
-        $f = fopen($destinationPath, "w+");
-        fwrite($f, $this->getData());
-        fclose($f);
-
+        file_put_contents($destinationPath, $this->getData());
         chmod($destinationPath, self::$chmod);
 
         return str_replace(PIMCORE_DOCUMENT_ROOT, "", $destinationPath);

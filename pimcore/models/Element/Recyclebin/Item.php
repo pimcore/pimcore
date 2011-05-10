@@ -107,6 +107,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         }
         
         file_put_contents($this->getStoreageFile(),$data);
+        chmod($this->getStoreageFile(), 0766);
     }
     
     public function delete () {

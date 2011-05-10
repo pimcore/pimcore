@@ -223,7 +223,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data"; 
         if(!is_dir($fieldClassFolder)) {
-            mkdir($fieldClassFolder,0755,true);
+            mkdir($fieldClassFolder,0766,true);
         }
 
 
