@@ -46,8 +46,6 @@ abstract class Pimcore_Model_Abstract {
      */
     protected function initResource($key = null) {
 
-        $supportedResources = array("mysql","pgsql");
-
         if (!$key) {
 
             $classes = $this->getParentClasses(get_class($this));
@@ -82,7 +80,10 @@ abstract class Pimcore_Model_Abstract {
             }
         }
         else {
-            $resource = $key . "_Resource";
+            $resourceClass = $key . "_Resource_" . ucfirst(Pimcore_Resource::getType());
+            if(!$resource = $this->determineResourceClass($resourceClass)) {
+                $resource = $key . "_Resource";
+            }
         }
 
         if(!$resource) {
