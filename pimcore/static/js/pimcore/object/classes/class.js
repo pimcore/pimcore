@@ -97,6 +97,7 @@ pimcore.object.classes.klass = Class.create({
         this.panel = new Ext.Panel({
             border: false,
             layout: "border",
+            closable: true,
             title: name,
             items: [
                 {
@@ -117,6 +118,7 @@ pimcore.object.classes.klass = Class.create({
 
         this.editpanel.add(this.getRootPanel());
         this.setCurrentNode("root");
+        this.parentPanel.getEditPanel().activate(this.panel);
 
         pimcore.layout.refresh();
     },

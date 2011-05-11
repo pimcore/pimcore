@@ -92,26 +92,6 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         return this.tree;
     },
 
-//    getEditPanel: function () {
-//        if (!this.editPanel) {
-//            this.editPanel = new Ext.Panel({
-//                region: "center",
-//                layout: "fit"
-//            });
-//        }
-//
-//        return this.editPanel;
-//    },
-
-//    getTreeNodeListeners: function () {
-//        var treeNodeListeners = {
-//            'click' : this.onTreeNodeClick,
-//            "contextmenu": this.onTreeNodeContextmenu
-//        };
-//
-//        return treeNodeListeners;
-//    },
-
     onTreeNodeClick: function () {
         
         Ext.Ajax.request({
@@ -127,28 +107,16 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
         var data = Ext.decode(response.responseText);
 
-        if (this.fieldPanel) {
+        /*if (this.fieldPanel) {
             this.getEditPanel().removeAll();
             delete this.fieldPanel;
-        }
+        }*/
 
-        this.fieldPanel = new pimcore.object.objectbricks.field(data, this);
+        var fieldPanel = new pimcore.object.objectbricks.field(data, this);
         pimcore.layout.refresh();
         
     },
 
-//    onTreeNodeContextmenu: function () {
-//        this.select();
-//
-//        var menu = new Ext.menu.Menu();
-//        menu.add(new Ext.menu.Item({
-//            text: t('delete'),
-//            iconCls: "pimcore_icon_delete",
-//            handler: this.attributes.reference.deleteField.bind(this)
-//        }));
-//
-//        menu.show(this.ui.getAnchor());
-//    },
 
     addField: function () {
         Ext.MessageBox.prompt(t('add_objectbrick'), t('enter_the_name_of_the_new_objectbrick'), this.addFieldComplete.bind(this), null, null, "");

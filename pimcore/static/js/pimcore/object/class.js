@@ -99,9 +99,8 @@ pimcore.object.klass = Class.create({
 
     getEditPanel: function () {
         if (!this.editPanel) {
-            this.editPanel = new Ext.Panel({
-                region: "center",
-                layout: "fit"
+            this.editPanel = new Ext.TabPanel({
+                region: "center"
             });
         }
 
@@ -133,12 +132,12 @@ pimcore.object.klass = Class.create({
 
         var data = Ext.decode(response.responseText);
 
-        if (this.classPanel) {
+        /*if (this.classPanel) {
             this.getEditPanel().removeAll();
             delete this.classPanel;
-        }
+        }*/
 
-        this.classPanel = new pimcore.object.classes.klass(data, this);
+        var classPanel = new pimcore.object.classes.klass(data, this);
         pimcore.layout.refresh();
     },
 

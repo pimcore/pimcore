@@ -99,9 +99,8 @@ pimcore.object.fieldcollection = Class.create({
 
     getEditPanel: function () {
         if (!this.editPanel) {
-            this.editPanel = new Ext.Panel({
-                region: "center",
-                layout: "fit"
+            this.editPanel = new Ext.TabPanel({
+                region: "center"
             });
         }
 
@@ -132,12 +131,12 @@ pimcore.object.fieldcollection = Class.create({
 
         var data = Ext.decode(response.responseText);
 
-        if (this.fieldPanel) {
+        /*if (this.fieldPanel) {
             this.getEditPanel().removeAll();
             delete this.fieldPanel;
-        }
+        }*/
 
-        this.fieldPanel = new pimcore.object.fieldcollections.field(data, this);
+        var fieldPanel = new pimcore.object.fieldcollections.field(data, this);
         pimcore.layout.refresh();
         
     },
