@@ -388,5 +388,39 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     }
 
 
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param boolean $omitMandatoryCheck
+     * @throws Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false){
+
+
+        if(!$omitMandatoryCheck){
+            if ($data instanceof Object_Fieldcollection) {
+                foreach ($data as $item) {
+
+                    if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
+                        continue;
+                    }
+
+                    try {
+                        $collectionDef = Object_Fieldcollection_Definition::getByKey($item->getType());
+                    } catch (Exception $e) {
+                        continue;
+                    }
+
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $key = $fd->getName();
+                        $getter = "get" . ucfirst($key);
+                        $fd->checkValidity($item->$getter());
+                    }
+                }
+            }
+        }
+    }
+
     //TODO: validity and sanity check
 }

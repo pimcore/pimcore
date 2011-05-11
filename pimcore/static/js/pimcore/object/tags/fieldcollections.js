@@ -338,9 +338,49 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     isDirty: function() {
+        // HACK: always true - always transfer the values of the fieldcollection to the server
         return true;
-        return this.dirty;
-    }    
+    },
+
+    isMandatory: function () {
+        var element;
+
+        for(var s=0; s<this.layout.items.items.length; s++) {
+            if(this.currentElements[this.layout.items.items[s].key]) {
+                element = this.currentElements[this.layout.items.items[s].key];
+
+                for (var u=0; u<element.fields.length; u++) {
+                    if(element.fields[u].isMandatory()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    },
+
+    isInvalidMandatory: function () {
+        var element;
+        var isInvalid = false;
+
+        for(var s=0; s<this.layout.items.items.length; s++) {
+            if(this.currentElements[this.layout.items.items[s].key]) {
+                element = this.currentElements[this.layout.items.items[s].key];
+
+                for (var u=0; u<element.fields.length; u++) {
+                    if(element.fields[u].isInvalidMandatory()) {
+                        isInvalid = true;
+                        element.fields[u].markMandatory();
+                    } else {
+                        element.fields[u].unmarkMandatory();
+                    }
+                }
+            }
+        }
+
+        return isInvalid;
+    }
 });
 
 pimcore.object.tags.fieldcollections.addMethods(pimcore.object.helpers.edit);
