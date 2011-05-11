@@ -258,6 +258,7 @@ pimcore.extensionmanager.share = Class.create({
     uploadSummary: function (transport) {
         var updateInfo = Ext.decode(transport.responseText);
         this.steps = updateInfo.steps;
+        this.actions = updateInfo.actions;
         this.stepAmount = this.steps.length;
 
         var content = "<b>" + t("share_extension_upload_summary") + "</b>";
@@ -288,84 +289,138 @@ pimcore.extensionmanager.share = Class.create({
 
     uploadStart: function () {
 
+        this.callAction("start", this.startParallelJobs.bind(this));
+    },
+
+
+    callAction: function (name, callback) {
+        Ext.Ajax.request({
+            url: "/admin/extensionmanager/share/" + this.actions[name].action,
+            params: this.actions[name].params,
+            success: function (callback, response) {
+                var r = Ext.decode(response.responseText);
+
+                try {
+                    if (r.success) {
+                        if(typeof callback == "function") {
+                            callback();
+                        }
+                    } else {
+                        throw "error";
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                    this.error(e + "<br />" + response.responseText);
+                }
+            }.bind(this, callback),
+            failure: this.error.bind(this)
+        });
+    },
+
+    startParallelJobs: function () {
+
         this.updateshareWindow.removeAll();
 
         this.progressBar = new Ext.ProgressBar({
             text: t('initializing'),
             style: "margin: 10px;"
         });
+
         this.updateshareWindow.add({
             style: "margin: 30px 10px 0 10px",
             bodyStyle: "padding: 10px;",
             html: t("please_wait")
         });
         this.updateshareWindow.add(this.progressBar);
-
         this.updateshareWindow.doLayout();
 
-        window.setTimeout(this.processStep.bind(this), 500);
+        this.parallelJobsRunning = 0;
+        this.parallelJobsFinished = 0;
+        this.parallelJobsStarted = 0;
+        this.parallelJobsTotal = this.steps.length;
+
+        this.parallelJobsInterval = window.setInterval(function () {
+
+            var maxConcurrentJobs = 10;
+
+            if(this.parallelJobsFinished == this.parallelJobsTotal) {
+                clearInterval(this.parallelJobsInterval);
+
+                this.callAction("verify", function () {
+
+                    this.finishLink = "http://www.pimcore.org/resources/extensions/edit?token=" + pimcore.settings.liveconnect.getToken() + "&id=" + this.currentExtension.get("id") + "&finish=1";
+
+                    this.updateshareWindow.removeAll();
+                    this.updateshareWindow.add({
+                        bodyStyle: "padding: 20px;",
+                        html: t("extensionmanager_upload_finished"),
+                        buttons: [{
+                            text: "<b>" + t("click_here_to_proceed") + "</b>",
+                            iconCls: "pimcore_icon_apply",
+                            handler: function () {
+                                window.open(this.finishLink);
+                            }.bind(this)
+                        }]
+                    });
+                    this.updateshareWindow.doLayout();
+
+                    this.currentExtension = null;
+                }.bind(this));
+
+                return;
+            }
+
+            if(this.parallelJobsRunning < maxConcurrentJobs && this.parallelJobsStarted < this.parallelJobsTotal) {
+
+                this.parallelJobsRunning++;
+
+                Ext.Ajax.request({
+                    url: "/admin/extensionmanager/share/" + this.steps[this.parallelJobsStarted].action,
+                    success: function (response) {
+
+                        try {
+                            var response = Ext.decode(response.responseText);
+                            if(!response.success) {
+                                // if the download fails, stop all activity
+                                throw response;
+                            }
+                        } catch (e) {
+                            clearInterval(this.parallelJobsInterval);
+                            this.error("Download fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + response);
+                        }
+
+                        this.parallelJobsFinished++;
+                        this.parallelJobsRunning-=1;
+
+                        // update progress bar
+                        var status = this.parallelJobsFinished / this.parallelJobsTotal;
+                        var percent = Math.ceil(status * 100);
+
+                        try {
+                            this.progressBar.updateProgress(status, percent + "%");
+                        } catch (e) {}
+
+                    }.bind(this),
+                    failure: function () {
+                        clearInterval(this.parallelJobsInterval);
+                        this.error("Download fails, see debug.log for more details.");
+                    }.bind(this),
+                    params: this.steps[this.parallelJobsStarted].params
+                });
+
+                this.parallelJobsStarted++;
+            }
+        }.bind(this),50);
     },
 
-    processStep: function (definedJob) {
+    error: function (error) {
 
-        var status = (1 - (this.steps.length / this.stepAmount));
-        var percent = Math.ceil(status * 100);
-
-        this.progressBar.updateProgress(status, percent + "%");
-
-        if (this.steps.length > 0) {
-
-            var nextJob;
-            if (typeof definedJob == "object") {
-                nextJob = definedJob;
-            }
-            else {
-                nextJob = this.steps.shift();
-            }
-
-            Ext.Ajax.request({
-                url: "/admin/extensionmanager/share/" + nextJob.action,
-                params: nextJob.params,
-                success: function (job, response) {
-                    var r = Ext.decode(response.responseText);
-
-                    try {
-                        if (r.success) {
-                            this.lastResponse = r;
-                            window.setTimeout(this.processStep.bind(this), 100);
-                        }
-                        else {
-                            this.error(job);
-                        }
-                    }
-                    catch (e) {
-                        this.error(job);
-                    }
-                }.bind(this, nextJob)
-            });
+        if(typeof error == "undefined") {
+            error = "Unknown Error";
         }
-        else {
 
-            this.updateshareWindow.removeAll();
-            this.updateshareWindow.add({
-                bodyStyle: "padding: 20px;",
-                html: "Your extension was successfully submitted to the extension repository. <br />Please click on the following link to complete the upload and add some additional information to your extension.<br /><br /><b><a href='http://www.pimcore.org/resources/extensions/edit?token=" + pimcore.settings.liveconnect.getToken() + "&id=" + this.currentExtension.get("id") + "&finish=1' target='_blank'>Click here to proceed</a></b>"
-                /*buttons: [{
-                    text: t("close"),
-                    iconCls: "pimcore_icon_apply",
-                    handler: function () {
-                        this.updateshareWindow.close();
-                    }.bind(this)
-                }]*/
-            });
-            this.updateshareWindow.doLayout();
-
-            this.currentExtension = null;
-        }
-    },
-
-    error: function (job) {
         this.updateshareWindow.close();
-        Ext.MessageBox.alert(t('error'), "Error");
+        Ext.MessageBox.alert(t('error'), error);
     }
 });

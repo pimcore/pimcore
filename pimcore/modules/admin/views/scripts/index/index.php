@@ -30,7 +30,7 @@
     <?php // define stylesheets ?>
     <?php
         $conf = Pimcore_Config::getSystemConfig();
-        
+
         $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css";
         if ($conf->general->theme) {
             $themeUrl = $conf->general->theme;
@@ -57,41 +57,41 @@
             "/pimcore/static/css/ext-admin-overwrite.css"
         );
     ?>
-    
+
     <!-- stylesheets -->
     <?php foreach ($styles as $style) { ?>
         <link rel="stylesheet" type="text/css" href="<?php echo $style ?>?_dc=<?php echo Pimcore_Version::$revision ?>" />
     <?php } ?>
 
-    
-    
-    
-    
+
+
+
+
     <?php //****************************************************************************************** ?>
-    
-    
-    
-    
-    
+
+
+
+
+
     <?php // define scripts ?>
     <?php
-        
+
         // SCRIPT LIBRARIES
         $scriptExtAdapter = "lib/ext/adapter/jquery/ext-jquery-adapter.js";
         $scriptExt = "lib/ext/ext-all.js";
-        if (PIMCORE_DEVMODE) { 
+        if (PIMCORE_DEVMODE) {
             $scriptExtAdapter = "lib/ext/adapter/jquery/ext-jquery-adapter-debug.js";
             $scriptExt = "lib/ext/ext-all-debug.js";
         }
-        
+
         $scriptLibs = array(
-            
-            // library            
+
+            // library
             "lib/prototype-light.js",
             "lib/jquery-1.4.2.min.js",
             "lib/jquery.color.js",
             $scriptExtAdapter,
-            
+
             $scriptExt,
 
             "lib/ext-plugins/Notification/Ext.ux.Notification.js",
@@ -131,31 +131,33 @@
             "lib/ext-plugins/ux/gridfilters/filter/BooleanFilter.js",
             "lib/ext-plugins/ux/fileuploadfield/FileUploadField.js",
             "lib/ckeditor/ckeditor.js",
-        
+
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",
 
             "lib/codemirror/js/codemirror.js"
         );
-        
-        
+
+
         // PIMCORE SCRIPTS
         $scripts = array(
-            
+
             // fixes for libraries
             "pimcore/libfixes.js",
-            
+
             // small libs
             "lib/array_merge.js",
             "lib/array_merge_recursive.js",
-                  
+
             // runtime
             "pimcore/namespace.js",
             "pimcore/functions.js",
             "pimcore/globalmanager.js",
             "pimcore/helpers.js",
-        
+
             "pimcore/user.js",
+
+            // tools
 
             // settings
             "pimcore/settings/user/panel.js",
