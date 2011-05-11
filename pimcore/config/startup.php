@@ -16,14 +16,7 @@
 error_reporting(E_ALL ^ E_NOTICE);
 
 // configure some constants needed by pimcore
-if ($_SERVER["DOCUMENT_ROOT"]) {
-    $pimcoreDocumentRoot = $_SERVER["DOCUMENT_ROOT"];
-    $pimcoreDocumentRoot = rtrim($pimcoreDocumentRoot,"/\\");
-}
-else {
-    // commandline, ...
-    $pimcoreDocumentRoot = str_replace(DIRECTORY_SEPARATOR . "pimcore" . DIRECTORY_SEPARATOR . "config", "", dirname(__FILE__));
-}
+$pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..'); 
 
 if (!defined("PIMCORE_DOCUMENT_ROOT"))  define("PIMCORE_DOCUMENT_ROOT", $pimcoreDocumentRoot);
 
