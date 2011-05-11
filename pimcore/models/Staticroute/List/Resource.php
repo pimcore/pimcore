@@ -35,4 +35,16 @@ class Staticroute_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         return $routes;
     }
 
+
+    public function getTotalCount() {
+
+        try {
+            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM staticroutes " . $this->getCondition());
+        } catch (Exception $e) {
+
+        }
+
+        return $amount["amount"];
+    }
+
 }

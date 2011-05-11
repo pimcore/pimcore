@@ -547,7 +547,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $routes[] = $route;
             }
 
-            $this->_helper->json(array("data" => $routes, "success" => true, "total" => count($routes)));
+            $this->_helper->json(array("data" => $routes, "success" => true, "total" => $list->getTotalCount()));
         }
 
         $this->_helper->json(false);
