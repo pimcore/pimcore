@@ -34,7 +34,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }
 
         for (var i = 0; i < this.layoutConf.options.length; i++) {
-            store.push([this.layoutConf.options[i].value, this.layoutConf.options[i].key]);
+            store.push([this.layoutConf.options[i].value, ts(this.layoutConf.options[i].key)]);
             validValues.push(this.layoutConf.options[i].value);
         }
 
