@@ -522,4 +522,28 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     {
         return $this->width;
     }
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param boolean $omitMandatoryCheck
+     * @throws Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false){
+
+        $data = $data->getItems();
+        $conf = Pimcore_Config::getSystemConfig();
+        if($conf->general->validLanguages) {
+            $languages = explode(",",$conf->general->validLanguages);
+        }
+
+        if(!$omitMandatoryCheck){
+            foreach ($languages as $language) {
+                foreach ($this->getFieldDefinitions() as $fd) {
+                    $fd->checkValidity($data[$language][$fd->getName()]);
+                }
+            }
+        }
+    }
 }

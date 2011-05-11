@@ -134,6 +134,10 @@ pimcore.object.tags.abstract = Class.create({
         return false;
     },
 
+    isMandatory: function () {
+        return this.layoutConf.mandatory;
+    },
+
     isDirty: function () {
         var dirty = false;
         if(this.layout && typeof this.layout.isDirty == "function") {

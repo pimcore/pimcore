@@ -102,7 +102,7 @@ pimcore.object.edit = Class.create({
             try {
                 if (this.dataFields[dataKeys[i]] && typeof this.dataFields[dataKeys[i]] == "object") {
                     currentField = this.dataFields[dataKeys[i]];
-                    if (currentField.layoutConf.mandatory == true && this.object.ignoreMandatoryFields != true) {
+                    if (currentField.isMandatory() == true && this.object.ignoreMandatoryFields != true) {
                         if (currentField.isInvalidMandatory()) {
                             Ext.MessageBox.alert(t("error"), t("mandatory_field_empty"));
                             currentField.markMandatory();
@@ -119,11 +119,6 @@ pimcore.object.edit = Class.create({
                     if(currentField.isDirty()) {
                         values[currentField.getName()] =  currentValue;
                     }
-
-                    //unloaded lazy fields must not be included in save response!
-//                    if(currentValue != false || !currentField.layoutConf.lazyLoading || currentField.dataChanged){
-//                        values[currentField.getName()] =  currentValue;
-//                    } 
                 }
             }
             catch (e) {

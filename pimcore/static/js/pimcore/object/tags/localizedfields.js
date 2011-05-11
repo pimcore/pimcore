@@ -172,9 +172,49 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             }
         }
 
-        return false;        
+        return false;
+    },
 
+    isMandatory: function () {
 
+        var currentLanguage;
+
+        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+
+            currentLanguage = pimcore.settings.websiteLanguages[i];
+
+            for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
+                if(this.languageElements[currentLanguage][s].isMandatory()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    },
+
+    isInvalidMandatory: function () {
+
+        var currentLanguage;
+        var isInvalid = false;
+
+        for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
+
+            currentLanguage = pimcore.settings.websiteLanguages[i];
+
+            for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
+                if(this.languageElements[currentLanguage][s].isMandatory()) {
+                    if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
+                        this.languageElements[currentLanguage][s].markMandatory();
+                        isInvalid = true;
+                    } else {
+                        this.languageElements[currentLanguage][s].unmarkMandatory();
+                    }
+                }
+            }
+        }
+
+        return isInvalid;
     }
 });
 
