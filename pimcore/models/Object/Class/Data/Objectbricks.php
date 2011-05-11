@@ -272,7 +272,9 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     public function delete($object)
     {
         $container = $this->load($object);
-        $container->delete($object);
+        if($container) {
+            $container->delete($object);
+        }
     }
 
     public function getAllowedTypes()
