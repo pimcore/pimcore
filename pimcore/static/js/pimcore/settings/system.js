@@ -915,7 +915,7 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {
-                                fieldLabel: t('cache_disable_cookie'),
+                                fieldLabel: t('cache_disable_cookies'),
                                 name: 'cache.excludeCookie',
                                 value: this.getValue("cache.excludeCookie")
                             }

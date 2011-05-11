@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_List extends Pimcore_Model_List_Abstract implements Iterator {
+class Document_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, Iterator {
 
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required

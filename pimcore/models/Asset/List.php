@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_List extends Pimcore_Model_List_Abstract implements Iterator {
+class Asset_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, Iterator {
 
     /**
      * List of assets

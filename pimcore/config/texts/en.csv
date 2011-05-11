@@ -1,3 +1,4 @@
+"cache_disable_cookies","Disable Cookies (comma separated)"
 "click_here_to_proceed","Click here to proceed"
 "extensionmanager_upload_finished","Your extension was successfully submitted to the extension repository. <br />Please click on the following link to complete the upload and add some additional information to your extension."
 "path_to_lessc_optional","Path to lessc (optional)"
@@ -652,7 +653,6 @@
 "downloading_plugin","Downloading Plugin ... "
 "cache_enabled","Enable"
 "cache_exclude_patterns","Exclude Patterns"
-"cache_disable_cookie","Disable Cookie"
 "systemlog","Systemmessages"
 "stop","Stop"
 "permissions_glossary","Glossary"

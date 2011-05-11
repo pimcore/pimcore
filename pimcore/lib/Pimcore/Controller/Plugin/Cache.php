@@ -53,8 +53,11 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
                 }
 
                 if ($conf->excludeCookie) {
-                    if (isset($_COOKIE[strval($conf->excludeCookie)])) {
-                        return $this->disable();
+                    $cookies = explode(",", strval($conf->excludeCookie));
+                    foreach ($cookies as $cookie) {
+                        if (isset($_COOKIE[trim($cookie)])) {
+                            return $this->disable();
+                        }
                     }
                 }
             }
