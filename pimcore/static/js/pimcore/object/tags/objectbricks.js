@@ -332,7 +332,50 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
 //        console.log("Dirty: " + this.dirty);
         return this.dirty;
-    }    
+    },
+
+    isMandatory: function () {
+        var element;
+
+        var types = Object.keys(this.currentElements);
+        for(var t=0; t < types.length; t++) {
+            if(this.currentElements[types[t]]) {
+                element = this.currentElements[types[t]];
+
+                for (var u=0; u<element.fields.length; u++) {
+                    return element.fields[u].isMandatory();
+                }
+            }
+        }
+
+        return false;
+    },
+
+    isInvalidMandatory: function () {
+        var element;
+        var isInvalid;
+
+        var types = Object.keys(this.currentElements);
+        for(var t=0; t < types.length; t++) {
+            if(this.currentElements[types[t]]) {
+                element = this.currentElements[types[t]];
+
+                for (var u=0; u<element.fields.length; u++) {
+                    if(element.fields[u].isMandatory()) {
+                        if(element.fields[u].isInvalidMandatory()) {
+                            isInvalid = true;
+                            element.fields[u].markMandatory();
+                        } else {
+                            element.fields[u].unmarkMandatory();
+                        }
+                    }
+                }
+            }
+        }
+
+        return isInvalid;
+    }
+
 });
 
 pimcore.object.tags.objectbricks.addMethods(pimcore.object.helpers.edit);

@@ -529,5 +529,41 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         return $code;
     }
 
-    //TODO: validity and sanity check
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param boolean $omitMandatoryCheck
+     * @throws Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false) {
+
+        if(!$omitMandatoryCheck){
+            if ($data instanceof Object_Objectbrick) {
+                $items = $data->getItems();
+                foreach ($items as $item) {
+
+                    if (!$item instanceof Object_Objectbrick_Data_Abstract) {
+                        continue;
+                    }
+
+                    try {
+                        $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
+                    } catch (Exception $e) {
+                        continue;
+                    }
+
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $key = $fd->getName();
+                        $getter = "get" . ucfirst($key);
+                        $fd->checkValidity($item->$getter());
+                    }
+                }
+            }
+        }
+    }
+
+
+    //TODO: sanity check
 }

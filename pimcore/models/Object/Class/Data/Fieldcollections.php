@@ -395,8 +395,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      * @param boolean $omitMandatoryCheck
      * @throws Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false){
-
+    public function checkValidity($data, $omitMandatoryCheck = false) {
 
         if(!$omitMandatoryCheck){
             if ($data instanceof Object_Fieldcollection) {
@@ -422,5 +421,5 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         }
     }
 
-    //TODO: validity and sanity check
+    //TODO: sanity check
 }

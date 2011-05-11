@@ -64,7 +64,10 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     getDeleteControl: function (classDefinitionData) {
 
-        var items = [{xtype: 'tbtext', text: this.availableClasses[classDefinitionData.classname].data.translatedText}];
+        var items = [{xtype: 'tbtext', text: ""}];
+        if(this.availableClasses[classDefinitionData.classname]) {
+            var items = [{xtype: 'tbtext', text: this.availableClasses[classDefinitionData.classname].data.translatedText}];
+        }
 
         items.push({
             cls: "pimcore_block_button_minus",
@@ -184,12 +187,16 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         });
 
         fieldComboStore.addListener("load", function() {
-            console.log("loaded");
             fieldCombo.setValue(currentData.fieldname);
         });
 
+        var translatedText = " ";
+        if(this.availableClasses[currentData.classname]) {
+            translatedText = this.availableClasses[currentData.classname].data.translatedText;
+        }
+
         var classTextfield = new Ext.form.TextField({
-            value: this.availableClasses[currentData.classname].data.translatedText,
+            value: translatedText,
             readOnly: true
         });
 

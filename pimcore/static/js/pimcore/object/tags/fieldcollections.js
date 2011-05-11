@@ -369,11 +369,13 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 element = this.currentElements[this.layout.items.items[s].key];
 
                 for (var u=0; u<element.fields.length; u++) {
-                    if(element.fields[u].isInvalidMandatory()) {
-                        isInvalid = true;
-                        element.fields[u].markMandatory();
-                    } else {
-                        element.fields[u].unmarkMandatory();
+                    if(element.fields[u].isMandatory()) {
+                        if(element.fields[u].isInvalidMandatory()) {
+                            isInvalid = true;
+                            element.fields[u].markMandatory();
+                        } else {
+                            element.fields[u].unmarkMandatory();
+                        }
                     }
                 }
             }
