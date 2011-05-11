@@ -130,6 +130,8 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
                 $document->getPermissionsForUser($this->getUser());
             }
 
+            // set _fulldump otherwise the properties will be removed because of the session-serialize 
+            $document->_fulldump = true;
             $this->setValuesToDocument($document);
 
             $session->$key = $document;
