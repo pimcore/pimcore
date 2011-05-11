@@ -50,8 +50,8 @@ class Pimcore_Google_Analytics {
         
         $siteKey = self::getSiteKey($site);
         
-        if(Pimcore_Report::getConfig()->analytics->sites->$siteKey->profile) {
-            return Pimcore_Report::getConfig()->analytics->sites->$siteKey;
+        if(Pimcore_Config::getReportConfig()->analytics->sites->$siteKey->profile) {
+            return Pimcore_Config::getReportConfig()->analytics->sites->$siteKey;
         }
         return false;
     }

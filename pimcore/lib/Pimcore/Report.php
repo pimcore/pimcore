@@ -15,17 +15,12 @@
  
 class Pimcore_Report {
 
-    public static $config;
-    
+    /**
+     * @static
+     * @depricated
+     * @return Zend_Config
+     */
     public static function getConfig() {
-        if(!self::$config) {
-            try {
-                self::$config = new Zend_Config_Xml(PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml");
-            }
-            catch (Exception $e) {
-                self::$config = new Zend_Config(array());
-            }
-        }
-        return self::$config;
+        return Pimcore_Config::getReportConfig();
     }  
 }

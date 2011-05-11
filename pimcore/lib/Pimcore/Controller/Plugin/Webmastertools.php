@@ -17,7 +17,7 @@ class Pimcore_Controller_Plugin_Webmastertools extends Zend_Controller_Plugin_Ab
 
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
             
-        $conf = Pimcore_Report::getConfig();
+        $conf = Pimcore_Config::getReportConfig();
         if($conf->webmastertools->sites) {
             $sites = $conf->webmastertools->sites->toArray();
             

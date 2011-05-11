@@ -48,4 +48,96 @@ class Pimcore_Config {
     }
 
 
+    /**
+     * @static
+     * @return mixed|Zend_Config
+     */
+    public static function getWebsiteConfig () {
+        try {
+            $config = Zend_Registry::get("pimcore_config_website");
+        } catch (Exception $e) {
+            $cacheKey = "website_config";
+            if (!$config = Pimcore_Model_Cache::load($cacheKey)) {
+
+                $websiteSettingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/website.xml";
+                $settingsArray = array();
+
+                if(is_file($websiteSettingFile)) {
+                    $rawConfig = new Zend_Config_Xml($websiteSettingFile);
+                    $arrayData = $rawConfig->toArray();
+
+                    foreach ($arrayData as $key => $value) {
+                        $s = null;
+                        if($value["type"] == "document") {
+                            $s = Document::getByPath($value["data"]);
+                        }
+                        else if($value["type"] == "asset") {
+                            $s = Asset::getByPath($value["data"]);
+                        }
+                        else if($value["type"] == "object") {
+                            $s = Object_Abstract::getByPath($value["data"]);
+                        }
+                        else if($value["type"] == "bool") {
+                            $s = (bool) $value["data"];
+                        }
+                        else if($value["type"] == "text") {
+                            $s = (string) $value["data"];
+                        }
+
+
+                        if($s) {
+                            $settingsArray[$key] = $s;
+                        }
+                    }
+                }
+                $config = new Zend_Config($settingsArray, true);
+
+                Pimcore_Model_Cache::save($config, $cacheKey, array("websiteconfig","system","config"));
+            }
+
+            self::setWebsiteConfig($config);
+        }
+
+        return $config;
+    }
+
+    /**
+     * @static
+     * @param Zend_Config $config
+     * @return void
+     */
+    public static function setWebsiteConfig (Zend_Config $config) {
+        Zend_Registry::set("pimcore_config_website", $config);
+    }
+
+
+    /**
+     * @static
+     * @return Zend_Config
+     */
+    public static function getReportConfig () {
+        try {
+            $config = Zend_Registry::get("pimcore_config_report");
+        } catch (Exception $e) {
+            try {
+                $config = new Zend_Config_Xml(PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml");
+            }
+            catch (Exception $e) {
+                $config = new Zend_Config(array());
+            }
+
+            self::setReportConfig($config);
+        }
+        return $config;
+    }
+
+    /**
+     * @static
+     * @param Zend_Config $config
+     * @return void
+     */
+    public static function setReportConfig (Zend_Config $config) {
+        Zend_Registry::set("pimcore_config_report", $config);
+    }
+
 }

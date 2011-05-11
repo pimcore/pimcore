@@ -52,7 +52,7 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
 
 
         // report configuration
-        $this->view->report_config = Pimcore_Report::getConfig();
+        $this->view->report_config = Pimcore_Config::getReportConfig();
 
         // customviews config
         $cvConfig = Pimcore_Tool::getCustomViewConfig();

@@ -40,7 +40,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         $this->view->controller = $this; 
         
         // init website config
-        $config = Pimcore_Tool_Frontend::getWebsiteConfig();
+        $config = Pimcore_Config::getWebsiteConfig();
         $this->config = $config;
         $this->view->config = $config;
         

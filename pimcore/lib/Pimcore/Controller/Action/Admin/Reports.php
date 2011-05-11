@@ -31,7 +31,7 @@ class Pimcore_Controller_Action_Admin_Reports extends Pimcore_Controller_Action_
     }
     
     public function getConfig () {
-        return Pimcore_Report::getConfig();                
+        return Pimcore_Config::getReportConfig();
     }
     
     protected function getAnalyticsCredentials () {

@@ -50,8 +50,8 @@ class Pimcore_Google_Webmastertools {
         
         $siteKey = self::getSiteKey($site);
         
-        if(Pimcore_Report::getConfig()->webmastertools->sites->$siteKey->profile) {
-            return Pimcore_Report::getConfig()->webmastertools->sites->$siteKey;
+        if(Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey->profile) {
+            return Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey;
         }
         return false;
     }
