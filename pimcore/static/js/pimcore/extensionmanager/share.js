@@ -360,6 +360,7 @@ pimcore.extensionmanager.share = Class.create({
                             iconCls: "pimcore_icon_apply",
                             handler: function () {
                                 window.open(this.finishLink);
+                                this.updateshareWindow.close();
                             }.bind(this)
                         }]
                     });
