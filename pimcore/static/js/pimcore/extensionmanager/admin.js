@@ -396,22 +396,22 @@ pimcore.extensionmanager.admin = Class.create({
                 url: "/admin/extensionmanager/" + nextJob.controller + "/" + nextJob.action,
                 params: nextJob.params,
                 success: function (job, response) {
-                    var r = Ext.decode(response.responseText);
-
                     try {
+                        var r = Ext.decode(response.responseText);
+
                         if (r.success) {
                             if(typeof r.message == "string") {
                                 this.updateMessages.push(r.message);
                             }
                             window.setTimeout(this.processStep.bind(this), 100);
-                        }
-                        else {
-                            this.error(job, response);
+                            return;
                         }
                     }
                     catch (e) {
-                        this.error(job, response);
+                        console.log(e);
                     }
+                    this.error(job, response);
+
                 }.bind(this, nextJob)
             });
         }
