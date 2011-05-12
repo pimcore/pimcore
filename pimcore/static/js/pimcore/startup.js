@@ -223,7 +223,7 @@ Ext.onReady(function() {
     }
     
     statusbar.add("->");
-    statusbar.add('Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
+    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#000;">pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
     if (!empty(pimcore.settings.liveconnectToken)) {
         pimcore.settings.liveconnect.setToken(pimcore.settings.liveconnectToken);
