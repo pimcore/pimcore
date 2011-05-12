@@ -102,6 +102,12 @@ class Version extends Pimcore_Model_Abstract {
 
         $this->id = $this->getResource()->save();
 
+        // check if directory exists
+        $saveDir = dirname($this->getFilePath());
+        if(!is_dir($saveDir)) {
+            mkdir($saveDir, 0766, true);
+        }
+
         // save data to filesystem
         if(!is_writable(dirname($this->getFilePath())) || (is_file($this->getFilePath()) && !is_writable($this->getFilePath()))) {
             throw new Exception("Cannot save version for element " . $this->getCid() . " with type " . $this->getCtype() . " because the file " . $this->getFilePath() . " is not writeable.");
