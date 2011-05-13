@@ -79,7 +79,7 @@ class Document_Tag_Areablock extends Document_Tag {
             
             if($this->getView() instanceof Zend_View) {
                 
-                $areas = Pimcore_ExtensionManager::getBrickDirectories();
+                $areas = $this->getAreaDirs();
                 
                 $view = $areas[$index["type"]] . "/view.php";
                 $action = $areas[$index["type"]] . "/action.php";
@@ -441,5 +441,13 @@ class Document_Tag_Areablock extends Document_Tag {
     public function getFromWebserviceImport($wsElement){
         throw new Exception("It's not possible to set areas via the webservice");
     }
-    
+
+
+    /**
+     * @return array
+     */
+    public function getAreaDirs () {
+        return Pimcore_ExtensionManager::getBrickDirectories();
+    }
+
 }
