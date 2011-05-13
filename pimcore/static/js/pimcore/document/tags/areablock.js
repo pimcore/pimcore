@@ -26,6 +26,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         this.elements = Ext.get(id).query("." + name);
 
+console.log(this.options);
 
         // type mapping
         var typeNameMappings = {};
@@ -138,18 +139,46 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     
     getTypeMenu: function (scope, element) {
         var menu = [];
-        
-        for (var i=0; i<this.options.types.length; i++) {
-            menu.push({
-                text: "<b>" + this.options.types[i].name + "</b> | " + this.options.types[i].description,
-                iconCls: "pimcore_icon_area",
-                listeners: {
-                    "click": this.addBlock.bind(scope, element, this.options.types[i].type)
+        var groupMenu;
+
+        if(typeof this.options.group != "undefined") {
+            var groups = Object.keys(this.options.group);
+            for (var g=0; g<groups.length; g++) {
+                if(groups[g].length > 0) {
+                    groupMenu = {
+                        text: groups[g],
+                        iconCls: "pimcore_icon_area",
+                        hideOnClick: false,
+                        menu: []
+                    };
+
+                    for (var i=0; i<this.options.types.length; i++) {
+                        if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
+                            groupMenu.menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element));
+                        }
+                    }
+                    menu.push(groupMenu);
                 }
-            });
+            }
+        } else {
+            for (var i=0; i<this.options.types.length; i++) {
+                menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element));
+            }
         }
-        
+
         return menu;
+    },
+
+    getMenuConfigForBrick: function (brick, scope, element) {
+        var tmpEntry = {
+            text: "<b>" + brick.name + "</b> | " + brick.description,
+            iconCls: "pimcore_icon_area",
+            listeners: {
+                "click": this.addBlock.bind(scope, element, brick.type)
+            }
+        };
+
+        return tmpEntry;
     },
 
     addBlock : function (element, type) {

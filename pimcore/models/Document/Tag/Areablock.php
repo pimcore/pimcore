@@ -352,6 +352,32 @@ class Document_Tag_Areablock extends Document_Tag {
         }
         
         $options["types"] = $availableAreas;
+
+        if(is_array($options["group"])) {
+            $groupingareas = array();
+            foreach ($availableAreas as $area) {
+                $groupingareas[$area["type"]] = $area["type"];
+            }
+            
+            $groups = array();
+            foreach ($options["group"] as $name => $areas) {
+                $groups[$this->view->translateAdmin($name)] = $areas;
+
+                foreach($areas as $area) {
+                    unset($groupingareas[$area]);
+                }
+            }
+
+            if(count($groupingareas) > 0) {
+                $uncatAreas = array();
+                foreach ($groupingareas as $area) {
+                    $uncatAreas[] = $area;
+                }
+                $groups[$this->view->translateAdmin("uncategorized")] = $uncatAreas;
+            }
+
+            $options["group"] = $groups;
+        }
         
         if (empty($options["limit"])) {
             $options["limit"] = 1000000;
