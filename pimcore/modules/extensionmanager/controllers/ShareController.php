@@ -184,6 +184,13 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
         $response = $client->request(Zend_Http_Client::POST);
 
+        // call share.php inside the extension
+        $extensionDir = Pimcore_ExtensionManager::getPathForExtension($this->_getParam("id"), $this->_getParam("type"));
+        $shareScript = $extensionDir . "/share.php";
+        if(is_file($shareScript)) {
+            include($shareScript);
+        }
+
         $this->_helper->json(array("success" => true));
     }
 
