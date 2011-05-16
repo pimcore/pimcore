@@ -1078,11 +1078,9 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     }
     
     public function removeInheritedProperties () {
-
         $myProperties = array();
-        
-        if($myProperties) {
-            foreach ($this->getProperties() as $name => $property) {
+        if($this->properties !== null) {
+            foreach ($this->properties as $name => $property) {
                 if(!$property->getInherited()) {
                     $myProperties[$name] = $property;
                 }
