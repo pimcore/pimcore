@@ -238,9 +238,9 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
 
                 }
 
-
+                $wsData[] = $wsDataItem;
             }
-            $wsData[] = $wsDataItem;
+
 
         }
 
