@@ -105,6 +105,7 @@ class Document_Tag_Image extends Document_Tag {
 
             // add attributes to image
             $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap", "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover", "onabort", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseup", "onkeydown", "onkeypress", "onkeyup");
+            $htmlEscapeAttributes = array("alt", "align", "border", "height", "hspace",  "longdesc", "usemap", "vspace", "width", "class", "dir", "id", "lang",  "title");
             $defaultAttributes = array(
                 "alt" => $this->alt,
                 "height" => $height,
@@ -119,6 +120,9 @@ class Document_Tag_Image extends Document_Tag {
 
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value)) && in_array($key, $allowedAttributes)) {
+                    if(in_array($key,$htmlEscapeAttributes)){
+                        $value = htmlspecialchars($value);
+                    }
                     $attribs[] = $key . '="' . $value . '"';
                 }
             }

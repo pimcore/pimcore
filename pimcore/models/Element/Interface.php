@@ -114,6 +114,12 @@ interface Element_Interface {
     public function isLocked();
 
     /**
+     * @param  bool $locked
+     * @return void
+     */
+    public function setLocked($locked);
+
+    /**
      * @return integer
      */
     public function getParentId();

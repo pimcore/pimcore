@@ -82,7 +82,7 @@ class Document_Service extends Element_Service {
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
-
+        $new->setLocked(false);
         $new->save();
 
         // add to store
@@ -118,7 +118,7 @@ class Document_Service extends Element_Service {
         $new->setUserOwner($this->_user->getId());
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
-
+        $new->setLocked(false);
         $new->save();
 
         $this->updateChilds($target,$new);

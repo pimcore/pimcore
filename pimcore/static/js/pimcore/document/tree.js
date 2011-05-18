@@ -342,7 +342,7 @@ pimcore.document.tree = Class.create({
         }
 
         //publish
-        if (this.attributes.permissions.publish && this.attributes.type != "folder") {
+        if (this.attributes.permissions.publish && this.attributes.type != "folder" && !this.attributes.locked) {
             if (this.attributes.published) {
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),

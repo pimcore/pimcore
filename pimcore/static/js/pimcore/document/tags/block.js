@@ -93,8 +93,8 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                     }
                 });
                 downButton.render(downDiv);
-                
-                
+
+
                 if(typeof options.limit != "undefined" && this.elements.length >= options.limit) {
                    Ext.get(id).addClass("pimcore_block_limitreached");
                 }
@@ -174,7 +174,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
             amount = 1;
         }
 
-        // get next heigher key
+        // get next higher key
         var nextKey = 0;
         var currentKey;
 
@@ -184,7 +184,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                 nextKey = currentKey;
             }
         }
-        
+
         var args = [index, 0];
 
         for (var p = 0; p < amount; p++) {
@@ -192,9 +192,10 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
             args.push({key: nextKey});
         }
 
-        this.elements.splice.apply(this.elements, args);
+       this.elements.splice.apply(this.elements, args);
 
         //this.elements.splice(index, 0, {key: nextKey});
+
         this.reload();
     },
 
