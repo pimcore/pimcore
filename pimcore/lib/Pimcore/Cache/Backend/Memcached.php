@@ -113,6 +113,8 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return boolean True if no problem
      */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
+        $success = true;
+
         if ($mode == Zend_Cache::CLEANING_MODE_ALL) {
             $this->clearTags();
             return $this->_memcache->flush();
@@ -120,38 +122,48 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
         if ($mode == Zend_Cache::CLEANING_MODE_OLD) {
             Logger::warning("Zend_Cache_Backend_Memcached::clean() : CLEANING_MODE_OLD is unsupported by the Memcached backend");
         }
+
         if ($mode == Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
             foreach ($tags as $tag) {
                 $items = $this->getItemsByTag($tag);
                 foreach ($items as $item) {
                     // We call delete directly here because the ID in the cache is already specific for this site
                     //$this->_memcache->delete($item);
-                    $this->remove($item);
+                    $_success = $this->remove($item);
+                    if(!$_success) {
+                        $success = false;
+                    }
                 }
                 //$this->removeTag($tag);
-            }            
+            }
         }
         if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
-            
+
             $condParts = array("1=1");
             foreach ($tags as $tag) {
                 $condParts[] = "tag != '" . $tag . "'";
             }
-            
+
             $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE ".implode(" AND ",$condParts));
             //$this->getDb()->delete(implode(" AND ",$condParts));
-            
+
             $items = array();
             foreach ($itemIds as $item) {
                 $items[] = $item["id"];
             }
-            
+
             foreach ($items as $item) {
-                $this->remove($item);
+               $_success = $this->remove($item);
+                if(!$_success) {
+                    $success = false;
+                }
                 //$this->_memcache->delete($item);
             }
         }
+
+        return $success;
     }
+
     
     
     /**
