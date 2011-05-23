@@ -39,19 +39,19 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         return array(
             "positions" => array(
                 array(
-                    "pimcore.layout.portlets.feed",
-                    "pimcore.layout.portlets.modificationStatistic"                     
+                    "pimcore.layout.portlets.modificationStatistic",
+                    "pimcore.layout.portlets.modifiedAssets"
                 ),
                 array(
                     "pimcore.layout.portlets.modifiedObjects",
                     "pimcore.layout.portlets.modifiedDocuments"
                 )
-            ),
+            )/*,
             "settings" => array(
                 "pimcore.layout.portlets.feed" => array(
                     "url" => self::$defaultFeed
                 )
-            )
+            )*/
         );
     }
     

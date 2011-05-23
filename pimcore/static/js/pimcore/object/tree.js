@@ -289,6 +289,7 @@ pimcore.object.tree = Class.create({
                     hideOnClick: false,
                     handler: function(){
                         new pimcore.element.importer("object",this.id);
+                        console.log(this);
                     }.bind(this)
                 },{
                     text: t('import_csv'),

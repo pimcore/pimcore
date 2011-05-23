@@ -51,7 +51,6 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                             $this->view->error = "could not send email";
                         }
 
-
                     } else {
                         $this->view->error = "user has no email address";
                     }
