@@ -216,12 +216,12 @@ class Pimcore_Backup {
                     $relPath = str_replace(PIMCORE_DOCUMENT_ROOT . "/", "", $file);
 
                     foreach ($excludePatterns as $pattern) {
-                        if (preg_match($pattern, $relPath)) {
+                        if (preg_match($pattern, str_replace("\\", "/", $relPath) )) {
                             $exclude = true;
                         }
                     }
 
-                    if (!$exclude && is_file($file)) {
+                    if (!$exclude && is_file($file) && !is_dir($file)) {
                         $this->getArchive()->addString($relPath, file_get_contents($file));
                     }
                     else {
