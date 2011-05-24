@@ -67,7 +67,7 @@ class Document_Tag_Multiselect extends Document_Tag {
      * @return void
      */
     public function setDataFromEditmode($data) {
-        $this->values = explode(",", $data);
+        $this->values = empty($data)?array():explode(",", $data);
     }
 
     /**
