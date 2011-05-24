@@ -19,6 +19,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             root: "data",
+            remoteSort: true,
             url: "/admin/search/search/find",
             fields: ["id","fullpath","type","subtype","published","title","description","keywords","name","filename"]
         });
@@ -182,11 +183,10 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                     {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                     {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
                     {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'},
-                    {header: t("title"), width: 200, sortable: true, dataIndex: 'title', hidden: true},
-                    {header: t("description"), width: 200, sortable: true, dataIndex: 'description', hidden: true},
-                    {header: t("keywords"), width: 200, sortable: true, dataIndex: 'keywords', hidden: true},
-                    {header: t("name"), width: 200, sortable: true, dataIndex: 'name'},
-                    {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true}
+                    {header: t("title"), width: 200, sortable: false, dataIndex: 'title', hidden: false},
+                    {header: t("description"), width: 200, sortable: false, dataIndex: 'description', hidden: true},
+                    {header: t("keywords"), width: 200, sortable: false, dataIndex: 'keywords', hidden: true},
+                    {header: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true}
                 ],
                 viewConfig: {
                     forceFit: true

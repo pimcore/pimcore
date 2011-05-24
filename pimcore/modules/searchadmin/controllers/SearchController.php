@@ -128,12 +128,19 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             //echo $condition; die();
             $searcherList->setCondition($condition);
         }
-        logger::debug($condition);
+
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
         $searcherList->setOrder("desc");
         $searcherList->setOrderKey("modificationdate");
+
+        if ($this->_getParam("sort")) {
+            $searcherList->setOrderKey($this->_getParam("sort"));
+        }
+        if ($this->_getParam("dir")) {
+            $searcherList->setOrder($this->_getParam("dir"));
+        }
 
         $hits = $searcherList->load();
         $totalMatches = $searcherList->getTotalCount();

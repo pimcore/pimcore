@@ -1407,6 +1407,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $class = Object_Class::getById($this->_getParam("classId"));
             $className = $class->getName();
 
+            $colMappings = array(
+                "filename" => "o_key",
+                "fullpath", array("o_path", "o_key"),
+                "id" => "o_id",
+                "published" => "o_published",
+                "modificationDate" => "o_modificationDate",
+                "creationDate" => "o_creationDate"
+            );
+
             $start = 0;
             $limit = 20;
             $orderKey = "o_id";
@@ -1419,16 +1428,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $start = $this->_getParam("start");
             }
             if ($this->_getParam("sort")) {
-                if ($this->_getParam("sort") == "fullpath") {
-                    $orderKey = array("o_path", "o_key");
-                } else if ($this->_getParam("sort") == "id") {
-                    $orderKey = "o_id";
-                } else if ($this->_getParam("sort") == "published") {
-                    $orderKey = "o_published";
-                } else if ($this->_getParam("sort") == "modificationDate") {
-                    $orderKey = "o_modificationDate";
-                } else if ($this->_getParam("sort") == "creationDate") {
-                    $orderKey = "o_creationDate";
+                if (array_key_exists($this->_getParam("sort"), $colMappings)) {
+                    $orderKey = $colMappings[$this->_getParam("sort")];
                 } else {
                     $orderKey = $this->_getParam("sort");
                 }

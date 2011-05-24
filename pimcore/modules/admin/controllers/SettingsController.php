@@ -356,7 +356,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "cache" => array(
                     "enabled" => $values["cache.enabled"],
                     "lifetime" => $values["cache.lifetime"],
-                    "excludePatterns" => $values["cache.excludePatterns"],
+                    "excludePatterns" => htmlentities($values["cache.excludePatterns"]),
                     "excludeCookie" => $values["cache.excludeCookie"]
                 ),
                 "outputfilters" => array(
@@ -369,7 +369,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "htmlminify" => $values["outputfilters.htmlminify"],
                     "cdn" => $values["outputfilters.cdn"],
                     "cdnhostnames" => $values["outputfilters.cdnhostnames"],
-                    "cdnpatterns" => $values["outputfilters.cdnpatterns"]
+                    "cdnpatterns" => htmlentities($values["outputfilters.cdnpatterns"])
                 ),
                 "email" => array(
                     "sender" => array(

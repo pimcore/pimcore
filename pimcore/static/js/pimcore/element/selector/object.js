@@ -513,6 +513,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             root: "data",
+            remoteSort: true,
             url: "/admin/search/search/find",
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
                     return ts(rec.classname);
