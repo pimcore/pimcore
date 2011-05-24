@@ -235,7 +235,9 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 header("Location: http://" . $config->general->domain . $originalPath);
             }
             else {
-                header("Location: /");
+                $errorMessage = "You have to specify a main domain in system-settings (Settings -> System -> Website -> Domain) if you want to use sites!";
+                Logger::emerg($errorMessage);
+                die($errorMessage);
             }
             exit;
         }
