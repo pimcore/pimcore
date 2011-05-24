@@ -347,7 +347,9 @@ pimcore.helpers.activateMaintenance = function () {
         url: "/admin/misc/maintenance/activate/true"
     });
 
-    pimcore.helpers.showMaintenanceDisableButton();
+    if(!Ext.getCmp("pimcore_maintenance_disable_button")) {
+        pimcore.helpers.showMaintenanceDisableButton();
+    }
 }
 
 pimcore.helpers.deactivateMaintenance = function () {

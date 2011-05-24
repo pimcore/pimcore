@@ -36,7 +36,7 @@ Ext.onReady(function() {
         console.log("xhr request failed");
 
         if(response.status == 503) {
-            // show whait info
+            // show wait info
             if(!pimcore.maintenanceWindow) {
                 pimcore.maintenanceWindow = new Ext.Window({
                     closable: false,
