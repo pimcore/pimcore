@@ -47,9 +47,12 @@
 }
 
 .pimcore_block_limitreached .pimcore_block_button_plus, .pimcore_block_limitreached .pimcore_block_amount {
-    display: none!important;
+    display: none !important;
 }
 
+.pimcore_block_limitnotreached .pimcore_block_button_plus, .pimcore_block_limitnotreached .pimcore_block_amount {
+    display: block !important;
+}
 
 .pimcore_block_type, .pimcore_block_type button {
     cursor:default !important;

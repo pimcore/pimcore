@@ -97,6 +97,8 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
 
                 if(typeof options.limit != "undefined" && this.elements.length >= options.limit) {
                    Ext.get(id).addClass("pimcore_block_limitreached");
+                } else {
+                   Ext.get(id).addClass("pimcore_block_limitnotreached");
                 }
             }
         }
