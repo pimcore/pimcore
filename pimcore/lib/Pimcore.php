@@ -59,13 +59,13 @@ class Pimcore {
         // register general pimcore plugins for frontend
         if ($frontend) {
             $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
         }
 
         if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
             $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Webmastertools(), 797);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Analytics(), 798);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
             $front->registerPlugin(new Pimcore_Controller_Plugin_CssMinify(), 800);
             $front->registerPlugin(new Pimcore_Controller_Plugin_JavascriptMinify(), 801);
             $front->registerPlugin(new Pimcore_Controller_Plugin_HtmlMinify(), 802);
