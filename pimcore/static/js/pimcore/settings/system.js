@@ -586,6 +586,7 @@ pimcore.settings.system = Class.create({
                             {
                                 fieldLabel: t('password'),
                                 disabled: true,
+                                inputType: "password",
                                 name: 'database.params.password',
                                 value: this.getValue("database.params.password")
                             },

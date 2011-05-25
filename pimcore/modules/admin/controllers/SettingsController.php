@@ -242,7 +242,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
 
             //remove password from values sent to frontend
-            //$valueArray['email']['smtp']['auth']['password']="";
+            $valueArray['database']["params"]['password'] = "##SECRET_PASS##";
 
             //admin users as array
             $adminUsers = array();
