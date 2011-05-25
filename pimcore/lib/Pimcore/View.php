@@ -129,12 +129,12 @@ class Pimcore_View extends Zend_View {
         $params = array_merge($params, array("document" => $include));
 
         if ($include instanceof Document_PageSnippet && $include->isPublished()) {
-            if ($include->getTemplate()) {
-                return $this->action("default", "default", null, $params);
-            }
-
             if ($include->getAction() && $include->getController()) {
                 return $this->action($include->getAction(), $include->getController(), null, $params);
+            }
+
+            if ($include->getTemplate()) {
+                return $this->action("default", "default", null, $params);
             }
         }
 
