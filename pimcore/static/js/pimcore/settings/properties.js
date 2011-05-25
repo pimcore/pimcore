@@ -359,7 +359,7 @@ pimcore.settings.properties = Class.create({
             else if (data.inherited == false) {
                 return '<div class="pimcore_property_droptarget">&nbsp;</div>';
             }
-        } else if (type == "bool") {
+        } else if (type == "bool" && data.inherited == false) {
             metaData.css += ' x-grid3-check-col-td';
             return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
         }
