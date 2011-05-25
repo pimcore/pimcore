@@ -196,7 +196,9 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             }
             
             try {
-                Zend_Session::start();
+                if(!Zend_Session::isStarted()) {
+                    Zend_Session::start();
+                }
             }
             catch (Exception $e) {
                 logger::error("Problem while starting session");
