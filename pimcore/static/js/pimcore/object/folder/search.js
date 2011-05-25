@@ -221,20 +221,36 @@ pimcore.object.search = Class.create({
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
         this.grid.on("afterrender", function (grid) {
-            grid.getView().hmenu.add({
+
+            var batchAllMenu = new Ext.menu.Item({
                 text: t("batch_change"),
                 iconCls: "pimcore_icon_batch",
                 handler: function (view) {
                     this.batchPrepare(view.hdCtxIndex);
                 }.bind(this, grid.getView())
             });
-            grid.getView().hmenu.add({
+            grid.getView().hmenu.add(batchAllMenu);
+
+            var batchSelectedMenu = new Ext.menu.Item({
                 text: t("batch_change_selected"),
                 iconCls: "pimcore_icon_batch",
                 handler: function (view) {
                     this.batchPrepare(view.hdCtxIndex, true);
                 }.bind(this, grid.getView())
             });
+            grid.getView().hmenu.add(batchSelectedMenu);
+
+            grid.getView().hmenu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, view) {
+                // no batch for system properties
+                if (view.hdCtxIndex <= 8) {
+                    batchAllMenu.hide();
+                    batchSelectedMenu.hide();
+                } else {
+                    batchAllMenu.show();
+                    batchSelectedMenu.show();
+                }
+            }.bind(grid.getView().hmenu, batchAllMenu, batchSelectedMenu, grid.getView()));
+
         }.bind(this));
         
         // check for filter updates
@@ -330,6 +346,11 @@ pimcore.object.search = Class.create({
 
     batchPrepare: function(columnIndex, onlySelected){
 
+        // no batch for system properties
+        if (columnIndex <= 8) {
+            return;
+        }
+
         var jobs = [];
         if(onlySelected) {
             var selectedRows = this.grid.getSelectionModel().getSelections();
@@ -379,10 +400,6 @@ pimcore.object.search = Class.create({
     batchOpen: function (columnIndex, jobs) {
 
         columnIndex = columnIndex-1;
-        // no batch for system properties
-        if (columnIndex < 5) {
-            return;
-        }
 
         var fieldInfo = this.grid.getColumnModel().config[columnIndex+1];
         if(!fieldInfo.layout || !fieldInfo.layout.layout) {
@@ -390,6 +407,7 @@ pimcore.object.search = Class.create({
         }
 
         if(fieldInfo.layout.layout.noteditable) {
+            Ext.MessageBox.alert(t('error'), t('this_element_cannot_be_edited'));
             return;
         }
 
