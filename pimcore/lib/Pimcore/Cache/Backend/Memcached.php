@@ -173,7 +173,9 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
         $this->getDb()->delete("cache_tags", "id = '".$id."'");
 
         $result = parent::remove($id);
-        if(!$result) {
+
+        // security check if the deletion fails 
+        if(!$result && $this->_memcache->get($id) !== false) {
             $this->_memcache->flush();
         }
 
