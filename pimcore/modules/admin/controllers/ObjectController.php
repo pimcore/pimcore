@@ -660,6 +660,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $this->metaData[$key]['inherited'] = $level != 0;
             }
         }
+        
     }
 
     private function isInheritableField(Object_Class_Data $fielddefinition) {

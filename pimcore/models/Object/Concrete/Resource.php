@@ -327,7 +327,9 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             } else if ($value->getColumnType()) {
                 if (is_array($value->getColumnType())) {
                     $insertDataArray = $value->getDataForResource($this->model->$getter());
-                    $data = array_merge($data, $insertDataArray);
+                    if(is_array($insertDataArray)) {
+                        $data = array_merge($data, $insertDataArray);
+                    }
                 } else {
                     $insertData = $value->getDataForResource($this->model->$getter());
                     $data[$key] = $insertData;

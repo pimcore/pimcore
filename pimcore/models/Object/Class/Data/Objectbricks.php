@@ -30,17 +30,12 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      *
      * @var string
      */
-    public $phpdocType = "";
+    public $phpdocType = "Object_Objectbrick";
 
     /**
      * @var string
      */
     public $allowedTypes = array();
-
-    public function getPhpdocType() {
-        return "";
-    }
-
 
     /**
      * @see Object_Class_Data::getDataForEditmode

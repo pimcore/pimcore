@@ -258,7 +258,7 @@ class Object_Service extends Element_Service {
     private static function getValueForObject($object, $getter) {
         $value = $object->$getter();
 
-        if(empty($value)) {
+        if(empty($value) || (method_exists($object, "isEmpty") && $object->isEmpty())) {
             $parent = self::hasInheritableParentObject($object);
             if(!empty($parent)) {
                 return self::getValueForObject($parent, $getter);
