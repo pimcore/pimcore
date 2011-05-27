@@ -125,10 +125,8 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                 $items = $this->getItemsByTag($tag);
                 foreach ($items as $item) {
                     // We call delete directly here because the ID in the cache is already specific for this site
-                    //$this->_memcache->delete($item);
                     $this->remove($item);
                 }
-                //$this->removeTag($tag);
             }            
         }
         if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
@@ -139,7 +137,6 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
             }
             
             $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE ".implode(" AND ",$condParts));
-            //$this->getDb()->delete(implode(" AND ",$condParts));
             
             $items = array();
             foreach ($itemIds as $item) {
@@ -148,7 +145,6 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
             
             foreach ($items as $item) {
                 $this->remove($item);
-                //$this->_memcache->delete($item);
             }
         }
     }
@@ -173,14 +169,15 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return bool true if OK
      */
     public function remove($id) {
-        /*$tags = $this->getTagsById($id);
-        foreach($tags as $tag) {
-            $this->removeTag($tag);
-        }*/
         
         $this->getDb()->delete("cache_tags", "id = '".$id."'");
-                
-        return parent::remove($id);
+
+        $result = parent::remove($id);
+        if(!$result) {
+            $this->_memcache->flush();
+        }
+
+        return $result;
     }
 
 
