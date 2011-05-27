@@ -89,9 +89,10 @@ class Object_Class_Data_Textarea extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
         return $data;
     }
 
@@ -107,9 +108,10 @@ class Object_Class_Data_Textarea extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForQueryResource($data) {
+    public function getDataForQueryResource($data, $object = null) {
         return $data;
     }
 
@@ -117,10 +119,11 @@ class Object_Class_Data_Textarea extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForEditmode($data) {
-        return $this->getDataForResource($data);
+    public function getDataForEditmode($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
     /**

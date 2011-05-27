@@ -198,9 +198,10 @@ class Object_Class_Data_Slider extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param float $data
+     * @param null|Object_Abstract $object
      * @return float
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
         return (float) $data;
     }
 
@@ -216,19 +217,21 @@ class Object_Class_Data_Slider extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param float $data
+     * @param null|Object_Abstract $object
      * @return float
      */
-    public function getDataForQueryResource($data) {
+    public function getDataForQueryResource($data, $object = null) {
         return $data;
     }
 
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param float $data
+     * @param null|Object_Abstract $object
      * @return float
      */
-    public function getDataForEditmode($data) {
-        return $this->getDataForResource($data);
+    public function getDataForEditmode($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
     /**

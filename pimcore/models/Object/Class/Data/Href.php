@@ -165,9 +165,10 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param Asset | Document | Object_Abstract $data
+     * @param null|Object_Abstract $object
      * @return array
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
 
         if($data instanceof Element_Interface){
             $type =  Element_Service::getType($data);
@@ -207,11 +208,12 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param Asset|Document|Object_Abstract $data
+     * @param null|Object_Abstract $object
      * @return array
      */
-    public function getDataForQueryResource($data) {
+    public function getDataForQueryResource($data, $object = null) {
         
-        $rData = $this->getDataForResource($data);
+        $rData = $this->getDataForResource($data, $object);
 
         $return = array();
         $return[$this->getName() . "__id"] = $rData[0]["dest_id"];
@@ -223,9 +225,10 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param Asset|Document|Object_Abstract $data
+     * @param null|Object_Abstract $object
      * @return array
      */
-    public function getDataForEditmode($data) {
+    public function getDataForEditmode($data, $object = null) {
         if ($data) {
 
             $r = array(

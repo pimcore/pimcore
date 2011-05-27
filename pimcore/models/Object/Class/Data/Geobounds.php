@@ -60,9 +60,10 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param Object_Data_Geobounds $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
         if ($data instanceof Object_Data_Geobounds) {
             return array(
                 $this->getName() . "__NElongitude" => $data->getNorthEast()->getLongitude(),
@@ -82,7 +83,7 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataFromResource
      * @param array $data
-     * @return string
+     * @return string 
      */
     public function getDataFromResource($data) {
         if($data[$this->getName() . "__NElongitude"] && $data[$this->getName() . "__NElatitude"] && $data[$this->getName() . "__SWlongitude"] && $data[$this->getName() . "__SWlatitude"]) {
@@ -97,18 +98,20 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param Object_Data_Geobounds $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForQueryResource($data) {
-        return $this->getDataForResource($data);
+    public function getDataForQueryResource($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param Object_Data_Geobounds $data
+     * @param null|Object_Abstract $object
      * @return array
      */
-    public function getDataForEditmode($data) {
+    public function getDataForEditmode($data, $object = null) {
         if($data instanceof Object_Data_Geobounds) {
             return array(
                 "NElongitude" => $data->getNorthEast()->getLongitude(),

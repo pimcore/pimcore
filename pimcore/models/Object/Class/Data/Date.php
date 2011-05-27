@@ -48,9 +48,10 @@ class Object_Class_Data_Date extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param Zend_Date $data
+     * @param null|Object_Abstract $object
      * @return integer
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
         if ($data instanceof Zend_Date) {
             return $data->getTimestamp();
         }
@@ -70,9 +71,10 @@ class Object_Class_Data_Date extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param Zend_Date $data
+     * @param null|Object_Abstract $object
      * @return integer
      */
-    public function getDataForQueryResource($data) {
+    public function getDataForQueryResource($data, $object = null) {
         if ($data instanceof Zend_Date) {
             return $data->getTimestamp();
         }
@@ -81,9 +83,10 @@ class Object_Class_Data_Date extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param Zend_Date $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForEditmode($data) {
+    public function getDataForEditmode($data, $object = null) {
         if ($data instanceof Zend_Date) {
             return $data->getTimestamp();
         }

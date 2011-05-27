@@ -45,6 +45,7 @@ class Webservice_SoapController extends Pimcore_Controller_Action {
 
         // create classmappings
         $classMap = Webservice_Tool::createClassMappings();
+//        p_r($classMap); die();
 
 
         // create wsdl

@@ -72,11 +72,9 @@ abstract class Webservice_Data_Mapper {
      * @return array
      */
     public static function map($object, $apiclass, $type) {
-
         if($object instanceof Zend_Date){
             $object=$object->toString();
         } else if (is_object($object)) {
-
             if (class_exists($apiclass)) {
                 $new = new $apiclass();
                 if (method_exists($new, "map")) {

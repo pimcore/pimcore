@@ -49,9 +49,10 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
         return serialize($data);
     }
 
@@ -67,19 +68,21 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForQueryResource($data) {
-        return $this->getDataForResource($data);
+    public function getDataForQueryResource($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
 
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForEditmode($data) {
+    public function getDataForEditmode($data, $object = null) {
         if (!empty($data)) {
             if (is_array($data)) {
                 $points = array();
@@ -178,7 +181,7 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
         $getter = "get".ucfirst($key);
         $data = $object->$getter();
         if (!empty($data)) {
-            return $this->getDataForEditmode($data);
+            return $this->getDataForEditmode($data, $object);
         } else return null;
     }
 

@@ -36,7 +36,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
                 if($fd->isRelationType()) {
 
-                    $relations = $fd->getDataForResource($items[$fd->getName()]);
+                    $relations = $fd->getDataForResource($items[$fd->getName()], $this->model);
 
                     if (is_array($relations) && !empty($relations)) {
                         foreach ($relations as $relation) {
@@ -54,7 +54,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                         }
                     }
                 } else {
-                    $insertData[$fd->getName()] = $fd->getDataForResource($items[$fd->getName()]);
+                    $insertData[$fd->getName()] = $fd->getDataForResource($items[$fd->getName()], $object);
                 }
             }
             

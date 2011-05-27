@@ -146,17 +146,13 @@ class Webservice_ObjectTest extends PHPUnit_Framework_TestCase {
         //take first element and fetch object
         $id = $wsDocument[0]->id;
         $this->assertTrue(is_numeric($id));
-
         $wsDocument = $client->getObjectConcreteById($id);
-
         $this->assertTrue($wsDocument instanceof Webservice_Data_Object_Concrete_Out);
-
         $className = "Object_" . ucfirst($wsDocument->className);
         $this->assertTrue(class_exists($className));
         $object = new $className();
 
         $wsDocument->reverseMap($object);
-
         //some checks to see if we got a valid object
         $this->assertTrue($object->getCreationDate() > 0);
         $this->assertTrue(strlen($object->getPath()) > 0);
@@ -166,7 +162,6 @@ class Webservice_ObjectTest extends PHPUnit_Framework_TestCase {
         $new->id = null;
         $new->setKey($object->getKey() . "_phpUnitTestCopy");
         $new->setResource(null);
-        
         //send new object back via ws
         $apiObject = Webservice_Data_Mapper::map($new, "Webservice_Data_Object_Concrete_In", "in");
 
@@ -176,7 +171,6 @@ class Webservice_ObjectTest extends PHPUnit_Framework_TestCase {
 
         $wsDocument = $client->getObjectConcreteById($id);
         $this->assertTrue($wsDocument instanceof Webservice_Data_Object_Concrete_Out);
-
         $refetchObject = new $className();
         $wsDocument->reverseMap($refetchObject);
 
@@ -186,7 +180,6 @@ class Webservice_ObjectTest extends PHPUnit_Framework_TestCase {
 
         //compare original object, and the one we mangled back and forth through the web service
         $localObject = Object_Abstract::getById($object->getId());
-
         //remove childs, this can not be set through WS
         $localObject->setChilds(null);
 
@@ -197,9 +190,12 @@ class Webservice_ObjectTest extends PHPUnit_Framework_TestCase {
         $refetchObject->setProperty("updateTest", "text", "a update test");
         $refetchObject->setInput("my updated test");
         $apiObject = Webservice_Data_Mapper::map($refetchObject, "Webservice_Data_Object_Concrete_In", "in");
-        $success = $client->updateObjectConcrete($apiObject);
-        $this->assertTrue($success);
+//        Logger::err(print_r($apiObject,true));
 
+        $success = $client->updateObjectConcrete($apiObject);
+         Logger::err($client->getLastRequest());
+
+        $this->assertTrue($success);
         $id = $refetchObject->getId();
         Test_Tool::resetRegistry();
         $localObject = Object_Abstract::getById($id);

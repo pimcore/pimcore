@@ -34,7 +34,7 @@ class Object_Fieldcollection_Data_Resource extends Pimcore_Model_Resource_Abstra
                 if ($fd->isRelationType()) {
 
                     if (method_exists($this->model, $getter)) {
-                        $relations = $fd->getDataForResource($this->model->$getter());
+                        $relations = $fd->getDataForResource($this->model->$getter(), $this->model);
                     }
 
                     if (is_array($relations) && !empty($relations)) {
@@ -55,10 +55,10 @@ class Object_Fieldcollection_Data_Resource extends Pimcore_Model_Resource_Abstra
                 } else {
 
                     if (is_array($fd->getColumnType())) {
-                        $insertDataArray = $fd->getDataForResource($this->model->$getter());
+                        $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object);
                         $data = array_merge($data, $insertDataArray);
                     } else {
-                        $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter());
+                        $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter(), $object);
                     }
                 }
             }

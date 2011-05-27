@@ -181,9 +181,10 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     /**
      * @see Object_Class_Data::getDataForResource
      * @param array $data
+     * @param null|Object_Abstract $object
      * @return array
      */
-    public function getDataForResource($data)
+    public function getDataForResource($data, $object = null)
     {
 
         $return = array();
@@ -248,9 +249,10 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param array $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForQueryResource($data)
+    public function getDataForQueryResource($data, $object = null)
     {
 
         //return null when data is not set
@@ -282,9 +284,10 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param array $data
+     * @param null|Object_Abstract $object
      * @return array
      */
-    public function getDataForEditmode($data)
+    public function getDataForEditmode($data, $object = null)
     {
         $return = array();
 

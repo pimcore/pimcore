@@ -119,18 +119,20 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param array $data
+     * @param null|Object_Abstract $object
      * @return array
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
         return null;
     }
 
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param array $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForQueryResource($data) {
+    public function getDataForQueryResource($data, $object = null) {
         return null;
     }
 

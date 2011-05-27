@@ -70,9 +70,10 @@ class Object_Class_Data_Checkbox extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param boolean $data
+     * @param null|Object_Abstract $object
      * @return int
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
 
 
         if (is_bool($data)) {
@@ -97,24 +98,27 @@ class Object_Class_Data_Checkbox extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param boolean $data
+     * @param null|Object_Abstract $object
      * @return boolean
      */
-    public function getDataForQueryResource($data) {
-        return $this->getDataForResource($data);
+    public function getDataForQueryResource($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param boolean $data
+     * @param null|Object_Abstract $object
      * @return boolean
      */
-    public function getDataForEditmode($data) {
-        return $this->getDataForResource($data);
+    public function getDataForEditmode($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param boolean $data
+
      * @return boolean
      */
     public function getDataFromEditmode($data) {

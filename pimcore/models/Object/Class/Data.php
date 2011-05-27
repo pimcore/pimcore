@@ -145,14 +145,15 @@ abstract class Object_Class_Data {
      
     abstract public function getDataForQueryResource($data);
     */
-    
+
     /**
      * Returns the data for the editmode
      *
      * @param mixed $data
+     * @param null|Object_Abstract $object
      * @return mixed
      */
-    abstract public function getDataForEditmode($data);
+    abstract public function getDataForEditmode($data, $object = null);
 
     /**
      * Converts data from editmode to internal eg. Image-Id to Asset_Image object

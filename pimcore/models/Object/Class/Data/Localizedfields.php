@@ -73,9 +73,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
+     * @param null|Object_Abstract $object 
      * @return string
      */
-    public function getDataForEditmode($data)
+    public function getDataForEditmode($data, $object = null)
     {
         $return = array();
 
@@ -85,7 +86,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
         foreach ($data->getItems() as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                $return[$language][$fd->getName()] = $fd->getDataForEditmode($values[$fd->getName()]);
+                $return[$language][$fd->getName()] = $fd->getDataForEditmode($values[$fd->getName()], $object);
             }
         }
 

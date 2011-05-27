@@ -303,7 +303,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
             if ($value->isRelationType()) {
                 if (method_exists($this->model, $getter)) {
-                    $relations = $value->getDataForResource($this->model->$getter());
+                    $relations = $value->getDataForResource($this->model->$getter(), $this->model);
                 }
 
                 if (is_array($relations) && !empty($relations)) {
@@ -326,12 +326,12 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
             } else if ($value->getColumnType()) {
                 if (is_array($value->getColumnType())) {
-                    $insertDataArray = $value->getDataForResource($this->model->$getter());
+                    $insertDataArray = $value->getDataForResource($this->model->$getter(), $this->model);
                     if(is_array($insertDataArray)) {
                         $data = array_merge($data, $insertDataArray);
                     }
                 } else {
-                    $insertData = $value->getDataForResource($this->model->$getter());
+                    $insertData = $value->getDataForResource($this->model->$getter(), $this->model);
                     $data[$key] = $insertData;
                 }
             } else if (method_exists($value, "save")) {
@@ -369,7 +369,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
                         $method = "get" . $key;
-                        $insertData = $fd->getDataForQueryResource($this->model->$method());
+                        $insertData = $fd->getDataForQueryResource($this->model->$method(), $this->model);
                         if (is_array($insertData)) {
                             $data = array_merge($data, $insertData);
                         }

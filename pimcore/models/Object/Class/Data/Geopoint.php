@@ -56,9 +56,10 @@ class Object_Class_Data_Geopoint extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
         if ($data instanceof Object_Data_Geopoint) {
             return array(
                 $this->getName() . "__longitude" => $data->getLongitude(),
@@ -86,18 +87,20 @@ class Object_Class_Data_Geopoint extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForQueryResource($data) {
-        return $this->getDataForResource($data);
+    public function getDataForQueryResource($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForEditmode($data) {
+    public function getDataForEditmode($data, $object = null) {
         if ($data instanceof Object_Data_Geopoint) {
             return array(
                 "longitude" => $data->getLongitude(),

@@ -95,9 +95,10 @@ class Object_Class_Data_Image extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param Asset $data
+     * @param null|Object_Abstract $object
      * @return integer|null
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
         if ($data instanceof Asset) {
             return $data->getId();
         }
@@ -119,9 +120,10 @@ class Object_Class_Data_Image extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param Asset $data
+     * @param null|Object_Abstract $object
      * @return integer|null
      */
-    public function getDataForQueryResource($data) {
+    public function getDataForQueryResource($data, $object = null) {
 
      
         if ($data instanceof Asset) {
@@ -133,10 +135,11 @@ class Object_Class_Data_Image extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param Asset $data
+     * @param null|Object_Abstract $object
      * @return integer
      */
-    public function getDataForEditmode($data) {
-        return $this->getDataForResource($data);
+    public function getDataForEditmode($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
     /**

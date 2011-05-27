@@ -68,9 +68,10 @@ class Object_Class_Data_Password extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForResource($data) {
+    public function getDataForResource($data, $object = null) {
 
 
         // is already a md5 string
@@ -92,18 +93,20 @@ class Object_Class_Data_Password extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForQueryResource($data) {
-        return $this->getDataForResource($data);
+    public function getDataForQueryResource($data, $object = null) {
+        return $this->getDataForResource($data, $object);
     }
 
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForEditmode($data) {
+    public function getDataForEditmode($data, $object = null) {
         return $data;
     }
 

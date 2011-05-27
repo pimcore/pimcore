@@ -40,9 +40,10 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForEditmode($data)
+    public function getDataForEditmode($data, $object = null)
     {
         $editmodeData = array();
 
@@ -146,7 +147,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         } else {
             $value = null;
             if(!empty($item)) {
-                $value = $fielddefinition->getDataForEditmode($item->$valueGetter());
+                $value = $fielddefinition->getDataForEditmode($item->$valueGetter(), $baseObject);
             }
             if(empty($value) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();

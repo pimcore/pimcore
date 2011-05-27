@@ -475,6 +475,7 @@ class Webservice_Service
      */
     public function createObjectConcrete($wsDocument)
     {
+//        p_r($wsDocument); die();
         try {
             if ($wsDocument instanceof Webservice_Data_Object_Concrete_In) {
                 $wsDocument->type = "object";

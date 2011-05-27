@@ -41,9 +41,10 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForEditmode($data)
+    public function getDataForEditmode($data, $object = null)
     {
 
         $editmodeData = array();
@@ -64,7 +65,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                 $collectionData = array();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()});
+                    $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object); 
                 }
 
                 $editmodeData[] = array(
@@ -213,7 +214,6 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         if ($data instanceof Object_Fieldcollection) {
             foreach ($data as $item) {
 
-
                 if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
                     continue;
                 }
@@ -255,13 +255,12 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function getFromWebserviceImport($data)
     {
-
-
         $values = array();
         $count = 0;
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
+
                 if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
                     throw new Exception("invalid data in fieldcollections [" . $this->getName() . "]");
