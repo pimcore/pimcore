@@ -287,6 +287,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             if (empty($smtpPassword)) {
                 $smtpPassword = $oldValues['email']['smtp']['auth']['password'];
             }
+
+            // convert all special characters to their entities so the xml writer can put it into the file
+            foreach ($values as $key => $value) {
+                if(is_string($value) || is_numeric($value)) {
+                    $values[$key] = htmlspecialchars($value,ENT_COMPAT,"UTF-8");
+                }
+            }
+
             $settings = array(
                 "general" => array(
                     "timezone" => $values["general.timezone"],
@@ -356,7 +364,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "cache" => array(
                     "enabled" => $values["cache.enabled"],
                     "lifetime" => $values["cache.lifetime"],
-                    "excludePatterns" => htmlentities($values["cache.excludePatterns"]),
+                    "excludePatterns" => $values["cache.excludePatterns"],
                     "excludeCookie" => $values["cache.excludeCookie"]
                 ),
                 "outputfilters" => array(
@@ -369,7 +377,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "htmlminify" => $values["outputfilters.htmlminify"],
                     "cdn" => $values["outputfilters.cdn"],
                     "cdnhostnames" => $values["outputfilters.cdnhostnames"],
-                    "cdnpatterns" => htmlentities($values["outputfilters.cdnpatterns"])
+                    "cdnpatterns" => $values["outputfilters.cdnpatterns"]
                 ),
                 "email" => array(
                     "sender" => array(
@@ -1185,7 +1193,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         // convert all special characters to their entities to ensure that Zend_Config can write it
         foreach ($data as &$setting) {
-            $setting["data"] = htmlentities($setting["data"]);
+            $setting["data"] = htmlspecialchars($setting["data"],ENT_COMPAT,"UTF-8");
         }
 
         $config = new Zend_Config($data, true);
