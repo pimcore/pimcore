@@ -118,10 +118,10 @@ class Object_Class_Data_Checkbox extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param boolean $data
-
+     * @param null|Object_Abstract $object
      * @return boolean
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
         if ($data === "false") {
             return false;
         }

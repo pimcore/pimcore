@@ -95,9 +95,10 @@ class Object_Class_Data_Date extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param integer $data
+     * @param null|Object_Abstract $object
      * @return Zend_Date
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
         if ($data) {
             return new Pimcore_Date($data / 1000);
         }

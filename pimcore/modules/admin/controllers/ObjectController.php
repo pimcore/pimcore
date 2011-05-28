@@ -961,7 +961,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             foreach ($data as $key => $value) {
 
                 $fd = $object->getClass()->getFieldDefinition($key);
-                $fd->setObject($object);
                 if ($fd) {
                     if (method_exists($fd, "isRemoteOwner") and $fd->isRemoteOwner()) {
                         $relations = $object->getRelationData($fd->getOwnerFieldName(), false, null);
@@ -971,7 +970,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                             $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
                         }
                     } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value));
+                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
                     }
                 }
             }
@@ -1585,7 +1584,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     if ($this->_getParam("valueType") == "object") {
                         $value = Zend_Json::decode($value);
                     }
-                    $object->setValue($this->_getParam("name"), $field->getDataFromEditmode($value));
+                    $object->setValue($this->_getParam("name"), $field->getDataFromEditmode($value, $object));
                     try {
                         $object->save();
                         $success = true;

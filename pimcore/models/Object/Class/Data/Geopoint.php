@@ -114,9 +114,10 @@ class Object_Class_Data_Geopoint extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
         if($data["longitude"] || $data["latitude"] ) {
             return new Object_Data_Geopoint($data["longitude"], $data["latitude"]);
         }

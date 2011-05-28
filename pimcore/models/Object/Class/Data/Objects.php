@@ -174,9 +174,10 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param array $data
+     * @param null|Object_Abstract $object
      * @return array
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
         
         //if not set, return null
         if($data === null or $data === FALSE){ return null; }

@@ -257,9 +257,10 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param array $data
+     * @param null|Object_Abstract $object
      * @return Asset|Document|Object_Abstract
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
 
         if ($data["id"] && $data["type"]) {
             return Element_Service::getElementById($data["type"], $data["id"]);

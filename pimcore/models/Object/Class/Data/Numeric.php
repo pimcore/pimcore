@@ -135,9 +135,10 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param float $data
+     * @param null|Object_Abstract $object
      * @return float
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
         return $this->getDataFromResource($data);
     }
 

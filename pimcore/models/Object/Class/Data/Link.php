@@ -101,9 +101,10 @@ class Object_Class_Data_Link extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
 
         $link = new Object_Data_Link();
         $link->setValues($data);

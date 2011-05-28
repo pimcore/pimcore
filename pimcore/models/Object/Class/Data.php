@@ -159,9 +159,10 @@ abstract class Object_Class_Data {
      * Converts data from editmode to internal eg. Image-Id to Asset_Image object
      *
      * @param mixed $data
+     * @param null|Object_Abstract $object
      * @return mixed
      */
-    abstract public function getDataFromEditmode($data);
+    abstract public function getDataFromEditmode($data, $object = null);
 
     /**
      * Checks if data is valid for current data field
@@ -608,26 +609,6 @@ abstract class Object_Class_Data {
 
         return $code;
     }
-
-
-
-    //todo Needed for ObjectBricks in ObjectController - maybe there is an other, better solution for this
-    /**
-     * @var Object_Concrete
-     */
-    private $object;
-    public function setObject($object)
-    {
-        $this->object = $object;
-    }
-
-    public function getObject()
-    {
-        return $this->object;
-    }
-
-
-
 
 
 }

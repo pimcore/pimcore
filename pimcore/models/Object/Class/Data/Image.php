@@ -145,9 +145,10 @@ class Object_Class_Data_Image extends Object_Class_Data {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param integer $data
+     * @param null|Object_Abstract $object
      * @return Asset
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
         return $this->getDataFromResource($data);
     }
 

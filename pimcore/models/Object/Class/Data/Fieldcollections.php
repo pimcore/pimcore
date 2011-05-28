@@ -81,9 +81,10 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataFromEditmode($data)
+    public function getDataFromEditmode($data, $object = null)
     {
 
         $values = array();

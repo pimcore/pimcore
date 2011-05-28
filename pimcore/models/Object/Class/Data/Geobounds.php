@@ -126,9 +126,10 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param array $data
+     * @param null|Object_Abstract $object
      * @return Object_Data_Geobounds
      */
-    public function getDataFromEditmode($data) {
+    public function getDataFromEditmode($data, $object = null) {
         if($data["NElongitude"] !== null && $data["NElatitude"] !== null && $data["SWlongitude"] !== null && $data["SWlatitude"] !== null) {
             $ne = new Object_Data_Geopoint($data["NElongitude"], $data["NElatitude"]);
             $sw = new Object_Data_Geopoint($data["SWlongitude"], $data["SWlatitude"]);

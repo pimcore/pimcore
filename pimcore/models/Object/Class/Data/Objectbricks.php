@@ -164,19 +164,21 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param string $data
+     * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataFromEditmode($data)
+    public function getDataFromEditmode($data, $object = null)
     {
+
         $getter = "get" . ucfirst($this->getName());
 
-        $container = $this->getObject()->$getter();
 
+        $container = $object->$getter(); //$this->getObject()->$getter();
         if(empty($container)) {
-            $className = $this->getObject()->getClass()->getName();
+            $className = $object->getClass()->getName(); //$this->getObject()->getClass()->getName();
 
             $containerClass = "Object_" . ucfirst($className) . "_" . ucfirst($this->getName());
-            $container = new $containerClass($this->getObject(), $this->getName());
+            $container = new $containerClass($object, $this->getName()); //$this->getObject(), $this->getName());
         }
 
         if (is_array($data)) {
@@ -189,7 +191,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 $brick = $container->$getter();
                 if(empty($brick)) {
                     $brickClass = "Object_Objectbrick_Data_" . ucfirst($collectionRaw["type"]);
-                    $brick = new $brickClass($this->getObject());
+                    $brick = new $brickClass($object); //$this->getObject());
                 }
 
 
@@ -198,7 +200,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                 } else {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         if (array_key_exists($fd->getName(), $collectionRaw["data"])) {
-                            $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()]);
+                            $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()], $object);
                         }
                     }
                     $brick->setValues($collectionData);
