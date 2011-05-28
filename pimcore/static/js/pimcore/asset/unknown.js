@@ -51,7 +51,7 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
         }
         items.push(this.dependencies.getLayout());
 
-        var tabbar = new Ext.TabPanel({
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:true,
@@ -61,6 +61,6 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
             activeTab: 0
         });
 
-        return tabbar;
+        return this.tabbar;
     }
 });
