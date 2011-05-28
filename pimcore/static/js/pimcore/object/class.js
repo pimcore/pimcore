@@ -117,6 +117,12 @@ pimcore.object.klass = Class.create({
     },
 
     onTreeNodeClick: function () {
+
+        if(Ext.getCmp("pimcore_class_editor_panel_" + this.id)) {
+            this.attributes.reference.getEditPanel().activate(Ext.getCmp("pimcore_class_editor_panel_" + this.id));
+            return;
+        }
+
         if (this.id > 0) {
             Ext.Ajax.request({
                 url: "/admin/class/get",

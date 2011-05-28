@@ -99,6 +99,7 @@ pimcore.object.classes.klass = Class.create({
             layout: "border",
             closable: true,
             title: name,
+            id: "pimcore_class_editor_panel_" + this.getId(),
             items: [
                 {
                     region: "west",
