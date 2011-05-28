@@ -205,7 +205,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
                     $editArrayItem["__row_identifyer"] = $r['key'];
                     $editArrayItem["__row_label"] = $r['label'];
                     foreach($this->getCols() as $c) {
-                        $editArrayItem[$c['key']] =  $data[$r['key']][$c['key']];
+                        $editArrayItem[$c['key']] = $data[$r['key']][$c['key']];
                     }
                     $editArray[] = $editArrayItem;
                 }
@@ -374,7 +374,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
     public function getColumnType() {
         $columns = array();
         foreach($this->calculateDbColumns() as $c) {
-            $columns[$c] = "double";
+            $columns[$c->name] = $c->type;
         }
         return $columns;
     }
@@ -382,13 +382,13 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
     public function getQueryColumnType() {
         $columns = array();
         foreach($this->calculateDbColumns() as $c) {
-            $columns[$c] = "double";
+            $columns[$c->name] = $c->type;
         }
         return $columns;
     }
 
 
-    public function calculateDbColumns() {
+    protected function calculateDbColumns() {
 
         $rows = $this->getRows();
         $cols = $this->getCols();
@@ -398,11 +398,25 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
         foreach($rows as $r) {
             foreach($cols as $c) {
                 $name = $r['key'] . "#" . $c['key'];
-                $dbCols[] = $name;
+
+                $col = new stdClass();
+                $col->name = $name;
+                $col->type = $this->typeMapper($c['type']);
+                $dbCols[] = $col;
             }
         }
 
         return $dbCols;
+    }
+
+    protected function typeMapper($type) {
+        $mapper = array(
+            "text" => "varchar(250)",
+            "number" => "double",
+            "bool" => "tinyint(1)"
+        );
+
+        return $mapper[$type];
     }
 
 

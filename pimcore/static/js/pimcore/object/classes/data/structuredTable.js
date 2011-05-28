@@ -35,11 +35,12 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
     },
 
     getIconClass: function () {
-        return "pimcore_icon_table";
+        return "pimcore_icon_structuredTable";
     },
 
     getLayout: function ($super) {
         this.grids = {};
+        this.stores = {};
 
         $super();
 
@@ -57,43 +58,105 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 name: "height",
                 value: this.datax.height
             },
-            this.getGetGrid("rows", this.datax.rows),
-            this.getGetGrid("cols", this.datax.cols)
+            this.getGrid("rows", this.datax.rows, false),
+            this.getGrid("cols", this.datax.cols, true)
         ]);
 
         return this.layout;
     },
 
 
-    getGetGrid: function (title, data) {
+    getGrid: function (title, data, hasType) {
 
-        var store = new Ext.data.JsonStore({
-            //writer: new Ext.data.JsonWriter(),
-            autoDestroy: true,
+        var fields = [
+           'position',
+           'key',
+           'label'
+        ];
+        
+        if(hasType) {
+            fields.push('type');
+        }
+        
+        this.stores[title] = new Ext.data.JsonStore({
+            autoDestroy: false,
             autoSave: false,
             idIndex: 1,
-            fields: [
-               'position',
-               'key',
-               'label'
-            ]            
+            fields: fields
         });
+
+        if(!data || data.length < 1) {
+            var d = {position:1, key: "1", label: "1"};
+            if(hasType) {
+                d.type = "number";
+            }
+            data = [d];
+        }
+
         if(data) {
-            store.loadData(data);
+            this.stores[title].loadData(data);
         }
 
         var editor = new Ext.ux.grid.RowEditor();
 
+        var keyTextField = new Ext.form.TextField({
+            //validationEvent: false,
+            validator: function(value) {
+                value = trim(value);
+                var regresult = value.match(/[a-zA-Z0-9_]+/);
+
+                if (value.length > 1 && regresult == value && in_array(value.toLowerCase(), ["id","key","path","type","index","classname","creationdate","userowner","value","class","list","fullpath","childs","values","cachetag","cachetags","parent","published","valuefromparent","userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data","versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource","parentClass","definition","locked","language"]) == false) {
+                    return true; 
+                } else {
+                    return t("structuredtable_invalid_key");
+                }
+            }
+        });
+
+
         var typesColumns = [
             {header: t("position"), width: 10, sortable: true, dataIndex: 'position', editor: new Ext.form.NumberField({})},
-            {header: t("key"), width: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
-            {header: t("label"), width: 200, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
+            {header: t("key"), width: 50, sortable: true, dataIndex: 'key', editor: keyTextField},
+            {header: t("label"), width: 150, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
         ];
+
+        if(hasType) {
+            var types = {
+                number: t("structuredtable_type_number"),
+                text: t("structuredtable_type_text"),
+                bool: t("structuredtable_type_bool")
+            };
+
+            var typeComboBox = new Ext.form.ComboBox({
+                triggerAction: 'all',
+                allowBlank: false,
+                lazyRender: true,
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 'value',
+                    fields: [
+                        'value',
+                        'label'
+                    ],
+                    data: [['number', types.number], ['text', types.text], ['bool', types.bool]]
+                }),
+                valueField: 'value',
+                displayField: 'label'
+            });
+
+            typesColumns.push({header: t("type"), width: 50, sortable: true, dataIndex: 'type', editor: typeComboBox, renderer: function(value) {
+                return types[value];
+            }});
+
+        }
+
+
 
         this.grids[title] = new Ext.grid.GridPanel({
             title: t(title),
             autoScroll: true,
-            store: store,
+            autoDestroy: false,
+            store: this.stores[title],
             height: 200,
             plugins: [editor],
             columns : typesColumns,
@@ -102,13 +165,13 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
             tbar: [
                 {
                     text: t('add'),
-                    handler: this.onAdd.bind(this, store, editor),
+                    handler: this.onAdd.bind(this, this.stores[title], editor, hasType),
                     iconCls: "pimcore_icon_add"
                 },
                 '-',
                 {
                     text: t('delete'),
-                    handler: this.onDelete.bind(this, store, title),
+                    handler: this.onDelete.bind(this, this.stores[title], title),
                     iconCls: "pimcore_icon_delete"
                 },
                 '-'
@@ -122,32 +185,40 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
     },
 
 
-    onAdd: function (store, editor, btn, ev) {
+    onAdd: function (store, editor, hasType, btn, ev) {
         var u = new store.recordType();
+        if(hasType) {
+            u.data.type = "text";
+        }
+        u.data.position = store.getCount() + 1;
+        u.data.key = "name";
         editor.stopEditing();
-        store.insert(0, u);
-        editor.startEditing(0);
+        store.add(u);
+        console.log(store.getCount());
+        editor.startEditing(store.getCount()-1);
     },
 
     onDelete: function (store, title) {
-        var rec = this.grids[title].getSelectionModel().getSelected();
-        if (!rec) {
-            return false;
+        if(store.getCount() > 1) {
+            var rec = this.grids[title].getSelectionModel().getSelected();
+            if (!rec) {
+                return false;
+            }
+            store.remove(rec);
         }
-        store.remove(rec);
     },
 
     getData: function () {
         if(this.grids) {
             var rows = [];
-            this.grids.rows.getStore().each(function(rec) {
+            this.stores.rows.each(function(rec) {
                 rows.push(rec.data);
                 rec.commit();
             });
             this.datax.rows = rows;
 
             var cols = [];
-            this.grids.cols.getStore().each(function(rec) {
+            this.stores.cols.each(function(rec) {
                 cols.push(rec.data);
                 rec.commit();
             });

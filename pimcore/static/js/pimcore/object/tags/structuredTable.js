@@ -45,7 +45,14 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         ];
 
         for(var i = 0; i < layoutConf.cols.length; i++) {
-            fields.push(layoutConf.cols[i].key);
+            var field = {name:layoutConf.cols[i].key};
+            if(layoutConf.cols[i].type == "number") {
+                field.type = "float";
+            }
+            if(layoutConf.cols[i].type == "bool") {
+                field.type = "bool";
+            }
+            fields.push(field);
         }
 
         this.store = new Ext.data.JsonStore({
@@ -62,8 +69,6 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             autoHeight = true;
         }
 
-        var cls = 'object_field';
-
         var columns = [
             {header: "", width: 80, sortable: false, dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
                     metaData.css = 'x-grid3-hd-row';
@@ -73,7 +78,40 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         ];
 
         for(var i = 0; i < this.layoutConf.cols.length; i++) {
-            columns.push({header: ts(this.layoutConf.cols[i].label), width: 120, sortable: false, dataIndex: this.layoutConf.cols[i].key, editor: new Ext.form.NumberField({})});
+
+            var editor = null;
+            var renderer = null;
+            var listeners = null;
+            if(this.layoutConf.cols[i].type == "number") {
+                editor = new Ext.form.NumberField({});
+            } else if(this.layoutConf.cols[i].type == "text") {
+                editor = new Ext.form.TextField({});
+            } else if(this.layoutConf.cols[i].type == "bool") {
+                editor = new Ext.form.Checkbox();
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    metaData.css += ' x-grid3-check-col-td';
+                    return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+                };
+                listeners = {
+                    "mousedown": function (col, grid, rowIndex, event) {
+                        var store = grid.getStore();
+                        var record = store.getAt(rowIndex);
+                        record.set(col.dataIndex, !record.data[col.dataIndex]);
+                        this.dataChanged = true;
+                    }.bind(this)
+                }
+            }
+
+            columns.push({
+                header: ts(this.layoutConf.cols[i].label),
+                width: 120,
+                sortable: false,
+                dataIndex: this.layoutConf.cols[i].key,
+                editor: editor,
+//                getCellEditor: editor,
+                listeners: listeners,
+                renderer: renderer
+            });
         }
 
         this.grid = new Ext.grid.EditorGridPanel({
@@ -84,15 +122,10 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                 },
                 columns: columns
             }),
-            cls: cls,
+            cls: 'object_field',
             width: this.layoutConf.width,
             height: this.layoutConf.height,
             tbar: [
-                {
-                    xtype: "tbspacer",
-                    width: 20,
-                    height: 16
-                },
                 {
                     xtype: "tbtext",
                     text: "<b>" + this.layoutConf.title + "</b>"

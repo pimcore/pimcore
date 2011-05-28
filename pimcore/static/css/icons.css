@@ -500,6 +500,10 @@
 	background: url(/pimcore/static/img/icon/table.png) no-repeat !important;
 }
 
+.pimcore_icon_structuredTable {
+	background: url(/pimcore/static/img/icon/table_gear.png) no-repeat !important;
+}
+
 .pimcore_icon_region {
 	background: url(/pimcore/static/img/icon/layout.png) no-repeat !important;
 }
