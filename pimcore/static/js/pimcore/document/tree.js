@@ -455,13 +455,15 @@ pimcore.document.tree = Class.create({
             }
         }
 
-        menu.add(new Ext.menu.Item({
-                    text: t('import_archive'),
-                    iconCls: "pimcore_icon_archive_import",
-                    handler: function(){
-                        new pimcore.element.importer("document",this.id);
-                    }.bind(this)
-                }));
+        if(this.attributes.permissions.create){
+            menu.add(new Ext.menu.Item({
+                        text: t('import_archive'),
+                        iconCls: "pimcore_icon_archive_import",
+                        handler: function(){
+                            new pimcore.element.importer("document",this.id);
+                        }.bind(this)
+                    }));
+        }
 
         menu.add(new Ext.menu.Item({
                 text: t('export_archive'),
