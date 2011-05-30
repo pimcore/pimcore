@@ -13,28 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Webservice_SoapController extends Pimcore_Controller_Action {
-
-
-
-    public function init() {
-
-        if(!$this->_getParam("apikey")){
-            throw new Exception("API key missing");
-        }
-
-        $userList = new User_List();
-        $userList->setCondition("password ='".$this->_getParam("apikey")."'");
-        $users = $userList->load();
-
-        if(!is_array($users) or count($users)!==1){
-            throw new Exception("API key error");
-        }
-        $user = $users[0];
-        Zend_Registry::set("pimcore_user", $user);
-
-        parent::init();
-    }
+class Webservice_SoapController extends Pimcore_Controller_Action_Webservice {
 
     public function endpointAction() {
 
