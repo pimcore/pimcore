@@ -1448,7 +1448,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
             $list = new $listClass();
-            $list->setCondition("o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . $folder->getFullPath() . "/%'" . $conditionFilters);
+            $list->setCondition("o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'" . $conditionFilters);
             $list->setLimit($limit);
             $list->setOffset($start);
             $list->setOrder($order);
