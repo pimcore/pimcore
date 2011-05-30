@@ -85,7 +85,11 @@ class Pimcore_Google_Analytics {
 
               var _gaq = _gaq || [];
               _gaq.push(['_setAccount', '" . $config->trackid . "']);
-              _gaq.push(['_trackPageview']);
+              if (typeof _gaqPageView != \"undefined\"){
+                _gaq.push(['_trackPageview',_gaqPageView]);
+              } else {
+                _gaq.push(['_trackPageview']);
+              }
             
               (function() {
                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
