@@ -122,13 +122,19 @@ class Object_Concrete extends Object_Abstract {
 
             if(method_exists($this, $getter)){
 
+                //To make sure, inherited values are not set again
+                $inheritedValues = Object_Abstract::doGetInheritedValues();
+                Object_Abstract::setGetInheritedValues(false);
+
                 $value = $this->$getter();
                 $fd->sanityCheck($this);
-
                 if(is_array($value) and ($fd instanceof Object_Class_Data_Multihref or $fd instanceof Object_Class_Data_Objects)){
                     //don't save relations twice
                     $this->$setter(array_unique($value));
                 }
+                Object_Abstract::setGetInheritedValues($inheritedValues);
+
+                $value = $this->$getter();
 
                 $omitMandatoryCheck = false;
                 $timeSinceCreation = (time()-$this->getCreationDate());
