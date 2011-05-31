@@ -86,7 +86,7 @@ class Document_Tag_Input extends Document_Tag
      */
     public function isEmpty()
     {
-        return (boolean) strlen($this->text);
+        return !(boolean) strlen($this->text);
     }
 
 
