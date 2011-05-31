@@ -15,6 +15,7 @@
 
 class Webservice_SoapController extends Pimcore_Controller_Action_Webservice {
 
+ 
     public function endpointAction() {
 
         // disable wsdl cache
