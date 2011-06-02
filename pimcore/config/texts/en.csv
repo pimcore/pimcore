@@ -878,3 +878,5 @@
 "structuredtable_type_text","Text"
 "structuredtable_type_bool","Checkbox"
 "structuredtable_invalid_key","Invalid Key"
+"no_further_classes_allowed","No further classes available"
+"objectbricks_saved_successfully","Objectbrick saved successfully"
