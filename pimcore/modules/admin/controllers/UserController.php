@@ -36,10 +36,11 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $list->load();
 
         $users = array();
-        foreach ($list->getUsers() as $user) {
-            $users[] = $this->getTreeNodeConfig($user);
+        if(is_array($list->getUsers())){
+            foreach ($list->getUsers() as $user) {
+                $users[] = $this->getTreeNodeConfig($user);
+            }
         }
-
         $this->_helper->json($users);
     }
 
@@ -145,18 +146,15 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
             $user->setAllAclToFalse();
             $user->setValues($values);
-            if (!empty($values["active"])) {
-                $user->setActive(true);
+
+            if (isset($allValues["active"])) {
+                $user->setActive($allValues["active"]);
             }
-            else {
-                $user->setActive(false);
+
+            if (isset($allValues["admin"])) {
+                $user->setAdmin($allValues["admin"]);
             }
-            if (!empty($values["admin"])) {
-                $user->setAdmin(true);
-            }
-            else {
-                $user->setAdmin(false);
-            }
+
             $user->save();
 
             $this->_helper->json(array("success" => true));
