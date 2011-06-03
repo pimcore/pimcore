@@ -295,6 +295,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 }
             }
 
+            // staging database, copy all db configurations from live system except the database name
+            $stagingDatabase = $oldValues["database"];
+            $stagingDatabase["params"]["dbname"] = $values["staging.database.params.dbname"];
+
             $settings = array(
                 "general" => array(
                     "timezone" => $values["general.timezone"],
@@ -408,9 +412,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "proxy_port" => $values["httpclient.proxy_port"],
                     "proxy_user" => $values["httpclient.proxy_user"],
                     "proxy_pass" => $values["httpclient.proxy_pass"],
+                ),
+                "staging" => array(
+                    "domain" => $values["staging.domain"],
+                    "database" => $stagingDatabase
                 )
             );
-
 
             $config = new Zend_Config($settings, true);
             $writer = new Zend_Config_Writer_Xml(array(

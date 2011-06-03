@@ -18,7 +18,34 @@ error_reporting(E_ALL ^ E_NOTICE);
 // configure some constants needed by pimcore
 $pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..'); 
 
-if (!defined("PIMCORE_DOCUMENT_ROOT"))  define("PIMCORE_DOCUMENT_ROOT", $pimcoreDocumentRoot);
+$stagingActive = false;
+
+if (!defined("PIMCORE_DOCUMENT_ROOT_STAGE"))  define("PIMCORE_DOCUMENT_ROOT_STAGE", $pimcoreDocumentRoot . "/pimcore-staging");
+if (!defined("PIMCORE_CONFIGURATION_STAGE"))  define("PIMCORE_CONFIGURATION_STAGE", PIMCORE_DOCUMENT_ROOT_STAGE . "/STAGING.ini");
+
+
+if (!defined("PIMCORE_DOCUMENT_ROOT")) {
+
+    // check for staging
+    if(is_file(PIMCORE_CONFIGURATION_STAGE)) {
+        $stageConfig = @parse_ini_file(PIMCORE_CONFIGURATION_STAGE);
+        if($stageConfig && strlen($stageConfig["domain"]) > 2) {
+            if($_SERVER["HTTP_HOST"] == $stageConfig["domain"]) {
+                define("PIMCORE_DOCUMENT_ROOT", PIMCORE_DOCUMENT_ROOT_STAGE);
+                $stagingActive = true;
+            } else if (preg_match("/^\/admin.*/",$_SERVER["REQUEST_URI"])) {
+                // redirect to staging admin
+                header("Location: " . "http://" . $stageConfig["domain"] . "/admin/",true, 301);
+                exit;
+            }
+        }
+    }
+
+    // default if staging is disabled
+    if(!$stagingActive) {
+        define("PIMCORE_DOCUMENT_ROOT", $pimcoreDocumentRoot);
+    }
+}
 
 if (!defined("PIMCORE_FRONTEND_MODULE"))  define("PIMCORE_FRONTEND_MODULE", "website"); // frontend module, this is the module containing your website, please be sure that the module folder is in PIMCORE_DOCUMENT_ROOT and is named identically with this name
 if (!defined("PIMCORE_PATH"))  define("PIMCORE_PATH", PIMCORE_DOCUMENT_ROOT . "/pimcore");

@@ -111,6 +111,14 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("system_settings")) {
+            extrasItems.push({
+                text: t("staging"),
+                iconCls: "pimcore_icon_staging",
+                handler: this.staging
+            });
+        }
+
         if (user.isAllowed("update")) {
             extrasItems.push({
                 text: t("update"),
@@ -460,6 +468,11 @@ pimcore.layout.toolbar = Class.create({
     backup: function () {
         var backup = new pimcore.settings.backup()
     },
+
+    staging: function () {
+        var staging = new pimcore.settings.staging()
+    },
+        
     
     recyclebin: function () {
         try {
