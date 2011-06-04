@@ -22,17 +22,49 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
         $this->session = new Zend_Session_Namespace("pimcore_staging");
     }
 
-    public function initAction() {
+    public function enableInitAction() {
 
-        $staging = new Pimcore_Staging();
-        $initInfo = $staging->init();
-        
-        $this->session->staging = $staging;
+        // check if all required settings are present
+        $config = Pimcore_Config::getSystemConfig()->toArray();
+        if($config["staging"] && $config["staging"]["domain"] && $config["staging"]["database"]["params"]["dbname"]) {
 
-        $this->_helper->json($initInfo);
+            // everything ok, let's start
+            $staging = new Pimcore_Staging_Enable();
+            $initInfo = $staging->init();
+
+            $this->session->staging = $staging;
+
+            $this->_helper->json($initInfo);
+        } else {
+            die("Cannot initiate staging, please be sure that you have configured a staging database and domain.");
+        }
     }
 
-    public function filesAction() {
+    public function enableCleanupDatabaseAction () {
+        $staging = $this->session->staging;
+        $return = $staging->cleanupDatabase();
+        $this->session->staging = $staging;
+
+        $this->_helper->json($return);
+    }
+
+    public function enableCleanupFilesAction () {
+        $staging = $this->session->staging;
+        $return = $staging->cleanupFiles();
+        $this->session->staging = $staging;
+
+        $this->_helper->json($return);
+    }
+
+    public function enableSetupAction () {
+        $staging = $this->session->staging;
+        $return = $staging->setUpStaging();
+        $this->session->staging = $staging;
+
+        $this->_helper->json($return);
+    }
+
+    public function enableFilesAction() {
 
         $staging = $this->session->staging;
         $return = $staging->fileStep($this->_getParam("step"));
@@ -41,7 +73,7 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($return);
     }
 
-    public function mysqlAction() {
+    public function enableMysqlAction() {
 
         $name = $this->_getParam("name");
         $type = $this->_getParam("type");
@@ -54,7 +86,7 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
     }
 
 
-    public function completeAction() {
+    public function enableCompleteAction() {
                                 
         $staging = $this->session->staging;
         $return = $staging->complete();

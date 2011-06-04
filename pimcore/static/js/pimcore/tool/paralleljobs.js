@@ -88,7 +88,7 @@ pimcore.tool.paralleljobs = Class.create({
                         }
                     } catch (e) {
                         clearInterval(this.jobsInterval);
-                        this.error("Download fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + response);
+                        this.error(response.responseText);
                     }
 
                     this.jobsFinished++;
@@ -106,9 +106,9 @@ pimcore.tool.paralleljobs = Class.create({
                     } catch (e) {}
 
                 }.bind(this),
-                failure: function () {
+                failure: function (response) {
                     clearInterval(this.jobsInterval);
-                    this.error("Download fails, see debug.log for more details.");
+                    this.error(response.responseText);
                 }.bind(this),
                 params: this.config.jobs[this.groupsFinished][this.jobsStarted].params
             });

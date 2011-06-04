@@ -1154,7 +1154,7 @@ pimcore.settings.system = Class.create({
                     },
                     {
                         xtype:'fieldset',
-                        title: t('staging'),
+                        title: t('development_stage_mode'),
                         collapsible: true,
                         collapsed: true,
                         autoHeight:true,

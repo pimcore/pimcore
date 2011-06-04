@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Staging {
+class Pimcore_Staging_Enable {
     
     public $filesToStage;
     public $fileAmount;
@@ -39,6 +39,64 @@ class Pimcore_Staging {
 
         $dbStaging = Zend_Db::factory(Pimcore_Config::getSystemConfig()->staging->database);
         return $dbStaging;
+    }
+
+    public function cleanupDatabase () {
+        // cleanup staging database
+        $dbStaging = $this->getStagingDatabase();
+        $tablesStage = $dbStaging->fetchAll("SHOW FULL TABLES");
+
+        // views
+        foreach ($tablesStage as $table) {
+            $name = current($table);
+            $type = next($table);
+
+            if ($type == "VIEW") {
+                $dbStaging->exec("DROP VIEW `" . $name . "`;");
+            }
+        }
+
+        // tables
+        foreach ($tablesStage as $table) {
+            $name = current($table);
+            $type = next($table);
+
+            if ($type != "VIEW") {
+                $dbStaging->exec("DROP TABLE `" . $name . "`;");
+            }
+        }
+
+        return array(
+            "success" => true
+        );
+    }
+
+    public function cleanupFiles () {
+        // cleanup old staging files
+        recursiveDelete(PIMCORE_DOCUMENT_ROOT_STAGE,false);
+
+        return array(
+            "success" => true
+        );
+    }
+
+    public function setUpStaging () {
+
+        // create website/var folders
+        $dirContent = scandir(PIMCORE_WEBSITE_PATH . "/var");
+        foreach ($dirContent as $content) {
+            if(is_dir(PIMCORE_WEBSITE_PATH . "/var/" . $content)) {
+
+                if(strpos($content,".") !== false) {
+                    continue;
+                }
+                mkdir(str_replace(PIMCORE_DOCUMENT_ROOT, PIMCORE_DOCUMENT_ROOT_STAGE, PIMCORE_WEBSITE_PATH . "/var")."/".$content,0766,true);
+            }
+        }
+
+        return array(
+            "success" => true
+        );
     }
         
     public function init () {
@@ -67,48 +125,22 @@ class Pimcore_Staging {
         $this->setFileAmount(0);
 
 
-        // cleanup old staging files
-        recursiveDelete(PIMCORE_DOCUMENT_ROOT_STAGE,false);
 
-        // create website/var folders
-        $dirContent = scandir(PIMCORE_WEBSITE_PATH . "/var");
-        foreach ($dirContent as $content) {
-            if(is_dir(PIMCORE_WEBSITE_PATH . "/var/" . $content)) {
-
-                if(strpos($content,".") !== false) {
-                    continue;
-                }
-                mkdir(str_replace(PIMCORE_DOCUMENT_ROOT, PIMCORE_DOCUMENT_ROOT_STAGE, PIMCORE_WEBSITE_PATH . "/var")."/".$content,0766,true);
-            }
-        }
-        
-        // cleanup staging database
-        $dbStaging = $this->getStagingDatabase();
-        $tablesStage = $dbStaging->fetchAll("SHOW FULL TABLES");
-
-        // views
-        foreach ($tablesStage as $table) {
-            $name = current($table);
-            $type = next($table);
-
-            if ($type == "VIEW") {
-                $dbStaging->exec("DROP VIEW `" . $name . "`;");
-            }
-        }
-
-        // tables
-        foreach ($tablesStage as $table) {
-            $name = current($table);
-            $type = next($table);
-
-            if ($type != "VIEW") {
-                $dbStaging->exec("DROP TABLE `" . $name . "`;");
-            }
-        }
-
-        
         // get steps
         $steps = array();
+
+
+        $steps[] = array(array(
+            "url" => "/admin/staging/enable-cleanup-database",
+        ));
+
+        $steps[] = array(array(
+            "url" => "/admin/staging/enable-cleanup-files",
+        ));
+
+        $steps[] = array(array(
+            "url" => "/admin/staging/enable-setup",
+        ));
 
         // get available tables
         $db = Pimcore_Resource::get();
@@ -123,7 +155,7 @@ class Pimcore_Staging {
 
             if ($type != "VIEW") {
                 $stepsTable[] = array(
-                    "url" => "/admin/staging/mysql",
+                    "url" => "/admin/staging/enable-mysql",
                     "params" => array(
                         "name" => $name,
                         "type" => $type
@@ -143,7 +175,7 @@ class Pimcore_Staging {
 
             if ($type == "VIEW") {
                 $stepsViews[] = array(
-                    "url" => "/admin/staging/mysql",
+                    "url" => "/admin/staging/enable-mysql",
                     "params" => array(
                         "name" => $name,
                         "type" => $type
@@ -202,7 +234,7 @@ class Pimcore_Staging {
 
         for ($i = 0; $i < $fileSteps; $i++) {
             $stepsFiles[] = array(
-                "url" => "/admin/staging/files",
+                "url" => "/admin/staging/enable-files",
                 "params" => array(
                     "step" => $i
                 )
@@ -211,7 +243,7 @@ class Pimcore_Staging {
         $steps[] = $stepsFiles;
 
         $steps[] = array(array(
-            "url" => "/admin/staging/complete",
+            "url" => "/admin/staging/enable-complete",
         ));
 
 
@@ -329,7 +361,8 @@ class Pimcore_Staging {
         
         // write staging config
         $stagingConfig = array(
-            "domain" => $systemConfig->staging->domain
+            "stagingdomain" => $systemConfig->staging->domain,
+            "livedomain" => $_SERVER["HTTP_HOST"]
         );
 
         $stagingConfig = new Zend_Config($stagingConfig);

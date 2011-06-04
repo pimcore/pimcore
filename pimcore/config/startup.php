@@ -29,13 +29,13 @@ if (!defined("PIMCORE_DOCUMENT_ROOT")) {
     // check for staging
     if(is_file(PIMCORE_CONFIGURATION_STAGE)) {
         $stageConfig = @parse_ini_file(PIMCORE_CONFIGURATION_STAGE);
-        if($stageConfig && strlen($stageConfig["domain"]) > 2) {
-            if($_SERVER["HTTP_HOST"] == $stageConfig["domain"]) {
+        if($stageConfig && strlen($stageConfig["stagingdomain"]) > 2) {
+            if($_SERVER["HTTP_HOST"] == $stageConfig["stagingdomain"]) {
                 define("PIMCORE_DOCUMENT_ROOT", PIMCORE_DOCUMENT_ROOT_STAGE);
                 $stagingActive = true;
             } else if (preg_match("/^\/admin.*/",$_SERVER["REQUEST_URI"])) {
                 // redirect to staging admin
-                header("Location: " . "http://" . $stageConfig["domain"] . "/admin/",true, 301);
+                header("Location: " . "http://" . $stageConfig["stagingdomain"] . "/admin/",true, 301);
                 exit;
             }
         }

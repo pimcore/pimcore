@@ -114,9 +114,9 @@ pimcore.layout.toolbar = Class.create({
         if (user.isAllowed("system_settings")) {
             if(pimcore.settings.staging_active == false) {
                 extrasItems.push({
-                    text: t("staging"),
-                    iconCls: "pimcore_icon_staging",
-                    handler: this.staging
+                    text: t("development_stage_mode_enable"),
+                    iconCls: "pimcore_icon_staging_enable",
+                    handler: this.stagingEnable
                 });
             }
         }
@@ -403,7 +403,17 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
         });
-        
+
+
+        // add staging information if enabled
+        if(pimcore.settings.staging_active) {
+            this.toolbar.add({
+                text: "<b>" + t("development_stage_mode_activated") + "</b>",
+                iconCls: "pimcore_icon_staging_disable",
+                handler: this.stagingDisable
+            });
+        }
+
         
         this.toolbar.add("->");
         
@@ -471,8 +481,12 @@ pimcore.layout.toolbar = Class.create({
         var backup = new pimcore.settings.backup()
     },
 
-    staging: function () {
-        var staging = new pimcore.settings.staging()
+    stagingEnable: function () {
+        var staging = new pimcore.settings.staging.enable()
+    },
+
+    stagingDisable: function () {
+        var staging = new pimcore.settings.staging.disable()
     },
         
     
