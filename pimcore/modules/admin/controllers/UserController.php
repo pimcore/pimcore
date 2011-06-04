@@ -147,6 +147,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $user->setAllAclToFalse();
             $user->setValues($values);
 
+            if (isset($allValues["parentId"])) {
+                $user->setParentId($allValues["parentId"]);
+            }
+
             if (isset($allValues["active"])) {
                 $user->setActive($allValues["active"]);
             }

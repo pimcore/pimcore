@@ -94,6 +94,7 @@
 "download_as_zip","Download as ZIP"
 "locked","Locked"
 "element_cannot_be_move_because_it_is_locked","Element cannot be moved because it is locked."
+"element_cannot_be_moved","The element cannot be moved here"
 "lock","Lock"
 "unlock","Unlock"
 "lock_and_propagate_to_childs","Lock and propagate to childs"

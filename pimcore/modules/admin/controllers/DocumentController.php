@@ -500,6 +500,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 //check if parent is changed
                 if ($document->getParentId() != $parentDocument->getId()) {
 
+                    if(!$parentDocument->isAllowed("create")){
+                        throw new Exception("Prevented moving document - no create permission on new parent ");
+                    }
+
                     $intendedPath = $parentDocument->getPath();
                     $pKey = $parentDocument->getKey();
                     if (!empty($pKey)) {

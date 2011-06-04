@@ -217,7 +217,13 @@ pimcore.asset.tree = Class.create({
             Ext.MessageBox.alert(t('locked'), t('element_cannot_be_move_because_it_is_locked'));
             return false;
         }
-        
+
+         // check new parent's permission
+        if(!newParent.attributes.permissions.create){
+            Ext.MessageBox.alert(t('missing_permission'), t('element_cannot_be_moved'));
+            return false;
+        }
+
         // check for permission
         if (element.attributes.permissions.settings) {
             tree.loadMask.show();

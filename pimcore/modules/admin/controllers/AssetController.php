@@ -699,6 +699,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 //check if parent is changed i.e. asset is moved
                 if ($asset->getParentId() != $parentAsset->getId()) {
 
+                    if(!$parentAsset->isAllowed("create")){
+                        throw new Exception("Prevented moving asset - no create permission on new parent ");
+                    }
+
                     $intendedPath = $parentAsset->getPath();
                     $pKey = $parentAsset->getKey();
                     if (!empty($pKey)) {

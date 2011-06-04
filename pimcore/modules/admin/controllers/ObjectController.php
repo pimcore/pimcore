@@ -894,6 +894,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 //check if parent is changed
                 if ($object->getParentId() != $parent->getId()) {
 
+                    if(!$parent->isAllowed("create")){
+                        throw new Exception("Prevented moving object - no create permission on new parent ");
+                    }
+
                     $objectWithSamePath = Object_Abstract::getByPath($parent->getFullPath() . "/" . $object->getKey());
 
                     if ($objectWithSamePath != null) {
