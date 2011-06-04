@@ -143,7 +143,8 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
         $return = $staging->complete();
         $this->session->staging = $staging;
 
-        $this->_helper->json($return);
+        echo json_encode($return);
+        exit;
     }
 
     /**
