@@ -41,6 +41,12 @@ class Pimcore_Staging_Disable {
         return $dbStaging;
     }
 
+    protected function getLiveDatabase() {
+
+        $dbStaging = Zend_Db::factory(Pimcore_Config::getSystemConfig()->staging->database);
+        return $dbStaging;
+    }
+
     public function cleanupDatabase () {
         // cleanup staging database
         $dbStaging = $this->getStagingDatabase();
