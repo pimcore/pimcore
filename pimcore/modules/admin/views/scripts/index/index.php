@@ -158,7 +158,8 @@
             "pimcore/user.js",
 
             // tools
-            "pimcore/settings/user/panel.js",
+            "pimcore/tool/paralleljobs.js",
+
             // settings
             "pimcore/settings/user/panel.js",
             "pimcore/settings/user/PermissionRowEditor.js",
