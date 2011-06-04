@@ -13,6 +13,18 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+
+
+function array_htmlspecialchars ($array) {
+    foreach ($array as $key => $value) {
+        if(is_string($value) || is_numeric($value)) {
+            $values[$key] = htmlspecialchars($value,ENT_COMPAT,"UTF-8");
+        } else if (is_array($value)) {
+            $values[$key] = array_htmlspecialchars($value);
+        }
+    }
+}
+
 function object2array($node) {
     // dirty hack, should be replaced
     $paj = @Zend_Json::encode($node);

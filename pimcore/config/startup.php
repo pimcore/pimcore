@@ -45,6 +45,8 @@ if (!defined("PIMCORE_DOCUMENT_ROOT")) {
     if(!$stagingActive) {
         define("PIMCORE_DOCUMENT_ROOT", $pimcoreDocumentRoot);
     }
+
+    define("PIMCORE_STAGING_ACTIVE", $stagingActive);
 }
 
 if (!defined("PIMCORE_FRONTEND_MODULE"))  define("PIMCORE_FRONTEND_MODULE", "website"); // frontend module, this is the module containing your website, please be sure that the module folder is in PIMCORE_DOCUMENT_ROOT and is named identically with this name

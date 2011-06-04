@@ -112,11 +112,13 @@ pimcore.layout.toolbar = Class.create({
         }
 
         if (user.isAllowed("system_settings")) {
-            extrasItems.push({
-                text: t("staging"),
-                iconCls: "pimcore_icon_staging",
-                handler: this.staging
-            });
+            if(pimcore.settings.staging_active == false) {
+                extrasItems.push({
+                    text: t("staging"),
+                    iconCls: "pimcore_icon_staging",
+                    handler: this.staging
+                });
+            }
         }
 
         if (user.isAllowed("update")) {

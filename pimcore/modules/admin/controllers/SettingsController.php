@@ -289,11 +289,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
 
             // convert all special characters to their entities so the xml writer can put it into the file
-            foreach ($values as $key => $value) {
-                if(is_string($value) || is_numeric($value)) {
-                    $values[$key] = htmlspecialchars($value,ENT_COMPAT,"UTF-8");
-                }
-            }
+            $values = array_htmlspecialchars($values);
 
             // staging database, copy all db configurations from live system except the database name
             $stagingDatabase = $oldValues["database"];

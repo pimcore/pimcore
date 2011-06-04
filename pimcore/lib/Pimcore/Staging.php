@@ -303,6 +303,10 @@ class Pimcore_Staging {
         // write new system.xml for staging
         $stagingSystemConfig = $systemConfig->toArray();
         $stagingSystemConfig["database"] = $stagingSystemConfig["staging"]["database"];
+
+        // convert all special characters to their entities so the xml writer can put it into the file
+        $stagingSystemConfig = array_htmlspecialchars($stagingSystemConfig);
+
         $stagingSystemConfig = new Zend_Config($stagingSystemConfig, true);
         $writer = new Zend_Config_Writer_Xml(array(
             "config" => $stagingSystemConfig,

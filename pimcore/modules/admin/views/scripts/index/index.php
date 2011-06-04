@@ -392,7 +392,8 @@
             language: '<?php echo $this->language; ?>',
             websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
             google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
-            liveconnectToken: "<?php echo $this->liveconnectToken; ?>"
+            liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
+            staging_active: <?php echo Zend_Json::encode(PIMCORE_STAGING_ACTIVE); ?>
         };
     </script>
     
