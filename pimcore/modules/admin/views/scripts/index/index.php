@@ -158,8 +158,7 @@
             "pimcore/user.js",
 
             // tools
-            "pimcore/tool/paralleljobs.js",
-
+            "pimcore/settings/user/panel.js",
             // settings
             "pimcore/settings/user/panel.js",
             "pimcore/settings/user/PermissionRowEditor.js",
@@ -181,8 +180,7 @@
             "pimcore/settings/redirects.js",
             "pimcore/settings/glossary.js",
             "pimcore/settings/systemlog.js",
-            "pimcore/settings/staging/enable.js",
-            "pimcore/settings/staging/disable.js",
+            "pimcore/settings/staging.js",
             "pimcore/settings/backup.js",
             "pimcore/settings/recyclebin.js",
             "pimcore/settings/fileexplorer/file.js",

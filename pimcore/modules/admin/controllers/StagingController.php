@@ -116,5 +116,34 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
         ));
     }
 
+    public function disableInitAction() {
+
+        $staging = new Pimcore_Staging_Disable();
+        $initInfo = $staging->init();
+        $this->session->staging = $staging;
+
+        $this->_helper->json($initInfo);
+    }
+
+    public function disableMysqlAction() {
+
+        $name = $this->_getParam("name");
+        $type = $this->_getParam("type");
+
+        $staging = $this->session->staging;
+        $return = $staging->mysql($name, $type);
+        $this->session->staging = $staging;
+
+        $this->_helper->json($return);
+    }
+
+    public function disableCompleteAction() {
+
+        $staging = $this->session->staging;
+        $return = $staging->complete();
+        $this->session->staging = $staging;
+
+        $this->_helper->json($return);
+    }
 
 }

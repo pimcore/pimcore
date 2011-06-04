@@ -18,8 +18,8 @@ pimcore.settings.staging.disable = Class.create({
     initialize: function () {
 
         Ext.Msg.show({
-            title:'Save Changes?',
-            msg: 'You are closing a tab that has unsaved changes. Would you like to save your changes?',
+            title: t("development_stage_mode"),
+            msg: t("development_stage_mode_disable_question"),
             buttons: Ext.Msg.YESNOCANCEL,
             fn: function (button) {
                 if(button == "yes") {
@@ -63,7 +63,7 @@ pimcore.settings.staging.disable = Class.create({
         });
 
         this.window = new Ext.Window({
-            title: "Staging",
+            title: t("development_stage_mode"),
             layout:'fit',
             width:500,
             bodyStyle: "padding: 10px;",
@@ -95,9 +95,11 @@ pimcore.settings.staging.disable = Class.create({
                                 this.window.removeAll();
                                 this.window.add(new Ext.Panel({
                                     bodyStyle: "padding: 20px;",
-                                    html: "Staging is now ready!"
+                                    html: t("development_stage_mode_disable_complete")
                                 }));
                                 this.window.doLayout();
+
+
                             }.bind(this),
                             update: function (currentStep, steps, percent) {
                                 var status = currentStep / steps;

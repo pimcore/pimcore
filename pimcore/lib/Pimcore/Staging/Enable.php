@@ -324,6 +324,7 @@ class Pimcore_Staging_Enable {
                 $dbStage->exec("INSERT INTO `" . $name . "` SELECT * FROM `" . Pimcore_Config::getSystemConfig()->database->params->dbname . "`.`" . $name . "`;");
             } catch (Exception $e) {
                 if ($name == "users") {
+                    // this is because ID = 0 causes a problem (the system user)
                     $dbStage->exec("INSERT INTO `" . $name . "` SELECT * FROM `" . Pimcore_Config::getSystemConfig()->database->params->dbname . "`.`" . $name . "` WHERE id > 0;");
                 } else {
                     throw $e;

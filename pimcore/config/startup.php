@@ -20,7 +20,8 @@ $pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..');
 
 $stagingActive = false;
 
-if (!defined("PIMCORE_DOCUMENT_ROOT_STAGE"))  define("PIMCORE_DOCUMENT_ROOT_STAGE", $pimcoreDocumentRoot . "/pimcore-staging");
+if (!defined("PIMCORE_DOCUMENT_ROOT_LIVE"))  define("PIMCORE_DOCUMENT_ROOT_LIVE", $pimcoreDocumentRoot);
+if (!defined("PIMCORE_DOCUMENT_ROOT_STAGE"))  define("PIMCORE_DOCUMENT_ROOT_STAGE", PIMCORE_DOCUMENT_ROOT_LIVE . "/pimcore-staging");
 if (!defined("PIMCORE_CONFIGURATION_STAGE"))  define("PIMCORE_CONFIGURATION_STAGE", PIMCORE_DOCUMENT_ROOT_STAGE . "/STAGING.ini");
 
 
@@ -43,7 +44,7 @@ if (!defined("PIMCORE_DOCUMENT_ROOT")) {
 
     // default if staging is disabled
     if(!$stagingActive) {
-        define("PIMCORE_DOCUMENT_ROOT", $pimcoreDocumentRoot);
+        define("PIMCORE_DOCUMENT_ROOT", PIMCORE_DOCUMENT_ROOT_LIVE);
     }
 
     define("PIMCORE_STAGING_ACTIVE", $stagingActive);
