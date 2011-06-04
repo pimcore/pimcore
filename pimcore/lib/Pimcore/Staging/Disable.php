@@ -144,9 +144,13 @@ class Pimcore_Staging_Disable {
             $steps = null;
         }
 
+
+        $config = new Zend_Config_Ini(PIMCORE_CONFIGURATION_STAGE);
+
         return array(
             "steps" => $steps,
-            "errors" => $errors
+            "errors" => $errors,
+            "livedomain" => $config->livedomain
         );
     }
 

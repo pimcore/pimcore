@@ -90,6 +90,8 @@ pimcore.settings.staging.disable = Class.create({
                 try {
                     if (r.steps) {
 
+                        this.livedomain = r.livedomain;
+
                         var pj = new pimcore.tool.paralleljobs({
                             success: function () {
                                 this.window.removeAll();
@@ -99,6 +101,9 @@ pimcore.settings.staging.disable = Class.create({
                                 }));
                                 this.window.doLayout();
 
+                                window.setTimeout(function () {
+                                    location.href = location.protocol + "//" + this.livedomain + "/admin/";
+                                }.bind(this), 1000)
 
                             }.bind(this),
                             update: function (currentStep, steps, percent) {
