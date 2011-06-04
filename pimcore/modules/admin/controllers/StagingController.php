@@ -22,11 +22,16 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
         $this->session = new Zend_Session_Namespace("pimcore_staging");
     }
 
+    /**
+     * ENABLE
+     */
+
+
     public function enableInitAction() {
 
         // check if all required settings are present
         $config = Pimcore_Config::getSystemConfig()->toArray();
-        if($config["staging"] && $config["staging"]["domain"] && $config["staging"]["database"]["params"]["dbname"]) {
+        if($config["staging"] && $config["staging"]["domain"] && $config["staging"]["domain"] != $_SERVER["HTTP_HOST"] && $config["staging"]["database"]["params"]["dbname"]) {
 
             // everything ok, let's start
             $staging = new Pimcore_Staging_Enable();
@@ -94,4 +99,22 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json($return);
     }
+
+
+    /**
+     * DISABLE
+     */
+
+
+    public function disableRemoveConfigAction () {
+
+        $config = new Zend_Config_Ini(PIMCORE_CONFIGURATION_STAGE);
+        unlink(PIMCORE_CONFIGURATION_STAGE);
+
+        $this->_helper->json(array(
+            "livedomain" => $config->livedomain
+        ));
+    }
+
+
 }

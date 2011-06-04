@@ -18,19 +18,43 @@ pimcore.settings.staging.disable = Class.create({
     initialize: function () {
 
         Ext.Msg.show({
-           title:'Save Changes?',
-           msg: 'You are closing a tab that has unsaved changes. Would you like to save your changes?',
-           buttons: Ext.Msg.YESNOCANCEL,
-           fn: function (button) {
-               console.log(button);
-           },
-           icon: Ext.MessageBox.QUESTION
+            title:'Save Changes?',
+            msg: 'You are closing a tab that has unsaved changes. Would you like to save your changes?',
+            buttons: Ext.Msg.YESNOCANCEL,
+            fn: function (button) {
+                if(button == "yes") {
+                    this.syncback();
+                } else if (button == "no") {
+                    this.justdisable();
+                } else {
+                    return;
+                }
+            }.bind(this),
+            icon: Ext.MessageBox.QUESTION
         });
 
     },
 
+    justdisable: function () {
+        Ext.Ajax.request({
+            url: "/admin/staging/disable-remove-config",
+            success: function (response) {
 
-    start: function () {
+                try {
+                    var r = Ext.decode(response.responseText);
+
+                    if(r.livedomain) {
+                        location.href = location.protocol + "//" + r.livedomain + "/admin/";
+                    }
+                } catch (e) {
+                    console.log(e);
+                    alert(e);
+                }
+            }.bind(this)
+        });
+    },
+
+    syncback: function () {
         this.errors = 0;
         this.enabled = true;
 
@@ -59,7 +83,7 @@ pimcore.settings.staging.disable = Class.create({
 
     init: function () {
         Ext.Ajax.request({
-            url: "/admin/staging/enable-init",
+            url: "/admin/staging/disable-init",
             success: function (response) {
                 var r = Ext.decode(response.responseText);
 
