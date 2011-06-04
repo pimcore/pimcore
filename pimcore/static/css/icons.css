@@ -1014,6 +1014,14 @@
     background: url(/pimcore/static/img/icon/delete.png) left center no-repeat !important;
 }
 
+.pimcore_icon_staging {
+    background: url(/pimcore/static/img/icon/cog.png) left center no-repeat !important;
+}
+
+.pimcore_icon_staging_cleanup {
+    background: url(/pimcore/static/img/icon/cog_delete.png) left center no-repeat !important;
+}
+
 .pimcore_icon_staging_enable {
     background: url(/pimcore/static/img/icon/cog_start.png) left center no-repeat !important;
 }

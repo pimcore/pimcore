@@ -146,4 +146,46 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($return);
     }
 
+    /**
+     * CLEANUP
+     */
+
+    public function cleanupInitAction() {
+
+        $staging = new Pimcore_Staging_Cleanup();
+        $initInfo = $staging->init();
+        $this->session->staging = $staging;
+
+        $this->_helper->json($initInfo);
+    }
+
+    public function cleanupMysqlAction() {
+
+        $name = $this->_getParam("name");
+        $type = $this->_getParam("type");
+
+        $staging = $this->session->staging;
+        $return = $staging->mysql($name, $type);
+        $this->session->staging = $staging;
+
+        $this->_helper->json($return);
+    }
+
+    public function cleanupFilesAction () {
+        $staging = $this->session->staging;
+        $return = $staging->fileStep($this->_getParam("step"));
+        $this->session->staging = $staging;
+
+        $this->_helper->json($return);
+    }
+
+    public function cleanupCompleteAction() {
+
+        $staging = $this->session->staging;
+        $return = $staging->complete();
+        $this->session->staging = $staging;
+
+        $this->_helper->json($return);
+    }
+
 }

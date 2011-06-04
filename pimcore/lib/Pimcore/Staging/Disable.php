@@ -164,10 +164,8 @@ class Pimcore_Staging_Disable {
             try {
                 $dbLive->exec("CREATE TABLE  `" . $tablePrefix. $name . "` LIKE `" . $this->getStagingConfig()->database->params->dbname . "`.`" . $name . "`;");
                 $dbLive->exec("INSERT INTO `" . $tablePrefix . $name . "` SELECT * FROM `" . $this->getStagingConfig()->database->params->dbname . "`.`" . $name . "`;");
-            } catch (Exception $e) {
+
                 if ($name == "users") {
-                    // this is because ID = 0 causes a problem (the system user)
-                    $dbLive->exec("INSERT INTO `" . $tablePrefix . $name . "` SELECT * FROM `" . $this->getStagingConfig()->database->params->dbname . "`.`" . $name . "` WHERE id > 0;");
                     // insert system user
                     $dbLive->insert($tablePrefix . $name, array(
                         "id" => 0,
@@ -177,9 +175,9 @@ class Pimcore_Staging_Disable {
                         "hasCredentials" => 1,
                         "active" => 1
                     ));
-                } else {
-                    throw $e;
                 }
+            } catch (Exception $e) {
+                throw $e;
             }
         }
 

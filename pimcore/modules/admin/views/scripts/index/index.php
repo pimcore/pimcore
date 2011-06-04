@@ -183,6 +183,7 @@
             "pimcore/settings/systemlog.js",
             "pimcore/settings/staging/enable.js",
             "pimcore/settings/staging/disable.js",
+            "pimcore/settings/staging/cleanup.js",
             "pimcore/settings/backup.js",
             "pimcore/settings/recyclebin.js",
             "pimcore/settings/fileexplorer/file.js",
