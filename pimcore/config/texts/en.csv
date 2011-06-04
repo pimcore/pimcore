@@ -1,7 +1,7 @@
 "development_stage_mode_disable_complete","The synchronisation is complete. Let's start the admin in 'Live-Mode'"
 "development_stage_mode_disable_question","Do you want to move the current state in the 'Development Stage Mode' to the live system?"
 "development_stage_mode","Development Stage Mode"
-"development_stage_mode_enable_question","Are you sure that you want to enable the Development Stage Mode?"
+"development_stage_mode_enable_question","Are you sure that you want to enable the Development Stage Mode?<br /><b>NOTE: Please perform a cleanup before you proceed!</b>"
 "development_stage_mode_enable","Enable Development Stage Mode"
 "development_stage_mode_activated","Development Stage Mode is ENABLED"
 "development_stage_mode_ready","Development Stage Mode is now ready. Now it's time to switch to this stage."

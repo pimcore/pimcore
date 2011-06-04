@@ -103,14 +103,18 @@ class Pimcore_Staging_Enable {
         // create staging directory if not exists
         if (!is_dir(PIMCORE_DOCUMENT_ROOT_STAGE)) {
             if (!mkdir(PIMCORE_DOCUMENT_ROOT_STAGE)) {
-                logger::err("Staging - Directory " . PIMCORE_DOCUMENT_ROOT_STAGE . " does not exists and cannot be created.");
+                $message = "Staging - Directory " . PIMCORE_DOCUMENT_ROOT_STAGE . " does not exists and cannot be created.";
+                logger::err($message);
+                echo $message;
                 exit;
             }
         }
 
         // check if the staging directory is writeable
         if(!is_writeable(PIMCORE_DOCUMENT_ROOT_STAGE)) {
-            logger::err("Staging - Directory " . PIMCORE_DOCUMENT_ROOT_STAGE . " does is not writeable.");
+            $message = "Staging - Directory " . PIMCORE_DOCUMENT_ROOT_STAGE . " does is not writeable.";
+            logger::err($message);
+            echo $message;
             exit;
         }
 
