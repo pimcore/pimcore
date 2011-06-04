@@ -36,13 +36,8 @@ class Pimcore_Staging {
     }
 
     protected function getStagingDatabase() {
-        $dbStaging = new Zend_Db_Adapter_Pdo_Mysql(array(
-            'host'     => '127.0.0.1',
-            'username' => 'root',
-            'password' => 'elements',
-            'dbname'   => 'pimcore_stage'
-        ));
 
+        $dbStaging = Zend_Db::factory(Pimcore_Config::getSystemConfig()->staging->database);
         return $dbStaging;
     }
         
