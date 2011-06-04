@@ -18,11 +18,13 @@
 function array_htmlspecialchars ($array) {
     foreach ($array as $key => $value) {
         if(is_string($value) || is_numeric($value)) {
-            $values[$key] = htmlspecialchars($value,ENT_COMPAT,"UTF-8");
+            $array[$key] = htmlspecialchars($value,ENT_COMPAT,"UTF-8");
         } else if (is_array($value)) {
-            $values[$key] = array_htmlspecialchars($value);
+            $array[$key] = array_htmlspecialchars($value);
         }
     }
+
+    return $array;
 }
 
 function object2array($node) {

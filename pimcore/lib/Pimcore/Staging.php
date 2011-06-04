@@ -120,20 +120,26 @@ class Pimcore_Staging {
         $tables = $db->fetchAll("SHOW FULL TABLES");
 
         // tables
+        $stepsTable = array();
         foreach ($tables as $table) {
 
             $name = current($table);
             $type = next($table);
 
             if ($type != "VIEW") {
-                $steps[] = array("mysql", array(
-                    "name" => $name,
-                    "type" => $type
-                ));
+                $stepsTable[] = array(
+                    "url" => "/admin/staging/mysql",
+                    "params" => array(
+                        "name" => $name,
+                        "type" => $type
+                    )
+                );
             }
         }
+        $steps[] = $stepsTable;
 
         // views
+        $stepsViews = array();
         foreach ($tables as $table) {
 
             reset($table);
@@ -141,14 +147,19 @@ class Pimcore_Staging {
             $type = next($table);
 
             if ($type == "VIEW") {
-                $steps[] = array("mysql", array(
-                    "name" => $name,
-                    "type" => $type
-                ));
+                $stepsViews[] = array(
+                    "url" => "/admin/staging/mysql",
+                    "params" => array(
+                        "name" => $name,
+                        "type" => $type
+                    )
+                );
             }
         }
+        $steps[] = $stepsViews;
 
         // check files
+        $stepsFiles = array();
         $currentFileCount = 0;
         $currentFileSize = 0;
         $currentStepFiles = array();
@@ -195,12 +206,18 @@ class Pimcore_Staging {
         $fileSteps = count($filesToStage);
 
         for ($i = 0; $i < $fileSteps; $i++) {
-            $steps[] = array("files", array(
-                "step" => $i
-            ));
+            $stepsFiles[] = array(
+                "url" => "/admin/staging/files",
+                "params" => array(
+                    "step" => $i
+                )
+            );
         }
+        $steps[] = $stepsFiles;
 
-        $steps[] = array("complete", null);
+        $steps[] = array(array(
+            "url" => "/admin/staging/complete",
+        ));
 
 
         if (!empty($errors)) {

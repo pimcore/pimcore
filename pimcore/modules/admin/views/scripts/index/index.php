@@ -158,6 +158,7 @@
             "pimcore/user.js",
 
             // tools
+            "pimcore/tool/paralleljobs.js",
 
             // settings
             "pimcore/settings/user/panel.js",
