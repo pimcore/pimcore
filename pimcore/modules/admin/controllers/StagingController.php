@@ -137,6 +137,26 @@ class Admin_StagingController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($return);
     }
 
+    public function disableCompleteFilesAction() {
+
+        $staging = $this->session->staging;
+        $return = $staging->completeFiles();
+        $this->session->staging = $staging;
+
+        echo json_encode($return);
+        exit;
+    }
+
+    public function disableCompleteMysqlAction() {
+
+        $staging = $this->session->staging;
+        $return = $staging->completeMysql();
+        $this->session->staging = $staging;
+
+        echo json_encode($return);
+        exit;
+    }
+
     public function disableCompleteAction() {
 
         $staging = $this->session->staging;

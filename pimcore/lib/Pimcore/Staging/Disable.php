@@ -131,7 +131,12 @@ class Pimcore_Staging_Disable {
         }
 
 
-
+        $steps[] = array(array(
+            "url" => "/admin/staging/disable-complete-files",
+        ));
+        $steps[] = array(array(
+            "url" => "/admin/staging/disable-complete-mysql",
+        ));
         $steps[] = array(array(
             "url" => "/admin/staging/disable-complete",
         ));
@@ -186,8 +191,7 @@ class Pimcore_Staging_Disable {
         );
     }
 
-    public function complete () {
-
+    public function completeFiles () {
         // write new system.xml for live system and keep the database settings from the live system
         $stagingSystemConfig = $this->getStagingConfig()->toArray();
         $liveSystemConfig = $this->getLiveConfig()->toArray();
@@ -224,7 +228,11 @@ class Pimcore_Staging_Disable {
         // write new system configuration
         $writer->write();
 
+        // remove staging config
+        unlink(PIMCORE_CONFIGURATION_STAGE);
+    }
 
+    public function completeMysql () {
         // rename the mysql tables and views
         $dbLive = $this->getLiveDatabase();
         $dbStage = $this->getStagingDatabase();
@@ -245,11 +253,9 @@ class Pimcore_Staging_Disable {
             $viewCode = $dbStage->fetchRow("show create view `".$view."`;");
             $dbLive->exec($viewCode["Create View"]);
         }
+    }
 
-
-
-        // remove staging config
-        unlink(PIMCORE_CONFIGURATION_STAGE);
+    public function complete () {
 
         return array(
             "success" => true
