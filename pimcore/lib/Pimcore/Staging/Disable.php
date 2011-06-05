@@ -230,6 +230,10 @@ class Pimcore_Staging_Disable {
 
         // remove staging config
         unlink(PIMCORE_CONFIGURATION_STAGE);
+
+        return array(
+            "success" => true
+        );
     }
 
     public function completeMysql () {
@@ -253,6 +257,10 @@ class Pimcore_Staging_Disable {
             $viewCode = $dbStage->fetchRow("show create view `".$view."`;");
             $dbLive->exec($viewCode["Create View"]);
         }
+
+        return array(
+            "success" => true
+        );
     }
 
     public function complete () {
