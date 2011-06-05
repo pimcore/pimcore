@@ -163,7 +163,7 @@ class Pimcore_Staging_Disable {
         $dbLive = $this->getLiveDatabase();
         $dbStage = $this->getStagingDatabase();
 
-        $tablePrefix = "STAGE__" . $this->id . "__";
+        $tablePrefix = "STAGE__" . $this->id . "_";
 
         if ($type != "VIEW") {
             try {
@@ -240,8 +240,8 @@ class Pimcore_Staging_Disable {
         // rename the mysql tables and views
         $dbLive = $this->getLiveDatabase();
         $dbStage = $this->getStagingDatabase();
-        $tablePrefixTmp = "STAGE__" . $this->id . "__";
-        $tablePrefixBackup = "STAGE__BACKUP__" . $this->id . "__";
+        $tablePrefixTmp = "STAGE__" . $this->id . "_";
+        $tablePrefixBackup = "STAGE__BAK_" . $this->id . "_";
 
         foreach ($this->dbViewsLive as $view) {
             $dbLive->exec("RENAME TABLE `" . $view . "` TO `" . $tablePrefixBackup . $view . "`;");
