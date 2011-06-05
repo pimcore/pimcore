@@ -93,52 +93,71 @@ class Pimcore_Staging_Cleanup {
             $steps[] = $stepsViews;
         }
 
-        if(is_dir(PIMCORE_DOCUMENT_ROOT_STAGE)) {
-            // check files
-            $stepsFiles = array();
-            $currentFileCount = 0;
-            $currentFileSize = 0;
-            $currentStepFiles = array();
 
-            $files = rscandir(PIMCORE_DOCUMENT_ROOT_STAGE . "/");
-            foreach ($files as $fileIn) {
-                if (!is_readable($fileIn)) {
-                    $errors[] = $fileIn . " is not readable.";
-                }
 
-                if ($currentFileCount > 300 || $currentFileSize > 20000000) {
+        // check files
+        $stepsFiles = array();
+        $currentFileCount = 0;
+        $currentFileSize = 0;
+        $currentStepFiles = array();
 
-                    $currentFileCount = 0;
-                    $currentFileSize = 0;
-                    if (!empty($currentStepFiles)) {
-                        $filesToStage[] = $currentStepFiles;
+        $files = scandir(PIMCORE_DOCUMENT_ROOT);
+        foreach ($files as $file) {
+
+            if($file != "pimcore-staging" && !preg_match("/^STAGE__.*/",$file)) {
+                continue;
+            }
+
+            $dir = PIMCORE_DOCUMENT_ROOT . "/" . $file;
+            if (is_dir($dir)) {
+                // check permissions
+                $filesIn = rscandir($dir . "/");
+
+                foreach ($filesIn as $fileIn) {
+                    if (!is_readable($fileIn)) {
+                        $errors[] = $fileIn . " is not readable.";
                     }
-                    $currentStepFiles = array();
+
+                    if ($currentFileCount > 300 || $currentFileSize > 20000000) {
+
+                        $currentFileCount = 0;
+                        $currentFileSize = 0;
+                        if (!empty($currentStepFiles)) {
+                            $filesToStage[] = $currentStepFiles;
+                        }
+                        $currentStepFiles = array();
+                    }
+
+                    $currentFileSize += filesize($fileIn);
+                    $currentFileCount++;
+                    $currentStepFiles[] = $fileIn;
                 }
 
-                $currentFileSize += filesize($fileIn);
-                $currentFileCount++;
-                $currentStepFiles[] = $fileIn;
+                $currentFileCount = 0;
+                $currentFileSize = 0;
+                if (!empty($currentStepFiles)) {
+                    $filesToStage[] = $currentStepFiles;
+                }
+
+                $currentStepFiles = array();
             }
-
-            if (!empty($currentStepFiles)) {
-                $filesToStage[] = $currentStepFiles;
-            }
-
-            $this->setFilesToStage($filesToStage);
-
-            $fileSteps = count($filesToStage);
-
-            for ($i = 0; $i < $fileSteps; $i++) {
-                $stepsFiles[] = array(
-                    "url" => "/admin/staging/cleanup-files",
-                    "params" => array(
-                        "step" => $i
-                    )
-                );
-            }
-            $steps[] = $stepsFiles;
         }
+
+        $this->setFilesToStage($filesToStage);
+        $fileSteps = count($filesToStage);
+
+        for ($i = 0; $i < $fileSteps; $i++) {
+            $stepsFiles[] = array(
+                "url" => "/admin/staging/cleanup-files",
+                "params" => array(
+                    "step" => $i
+                )
+            );
+        }
+        $steps[] = $stepsFiles;
+
+
+
 
         $steps[] = array(array(
             "url" => "/admin/staging/cleanup-complete",
@@ -194,6 +213,17 @@ class Pimcore_Staging_Cleanup {
     public function complete () {
 
         recursiveDelete(PIMCORE_DOCUMENT_ROOT_STAGE,true);
+
+
+        $files = scandir(PIMCORE_DOCUMENT_ROOT);
+        foreach ($files as $file) {
+
+            if($file == "pimcore-staging" || preg_match("/^STAGE__.*/",$file)) {
+                $dir = PIMCORE_DOCUMENT_ROOT . "/" . $file;
+                recursiveDelete($dir);
+            }
+        }
+
 
         return array(
             "success" => true
