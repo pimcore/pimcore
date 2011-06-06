@@ -72,8 +72,7 @@ class Pimcore_Backup {
         return $obj;
     }
     
-    public function init ($additionalExcludePatterns = null) {
-        $this->additionalExcludePatterns = $additionalExcludePatterns;
+    public function init () {
 
         // create backup directory if not exists
         if (!is_dir(PIMCORE_BACKUP_DIRECTORY)) {
