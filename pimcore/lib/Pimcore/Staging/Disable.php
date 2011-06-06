@@ -244,18 +244,34 @@ class Pimcore_Staging_Disable {
         $tablePrefixBackup = "STAGE__BAK_" . $this->id . "_";
 
         foreach ($this->dbViewsLive as $view) {
-            $dbLive->exec("RENAME TABLE `" . $view . "` TO `" . $tablePrefixBackup . $view . "`;");
+            try {
+                $dbLive->exec("RENAME TABLE `" . $view . "` TO `" . $tablePrefixBackup . $view . "`;");
+            } catch (Exception $e) {
+                Logger::critical($e);
+            }
         }
         foreach ($this->dbTablesLive as $table) {
-            $dbLive->exec("RENAME TABLE `" . $table . "` TO `" . $tablePrefixBackup . $table . "`;");
+            try {
+                $dbLive->exec("RENAME TABLE `" . $table . "` TO `" . $tablePrefixBackup . $table . "`;");
+            } catch (Exception $e) {
+                Logger::critical($e);
+            }
         }
 
         foreach ($this->dbTablesStage as $table) {
-            $dbLive->exec("RENAME TABLE `" . $tablePrefixTmp . $table . "` TO `" . $table . "`;");
+            try {
+                $dbLive->exec("RENAME TABLE `" . $tablePrefixTmp . $table . "` TO `" . $table . "`;");
+            } catch (Exception $e) {
+                Logger::critical($e);
+            }
         }
         foreach ($this->dbViewsLive as $view) {
-            $viewCode = $dbStage->fetchRow("show create view `".$view."`;");
-            $dbLive->exec($viewCode["Create View"]);
+            try {
+                $viewCode = $dbStage->fetchRow("show create view `".$view."`;");
+                $dbLive->exec($viewCode["Create View"]);
+            } catch (Exception $e) {
+                Logger::critical($e);
+            }
         }
 
         return array(
