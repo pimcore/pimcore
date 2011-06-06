@@ -172,14 +172,18 @@ class Pimcore_Staging_Disable {
 
                 if ($name == "users") {
                     // insert system user
-                    $dbLive->insert($tablePrefix . $name, array(
-                        "id" => 0,
-                        "parentId" => 0,
-                        "username" => "system",
-                        "admin" => 1,
-                        "hasCredentials" => 1,
-                        "active" => 1
-                    ));
+                    try {
+                        $dbLive->insert($tablePrefix . $name, array(
+                            "id" => 0,
+                            "parentId" => 0,
+                            "username" => "system",
+                            "admin" => 1,
+                            "hasCredentials" => 1,
+                            "active" => 1
+                        ));
+                    } catch (Exception $e) {
+                        Logger::crit($e);
+                    }
                 }
             } catch (Exception $e) {
                 throw $e;
