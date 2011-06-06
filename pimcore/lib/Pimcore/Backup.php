@@ -14,7 +14,9 @@
  */
 
 class Pimcore_Backup {
-    
+
+    public $additionalExcludePatterns = array();
+
     public $filesToBackup;
     public $fileAmount;
     public $backupFile;
@@ -42,7 +44,15 @@ class Pimcore_Backup {
     public function getBackupFile () {
         return $this->backupFile;
     }
-    
+
+    public function getAdditionalExcludeFiles () {
+        return $this->additionalExcludePatterns;
+    }
+
+    public function setAdditionalExcludePatterns ($additionalExcludePatterns) {
+        $this->additionalExcludePatterns = $additionalExcludePatterns;
+    }
+
     protected function getFormattedFilesize () {
         return formatBytes(filesize($this->getBackupFile()));
     }
@@ -62,7 +72,9 @@ class Pimcore_Backup {
         return $obj;
     }
     
-    public function init () {
+    public function init ($additionalExcludePatterns = null) {
+        $this->additionalExcludePatterns = $additionalExcludePatterns;
+
         // create backup directory if not exists
         if (!is_dir(PIMCORE_BACKUP_DIRECTORY)) {
             if (!mkdir(PIMCORE_BACKUP_DIRECTORY)) {
@@ -208,6 +220,10 @@ class Pimcore_Backup {
             "/^" . PIMCORE_FRONTEND_MODULE . "\/var\/webdav\/.*/"
         );
 
+        if(!empty($this->additionalExcludePatterns) && is_array($this->additionalExcludePatterns)) {
+            $excludePatterns = array_merge($excludePatterns, $this->additionalExcludePatterns);
+        }
+
         foreach ($files as $file) {
             if ($file) {
                 if (is_readable($file)) {
@@ -216,12 +232,12 @@ class Pimcore_Backup {
                     $relPath = str_replace(PIMCORE_DOCUMENT_ROOT . "/", "", $file);
 
                     foreach ($excludePatterns as $pattern) {
-                        if (preg_match($pattern, str_replace("\\", "/", $relPath) )) {
+                        if (preg_match($pattern, $relPath)) {
                             $exclude = true;
                         }
                     }
 
-                    if (!$exclude && is_file($file) && !is_dir($file)) {
+                    if (!$exclude && is_file($file)) {
                         $this->getArchive()->addString($relPath, file_get_contents($file));
                     }
                     else {
