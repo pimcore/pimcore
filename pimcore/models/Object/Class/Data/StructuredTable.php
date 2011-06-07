@@ -110,7 +110,12 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      */
     public function setCols($cols) {
         usort($cols, array($this, 'sort'));
-        $this->cols = $cols;
+
+        $this->cols = array();;
+        foreach($cols as $c) {
+            $c['key'] = strtolower($c['key']);
+            $this->cols[] = $c;
+        }
     }
 
     /**
@@ -126,7 +131,13 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      */
     public function setRows($rows) {
         usort($rows, array($this, 'sort'));
-        $this->rows = $rows;
+
+        $this->rows = array();;
+        foreach($rows as $r) {
+            $r['key'] = strtolower($r['key']);
+            $this->rows[] = $r;
+        }
+
     }
 
     public function sort($a, $b) {
@@ -444,7 +455,11 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
 
         // insert this line if inheritance from parent objects is allowed
         if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if((!$data || $data->isEmpty()) && Object_Abstract::doGetInheritedValues()) { return $this->getValueFromParent("' . $key . '");}' . "\n";
+            $code .= "\t" . 'if((!$data || $data->isEmpty()) && Object_Abstract::doGetInheritedValues()) { ' . "\n";
+            $code .= "\t\t" . '$parentData  = $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . 'if($parentData) { return $parentData; }' . "\n";
+            $code .= "\t\t" . 'else { return $data; }' . "\n";
+            $code .= "\t" . '}' . "\n";
         }
 
         $code .= "\t return " . '$data' . ";\n";

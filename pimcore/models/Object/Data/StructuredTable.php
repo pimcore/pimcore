@@ -40,7 +40,7 @@ class Object_Data_StructuredTable {
     public function __call($name, $arguments) {
 
         if(substr($name, 0, 3) == "get") {
-            $key = lcfirst(substr($name, 3, strlen($name)-3));
+            $key = strtolower(substr($name, 3, strlen($name)-3));
 
             $parts = explode("__", $key);
             if(count($parts) == 2) {
@@ -62,7 +62,7 @@ class Object_Data_StructuredTable {
 
 
         if(substr($name, 0, 3) == "set") {
-            $key = lcfirst(substr($name, 3, strlen($name)-3));
+            $key = strtolower(substr($name, 3, strlen($name)-3));
 
             $parts = explode("__", $key);
             if(count($parts) == 2) {
