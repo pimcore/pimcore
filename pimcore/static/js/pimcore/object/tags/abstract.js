@@ -34,6 +34,26 @@ pimcore.object.tags.abstract = Class.create({
         return this.myName;
     },
 
+    getGridColumnEditor: function(field) {
+        return null;
+    },
+
+    getGridColumnConfig: function(field) {
+        var renderer = function(key, value, metaData, record) {
+            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                metaData.css += " grid_value_inherited";
+            }
+            return value;
+
+        }.bind(this, field.key);
+
+        return {header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer, editor: this.getGridColumnEditor(field)};
+    },
+
+    getGridColumnFilter: function(field) {
+        return null;
+    },
+
     markMandatory: function () {
         var el = this.getEl();
         if (el) {
@@ -99,7 +119,7 @@ pimcore.object.tags.abstract = Class.create({
             var button = Ext.get(el.query(".pimcore_open_inheritance_source")[0]);
             if(button) {
                 button.addListener("click", function (metaData) {
-                    console.log("Click");
+//                    console.log("Click");
 
                     var myName = this.getName();
                     var myObject = this.getObject();

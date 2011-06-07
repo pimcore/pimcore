@@ -23,6 +23,57 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
     },
 
+    getGridColumnEditor: function(field) {
+        var store = new Ext.data.JsonStore({
+            autoDestroy: true,
+            root: 'store',
+            fields: ['key',"value"],
+            data: field.config
+        });
+
+        var editorConfig = {};
+
+        if (field.config) {
+            if (field.config.width) {
+                if (parseInt(field.config.width) > 10) {
+                    editorConfig.width = field.config.width;
+                }
+            }
+        }
+
+        editorConfig = Object.extend(editorConfig, {
+            store: store,
+            triggerAction: "all",
+            editable: false,
+            mode: "local",
+            valueField: 'value',
+            displayField: 'key'
+        });
+
+        return new Ext.form.ComboBox(editorConfig);
+    },
+
+    getGridColumnFilter: function(field) {
+        var selectFilterFields = [];
+
+        var store = new Ext.data.JsonStore({
+            autoDestroy: true,
+            root: 'store',
+            fields: ['key',"value"],
+            data: field.config
+        });
+
+        store.each(function (rec) {
+            selectFilterFields.push(rec.data.value);
+        });
+
+        return {
+            type: 'list',
+            dataIndex: field.key,
+            options: selectFilterFields
+        };
+    },    
+
     getLayoutEdit: function () {
 
         // generate store

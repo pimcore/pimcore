@@ -23,6 +23,35 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
     },
 
+    getGridColumnConfig: function(field) {
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
+            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                metaData.css += " grid_value_inherited";
+            }
+
+            if (value && value.length > 0) {
+                return value.join(",");
+            }
+        }.bind(this, field.key)};
+    },
+
+    getGridColumnFilter: function(field) {
+        var selectFilterFields = [];
+
+        var store = new Ext.data.JsonStore({
+            autoDestroy: true,
+            root: 'options',
+            fields: ['key',"value"],
+            data: field.layout
+        });
+
+        store.each(function (rec) {
+            selectFilterFields.push(rec.data.value);
+        });
+
+        return {type: 'list', dataIndex: field.key, options: selectFilterFields};
+    },
+
     getLayoutEdit: function () {
 
         // generate store

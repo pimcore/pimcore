@@ -23,6 +23,26 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
     },
 
+    getGridColumnConfig: function(field) {
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
+            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                metaData.css += " grid_value_inherited";
+            }
+
+            if (value) {
+                var timestamp = intval(value) * 1000;
+                var date = new Date(timestamp);
+
+                return date.format("Y-m-d H:i");
+            }
+            return "";
+        }.bind(this, field.key)};
+    },
+
+    getGridColumnFilter: function(field) {
+        return {type: 'date', dataIndex: field.key};
+    },        
+
     getLayoutEdit: function () {
 
         var date = {

@@ -25,6 +25,33 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         this.layoutConf = layoutConf;
     },
 
+    getGridColumnEditor: function(field) {
+        var editorConfig = {};
+
+        if (field.config) {
+            if (field.config.width) {
+                if (parseInt(field.config.width) > 10) {
+                    editorConfig.width = field.config.width;
+                }
+            }
+        }
+
+        if(field.layout.noteditable) {
+            return null;
+        }
+        // WYSIWYG
+        if (field.type == "wysiwyg") {
+            return new Ext.form.HtmlEditor({
+                width: 500,
+                height: 300
+            });
+        }
+    },
+
+    getGridColumnFilter: function(field) {
+        return {type: 'string', dataIndex: field.key};
+    },    
+
     getLayoutEdit: function () {
 
         if (parseInt(this.layoutConf.width) < 1) {

@@ -23,6 +23,31 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         this.layoutConf = layoutConf;
     },
 
+    getGridColumnEditor: function(field) {
+        var editorConfig = {};
+
+        if (field.config) {
+            if (field.config.width) {
+                if (parseInt(field.config.width) > 10) {
+                    editorConfig.width = field.config.width;
+                }
+            }
+        }
+
+        if(field.layout.noteditable) {
+            return null;
+        }
+        // NUMERIC
+        if (field.type == "numeric") {
+            editorConfig.decimalPrecision = 20;
+            return new Ext.ux.form.SpinnerField(editorConfig);
+        }
+    },
+
+    getGridColumnFilter: function(field) {
+        return {type: 'numeric', dataIndex: field.key};
+    },
+
     getLayoutEdit: function () {
 
         var input = {

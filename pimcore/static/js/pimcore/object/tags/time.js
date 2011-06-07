@@ -20,8 +20,11 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, layoutConf) {
         this.data = data;
         this.layoutConf = layoutConf;
-
     },
+
+    getGridColumnFilter: function(field) {
+        return {type: 'string', dataIndex: field.key};
+    },    
 
     getLayoutEdit: function () {
         this.layout = new Ext.form.TimeField({

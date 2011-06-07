@@ -33,6 +33,10 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
     },
 
+    getGridColumnFilter: function(field) {
+        return {type: 'numeric', dataIndex: field.key};
+    },    
+
     getLayoutEdit: function () {
 
         var slider = {

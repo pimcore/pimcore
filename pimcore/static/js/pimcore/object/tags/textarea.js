@@ -23,6 +23,30 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
 
     },
 
+    getGridColumnEditor: function(field) {
+        var editorConfig = {};
+
+        if (field.config) {
+            if (field.config.width) {
+                if (parseInt(field.config.width) > 10) {
+                    editorConfig.width = field.config.width;
+                }
+            }
+        }
+
+        if(field.layout.noteditable) {
+            return null;
+        }
+        // TEXTAREA
+        if (field.type == "textarea") {
+           return new Ext.form.TextArea(editorConfig);
+        }
+    },
+
+    getGridColumnFilter: function(field) {
+        return {type: 'string', dataIndex: field.key};
+    },
+
     getLayoutEdit: function () {
 
 

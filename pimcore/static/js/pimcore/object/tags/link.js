@@ -41,6 +41,21 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     },
 
+    getGridColumnConfig: function(field) {
+        var renderer = function(key, value, metaData, record) {
+            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                metaData.css += " grid_value_inherited";
+            }
+            if(value) {
+                return value.title;
+            }
+            return value;
+
+        }.bind(this, field.key);
+
+        return {header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer, editor: this.getGridColumnEditor(field)};
+    },
+
     getLayoutEdit: function () {
 
         var input = {

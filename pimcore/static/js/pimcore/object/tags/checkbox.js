@@ -27,6 +27,24 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         this.layoutConf = layoutConf;
     },
 
+    getGridColumnConfig: function(field) {
+        return new Ext.grid.CheckColumn({
+            header: ts(field.label),
+            dataIndex: field.key,
+            renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
+                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.css += " grid_value_inherited";
+                }
+                metaData.css += ' x-grid3-check-col-td';
+                return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
+            }.bind(this, field.key)
+        });
+    },
+
+    getGridColumnFilter: function(field) {
+        return {type: 'boolean', dataIndex: field.key};
+    },    
+
     getLayoutEdit: function () {
 
         var checkbox = {

@@ -25,7 +25,30 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
             this.data = data;
         }
         this.layoutConf = layoutConf;
+    },
 
+    getGridColumnEditor: function(field) {
+        var editorConfig = {};
+
+        if (field.config) {
+            if (field.config.width) {
+                if (parseInt(field.config.width) > 10) {
+                    editorConfig.width = field.config.width;
+                }
+            }
+        }
+
+        if(field.layout.noteditable) {
+            return null;
+        }
+        //INPUT
+        if (field.type == "input") {
+            return new Ext.form.TextField(editorConfig);
+        }
+    },
+
+    getGridColumnFilter: function(field) {
+        return {type: 'string', dataIndex: field.key};
     },
 
     getLayoutEdit: function () {

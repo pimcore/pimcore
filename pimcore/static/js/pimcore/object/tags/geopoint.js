@@ -23,6 +23,28 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
     },
 
+    getGridColumnConfig: function(field) {
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
+            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                metaData.css += " grid_value_inherited";
+            }
+
+            if (value) {
+                if (value.latitude && value.longitude) {
+
+                    var width = 140;
+                    var mapZoom = 10;
+                    var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + value.longitude + "," + value.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + value.longitude + "," + value.latitude + ",pointImagePattern:red";
+                    if (pimcore.settings.google_maps_api_key) {
+                        mapUrl = "http://maps.google.com/staticmap?center=" + value.latitude + "," + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + value.latitude + "," + value.longitude + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
+                    }
+
+                    return '<img src="' + mapUrl + '" />';
+                }
+            }
+        }.bind(this, field.key)};
+    },
+
     getLayoutEdit: function () {
 
         if (!this.data) {
