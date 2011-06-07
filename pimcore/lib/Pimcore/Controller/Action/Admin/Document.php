@@ -70,6 +70,8 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
             }
         }
 
+        // force loading of properties
+        $document->getProperties();
     }
     
     protected function addSchedulerToDocument(Document $document) {
