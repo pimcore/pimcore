@@ -105,6 +105,14 @@ class Object_Class_Data_Datetime extends Object_Class_Data {
         return false;
     }
 
+    public function getDataForGrid($data, $object = null) {
+        if ($data instanceof Zend_Date) {
+            return $data->getTimestamp();
+        } else {
+            return null;
+        }
+    }
+
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param Zend_Date $data

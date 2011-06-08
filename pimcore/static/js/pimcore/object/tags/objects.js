@@ -52,7 +52,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 metaData.css += " grid_value_inherited";
             }
 
-            if (value.length > 0) {
+            if (value && value.length > 0) {
                 return value.join(",");
             }
         }.bind(this, field.key)};

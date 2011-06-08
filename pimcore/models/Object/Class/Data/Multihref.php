@@ -353,6 +353,18 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         return $elements;
     }
 
+    public function getDataForGrid($data, $object = null) {
+        if (is_array($data)) {
+            $pathes = array();
+            foreach ($data as $eo) {
+                if ($eo instanceof Element_Interface) {
+                    $pathes[] = $eo->getFullPath();
+                }
+            }
+            return $pathes;
+        }
+    }    
+
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param array $data

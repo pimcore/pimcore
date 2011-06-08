@@ -269,6 +269,13 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         return null;
     }
 
+
+    public function getDataForGrid($data, $object = null) {
+        if ($data instanceof Element_Interface) {
+            return $data->getFullPath();
+        }
+    }
+
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param Document | Asset | Object_Abstract $data

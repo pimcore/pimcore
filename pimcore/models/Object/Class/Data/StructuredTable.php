@@ -246,6 +246,15 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
         return $table;
     }
 
+    public function getDataForGrid($data, $object) {
+        if($data instanceof Object_Data_StructuredTable) {
+            if(!$data->isEmpty()) {
+                return $data->getData();
+            }
+        }
+        return null;
+    }
+
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param string $data

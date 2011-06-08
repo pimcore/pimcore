@@ -63,17 +63,34 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
+        console.log(field);
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, field, value, metaData, record) {
             if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.css += " grid_value_inherited";
             }
-
-            if (value && value.length > 0) {
+            var rows = Object.keys(value);
+            if (rows && rows.length > 0) {
                 var table = '<table cellpadding="2" cellspacing="0" border="1">';
-                for (var i = 0; i < value.length; i++) {
+
+                var row = value[rows[0]];
+                var cols = Object.keys(row);
+                //column headlines
+                table += '<tr>';
+                table += '<td></td>';
+                for (var c = 0; c < cols.length; c++) {
+                    table += '<td>' + ts(field.layout.cols[c].label) + '</td>';
+                }
+                table += '</tr>';
+
+                //row values
+                for (var i = 0; i < rows.length; i++) {
+                    var row = value[rows[i]];
+                    var cols = Object.keys(row);
+
                     table += '<tr>';
-                    for (var c = 0; c < value[i].length; c++) {
-                        table += '<td>' + value[i][c] + '</td>';
+                    table += '<td>' + ts(field.layout.rows[i].label) + '</td>';
+                    for (var c = 0; c < cols.length; c++) {
+                        table += '<td>' + row[cols[c]] + '</td>';
                     }
                     table += '</tr>';
                 }
@@ -81,7 +98,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                 return table;
             }
             return "";
-        }.bind(this, field.key)};
+        }.bind(this, field.key, field)};
     },
 
     getLayoutEdit: function () {

@@ -207,45 +207,22 @@ class Object_Service extends Element_Service {
                 if(method_exists($object,$getter)) {
                     $valueObject = self::getValueForObject($object, $getter);
                     $data['inheritedFields'][$key] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
-                    if ($def->getFieldType() == "href") {
-                        if ($valueObject->value instanceof Element_Interface) {
-                            $data[$key] = $valueObject->value->getFullPath();
-                        }
-                        continue;
-                    }
-                    else if ($def->getFieldType() == "objects" || $def->getFieldType() == "multihref") {
-                        if (is_array($valueObject->value)) {
-                            $pathes = array();
-                            foreach ($valueObject->value as $eo) {
-                                if ($eo instanceof Element_Interface) {
-                                    $pathes[] = $eo->getFullPath();
-                                }
+
+                    if(method_exists($def, "getDataForGrid")) {
+                        $tempData = $def->getDataForGrid($valueObject->value, $object);
+                        if(is_object($tempData)) {
+                            foreach($tempData as $tempKey => $tempValue) {
+                                $data[$tempKey] = $tempValue;
                             }
-                            $data[$key] = $pathes;
+                        } else {
+                            $data[$key] = $tempData;
                         }
-                        continue;
+                    } else {
+                        $data[$key] = $valueObject->value;
                     }
-                    else if ($def->getFieldType() == "date" || $def->getFieldType() == "datetime") {
-                        if ($valueObject->value instanceof Zend_Date) {
-                            $data[$key] = $valueObject->value->getTimestamp();
-                        }
-                        else {
-                            $data[$key] = null;
-                        }
-                        continue;
-                    } else if ($def->getFieldType() == "localizedfields") {
-                        foreach ($def->getFieldDefinitions() as $fd) {
-                            $data[$fd->getName()] = $object->{"get".ucfirst($fd->getName())}();
-                        }
-                       continue;
-                    }
-                    $data[$key] = $valueObject->value;
-
-
                 }
             }
         }
-
         return $data;
     }
 
@@ -258,7 +235,8 @@ class Object_Service extends Element_Service {
     private static function getValueForObject($object, $getter) {
         $value = $object->$getter();
 
-        if(empty($value) || (method_exists($object, "isEmpty") && $object->isEmpty())) {
+
+        if(empty($value) || (method_exists($value, "isEmpty") && $value->isEmpty())) {
             $parent = self::hasInheritableParentObject($object);
             if(!empty($parent)) {
                 return self::getValueForObject($parent, $getter);

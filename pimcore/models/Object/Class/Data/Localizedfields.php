@@ -116,6 +116,15 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         return $localizedFields;
     }
 
+    public function getDataForGrid($data, $object = null) {
+        $result = new stdClass();
+        foreach ($this->getFieldDefinitions() as $fd) {
+            $key = $fd->getName();
+            $result->$key = $object->{"get".ucfirst($fd->getName())}();
+        }
+        return $result;
+    }
+
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param string $data
