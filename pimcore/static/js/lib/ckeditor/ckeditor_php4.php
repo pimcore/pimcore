@@ -21,12 +21,12 @@ class CKEditor
 	 * The version of %CKEditor.
 	 * \private
 	 */
-	var $version = '3.5.1';
+	var $version = '3.6';
 	/**
 	 * A constant string unique for each release of %CKEditor.
 	 * \private
 	 */
-	var $_timestamp = 'B0VI4XQ';
+	var $_timestamp = 'B49E5BQ';
 
 	/**
 	 * URL to the %CKEditor installation directory (absolute or relative to document root).
@@ -80,7 +80,7 @@ class CKEditor
 	 * A string indicating the creation date of %CKEditor.
 	 * Do not change it unless you want to force browsers to not use previously cached version of %CKEditor.
 	 */
-	var $timestamp = "B0VI4XQ";
+	var $timestamp = "B49E5BQ";
 	/**
 	 * An array that holds event listeners.
 	 * \private
@@ -526,7 +526,6 @@ class CKEditor
 
 	/**
 	 * This little function provides a basic JSON support.
-	 * http://php.net/manual/en/function.json-encode.php
 	 * \private
 	 *
 	 * @param mixed $val
@@ -537,60 +536,31 @@ class CKEditor
 		if (is_null($val)) {
 			return 'null';
 		}
-		if ($val === false) {
-			return 'false';
+		if (is_bool($val)) {
+			return $val ? 'true' : 'false';
 		}
-		if ($val === true) {
-			return 'true';
+		if (is_int($val)) {
+			return $val;
 		}
-		if (is_scalar($val))
-		{
-			if (is_float($val))
-			{
-				// Always use "." for floats.
-				$val = str_replace(",", ".", strval($val));
+		if (is_float($val)) {
+			return str_replace(',', '.', $val);
+		}
+		if (is_array($val) || is_object($val)) {
+			if (is_array($val) && (array_keys($val) === range(0,count($val)-1))) {
+				return '[' . implode(',', array_map(array($this, 'jsEncode'), $val)) . ']';
 			}
+			$temp = array();
+			foreach ($val as $k => $v){
+				$temp[] = $this->jsEncode("{$k}") . ':' . $this->jsEncode($v);
+			}
+			return '{' . implode(',', $temp) . '}';
+		}
+		// String otherwise
+		if (strpos($val, '@@') === 0)
+			return substr($val, 2);
+		if (strtoupper(substr($val, 0, 9)) == 'CKEDITOR.')
+			return $val;
 
-			// Use @@ to not use quotes when outputting string value
-			if (strpos($val, '@@') === 0) {
-				return substr($val, 2);
-			}
-			else {
-				// All scalars are converted to strings to avoid indeterminism.
-				// PHP's "1" and 1 are equal for all PHP operators, but
-				// JS's "1" and 1 are not. So if we pass "1" or 1 from the PHP backend,
-				// we should get the same result in the JS frontend (string).
-				// Character replacements for JSON.
-				static $jsonReplaces = array(array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"'),
-				array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"'));
-
-				$val = str_replace($jsonReplaces[0], $jsonReplaces[1], $val);
-				if (strtoupper(substr($val, 0, 9)) == 'CKEDITOR.') {
-					return $val;
-				}
-
-				return '"' . $val . '"';
-			}
-		}
-		$isList = true;
-		for ($i = 0, reset($val); $i < count($val); $i++, next($val))
-		{
-			if (key($val) !== $i)
-			{
-				$isList = false;
-				break;
-			}
-		}
-		$result = array();
-		if ($isList)
-		{
-			foreach ($val as $v) $result[] = $this->jsEncode($v);
-			return '[ ' . join(', ', $result) . ' ]';
-		}
-		else
-		{
-			foreach ($val as $k => $v) $result[] = $this->jsEncode($k).': '.$this->jsEncode($v);
-			return '{ ' . join(', ', $result) . ' }';
-		}
+		return '"' . str_replace(array("\\", "/", "\n", "\t", "\r", "\x08", "\x0c", '"'), array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"'), $val) . '"';
 	}
 }

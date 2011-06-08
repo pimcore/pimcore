@@ -35,6 +35,158 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 		CKEditor Changelog
 	</h1>
 	<h3>
+			CKEditor 3.6</h3>
+	<p>
+			New features:</p>
+	<ul>
+		<li><a href="http://dev.ckeditor.com/ticket/7044">#7044</a> : New BBCode sample plugin that makes the editor output (one dialect of) BBCode format.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5647">#5647</a> : Accessibility enhancements to the structure of the toolbar.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5647">#5647</a> : The Kama skin now presents separators for the toolbar items, making it easier to group buttons and have a cleaner layout.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5647">#5647</a> : Usability enhancements to keyboard navigation on the toolbar. The <em>Tab</em> key is now used to jump between toolbar groups, while the <em>Arrow</em> keys can be used to cycle within the group. The new <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.toolbarGroupCycling">toolbarGroupCycling</a></code> setting can be used to change the <em>Arrow</em> keys behavior.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/1376">#1376</a> : It is now possible to put the editor in the "read-only" state, so that the users would not be able to introduce changes to the contents. Check out the new <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#setReadOnly">CKEDITOR.editor::setReadOnly</a></code> method, the <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#readOnly">CKEDITOR.editor::readOnly</a></code> property, the <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#event:readOnly">CKEDITOR.editor::readOnly</a></code> event, and the <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.readOnly">readOnly</a></code> setting.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/3582">#3582</a> : New presentation of anchor elements in the WYSIWYG mode.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6737">#6737</a> : The Format drop-down list will now display the preview of its contents exactly as defined in their style configurations.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6654">#6654</a> : A new <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.autoParagraph">autoParagraph</a></code> configuration setting is added to disable the auto paragraphing feature.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/901">#901</a> : New Stylesheet Parser (<code>stylesheetparser</code>) plugin that fills the Styles drop-down list based on the CSS classes available for the content. Check the new sample to learn how to use it.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/2988">#2988</a> : New Document Properties (<code>docprops</code>) plugin that sets the metadata of the page in the Full Page mode.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7240">#7240</a> : New Developer Tools (<code>devtools</code>) plugin that shows information about dialog window UI elements to allow for easier customization.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6841">#6841</a> : Pressing the <em>Enter</em> key at the end of a pre-formatted block will now exit from it.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6850">#6850</a> : The About CKEditor dialog window now contains a link to CKEditor User's Guide.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5745">#5745</a> : Extra configuration options for the <code>iframeDialog</code> can now be passed.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6589">#6589</a> : The <code>onDialogEvent</code> function will now be used automatically in the <code>iframeDialog</code> contents if no callback is used on creation.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7757">#7757</a> : Georgian localization added.</li>
+	</ul>
+	<p>
+			Fixed issues:</p>
+	<ul>
+		<li><a href="http://dev.ckeditor.com/ticket/6774">#6774</a> : Internal styles are not included in the <code>contents.css</code> sample.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6521">#6521</a> : Added sample for the TableResize plugin.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6664">#6664</a> : Page break is sometimes merged into block-level elements.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7594">#7594</a> : Toolbar keyboard navigation is not possible after recreating the editor.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6657">#6657</a> : Allow to style the entire dialog window field when the input element is disabled.</li>
+		<li>Updated the following language files:<ul>
+			<li>Hebrew;</li>
+			<li>Polish;</li>
+		</ul></li>
+	</ul>
+	<h3>
+			CKEditor 3.5.4</h3>
+	<p>
+			Fixed issues:</p>
+	<ul>
+		<li>Added protection against XSS attacks in PHP samples when displaying element names.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7347">#7347</a> : The <em>Enter</em> key will no longer be caught by the dialog window covering the editor.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6718">#6718</a> : Paste from Word command overrides the Force Paste as Plain Text configuration.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6629">#6629</a> : Padding body is no longer needed when the last block is pre-formatted.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/4844">#4844</a> : [IE] Dialog windows fail to load if there are too many editor instances on the page.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5788">#5788</a> : HTML parser trims empty spaces following <code>&lt;br&gt;</code> elements.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7513">#7513</a> : Invalid markup could cause the editor to hang.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6109">#6109</a> : Paste and Paste as Plain Text dialog windows now use the standard <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.dialog.html#commitContent">commitContent</a></code> and <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.dialog.html#setupContent">setupContent</a></code> methods.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7588">#7588</a> : The editor code now has a protection system to avoid issues when including <code>ckeditor.js</code> more than once in the page.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7322">#7322</a> : Text font plugin now recognizes font family names that contain quotes.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7540">#7540</a> : Paste from Word introduces wrong spaces.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7697">#7697</a> : Successive calls of the <code>replace()</code> method did not work after SCAYT context menu initialization.</li>
+		<li>Updated the following language files:<ul>
+			<li><a href="http://dev.ckeditor.com/ticket/7647">#7647</a> : Slovak;</li>
+		</ul></li>
+	</ul>
+	<h3>
+			CKEditor 3.5.3</h3>
+	<p>
+			New features:</p>
+	<ul>
+		<li><a href="http://dev.ckeditor.com/ticket/4890">#4890</a> : Added the possibility to edit the <code>rel</code> attribute for links.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7004">#7004</a> : Allow loading plugin translations even if they are not present in the plugin definition.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7315">#7315</a> : Firing the <code>resize</code> event on dialog window instances is now possible.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7259">#7259</a> : Dialog window definition allows to specify initial <code>width</code> and <code>height</code> values.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7131">#7131</a> : List item numbering is now supported on pasting from Microsoft Word.</li>
+	</ul>
+	<p>
+			Fixed issues:</p>
+	<ul>
+		<li><a href="http://dev.ckeditor.com/ticket/1272">#1272</a> : [WebKit] It is now possible to apply styles to collapsed selections in Safari and Chrome.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7054">#7054</a> : The tooltips for special characters are now lowercased, making them more readable.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7102">#7102</a> : "Replace DIV" sample did not work when double-clicking inside the formatted text.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7088">#7088</a> : Loading of plugins failed on new instances of the editor after the Insert Special Character dialog window was used.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6215">#6215</a> : Removal of inline styles now also removes overrides.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6144">#6144</a> : Rich text drop-down lists have wrong height when toolbar is wrapped.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6387">#6387</a> : AutoGrow may cause an error when editor instance is destroyed too quickly after a height change.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6901">#6901</a> : Mixed direction content was not properly respected in a shared toolbar setting.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/4809">#4809</a> : Table-related tags are output in wrong order.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7092">#7092</a> : Corrupted toolbar button state for inline style after switching to Source.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6921">#6921</a> : Pasted text marked by SCAYT in one language is not re-checked if another spellchecking language is selected in the editor.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6614">#6614</a> : Enhancement of the resize handle in RTL.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5924">#5924</a> : Flash plugin now recognizes Flash content without an <code>embed</code> tag.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/4475">#4475</a> : Protected source in attributes and inline CSS text is not handled correctly.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6984">#6984</a> : [FF] Trailing line breaks are lost in <code>ENTER_BR</code>.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6987">#6987</a> : [IE] Text selection lost when calling <code>editor::insertHtml</code> from a dialog window in some situations.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6865">#6865</a> : BiDi mirroring does not work when a text direction change is done through a dialog window.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6966">#6966</a> : [IE] Unintended paragraph is created in an empty document in <code>enterMode</code> set for <code>BR</code> and <code>DIV</code>.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7084">#7084</a> : SCAYT dialog window is now working properly with more than one editor instance in a page.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6662">#6662</a> : [FF] List structure pasting error caused by a regression from FF3.5.x is now fixed.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7300">#7300</a> : Link dialog window now loads numeric values correctly.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7330">#7330</a> : New list items no longer inherit the <code>value</code> attribute from their sibling.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7293">#7293</a> : The "Automatic" color button is now presented correctly without focus inside the editor.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7018">#7018</a> : [IE] Toolbar drop-down lists did not have a border around them.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7073">#7073</a> : Image dialog window no longer allows zero height and width value to be entered.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7316">#7316</a> : [FF] Clicking on "Paste" button incorrectly breaks the line at the cursor position.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6751">#6751</a> : Inline whitespaces are incorrectly stripped when pasting from Word.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6236">#6236</a> : [IE] Fixing malformed nested list structure which was introduced by the <em>Backspace</em> key.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6649">#6649</a> : [IE] Selection of the full table sometimes does not work.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6946">#6946</a> : HTML parser is now able to fix orphan list items.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6861">#6861</a> : Indenting a list item should retain the text direction.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6938">#6938</a> : Outdenting a list item should retain the text direction.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6849">#6849</a> : Correct <em>Enter</em> key behavior on list item.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7113">#7113</a> : [WebKit] Undesired document scroll on click after scrolling.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6491">#6491</a> : Undesired Image dialog window dimension lock reset on URL change.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7284">#7284</a> : [FF Quirks] Maximize now works correctly.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6609">#6609</a> : [IE9] Browser in high contrast mode is not properly detected.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7222">#7222</a> : [WebKit] Impossible to apply a single style to a collapsed selection without giving the editor focus.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7180">#7180</a> : [IE9] When using Kama skin and RTL layout dialog window buttons were not being displayed correctly.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7182">#7182</a> : [IE9] When using Office2003/v2 skin and RTL layout dialog window shadows were corrupted.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6913">#6913</a> : Invalid escape sequence (<code>\b</code>) was used in the PHP integration.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5757">#5757</a> : [IE6] Text was not wrapping in the accessibility instructions dialog window.</li>
+		<li><a href="http://dev.ckeditor.com/changeset/6604">[6604]</a> : <code>Xml.js</code> and <code>Ajax.js</code> are now available as plugins ('xml' and 'ajax').</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7304">#7304</a> : Microsoft Word cleanup function is not always invoked when clicking on the "Paste From Word" button.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6658">#6658</a> : [IE] Pasting text from Microsoft Word with one or more tabs between list items was failing.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7433">#7433</a> : [IE9] <code>ENTER_BR</code> at the end of a block breaks due to an IE9 regression.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7432">#7432</a> : [WebKit] Unable to create a new list in an empty document.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/4880">#4880</a> : CKEditor changes tag style inside HTML comment with <code>cke_protected</code>.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7023">#7023</a> : [IE] JavaScript error when a Selection Field is inserted into a page.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7034">#7034</a> : Inserting special characters into styled text.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7132">#7132</a> : Paste toolbar buttons are becoming disabled.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7138">#7138</a> : The <code>api.html</code> sample in Opera does not work as expected.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7160">#7160</a> : Cannot paste the form element on top of the page.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7171">#7171</a> : Double-clicking an image in non-editable content opens the editing dialog window.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7455">#7455</a> : Extra line break is added automatically to the preformatted element.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7467">#7467</a> : [Firefox] Extra <code>br</code> element is added in a nested list.</li>
+		<li>Updated the following language files:<ul>
+			<li><a href="http://dev.ckeditor.com/ticket/7124">#7124</a> : Czech;</li>
+			<li><a href="http://dev.ckeditor.com/ticket/7126">#7126</a> : French;</li>
+			<li><a href="http://dev.ckeditor.com/ticket/7140">#7140</a> : Catalan;</li>
+			<li><a href="http://dev.ckeditor.com/ticket/7215">#7215</a> : Faroese;</li>
+			<li><a href="http://dev.ckeditor.com/ticket/7177">#7177</a> : Finnish;</li>
+			<li><a href="http://dev.ckeditor.com/ticket/7163">#7163</a> : Norwegian (no and nb);</li>
+			<li><a href="http://dev.ckeditor.com/ticket/7219">#7219</a> : Swedish;</li>
+			<li><a href="http://dev.ckeditor.com/ticket/7183">#7183</a> : Afrikaans;</li>
+			<li>Hebrew;</li>
+			<li>Spanish;</li>
+			<li>Polish;</li>
+			<li>German;</li>
+		</ul></li>
+	</ul>
+	<h3>
+			CKEditor 3.5.2</h3>
+	<p>
+			Fixed issues:</p>
+	<ul>
+		<li><a href="http://dev.ckeditor.com/ticket/7168">#7168</a> : [IE9] Destroying an editor instance throws an error.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7169">#7169</a> : [IE9] Menu item has incorrect height.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7178">#7178</a> : [IE9] Read-only attributes do not work in IE9.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7181">#7181</a> : [IE9] Toolbar items are not aligned in v2 and Office2003 skins.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7174">#7174</a> : [IE9] Elements path does not load correctly when the editor is switched back from Source to WYSIWYG.</li>
+	</ul>
+	<h3>
 			CKEditor 3.5.1</h3>
 	<p>
 			New features:</p>
