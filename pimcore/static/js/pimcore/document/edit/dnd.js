@@ -72,17 +72,13 @@ pimcore.document.edit.dnd = Class.create({
         var scrollTop = 0;
         var scrollLeft = 0;
 
-        //if(Ext.isGecko || Ext.isChrome) {
-        if (!Ext.isIE) {
+        if (!Ext.isIE || parent.Ext.isIE9) {
             var doc = (window.contentDocument || window.document);
             scrollTop = doc.documentElement.scrollTop || doc.body.scrollTop;
             scrollLeft = doc.documentElement.scrollLeft || doc.body.scrollLeft;
         }
 
-        //if(!Ext.isWebKit) {
-        //if(!Ext.isSafari) {
         e.xy = [e.xy[0] + this.iframeOffset[0] - scrollLeft, e.xy[1] + this.iframeOffset[1] - scrollTop];
-        //}
     },
     
     setIframeOffset: function () {
