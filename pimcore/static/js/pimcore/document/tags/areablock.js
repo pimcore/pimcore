@@ -26,8 +26,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         this.elements = Ext.get(id).query("." + name);
 
-console.log(this.options);
-
         // type mapping
         var typeNameMappings = {};
         for (var i=0; i<this.options.types.length; i++) {
