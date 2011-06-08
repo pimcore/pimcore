@@ -150,7 +150,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.autogrow = true;
             
             if(!this.options.height) {
-                eConfig.extraPlugins += ",ckeditor_autogrow";
+                eConfig.extraPlugins += ",autogrow";
             }
             
             if(this.options.sharedtoolbar !== false) {
@@ -384,7 +384,7 @@ function closeCKeditors() {
 
 
 // add the close button to the default configurations
-CKEDITOR.config.toolbar_Full[0].unshift("close");
+CKEDITOR.config.toolbar_Full[0].items.unshift("close");
 CKEDITOR.config.toolbar_Basic[0].unshift("close");
 
 
