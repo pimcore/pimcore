@@ -337,7 +337,7 @@ pimcore.object.tree = Class.create({
                 });
             }
 
-            if (this.attributes.reference.cacheObjectId) {
+            if (this.attributes.reference.cacheObjectId && this.attributes.permissions.create) {
                 menu.add(new Ext.menu.Item({
                     text: t('paste'),
                     iconCls: "pimcore_icon_paste",

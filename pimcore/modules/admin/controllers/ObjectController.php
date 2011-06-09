@@ -1536,6 +1536,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 Logger::error(get_class($this) . ": could not execute copy/paste, source object with id [ $sourceId ] not found");
                 $this->_helper->json(array("success" => false, "message" => "source object not found"));
             }
+        } else {
+            Logger::error(get_class($this) . ": could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
+            $this->_helper->json(array("error" => false, "message" => "missing_permission"));
         }
 
         $this->_helper->json(array("success" => $success));

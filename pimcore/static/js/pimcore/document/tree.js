@@ -296,7 +296,7 @@ pimcore.document.tree = Class.create({
 
 
             //paste
-            if (this.attributes.reference.cacheDocumentId) {
+            if (this.attributes.reference.cacheDocumentId && this.attributes.permissions.create) {
                 pasteMenu.push({
                     text: t("paste_recursive_as_childs"),
                     iconCls: "pimcore_icon_paste",
@@ -312,7 +312,7 @@ pimcore.document.tree = Class.create({
 
 
         //paste
-        if (this.attributes.reference.cacheDocumentId) {
+        if (this.attributes.reference.cacheDocumentId && this.attributes.permissions.create) {
 
             if (this.attributes.type != "folder") {
                 pasteMenu.push({

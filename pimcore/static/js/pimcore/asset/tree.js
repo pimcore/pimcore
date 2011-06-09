@@ -311,7 +311,7 @@ pimcore.asset.tree = Class.create({
         }
 
         //paste
-        if (this.attributes.reference.cacheDocumentId) {
+        if (this.attributes.reference.cacheDocumentId && this.attributes.permissions.create) {
             var pasteMenu = [];
 
             if (this.attributes.type == "folder") {
