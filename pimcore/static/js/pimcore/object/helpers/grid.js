@@ -156,12 +156,13 @@ pimcore.object.helpers.grid = Class.create({
         var fields = this.fields;
         for (var i = 0; i < fields.length; i++) {
             gridColumns.push(pimcore.object.tags[fields[i].type].prototype.getGridColumnConfig(fields[i]));
+            gridColumns[gridColumns.length-1].hidden = false;
             // is visible or not
-            if(this.isSearch) {
-                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleSearch;
-            } else {
-                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleGridView;
-            }
+//            if(this.isSearch) {
+//                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleSearch;
+//            } else {
+//                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleGridView;
+//            }
             gridColumns[gridColumns.length-1].layout = fields[i];
 
         }

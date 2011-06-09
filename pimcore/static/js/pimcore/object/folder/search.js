@@ -97,7 +97,12 @@ pimcore.object.search = Class.create({
 
         var itemsPerPage = 20;
 
-        var fields = Ext.decode(response.responseText);
+        var fields = [];
+        if(response.responseText) {
+            fields = Ext.decode(response.responseText);
+        } else {
+            fields = response;
+        }
         var plugins = [];
 
         // get current class
@@ -358,23 +363,29 @@ pimcore.object.search = Class.create({
 
         var visibleColumns = [];
         for(var i = 0; i < fields.length; i++) {
-            if(fields[i].visibleGridView) {
+//            if(fields[i].visibleGridView) {
                 visibleColumns.push({
                     key: fields[i].key,
                     label: fields[i].label,
-                    dataType: fields[i].type
+                    dataType: fields[i].type,
+                    layout: fields[i].layout
                 });
-            }
+//            }
         }
+
+        console.log(visibleColumns);
 
 
         var columnConfig = {
             language: "en",
             classid: this.classId,
-            brickKeys: [/*'meins2', 'brick'*/],
             selectedGridColumns: visibleColumns
         };
-        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {console.log(data); console.log("done"); } );
+        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
+            this.setEditableGrid(data.columns);
+            console.log(data);
+            console.log("done");
+        }.bind(this) );
     },
 
 

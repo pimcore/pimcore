@@ -4,6 +4,7 @@ pimcore.registerNS("pimcore.object.helpers.gridConfigDialog");
 pimcore.object.helpers.gridConfigDialog = Class.create({
 
     data: {},
+    brickKeys: [],
 
     initialize: function (columnConfig, callback) {
 
@@ -53,6 +54,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 obj.key = child.attributes.key;
                 obj.label = child.attributes.text;
                 obj.type = child.attributes.dataType;
+                obj.layout = child.attributes.layout;
 
                 this.data.columns.push(obj);
             }.bind(this));
@@ -122,6 +124,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     type: "data",
                     dataType: nodeConf.dataType,
                     leaf: true,
+                    layout: nodeConf.layout,
                     iconCls: "pimcore_icon_" + nodeConf.dataType
                 });
             }
@@ -199,10 +202,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         if (!this.resultPanel) {
 
             var items = [];
-            items.push(this.getClassTree("/admin/class/get", this.config.classid, t("object_class"), null));
-            for(var i = 0; i < this.config.brickKeys.length; i++) {
-                items.push(this.getClassTree("/admin/class/objectbrick-get", this.config.brickKeys[i], ts(this.config.brickKeys[i]), this.config.brickKeys[i]));
-            }
+
+            items.push(this.getClassTree("/admin/class/get", this.config.classid, t("object_class"), null, this.loadBricks.bind(this)));
+            items.push(this.getSystemColumns());
 
             this.resultPanel = new Ext.Panel({
                 region: "center",
@@ -226,7 +228,85 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         return this.resultPanel;
     },
 
-    getClassTree: function(url, id, title, attributePrefix) {
+    loadBricks: function() {
+        for(var i = 0; i < this.brickKeys.length; i++) {
+            this.resultPanel.add(this.getClassTree("/admin/class/objectbrick-get", this.brickKeys[i], ts(this.brickKeys[i]), this.brickKeys[i]));
+        }
+        this.resultPanel.doLayout();
+
+    },
+
+    getSystemColumns: function() {
+        var tree = new Ext.tree.TreePanel({
+            title: t("system_columns"),
+            xtype: "treepanel",
+            region: "center",
+            enableDrag: true,
+            enableDrop: false,
+            autoScroll: true,
+            rootVisible: false,
+            root: {
+                id: "0",
+                root: true,
+                text: t("base"),
+                leaf: true,
+                expanded: true
+            },
+            listeners:{
+                dblclick: function(node) {
+
+                    var copy = new Ext.tree.TreeNode( // copy it
+                        Ext.apply({}, node.attributes)
+                    );
+
+                    if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", copy.attributes.key)) {
+                        this.selectionPanel.getRootNode().appendChild(copy);
+                    }
+
+                }.bind(this),
+                afterrender: function() {
+
+                    var fn = this.addDataChild.bind(tree.getRootNode());
+
+                    var initData = { name: "id", title: "ID"};
+                    fn("system", initData, null);
+
+                    initData = { name: "published", title: t("published")};
+                    fn("system", initData, null);
+
+                    initData = { name: "fullpath", title: t("path")};
+                    fn("system", initData, null);
+
+                    initData = { name: "filename", title: t("filename")};
+                    fn("system", initData, null);
+
+                    initData = { name: "classname", title: t("class")};
+                    fn("system", initData, null);
+
+                    initData = { name: "creationDate", title: t("creationdate")};
+                    fn("system", initData, null);
+
+                    initData = { name: "modificationDate", title: t("modificationdate")};
+                    fn("system", initData, null);
+
+                    tree.getRootNode().expand();
+                }.bind(this)
+            }
+        });
+
+
+//
+//        var initData = { name: "modificationDate", title: t("modificationdate")};
+//        var fn = this.addDataChild.bind(tree.getRootNode());
+//        tree.getRootNode().appendChild(fn("system", initData, null));
+
+
+//        console.log(tree.getRootNode());
+//        tree.getRootNode().expand();
+        return tree;
+    },
+
+    getClassTree: function(url, id, title, attributePrefix, callback) {
 
         var tree = new Ext.tree.TreePanel({
             title: title,
@@ -239,20 +319,21 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 id: "0",
                 root: true,
                 text: t("base"),
-                reference: this,
+                draggable: false,
                 leaf: true,
                 isTarget: true
             },
             listeners:{
                 "dblclick": function(node) {
-                    var copy = new Ext.tree.TreeNode( // copy it
-                        Ext.apply({}, node.attributes)
-                    );
+                    if(!node.attributes.root && node.attributes.type != "layout" && node.attributes.dataType != 'localizedfields') {
+                        var copy = new Ext.tree.TreeNode( // copy it
+                                Ext.apply({}, node.attributes)
+                                );
 
-                    if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", copy.attributes.key)) {
-                        this.selectionPanel.getRootNode().appendChild(copy);
+                        if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", copy.attributes.key)) {
+                            this.selectionPanel.getRootNode().appendChild(copy);
+                        }
                     }
-
                 }.bind(this)
             }
         });
@@ -262,13 +343,13 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             params: {
                 id: id // this.config.classid
             },
-            success: this.initLayoutFields.bind(this, tree, attributePrefix)
+            success: this.initLayoutFields.bind(this, tree, attributePrefix, callback)
         });
 
         return tree;
     },
 
-    initLayoutFields: function (tree, attributePrefix, response) {
+    initLayoutFields: function (tree, attributePrefix, callback, response) {
         var data = Ext.decode(response.responseText);
 
         if (data.layoutDefinitions) {
@@ -278,6 +359,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 }
                 tree.getRootNode().expand();
             }
+        }
+        if(callback) {
+            callback();
         }
     },
 
@@ -291,6 +375,16 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         }
         else if (con.datatype == "data") {
             fn = this.addDataChild.bind(scope, con.fieldtype, con, attributePrefix);
+
+            if(con.fieldtype == "objectbricks") {
+
+                if(con.allowedTypes) {
+                    for(var i = 0; i < con.allowedTypes.length; i++) {
+                        this.brickKeys.push(con.allowedTypes[i]);
+                    }
+                }
+            }
+
         }
 
         newNode = fn();
@@ -322,8 +416,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         this.appendChild(newNode);
 
-        this.renderIndent();
-        this.expand();
+        if(this.rendered) {
+            this.renderIndent();
+            this.expand();
+        }
 
         return newNode;
     },
@@ -332,10 +428,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         if(type != "objectbricks") {
             var isLeaf = true;
+            var draggable = true;
 
             // localizedfields can be a drop target
             if(type == "localizedfields") {
                 isLeaf = false;
+                draggable = false;
             }
 
             var key = initData.name;
@@ -343,20 +441,23 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 key = attributePrefix + "." + key;
             }
 
-
             var newNode = new Ext.tree.TreeNode({
                 text: ts(initData.title),
                 key: key,
                 type: "data",
+                layout: initData,
                 leaf: isLeaf,
+                draggable: draggable,
                 dataType: type,
                 iconCls: "pimcore_icon_" + type
             });
 
             this.appendChild(newNode);
 
-            this.renderIndent();
-            this.expand();
+            if(this.rendered) {
+                this.renderIndent();
+                this.expand();
+            }
 
             return newNode;
         } else {
