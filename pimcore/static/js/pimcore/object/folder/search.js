@@ -251,6 +251,14 @@ pimcore.object.search = Class.create({
                 }
             }.bind(grid.getView().hmenu, batchAllMenu, batchSelectedMenu, grid.getView()));
 
+
+            var columnConfig = new Ext.menu.Item({
+                text: t("column_config"),
+                iconCls: "xxx",
+                handler: this.openColumnConfig.bind(this, fields)
+            });
+            grid.getView().hmenu.add(columnConfig);
+
         }.bind(this));
         
         // check for filter updates
@@ -343,6 +351,32 @@ pimcore.object.search = Class.create({
         this.layout.doLayout();
 
     },
+
+
+    openColumnConfig: function(fields) {
+        console.log(fields);
+
+        var visibleColumns = [];
+        for(var i = 0; i < fields.length; i++) {
+            if(fields[i].visibleGridView) {
+                visibleColumns.push({
+                    key: fields[i].key,
+                    label: fields[i].label,
+                    dataType: fields[i].type
+                });
+            }
+        }
+
+
+        var columnConfig = {
+            language: "en",
+            classid: this.classId,
+            brickKeys: [/*'meins2', 'brick'*/],
+            selectedGridColumns: visibleColumns
+        };
+        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {console.log(data); console.log("done"); } );
+    },
+
 
     batchPrepare: function(columnIndex, onlySelected){
 

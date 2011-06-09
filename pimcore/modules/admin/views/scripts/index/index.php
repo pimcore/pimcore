@@ -198,6 +198,7 @@
             "pimcore/element/selector/document.js",
             "pimcore/element/selector/asset.js",
             "pimcore/object/helpers/grid.js",
+            "pimcore/object/helpers/gridConfigDialog.js",
             "pimcore/element/selector/object.js",
 
             //element importer, exporter

@@ -29,8 +29,6 @@ pimcore.object.helpers.grid = Class.create({
     initialize: function(selectedClass, fields, url, baseParams, isSearch) {
         this.selectedClass = selectedClass;
         this.fields = fields;
-//        this.validFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","image","geopoint","country","href","multihref","objects","language","table","date","datetime","time","link","multiselect","password","slider","user"];
-//        this.editableFieldTypes = ["textarea","input","checkbox","select","numeric","wysiwyg","country","language","user"]
         this.isSearch = isSearch;
 
         this.url = url;
@@ -133,7 +131,6 @@ pimcore.object.helpers.grid = Class.create({
         // init grid-columns
         var gridColumns = [];
 
-        var editor = null;
         if(this.enableEditor) {
             var selectionColumn = this.getSelectionColumn();
             gridColumns.push(selectionColumn);
@@ -174,8 +171,6 @@ pimcore.object.helpers.grid = Class.create({
     },
 
     getGridFilters: function() {
-        var selectFilterFields;
-
         var configuredFilters = [{
             type: "date",
             dataIndex: "creationDate"
