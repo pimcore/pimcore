@@ -60,6 +60,19 @@ public function testAction() {
         $orderKey = "o_id";
         $order = "ASC";
 
+        $fields = array();
+        $bricks = array();
+        if($this->_getParam("fields")) {
+            $fields = $this->_getParam("fields");
+
+            foreach($fields as $f) {
+                $parts = explode("~", $f);
+                if(count($parts) > 1) {
+                    $bricks[$parts[0]] = $parts[0];
+                }
+            }
+        }
+
         if ($this->_getParam("limit")) {
             $limit = $this->_getParam("limit");
         }
@@ -97,6 +110,11 @@ public function testAction() {
         }
 
         $list = new $listClass();
+        if(!empty($bricks)) {
+            foreach($bricks as $b) {
+                $list->addObjectbrick($b);
+            }
+        }        
         $list->setCondition($conditionFilters);
         $list->setLimit($limit);
         $list->setOffset($start);
@@ -110,7 +128,7 @@ public function testAction() {
         $objects = array();
         foreach ($list->getObjects() as $object) {
 
-            $o = Object_Service::gridObjectData($object);
+            $o = Object_Service::gridObjectData($object, $fields);
 
             $objects[] = $o;
         }

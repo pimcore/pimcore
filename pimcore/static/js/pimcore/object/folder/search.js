@@ -14,7 +14,7 @@
 
 pimcore.registerNS("pimcore.object.search");
 pimcore.object.search = Class.create({
-
+    systemColumns: ["id", "fullpath", "published", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
     fieldObject: {},
     sortInfo: {},
     initialize: function(object) {
@@ -126,7 +126,7 @@ pimcore.object.search = Class.create({
                 klass.data.text,
                 fields,
                 "/admin/object/grid-proxy/classId/" + this.classId + "/folderId/" + this.object.id,
-                null,
+                {language: this.gridLanguage},
                 false
         );
 
@@ -151,7 +151,11 @@ pimcore.object.search = Class.create({
 
         plugins.push(this.gridfilters);
         
-        
+
+        this.languageInfo = new Ext.Toolbar.TextItem({
+            text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]
+        });
+
         this.toolbarFilterInfo = new Ext.Toolbar.TextItem({
             text: ""
         });
@@ -197,9 +201,8 @@ pimcore.object.search = Class.create({
                 }
             }.bind(this)
         });
-        
-        
-        // grid        
+
+        // grid
         this.grid = new Ext.grid.EditorGridPanel({
             frame: false,
             store: this.store,
@@ -214,7 +217,7 @@ pimcore.object.search = Class.create({
             viewConfig: {
                 forceFit: false
             },
-            tbar: [this.toolbarFilterInfo
+            tbar: [this.languageInfo, "|", this.toolbarFilterInfo
             ,"->"
             ,this.sqlEditor
             ,this.sqlButton,{
@@ -237,12 +240,22 @@ pimcore.object.search = Class.create({
 
 
                 }.bind(this)
+            },{
+                text: t("grid_column_config"),
+                iconCls: "pimcore_icon_grid_column_config",
+                handler: this.openColumnConfig.bind(this)
             }]
         });
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
         this.grid.on("afterrender", function (grid) {
-
+            var columnConfig = new Ext.menu.Item({
+                text: t("grid_column_config"),
+                iconCls: "pimcore_icon_grid_column_config",
+                handler: this.openColumnConfig.bind(this)
+            });
+            grid.getView().hmenu.add(columnConfig);
+            
             var batchAllMenu = new Ext.menu.Item({
                 text: t("batch_change"),
                 iconCls: "pimcore_icon_batch",
@@ -263,23 +276,15 @@ pimcore.object.search = Class.create({
 
             grid.getView().hmenu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, view) {
                 // no batch for system properties
-                if (view.hdCtxIndex <= 8) {
+                if(this.systemColumns.indexOf(view.cm.config[view.hdCtxIndex].dataIndex) > 0) {
                     batchAllMenu.hide();
                     batchSelectedMenu.hide();
                 } else {
                     batchAllMenu.show();
                     batchSelectedMenu.show();
                 }
-            }.bind(grid.getView().hmenu, batchAllMenu, batchSelectedMenu, grid.getView()));
-
-
-            var columnConfig = new Ext.menu.Item({
-                text: t("column_config"),
-                iconCls: "xxx",
-                handler: this.openColumnConfig.bind(this)
-            });
-            grid.getView().hmenu.add(columnConfig);
-
+                
+            }.bind(this, batchAllMenu, batchSelectedMenu, grid.getView()));
         }.bind(this));
 
         this.grid.on("sortchange", function(grid, sortinfo) {
@@ -401,20 +406,20 @@ pimcore.object.search = Class.create({
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
-            this.setEditableGrid(data.columns);
             this.gridLanguage = data.language;
-//            console.log(data);
-//            console.log("done");
+            this.setEditableGrid(data.columns);
         }.bind(this) );
     },
 
 
     batchPrepare: function(columnIndex, onlySelected){
-
         // no batch for system properties
-        if (columnIndex <= 8) {
+        if(this.systemColumns.indexOf(this.grid.getColumnModel().config[columnIndex].dataIndex) > 0) {
             return;
         }
+//        if (columnIndex <= 8) {
+//            return;
+//        }
 
         var jobs = [];
         if(onlySelected) {

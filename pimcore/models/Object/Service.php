@@ -191,39 +191,79 @@ class Object_Service extends Element_Service {
      * @param  Object_Abstract $object
      * @return array
      */
-    public static function gridObjectData($object) {
+    public static function gridObjectData($object, $fields = null) {
 
         $data = Element_Service::gridElementData($object);
 
         if ($object instanceof Object_Concrete) {
             $data["classname"] = $object->geto_ClassName();
             $data['inheritedFields'] = array();
-            foreach ($object->getclass()->getFieldDefinitions() as $key => $def) {
-                // some of the not editable field require a special response
 
-                $getter = "get".ucfirst($key);
+            if(empty($fields)) {
+                $fields = array_keys($object->getclass()->getFieldDefinitions());
+            }
+            foreach($fields as $key) {
+                $brickType = null;
+                $brickGetter = null;
+                $dataKey = $key; 
+                $keyParts = explode("~", $key);
 
-                //relation type fields with remote owner do not have a getter
-                if(method_exists($object,$getter)) {
-                    $valueObject = self::getValueForObject($object, $getter);
-                    $data['inheritedFields'][$key] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
+                $def = $object->getClass()->getFieldDefinition($key);
 
-                    if(method_exists($def, "getDataForGrid")) {
-                        $tempData = $def->getDataForGrid($valueObject->value, $object);
-                        if(is_object($tempData)) {
-                            foreach($tempData as $tempKey => $tempValue) {
-                                $data[$tempKey] = $tempValue;
+                if(count($keyParts) > 1) {
+                    $brickType = $keyParts[0];
+                    $brickKey = $keyParts[1];
+                    $key = self::getFieldForBrickType($object->getclass(), $brickType);
+
+                    $brickClass = Object_Objectbrick_Definition::getByKey($brickType);
+                    $def = $brickClass->getFieldDefinition($brickKey);
+                }
+
+                if(!empty($key)) {
+
+                    // some of the not editable field require a special response
+
+                    $getter = "get".ucfirst($key);
+                    $brickGetter = null;
+                    if(!empty($brickKey)) {
+                        $brickGetter = "get".ucfirst($brickKey);
+                    }
+
+                    //relation type fields with remote owner do not have a getter
+                    if(method_exists($object,$getter)) {
+                        $valueObject = self::getValueForObject($object, $getter, $brickType, $brickGetter);
+                        $data['inheritedFields'][$dataKey] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
+
+                        if(method_exists($def, "getDataForGrid")) {
+                            $tempData = $def->getDataForGrid($valueObject->value, $object);
+                            if(is_object($tempData)) {
+                                foreach($tempData as $tempKey => $tempValue) {
+                                    $data[$tempKey] = $tempValue;
+                                }
+                            } else {
+                                $data[$dataKey] = $tempData;
                             }
                         } else {
-                            $data[$key] = $tempData;
+                            $data[$dataKey] = $valueObject->value;
                         }
-                    } else {
-                        $data[$key] = $valueObject->value;
                     }
                 }
+
             }
         }
         return $data;
+    }
+
+    public static function getFieldForBrickType(Object_Class $class, $bricktype) {
+        $fieldDefinitions = $class->getFieldDefinitions();
+        foreach($fieldDefinitions as $key => $fd) {
+            if($fd instanceof Object_Class_Data_Objectbricks) {
+                if(in_array($bricktype, $fd->getAllowedTypes())) {
+                    return $key;
+                }
+            }
+        }
+       return null;
     }
 
     /**
@@ -232,14 +272,21 @@ class Object_Service extends Element_Service {
      * @static
      * @return stdclass, value and objectid where the value comes from
      */
-    private static function getValueForObject($object, $getter) {
+    private static function getValueForObject($object, $getter, $brickType = null, $brickGetter = null) {
         $value = $object->$getter();
+        if(!empty($value) && !empty($brickType)) {
+            $getBrickType = "get" . ucfirst($brickType);
+            $value = $value->$getBrickType();
+            if(!empty($value) && !empty($brickGetter)) {
+                $value = $value->$brickGetter();
+            }
+        }
 
 
         if(empty($value) || (method_exists($value, "isEmpty") && $value->isEmpty())) {
             $parent = self::hasInheritableParentObject($object);
             if(!empty($parent)) {
-                return self::getValueForObject($parent, $getter);
+                return self::getValueForObject($parent, $getter, $brickType, $brickGetter);
             }
         }
 
@@ -327,14 +374,44 @@ class Object_Service extends Element_Service {
                 }
                 
                 $field = $class->getFieldDefinition($filter["field"]);
-                if(!$field) { // if the definition doesn't exist check for a localized field
+                $brickField = null;
+                $brickType = null;
+                if(!$field) {
+
+                    // if the definition doesn't exist check for a localized field
                     $localized = $class->getFieldDefinition("localizedfields");
                     if($localized instanceof Object_Class_Data_Localizedfields) {
                         $field = $localized->getFieldDefinition($filter["field"]);
                     }
-                }
 
-                if($field instanceof Object_Class_Data) {
+
+                    //if the definition doesn't exist check for object brick
+                    $keyParts = explode("~", $filter["field"]);
+                    if(count($keyParts) > 1) {
+                        $brickType = $keyParts[0];
+                        $brickKey = $keyParts[1];
+
+                        $key = self::getFieldForBrickType($class, $brickType);
+                        $field = $class->getFieldDefinition($key);
+
+                        $brickClass = Object_Objectbrick_Definition::getByKey($brickType);
+                        $brickField = $brickClass->getFieldDefinition($brickKey);
+
+                    }
+                }
+                if($field instanceof Object_Class_Data_Objectbricks) {
+                    // custom field
+                    $db = Pimcore_Resource::get();
+                    if(is_array($filter["value"])) {
+                        $fieldConditions = array();
+                        foreach ($filter["value"] as $filterValue) {
+                            $fieldConditions[] = $db->getQuoteIdentifierSymbol() . $brickType . $db->getQuoteIdentifierSymbol() . "." . $brickField->getFilterCondition($filterValue, $operator);
+                        }
+                        $conditionPartsFilters[] = "(" . implode(" OR ", $fieldConditions) . ")";
+                    } else {
+                        $conditionPartsFilters[] = $db->getQuoteIdentifierSymbol() . $brickType . $db->getQuoteIdentifierSymbol() . "." . $brickField->getFilterCondition($filter["value"], $operator);
+                    }
+                } else if($field instanceof Object_Class_Data) {
                     // custom field
                     if(is_array($filter["value"])) {
                         $fieldConditions = array();
@@ -357,7 +434,6 @@ class Object_Service extends Element_Service {
         if (count($conditionPartsFilters) > 0) {
             $conditionFilters = " AND (" . implode("AND", $conditionPartsFilters) . ")";
         }
-
         Logger::log("ObjectController filter condition:" . $conditionFilters);
         return $conditionFilters;
     }

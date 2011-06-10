@@ -204,7 +204,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             var items = [];
 
             this.brickKeys = [];
-            items.push(this.getClassTree("/admin/class/get", this.config.classid, t("object_class"), null, this.loadBricks.bind(this)));
+            items.push(this.getClassTree("/admin/class/get", this.config.classid, t("object_columns"), null, this.loadBricks.bind(this)));
             items.push(this.getSystemColumns());
 
             this.resultPanel = new Ext.Panel({
@@ -231,7 +231,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
     loadBricks: function() {
         for(var i = 0; i < this.brickKeys.length; i++) {
-            this.resultPanel.add(this.getClassTree("/admin/class/objectbrick-get", this.brickKeys[i], ts(this.brickKeys[i]), this.brickKeys[i]));
+            this.resultPanel.add(this.getClassTree("/admin/class/objectbrick-get", this.brickKeys[i], ts(this.brickKeys[i]) + " " + t("columns"), this.brickKeys[i]));
         }
         this.resultPanel.doLayout();
 
@@ -439,7 +439,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
             var key = initData.name;
             if(attributePrefix) {
-                key = attributePrefix + "." + key;
+                key = attributePrefix + "~" + key;
             }
 
             var newNode = new Ext.tree.TreeNode({

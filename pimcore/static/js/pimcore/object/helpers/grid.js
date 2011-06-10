@@ -72,8 +72,6 @@ pimcore.object.helpers.grid = Class.create({
             readerFields.push({name: this.fields[i].key, allowBlank: true});
         }
 
-        console.log(readerFields);
-
         var proxy = new Ext.data.HttpProxy({
             url: this.url,
             method: 'post'
@@ -178,17 +176,9 @@ pimcore.object.helpers.grid = Class.create({
             } else {
                 gridColumns.push(pimcore.object.tags[fields[i].type].prototype.getGridColumnConfig(fields[i]));
                 gridColumns[gridColumns.length-1].hidden = false;
-                // is visible or not
-//            if(this.isSearch) {
-//                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleSearch;
-//            } else {
-//                gridColumns[gridColumns.length-1].hidden = !fields[i].visibleGridView;
-//            }
                 gridColumns[gridColumns.length-1].layout = fields[i];
             }
         }
-
-        console.log(gridColumns);
 
         return gridColumns;
     },

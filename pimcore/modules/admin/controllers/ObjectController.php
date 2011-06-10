@@ -1045,6 +1045,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     {
 
         $object = Object_Abstract::getById($this->_getParam("id"));
+        $classId = $this->_getParam("class_id");
         $object->getPermissionsForUser($this->getUser());
 
         // general settings
@@ -1059,7 +1060,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 // grid config
                 $gridConfig = Zend_Json::decode($this->_getParam("gridconfig"));
-                $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . ".psf";
+                if($classId) {
+                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . ".psf";
+                } else {
+                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . ".psf";
+                }
+
                 $configDir = dirname($configFile);
                 if (!is_dir($configDir)) {
                     mkdir($configDir, 0755, true);
@@ -1203,7 +1209,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $class = Object_Class::getByName($this->_getParam("name"));
         }
 
+        $gridType = "search";
+        if($this->_getParam("gridtype")) {
+            $gridType = $this->_getParam("gridtype");
+        }
+
         $fields = $class->getFieldDefinitions();
+        //        p_r($fields); die();
 
         $types = array();
         if ($this->_getParam("types")) {
@@ -1213,34 +1225,156 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         // grid config
         $gridConfig = array();
         if ($this->_getParam("objectId")) {
-            $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . ".psf";
+
+            $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . "_" . $class->getId() . ".psf";
             if (is_file($configFile)) {
                 $gridConfig = unserialize(file_get_contents($configFile));
+            } else {
+                $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . ".psf";
+                if (is_file($configFile)) {
+                    $gridConfig = unserialize(file_get_contents($configFile));
+                }
             }
+
+        }
+
+        $localizedFields = array();
+        $objectbrickFields = array(); 
+        foreach ($fields as $key => $field) {
+            if ($field instanceof Object_Class_Data_Localizedfields) {
+                $localizedFields[] = $field;
+            } else if($field instanceof Object_Class_Data_Objectbricks) {
+                $objectbrickFields[] = $field;
+            }
+
         }
 
         $availableFields = array();
-        $count = 0;
-        foreach ($fields as $key => $field) {
+        $systemColumns = array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
+        if(empty($gridConfig)) {
+            $count = 0;
 
-            if ($field instanceof Object_Class_Data_Localizedfields) {
-                foreach ($field->getFieldDefinitions() as $fd) {
-                    if (empty($types) || in_array($fd->getFieldType(), $types)) {
-                        $fd->setNoteditable(true);
-                        $fieldConfig = $this->getFieldGridConfig($fd, $gridConfig);
-                        $availableFields[] = $fieldConfig;
-                    }
+            foreach($systemColumns as $sc) {
+                $vis = $class->getPropertyVisibility();
+
+                $key = $sc;
+                if($key == "fullpath") {
+                    $key = "path";
                 }
-            } else {
-                if (empty($types) || in_array($field->getFieldType(), $types)) {
-                    $fieldConfig = $this->getFieldGridConfig($field, $gridConfig);
-                    $availableFields[] = $fieldConfig;
+
+                if(empty($types) && ($vis[$gridType][$key] || $gridType == "all")) {
+                    $availableFields[] = array(
+                        "key" => $sc,
+                        "type" => "system",
+                        "label" => $sc,
+                        "position" => $count);
+                    $count++;
                 }
             }
 
-            $count++;
-        }
+            foreach ($fields as $key => $field) {
+                if ($field instanceof Object_Class_Data_Localizedfields) {
+                    foreach ($field->getFieldDefinitions() as $fd) {
+                        if (empty($types) || in_array($fd->getFieldType(), $types)) {
+                            $fd->setNoteditable(true);
+                            $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count);
+                            if(!empty($fieldConfig)) {
+                                $availableFields[] = $fieldConfig;
+                                $count++;
+                            }
+                        }
+                    }
 
+                } else if($field instanceof Object_Class_Data_Objectbricks) {
+
+                    if (in_array($field->getFieldType(), $types)) {
+                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count);
+                        if(!empty($fieldConfig)) {
+                            $availableFields[] = $fieldConfig;
+                            $count++;
+                        }
+                    } else {
+                        $allowedTypes = $field->getAllowedTypes();
+                        if(!empty($allowedTypes)) {
+                            foreach($allowedTypes as $t) {
+                                $brickClass = Object_Objectbrick_Definition::getByKey($t);
+                                $brickFields = $brickClass->getFieldDefinitions();
+                                if(!empty($brickFields)) {
+                                    foreach($brickFields as $bf) {
+                                        $fieldConfig = $this->getFieldGridConfig($bf, $gridType, $count, false, $t . "~");
+                                        if(!empty($fieldConfig)) {
+                                            $availableFields[] = $fieldConfig;
+                                            $count++;
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+
+                } else {
+                    if (empty($types) || in_array($field->getFieldType(), $types)) {
+                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count);
+                        if(!empty($fieldConfig)) {
+                            $availableFields[] = $fieldConfig;
+                            $count++;
+                        }
+                    }
+                }
+
+
+            }
+        } else {
+            $savedColumns = $gridConfig['columns'];
+            foreach($savedColumns as $key => $sc) {
+                if(!$sc['hidden']) {
+                    if(in_array($key, $systemColumns)) {
+                        $availableFields[] = array(
+                            "key" => $key,
+                            "type" => "system",
+                            "label" => $key,
+                            "position" => $sc['position']);
+                    } else {
+                        $keyParts = explode("~", $key);
+                        if(count($keyParts) > 1) {
+                            $brick = $keyParts[0];
+                            $key = $keyParts[1];
+
+                            $brickClass = Object_Objectbrick_Definition::getByKey($brick);
+                            $fd = $brickClass->getFieldDefinition($key);
+                            if(!empty($fd)) {
+                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $brick . "~");
+                                if(!empty($fieldConfig)) {
+                                    $availableFields[] = $fieldConfig;
+                                }
+                            }
+                        } else {
+                            $fd = $class->getFieldDefinition($key);
+                            //if not found, look for localized fields
+                            if(empty($fd)) {
+                                foreach($localizedFields as $lf) {
+                                    $fd = $lf->getFieldDefinition($key);
+                                    if(!empty($fd)) {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if(!empty($fd)) {
+                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true);
+                                if(!empty($fieldConfig)) {
+                                    $availableFields[] = $fieldConfig;
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
         usort($availableFields, function ($a, $b)
         {
             if ($a["position"] == $b["position"]) {
@@ -1249,13 +1383,21 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             return ($a["position"] < $b["position"]) ? -1 : 1;
         });
 
-        $this->_helper->json($availableFields);
+        $language = $this->getLanguage();
+        if(!empty($gridConfig) && !empty($gridConfig['language'])) {
+            $language = $gridConfig['language'];
+        }
+        $this->_helper->json(array(
+            "sortinfo" => $gridConfig['sortinfo'],
+            "language" => $language,
+            "availableFields" => $availableFields
+        ));
     }
 
-    protected function getFieldGridConfig($field, $gridConfig)
+    protected function getFieldGridConfig($field, $gridType, $position, $force = false, $keyPrefix = null)
     {
 
-        $key = $field->getName();
+        $key = $keyPrefix . $field->getName();
         $config = null;
         $title = $field->getName();
         if (method_exists($field, "getTitle")) {
@@ -1264,9 +1406,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
         }
 
-        if ($field->getFieldType() == "select" || $field->getFieldType() == "country" || $field->getFieldType() == "language" || $field->getFieldType() == "user") {
-            $config["store"] = $field->getOptions();
-        }
         if ($field->getFieldType() == "slider") {
             $config["minValue"] = $field->getMinValue();
             $config["maxValue"] = $field->getMaxValue();
@@ -1280,25 +1419,28 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $config["height"] = $field->getHeight();
         }
 
-        $index = $count;
-        $gridVisibility = $field->getVisibleGridView();
-        if ($gridConfig["columns"]) {
-            if ($gridConfig["columns"][$key]) {
-                $index = (int)$gridConfig["columns"][$key]["position"];
-                $gridVisibility = !(bool)$gridConfig["columns"][$key]["hidden"];
-            }
+        $visible = false;
+        if($gridType == "search") {
+            $visible = $field->getVisibleSearch();
+        } elseif($gridType == "grid") {
+            $visible = $field->getVisibleGridView();
+        } elseif($gridType == "all") {
+            $visible = true;
         }
 
-        return array(
-            "key" => $key,
-            "type" => $field->getFieldType(),
-            "label" => $title,
-            "config" => $config,
-            "layout" => $field,
-            "position" => $index,
-            "visibleGridView" => $gridVisibility,
-            "visibleSearch" => $field->getVisibleSearch()
-        );
+        if(!$field->getInvisible() && ($force || $visible)) {
+            return array(
+                "key" => $key,
+                "type" => $field->getFieldType(),
+                "label" => $title,
+                "config" => $config,
+                "layout" => $field ,
+                "position" => $position
+            );
+        } else {
+            return null;
+        }
+
     }
 
     public function exportAction()
@@ -1363,6 +1505,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     public function gridProxyAction()
     {
 
+        if($this->_getParam("language")) {
+            $this->setLanguage($this->_getParam("language"));
+        }
+
         if ($this->_getParam("data")) {
 
             if ($this->_getParam("xaction") == "destroy") {
@@ -1384,11 +1530,37 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 // save glossary
                 $object = Object_Abstract::getById($data["id"]);
 
-                $object->setValues($data);
+                $objectData = array();
+                foreach($data as $key => $value) {
+                    $parts = explode("~", $key);
+                    if(count($parts) > 1) {
+                        $brickType = $parts[0];
+                        $brickKey = $parts[1];
+                        $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);
+
+                        $fieldGetter = "get" . ucfirst($brickField);
+                        $brickGetter = "get" . ucfirst($brickType);
+                        $valueSetter = "set" . ucfirst($brickKey);
+
+                        $brick = $object->$fieldGetter()->$brickGetter();
+                        if(empty($brick)) {
+                            $classname = "Object_Objectbrick_Data_" . ucfirst($brickType);
+                            $brickSetter = "set" . ucfirst($brickType);
+                            $brick = new $classname($object);
+                            $object->$fieldGetter()->$brickSetter($brick);
+                        }
+                        $brick->$valueSetter($value);
+
+                    } else {
+                        $objectData[$key] = $value;
+                    }
+                }
+
+                $object->setValues($objectData);
 
                 try {
                     $object->save();
-                    $this->_helper->json(array("data" => Object_Service::gridObjectData($object), "success" => true));
+                    $this->_helper->json(array("data" => Object_Service::gridObjectData($object, $this->_getParam("fields")), "success" => true));
                 } catch (Exception $e) {
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
@@ -1424,6 +1596,19 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $orderKey = "o_id";
             $order = "ASC";
 
+            $fields = array();
+            $bricks = array();
+            if($this->_getParam("fields")) {
+                $fields = $this->_getParam("fields");
+
+                foreach($fields as $f) {
+                    $parts = explode("~", $f);
+                    if(count($parts) > 1) {
+                        $bricks[$parts[0]] = $parts[0];
+                    }
+                }
+            }
+
             if ($this->_getParam("limit")) {
                 $limit = $this->_getParam("limit");
             }
@@ -1452,6 +1637,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
             $list = new $listClass();
+            if(!empty($bricks)) {
+                foreach($bricks as $b) {
+                    $list->addObjectbrick($b);
+                }
+            }
+
             $list->setCondition("o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'" . $conditionFilters);
             $list->setLimit($limit);
             $list->setOffset($start);
@@ -1464,7 +1655,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objects = array();
             foreach ($list->getObjects() as $object) {
 
-                $o = Object_Service::gridObjectData($object);
+                $o = Object_Service::gridObjectData($object, $fields);
 
                 $objects[] = $o;
             }
@@ -1581,28 +1772,54 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $success = true;
 
         try {
-                $object = Object_Abstract::getById($this->_getParam("job"));
+            $object = Object_Abstract::getById($this->_getParam("job"));
 
-                if ($object) {
-                    $className = $object->getO_className();
-                    $class = Object_Class::getByName($className);
-                    $field = $class->getFieldDefinition($this->_getParam("name"));
-                    $value = $this->_getParam("value");
-                    if ($this->_getParam("valueType") == "object") {
-                        $value = Zend_Json::decode($value);
-                    }
-                    $object->setValue($this->_getParam("name"), $field->getDataFromEditmode($value, $object));
-                    try {
-                        $object->save();
-                        $success = true;
-                    } catch (Exception $e) {
-                        $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
-                    }
+            if ($object) {
+                $className = $object->getO_className();
+                $class = Object_Class::getByName($className);
+                $value = $this->_getParam("value");
+                if ($this->_getParam("valueType") == "object") {
+                    $value = Zend_Json::decode($value);
                 }
-                else {
-                    logger::debug("ObjectController::batchAction => There is no object left to update.");
-                    $success = false;
+
+                $name = $this->_getParam("name");
+                $parts = explode("~", $name);
+                if(count($parts) > 1) {
+                    $brickType = $parts[0];
+                    $brickKey = $parts[1];
+                    $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);
+
+                    $fieldGetter = "get" . ucfirst($brickField);
+                    $brickGetter = "get" . ucfirst($brickType);
+                    $valueSetter = "set" . ucfirst($brickKey);
+
+                    $brick = $object->$fieldGetter()->$brickGetter();
+                    if(empty($brick)) {
+                        $classname = "Object_Objectbrick_Data_" . ucfirst($brickType);
+                        $brickSetter = "set" . ucfirst($brickType);
+                        $brick = new $classname($object);
+                        $object->$fieldGetter()->$brickSetter($brick);
+                    }
+
+                    $brickClass = Object_Objectbrick_Definition::getByKey($brickType);
+                    $field = $brickClass->getFieldDefinition($brickKey);
+                    $brick->$valueSetter($field->getDataFromEditmode($value, $object));
+
+                } else {
+                    $field = $class->getFieldDefinition($name);
+                    $object->setValue($name, $field->getDataFromEditmode($value, $object));
                 }
+                try {
+                    $object->save();
+                    $success = true;
+                } catch (Exception $e) {
+                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                }
+            }
+            else {
+                logger::debug("ObjectController::batchAction => There is no object left to update.");
+                $success = false;
+            }
 
         }
         catch (Exception $e) {

@@ -90,11 +90,34 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $conditionParts[] = "(id = '". mysql_escape_string($query) ."' or fullpath like '%". mysql_escape_string($query) ."%' or  data like '%" . mysql_escape_string($query) . "%' or  localizeddata like '%" . mysql_escape_string($query) . "%' or  fieldcollectiondata like '%" . mysql_escape_string($query) . "%' or properties like '%" . mysql_escape_string($query) . "%')";
         }                      
 
+
+        //For objects - handling of bricks
+        $fields = array();
+        $bricks = array();
+        if($this->_getParam("fields")) {
+            $fields = $this->_getParam("fields");
+
+            foreach($fields as $f) {
+                $parts = explode("~", $f);
+                if(count($parts) > 1) {
+                    $bricks[$parts[0]] = $parts[0];
+                }
+            }
+        }        
+
         // filtering for objects
         if ($this->_getParam("filter")) {
             $class = Object_Class::getByName($this->_getParam("class"));
             $conditionFilters = Object_Service::getFilterCondition($this->_getParam("filter"), $class);
-            $conditionParts[] = "( id IN (SELECT o_id FROM object_" . $class->getId() . " WHERE 1=1 " . $conditionFilters . ") )";
+            $join = "";
+            foreach($bricks as $ob) {
+                $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $class->getId();
+
+                $join .= " `" . $ob . "`";
+                $join .= " ON `" . $ob . "`.o_id = `object_" . $class->getId() . "`.o_id";
+            }
+
+            $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId() . $join . " WHERE 1=1 " . $conditionFilters . ") )";
         }
 
         if (is_array($types) and !empty($types[0])) {
@@ -142,6 +165,8 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $searcherList->setOrder($this->_getParam("dir"));
         }
 
+
+
         $hits = $searcherList->load();
         $totalMatches = $searcherList->getTotalCount();
 
@@ -152,7 +177,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $element->getPermissionsForUser($user);
             if ($element->isAllowed("view")) {
                 if ($element instanceof Object_Abstract) {
-                    $data = Object_Service::gridObjectData($element);
+                    $data = Object_Service::gridObjectData($element, $fields);
                 } else if ($element instanceof Document) {
                     $data = Document_Service::gridDocumentData($element);
                 } else if ($element instanceof Asset) {

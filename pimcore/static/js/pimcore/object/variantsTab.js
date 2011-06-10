@@ -15,6 +15,7 @@
 pimcore.registerNS("pimcore.object.variantsTab");
 pimcore.object.variantsTab = Class.create({
 
+    fieldObject: {},
     initialize: function(element) {
         this.element = element;
 
@@ -26,7 +27,7 @@ pimcore.object.variantsTab = Class.create({
 
             Ext.Ajax.request({
                 url: "/admin/object/grid-get-column-config",
-                params: {name: this.selectedClass},
+                params: {name: this.selectedClass, gridtype: "grid"},
                 success: this.createGrid.bind(this)
             });
 
@@ -42,7 +43,21 @@ pimcore.object.variantsTab = Class.create({
     },
 
     createGrid: function(response) {
-        var fields = Ext.decode(response.responseText);
+        var fields = [];
+        if(response.responseText) {
+            response = Ext.decode(response.responseText);
+            fields = response.availableFields;
+            this.gridLanguage = response.language;
+            this.sortinfo = response.sortinfo;
+        } else {
+            fields = response;
+        }
+
+        this.fieldObject = {};
+        for(var i = 0; i < fields.length; i++) {
+            this.fieldObject[fields[i].key] = fields[i];
+        }        
+        
         var gridHelper = new pimcore.object.helpers.grid(this.selectedClass, fields, "/admin/variants/get-variants", null, false);
         gridHelper.showSubtype = false;
         gridHelper.showKey = true;
@@ -94,6 +109,10 @@ pimcore.object.variantsTab = Class.create({
             emptyMsg: t("no_objects_found")
         });
 
+        this.languageInfo = new Ext.Toolbar.TextItem({
+            text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]
+        });
+
         this.gridPanel = new Ext.grid.GridPanel({
             store: this.store,
             border: false,
@@ -113,7 +132,11 @@ pimcore.object.variantsTab = Class.create({
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 },
-                '-'
+                '-', this.languageInfo, '->', {
+                    text: t("grid_column_config"),
+                    iconCls: "pimcore_icon_grid_column_config",
+                    handler: this.openColumnConfig.bind(this)
+                } 
             ],
             listeners: {
                 rowdblclick: function (grid, rowIndex, ev) {
@@ -122,9 +145,70 @@ pimcore.object.variantsTab = Class.create({
             }
         });
         this.gridPanel.on("rowcontextmenu", this.onRowContextmenu.bind(this));
+
+        this.gridPanel.on("afterrender", function (grid) {
+            var columnConfig = new Ext.menu.Item({
+                text: t("grid_column_config"),
+                iconCls: "pimcore_icon_grid_column_config",
+                handler: this.openColumnConfig.bind(this)
+            });
+            grid.getView().hmenu.add(columnConfig);
+        }.bind(this));
+
         this.store.load();
 
+        this.layout.removeAll();
         this.layout.add(this.gridPanel);
+        this.layout.doLayout();
+    },
+
+    openColumnConfig: function() {
+        var fields = this.getGridConfig().columns;
+
+        var fieldKeys = Object.keys(fields);
+
+        var visibleColumns = [];
+        for(var i = 0; i < fieldKeys.length; i++) {
+            if(!fields[fieldKeys[i]].hidden) {
+                visibleColumns.push({
+                    key: fieldKeys[i],
+                    label: fields[fieldKeys[i]].fieldConfig.label,
+                    dataType: fields[fieldKeys[i]].fieldConfig.type,
+                    layout: fields[fieldKeys[i]].fieldConfig.layout
+                });
+            }
+        }
+
+        var columnConfig = {
+            language: this.gridLanguage,
+            classid: this.element.data.general.o_classId,
+            selectedGridColumns: visibleColumns
+        };
+        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
+            this.gridLanguage = data.language;
+            this.createGrid(data.columns);
+        }.bind(this) );
+    },
+
+    getGridConfig : function () {
+        var config = {
+            language: this.gridLanguage,
+            sortinfo: this.sortinfo,
+            columns: {}
+        };
+        var cm = this.gridPanel.getColumnModel();
+        for (var i=0; i<cm.config.length; i++) {
+            if(cm.config[i].dataIndex) {
+                config.columns[cm.config[i].dataIndex] = {
+                    name: cm.config[i].dataIndex,
+                    position: i,
+                    hidden: cm.config[i].hidden,
+                    fieldConfig: this.fieldObject[cm.config[i].dataIndex]
+                };
+            }
+        }
+
+        return config;
     },
 
 

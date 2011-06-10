@@ -1029,3 +1029,7 @@
 .pimcore_icon_staging_disable {
     background: url(/pimcore/static/img/icon/cog_stop.png) left center no-repeat !important;
 }
+
+.pimcore_icon_grid_column_config {
+    background: url(/pimcore/static/img/icon/table_gear.png) left center no-repeat !important;
+}
