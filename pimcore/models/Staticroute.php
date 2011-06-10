@@ -307,9 +307,9 @@ class Staticroute extends Pimcore_Model_Abstract {
         // check for named variables
         foreach ($urlParams as $key => $param) {
             if(strpos($this->getReverse(), "%" . $key) !== false) {
-                $parametersInReversePattern[$key] = $param;
+                $parametersInReversePattern[$key] = urldecode($param);
             } else if (is_numeric($key)) {
-                $parametersNotNamed[$key] = $param;
+                $parametersNotNamed[$key] = urldecode($param);
             } else {
                 // only append the get parameters if there are defined in $urlOptions
                 if(array_key_exists($key,$urlOptions)) {
