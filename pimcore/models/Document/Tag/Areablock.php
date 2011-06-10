@@ -61,12 +61,13 @@ class Document_Tag_Areablock extends Document_Tag {
     public function frontend() {
         $count = 0;
         $this->start();
+        $options = $this->getOptions();
         foreach ($this->indices as $index) {
             
             $this->current = $count;
 
             // don't show disabled bricks
-            if(!Pimcore_ExtensionManager::isEnabled("brick", $index["type"])) {
+            if(!Pimcore_ExtensionManager::isEnabled("brick", $index["type"]) && $options['dontCheckEnabled'] != true) {
                 $count++;
                 continue;
             }
@@ -321,7 +322,7 @@ class Document_Tag_Areablock extends Document_Tag {
     public function setOptions($options) {
                
         // read available types
-        $areaConfigs = Pimcore_ExtensionManager::getBrickConfigs();
+        $areaConfigs = $this->getBrickConfigs();
         $availableAreas = array();
         $availableAreasSort = array();
         
@@ -332,9 +333,12 @@ class Document_Tag_Areablock extends Document_Tag {
         foreach ($areaConfigs as $areaName => $areaConfig) {
 
             // don't show disabled bricks
-            if(!Pimcore_ExtensionManager::isEnabled("brick", $areaName)) {
-                 continue;
+            if(!$options['dontCheckEnabled']){
+                if(!Pimcore_ExtensionManager::isEnabled("brick", $areaName)) {
+                     continue;
+                }
             }
+
 
             if(empty($options["allowed"]) || in_array($areaName,$options["allowed"])) {
                 $availableAreasSort[$this->view->translateAdmin((string) $areaConfig->name)] = array(
@@ -450,4 +454,7 @@ class Document_Tag_Areablock extends Document_Tag {
         return Pimcore_ExtensionManager::getBrickDirectories();
     }
 
+    public function getBrickConfigs() {
+        return Pimcore_ExtensionManager::getBrickConfigs();
+    }
 }
