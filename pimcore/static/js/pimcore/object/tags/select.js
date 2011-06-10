@@ -26,9 +26,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     getGridColumnEditor: function(field) {
         var store = new Ext.data.JsonStore({
             autoDestroy: true,
-            root: 'store',
+            root: 'options',
             fields: ['key',"value"],
-            data: field.config
+            data: field.layout
         });
 
         var editorConfig = {};
@@ -58,9 +58,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
         var store = new Ext.data.JsonStore({
             autoDestroy: true,
-            root: 'store',
+            root: 'options',
             fields: ['key',"value"],
-            data: field.config
+            data: field.layout
         });
 
         store.each(function (rec) {

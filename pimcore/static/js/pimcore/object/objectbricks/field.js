@@ -159,10 +159,12 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             url: '/admin/object/grid-get-column-config',
             baseParams: {
                 types: 'objectbricks',
+                gridtype: "all",
                 id:currentData.classname
             },
             fields: ['key', 'label'],
             autoLoad: true,
+            root: "availableFields",
             forceSelection:true
         });
 

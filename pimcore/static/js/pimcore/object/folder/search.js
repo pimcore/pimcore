@@ -15,6 +15,8 @@
 pimcore.registerNS("pimcore.object.search");
 pimcore.object.search = Class.create({
 
+    fieldObject: {},
+    sortInfo: {},
     initialize: function(object) {
         this.object = object;
         this.currentClass;
@@ -88,7 +90,7 @@ pimcore.object.search = Class.create({
     getTableDescription: function (classId) {
         Ext.Ajax.request({
             url: "/admin/object/grid-get-column-config",
-            params: {id: classId, objectId: this.object.id},
+            params: {id: classId, objectId: this.object.id, gridtype: "grid"},
             success: this.setEditableGrid.bind(this)
         });
     },
@@ -99,10 +101,21 @@ pimcore.object.search = Class.create({
 
         var fields = [];
         if(response.responseText) {
-            fields = Ext.decode(response.responseText);
+            response = Ext.decode(response.responseText);
+            fields = response.availableFields;
+            this.gridLanguage = response.language;
+            this.sortinfo = response.sortinfo;
         } else {
             fields = response;
         }
+
+        this.fieldObject = {};
+        for(var i = 0; i < fields.length; i++) {
+            this.fieldObject[fields[i].key] = fields[i];
+        }
+
+//        console.log(this.fieldObject);
+
         var plugins = [];
 
         // get current class
@@ -125,8 +138,11 @@ pimcore.object.search = Class.create({
         var propertyVisibility = klass.get("propertyVisibility");
 
         this.store = gridHelper.getStore();
+        if(this.sortinfo) {
+           this.store.setDefaultSort(this.sortinfo.field, this.sortinfo.direction);
+        }
         this.store.load();
-        
+
         var gridColumns = gridHelper.getGridColumns();
         
 
@@ -260,10 +276,14 @@ pimcore.object.search = Class.create({
             var columnConfig = new Ext.menu.Item({
                 text: t("column_config"),
                 iconCls: "xxx",
-                handler: this.openColumnConfig.bind(this, fields)
+                handler: this.openColumnConfig.bind(this)
             });
             grid.getView().hmenu.add(columnConfig);
 
+        }.bind(this));
+
+        this.grid.on("sortchange", function(grid, sortinfo) {
+            this.sortinfo = sortinfo;
         }.bind(this));
         
         // check for filter updates
@@ -358,33 +378,33 @@ pimcore.object.search = Class.create({
     },
 
 
-    openColumnConfig: function(fields) {
-        console.log(fields);
+    openColumnConfig: function() {
+        var fields = this.getGridConfig().columns;
+
+        var fieldKeys = Object.keys(fields);
 
         var visibleColumns = [];
-        for(var i = 0; i < fields.length; i++) {
-//            if(fields[i].visibleGridView) {
+        for(var i = 0; i < fieldKeys.length; i++) {
+            if(!fields[fieldKeys[i]].hidden) {
                 visibleColumns.push({
-                    key: fields[i].key,
-                    label: fields[i].label,
-                    dataType: fields[i].type,
-                    layout: fields[i].layout
+                    key: fieldKeys[i],
+                    label: fields[fieldKeys[i]].fieldConfig.label,
+                    dataType: fields[fieldKeys[i]].fieldConfig.type,
+                    layout: fields[fieldKeys[i]].fieldConfig.layout
                 });
-//            }
+            }
         }
 
-        console.log(visibleColumns);
-
-
         var columnConfig = {
-            language: "en",
+            language: this.gridLanguage,
             classid: this.classId,
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
             this.setEditableGrid(data.columns);
-            console.log(data);
-            console.log("done");
+            this.gridLanguage = data.language;
+//            console.log(data);
+//            console.log("done");
         }.bind(this) );
     },
 
@@ -479,8 +499,6 @@ pimcore.object.search = Class.create({
         this.batchWin.show();
 
     },
-
-   
 
     batchProcess: function (jobs,  editor, fieldInfo, initial) {
 
@@ -618,6 +636,8 @@ pimcore.object.search = Class.create({
     
     getGridConfig : function () {
         var config = {
+            language: this.gridLanguage,
+            sortinfo: this.sortinfo,
             columns: {}
         };
         var cm = this.grid.getColumnModel();
@@ -626,11 +646,12 @@ pimcore.object.search = Class.create({
                 config.columns[cm.config[i].dataIndex] = {
                     name: cm.config[i].dataIndex,
                     position: i,
-                    hidden: cm.config[i].hidden
+                    hidden: cm.config[i].hidden,
+                    fieldConfig: this.fieldObject[cm.config[i].dataIndex]
                 };
             }
         }
-        
-        return config;        
+
+        return config;
     }
 });

@@ -203,6 +203,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
             var items = [];
 
+            this.brickKeys = [];
             items.push(this.getClassTree("/admin/class/get", this.config.classid, t("object_class"), null, this.loadBricks.bind(this)));
             items.push(this.getSystemColumns());
 
@@ -426,7 +427,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
     addDataChild: function (type, initData, attributePrefix) {
 
-        if(type != "objectbricks") {
+        if(type != "objectbricks" && !initData.invisible) {
             var isLeaf = true;
             var draggable = true;
 
