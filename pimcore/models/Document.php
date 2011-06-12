@@ -355,7 +355,12 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         // set path
         if ($this->getId() != 1) { // not for the root node
             $parent = Document::getById($this->getParentId());
-            $this->setPath(str_replace("//", "/", $parent->getFullPath() . "/"));
+            if($parent) {
+                $this->setPath(str_replace("//", "/", $parent->getFullPath() . "/"));
+            } else {
+                // parent document doesn't exist anymore, so delete this document
+                $this->delete();
+            }
         }
 
         $duplicate = Document::getByPath($this->getFullPath());
