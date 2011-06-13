@@ -80,8 +80,9 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                 if (($child instanceof Document_Page or $child instanceof Document_Link ) and $child->getProperty("navigation_name") and !$child->getProperty("navigation_exclude")) {
 
                     $active = false;
-                    if(strstr($this->_activeDocument->getFullPath(), $child->getFullPath())){
-                       $active=true;
+
+                    if(strpos($this->_activeDocument->getFullPath(), $child->getFullPath()."/")===0 or $this->_activeDocument->getFullPath()== $child->getFullPath()){
+                                           $active=true;
                     }
 
                     $path = $child->getFullPath();
