@@ -52,7 +52,7 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
         try {
             try {
                 $this->create();
-            } catch (Zend_Db_Statement_Exception $e) {
+            } catch (Exception $e) {
                 //probably dulplicate
                 $this->update();
             }
