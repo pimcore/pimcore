@@ -340,16 +340,7 @@ pimcore.settings.user.PermissionRowEditor = Ext.extend(Ext.Panel, {
 
     onRender: function() {
 
-        Ext.ux.grid.RowEditor.superclass.onRender.apply(this, arguments);
-        this.el.swallowEvent(['keydown', 'keyup', 'keypress']);
-        this.btns = new Ext.Panel({
-            baseCls: 'x-plain',
-            cls: 'x-btns',
-            elements:'body',
-            layout: 'table',
-            autoWidth: true,
-            //width: (this.minButtonWidth * 4) + (this.frameWidth * 4) + (this.buttonPad * 8), // width must be specified for IE
-            items: [
+        var buttons = [
                 {
                     ref: 'saveBtn',
                     itemId: 'saveBtn',
@@ -363,20 +354,32 @@ pimcore.settings.user.PermissionRowEditor = Ext.extend(Ext.Panel, {
                     text: this.inheritText,
                     autoWidth: true,
                     handler: this.stopEditing.createDelegate(this, [true,"inherit"])
-                },
-                {
+                },{
                     xtype: 'button',
                     text: this.resetText,
                     autoWidth: true,
                     handler: this.stopEditing.createDelegate(this, [true,"reset"])
-                },
-                {
+                },{
                     xtype: 'button',
                     text: this.cancelText,
                     autoWidth: true,
                     handler: this.stopEditing.createDelegate(this, [false,"cancel"])
-                }
-            ]
+                }];
+
+
+
+
+        Ext.ux.grid.RowEditor.superclass.onRender.apply(this, arguments);
+        this.el.swallowEvent(['keydown', 'keyup', 'keypress']);
+        this.btns = new Ext.Panel({
+            baseCls: 'x-plain',
+            cls: 'x-btns',
+            elements:'body',
+            layout: 'table',
+            autoWidth: true,
+            //width: (this.minButtonWidth * 4) + (this.frameWidth * 4) + (this.buttonPad * 8), // width must be specified for IE
+            items: buttons
+
         });
         this.btns.render(this.bwrap);
     },
@@ -407,7 +410,16 @@ pimcore.settings.user.PermissionRowEditor = Ext.extend(Ext.Panel, {
     },
 
     positionButtons: function() {
+
+
         if (this.btns) {
+
+            if(this.record.data.permissionSet){
+               this.btns.items.items[2].setVisible(true);
+            } else {
+               this.btns.items.items[2].setVisible(false);
+            }
+
             var g = this.grid,
                     h = this.el.dom.clientHeight,
                     view = g.getView(),

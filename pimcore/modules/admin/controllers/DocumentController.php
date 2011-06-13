@@ -131,8 +131,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         $found = true;
                         if (!$node->permissionSet) {
                             //reset permission by deleting it
-                            $documentPermission->delete();
-                            $permissions = $document->getPermissions();
+                            if($documentPermission->getCid() == $document->getId()){
+                                 $documentPermission->delete();
+                                $permissions = $document->getPermissions();
+                            }
                             break;
 
                         } else {

@@ -182,8 +182,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                         $found = true;
                         if (!$node->permissionSet) {
                             //reset permission by deleting it
-                            $objectPermission->delete();
-                            $permissions = $object->getPermissions();
+                            if($objectPermission->getCid() == $object->getId()){
+                                $objectPermission->delete();
+                                $permissions = $object->getPermissions();
+                            }
                             break;
 
                         } else {

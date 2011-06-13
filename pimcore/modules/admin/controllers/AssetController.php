@@ -226,8 +226,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                         $found = true;
                         if (!$node->permissionSet) {
                             //reset permission by deleting it
-                            $assetPermission->delete();
-                            $permissions = $asset->getPermissions();
+                            if($assetPermission->getCid() == $asset->getId()){
+                                $assetPermission->delete();
+                                $permissions = $asset->getPermissions();
+                            }
                             break;
 
                         } else {
