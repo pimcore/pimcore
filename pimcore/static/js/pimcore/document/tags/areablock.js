@@ -22,7 +22,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.elements = [];
         this.options = options;
 
-        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv;
+        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv, typebuttontext;
 
         this.elements = Ext.get(id).query("." + name);
 
@@ -97,12 +97,15 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 downButton.render(downDiv);
 
                 // type button
+                typebuttontext = "<b>"  + this.elements[i].type + "</b>";
+                if(typeNameMappings[this.elements[i].type] && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
+                    typebuttontext = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> " + typeNameMappings[this.elements[i].type].description
+                }
 
-                
                 typeDiv = Ext.get(this.elements[i]).query(".pimcore_block_type")[0];
                 typeButton = new Ext.Button({
                     cls: "pimcore_block_button_type",
-                    text: "<b>" + typeNameMappings[this.elements[i].type].name + "</b> " + typeNameMappings[this.elements[i].type].description,
+                    text: typebuttontext,
                     handleMouseEvents: false
                 });
                 typeButton.render(typeDiv);
