@@ -97,12 +97,16 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             }
 
             if(function_exists("exif_read_data")) {
-                $exif = @exif_read_data($asset->getFileSystemPath());
-                if(is_array($exif)) {
-                    $imageInfo["exif"] = array();
-                    foreach($exif as $name => $value) {
-                        if((is_string($value) && strlen($value) < 50) || is_numeric($value)) {
-                            $imageInfo["exif"][$name] = $value;
+                $supportedTypes = array(IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM);
+
+                if(in_array(exif_imagetype($asset->getFileSystemPath()),$supportedTypes)) {
+                    $exif = @exif_read_data($asset->getFileSystemPath());
+                    if(is_array($exif)) {
+                        $imageInfo["exif"] = array();
+                        foreach($exif as $name => $value) {
+                            if((is_string($value) && strlen($value) < 50) || is_numeric($value)) {
+                                $imageInfo["exif"][$name] = $value;
+                            }
                         }
                     }
                 }
