@@ -129,12 +129,14 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             $tmpSplit = explode("areas/".$id."/", $extensionDir);
             $pathPrefix = $tmpSplit[0]."areas";
         }
-        
+
+        $pathPrefix = str_replace(DIRECTORY_SEPARATOR, "/", $pathPrefix);
         $files = rscandir($extensionDir);
 
         foreach ($files as $file) {
             if(is_file($file)) {
 
+                $file = str_replace(DIRECTORY_SEPARATOR, "/", $file);
                 // check for excludes
                 try {
                     foreach ($excludes as $regexp) {
@@ -202,13 +204,18 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
             "type" => $this->_getParam("type"),
             "token" => Pimcore_Liveconnect::getToken(),
             "path" => str_replace($this->_getParam("pathPrefix"),"",$this->_getParam("path")),
-            "data" => base64_encode(file_get_contents($this->_getParam("path")))
+            "data" => base64_encode(file_get_contents(str_replace("/",DIRECTORY_SEPARATOR,$this->_getParam("path"))))
         ))));
         $client->setUri("http://extensions.pimcore.org/share/uploadFile.php");
 
         $response = $client->request(Zend_Http_Client::POST);
 
-        $this->_helper->json(array("success" => true, "response" => $response->getBody()));
+        $this->_helper->json(array(
+            "success" => true,
+            "response" => $response->getBody(),
+            "checksum" => md5_file(str_replace("/",DIRECTORY_SEPARATOR,$this->_getParam("path"))),
+            "content" => file_get_contents(str_replace("/",DIRECTORY_SEPARATOR,$this->_getParam("path")))
+        ));
     }
 
     public function verifyUploadAction () {
