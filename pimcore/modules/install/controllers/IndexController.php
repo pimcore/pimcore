@@ -82,19 +82,17 @@ class Install_IndexController extends Pimcore_Controller_Action {
             $settings = array(
                 "general" => array(
                     "timezone" => "Europe/Berlin",
-                    "domain" => "",
                     "language" => "en",
                     "validLanguages" => "en",
                     "debug" => "1",
-                    "devmode" => "",
                     "theme" => "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css",
                     "welcomescreen" => "1",
                     "loglevel" => array(
-                        "debug" => "",
-                        "info" => "",
-                        "notice" => "",
-                        "warning" => "",
-                        "error" => "",
+                        "debug" => "1",
+                        "info" => "1",
+                        "notice" => "1",
+                        "warning" => "1",
+                        "error" => "1",
                         "critical" => "1",
                         "alert" => "1",
                         "emergency" => "1"
@@ -112,7 +110,6 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 ),
                 "documents" => array(
                     "versions" => array(
-                        "days" => "",
                         "steps" => "10"
                     ),
                     "default_controller" => "default",
@@ -123,59 +120,17 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 ),
                 "objects" => array(
                     "versions" => array(
-                        "days" => "",
                         "steps" => "10"
                     )
                 ),
                 "assets" => array(
-                    "webdav" => array(
-                        "hostname" => ""
-                    ),
                     "versions" => array(
-                        "days" => "",
                         "steps" => "10"
                     )
                 ),
-                "services" => array(
-                    "youtube" => array(
-                        "apikey" => ""
-                    ),
-                    "googlemaps" => array(
-                        "apikey" => ""
-                    ),
-                    "translate" => array(
-                        "apikey" => ""
-                    ),
-                    "google" => array(
-                        "username" => "",
-                        "password" => ""
-                    )
-                ),
+                "services" => array(),
                 "cache" => array(
-                    "enabled" => "",
-                    "excludePatterns" => "",
                     "excludeCookie" => "pimcore_admin_sid"
-                ),
-                "outputfilters" => array(
-                    "imagedatauri" => "",
-                    "htmlminify" => "",
-                    "less" => "",
-                    "cssminify" => "",
-                    "javascriptminify" => "",
-                    "javascriptminifyalgorithm" => "",
-                    "cdn" => "",
-                    "cdnhostnames" => "",
-                    "cdnpatterns" => ""
-                ),
-                "webservice" => array(
-                    "enabled" => ""
-                ),
-                "httpclient" => array(
-                    "adapter" => "Zend_Http_Client_Adapter_Socket",
-                    "proxy_host" => "",
-                    "proxy_port" => "",
-                    "proxy_user" => "",
-                    "proxy_pass" => "",
                 )
             );
 
