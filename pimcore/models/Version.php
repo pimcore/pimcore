@@ -123,7 +123,9 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function delete() {
 
-        @unlink($this->getFilePath());
+        if(is_file($this->getFilePath())) {
+            @unlink($this->getFilePath());
+        }
 
         $this->getResource()->delete();
     }
