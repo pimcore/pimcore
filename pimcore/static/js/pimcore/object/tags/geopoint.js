@@ -34,9 +34,13 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
                     var width = 140;
                     var mapZoom = 10;
-                    var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + value.longitude + "," + value.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + value.longitude + "," + value.latitude + ",pointImagePattern:red";
+
+                    var mapUrl;
+                    //var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + value.longitude + "," + value.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + value.longitude + "," + value.latitude + ",pointImagePattern:red";
                     if (pimcore.settings.google_maps_api_key) {
                         mapUrl = "http://maps.google.com/staticmap?center=" + value.latitude + "," + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + value.latitude + "," + value.longitude + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
+                    } else {
+                        return 'Google Maps API Key not present!';
                     }
 
                     return '<img src="' + mapUrl + '" />';
@@ -46,6 +50,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutEdit: function () {
+
 
         if (!this.data) {
             this.data = {};
@@ -70,13 +75,25 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
         this.longitude = new Ext.form.NumberField(longitudeConf);
         this.latitude = new Ext.form.NumberField(latitudeConf);
 
+        // fallback without map
+        if (!pimcore.settings.google_maps_api_key) {
+            this.layout = new Ext.Panel({
+                title: this.layoutConf.title,
+                width: 490,
+                bodyStyle: "padding: 10px;",
+                cls: "object_field",
+                html: 'Please set the Google Maps API Key in the System Settings to use this widget.',
+                bbar: [t("latitude"), this.latitude, "-", t("longitude"), this.longitude]
+            });
+
+            return this.layout;
+        }
+
+
+
+
         this.longitude.on("keyup", this.updatePreviewImage.bind(this));
         this.latitude.on("keyup", this.updatePreviewImage.bind(this));
-
-        var searchbuttonDisabled = true;
-        if (pimcore.settings.google_maps_api_key) {
-            searchbuttonDisabled = false;
-        }
 
         this.layout = new Ext.Panel({
             title: this.layoutConf.title,
@@ -88,8 +105,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
                 xtype: "button",
                 text: t("open_search_editor"),
                 icon: "/pimcore/static/img/icon/magnifier.png",
-                handler: this.openPicker.bind(this),
-                disabled: searchbuttonDisabled
+                handler: this.openPicker.bind(this)
             }]
         });
 
@@ -137,10 +153,10 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
             width = 300;
         }
 
-        var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + longitudeMap + "," + latitudeMap + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=300&points=" + longitudeMap + "," + latitudeMap + ",pointImagePattern:red";
-        if (pimcore.settings.google_maps_api_key) {
-            mapUrl = "http://maps.google.com/staticmap?center=" + latitudeMap + "," + longitudeMap + "&zoom=" + mapZoom + "&size=" + width + "x300&markers=" + latitudeMap + "," + longitudeMap + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
-        }
+        //var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + longitudeMap + "," + latitudeMap + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=300&points=" + longitudeMap + "," + latitudeMap + ",pointImagePattern:red";
+        //if (pimcore.settings.google_maps_api_key) {
+        var mapUrl = "http://maps.google.com/staticmap?center=" + latitudeMap + "," + longitudeMap + "&zoom=" + mapZoom + "&size=" + width + "x300&markers=" + latitudeMap + "," + longitudeMap + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
+        //}
 
         return mapUrl;
     },
