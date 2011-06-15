@@ -318,8 +318,6 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function testAction()
     {
-
-
         die("done");
     }
 }

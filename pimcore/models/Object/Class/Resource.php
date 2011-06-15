@@ -163,7 +163,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
               `src_id` int(11) NOT NULL DEFAULT '0',
               `dest_id` int(11) NOT NULL DEFAULT '0',
-              `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
+              `type` varchar(50) NOT NULL DEFAULT '',
               `fieldname` varchar(70) NOT NULL DEFAULT '0',
               `index` int(11) unsigned NOT NULL DEFAULT '0',
               `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
