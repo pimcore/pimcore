@@ -45,6 +45,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                     }
 
                     data = dataGrid;
+                    this.dirty = true;
                 }
                 catch (e) {
                     console.log(e);
