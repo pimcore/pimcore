@@ -41,6 +41,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/js/lib/ext-plugins/ux/PortalColumn.js",
             "/pimcore/static/js/lib/ext-plugins/ux/Portlet.js",
             "/pimcore/static/js/lib/ckeditor/ckeditor.js",
+            //"/pimcore/static/js/lib/ckeditor-plugins/pimcorelink/plugin.js",
             "/pimcore/static/js/pimcore/libfixes.js"
         );
         
