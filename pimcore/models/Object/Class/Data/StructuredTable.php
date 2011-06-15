@@ -142,7 +142,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
 
     public function sort($a, $b) {
         if(is_array($a) && is_array($b)) {
-            return strcmp($a['position'], $b['position']);
+            return $a['position'] - $b['position']; // strcmp($a['position'], $b['position']);
         }
         return strcmp($a, $b);
     }

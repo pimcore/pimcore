@@ -31,7 +31,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                     dataRow.__row_label = layoutConf.rows[i].label;
 
                     for(var j = 0; j < layoutConf.cols.length; j++) {
-                        dataRow[layoutConf.cols[i].key] = null;
+                        dataRow[layoutConf.cols[j].key] = null;
                     }
                     data.push(dataRow);
                 }
