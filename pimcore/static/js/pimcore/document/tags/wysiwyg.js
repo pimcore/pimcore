@@ -288,6 +288,14 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         catch (e) {
         }
 
+        // remove existing links out of the wrapped text
+        wrappedText = wrappedText.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>/gi, function ($0, $1) {
+            if($1.toLowerCase() == "a") {
+                return "";
+            }
+            return $0;
+        });
+
         var id = data.node.attributes.id;
         var uri = data.node.attributes.path;
         
