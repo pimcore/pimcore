@@ -13,10 +13,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Install_RequirementsController extends Pimcore_Controller_Action {
+class Pimcore_Tool_Requirements {
 
-    public function indexAction() {
-
-
+    public function gd () {
+        
     }
+
 }
