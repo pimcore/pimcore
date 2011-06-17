@@ -55,6 +55,10 @@ function array_urlencode ($args) {
 }
 
 
+function is_includeable($filename) {
+    return Pimcore_File::isIncludeable($filename);
+}
+
 function return_bytes($val) {
     $val = trim($val);
     $last = strtolower($val[strlen($val) - 1]);
