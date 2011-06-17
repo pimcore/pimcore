@@ -58,9 +58,7 @@ pimcore.settings.dependencies = Class.create({
     },
 
     completeLoad: function() {
-
-        console.log("completeLoad");
-
+        
         this.layout.add(this.requiresNote);
         this.layout.add(this.requiresGrid);
         
