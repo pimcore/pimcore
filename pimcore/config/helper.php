@@ -14,7 +14,10 @@
  */
 
 
-
+/**
+ * @param  $array
+ * @return array
+ */
 function array_htmlspecialchars ($array) {
     foreach ($array as $key => $value) {
         if(is_string($value) || is_numeric($value)) {
@@ -27,13 +30,20 @@ function array_htmlspecialchars ($array) {
     return $array;
 }
 
+/**
+ * @param  $node
+ * @return array
+ */
 function object2array($node) {
     // dirty hack, should be replaced
     $paj = @Zend_Json::encode($node);
     return @Zend_Json::decode($paj);
 }
 
-
+/**
+ * @param  $args
+ * @return bool|string
+ */
 function array_urlencode ($args) {
   if(!is_array($args)) return false;
   $out = '';
@@ -54,11 +64,19 @@ function array_urlencode ($args) {
   return substr($out,0,-1); //trim the last & }
 }
 
-
+/**
+ * @depricated
+ * @param  $filename
+ * @return bool
+ */
 function is_includeable($filename) {
     return Pimcore_File::isIncludeable($filename);
 }
 
+/**
+ * @param  $val
+ * @return int|string
+ */
 function return_bytes($val) {
     $val = trim($val);
     $last = strtolower($val[strlen($val) - 1]);
@@ -74,6 +92,12 @@ function return_bytes($val) {
     return $val;
 }
 
+
+/**
+ * @param  $bytes
+ * @param int $precision
+ * @return string
+ */
 function formatBytes($bytes, $precision = 2) {
     $units = array('B', 'KB', 'MB', 'GB', 'TB');
 
@@ -87,6 +111,10 @@ function formatBytes($bytes, $precision = 2) {
 }
 
 
+/**
+ * @param  $str
+ * @return float|int
+ */
 function filesize2bytes($str) {
     $bytes = 0;
 
@@ -110,7 +138,11 @@ function filesize2bytes($str) {
     return $bytes;
 }
 
-
+/**
+ * @param string $base
+ * @param array $data
+ * @return array
+ */
 function rscandir($base = '', &$data = array()) {
 	
 	$array = array_diff(scandir($base), array('.', '..', '.svn'));
@@ -134,7 +166,6 @@ function rscandir($base = '', &$data = array()) {
  * @param string $dir Directory name
  * @param boolean $deleteRootToo Delete specified top-level directory as well
  */
-
 function recursiveDelete ($directory, $empty = true) { 
 
     if(substr($directory,-1) == "/") { 
@@ -172,14 +203,24 @@ function recursiveDelete ($directory, $empty = true) {
     } 
 }
 
-
+/**
+ * @param  $var
+ * @return void
+ */
 function p_r($var) {
     echo "<pre>";
     print_r($var);
     echo "</pre>";
 }
 
-
+/**
+ * @param  $errno
+ * @param  $errstr
+ * @param  $errfile
+ * @param  $errline
+ * @param  $errcontext
+ * @return bool
+ */
 function pimcore_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
 
     //Log::info($errno . " | " . $errstr . " in " . $errfile . " on line: " .$errline );
