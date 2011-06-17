@@ -53,7 +53,7 @@ pimcore.settings.dependencies = Class.create({
         if (this.requiredByLoaded && this.requiresLoaded) {
             this.completeLoad();
         } else {
-            window.setTimeout(this.completeLoad.bind(this), 1000);
+            window.setTimeout(this.waitForLoaded.bind(this), 1000);
         }
     },
 
