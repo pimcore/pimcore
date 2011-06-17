@@ -21,6 +21,11 @@ abstract class Pimcore_Model_Abstract {
     protected $resource;
 
     /**
+     * @var array
+     */
+    private static $resourceClassCache = array();
+
+    /**
      * @return Pimcore_Model_Resource_Abstract
      */
     public function getResource() {
@@ -46,40 +51,50 @@ abstract class Pimcore_Model_Abstract {
      */
     protected function initResource($key = null) {
 
+        $myClass = get_class($this);
+        $resource = null;
+
         if (!$key) {
+            // check for a resource in the cache
+            if(array_key_exists($myClass,self::$resourceClassCache)) {
+                $resource = self::$resourceClassCache[$myClass];
+            } else {
+                $classes = $this->getParentClasses($myClass);
 
-            $classes = $this->getParentClasses(get_class($this));
+                foreach ($classes as $class) {
+                    $classParts = explode("_", $class);
+                    $length = count($classParts);
+                    $className = null;
 
-            foreach ($classes as $class) {
-                $classParts = explode("_", $class);
-                $length = count($classParts);
-                $className = null;
+                    for ($i = 0; $i < $length; $i++) {
 
-                for ($i = 0; $i < $length; $i++) {
+                        // check for a specialized resource adapter for the current DBMS
+                        $tmpClassName = implode("_", $classParts) . "_Resource_" . ucfirst(Pimcore_Resource::getType());
+                        if($className = $this->determineResourceClass($tmpClassName)) {
+                            break;
+                        }
 
-                    // check for a specialized resource adapter for the current DBMS
-                    $tmpClassName = implode("_", $classParts) . "_Resource_" . ucfirst(Pimcore_Resource::getType());
-                    if($className = $this->determineResourceClass($tmpClassName)) {
-                        break;
+                        // check for a general DBMS resource adapter
+                        $tmpClassName = implode("_", $classParts) . "_Resource";
+                        if($className = $this->determineResourceClass($tmpClassName)) {
+                            break;
+                        }
+
+                        array_pop($classParts);
                     }
 
-                    // check for a general DBMS resource adapter
-                    $tmpClassName = implode("_", $classParts) . "_Resource";
-                    if($className = $this->determineResourceClass($tmpClassName)) {
+                    if($className) {
+                        Logger::debug("Find resource implementation " . $className . " for " . $myClass);
+                        $resource = $className;
+                        self::$resourceClassCache[$myClass] = $resource;
+
                         break;
                     }
-
-                    array_pop($classParts);
-                }
-
-                if($className) {
-                    Logger::debug("Find resource implementation " . $className . " for " . get_class($this));
-                    $resource = $className;
-                    break;
                 }
             }
         }
         else {
+            // check for a specialized resource adapter for the current DBMS
             $resourceClass = $key . "_Resource_" . ucfirst(Pimcore_Resource::getType());
             if(!$resource = $this->determineResourceClass($resourceClass)) {
                 $resource = $key . "_Resource";
@@ -87,8 +102,8 @@ abstract class Pimcore_Model_Abstract {
         }
 
         if(!$resource) {
-            Logger::critical("No resource implementation found for: " . get_class($this));
-            throw new Exception("No resource implementation found for: " . get_class($this));
+            Logger::critical("No resource implementation found for: " . $myClass);
+            throw new Exception("No resource implementation found for: " . $myClass);
         }
 
         $this->resource = new $resource();

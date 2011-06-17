@@ -15,8 +15,16 @@
 
 class Pimcore_File {
 
-    private static $isIncludeableStore = array();
+    /**
+     * @var array
+     */
+    private static $isIncludeableCache = array();
 
+    /**
+     * @static
+     * @param  $name
+     * @return string
+     */
     public static function getFileExtension($name) {
         
         $name = strtolower($name);
@@ -28,6 +36,11 @@ class Pimcore_File {
         return "";
     }
 
+    /**
+     * @static
+     * @param  $tmpFilename
+     * @return string
+     */
     public static function getValidFilename($tmpFilename) {
         
         $tmpFilename = Pimcore_Tool_Transliteration::toASCII($tmpFilename);
@@ -46,10 +59,15 @@ class Pimcore_File {
         return strtolower(implode("", $filenameParts));
     }
 
+    /**
+     * @static
+     * @param  $filename
+     * @return bool
+     */
     public static function isIncludeable($filename) {
 
-        if(array_key_exists($filename,self::$isIncludeableStore)) {
-            return self::$isIncludeableStore[$filename];
+        if(array_key_exists($filename,self::$isIncludeableCache)) {
+            return self::$isIncludeableCache[$filename];
         }
 
         $include_paths = explode(PATH_SEPARATOR, get_include_path());
@@ -64,7 +82,7 @@ class Pimcore_File {
         }
         
         // add to store
-        self::$isIncludeableStore[$filename] = $isIncludeAble;
+        self::$isIncludeableCache[$filename] = $isIncludeAble;
 
         return $isIncludeAble;
     }
