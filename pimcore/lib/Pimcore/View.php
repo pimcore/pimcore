@@ -166,7 +166,7 @@ class Pimcore_View extends Zend_View {
         $class = "Document_Tag_" . ucfirst(strtolower($method));
         $tagFile = str_replace("_", "/", $class) . ".php";
 
-        if (is_includeable($tagFile)) {
+        if (Pimcore_File::isIncludeable($tagFile)) {
             include_once($tagFile);
             if (@class_exists($class)) {
                 if(!isset($arguments[0])) {

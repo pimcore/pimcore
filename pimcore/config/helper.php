@@ -55,24 +55,6 @@ function array_urlencode ($args) {
 }
 
 
-function is_includeable($filename, $returnpaths = false) {
-    $include_paths = explode(PATH_SEPARATOR, get_include_path());
-    $includable_paths = array();
-
-    foreach ($include_paths as $path) {
-        $include = $path.DIRECTORY_SEPARATOR.$filename;
-        if (is_file($include) && is_readable($include)) {
-            if ($returnpaths == true) {
-                $includable_paths[] = $path;
-            } else {
-                return true;
-            }
-        }
-    }
-
-    return (isset($includeable_paths) && $returnpaths == true) ? $includeable_paths : false;
-}
-
 function return_bytes($val) {
     $val = trim($val);
     $last = strtolower($val[strlen($val) - 1]);

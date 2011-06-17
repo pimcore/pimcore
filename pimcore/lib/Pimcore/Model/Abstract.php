@@ -106,7 +106,7 @@ abstract class Pimcore_Model_Abstract {
 
     protected function determineResourceClass ($className) {
         $fileToInclude = str_replace("_", "/", $className) . ".php";
-        if (is_includeable($fileToInclude)) {
+        if (Pimcore_File::isIncludeable($fileToInclude)) {
             include_once($fileToInclude);
             if(class_exists($className)) {
                 return $className;

@@ -15,6 +15,8 @@
 
 class Pimcore_File {
 
+    private static $isIncludeableStore = array();
+
     public static function getFileExtension($name) {
         
         $name = strtolower($name);
@@ -42,5 +44,28 @@ class Pimcore_File {
         }
 
         return strtolower(implode("", $filenameParts));
+    }
+
+    public static function isIncludeable($filename) {
+
+        if(array_key_exists($filename,self::$isIncludeableStore)) {
+            return self::$isIncludeableStore[$filename];
+        }
+
+        $include_paths = explode(PATH_SEPARATOR, get_include_path());
+        $isIncludeAble = false;
+
+        foreach ($include_paths as $path) {
+            $include = $path.DIRECTORY_SEPARATOR.$filename;
+            if (is_file($include) && is_readable($include)) {
+                $isIncludeAble = true;
+                break;
+            }
+        }
+        
+        // add to store
+        self::$isIncludeableStore[$filename] = $isIncludeAble;
+
+        return $isIncludeAble;
     }
 }
