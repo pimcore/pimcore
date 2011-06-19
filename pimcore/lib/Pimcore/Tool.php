@@ -333,6 +333,7 @@ class Pimcore_Tool {
         $clientConfig = $config->httpclient->toArray();
         $clientConfig["maxredirects"] = 0;
         $clientConfig["timeout"] = 3600;
+        $type = empty($type) ? "Zend_Http_Client" : $type;
 
         if(class_exists($type)) {
             $client = new $type(null, $clientConfig);

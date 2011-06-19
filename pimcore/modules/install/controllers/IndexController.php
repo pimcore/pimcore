@@ -131,6 +131,9 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 "services" => array(),
                 "cache" => array(
                     "excludeCookie" => "pimcore_admin_sid"
+                ),
+                "httpclient" => array(
+                    "adapter" => "Zend_Http_Client_Adapter_Socket"
                 )
             );
 
