@@ -1,0 +1,9 @@
+/*!
+ * Ext JS Library 3.4.0
+ * Copyright(c) 2006-2011 Sencha Inc.
+ * licensing@sencha.com
+ * http://www.sencha.com/license
+ */
+td.ux-grid-hd-group-cell {
+    background: url(../../../resources/images/default/grid/grid3-hrow.gif) repeat-x bottom;
+}
