@@ -208,6 +208,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     public function getCurrentUserAction() {
 
+        header("Content-Type: text/javascript");
+
         $user = $this->getUser();
         if ($user != null) {
             $user = $user->getIterator();

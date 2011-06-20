@@ -505,12 +505,12 @@ pimcore.settings.user.panel = Class.create({
         }));
         if(this.wsenabled && this.currentUser.admin){
             generalItems.push(new Array({
-                    xtype: "displayfield",
-                    hideLabel: true,
-                    width: 600,
-                    value: t("user_apikey_change_warning"),
-                    cls: "pimcore_extra_label_bottom"
-                }));
+                xtype: "displayfield",
+                hideLabel: true,
+                width: 600,
+                value: t("user_apikey_change_warning"),
+                cls: "pimcore_extra_label_bottom"
+            }));
         }
 
         generalItems.push(new Array({
@@ -588,6 +588,7 @@ pimcore.settings.user.panel = Class.create({
         }));
 
          if(this.wsenabled && this.currentUser.admin){
+
             generalItems.push(new Array({
                 xtype: "displayfield",
                 fieldLabel: t("apikey"),
