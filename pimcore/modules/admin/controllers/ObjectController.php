@@ -689,8 +689,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         // check for lock
         if (Element_Editlock::isLocked($this->_getParam("id"), "object")) {
             $this->_helper->json(array(
-                                      "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "object")
-                                 ));
+                "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "object")
+            ));
         }
         Element_Editlock::lock($this->_getParam("id"), "object");
 
@@ -721,8 +721,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             Logger::debug(get_class($this) . ": prevented getting folder id [ " . $object->getId() . " ] because of missing permissions");
             $this->_helper->json(array("success" => false, "message" => "missing_permission"));
         }
-
-
     }
 
 
@@ -1063,9 +1061,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 // grid config
                 $gridConfig = Zend_Json::decode($this->_getParam("gridconfig"));
                 if($classId) {
-                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . ".psf";
+                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . "-user_" . $this->getUser()->getId() . ".psf";
                 } else {
-                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . ".psf";
+                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";
                 }
 
                 $configDir = dirname($configFile);
@@ -1228,16 +1226,19 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $gridConfig = array();
         if ($this->_getParam("objectId")) {
 
-            $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . "_" . $class->getId() . ".psf";
-            if (is_file($configFile)) {
-                $gridConfig = unserialize(file_get_contents($configFile));
-            } else {
-                $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . ".psf";
+            $configFiles["configFileClassUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . "_" . $class->getId() . "-user_" . $this->getUser()->getId() . ".psf";
+            $configFiles["configFileUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . "-user_" . $this->getUser()->getId() . ".psf";
+
+            // this is for backward compatibility (not based on user)
+            $configFiles["configFileClassCompatible"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . "_" . $class->getId() . ".psf";
+            $configFiles["configFileCompatible"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->_getParam("objectId") . ".psf";
+
+            foreach ($configFiles as $configFile) {
                 if (is_file($configFile)) {
                     $gridConfig = unserialize(file_get_contents($configFile));
+                    break;
                 }
             }
-
         }
 
         $localizedFields = array();
