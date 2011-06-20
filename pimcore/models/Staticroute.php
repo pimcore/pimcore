@@ -36,7 +36,12 @@ class Staticroute extends Pimcore_Model_Abstract {
      * @var string
      */
     public $reverse;
-    
+
+    /**
+     * @var string
+     */
+    public $module;
+
     /**
      * @var string
      */
@@ -154,6 +159,14 @@ class Staticroute extends Pimcore_Model_Abstract {
         return $this->pattern;
     }
 
+
+    /**
+     * @return string
+     */
+    public function getModule() {
+        return $this->module;
+    }
+
     /**
      * @return string
      */
@@ -197,6 +210,15 @@ class Staticroute extends Pimcore_Model_Abstract {
     public function setPattern($pattern) {
         $this->pattern = $pattern;
     }
+
+    /**
+     * @param string $module
+     * @return void
+     */
+    public function setModule($module) {
+        $this->module = $module;
+    }
+
 
     /**
      * @param string $controller

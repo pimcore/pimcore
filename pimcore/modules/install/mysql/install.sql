@@ -337,6 +337,7 @@ CREATE TABLE `staticroutes` (
   `name` varchar(50) collate utf8_bin default NULL,
   `pattern` varchar(255) collate utf8_bin default NULL,
   `reverse` varchar(255) collate utf8_bin default NULL,
+  `module` varchar(255) collate utf8_bin default NULL,
   `controller` varchar(255) collate utf8_bin default NULL,
   `action` varchar(255) collate utf8_bin default NULL,
   `variables` varchar(255) collate utf8_bin default NULL,

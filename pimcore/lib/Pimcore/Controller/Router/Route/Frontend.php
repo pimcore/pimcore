@@ -191,6 +191,10 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
                         $params["controller"] = $route->getController();
                         $params["action"] = $route->getAction();
+                        $module = trim($route->getModule());
+                        if(!empty($module)){
+                            $params["module"] = $module;
+                        }
 
                         // try to get nearest document to the route
                         $pathes[] = "/";
