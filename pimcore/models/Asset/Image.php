@@ -138,6 +138,7 @@ class Asset_Image extends Asset {
         $image = self::getImageTransformInstance();
 
         $status = $image->load($this->getFileSystemPath());
+        $this->forceRGB($image);
         if($status !== true) {
             return "/pimcore/static/img/image-not-supported.png";
         }
@@ -145,6 +146,7 @@ class Asset_Image extends Asset {
         // create image with original dimensions, as a fallback
         $imageFallback = self::getImageTransformInstance();
         $imageFallback->load($this->getFileSystemPath());
+        $this->forceRGB($imageFallback);
         $imageFallback->resize($width, $height);
         $imageFallback->save($fsPath, $format, $thumbnail->getQuality());
 
@@ -255,5 +257,20 @@ class Asset_Image extends Asset {
     public function getHeight() {
         $dimensions = $this->getDimensions();
         return $dimensions["height"];
+    }
+
+    public function forceRGB ($image) {
+
+        // currently not working because of a bug in the imagick lib turns cmyk images to inverted colors
+        /*if($image instanceof Image_Transform_Driver_Imagick3) {
+            if($image->imagick) {
+                $cs = $image->imagick->getImageColorspace();
+                if($cs != Imagick::COLORSPACE_SRGB && $cs != Imagick::COLORSPACE_RGB) {
+                    //$image->imagick->setImageColorspace(Imagick::COLORSPACE_RGB);
+                }
+            }
+        }*/
+
+        return $image;
     }
 }
