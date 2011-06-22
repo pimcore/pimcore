@@ -3,8 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, nofollow" />
-    
-    <title><?php echo $_SERVER["HTTP_HOST"] ?> :: pimcore</title>
+    <title><?php echo htmlentities($_SERVER["HTTP_HOST"], ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
 
     <!-- load in head because of the progress bar at loading -->
     <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
@@ -381,7 +380,7 @@
     <script type="text/javascript">
         pimcore.settings = {
             upload_max_filesize: <?php echo $this->upload_max_filesize; ?>,
-            sessionId: "<?php echo $_COOKIE["pimcore_admin_sid"] ?>",
+            sessionId: "<?php echo htmlentities($_COOKIE["pimcore_admin_sid"], ENT_QUOTES, 'UTF-8') ?>",
             version: "<?php echo Pimcore_Version::getVersion() ?>",
             build: "<?php echo Pimcore_Version::$revision ?>",
             maintenance_active: <?php echo $this->maintenance_enabled; ?>,
