@@ -318,11 +318,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 elementData = {};
                 if(this.currentElements[types[t]]) {
                     element = this.currentElements[types[t]];
-                    for (var u=0; u<element.fields.length; u++) {
-                        if(element.fields[u].isDirty()) {
-                            element.fields[u].unmarkInherited();
-                            this.dirty = true;
-                            return this.dirty;
+                    if(element.action != "deleted") {
+                        for (var u=0; u<element.fields.length; u++) {
+                            if(element.fields[u].isDirty()) {
+                                element.fields[u].unmarkInherited();
+                                this.dirty = true;
+                                return this.dirty;
+                            }
                         }
                     }
                 }
