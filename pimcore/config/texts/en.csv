@@ -1,3 +1,4 @@
+"label_width","Label Width"
 "development_stage_mode_disable_complete","The synchronisation is complete. Let's start the admin in 'Live-Mode'"
 "development_stage_mode_disable_question","Do you want to move the current state in the 'Development Stage Mode' to the live system?"
 "development_stage_mode","Development Stage Mode"
