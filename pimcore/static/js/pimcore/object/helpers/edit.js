@@ -78,7 +78,7 @@ pimcore.object.helpers.edit = {
             }
         };
 
-        var validKeys = ["xtype","title","layout","border","items","region","width","height","name","text","html","handler"];
+        var validKeys = ["xtype","title","layout","border","items","region","width","height","name","text","html","handler","labelWidth"];
 
         var tmpItems;
 
@@ -116,7 +116,6 @@ pimcore.object.helpers.edit = {
                         } else {
                             newConfig[configKeys[u]] = l[configKeys[u]];
                         }
-
                     }
                 }
             }

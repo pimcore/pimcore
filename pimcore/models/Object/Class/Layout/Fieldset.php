@@ -23,4 +23,30 @@ class Object_Class_Layout_Fieldset extends Object_Class_Layout {
      * @var string
      */
     public $fieldtype = "fieldset";
+
+
+    /**
+     * Width of input field labels
+     * @var int
+     */
+    public $labelWidth = 100;
+
+
+    /**
+     * @param int $labelWidth
+     */
+    public function setLabelWidth($labelWidth)
+    {
+        if(!empty($labelWidth)) {
+            $this->labelWidth = $labelWidth;
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getLabelWidth()
+    {
+        return $this->labelWidth;
+    }
 }

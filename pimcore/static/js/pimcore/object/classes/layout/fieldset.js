@@ -31,6 +31,26 @@ pimcore.object.classes.layout.fieldset = Class.create(pimcore.object.classes.lay
 
     getIconClass: function () {
         return "pimcore_icon_layout_fieldset";
+    },
+
+    getLayout: function ($super) {
+        $super();
+
+        this.layout.add({
+            xtype: "form",
+            bodyStyle: "padding: 10px;",
+            style: "margin: 10px 0 10px 0",
+            items: [
+                {
+                    xtype: "spinnerfield",
+                    name: "labelWidth",
+                    fieldLabel: t("label_width"),
+                    value: this.datax.labelWidth
+                }
+            ]
+        });
+
+        return this.layout;
     }
 
 });
