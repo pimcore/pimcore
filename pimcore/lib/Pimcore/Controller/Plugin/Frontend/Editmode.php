@@ -206,7 +206,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             $head = $html->find("head", 0);
 
             // HACK: temp fix for extjs issues in IE9
-            $head->innertext = "\n".'<meta http-equiv="X-UA-Compatible" content="IE=8" />' ."\n" . $head->innertext;
+            //$head->innertext = "\n".'<meta http-equiv="X-UA-Compatible" content="IE=8" />' ."\n" . $head->innertext;
 
             $head->innertext = $head->innertext . "\n\n" . $editmodeHeadHtml;
 

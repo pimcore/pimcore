@@ -70,7 +70,7 @@ pimcore.document.edit.dnd = Class.create({
         var scrollTop = 0;
         var scrollLeft = 0;
 
-        if (!Ext.isIE || parent.Ext.isIE9) {
+        if (!parent.Ext.isIE6 && !parent.Ext.isIE7 && !parent.Ext.isIE8) {
             var doc = (window.contentDocument || window.document);
             scrollTop = doc.documentElement.scrollTop || doc.body.scrollTop;
             scrollLeft = doc.documentElement.scrollLeft || doc.body.scrollLeft;
