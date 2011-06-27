@@ -22,10 +22,8 @@ pimcore.document.edit.dnd = Class.create({
         this.dndManager = parentExt.dd.DragDropMgr;
         var iFrameElement = parent.Ext.get('document_iframe_' + window.editWindow.document.id);
         
-        //if(!Ext.isSafari){
         parentExt.EventManager.on(body, 'mousemove', this.ddMouseMove.bind(this));
         parentExt.EventManager.on(body, 'mouseup', this.ddMouseUp.bind(this));
-        //}
 
         var dd = new parent.Ext.dd.DropZone(iframeElement, {
             ddGroup: "element",

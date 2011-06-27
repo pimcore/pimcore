@@ -298,9 +298,7 @@ class Pimcore_Backup {
     }
     
     public function mysqlData ($name, $type) {
-        $db = Pimcore_Resource::get();
-
-
+        $db = Pimcore_Resource::reset();
 
         $dumpData = "\n\n";
 
