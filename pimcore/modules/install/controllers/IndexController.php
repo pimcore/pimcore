@@ -68,7 +68,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
             }
         }
         catch (Exception $e) {
-            $errors[] = "Couldn't establish connection to mysql";
+            $errors[] = "Couldn't establish connection to mysql: " . $e->getMessage();
         }
 
         // check username & password
