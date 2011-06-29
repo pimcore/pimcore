@@ -146,7 +146,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             });
             items.push({
                 xtype: "tbtext",
-                text: type
+                text: ts(type)
             });
 
             var toolbar = new Ext.Toolbar({
@@ -271,19 +271,13 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         var element;
         var elementData = {};
 
-//        console.log(this.currentElements);
-
         var types = Object.keys(this.currentElements);
         for(var t=0; t < types.length; t++) {
-//        for(var s=0; s<this.layout.items.items.length; s++) {
             elementData = {};
-//            if(this.currentElements[this.layout.items.items[s].key]) {
             if(this.currentElements[types[t]]) {
-//                element = this.currentElements[this.layout.items.items[s].key];
                 element = this.currentElements[types[t]];
 
                 if(element.action == "deleted") {
-//                    console.log(elementData);
                     elementData = "deleted";
                 } else {
                     for (var u=0; u<element.fields.length; u++) {
@@ -302,8 +296,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-//        console.log(data);
-        
         return data;
     },
 
