@@ -35,6 +35,11 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
     public $height;
 
     /**
+     * @var integer
+     */
+    public $labelWidth;
+
+    /**
      * @var object
      */
     public $cols;
@@ -95,6 +100,21 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      */
     public function setHeight($height) {
         $this->height = $height;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getLabelWidth() {
+        return $this->labelWidth;
+    }
+
+    /**
+     * @param integer $labelWidth
+     * @return void
+     */
+    public function setLabelWidth($labelWidth) {
+        $this->labelWidth = $labelWidth;
     }
 
     /**

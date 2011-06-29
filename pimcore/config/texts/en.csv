@@ -890,6 +890,7 @@
 "structuredtable_type_text","Text"
 "structuredtable_type_bool","Checkbox"
 "structuredtable_invalid_key","Invalid Key"
+"data_width","Data Columns Width"
 "grid_current_language","Current Language"
 "grid_column_config","Column configuration"
 "selected_grid_columns","Selected grid columns"

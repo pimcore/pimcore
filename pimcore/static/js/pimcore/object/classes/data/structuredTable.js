@@ -58,6 +58,12 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 name: "height",
                 value: this.datax.height
             },
+            {
+                xtype: "spinnerfield",
+                fieldLabel: t("label_width"),
+                name: "labelWidth",
+                value: this.datax.labelWidth
+            },
             this.getGrid("rows", this.datax.rows, false),
             this.getGrid("cols", this.datax.cols, true)
         ]);
@@ -76,6 +82,7 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         
         if(hasType) {
             fields.push('type');
+            fields.push('width');
         }
         
         this.stores[title] = new Ext.data.JsonStore({
@@ -147,6 +154,8 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
             typesColumns.push({header: t("type"), width: 50, sortable: true, dataIndex: 'type', editor: typeComboBox, renderer: function(value) {
                 return types[value];
             }});
+
+            typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width', editor: new Ext.form.NumberField({})});
 
         }
 
