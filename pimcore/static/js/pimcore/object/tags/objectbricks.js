@@ -304,6 +304,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
+        if(!this.layout.rendered) {
+            return false;
+        }
+        
 //        if(!this.dirty) {
             var types = Object.keys(this.currentElements);
             for(var t=0; t < types.length; t++) {
@@ -335,9 +339,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         for(var t=0; t < types.length; t++) {
             if(this.currentElements[types[t]]) {
                 element = this.currentElements[types[t]];
-
-                for (var u=0; u<element.fields.length; u++) {
-                    return element.fields[u].isMandatory();
+                if(element.action != "deleted") {
+                    for (var u=0; u<element.fields.length; u++) {
+                        return element.fields[u].isMandatory();
+                    }
                 }
             }
         }
@@ -353,14 +358,15 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         for(var t=0; t < types.length; t++) {
             if(this.currentElements[types[t]]) {
                 element = this.currentElements[types[t]];
-
-                for (var u=0; u<element.fields.length; u++) {
-                    if(element.fields[u].isMandatory()) {
-                        if(element.fields[u].isInvalidMandatory()) {
-                            isInvalid = true;
-                            element.fields[u].markMandatory();
-                        } else {
-                            element.fields[u].unmarkMandatory();
+                if(element.action != "deleted") {
+                    for (var u=0; u<element.fields.length; u++) {
+                        if(element.fields[u].isMandatory()) {
+                            if(element.fields[u].isInvalidMandatory()) {
+                                isInvalid = true;
+                                element.fields[u].markMandatory();
+                            } else {
+                                element.fields[u].unmarkMandatory();
+                            }
                         }
                     }
                 }

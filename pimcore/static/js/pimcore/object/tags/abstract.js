@@ -161,15 +161,20 @@ pimcore.object.tags.abstract = Class.create({
     isDirty: function () {
         var dirty = false;
         if(this.layout && typeof this.layout.isDirty == "function") {
-            dirty = this.layout.isDirty();
-            if(this.layout["__pimcore_dirty"]) {
-                dirty = true;
-            }
-            if(dirty) {
-                this.layout["__pimcore_dirty"] = true;
-            }
 
-            return dirty;
+            if(!this.layout.rendered) {
+                return false;
+            } else {
+                dirty = this.layout.isDirty();
+                if(this.layout["__pimcore_dirty"]) {
+                    dirty = true;
+                }
+                if(dirty) {
+                    this.layout["__pimcore_dirty"] = true;
+                }
+
+                return dirty;
+            }
         }
 
         throw "isDirty() is not implemented";

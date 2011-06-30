@@ -260,6 +260,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
+        if(!this.layout.rendered) {
+            return false;
+        }
+
         return this.dirty;
     }
 });

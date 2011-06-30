@@ -268,6 +268,10 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
+        if((this.panel && !this.panel.rendered) || (this.layout && !this.layout.rendered)) {
+            return false;
+        }
+        
         return this.dirty;
     }
 

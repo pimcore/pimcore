@@ -603,6 +603,10 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
+        if(!this.grid.rendered) {
+            return false;
+        }
+        
         return this.dataChanged;
     }
 });

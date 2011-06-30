@@ -289,6 +289,10 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
 
 
     isDirty: function() {
+        if(!this.grid.rendered) {
+            return false;
+        }
+        
         return this.dataChanged;
     }
 });

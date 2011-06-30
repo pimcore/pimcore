@@ -301,6 +301,10 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
+        if(!this.layout.rendered) {
+            return false;
+        }
+        
         return this.longitude.isDirty() || this.latitude.isDirty();
     }
 });

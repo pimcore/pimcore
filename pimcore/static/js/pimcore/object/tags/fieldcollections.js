@@ -338,6 +338,10 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     isDirty: function() {
+        if(!this.layout.rendered) {
+            return false;
+        }
+        
         // HACK: always true - always transfer the values of the fieldcollection to the server
         return true;
     },

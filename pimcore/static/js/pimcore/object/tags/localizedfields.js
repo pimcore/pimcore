@@ -159,6 +159,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     isDirty: function() {
+        if(!this.layout.rendered) {
+            return false;
+        }
+
         var currentLanguage;
 
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {

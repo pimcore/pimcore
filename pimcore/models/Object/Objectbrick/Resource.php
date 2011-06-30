@@ -52,7 +52,6 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
             }
 
             $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'objectbrick' AND ownername = ?", array($object->getO_id(), $this->model->getFieldname()));
-
             $fieldDefinitions = $definition->getFieldDefinitions();
             $brickClass = "Object_Objectbrick_Data_" . ucfirst($type);
             
@@ -98,7 +97,6 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
                 $values[] = $brick;
             }
         }
-
         return $values;
     }
     

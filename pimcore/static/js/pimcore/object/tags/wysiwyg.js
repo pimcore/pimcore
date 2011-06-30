@@ -298,6 +298,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
+        if(!this.layout.rendered) {
+            return false;
+        }
+        
         if(this.ckeditor) {
             return this.ckeditor.checkDirty();
         }
