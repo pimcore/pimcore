@@ -78,6 +78,7 @@ $includePaths = array(
     PIMCORE_WEBSITE_PATH . "/models",
     PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY,
+    PIMCORE_PATH . "/lib/ezc",
     get_include_path()
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths));

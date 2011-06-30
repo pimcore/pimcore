@@ -1,0 +1,3 @@
+This class allows you to analyse image files in different ways. At least the
+MIME type of the file is returned. In some cases (JPEG, TIFF and GIF)
+additional information is gathered as well.

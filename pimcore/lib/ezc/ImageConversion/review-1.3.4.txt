@@ -1,0 +1,4 @@
+[X] The class documentation for ezcImageFilter should mention (in the ctor)
+    where the names of the different filters can be found. Perhaps we
+    should add a list of all supported filters somewhere.
+[X] Code coverage is pretty low, only 85%.

@@ -1,0 +1,301 @@
+1.3.8 - Monday 22 March 2010
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #15011: ImageMagick handler does now correctly use the binary
+  set through handler options.
+- Fixed issue #15976: ImageMagick based scalePercent filter now allows values
+  > 100 for the width value, too.
+
+
+1.3.7 - Monday 22 June 2009
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #15011: Corrected determining of ImageMagick binary from
+  settings.
+
+
+1.3.6 - Monday 11 May 2009
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #14810: Exceptions are now thrown correctly with corrupt JPEGs.
+
+
+1.3.5 - Monday 16 June 2008
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #13134: Fixed array_splice() call in
+  ezcImageTransformation->addFilter().
+
+
+1.3.4 - Monday 05 May 2008
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #12592: New thumbnail filter. Documentation about the scale()
+  filter has been added to the thumbnail filters.
+- Fixed issue #12667: ezcImageConverter doesn't pass saveOptions to
+  ezcImageTransformation.
+- Fixed issue #12671: Unhandled exception in ezcImageTransformation. Checks to
+  avoid double throwing of exceptions have been introduced. Additional
+  parameter checks are performed.
+
+
+1.3.3 - Monday 17 December 2007
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #12166: Undefined attribute in ezcImageImagemagickBaseHandler.
+
+
+1.3.2 - Wednesday 05 December 2007
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #12126: ImageConversion test is incorrect.
+- Fixed issue #12160: Conversion of transparent backgrounds does not work on
+  certain systems.
+- Fixed issue #12171: Monochrome colorspace conversion does not work on some
+  systems with the ImageMagick handler.
+
+
+1.3.1 - Wednesday 28 November 2007
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #11029: Converting transparent PNG to JPG cause an strange
+  effect. A new option $transparencyReplacementColor has been introduced to
+  ezcImageSaveOptions, which will be utilized if a potentially tranparent
+  image is converted to a format that does not support a transparent
+  background.
+
+
+1.3 - Monday 02 July 2007
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #11030: The GD-Handler's watermarkPercent() calculates
+  incorrectly. The placement and size of the watermark are now calculated
+  correctly.
+- Documentation updates and fixes.
+
+
+1.3rc1 - Monday 25 June 2007
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #10949: Rename PHP error if file already exists. If rename()
+  fails on Windows systems, the temporary files are cleaned up properly now.
+- Documentation updates and fixes.
+
+
+1.3beta2 - Thursday 31 May 2007
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed exception messages.
+- Updated documentation for ezcImageThumbnailFilters.
+
+
+1.3beta1 - Monday 07 May 2007
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Implemented feature #8589: JPEG quality transform for ImageConversion. A new
+  option class ezcImageSaveOptions supports setting a quality indicator for
+  JPEG and a compression indicator for PNG images.
+- Implemented feature #9564: Watermark (and perhaps other filters) should
+  allow image placements from opposite corners. Crop filters support negative
+  offsets now, too.
+
+
+1.2 - Monday 18 December 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed issue #9493: Convert < and > in exception messages to ' and ' for
+  Cache, ConsoleTools, ImageAnalysis, ImageConversion, PersistentObject,
+  PersistentObjectDatabaseSchemaTiein.
+- Fixed issue #9520: ImageConversion test fails.
+- Fixed issue #9521: Watermark tests needs some tuning.
+- Fixed issue #9563: watermarkAbsolute filters requires width and height options.
+- Fixed issue #9819: Let all components deal with the ezcBaseAutoloadException
+  properly.
+
+
+1.2beta1 - Monday 20 November 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Added feature #9236: Added two new filters for adding watermarks to images.
+- Fixed issue #8892: Handler / Converter destruction should remove all temp
+  files.
+- Fixed issue #9012: Problems with open_basedir.
+- Fixed issue #9013: SVG not detected in
+  ezcImageImagemagickBaseHandler::determineTypes().
+- Fixed issue #9014: ezcImageTransformationException doesn't accept
+  ezcImageAnalyzerException as argument.
+- Fixed issue #9440: GD scale/crop filters loose transparency.
+
+
+1.1.2 - Monday 09 October 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed bug #8958: GD crop filter calculates width and height incorrect.
+- Fixed bug #8959: GD and ImageMagick crop filters behave differently. The GD
+  driver now behaves like the ImageMagick driver and reduces the crop
+  dimensions, if they are larger than the source image dimensions.
+
+
+1.1.1 - Monday 28 August 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed bug #8712: The x and y parameters for cropping where handled as 
+  coordinates and not as offsets.
+- Refactored to use new ezcBaseStruct and properties approach.
+
+
+1.1 - Monday 12 June 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- No changes at all.
+
+
+1.1rc1 - Monday 29 May 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- No changes at all.
+
+
+1.1beta1 - Wednesday 19 April 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Added checks for file names that could cause potential security issues.
+  File names containing one of ', " or $ will be rejected to load/save with an
+  ezcImageFileNameInvalidException. (See 
+  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=345238).
+- Refactored internal filter handling to make ezcImageHandler classes
+  publically available.
+- Fixed bug #8137: ImageConversion - ezcImageTransformation fails on
+  processing Multiple images in 1 request.
+
+
+1.0.1 - Thursday 23 February 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed unreported bug: ezcImageTransformation::setFilters() threw old style
+  exceptions on an invalid filter class. Now throws the correct
+  ezcBaseSettingValueException.
+- Added checks for file names that could cause potential security issues. File
+  names containing one of the three characters ' " or $ will be rejected to
+  load/save with an ezcImageFileNameInvalidException. (See
+  http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=345238).
+
+
+1.0 - Monday 30 January 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Fixed unreported bug: ezcImageTransformation will cause an error, if no
+  filters are submitted, but only a MIME type conversion is set.
+- Fixed unreported bug: ImageAnalysis and ImageConversion used different
+  MIME types for PSD files.
+- Fixed unreported bug: Missing sanity checks for file existance and
+  reabability in ezcImageTransformation::transform().
+
+
+1.0rc1 - Monday 16 January 2006
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Added more MIME types to ezcImageImagemagickHandler to be able to
+  transform more formats.
+- Added option for ezcImageImagemagickHandler to allow the explicit setting of
+  ImageMagick's "convert" binary.
+
+- Changed exception behavior. All errors will now throw a different exception
+  class.
+- Changed OS detection of ezcImageImagemagickHandler to better detect Windows
+  versions.
+- Changed behavior of ezcImageGeometryFilters::scale() to its
+  original purpose. The scale() filter now allows scaling of images to fit
+  into a certain rectengular box. The former behavior is still available
+  throug the scaleExact() filter.
+- Changed execution of ImageMagick binary from exec() to proc_open(). This
+  avoids nasty error output on the console if something fails. Errors from
+  STDERR are now caught and used in the thrown exception for analysis.
+
+- Fixed bug #7640: "createTransformation aspect ratio scaling". 
+  The ImageMagick driver now does correct scaling, maintaining aspect ratio.
+- Fixed unreported bug, that $name attribute in ezcImageMethodcallHandler is
+  private, but accessed by it's derived classes for error reporting.
+- Fixed unreported bug in crop filter code of ezcImageImagemagickHandler, that
+  caused the crop to always start at the coordinates 0, 0.
+
+
+1.0beta2 - Friday 23 December 2005
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Added struct for ezcImageConverter settings: ezcImageConverterSettings.
+- Added new method getIdentifier() to handler classes which returns
+  a lowercase version of the name. The convert class uses this instead of
+  lowercasing the name manually.
+- Added ezcImageFilter struct to keep the filter name and
+  options. This replaces the associative arrays and separate parameters used
+  throughout the various classes (mostly ezcImageTransformation).
+
+- Changed settings handling in ezcImageConverter to new struct
+  ezcImageConverterSettings.
+- Changed ezcImageHandler objects to get their $name and $identifier in
+  their constructor.
+- Changed ezcImageHandlers not to automagically find the correct class name for
+  a filter. Instead the ezcImageFilters object is now created by the specific 
+  ezcImageHandler class.
+
+- Changed functions to properties:
+
+  * ezcImageHandler::getName() to property 'name'.
+  * ezcImageHandler::getIdentifier() to property 'identifier'.
+
+- Changed class names:
+
+  * ezcImageHandlerGd to ezcImageGdHandler.
+  * ezcImageHandlerShell to ezcImageShellHandler.
+  * ezcImageFiltersGd to ezcImageGdFilters.
+  * ezcImageFiltersShell to ezcImageShellFilters.
+  * ezcImageFiltersInterfaceEffect to ezcImageEffectFilters.
+  * ezcImageFiltersInterfaceGeomtry to ezcImageGeometryFilters.
+  * ezcImageFiltersInterfaceColorspace to ezcImageColorspaceFilters.
+  * ezcImageShellHandler to ezcImageImagemagickHandler.
+  * ezcImageShellFilters to ezcImageImagemagickFilters.
+
+- Changed function names:
+
+  * ezcImageHandler::listFilters() to getFilterNames().
+
+- Changed ezcImageTransformation::transform() to throw a catch-all exception
+  instead of all inherited ones. The catch-all exception stores the source
+  exception in it's 'parent' property.
+- Changed visibility of filter handling classes to private.
+  The code for the filter handling needs to more work before
+  becoming public. Any references to the filter classes from public
+  classes are also removed. This marks the GD and Imagemagick handlers as
+  private.
+- Changed ezcImageHandler::listFilters() to use the getFilters() method on
+  the filter object to get filter list.
+
+- Changed the way on how handlers can be referenced. The class names which are
+  passed in ezcImageConverterSettings are now stored in the
+  ezcImageHandlerSettings class:
+
+  * Added a reference name setting which are used by the converter
+    and handler. This allows the developer to reference the handler
+    with a simple name.
+  * Add a settings array which can be used by the handler as configuration.
+
+- Removed 'identifier' from ezcImageHandler and uses class name of handler
+  for lookup in ezcImageConverter::applyFilter().
+- Removed generation from class names out of values in
+  ezcImageConverterSettings.  Instead they should now pass the full class name
+  to the converter. This removes the need to prefix custom made handler
+  classes with ezcImageHandler.
+- Removed all the special code from the abstract class ezcImageHandler and
+  added them to ezcImageMethodcallHandler. The main handler class is now much
+  cleaner and exposes less special functions and properties to the public.
+
+  * Updated GD and ImageMagick handlers to extends the new class.
+
+- Fixed createTransformation() to return the transformation object.
+
+
+1.0beta1 - Thursday 24 November 2005
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Initial release of this package.
