@@ -325,6 +325,49 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
 
 
+    public function getClassDefinitionForColumnConfigAction() {
+        $class = Object_Class::getById(intval($this->_getParam("id")));
+        $class->setFieldDefinitions(null);
+
+        $result = array();
+        $result['objectColumns']['childs'] = $class->getLayoutDefinitions()->getChilds();
+        $result['objectColumns']['nodeLabel'] = "object_columns";
+        $result['objectColumns']['nodeType'] = "object";
+
+        $systemColumnNames = array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
+        $systemColumns = array();
+        foreach($systemColumnNames as $systemColumn) {
+            $systemColumns[] = array("title" => $systemColumn, "name" => $systemColumn, "datatype" => "data", "fieldtype" => "system");
+        }
+        $result['systemColumns']['nodeLabel'] = "system_columns";
+        $result['systemColumns']['nodeType'] = "system";
+        $result['systemColumns']['childs'] = $systemColumns;
+
+
+        $list = new Object_Objectbrick_Definition_List();
+        $list = $list->load();
+
+        foreach($list as $brickDefinition) {
+
+            $classDefs = $brickDefinition->getClassDefinitions();
+            if(!empty($classDefs)) {
+                foreach($classDefs as $classDef) {
+                    if($classDef['classname'] == $class->getId()) {
+
+                        $key = $brickDefinition->getKey();
+                        $result[$key]['nodeLabel'] = $key;
+                        $result[$key]['nodeType'] = "objectbricks";
+                        $result[$key]['childs'] = $brickDefinition->getLayoutdefinitions()->getChilds();
+                        break;
+                    }
+                }
+            }
+        }
+
+        $this->_helper->json($result);
+    }
+
+
     /**
      * OBJECT BRICKS
      */

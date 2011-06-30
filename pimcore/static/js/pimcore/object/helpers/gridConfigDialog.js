@@ -204,96 +204,97 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             var items = [];
 
             this.brickKeys = [];
-            items.push(this.getClassTree("/admin/class/get", this.config.classid, t("object_columns"), null, this.loadBricks.bind(this)));
-            items.push(this.getSystemColumns());
+            this.resultPanel = this.getClassTree("/admin/class/get-class-definition-for-column-config", this.config.classid);
+//            items.push(this.getClassTree("/admin/class/get", this.config.classid, t("object_columns"), null, this.loadBricks.bind(this)));
+//            items.push(this.getSystemColumns());
 
-            this.resultPanel = new Ext.Panel({
-                region: "center",
-                layout: "fit",
-                title: t('class_definitions'),
-                layout:'accordion',
-                defaults: {
-                    // applied to each contained panel
-                    //bodyStyle: 'padding:10px'
-                },
-                layoutConfig: {
-                    // layout-specific configs go here
-                    titleCollapse: true,
-                    animate: false,
-                    activeOnTop: false
-                },
-                items: items
-            });
+//            this.resultPanel = new Ext.Panel({
+//                region: "center",
+//                layout: "fit",
+//                title: t('class_definitions'),
+//                layout:'accordion',
+//                defaults: {
+//                    // applied to each contained panel
+//                    //bodyStyle: 'padding:10px'
+//                },
+//                layoutConfig: {
+//                    // layout-specific configs go here
+//                    titleCollapse: true,
+//                    animate: false,
+//                    activeOnTop: false
+//                },
+//                items: items
+//            });
         }
 
         return this.resultPanel;
     },
 
-    loadBricks: function() {
-        for(var i = 0; i < this.brickKeys.length; i++) {
-            this.resultPanel.add(this.getClassTree("/admin/class/objectbrick-get", this.brickKeys[i], ts(this.brickKeys[i]) + " " + t("columns"), this.brickKeys[i]));
-        }
-        this.resultPanel.doLayout();
+//    loadBricks: function() {
+//        for(var i = 0; i < this.brickKeys.length; i++) {
+//            this.resultPanel.add(this.getClassTree("/admin/class/objectbrick-get", this.brickKeys[i], ts(this.brickKeys[i]) + " " + t("columns"), this.brickKeys[i]));
+//        }
+//        this.resultPanel.doLayout();
+//
+//    },
 
-    },
-
-    getSystemColumns: function() {
-        var tree = new Ext.tree.TreePanel({
-            title: t("system_columns"),
-            xtype: "treepanel",
-            region: "center",
-            enableDrag: true,
-            enableDrop: false,
-            autoScroll: true,
-            rootVisible: false,
-            root: {
-                id: "0",
-                root: true,
-                text: t("base"),
-                leaf: true,
-                expanded: true
-            },
-            listeners:{
-                dblclick: function(node) {
-
-                    var copy = new Ext.tree.TreeNode( // copy it
-                        Ext.apply({}, node.attributes)
-                    );
-
-                    if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", copy.attributes.key)) {
-                        this.selectionPanel.getRootNode().appendChild(copy);
-                    }
-
-                }.bind(this),
-                afterrender: function() {
-
-                    var fn = this.addDataChild.bind(tree.getRootNode());
-
-                    var initData = { name: "id", title: "ID"};
-                    fn("system", initData, null);
-
-                    initData = { name: "published", title: t("published")};
-                    fn("system", initData, null);
-
-                    initData = { name: "fullpath", title: t("path")};
-                    fn("system", initData, null);
-
-                    initData = { name: "filename", title: t("filename")};
-                    fn("system", initData, null);
-
-                    initData = { name: "classname", title: t("class")};
-                    fn("system", initData, null);
-
-                    initData = { name: "creationDate", title: t("creationdate")};
-                    fn("system", initData, null);
-
-                    initData = { name: "modificationDate", title: t("modificationdate")};
-                    fn("system", initData, null);
-
-                    tree.getRootNode().expand();
-                }.bind(this)
-            }
-        });
+//    getSystemColumns: function() {
+//        var tree = new Ext.tree.TreePanel({
+//            title: t("system_columns"),
+//            xtype: "treepanel",
+//            region: "center",
+//            enableDrag: true,
+//            enableDrop: false,
+//            autoScroll: true,
+//            rootVisible: false,
+//            root: {
+//                id: "0",
+//                root: true,
+//                text: t("base"),
+//                leaf: true,
+//                expanded: true
+//            },
+//            listeners:{
+//                dblclick: function(node) {
+//
+//                    var copy = new Ext.tree.TreeNode( // copy it
+//                        Ext.apply({}, node.attributes)
+//                    );
+//
+//                    if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", copy.attributes.key)) {
+//                        this.selectionPanel.getRootNode().appendChild(copy);
+//                    }
+//
+//                }.bind(this),
+//                afterrender: function() {
+//
+//                    var fn = this.addDataChild.bind(tree.getRootNode());
+//
+//                    var initData = { name: "id", title: "ID"};
+//                    fn("system", initData, null);
+//
+//                    initData = { name: "published", title: t("published")};
+//                    fn("system", initData, null);
+//
+//                    initData = { name: "fullpath", title: t("path")};
+//                    fn("system", initData, null);
+//
+//                    initData = { name: "filename", title: t("filename")};
+//                    fn("system", initData, null);
+//
+//                    initData = { name: "classname", title: t("class")};
+//                    fn("system", initData, null);
+//
+//                    initData = { name: "creationDate", title: t("creationdate")};
+//                    fn("system", initData, null);
+//
+//                    initData = { name: "modificationDate", title: t("modificationdate")};
+//                    fn("system", initData, null);
+//
+//                    tree.getRootNode().expand();
+//                }.bind(this)
+//            }
+//        });
 
 
 //
@@ -304,18 +305,19 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
 //        console.log(tree.getRootNode());
 //        tree.getRootNode().expand();
-        return tree;
-    },
+//        return tree;
+//    },
 
-    getClassTree: function(url, id, title, attributePrefix, callback) {
+    getClassTree: function(url, id) {
 
         var tree = new Ext.tree.TreePanel({
-            title: title,
+            title: t('class_definitions'),
             xtype: "treepanel",
             region: "center",
             enableDrag: true,
             enableDrop: false,
             autoScroll: true,
+            rootVisible: false,
             root: {
                 id: "0",
                 root: true,
@@ -344,25 +346,43 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             params: {
                 id: id // this.config.classid
             },
-            success: this.initLayoutFields.bind(this, tree, attributePrefix, callback)
+            success: this.initLayoutFields.bind(this, tree)
         });
 
         return tree;
     },
 
-    initLayoutFields: function (tree, attributePrefix, callback, response) {
+    initLayoutFields: function (tree, response) {
         var data = Ext.decode(response.responseText);
 
-        if (data.layoutDefinitions) {
-            if (data.layoutDefinitions.childs) {
-                for (var i = 0; i < data.layoutDefinitions.childs.length; i++) {
-                    tree.getRootNode().appendChild(this.recursiveAddNode(data.layoutDefinitions.childs[i], tree.getRootNode(), attributePrefix));
+        var keys = Object.keys(data);
+        for(var i = 0; i < keys.length; i++) {
+            if (data[keys[i]]) {
+                if (data[keys[i]].childs) {
+                    var attributePrefix = "";
+                    var text = t(data[keys[i]].nodeLabel);
+                    if(data[keys[i]].nodeType == "objectbricks") {
+                        text = ts(data[keys[i]].nodeLabel) + " " + t("columns");
+                        attributePrefix = data[keys[i]].nodeLabel;
+                    }
+                    var baseNode = new Ext.tree.TreeNode({
+                        type: "layout",
+                        draggable: false,
+                        iconCls: "pimcore_icon_" + data[keys[i]].nodeType,
+                        text: text
+                    });
+
+                    tree.getRootNode().appendChild(baseNode);
+                    for (var j = 0; j < data[keys[i]].childs.length; j++) {
+                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, attributePrefix));
+                    }
+                    if(data[keys[i]].nodeType == "object") {
+                        baseNode.expand();
+                    } else {
+                        baseNode.collapse();
+                    }
                 }
-                tree.getRootNode().expand();
             }
-        }
-        if(callback) {
-            callback();
         }
     },
 
@@ -376,16 +396,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         }
         else if (con.datatype == "data") {
             fn = this.addDataChild.bind(scope, con.fieldtype, con, attributePrefix);
-
-            if(con.fieldtype == "objectbricks") {
-
-                if(con.allowedTypes) {
-                    for(var i = 0; i < con.allowedTypes.length; i++) {
-                        this.brickKeys.push(con.allowedTypes[i]);
-                    }
-                }
-            }
-
         }
 
         newNode = fn();
