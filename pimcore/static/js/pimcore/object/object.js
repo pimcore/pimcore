@@ -207,7 +207,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
-            deferredRender:false,
+            deferredRender:true,
             enableTabScroll:true,
             border: false,
             items: items,

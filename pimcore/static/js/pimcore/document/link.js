@@ -191,7 +191,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
-            deferredRender:false,
+            deferredRender:true,
             enableTabScroll:true,
             border: false,
             items: items,

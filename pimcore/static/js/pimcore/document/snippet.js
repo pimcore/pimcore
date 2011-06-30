@@ -79,7 +79,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         var tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
-            deferredRender:false,
+            deferredRender:true,
             enableTabScroll:true,
             defaults: {autoScroll:true},
             border: false,
