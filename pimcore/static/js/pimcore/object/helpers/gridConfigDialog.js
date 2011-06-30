@@ -205,108 +205,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
             this.brickKeys = [];
             this.resultPanel = this.getClassTree("/admin/class/get-class-definition-for-column-config", this.config.classid);
-//            items.push(this.getClassTree("/admin/class/get", this.config.classid, t("object_columns"), null, this.loadBricks.bind(this)));
-//            items.push(this.getSystemColumns());
-
-//            this.resultPanel = new Ext.Panel({
-//                region: "center",
-//                layout: "fit",
-//                title: t('class_definitions'),
-//                layout:'accordion',
-//                defaults: {
-//                    // applied to each contained panel
-//                    //bodyStyle: 'padding:10px'
-//                },
-//                layoutConfig: {
-//                    // layout-specific configs go here
-//                    titleCollapse: true,
-//                    animate: false,
-//                    activeOnTop: false
-//                },
-//                items: items
-//            });
         }
 
         return this.resultPanel;
     },
-
-//    loadBricks: function() {
-//        for(var i = 0; i < this.brickKeys.length; i++) {
-//            this.resultPanel.add(this.getClassTree("/admin/class/objectbrick-get", this.brickKeys[i], ts(this.brickKeys[i]) + " " + t("columns"), this.brickKeys[i]));
-//        }
-//        this.resultPanel.doLayout();
-//
-//    },
-
-//    getSystemColumns: function() {
-//        var tree = new Ext.tree.TreePanel({
-//            title: t("system_columns"),
-//            xtype: "treepanel",
-//            region: "center",
-//            enableDrag: true,
-//            enableDrop: false,
-//            autoScroll: true,
-//            rootVisible: false,
-//            root: {
-//                id: "0",
-//                root: true,
-//                text: t("base"),
-//                leaf: true,
-//                expanded: true
-//            },
-//            listeners:{
-//                dblclick: function(node) {
-//
-//                    var copy = new Ext.tree.TreeNode( // copy it
-//                        Ext.apply({}, node.attributes)
-//                    );
-//
-//                    if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", copy.attributes.key)) {
-//                        this.selectionPanel.getRootNode().appendChild(copy);
-//                    }
-//
-//                }.bind(this),
-//                afterrender: function() {
-//
-//                    var fn = this.addDataChild.bind(tree.getRootNode());
-//
-//                    var initData = { name: "id", title: "ID"};
-//                    fn("system", initData, null);
-//
-//                    initData = { name: "published", title: t("published")};
-//                    fn("system", initData, null);
-//
-//                    initData = { name: "fullpath", title: t("path")};
-//                    fn("system", initData, null);
-//
-//                    initData = { name: "filename", title: t("filename")};
-//                    fn("system", initData, null);
-//
-//                    initData = { name: "classname", title: t("class")};
-//                    fn("system", initData, null);
-//
-//                    initData = { name: "creationDate", title: t("creationdate")};
-//                    fn("system", initData, null);
-//
-//                    initData = { name: "modificationDate", title: t("modificationdate")};
-//                    fn("system", initData, null);
-//
-//                    tree.getRootNode().expand();
-//                }.bind(this)
-//            }
-//        });
-
-
-//
-//        var initData = { name: "modificationDate", title: t("modificationdate")};
-//        var fn = this.addDataChild.bind(tree.getRootNode());
-//        tree.getRootNode().appendChild(fn("system", initData, null));
-
-
-//        console.log(tree.getRootNode());
-//        tree.getRootNode().expand();
-//        return tree;
-//    },
 
     getClassTree: function(url, id) {
 
