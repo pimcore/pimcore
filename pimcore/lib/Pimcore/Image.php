@@ -21,9 +21,15 @@ class Pimcore_Image {
      */
     public static function getInstance () {
 
-
-        if(class_exists("Imagick")) {
-            return new Pimcore_Image_Adapter_Imagick();
+        try {
+            if(class_exists("Imagick")) {
+                return new Pimcore_Image_Adapter_Imagick();
+            } else {
+                return new Pimcore_Image_Adapter_GD();
+            }
+        } catch (Exception $e) {
+            Logger::crit("Unable to load image extensions: " . $e->getMessage());
+            throw $e;
         }
 
         return null;
