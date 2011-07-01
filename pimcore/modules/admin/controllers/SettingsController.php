@@ -88,74 +88,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
     }
 
-    public function thumbnailsAction() {
-        if ($this->getUser()->isAllowed("thumbnails")) {
-
-            if ($this->_getParam("data")) {
-                if ($this->_getParam("xaction") == "destroy") {
-
-                    $id = Zend_Json::decode($this->_getParam("data"));
-
-                    $thumbnail = Asset_Image_Thumbnail::getById($id);
-                    $this->deleteThumbnailTmpFiles($thumbnail);
-                    $thumbnail->delete();
-
-                    Pimcore_Model_Cache::clearTag("output");
-
-                    $this->_helper->json(array("success" => true, "data" => array()));
-                }
-                else if ($this->_getParam("xaction") == "update") {
-
-                    $data = Zend_Json::decode($this->_getParam("data"));
-
-                    // save type
-                    $thumbnail = Asset_Image_Thumbnail::getById($data["id"]);
-                    $this->deleteThumbnailTmpFiles($thumbnail);
-                    $thumbnail->setValues($data);
-
-                    $thumbnail->save();
-
-                    Pimcore_Model_Cache::clearTag("output");
-
-                    $this->_helper->json(array("data" => $thumbnail, "success" => true));
-                }
-                else if ($this->_getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->_getParam("data"));
-                    unset($data["id"]);
-
-                    // save thumbnail
-                    $thumbnail = new Asset_Image_Thumbnail();
-                    $thumbnail->setValues($data);
-
-                    $thumbnail->save();
-
-                    $this->_helper->json(array("data" => $thumbnail, "success" => true));
-                }
-            }
-            else {
-                // get list of types
-
-                $list = new Asset_Image_Thumbnail_List();
-                $list->load();
-
-                $thumbnails = array();
-                foreach ($list->getThumbnails() as $thumbnail) {
-                    $thumbnails[] = $thumbnail;
-                }
-
-                $this->_helper->json(array("data" => $thumbnails, "success" => true, "total" => count($thumbnails)));
-            }
-        } else {
-            if ($this->getUser() != null) {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to access or modify thumbnail settings, but has no permission to do so.");
-            } else {
-                Logger::err(get_class($this) . ": attempt to access or modify thumbnail settings, but no user in session.");
-            }
-        }
-
-        $this->removeViewRenderer();
-    }
-
     private function deleteThumbnailTmpFiles(Asset_Image_Thumbnail $thumbnail) {
         // delete all thumbnails which are using this config
         $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
@@ -1245,5 +1177,84 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array(
             "settings" => $data
         ));
+    }
+
+
+    public function thumbnailTreeAction () {
+
+        $dir = Asset_Image_Thumbnail_Config::getWorkingDir();
+
+        $pipelines = array();
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if(strpos($file, ".xml")) {
+                $name = str_replace(".xml", "", $file);
+                $pipelines[] = array(
+                    "id" => $name,
+                    "text" => $name
+                );
+            }
+        }
+
+        $this->_helper->json($pipelines);
+    }
+
+    public function thumbnailAddAction () {
+
+        $pipe = new Asset_Image_Thumbnail_Config();
+        $pipe->setName($this->_getParam("name"));
+        $pipe->save();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function thumbnailDeleteAction () {
+
+        $pipe = Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
+        $pipe->delete();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+
+    public function thumbnailGetAction () {
+
+        $pipe = Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
+        //$pipe->delete();
+
+        $this->_helper->json($pipe);
+    }
+
+
+    public function thumbnailUpdateAction () {
+
+        $pipe = Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
+        $data = Zend_Json::decode($this->_getParam("configuration"));
+
+        $items = array();
+        foreach ($data as $key => $value) {
+            $setter = "set" . ucfirst($key);
+            if(method_exists($pipe, $setter)) {
+                $pipe->$setter($value);
+            }
+
+            if(strpos($key,"item.") === 0) {
+                $cleanKeyParts = explode(".",$key);
+                $items[$cleanKeyParts[1]][$cleanKeyParts[2]] = $value;
+            }
+        }
+
+        $pipe->resetItems();
+        foreach ($items as $item) {
+
+            $type = $item["type"];
+            unset($item["type"]);
+
+            $pipe->addItem($type, $item);
+        }
+
+        $pipe->save();
+
+        $this->_helper->json(array("success" => true));
     }
 }

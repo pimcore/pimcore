@@ -537,7 +537,7 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get("thumbnails").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("thumbnails", new pimcore.settings.thumbnails());
+            pimcore.globalmanager.add("thumbnails", new pimcore.settings.thumbnail.panel());
         }
     },
 
