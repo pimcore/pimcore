@@ -95,7 +95,10 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     },
 
     getValue: function () {
-        return this.layout.getValue().toString();
+        if(this.layout.rendered) {
+            return this.layout.getValue().toString();
+        }
+        return null;
     },
 
     getName: function () {
