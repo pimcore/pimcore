@@ -16,6 +16,18 @@
 class Asset_Image_Thumbnail_Config {
 
     /**
+     * format of array:
+     * array(
+        array(
+            "method" => "myName",
+            "arguments" =>
+                array(
+                    "width" => 345,
+                    "height" => 200
+                )
+        )
+     * )
+     *
      * @var array
      */
     public $items = array();
@@ -49,7 +61,9 @@ class Asset_Image_Thumbnail_Config {
     public static function getByName ($name) {
         $pipe = new self();
         $pipe->setName($name);
-        $pipe->load();
+        if(!$pipe->load()) {
+            throw new Exception("thumbnail definition : " . $name . " does not exist");
+        }
 
         return $pipe;
     }
@@ -218,7 +232,9 @@ class Asset_Image_Thumbnail_Config {
      */
     public function setQuality($quality)
     {
-        $this->quality = $quality;
+        if($quality) {
+            $this->quality = $quality;
+        }
     }
 
     /**
@@ -227,5 +243,93 @@ class Asset_Image_Thumbnail_Config {
     public function getQuality()
     {
         return $this->quality;
+    }
+
+    /**
+     * @static
+     * @param $config
+     * @return Asset_Image_Thumbnail_Config
+     */
+    public static function getByArrayConfig ($config) {
+        $pipe = new Asset_Image_Thumbnail_Config();
+
+        if($config["format"]) {
+            $pipe->setFormat($config["format"]);
+        }
+        if($config["quality"]) {
+            $pipe->setQuality($config["quality"]);
+        }
+        if($config["items"]) {
+            $pipe->setItems($config["items"]);
+        }
+
+        // set name
+        $hash = md5(serialize($config));
+        $pipe->setName("auto_" . $hash);
+
+        return $pipe;
+    }
+
+    /**
+     * This is just for compatibility, this method will be removed with the next major release
+     * @depricated
+     * @static
+     * @param $config
+     * @return Asset_Image_Thumbnail_Config
+     */
+    public static function getByLegacyConfig ($config) {
+
+        $pipe = new Asset_Image_Thumbnail_Config();
+
+        $hash = md5(serialize($config));
+        $pipe->setName("auto_" . $hash);
+
+        if($config["format"]) {
+            $pipe->setFormat($config["format"]);
+        }
+        if($config["quality"]) {
+            $pipe->setQuality($config["quality"]);
+        }
+
+
+        if ($config["cover"]) {
+            $pipe->addItem("cover", array(
+                "width" => $config["width"],
+                "height" => $config["height"]
+            ));
+        }
+        else if ($config["contain"]) {
+            $pipe->addItem("contain", array(
+                "width" => $config["width"],
+                "height" => $config["height"]
+            ));
+        }
+        else if ($config["aspectratio"]) {
+
+            if ($config["height"] > 0 && $config["width"] > 0) {
+                $pipe->addItem("contain", array(
+                    "width" => $config["width"],
+                    "height" => $config["height"]
+                ));
+            }
+            else if ($config["height"] > 0) {
+                $pipe->addItem("scaleByHeight", array(
+                    "height" => $config["height"]
+                ));
+            }
+            else {
+                $pipe->addItem("scaleByWidth", array(
+                    "width" => $config["width"]
+                ));
+            }
+        }
+        else {
+            $pipe->addItem("resize", array(
+                "width" => $config["width"],
+                "height" => $config["height"]
+            ));
+        }
+
+        return $pipe;
     }
 }

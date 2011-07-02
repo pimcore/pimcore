@@ -961,7 +961,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $format = "png";
         }
 
-        
+
         $this->getResponse()->setHeader("Content-Type", "image/" . $format, true);
 
         if($this->_getParam("download")) {

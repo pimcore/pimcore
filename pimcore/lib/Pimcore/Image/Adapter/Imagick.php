@@ -24,7 +24,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public function load ($imagePath) {
 
         $this->resource = new Imagick();
-        $this->resource->readImage($imagePath);
+        if(!$this->resource->readImage($imagePath)) {
+            return false;
+        }
 
         // set dimensions
         $this->setWidth($this->resource->getImageWidth());
@@ -40,8 +42,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public function save ($path, $quality = null) {
 
         if($quality) {
-            $this->resource->setCompressionQuality($quality);
-            $this->resource->setImageCompressionQuality($quality);
+            $this->resource->setCompressionQuality((int) $quality);
+            $this->resource->setImageCompressionQuality((int) $quality);
         }
         
         $this->resource->writeImage($path);
@@ -66,7 +68,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function resize ($width, $height) {
-        $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 0);
+        $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 1, false);
 
         $this->setWidth($width);
         $this->setHeight($height);

@@ -396,7 +396,7 @@ pimcore.settings.thumbnail.items = {
                 }]
             },{
                 xtype: "combo",
-                name: "positioning",
+                name: "item." + myId  + ".positioning",
                 fieldLabel: t("positioning"),
                 value: data.positioning,
                 triggerAction: 'all',
@@ -493,7 +493,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("rotate"), myId, panel),
+            tbar: this.getTopBar(t("setBackgroundColor"), myId, panel),
             items: [{
                 xtype: 'textfield',
                 name: "item." + myId  + ".color",

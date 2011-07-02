@@ -17,8 +17,6 @@
 
 class Asset_Image extends Asset {
 
-    public $thumbnails = array();
-
     /**
      * Get the current name of the class
      *
@@ -59,7 +57,7 @@ class Asset_Image extends Asset {
         
         if (is_string($config)) {
             try {
-                $thumbnail = Asset_Image_Thumbnail::getByName($config);
+                $thumbnail = Asset_Image_Thumbnail_Config::getByName($config);
             }
             catch (Exception $e) {
                 Logger::error("requested thumbnail " . $config . " is not defined");
@@ -67,14 +65,14 @@ class Asset_Image extends Asset {
             }
         }
         else if (is_array($config)) {
-            $thumbnail = new Asset_Image_Thumbnail();
-
-            $hash = md5(serialize($config));
-
-            $thumbnail->setName("auto_" . $hash);
-            $thumbnail->setValues($config);
+            // check if it is a legacy config or a new one
+            if(array_key_exists("items", $config)) {
+                $thumbnail = Asset_Image_Thumbnail_Config::getByArrayConfig($config);
+            } else {
+                $thumbnail = Asset_Image_Thumbnail_Config::getByLegacyConfig($config);
+            }
         }
-        else if ($config instanceof Asset_Image_Thumbnail) {
+        else if ($config instanceof Asset_Image_Thumbnail_Config) {
             $thumbnail = $config;
         }
         
@@ -90,131 +88,45 @@ class Asset_Image extends Asset {
     public function getThumbnail($thumbnailName) {
 
         $thumbnail = $this->getThumbnailConfig($thumbnailName);
-        
-        if(!$thumbnail) {
+        $path = "";
+
+        if($thumbnail) {
+            $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail);
+        }
+
+        // if no thumbnail config is given return the original image
+        if(empty($path)) {
             $fsPath = $this->getFileSystemPath();
             $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
             return $path;
         }
         
-        $format = strtolower($thumbnail->getFormat());
-        
-        // simple detection for source type if SOURCE is selected 
-        if($format == "source") {
-            $typeMapping = array(
-                "gif" => "gif",
-                "jpeg" => "jpeg",
-                "jpg" => "jpeg",
-                "png" => "png"
-            );
-            
-            $fileExt = Pimcore_File::getFileExtension($this->getFilename());
-            if($typeMapping[$fileExt]) {
-                $format = $typeMapping[$fileExt];
-            } else {
-                // use PNG if source doesn't have a valid mapping
-                $format = "png";
-            }
-        }
-        
-        
-        $filename = "thumb_" . $this->getId() . "__" . $thumbnail->getName() . "." . $format;
-
-        $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $filename;
-        $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
-
-        $this->thumbnails[$thumbnail->getName()] = $path;
-
-        if (is_file($fsPath) and filemtime($fsPath) > $this->getModificationDate()) {
-            return $path;
-        }
-
-        // check dimensions
-        $width = $this->getWidth();
-        $height = $this->getHeight();
-        
-  
-        // transform image 
-        $image = self::getImageTransformInstance();
-
-        $status = $image->load($this->getFileSystemPath());
-        $this->forceRGB($image);
-        if($status !== true) {
-            return "/pimcore/static/img/image-not-supported.png";
-        }
-
-        // create image with original dimensions, as a fallback
-        $imageFallback = self::getImageTransformInstance();
-        $imageFallback->load($this->getFileSystemPath());
-        $this->forceRGB($imageFallback);
-        $imageFallback->resize($width, $height);
-        $imageFallback->save($fsPath, $format, $thumbnail->getQuality());
-
-
-        // now try to resize
-        if ($thumbnail->getCover()) {
-            // return original image if this is smaller than the thumb dimensions
-            if ($width < $thumbnail->getWidth() && $height < $thumbnail->getHeight()) {
-                return $path;
-            }
-            
-            $image->fitOnCanvas($thumbnail->getWidth(), $thumbnail->getHeight());
-        }
-        else if ($thumbnail->getContain()) {
-            // return original image if this is smaller than the thumb dimensions
-            if ($width < $thumbnail->getWidth() && $height < $thumbnail->getHeight()) {
-                return $path;
-            }
-            
-            $image->fit($thumbnail->getWidth(), $thumbnail->getHeight());
-        }
-        else if ($thumbnail->getAspectratio()) {
-            
-            // return original image if this is smaller than the thumb dimensions
-            if ($width < $thumbnail->getWidth() && $thumbnail->getWidth() > 0) {
-                return $path;
-            }
-        
-            if ($height < $thumbnail->getHeight() && $thumbnail->getHeight() > 0) {
-                return $path;
-            }
-            
-            if ($thumbnail->getHeight() > 0 && $thumbnail->getWidth() > 0) {
-                $image->fit($thumbnail->getWidth(), $thumbnail->getHeight());
-            }
-            else if ($thumbnail->getHeight() > 0) {
-                $image->scaleByY($thumbnail->getHeight());
-            }
-            else {
-                $image->scaleByX($thumbnail->getWidth());
-            }
-        }
-        else {
-            $image->resize($thumbnail->getWidth(), $thumbnail->getHeight());
-        }
-        $image->save($fsPath, $format, $thumbnail->getQuality());
-
         return $path;
     }
 
+    /**
+     * @static
+     * @throws Exception
+     * @return null|Pimcore_Image_Adapter
+     */
     public static function getImageTransformInstance () {
-        // try to use ImageMagick
-        $image = Image_Transform::factory('Imagick3');
-        if($image instanceof PEAR_Error){
-            // use (php) build-in GD
-            $image = Image_Transform::factory('GD');
+
+        try {
+            $image = Pimcore_Image::getInstance();
+        } catch (Exception $e) {
+            $image = null;
         }
 
-        if(!$image instanceof Image_Transform){
-            if($image instanceof PEAR_Error){
-                Logger::error($image->getMessage());
-                throw new Exception($image->getMessage());
-            } else throw new Exception("failed to get create instance of Image_Transform. Could not transform image.");
+        if(!$image instanceof Pimcore_Image_Adapter){
+            throw new Exception("Couldn't get instance of image tranform processor.");
         }
 
         return $image;
     }
 
+    /**
+     * @return string
+     */
     public function getFormat() {
         if ($this->getWith() > $this->getHeight()) {
             return "landscape";
@@ -227,50 +139,47 @@ class Asset_Image extends Asset {
         }
         return "unknown";
     }
-    
+
+    /**
+     * @return string
+     */
     public function getRelativeFileSystemPath() {
         return str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getFileSystemPath());
     }
-    
+
+    /**
+     * @return array
+     */
     public function getDimensions() {
 
         $image = self::getImageTransformInstance();
 
         $status = $image->load($this->getFileSystemPath());
-        if($status !== true) {
+        if($status === false) {
             return;
         }
 
         $dimensions = array(
-            "width" => $image->getImageWidth(),
-            "height" => $image->getImageHeight()
+            "width" => $image->getWidth(),
+            "height" => $image->getHeight()
         );
 
         return $dimensions;
     }
 
+    /**
+     * @return int
+     */
     public function getWidth() {
         $dimensions = $this->getDimensions();
         return $dimensions["width"];
     }
 
+    /**
+     * @return int
+     */
     public function getHeight() {
         $dimensions = $this->getDimensions();
         return $dimensions["height"];
-    }
-
-    public function forceRGB ($image) {
-
-        // currently not working because of a bug in the imagick lib turns cmyk images to inverted colors
-        /*if($image instanceof Image_Transform_Driver_Imagick3) {
-            if($image->imagick) {
-                $cs = $image->imagick->getImageColorspace();
-                if($cs != Imagick::COLORSPACE_SRGB && $cs != Imagick::COLORSPACE_RGB) {
-                    //$image->imagick->setImageColorspace(Imagick::COLORSPACE_RGB);
-                }
-            }
-        }*/
-
-        return $image;
     }
 }
