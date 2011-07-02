@@ -19,13 +19,22 @@ class Pimcore_Image {
      * @static
      * @return null|Pimcore_Image_Adapter
      */
-    public static function getInstance () {
+    public static function getInstance ($adapter = null) {
 
         try {
-            if(class_exists("Imagick")) {
-                return new Pimcore_Image_Adapter_Imagick();
+            if($adapter) {
+                $adapterClass = "Pimcore_Image_Adapter_" . $adapter;
+                if(class_exists($adapterClass)) {
+                    return new $adapterClass();
+                } else {
+                    throw new Exception("Image-transform adapter `" . $adapter . "´ does not exist.");
+                }
             } else {
-                return new Pimcore_Image_Adapter_GD();
+                if(class_exists("Imagick")) {
+                    return new Pimcore_Image_Adapter_Imagick();
+                } else {
+                    return new Pimcore_Image_Adapter_GD();
+                }
             }
         } catch (Exception $e) {
             Logger::crit("Unable to load image extensions: " . $e->getMessage());

@@ -62,13 +62,14 @@ class Asset_Image_Thumbnail_Processor {
         $fsPath = PIMCORE_TEMPORARY_DIRECTORY . "/" . $filename;
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
+        // check for existing and still valid thumbnail
         if (is_file($fsPath) and filemtime($fsPath) > $asset->getModificationDate()) {
             //return $path;
         }
 
         // check dimensions
-        $width = $asset->getWidth();
-        $height = $asset->getHeight();
+        //$width = $asset->getWidth();
+        //$height = $asset->getHeight();
 
         // transform image
         $image = Asset_Image::getImageTransformInstance();
