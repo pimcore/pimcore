@@ -39,7 +39,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param  $path
      * @return void
      */
-    public function save ($path, $quality = null) {
+    public function save ($path, $format, $quality = null) {
+
+        $this->resource->setImageFormat($format);
 
         if($quality) {
             $this->resource->setCompressionQuality((int) $quality);
@@ -51,16 +53,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         return $this;
     }
 
-
-    /**
-     * @param  $format
-     * @return void
-     */
-    public function setFormat($format) {
-        $this->resource->setImageFormat($format);
-
-        return $this;
-    }
 
     /**
      * @param  $width
@@ -108,8 +100,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $y = ($height - $this->getHeight()) / 2;
 
 
-        $newImage = new Imagick();
-        $newImage->newimage($width, $height, "transparent");
+        $newImage = $this->createImage($width, $height);
         $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT , $x, $y);
         $this->resource = $newImage;
 
@@ -125,12 +116,22 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function setBackgroundColor ($color) {
 
-        $newImage = new Imagick();
-        $newImage->newimage($this->getWidth(), $this->getHeight(), $color);
-        $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT , $x, $y);
+        $newImage = $this->createImage($this->getWidth(), $this->getHeight(), $color);
+        $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT , 0, 0);
         $this->resource = $newImage;
 
         return $this;
+    }
+
+    /**
+     * @param $width
+     * @param $height
+     * @return Imagick
+     */
+    protected  function createImage ($width, $height, $color = "transparent") {
+        $newImage = new Imagick();
+        $newImage->newimage($width, $height, $color);
+        return $newImage;
     }
 
 

@@ -242,15 +242,8 @@ abstract class Pimcore_Image_Adapter {
 
     /**
      * @abstract
-     * @param  $format
-     * @return Pimcore_Image_Adapter
-     */
-    public abstract function setFormat ($format);
-
-    /**
-     * @abstract
      * @param  $path
      * @return Pimcore_Image_Adapter
      */
-    public abstract function save ($path, $quality = null);
+    public abstract function save ($path, $format, $quality = null);
 }
