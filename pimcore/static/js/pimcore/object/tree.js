@@ -501,6 +501,11 @@ pimcore.object.tree = Class.create({
 
     addObjectCreate: function (classId, className, button, value, object) {
 
+        // check for ident filename in current level
+        if(this.attributes.reference.isExistingKeyInLevel(this, value)) {
+            return;
+        }
+
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/object/add",
@@ -521,9 +526,12 @@ pimcore.object.tree = Class.create({
 
     addFolderCreate: function (button, value, object) {
 
-        if (button == "ok") {
+        // check for ident filename in current level
+        if(this.attributes.reference.isExistingKeyInLevel(this, value)) {
+            return;
+        }
 
-            
+        if (button == "ok") {
 
             Ext.Ajax.request({
                 url: "/admin/object/add-folder",
@@ -560,6 +568,8 @@ pimcore.object.tree = Class.create({
 
 
     isExistingKeyInLevel: function (parentNode, key, node) {
+
+        key = pimcore.helpers.getValidFilename(key);
         var parentChilds = parentNode.childNodes;
         for (var i = 0; i < parentChilds.length; i++) {
             if (parentChilds[i].text == key && node != parentChilds[i]) {
@@ -651,6 +661,12 @@ pimcore.object.tree = Class.create({
     },
 
     editKeyComplete: function (button, value, object) {
+
+        // check for ident filename in current level
+        if(this.attributes.reference.isExistingKeyInLevel(this.parentNode, value, this)) {
+            return;
+        }
+
         if (button == "ok") {
 
             // check for ident filename in current level

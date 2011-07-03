@@ -741,6 +741,8 @@ pimcore.document.tree = Class.create({
     },
 
     isExistingKeyInLevel: function (parentNode, key, node) {
+
+        key = pimcore.helpers.getValidFilename(key);
         var parentChilds = parentNode.childNodes;
         for (var i = 0; i < parentChilds.length; i++) {
             if (parentChilds[i].text == key && node != parentChilds[i]) {
