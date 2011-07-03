@@ -59,6 +59,15 @@ class Object_Concrete extends Object_Abstract {
      */
     public $scheduledTasks = null;
 
+
+    /**
+     * @var bool
+     */
+    protected $omitMandatoryCheck = false;
+
+    /**
+     *
+     */
     public function __construct () {
 
         // set default values
@@ -136,7 +145,7 @@ class Object_Concrete extends Object_Abstract {
 
                 $value = $this->$getter();
 
-                $omitMandatoryCheck = false;
+                $omitMandatoryCheck = $this->getOmitMandatoryCheck();
                 $timeSinceCreation = (time()-$this->getCreationDate());
                 if($timeSinceCreation <= 5){
                     // legacy hack: in previous version there was no check for mandatory fields,
@@ -453,6 +462,21 @@ class Object_Concrete extends Object_Abstract {
         $this->setO_published($o_published);
     }
 
+    /**
+     * @param boolean $omitMandatoryCheck
+     */
+    public function setOmitMandatoryCheck($omitMandatoryCheck)
+    {
+        $this->omitMandatoryCheck = $omitMandatoryCheck;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getOmitMandatoryCheck()
+    {
+        return $this->omitMandatoryCheck;
+    }
 
     /**
      * @return array

@@ -875,6 +875,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $object = Object_Abstract::getById($this->_getParam("id"));
         $object->getPermissionsForUser($this->getUser());
 
+        if($object instanceof Object_Concrete) {
+            $object->setOmitMandatoryCheck(true);
+        }
+
         $values = Zend_Json::decode($this->_getParam("values"));
 
         if ($object->isAllowed("settings")) {

@@ -1282,12 +1282,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("o_userPermissions","o_dependencies","o_permissions","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_parent");
+            $blockedVars = array("o_userPermissions","o_dependencies","o_permissions","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_parent","omitMandatoryCheck");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("o_userPermissions","o_dependencies","o_permissions","o_childs","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_properties","o_parent","o___loadedLazyFields");
+            $blockedVars = array("o_userPermissions","o_dependencies","o_permissions","o_childs","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_properties","o_parent","o___loadedLazyFields","omitMandatoryCheck");
         }
         
 
