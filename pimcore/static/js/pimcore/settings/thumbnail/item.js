@@ -493,7 +493,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("setBackgroundColor"), myId, panel),
+            tbar: this.getTopBar(t("setbackgroundcolor"), myId, panel),
             items: [{
                 xtype: 'textfield',
                 name: "item." + myId  + ".color",
@@ -523,7 +523,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("roundCorners"), myId, panel),
+            tbar: this.getTopBar(t("roundcorners"), myId, panel),
             items: [{
                 xtype: 'compositefield',
                 items: [{
