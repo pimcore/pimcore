@@ -496,6 +496,11 @@ pimcore.asset.tree = Class.create({
                                 this.uploadWindowCompatible.hide();
                                 var f = this.attributes.reference.addAssetComplete.bind(this);
                                 f();
+                            }.bind(this),
+                            failure: function () {
+                                this.uploadWindowCompatible.hide();
+                                var f = this.attributes.reference.addAssetComplete.bind(this);
+                                f();
                             }.bind(this)
                         });
                     }.bind(this)

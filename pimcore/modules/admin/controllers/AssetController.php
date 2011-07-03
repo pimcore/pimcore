@@ -408,7 +408,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
     public function addAssetAction() {
         $success = $this->addAsset();
-        $this->_helper->json(array("success" => $success));
+        $this->_helper->json(array("success" => $success, "msg" => "Success"));
     }
 
     protected function addAsset () {
