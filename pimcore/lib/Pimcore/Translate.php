@@ -68,6 +68,12 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
 
     public function translate($messageId, $locale = null) {
 
+
+        // the maximum length of message-id's is 255
+        if(strlen($messageId) > 255) {
+            throw new Exception("Pimcore_Translate: Message ID's longer than 255 characters are invalid!");
+        }
+
         if ($locale === null) {
             $locale = $this->_options['locale'];
         }
