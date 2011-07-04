@@ -71,8 +71,12 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     protected function createImage ($width, $height) {
         $newImg = imagecreatetruecolor($width, $height);
-        $black = imagecolorallocate($newImg, 0, 0, 0);
-        imagecolortransparent($newImg, $black);
+        //$black = imagecolorallocate($newImg, 0, 0, 0);
+        //imagecolortransparent($newImg, $black);
+
+        imagealphablending($newImg, false);
+        $trans_colour = imagecolorallocatealpha($newImg, 255, 0, 0, 127);
+        imagefill($newImg, 0, 0, $trans_colour);
 
         return $newImg;
     }
@@ -190,7 +194,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     public function roundCorners ($x, $y) {
 
-        /*$corner_image = imagecreatetruecolor( $x, $y );
+        $corner_image = imagecreatetruecolor( $x, $y );
         $clear_colour = imagecolorallocate($corner_image, 0, 0, 0);
         $solid_colour = imagecolorallocatealpha($corner_image, 0, 0, 0, 127);
 
@@ -222,7 +226,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         $corner_image = imagerotate($corner_image, 180, 0);
         imagecopymerge( $this->resource, $corner_image, $this->getWidth() - $x, 0,  0, 0, $x, $y, 100 );
-        */
+
         
         return $this;
     }
