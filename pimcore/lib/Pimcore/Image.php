@@ -20,7 +20,6 @@ class Pimcore_Image {
      * @return null|Pimcore_Image_Adapter
      */
     public static function getInstance ($adapter = null) {
-
         try {
             if($adapter) {
                 $adapterClass = "Pimcore_Image_Adapter_" . $adapter;

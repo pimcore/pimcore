@@ -26,7 +26,10 @@ class Asset_Image_Thumbnail_Processor {
         "rotate" => array("angle"),
         "crop" => array("x","y","width","height"),
         "setBackgroundColor" => array("color"),
-        "roundCorners" => array("width","height")
+        "roundCorners" => array("width","height"),
+        "setBackgroundImage" => array("path"),
+        "addOverlay" => array("path", "x", "y", "alpha"),
+        "applyMask" => array("path")
     );
 
     /**
@@ -83,21 +86,27 @@ class Asset_Image_Thumbnail_Processor {
         //$imageFallback->resize($width, $height);
         //$imageFallback->save($fsPath, $format, $config->getQuality());
 
-        foreach ($config->getItems() as $transformation) {
-            $arguments = array();
-            $mapping = self::$argumentMapping[$transformation["method"]];
-            foreach ($transformation["arguments"] as $key => $value) {
-                $position = array_search($key, $mapping);
-                if($position !== false) {
-                    $arguments[$position] = $value;
+
+        $transformations = $config->getItems();
+        if(is_array($transformations) && count($transformations) > 0) {
+            foreach ($transformations as $transformation) {
+                if(!empty($transformation)) {
+                    $arguments = array();
+                    $mapping = self::$argumentMapping[$transformation["method"]];
+                    foreach ($transformation["arguments"] as $key => $value) {
+                        $position = array_search($key, $mapping);
+                        if($position !== false) {
+                            $arguments[$position] = $value;
+                        }
+                    }
+                    ksort($arguments);
+                    if(count($mapping) == count($arguments)) {
+                        call_user_func_array(array($image,$transformation["method"]),$arguments);
+                    } else {
+                        $message = "Image Transform failed: cannot call method `" . $transformation["method"] . "´ with arguments `" . implode(",",$arguments) . "´ because there are too few arguments";
+                        Logger::error($message);
+                    }
                 }
-            }
-            ksort($arguments);
-            if(count($mapping) == count($arguments)) {
-                call_user_func_array(array($image,$transformation["method"]),$arguments);
-            } else {
-                $message = "Image Transform failed: cannot call method `" . $transformation["method"] . "´ with arguments `" . implode(",",$arguments) . "´ because there are too few arguments";
-                Logger::error($message);
             }
         }
 

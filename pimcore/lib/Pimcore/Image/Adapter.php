@@ -220,6 +220,15 @@ abstract class Pimcore_Image_Adapter {
         return $this;
     }
 
+    /**
+     * @param  $image
+     * @return Pimcore_Image_Adapter
+     */
+    public function setBackgroundImage ($image) {
+        
+        return $this;
+    }
+
 
     /**
      * @param  $x
@@ -227,6 +236,27 @@ abstract class Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function roundCorners ($x, $y) {
+
+        return $this;
+    }
+
+    /**
+     * @param string $image
+     * @param int $x
+     * @param int $y
+     * @param int $alpha
+     * @return Pimcore_Image_Adapter
+     */
+    public function  addOverlay ($image, $x, $y, $alpha = 100) {
+
+        return $this;
+    }
+
+    /**
+     * @param  $image
+     * @return Pimcore_Image_Adapter
+     */
+    public function applyMask ($image) {
 
         return $this;
     }

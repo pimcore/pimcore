@@ -162,4 +162,69 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         return $this;
     }
+
+
+    /**
+     * @param  $color
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function setBackgroundImage ($image) {
+
+        $image = ltrim($image,"/");
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+
+        if(is_file($image)) {
+            $newImage = new Imagick();
+            $newImage->readimage($image);
+            $newImage->resizeimage($this->getWidth(), $this->getHeight(), Imagick::FILTER_UNDEFINED, 1, false);
+            $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT, 0 ,0);
+            $this->resource = $newImage;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $image
+     * @param int $x
+     * @param int $y
+     * @param int $alpha
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100) {
+                
+        $image = ltrim($image,"/");
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+        $alpha = round($alpha / 100, 1);
+
+        if(is_file($image)) {
+            $newImage = new Imagick();
+            $newImage->readimage($image);
+            $newImage->setimageopacity($alpha);
+            $this->resource->compositeImage($newImage, Imagick::COMPOSITE_DEFAULT, $x ,$y);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @param  $image
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function applyMask ($image) {
+
+        $image = ltrim($image,"/");
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+
+        if(is_file($image)) {
+            $this->resource->setImageMatte(1);
+            $newImage = new Imagick();
+            $newImage->readimage($image);
+            $newImage->resizeimage($this->getWidth(), $this->getHeight(), Imagick::FILTER_UNDEFINED, 1, false);
+            $this->resource->compositeImage($newImage, Imagick::COMPOSITE_DSTIN, 0 ,0);
+        }
+
+        return $this;
+    }
 }

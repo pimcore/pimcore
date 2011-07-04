@@ -88,7 +88,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
     }
 
-    private function deleteThumbnailTmpFiles(Asset_Image_Thumbnail $thumbnail) {
+    private function deleteThumbnailTmpFiles(Asset_Image_Thumbnail_Config $thumbnail) {
         // delete all thumbnails which are using this config
         $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
         foreach ($files as $file) {
@@ -1254,6 +1254,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
 
         $pipe->save();
+
+        $this->deleteThumbnailTmpFiles($pipe);
 
         $this->_helper->json(array("success" => true));
     }

@@ -109,10 +109,14 @@ class Asset_Image_Thumbnail_Config {
         $configXml = new Zend_Config_Xml($this->getConfigFile());
         $configArray = $configXml->toArray();
 
-        if(array_key_exists("method",$configArray["items"]["item"])) {
-            $configArray["items"] = array($configArray["items"]["item"]);
+        if(array_key_exists("items",$configArray) && is_array($configArray["items"]["item"])) {
+            if(array_key_exists("method",$configArray["items"]["item"])) {
+                $configArray["items"] = array($configArray["items"]["item"]);
+            } else {
+                $configArray["items"] = $configArray["items"]["item"];
+            }
         } else {
-            $configArray["items"] = $configArray["items"]["item"];
+            $configArray["items"] = array("item" => array());
         }
 
         foreach ($configArray as $key => $value) {

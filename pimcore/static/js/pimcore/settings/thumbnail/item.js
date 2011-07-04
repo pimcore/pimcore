@@ -553,5 +553,114 @@ pimcore.settings.thumbnail.items = {
         });
 
         return item;
-    }
+    },
+
+    itemSetBackgroundImage: function (panel, data) {
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.Panel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(t("setbackgroundimage"), myId, panel),
+            items: [{
+                xtype: 'textfield',
+                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                name: "item." + myId  + ".path",
+                value: data.path,
+                width: 350
+            },{
+                xtype: "hidden",
+                name: "item." + myId  + ".type",
+                value: "setBackgroundImage"
+            }]
+        });
+
+        return item;
+    },
+
+    itemAddOverlay: function (panel, data) {
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.Panel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(t("addoverlay"), myId, panel),
+            items: [{
+                xtype: 'textfield',
+                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                name: "item." + myId  + ".path",
+                value: data.path,
+                width: 350
+            },{
+                xtype: 'compositefield',
+                items: [{
+                    xtype: 'spinnerfield',
+                    name: "item." + myId  + ".x",
+                    fieldLabel: "X",
+                    width: 50,
+                    value: data.x
+                },
+                {
+                    xtype: 'spinnerfield',
+                    name: "item." + myId  + ".y",
+                    fieldLabel: "Y",
+                    width: 50,
+                    value: data.y
+                }]
+            },{
+                xtype: 'spinnerfield',
+                name: "item." + myId  + ".alpha",
+                fieldLabel: t("opacity") + " (0-100)",
+                width: 50,
+                value: data.alpha
+            },{
+                xtype: "hidden",
+                name: "item." + myId  + ".type",
+                value: "addOverlay"
+            }]
+        });
+
+        return item;
+    },
+
+    itemApplyMask: function (panel, data) {
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.Panel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(t("applymask"), myId, panel),
+            items: [{
+                xtype: 'textfield',
+                fieldLabel: t("path") + " <br />(rel. to doc-root)",
+                name: "item." + myId  + ".path",
+                value: data.path,
+                width: 350
+            },{
+                xtype: "hidden",
+                name: "item." + myId  + ".type",
+                value: "applyMask"
+            }]
+        });
+
+        return item;
+    },
 }

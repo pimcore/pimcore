@@ -30,7 +30,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      *
      * @var string
      */
-    public $phpdocType = "Object_Fieldcollection_Data_Abstract[]";
+    public $phpdocType = "Object_Fieldcollection";
 
     /**
      * @var string
