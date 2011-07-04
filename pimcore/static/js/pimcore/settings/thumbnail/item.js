@@ -229,7 +229,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("scaleByHeight"), myId, panel),
+            tbar: this.getTopBar(t("scalebyheight"), myId, panel),
             items: [{
                 xtype: 'spinnerfield',
                 name: "item." + myId  + ".height",
@@ -258,7 +258,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("scaleByWidth"), myId, panel),
+            tbar: this.getTopBar(t("scalebywidth"), myId, panel),
             items: [{
                 xtype: 'spinnerfield',
                 name: "item." + myId  + ".width",
