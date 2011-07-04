@@ -15,7 +15,8 @@ foreach ($list->getThumbnails() as $thumbnail) {
     if ($thumbnail->getCover()) {
         $pipe->addItem("cover", array(
             "width" => $thumbnail->getWidth(),
-            "height" => $thumbnail->getHeight()
+            "height" => $thumbnail->getHeight(),
+            "positioning" => "center"
         ));
     }
     else if ($thumbnail->getContain()) {
