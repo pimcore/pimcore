@@ -528,7 +528,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("roundcorners"), myId, panel),
+            tbar: this.getTopBar(t("roundcorners") + " (Imagick)", myId, panel),
             items: [{
                 xtype: 'compositefield',
                 items: [{
@@ -567,7 +567,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("setbackgroundimage"), myId, panel),
+            tbar: this.getTopBar(t("setbackgroundimage") + " (Imagick)", myId, panel),
             items: [{
                 xtype: 'textfield',
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
@@ -596,7 +596,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("addoverlay"), myId, panel),
+            tbar: this.getTopBar(t("addoverlay") + " (Imagick)", myId, panel),
             items: [{
                 xtype: 'textfield',
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
@@ -647,7 +647,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("applymask"), myId, panel),
+            tbar: this.getTopBar(t("applymask") + " (Imagick)", myId, panel),
             items: [{
                 xtype: 'textfield',
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
