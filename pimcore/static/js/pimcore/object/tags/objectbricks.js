@@ -135,8 +135,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
 
     getDeleteControl: function(type, blockElement) {
+        var items = [];
         if(!this.preventDelete[type]) {
-            var items = [];
             items.push({
                 cls: "pimcore_block_button_minus",
                 iconCls: "pimcore_icon_minus",
@@ -144,18 +144,17 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     "click": this.removeBlock.bind(this, blockElement)
                 }
             });
-            items.push({
-                xtype: "tbtext",
-                text: ts(type)
-            });
-
-            var toolbar = new Ext.Toolbar({
-                items: items
-            });
-
-            return toolbar;
         }
-        return null;
+        items.push({
+            xtype: "tbtext",
+            text: ts(type)
+        });
+
+        var toolbar = new Ext.Toolbar({
+            items: items
+        });
+
+        return toolbar;
     },
     
     addBlock: function (blockElement, type) {

@@ -124,25 +124,26 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             if(empty($relations) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}();
-                return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
-            } else {
-                $data = array();
+                if(!empty($parentItem)) {
+                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
+                }
+            }
+            $data = array();
 
-                if ($fielddefinition instanceof Object_Class_Data_Href) {
-                    $data = $relations[0];
-                } else {
-                    foreach ($relations as $rel) {
-                        if ($fielddefinition instanceof Object_Class_Data_Objects) {
-                            $data[] = array($rel["id"], $rel["path"], $rel["subtype"]);
-                        } else {
-                            $data[] = array($rel["id"], $rel["path"], $rel["type"], $rel["subtype"]);
-                        }
+            if ($fielddefinition instanceof Object_Class_Data_Href) {
+                $data = $relations[0];
+            } else {
+                foreach ($relations as $rel) {
+                    if ($fielddefinition instanceof Object_Class_Data_Objects) {
+                        $data[] = array($rel["id"], $rel["path"], $rel["subtype"]);
+                    } else {
+                        $data[] = array($rel["id"], $rel["path"], $rel["type"], $rel["subtype"]);
                     }
                 }
-                $result->objectData = $data;
-                $result->metaData['objectid'] = $baseObject->getId();
-                $result->metaData['inherited'] = $level != 0;
             }
+            $result->objectData = $data;
+            $result->metaData['objectid'] = $baseObject->getId();
+            $result->metaData['inherited'] = $level != 0;
 
         } else {
             $value = null;
@@ -151,12 +152,13 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             }
             if(empty($value) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
-                return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
-            } else {
-                $result->objectData = $value;
-                $result->metaData['objectid'] = $baseObject->getId();
-                $result->metaData['inherited'] = $level != 0;
+                if(!empty($parentItem)) {
+                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
+                }
             }
+            $result->objectData = $value;
+            $result->metaData['objectid'] = $baseObject->getId();
+            $result->metaData['inherited'] = $level != 0;
         }
         return $result;
     }
@@ -536,11 +538,13 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @throws Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false) {
-
         if(!$omitMandatoryCheck){
             if ($data instanceof Object_Objectbrick) {
                 $items = $data->getItems();
                 foreach ($items as $item) {
+                    if($item->getDoDelete()) {
+                        continue;
+                    }
 
                     if (!$item instanceof Object_Objectbrick_Data_Abstract) {
                         continue;

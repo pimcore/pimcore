@@ -589,7 +589,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if ($object instanceof Object_Concrete) {
                 $objectData["lazyLoadedFields"] = $object->getLazyLoadedFields();
             }
-
             $this->_helper->json($objectData);
         }
         else {

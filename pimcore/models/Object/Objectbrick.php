@@ -120,7 +120,6 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
                         $brick = new $brickType($object);
                         $brick->setFieldname($this->getFieldname());
                         $brick->save($object);
-
                     }
 
 
@@ -177,11 +176,4 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
         }
     }
     
-    
-//    public function isEmpty () {
-//        if(count($this->getItems()) < 1) {
-//            return true;
-//        }
-//        return false;
-//    }
 }
