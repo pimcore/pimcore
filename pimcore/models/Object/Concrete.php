@@ -502,11 +502,17 @@ class Object_Concrete extends Object_Abstract {
      */
     public function getValueFromParent($key) {
         if ($this->getO_parent() instanceof Object_Abstract) {
-            if ($this->getO_parent()->getO_type() == "object" || $this->getO_parent()->getO_type() == "variant") {
-                if ($this->getO_parent()->getO_classId() == $this->getO_classId()) {
+
+            $parent = $this->getO_parent();
+            while($parent && $parent->getO_type() == "folder") {
+                $parent = $parent->getO_parent();
+            }
+
+            if ($parent && ($parent->getO_type() == "object" || $parent->getO_type() == "variant")) {
+                if ($parent->getO_classId() == $this->getO_classId()) {
                     $method = "get" . $key;
-                    if (method_exists($this->getO_parent(), $method)) {
-                        return $this->getO_parent()->$method();
+                    if (method_exists($parent, $method)) {
+                        return $parent->$method();
                     }
                 }
             }

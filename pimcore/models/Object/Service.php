@@ -299,9 +299,14 @@ class Object_Service extends Element_Service {
     public static function hasInheritableParentObject(Object_Concrete $object) {
         if($object->getO_class()->getAllowInherit()) {
             if ($object->getO_parent() instanceof Object_Abstract) {
-                if ($object->getO_parent()->getO_type() == "object" || $object->getO_parent()->getO_type() == "variant") {
-                    if ($object->getO_parent()->getO_classId() == $object->getO_classId()) {
-                        return $object->getO_parent();
+                $parent = $object->getO_parent();
+                while($parent && $parent->getO_type() == "folder") {
+                    $parent = $parent->getO_parent();
+                }
+
+                if ($parent && ($parent->getO_type() == "object" || $parent->getO_type() == "variant")) {
+                    if ($parent->getO_classId() == $object->getO_classId()) {
+                        return $parent;
                     }
                 }
             }
