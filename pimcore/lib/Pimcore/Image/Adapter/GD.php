@@ -227,23 +227,4 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         return $this;
     }
 
-    /**
-     * @param  $color
-     * @return Pimcore_Image_Adapter_GD
-     */
-    public function setBackgroundImage ($image) {
-
-        /*
-        $image = ltrim($image,"/");
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
-
-        if(is_file($image)) {
-            $newImage = imagecreatefromstring(file_get_contents($image));
-            imagecopy($newImage, $this->resource,0, 0, 0, 0, $this->getWidth(), $this->getHeight());
-            $this->resource = $newImage;
-        }
-        */
-
-        return $this;
-    }
 }
