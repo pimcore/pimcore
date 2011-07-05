@@ -208,12 +208,15 @@ class Pimcore_Model_Cache {
             
             
             // check for cleared tags, only item which are not cleared within the same session are stored to the cache
-            foreach ($tags as $t) {
-                if(in_array($t,self::$clearStack)) {
-                    Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
-                    return;
+            if(is_array($tags)){
+                foreach ($tags as $t) {
+                    if(in_array($t,self::$clearStack)) {
+                        Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
+                        return;
+                    }
                 }
             }
+
             
     
             $key = self::$cachePrefix . $key;
