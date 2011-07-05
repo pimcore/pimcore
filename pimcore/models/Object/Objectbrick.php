@@ -89,9 +89,15 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
                     $this->$setter(null);
 
                     //check if parent object has brick, and if so, create an empty brick to enable inheritance
+                    $parentBrick = null;
                     $inheritanceModeBackup = Object_Abstract::getGetInheritedValues();
                     Object_Abstract::setGetInheritedValues(true);
-                    $parentBrick = $this->$getter();
+                    if(Object_Abstract::doGetInheritedValues($object)) {
+                        $container = $object->getValueFromParent($this->fieldname);
+                        if(!empty($container)) {
+                            $parentBrick = $container->$getter();
+                        }
+                    }
                     Object_Abstract::setGetInheritedValues($inheritanceModeBackup);
 
                     if(!empty($parentBrick)) {
@@ -110,9 +116,15 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
 
             } else {
                 if($brick == null) {
+                    $parentBrick = null;
                     $inheritanceModeBackup = Object_Abstract::getGetInheritedValues();
                     Object_Abstract::setGetInheritedValues(true);
-                    $parentBrick = $this->$getter();
+                    if(Object_Abstract::doGetInheritedValues($object)) {
+                        $container = $object->getValueFromParent($this->fieldname);
+                        if(!empty($container)) {
+                            $parentBrick = $container->$getter();
+                        }
+                    }
                     Object_Abstract::setGetInheritedValues($inheritanceModeBackup);
 
                     if(!empty($parentBrick)) {
@@ -129,37 +141,6 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
   
 
         }
-
-//        p_r($this);
-
-       /* if(is_array($this->getItems())) {
-            foreach ($this->getItems() as $brick) {
-                if($brick instanceof Object_Objectbrick_Data_Abstract) {
-                    if($brick->getDoDelete()) {
-                        $brick->delete($object);
-
-                        //check if parent object has brick, and if so, create an empty brick to enable inheritance
-                        $inheritanceModeBackup = Object_Abstract::getGetInheritedValues();
-                        Object_Abstract::setGetInheritedValues(true);
-                        $parentBrick = $this->$getter();
-                        Object_Abstract::setGetInheritedValues($inheritanceModeBackup);
-
-                        if(!empty($parentBrick)) {
-                            $brickType = "Object_Objectbrick_Data_" . ucfirst($parentBrick->getType());
-                            $brick = new $brickType($object);
-                            $brick->setFieldname($this->getFieldname());
-                            $brick->save($object);
-                            $this->$setter($brick);
-                        }
-
-                    } else  {
-                        $brick->setFieldname($this->getFieldname());
-                        $brick->save($object);
-                    }
-
-                }
-            }
-        }*/
     }
 
     public function getObject() {
