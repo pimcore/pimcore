@@ -467,7 +467,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setOmitMandatoryCheck($omitMandatoryCheck)
     {
-        $this->omitMandatoryCheck = $omitMandatoryCheck;
+        $this->omitMandatoryCheck = $omitMandatoryCheck; 
     }
 
     /**
