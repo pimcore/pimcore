@@ -38,6 +38,30 @@ class Document_Tag_Image extends Document_Tag {
      */
     public $image;
 
+    /**
+     * @var bool
+     */
+    public $cropPercent = false;
+
+    /**
+     * @var float
+     */
+    public $cropWidth;
+
+    /**
+     * @var float
+     */
+    public $cropHeight;
+
+    /**
+     * @var float
+     */
+    public $cropTop;
+
+    /**
+     * @var float
+     */
+    public $cropLeft;
 
     /**
      * @see Document_Tag_Interface::getType
@@ -54,7 +78,12 @@ class Document_Tag_Image extends Document_Tag {
     public function getData() {
         return array(
             "id" => $this->id,
-            "alt" => $this->alt
+            "alt" => $this->alt,
+            "cropPercent" => $this->cropPercent,
+            "cropWidth" => $this->cropWidth,
+            "cropHeight" => $this->cropHeight,
+            "cropTop" => $this->cropTop,
+            "cropLeft" => $this->cropLeft
         );
     }
 
@@ -68,7 +97,12 @@ class Document_Tag_Image extends Document_Tag {
             return array(
                 "id" => $this->id,
                 "path" => $this->image->getPath() . $this->image->getFilename(),
-                "alt" => $this->alt
+                "alt" => $this->alt,
+                "cropPercent" => $this->cropPercent,
+                "cropWidth" => $this->cropWidth,
+                "cropHeight" => $this->cropHeight,
+                "cropTop" => $this->cropTop,
+                "cropLeft" => $this->cropLeft
             );
         }
         return null;
@@ -84,7 +118,20 @@ class Document_Tag_Image extends Document_Tag {
             $thumbnailInUse = false;
             if ($this->options["thumbnail"]) {
                 // create a thumbnail first
-                if ($imagePath = $this->image->getThumbnail($this->options["thumbnail"])) {
+
+                $thumbConfig = $this->image->getThumbnailConfig($this->options["thumbnail"]);
+                if($this->cropPercent) {
+                    $thumbConfig->addItemAt(0,"cropPercent", array(
+                        "width" => $this->cropWidth,
+                        "height" => $this->cropHeight,
+                        "y" => $this->cropTop,
+                        "x" => $this->cropLeft
+                    ));
+                    $hash = md5(serialize($thumbConfig->getItems()));
+                    $thumbConfig->setName("auto_" . $hash);
+                }
+
+                if ($imagePath = $this->image->getThumbnail($thumbConfig)) {
                     list($width, $height) = getimagesize(PIMCORE_DOCUMENT_ROOT . $imagePath);
                     $thumbnailInUse = true;
                 }
@@ -144,6 +191,11 @@ class Document_Tag_Image extends Document_Tag {
 
         $this->id = $data["id"];
         $this->alt = $data["alt"];
+        $this->cropPercent = $data["cropPercent"];
+        $this->cropWidth = $data["cropWidth"];
+        $this->cropHeight = $data["cropHeight"];
+        $this->cropTop = $data["cropTop"];
+        $this->cropLeft = $data["cropLeft"];
 
         try {
             $this->image = Asset_Image::getById($this->id);
@@ -160,6 +212,11 @@ class Document_Tag_Image extends Document_Tag {
     public function setDataFromEditmode($data) {
         $this->id = $data["id"];
         $this->alt = $data["alt"];
+        $this->cropPercent = $data["cropPercent"];
+        $this->cropWidth = $data["cropWidth"];
+        $this->cropHeight = $data["cropHeight"];
+        $this->cropTop = $data["cropTop"];
+        $this->cropLeft = $data["cropLeft"];
 
         $this->image = Asset_Image::getById($this->id);
     }
@@ -272,6 +329,86 @@ class Document_Tag_Image extends Document_Tag {
         }
 
 
+    }
+
+    /**
+     * @param float $cropHeight
+     */
+    public function setCropHeight($cropHeight)
+    {
+        $this->cropHeight = $cropHeight;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCropHeight()
+    {
+        return $this->cropHeight;
+    }
+
+    /**
+     * @param float $cropLeft
+     */
+    public function setCropLeft($cropLeft)
+    {
+        $this->cropLeft = $cropLeft;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCropLeft()
+    {
+        return $this->cropLeft;
+    }
+
+    /**
+     * @param boolean $cropPercent
+     */
+    public function setCropPercent($cropPercent)
+    {
+        $this->cropPercent = $cropPercent;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCropPercent()
+    {
+        return $this->cropPercent;
+    }
+
+    /**
+     * @param float $cropTop
+     */
+    public function setCropTop($cropTop)
+    {
+        $this->cropTop = $cropTop;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCropTop()
+    {
+        return $this->cropTop;
+    }
+
+    /**
+     * @param float $cropWidth
+     */
+    public function setCropWidth($cropWidth)
+    {
+        $this->cropWidth = $cropWidth;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCropWidth()
+    {
+        return $this->cropWidth;
     }
 
 }

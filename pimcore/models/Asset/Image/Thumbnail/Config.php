@@ -159,6 +159,21 @@ class Asset_Image_Thumbnail_Config {
         return true;
     }
 
+    /**
+     * @param  $name
+     * @param  $parameters
+     * @return bool
+     */
+    public function addItemAt ($position, $name, $parameters) {
+
+        array_splice($this->items, $position, 0, array(array(
+            "method" => $name,
+            "arguments" => $parameters
+        )));
+
+        return true;
+    }
+
 
     /**
      * @return void
@@ -284,7 +299,6 @@ class Asset_Image_Thumbnail_Config {
     public static function getByLegacyConfig ($config) {
 
         $pipe = new Asset_Image_Thumbnail_Config();
-
         $hash = md5(serialize($config));
         $pipe->setName("auto_" . $hash);
 
@@ -294,6 +308,15 @@ class Asset_Image_Thumbnail_Config {
         if($config["quality"]) {
             $pipe->setQuality($config["quality"]);
         }
+        /*if ($config["cropPercent"]) {
+            $pipe->addItem("cropPercent", array(
+                "width" => $config["cropWidth"],
+                "height" => $config["cropHeight"],
+                "y" => $config["cropTop"],
+                "x" => $config["cropLeft"]
+            ));
+        }*/
+
 
 
         if ($config["cover"]) {
@@ -304,6 +327,12 @@ class Asset_Image_Thumbnail_Config {
         }
         else if ($config["contain"]) {
             $pipe->addItem("contain", array(
+                "width" => $config["width"],
+                "height" => $config["height"]
+            ));
+        }
+        else if ($config["frame"]) {
+            $pipe->addItem("frame", array(
                 "width" => $config["width"],
                 "height" => $config["height"]
             ));

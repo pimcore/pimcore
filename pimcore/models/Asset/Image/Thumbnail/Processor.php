@@ -29,7 +29,8 @@ class Asset_Image_Thumbnail_Processor {
         "roundCorners" => array("width","height"),
         "setBackgroundImage" => array("path"),
         "addOverlay" => array("path", "x", "y", "alpha"),
-        "applyMask" => array("path")
+        "applyMask" => array("path"),
+        "cropPercent" => array("width","height","x","y")
     );
 
     /**
@@ -67,7 +68,7 @@ class Asset_Image_Thumbnail_Processor {
 
         // check for existing and still valid thumbnail
         if (is_file($fsPath) and filemtime($fsPath) > $asset->getModificationDate()) {
-            //return $path;
+            return $path;
         }
 
         // check dimensions

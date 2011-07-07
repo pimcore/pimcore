@@ -954,11 +954,23 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $thumbnail = $image->getThumbnailConfig($this->_getAllParams());
             }
         }
-
+        
         $format = strtolower($thumbnail->getFormat());
         if ($format == "source") {
             $thumbnail->setFormat("PNG");
             $format = "png";
+        }
+
+        if ($this->_getParam("cropPercent")) {
+            $thumbnail->addItemAt(0,"cropPercent", array(
+                "width" => $this->_getParam("cropWidth"),
+                "height" => $this->_getParam("cropHeight"),
+                "y" => $this->_getParam("cropTop"),
+                "x" => $this->_getParam("cropLeft")
+            ));
+
+            $hash = md5(serialize($this->_getAllParams()));
+            $thumbnail->setName("auto_" . $hash);
         }
 
 

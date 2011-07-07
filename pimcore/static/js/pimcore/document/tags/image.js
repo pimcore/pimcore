@@ -118,6 +118,19 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     onContextMenu: function (e) {
 
         var menu = new Ext.menu.Menu();
+
+        if(this.datax.id) {
+            menu.add(new Ext.menu.Item({
+                text: t('edit'),
+                iconCls: "pimcore_icon_edit",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+
+                    this.openEditWindow();
+                }.bind(this)
+            }));
+        }
+
         menu.add(new Ext.menu.Item({
             text: t('empty'),
             iconCls: "pimcore_icon_delete",
@@ -164,6 +177,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     onNodeDrop: function (target, dd, e, data) {
 
         if (data.node.attributes.type == "image") {
+            this.resetData();
             this.datax.id = data.node.attributes.id;
 
             this.updateImage();
@@ -192,6 +206,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     
     addDataFromSelector: function (item) {        
         if(item) {
+            this.resetData();
             this.datax.id = item.id;
 
             this.updateImage();
@@ -201,8 +216,15 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         }
     },
 
+    resetData: function () {
+        this.datax = {
+            id: null
+        };
+    },
+
     empty: function () {
-        this.datax.id = null;
+
+        this.resetData();
 
         this.updateImage();
         this.getBody().addClass("pimcore_tag_image_empty");
@@ -232,14 +254,14 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
 
         if (!this.options.thumbnail) {
-            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.element.getEl().getWidth() + "/aspectratio/true";
+            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.element.getEl().getWidth() + "/aspectratio/true?" + Ext.urlEncode(this.datax);
         }
         else {
             if (typeof this.options.thumbnail == "string") {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail;
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail + "?" + Ext.urlEncode(this.datax);
             }
             else if (this.options.thumbnail.width || this.options.thumbnail.height) {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height;
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height + "?" + Ext.urlEncode(this.datax);
             }
         }
 
@@ -325,6 +347,77 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         }
 
         this.updateCounter++;
+    },
+
+    openEditWindow: function() {
+
+        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.datax.id + '/width/500/height/400/contain/true';
+
+        this.editWindow = new Ext.Window({
+            width: 500,
+            height: 400,
+            modal: true,
+            closeAction: "close",
+            resizable: false,
+            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat;",
+            bbar: ["->", {
+                xtype: "button",
+                iconCls: "pimcore_icon_apply",
+                text: t("save"),
+                handler: function () {
+
+                    var originalWidth = this.editWindow.getInnerWidth();
+                    var originalHeight = this.editWindow.getInnerHeight();
+
+                    var dimensions = Ext.get("selector").getStyles("top","left","width","height");
+
+                    var newWidth = intval(dimensions.width);
+                    var newHeight = intval(dimensions.height);
+                    var top = intval(dimensions.top);
+                    var left = intval(dimensions.left);
+
+                    this.datax.cropWidth = newWidth * 100 / originalWidth;
+                    this.datax.cropHeight = newHeight * 100 / originalHeight;
+                    this.datax.cropTop = top * 100 / originalHeight;
+                    this.datax.cropLeft = left * 100 / originalWidth;
+                    this.datax.cropPercent = true;
+                    
+                    this.resizer = null;
+                    this.editWindow.close();
+
+                    this.updateImage();
+                }.bind(this)
+            }],
+            html: '<img id="selectorImage" src="' + imageUrl + '" /><div id="selector" style="cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;"></div>'
+        });
+
+        this.editWindow.on("afterrender", function ( ){
+            this.editWindowInterval = window.setInterval(function () {
+                var el = Ext.get("selectorImage");
+                if(el) {
+                    if(el.getWidth() > 10) {
+                        clearInterval(this.editWindowInterval);
+                        this.editWindow.setSize(el.getWidth() + 14, el.getHeight() + 32 + 27);
+                        Ext.get("selectorImage").remove();
+
+                        this.resizer = new Ext.Resizable('selector', {
+                            pinned:true,
+                            minWidth:50,
+                            minHeight: 50,
+                            preserveRatio: false,
+                            dynamic:true,
+                            handles: 'all',
+                            draggable:true,
+                            width: 100,
+                            height: 100
+                        });
+                    }
+                }
+            }.bind(this), 500);
+            
+        }.bind(this));
+
+        this.editWindow.show();
     },
 
     getValue: function () {

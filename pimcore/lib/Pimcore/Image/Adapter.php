@@ -261,6 +261,19 @@ abstract class Pimcore_Image_Adapter {
         return $this;
     }
 
+    public function  cropPercent ($width, $height, $x, $y) {
+
+        $originalWidth = $this->getWidth();
+        $originalHeight = $this->getHeight();
+
+        $widthPixel = $originalWidth * ($width / 100);
+        $heightPixel = $originalHeight * ($height / 100);
+        $xPixel = $originalWidth * ($x / 100);
+        $yPixel = $originalHeight * ($y / 100);
+
+        return $this->crop($xPixel, $yPixel, $widthPixel, $heightPixel);
+    }
+
 
     /**
      * @abstract

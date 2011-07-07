@@ -54,7 +54,7 @@ class Asset_Image extends Asset {
      * @return Asset_Image_Thumbnail|bool|Thumbnail
      */
     public function getThumbnailConfig ($config) {
-        
+
         if (is_string($config)) {
             try {
                 $thumbnail = Asset_Image_Thumbnail_Config::getByName($config);
