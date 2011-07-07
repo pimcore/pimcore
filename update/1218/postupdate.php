@@ -69,6 +69,9 @@ foreach ($tableData as $row) {
     $dumpData .= "\n";
 }
 
+if(!is_dir(PIMCORE_BACKUP_DIRECTORY)) {
+    mkdir(PIMCORE_BACKUP_DIRECTORY);
+}
 file_put_contents(PIMCORE_BACKUP_DIRECTORY . "/update-1218-recovery.sql",$dumpData);
 
 // drop thumbnail table
