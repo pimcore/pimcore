@@ -2182,7 +2182,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
 
         $id = $this->_getParam("id");
-        $object = Object_Abstract::getById($id);
+        $key = "object_" . $id;
+        $session = new Zend_Session_Namespace("pimcore_objects");
+        if($session->$key) {
+            $object = $session->$key;
+        } else {
+            die("Preview not available, it seems that there's a problem with this object.");
+        }
+
         $url = $object->getClass()->getPreviewUrl();
 
         // replace named variables
@@ -2190,6 +2197,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         foreach ($vars as $key => $value) {
             if(!empty($value)) {
                 $url = str_replace("%".$key, urlencode($value), $url);
+            } else {
+                if(strpos($url, "%".$key) !== false) {
+                    die("No preview available, please ensure that all fields which are required for the preview are filled correctly.");
+                }
             }
         }
 
