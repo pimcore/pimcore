@@ -394,10 +394,13 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.editWindow.on("afterrender", function ( ){
             this.editWindowInterval = window.setInterval(function () {
                 var el = Ext.get("selectorImage");
+                var imageWidth = el.getWidth();
+                var imageHeight = el.getHeight();
+                
                 if(el) {
                     if(el.getWidth() > 10) {
                         clearInterval(this.editWindowInterval);
-                        this.editWindow.setSize(el.getWidth() + 14, el.getHeight() + 32 + 27);
+                        this.editWindow.setSize(imageWidth + 14, imageHeight + 32 + 27);
                         Ext.get("selectorImage").remove();
 
                         this.resizer = new Ext.Resizable('selector', {
@@ -411,6 +414,15 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                             width: 100,
                             height: 100
                         });
+
+                        if(this.datax.cropPercent) {
+                            Ext.get("selector").applyStyles({
+                                width: (imageWidth * (this.datax.cropWidth / 100)) + "px",
+                                height: (imageHeight * (this.datax.cropHeight / 100)) + "px",
+                                top: (imageHeight * (this.datax.cropTop / 100)) + "px",
+                                left: (imageWidth * (this.datax.cropLeft / 100)) + "px",
+                            });
+                        }
                     }
                 }
             }.bind(this), 500);
