@@ -484,6 +484,13 @@ pimcore.object.classes.klass = Class.create({
                     }
                 },
                 {
+                    xtype: "textfield",
+                    fieldLabel: t("preview_url"),
+                    name: "previewUrl",
+                    width: 400,
+                    value: this.data.previewUrl
+                },
+                {
                     xtype: "displayfield",
                     hideLabel: true,
                     width: 600,

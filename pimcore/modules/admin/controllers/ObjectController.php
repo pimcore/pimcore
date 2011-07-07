@@ -549,8 +549,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         // check for lock
         if (Element_Editlock::isLocked($this->_getParam("id"), "object")) {
             $this->_helper->json(array(
-                                      "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "object")
-                                 ));
+                  "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "object")
+            ));
         }
         Element_Editlock::lock($this->_getParam("id"), "object");
 
@@ -566,6 +566,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData = array();
 
             $objectData["idPath"] = Pimcore_Tool::getIdPathForElement($object);
+            $objectData["previewUrl"] = $object->getClass()->getPreviewUrl();
             $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
             $this->getDataForObject($object);
             $objectData["data"] = $this->objectData;
@@ -1027,6 +1028,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
             }
 
+        }
+        else if ($this->_getParam("task") == "session") {
+            $key = "object_" . $object->getId();
+            $session = new Zend_Session_Namespace("pimcore_objects");
+            //$object->_fulldump = true; // not working yet, donno why
+            $session->$key = $object;
+
+            $this->_helper->json(array("success" => true));
         }
         else {
             if ($object->isAllowed("save")) {
@@ -2168,6 +2177,25 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array("success" => $success));
     }
 
+
+    public function previewAction () {
+
+
+        $id = $this->_getParam("id");
+        $object = Object_Abstract::getById($id);
+        $url = $object->getClass()->getPreviewUrl();
+
+        // replace named variables
+        $vars = get_object_vars($object);
+        foreach ($vars as $key => $value) {
+            if(!empty($value)) {
+                $url = str_replace("%".$key, urlencode($value), $url);
+            }
+        }
+
+        $urlParts = parse_url($url);
+        $this->_redirect($urlParts["path"] . "?pimcore_object_preview=" . $id . "&_dc=" . time() . "&" . $urlParts["query"]);
+    }
 
     /**
      * @param  Object_Concrete $object

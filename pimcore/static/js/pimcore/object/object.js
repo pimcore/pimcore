@@ -25,6 +25,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.edit = new pimcore.object.edit(this);
 
+        this.preview = new pimcore.object.preview(this);
         this.properties = new pimcore.settings.properties(this, "object");
         this.versions = new pimcore.object.versions(this);
         this.scheduler = new pimcore.settings.scheduler(this, "object");
@@ -179,6 +180,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var items = [];
 
         items.push(this.edit.getLayout(this.data.layout));
+
+        if(!empty(this.data.previewUrl)) {
+            items.push(this.preview.getLayout());
+        }
 
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
@@ -455,8 +460,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
     },
 
-    save : function (task, only) {
+    saveToSession: function (callback) {
+        this.save("session", null, callback);
+    },
 
+    save : function (task, only, callback) {
+
+        var callback = callback;
         var saveData = this.getSaveData(only);
 
         if (saveData.data != "false") {
@@ -476,22 +486,29 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 method: "post",
                 params: saveData,
                 success: function (response) {
-                    try{
-                        var rdata = Ext.decode(response.responseText);
-                        if (rdata && rdata.success) {
-                            pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+
+                    if(task != "session") {
+                        try{
+                            var rdata = Ext.decode(response.responseText);
+                            if (rdata && rdata.success) {
+                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                            }
+                            else {
+                                pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",t(rdata.message));
+                            }
+                        } catch(e){
+                            pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
                         }
-                        else {
-                            pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",t(rdata.message));
+                        // reload versions
+                        if (this.versions) {
+                            if (typeof this.versions.reload == "function") {
+                                this.versions.reload();
+                            }
                         }
-                    } catch(e){
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");    
                     }
-                    // reload versions
-                    if (this.versions) {
-                        if (typeof this.versions.reload == "function") {
-                            this.versions.reload();
-                        }
+
+                    if(callback) {
+                        callback();
                     }
                 }.bind(this)
             });

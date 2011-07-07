@@ -58,7 +58,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         }
 
 
-        if ($this->_getParam("pimcore_editmode") || $this->_getParam("pimcore_version") || $this->_getParam("pimcore_preview") || $this->_getParam("pimcore_admin")) {
+        if ($this->_getParam("pimcore_editmode") || $this->_getParam("pimcore_version") || $this->_getParam("pimcore_preview") || $this->_getParam("pimcore_admin") || $this->_getParam("pimcore_object_preview")) {
 
             $specialAdminRequest = true;
 
@@ -123,6 +123,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
         // for preview
         if ($adminSession && $adminSession->user instanceof User) {
+            // document preview
             if ($this->_getParam("pimcore_preview")) {
                 // get document from session
                 $docKey = "document_" . $this->_getParam("document")->getId();
@@ -130,6 +131,17 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
                 if ($docSession->$docKey) {
                     $this->setDocument($docSession->$docKey);
+                }
+            }
+
+            // object preview
+            if ($this->_getParam("pimcore_object_preview")) {
+                $key = "object_" . $this->_getParam("pimcore_object_preview");
+                $session = new Zend_Session_Namespace("pimcore_objects");
+                if($session->$key) {
+                    $object = $session->$key;
+                    // add the object to the registry so every call to Object_Abstract::getById() will return this object instead of the real one
+                    Zend_Registry::set("object_" . $object->getId(), $object);
                 }
             }
         }

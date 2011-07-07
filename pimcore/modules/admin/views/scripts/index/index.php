@@ -313,6 +313,7 @@
             "pimcore/object/tags/countrymultiselect.js",
             "pimcore/object/tags/languagemultiselect.js",
             "pimcore/object/tags/objectbricks.js",
+            "pimcore/object/preview.js",
             "pimcore/object/versions.js",
             "pimcore/object/variantsTab.js",
             "pimcore/object/importer.js",

@@ -80,6 +80,11 @@ class Object_Class extends Pimcore_Model_Abstract {
     public $icon;
 
     /**
+     * @var string
+     */
+    public $previewUrl;
+
+    /**
      * @var array
      */
     public $propertyVisibility = array(
@@ -580,7 +585,22 @@ class Object_Class extends Pimcore_Model_Abstract {
             $this->propertyVisibility = $propertyVisibility;
         }
     }
-    
-    
+
+    /**
+     * @param string $previewUrl
+     */
+    public function setPreviewUrl($previewUrl)
+    {
+        $this->previewUrl = $previewUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPreviewUrl()
+    {
+        return $this->previewUrl;
+    }
+
 
 }
