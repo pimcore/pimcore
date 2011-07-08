@@ -16,6 +16,11 @@ pimcore.registerNS("pimcore.object.search");
 pimcore.object.search = Class.create({
     systemColumns: ["id", "fullpath", "published", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
     fieldObject: {},
+
+    title: t('search_edit'),
+    icon: "pimcore_icon_tab_search",
+    onlyDirectChildren: false,
+
     sortInfo: {},
     initialize: function(object) {
         this.object = object;
@@ -61,10 +66,10 @@ pimcore.object.search = Class.create({
             }
 
             this.layout = new Ext.Panel({
-                title: t('search_edit'),
+                title: this.title,
                 border: false,
                 layout: "fit",
-                iconCls: "pimcore_icon_tab_search",
+                iconCls: this.icon,
                 items: [],
                 tbar: toolbarConfig
             });
@@ -141,6 +146,7 @@ pimcore.object.search = Class.create({
         if(this.sortinfo) {
            this.store.setDefaultSort(this.sortinfo.field, this.sortinfo.direction);
         }
+        this.store.setBaseParam("only_direct_children", this.onlyDirectChildren);
         this.store.load();
 
         var gridColumns = gridHelper.getGridColumns();
@@ -176,6 +182,25 @@ pimcore.object.search = Class.create({
                         
                         this.pagingtoolbar.moveFirst();                        
                     }
+                }.bind(this)
+            }
+        });
+
+        this.labelOnlyDirectChildren = new Ext.form.Label({
+            text: t("only_children")
+        });
+        this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
+            name: "onlyDirectChildren",
+            style: "margin-bottom: 5px; margin-left: 5px",
+            checked: this.onlyDirectChildren,
+            listeners: {
+                "check" : function (field, checked) {
+                    this.gridfilters.clearFilters();
+
+                    this.store.baseparams = {};
+                    this.store.setBaseParam("only_direct_children", checked);
+
+                    this.pagingtoolbar.moveFirst();
                 }.bind(this)
             }
         });
@@ -219,6 +244,7 @@ pimcore.object.search = Class.create({
             },
             tbar: [this.languageInfo, "|", this.toolbarFilterInfo
             ,"->"
+            ,this.labelOnlyDirectChildren,this.checkboxOnlyDirectChildren
             ,this.sqlEditor
             ,this.sqlButton,{
                 text: t("export_csv"),

@@ -204,6 +204,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             items.push(reportLayout);
         }
 
+        if(this.data.childdata.data.classes.length > 0) {
+            this.search = new pimcore.object.search(this.data.childdata);
+            this.search.title = t('children_grid');
+            this.search.onlyDirectChildren = true;
+            items.push(this.search.getLayout());
+        }
 
         if(this.data.allowedClasses.allowVariants) {
             items.push(this.variants.getLayout());
