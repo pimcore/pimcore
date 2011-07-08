@@ -25,7 +25,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function jsonTranslationsAdminAction()
     {
-        $this->getResponse()->setHeader("Content-Type","text/javascript");
+        $this->getResponse()->setHeader("Content-Type","text/javascript", true);
         
         $language = $this->_getParam("language");
 
@@ -43,7 +43,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function jsonTranslationsSystemAction()
     {
-        $this->getResponse()->setHeader("Content-Type","text/javascript");
+        $this->getResponse()->setHeader("Content-Type","text/javascript", true);
 
         $language = $this->_getParam("language");
 
@@ -69,7 +69,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function jsonTransliterationAction()
     {
-        $this->getResponse()->setHeader("Content-Type","text/javascript");
+        $this->getResponse()->setHeader("Content-Type","text/javascript", true);
         $translitTable = Pimcore_Tool_Transliteration::getTransliterationTable();
 
         $search = array();
@@ -145,7 +145,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function availableLanguagesAction()
     {
-        $this->getResponse()->setHeader("Content-Type","text/javascript");
+        $this->getResponse()->setHeader("Content-Type","text/javascript", true);
 
         $languages = Zend_Locale::getTranslationList('language');
 
