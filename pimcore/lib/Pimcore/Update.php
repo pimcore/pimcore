@@ -244,7 +244,11 @@ class Pimcore_Update {
     public static function executeScript ($revision, $type) {
         
         $script = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision . "/scripts/" . $type . ".php";
-        
+
+        $maxExecutionTime = 900;
+        @ini_set("max_execution_time", $maxExecutionTime);
+        set_time_limit($maxExecutionTime);
+
         if(is_file($script)) {
             ob_start();
             try {

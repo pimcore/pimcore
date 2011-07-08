@@ -90,6 +90,11 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
             $extensionPath = PIMCORE_WEBSITE_PATH . "/var/areas/" . $id;
         }
 
+
+        $maxExecutionTime = 900;
+        @ini_set("max_execution_time", $maxExecutionTime);
+        set_time_limit($maxExecutionTime);
+
         $updateFile = $extensionPath."/"."update.php";
         if(is_file($updateFile)) {
             ob_start();
