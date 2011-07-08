@@ -31,7 +31,7 @@ Ext.onReady(function() {
     // define some globals
     Ext.QuickTips.init();
     Ext.Ajax.method = "get";
-    Ext.Ajax.timeout = 120000;
+    Ext.Ajax.timeout = 900000;
     Ext.Ajax.on('requestexception', function (conn, response, options) {
         console.log("xhr request failed");
 
