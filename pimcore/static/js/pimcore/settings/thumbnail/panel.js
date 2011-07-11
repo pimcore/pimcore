@@ -155,7 +155,7 @@ pimcore.settings.thumbnail.panel = Class.create({
 
     addFieldComplete: function (button, value, object) {
 
-        var regresult = value.match(/[a-zA-Z]+/);
+        var regresult = value.match(/[a-zA-Z0-9_\-]+/);
         if (button == "ok" && value.length > 2 && regresult == value) {
             Ext.Ajax.request({
                 url: "/admin/settings/thumbnail-add",
