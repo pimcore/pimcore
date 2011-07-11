@@ -66,6 +66,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
         
         this.layout = new Ext.Panel(panelConf);
+
         return this.layout;
     },
     
@@ -80,6 +81,10 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
         
         this.layout.doLayout();
+
+        if(this.object.data.metaData[this.myName] && this.object.data.metaData[this.myName].hasParentValue) {
+            this.addInheritanceSourceButton(this.object.data.metaData[this.myName]);
+        }        
     },
     
     getControls: function (blockElement) {

@@ -657,12 +657,43 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         } else {
             $value = $fielddefinition->getDataForEditmode($object->$getter(), $object);
-            if(empty($value) && !empty($parent) && $this->isInheritableField($fielddefinition)) {
+            if(empty($value) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $level + 1);
             } else {
-                $this->objectData[$key] = $value;
+                $isInheritedValue = $level != 0;
                 $this->metaData[$key]['objectid'] = $object->getId();
-                $this->metaData[$key]['inherited'] = $level != 0;
+
+                $this->objectData[$key] = $value;
+                $this->metaData[$key]['inherited'] = $isInheritedValue;
+
+                if($isInheritedValue && !$this->isInheritableField($fielddefinition)) {
+                    $this->objectData[$key] = null;
+                    $this->metaData[$key]['inherited'] = false;
+                    $this->metaData[$key]['hasParentValue'] = true;
+                } else {
+                    $parentValue = $this->getParentValue($object, $key);
+                    $this->metaData[$key]['hasParentValue'] = !empty($parentValue->value);
+                    if(!empty($parentValue->value)) {
+                        $this->metaData[$key]['objectid'] = $parentValue->id;
+                    }
+                }
+
+            }
+        }
+    }
+
+    private function getParentValue($object, $key) {
+        $parent = Object_Service::hasInheritableParentObject($object);
+        $getter = "get" . ucfirst($key);
+        if($parent) {
+            $value = $parent->$getter();
+            if($value) {
+                $result = new stdClass();
+                $result->value = $value;
+                $result->id = $parent->getId();
+                return $result;
+            } else {
+                return $this->getParentValue($parent, $key);
             }
         }
     }
