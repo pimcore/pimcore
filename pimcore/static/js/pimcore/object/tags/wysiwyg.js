@@ -119,9 +119,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     initCkEditor: function () {
 
         var toolbar_Full = [
-            ["close_object",'Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
+            ["close_object",'Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker'],
             ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-            ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
             '/',
             ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
             ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
