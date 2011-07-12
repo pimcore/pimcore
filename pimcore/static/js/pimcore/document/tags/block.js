@@ -172,7 +172,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
         catch (e) {
         }
 
-        if (parseInt(amount) < 1) {
+        if (intval(amount) < 1) {
             amount = 1;
         }
 
@@ -181,7 +181,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
         var currentKey;
 
         for (var i = 0; i < this.elements.length; i++) {
-            currentKey = parseInt(this.elements[i].key);
+            currentKey = intval(this.elements[i].key);
             if (currentKey > nextKey) {
                 nextKey = currentKey;
             }

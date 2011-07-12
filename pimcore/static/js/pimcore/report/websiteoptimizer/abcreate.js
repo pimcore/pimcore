@@ -41,7 +41,7 @@ pimcore.report.websiteoptimizer.abcreate = Class.create(pimcore.report.abstract,
             },
             root: 'versions',
             fields: ['id', {name: 'date', convert: function (v, r) {
-                var d = new Date(parseInt(v) * 1000);
+                var d = new Date(intval(v) * 1000);
 
                 var ret = d.format("Y-m-d H:i");
                 if (r.user) {

@@ -22,7 +22,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "snippet");
 
         this.addLoadingPanel();
-        this.id = parseInt(id);
+        this.id = intval(id);
         this.getData();
     },
 

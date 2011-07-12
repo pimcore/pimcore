@@ -32,7 +32,7 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (parseInt(field.config.width) > 10) {
+                if (intval(field.config.width) > 10) {
                     editorConfig.width = field.config.width;
                 }
             }

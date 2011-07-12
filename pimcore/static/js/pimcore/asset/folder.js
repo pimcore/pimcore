@@ -24,7 +24,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         pimcore.plugin.broker.fireEvent("preOpenAsset", this, "folder");
 
         this.addLoadingPanel();
-        this.id = parseInt(id);
+        this.id = intval(id);
 
         this.properties = new pimcore.settings.properties(this, "asset");
         this.permissions = new pimcore.asset.permissions(this);

@@ -31,7 +31,7 @@ pimcore.settings.scheduler = Class.create({
             if (this.element.data.scheduledTasks.length > 0) {
                 for (var i = 0; i < this.element.data.scheduledTasks.length; i++) {
                     rawTask = this.element.data.scheduledTasks[i];
-                    d = new Date(parseInt(rawTask.date) * 1000);
+                    d = new Date(intval(rawTask.date) * 1000);
                     tasksData.push([Date.parseDate(d.format("n/j/Y"), "n/j/Y"), d.format("H:i"), rawTask.action, rawTask.version, rawTask.active]);
                 }
             }
@@ -82,7 +82,7 @@ pimcore.settings.scheduler = Class.create({
                 },
                 root: 'versions',
                 fields: ['id', {name: 'date', convert: function (v, r) {
-                    var d = new Date(parseInt(v) * 1000);
+                    var d = new Date(intval(v) * 1000);
 
                     var ret = d.format("Y-m-d H:i");
                     if (r.user) {

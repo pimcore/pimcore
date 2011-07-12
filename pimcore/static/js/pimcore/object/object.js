@@ -21,7 +21,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.addLoadingPanel();
 
-        this.id = parseInt(id);
+        this.id = intval(id);
 
         this.edit = new pimcore.object.edit(this);
 
@@ -481,7 +481,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             if(this.newerVersionNotification) {
                 if(task == "publish") {
                     this.newerVersionNotification.hide();
-                } else {
+                } else if(task != "session") {
                     this.newerVersionNotification.show();
                 }
 

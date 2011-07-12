@@ -119,10 +119,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
 
-        if (parseInt(this.layoutConf.width) < 1) {
+        if (intval(this.layoutConf.width) < 1) {
             this.layoutConf.width = 100;
         }
-        if (parseInt(this.layoutConf.height) < 1) {
+        if (intval(this.layoutConf.height) < 1) {
             this.layoutConf.height = 100;
         }
 

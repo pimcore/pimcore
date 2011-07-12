@@ -26,7 +26,7 @@ pimcore.document.tags.date = Class.create(pimcore.document.tag, {
         }
 
         if (data) {
-            var tmpDate = new Date(parseInt(data) * 1000);
+            var tmpDate = new Date(intval(data) * 1000);
             options.value = tmpDate;
         }
 

@@ -22,7 +22,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "folder");
 
         this.addLoadingPanel();
-        this.id = parseInt(id);
+        this.id = intval(id);
         this.getData();
     },
 

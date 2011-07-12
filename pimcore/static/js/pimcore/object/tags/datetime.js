@@ -57,7 +57,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
         };
 
         if (this.data) {
-            var tmpDate = new Date(parseInt(this.data) * 1000);
+            var tmpDate = new Date(intval(this.data) * 1000);
             date.value = tmpDate;
             time.value = tmpDate.format("H:i");
         }

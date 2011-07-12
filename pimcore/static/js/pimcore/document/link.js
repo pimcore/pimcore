@@ -22,7 +22,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "link");
 
         this.addLoadingPanel();
-        this.id = parseInt(id);
+        this.id = intval(id);
         this.getData();
     },
 

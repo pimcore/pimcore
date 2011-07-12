@@ -193,7 +193,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var currentKey;
 
         for (var i = 0; i < this.elements.length; i++) {
-            currentKey = parseInt(this.elements[i].key);
+            currentKey = intval(this.elements[i].key);
             if (currentKey > nextKey) {
                 nextKey = currentKey;
             }

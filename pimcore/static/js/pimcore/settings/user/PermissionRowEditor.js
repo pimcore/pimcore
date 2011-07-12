@@ -546,7 +546,7 @@ pimcore.settings.user.PermissionRowEditor = Ext.extend(Ext.Panel, {
             });
         }
         var v = this.grid.getView(),
-                top = parseInt(this.el.dom.style.top, 10),
+                top = intval(this.el.dom.style.top, 10),
                 scroll = v.scroller.dom.scrollTop,
                 h = this.el.getHeight();
 

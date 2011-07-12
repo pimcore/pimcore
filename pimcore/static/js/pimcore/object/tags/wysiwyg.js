@@ -30,7 +30,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (parseInt(field.config.width) > 10) {
+                if (intval(field.config.width) > 10) {
                     editorConfig.width = field.config.width;
                 }
             }
@@ -53,45 +53,49 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },    
 
     getLayoutEdit: function () {
-
-        if (parseInt(this.layoutConf.width) < 1) {
+        
+        if (intval(this.layoutConf.width) < 1) {
             this.layoutConf.width = 400;
         }
-        if (parseInt(this.layoutConf.height) < 1) {
+        if (intval(this.layoutConf.height) < 1) {
             this.layoutConf.height = 300;
         }
 
         this.editableDivId = "object_wysiwyg_" + uniqid();
+        this.previewIframeId = "object_wysiwyg_iframe_" + uniqid();
 
         var pConf = {
             title: this.layoutConf.title,
             width: this.layoutConf.width,
-            html: '<div style="cursor:pointer;" id="' + this.editableDivId + '">' + this.data + '</div>',
+            html: '<div style="position:relative;" id="' + this.editableDivId + '"><iframe frameborder="0" id="' + this.previewIframeId + '"></iframe></div>',
             cls: "object_field"
         };
 
         this.layout = new Ext.Panel(pConf);
 
         this.layout.on("afterrender", function () {
-            Ext.get(this.editableDivId).on("click", this.initCkEditor.bind(this));
 
+            // put the data into the iframe with a delay otherwise the text in the frame appears only for a few milisecs (might be causes by Ext - rerendering)
+            window.setTimeout(function () {
+                var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
+                this.data += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
+                document.body.innerHTML = this.data;
+                Ext.get(document.body).on("click", this.initCkEditor.bind(this));
+                
+            }.bind(this), 1000);
 
+            // set dimensions of iframe
             if (this.layoutConf.height) {
-                Ext.get(this.editableDivId).setStyle({
+                Ext.get(this.previewIframeId).setStyle({
                     height: this.layoutConf.height + "px"
                 });
             }
             if (this.layoutConf.width) {
-                Ext.get(this.editableDivId).setStyle({
+                Ext.get(this.previewIframeId).setStyle({
                     width: this.layoutConf.width + "px"
                 });
             }
 
-            if (Ext.get(this.editableDivId).getHeight() < 10) {
-                Ext.get(this.editableDivId).setStyle({
-                    minHeight: "300px"
-                });
-            }
         }.bind(this));
 
         return this.layout;
@@ -100,10 +104,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
 
-        if (parseInt(this.layoutConf.width) < 1) {
+        if (intval(this.layoutConf.width) < 1) {
             this.layoutConf.width = 400;
         }
-        if (parseInt(this.layoutConf.height) < 1) {
+        if (intval(this.layoutConf.height) < 1) {
             this.layoutConf.height = 300;
         }
 
@@ -147,14 +151,15 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             resize_enabled: false
         };
 
-        if (parseInt(this.layoutConf.width) > 1) {
+        if (intval(this.layoutConf.width) > 1) {
             eConfig.width = this.layoutConf.width;
         }
-        if (parseInt(this.layoutConf.height) > 1) {
+        if (intval(this.layoutConf.height) > 1) {
             eConfig.height = this.layoutConf.height;
         }
 
-        this.ckeditor = CKEDITOR.replace(Ext.get(this.editableDivId).dom, eConfig);
+        Ext.get(this.editableDivId).update(this.data);
+        this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
     },
 
     mask: function () {

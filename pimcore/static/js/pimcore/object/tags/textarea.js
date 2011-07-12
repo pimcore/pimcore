@@ -28,7 +28,7 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
 
         if (field.config) {
             if (field.config.width) {
-                if (parseInt(field.config.width) > 10) {
+                if (intval(field.config.width) > 10) {
                     editorConfig.width = field.config.width;
                 }
             }
@@ -50,10 +50,10 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
 
-        if (parseInt(this.layoutConf.width) < 1) {
+        if (intval(this.layoutConf.width) < 1) {
             this.layoutConf.width = 100;
         }
-        if (parseInt(this.layoutConf.height) < 1) {
+        if (intval(this.layoutConf.height) < 1) {
             this.layoutConf.height = 100;
         }
 

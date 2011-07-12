@@ -24,7 +24,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         pimcore.plugin.broker.fireEvent("preOpenAsset", this, "video");
 
         this.addLoadingPanel();
-        this.id = parseInt(id);
+        this.id = intval(id);
 
         this.properties = new pimcore.settings.properties(this, "asset");
         this.versions = new pimcore.asset.versions(this);
