@@ -30,7 +30,6 @@ pimcore.document.edit = Class.create({
         if (this.layout == null) {
             this.reloadInProgress = true;
             this.iframeName = 'document_iframe_' + this.document.id;
-            //var onLoad = "pimcore.globalmanager.get('document_" + this.document.id + "').edit.iFrameLoaded()";
 
             var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
             this.layout = new Ext.Panel({

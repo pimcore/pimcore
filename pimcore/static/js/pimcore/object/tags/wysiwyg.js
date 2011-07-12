@@ -82,17 +82,21 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getPreview: function() {
 
-        Ext.get(this.editableDivId).update('<iframe frameborder="0" id="' + this.previewIframeId + '" src="about:blank"></iframe>');
-
-        // put the data into the iframe with a delay otherwise the text in the frame appears only for a few milisecs (might be causes by Ext - rerendering)
-        window.setTimeout(function () {
+        var iframe = document.createElement("iframe");
+        iframe.setAttribute("frameborder", "0");
+        iframe.setAttribute("id", this.previewIframeId);
+        iframe.onload = function () {
             var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
             var iframeContent = this.data;
             iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
             document.body.innerHTML = iframeContent;
             Ext.get(document.body).on("click", this.initCkEditor.bind(this));
 
-        }.bind(this), 100);
+        }.bind(this);
+
+        Ext.get(this.editableDivId).dom.innerHTML = "";
+        Ext.get(this.editableDivId).dom.appendChild(iframe);
+
 
         // set dimensions of iframe
         if (this.layoutConf.height) {
@@ -114,22 +118,21 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     initCkEditor: function () {
 
-        var toolbar_Full =
-                [
-                    ["close_object",'Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
-                    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-                    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
-                    '/',
-                    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-                    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
-                    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-                    ['Link','Unlink','Anchor'],
-                    ['Image','Flash','Table','HorizontalRule','SpecialChar','PageBreak'],
-                    '/',
-                    ['Styles','Format','Font','FontSize'],
-                    ['TextColor','BGColor'],
-                    ['Maximize', 'ShowBlocks','Source',"DestroyPimcore"]
-                ];
+        var toolbar_Full = [
+            ["close_object",'Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
+            ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+            ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
+            '/',
+            ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+            ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
+            ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+            ['Link','Unlink','Anchor'],
+            ['Image','Flash','Table','HorizontalRule','SpecialChar','PageBreak'],
+            '/',
+            ['Styles','Format','Font','FontSize'],
+            ['TextColor','BGColor'],
+            ['Maximize', 'ShowBlocks','Source']
+        ];
 
         var eConfig = {
             uiColor: "#f2f2f2",
