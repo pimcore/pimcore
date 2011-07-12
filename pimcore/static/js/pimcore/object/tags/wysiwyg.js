@@ -23,6 +23,17 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             this.data = data;
         }
         this.layoutConf = layoutConf;
+
+        if (intval(this.layoutConf.width) < 1) {
+            this.layoutConf.width = 400;
+        }
+        if (intval(this.layoutConf.height) < 1) {
+            this.layoutConf.height = 300;
+        }
+
+        this.editableDivId = "object_wysiwyg_" + uniqid();
+        this.previewIframeId = "object_wysiwyg_iframe_" + uniqid();
+        
     },
 
     getGridColumnEditor: function(field) {
@@ -53,74 +64,51 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },    
 
     getLayoutEdit: function () {
-        
-        if (intval(this.layoutConf.width) < 1) {
-            this.layoutConf.width = 400;
-        }
-        if (intval(this.layoutConf.height) < 1) {
-            this.layoutConf.height = 300;
-        }
-
-        this.editableDivId = "object_wysiwyg_" + uniqid();
-        this.previewIframeId = "object_wysiwyg_iframe_" + uniqid();
-
-        var pConf = {
-            title: this.layoutConf.title,
-            width: this.layoutConf.width,
-            html: '<div style="position:relative;" id="' + this.editableDivId + '"><iframe frameborder="0" id="' + this.previewIframeId + '"></iframe></div>',
-            cls: "object_field"
-        };
-
-        this.layout = new Ext.Panel(pConf);
-
-        this.layout.on("afterrender", function () {
-
-            // put the data into the iframe with a delay otherwise the text in the frame appears only for a few milisecs (might be causes by Ext - rerendering)
-            window.setTimeout(function () {
-                var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
-                this.data += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
-                document.body.innerHTML = this.data;
-                Ext.get(document.body).on("click", this.initCkEditor.bind(this));
-                
-            }.bind(this), 1000);
-
-            // set dimensions of iframe
-            if (this.layoutConf.height) {
-                Ext.get(this.previewIframeId).setStyle({
-                    height: this.layoutConf.height + "px"
-                });
-            }
-            if (this.layoutConf.width) {
-                Ext.get(this.previewIframeId).setStyle({
-                    width: this.layoutConf.width + "px"
-                });
-            }
-
-        }.bind(this));
-
+        this.getLayout();
+        this.layout.on("afterrender", this.getPreview.bind(this));
         return this.layout;
     },
 
-
-    getLayoutShow: function () {
-
-        if (intval(this.layoutConf.width) < 1) {
-            this.layoutConf.width = 400;
-        }
-        if (intval(this.layoutConf.height) < 1) {
-            this.layoutConf.height = 300;
-        }
-
-        this.editableDivId = "object_wysiwyg_" + uniqid();
-
+    getLayout: function () {
         var pConf = {
             title: this.layoutConf.title,
             width: this.layoutConf.width,
-            html: '<div id="' + this.editableDivId + '">' + this.data + '</div>',
+            html: '<div style="position:relative;" id="' + this.editableDivId + '"></div>',
             cls: "object_field"
         };
-        this.layout = new Ext.Panel(pConf);
 
+        this.layout = new Ext.Panel(pConf);
+    },
+
+    getPreview: function() {
+
+        Ext.get(this.editableDivId).update('<iframe frameborder="0" id="' + this.previewIframeId + '"></iframe>');
+
+        // put the data into the iframe with a delay otherwise the text in the frame appears only for a few milisecs (might be causes by Ext - rerendering)
+        window.setTimeout(function () {
+            var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
+            var iframeContent = this.data;
+            iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
+            document.body.innerHTML = iframeContent;
+            Ext.get(document.body).on("click", this.initCkEditor.bind(this));
+
+        }.bind(this), 1000);
+
+        // set dimensions of iframe
+        if (this.layoutConf.height) {
+            Ext.get(this.previewIframeId).setStyle({
+                height: this.layoutConf.height + "px"
+            });
+        }
+        if (this.layoutConf.width) {
+            Ext.get(this.previewIframeId).setStyle({
+                width: this.layoutConf.width + "px"
+            });
+        }
+    },
+
+    getLayoutShow: function () {
+        this.getLayout();
         return this.layout;
     },
 
@@ -128,7 +116,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         var toolbar_Full =
                 [
-                    ['Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
+                    ["close_object",'Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
                     ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
                     ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
                     '/',
@@ -151,6 +139,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             resize_enabled: false
         };
 
+        eConfig.extraPlugins = "close_object";
+        
         if (intval(this.layoutConf.width) > 1) {
             eConfig.width = this.layoutConf.width;
         }
@@ -160,6 +150,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         Ext.get(this.editableDivId).update(this.data);
         this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
+        this.ckeditor.pimcore_tag_instance = this;
     },
 
     mask: function () {
@@ -312,5 +303,32 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
         return false;
 //        return this.ckeditor.IsDirty();
+    }
+});
+
+
+
+// add close button plugin
+var ckeditor_close_objectplugin_button ='close_object';
+CKEDITOR.plugins.add(ckeditor_close_objectplugin_button,{
+    init:function(editor){
+        editor.addCommand(ckeditor_close_objectplugin_button, {
+            exec:function(editor){
+                window.setTimeout(function () {
+                    try {
+                        this.data = this.ckeditor.getData();
+                        this.ckeditor.destroy();
+                        this.getPreview();
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }.bind(editor.pimcore_tag_instance), 10);
+            }
+        });
+        editor.ui.addButton("close_object",{
+            label:t('close'),
+            icon: "/pimcore/static/img/icon/cross.png",
+            command: ckeditor_close_objectplugin_button
+        });
     }
 });
