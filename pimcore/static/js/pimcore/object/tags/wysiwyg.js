@@ -82,7 +82,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getPreview: function() {
 
-        Ext.get(this.editableDivId).update('<iframe frameborder="0" id="' + this.previewIframeId + '"></iframe>');
+        Ext.get(this.editableDivId).update('<iframe frameborder="0" id="' + this.previewIframeId + '" src="about:blank"></iframe>');
 
         // put the data into the iframe with a delay otherwise the text in the frame appears only for a few milisecs (might be causes by Ext - rerendering)
         window.setTimeout(function () {
@@ -92,7 +92,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             document.body.innerHTML = iframeContent;
             Ext.get(document.body).on("click", this.initCkEditor.bind(this));
 
-        }.bind(this), 1000);
+        }.bind(this), 100);
 
         // set dimensions of iframe
         if (this.layoutConf.height) {
