@@ -134,9 +134,9 @@ class Object_Class_Data_Link extends Object_Class_Data {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and !$data instanceof Object_Data_Link ){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");    
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         } else if ($data instanceof Object_Data_Link and !$data->getPath()){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ] - no path set");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ] - no path set");
         }
 
         if ($data) {
@@ -146,13 +146,13 @@ class Object_Class_Data_Link extends Object_Class_Data {
                         $doc = Document::getById($data->getInternal());
                         logger::log($doc);
                         if (!$doc instanceof Document) {
-                            throw new Exception(get_class($this) . ": invalid internal link, referenced document with id [" . $data->getInternal() . "] does not exist");
+                            throw new Exception("invalid internal link, referenced document with id [" . $data->getInternal() . "] does not exist");
                         }
                     }
                     else if ($data->getInternalType() == "asset") {
                         $asset = Asset::getById($data->getInternal());
                         if (!$asset instanceof Asset) {
-                            throw new Exception(get_class($this) . ": invalid internal link, referenced asset with id [" . $data->getInternal() . "] does not exist");
+                            throw new Exception("invalid internal link, referenced asset with id [" . $data->getInternal() . "] does not exist");
                         }
                     }
                 } 
@@ -295,7 +295,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
                 if (method_exists($link, $method)) {
                     $link->$method($value);
                 } else {
-                    throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data. Unknown Object_Data_Link setter [ " . $method . " ]");
+                    throw new Exception("cannot get values from web service import - invalid data. Unknown Object_Data_Link setter [ " . $method . " ]");
                 }
             }
             return $link;
@@ -303,7 +303,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
         } else if (is_array($value) and !empty($value['text']) and !empty($value['internalType']) and !empty($value['internal'])) {
             $element = Element_Service::getElementById($value['internalType'],$value['internal']);
             if(!$element){
-                throw new Exception(get_class($this) . ": cannot get values from web service import - referencing unknown internal element with type [ ".$value['internalType']." ] and id [ ".$value['internal']." ]");
+                throw new Exception("cannot get values from web service import - referencing unknown internal element with type [ ".$value['internalType']." ] and id [ ".$value['internal']." ]");
             }
             $link = new Object_Data_Link();
             foreach ($value as $key => $value) {
@@ -311,13 +311,13 @@ class Object_Class_Data_Link extends Object_Class_Data {
                 if (method_exists($link, $method)) {
                     $link->$method($value);
                 } else {
-                    throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data. Unknown Object_Data_Link setter [ " . $method . " ]");
+                    throw new Exception("cannot get values from web service import - invalid data. Unknown Object_Data_Link setter [ " . $method . " ]");
                 }
             }
             return $link;
 
         } else {
-            throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
 
     }
@@ -337,7 +337,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
         try {
             $this->checkValidity($data,true);
         } catch (Exception $e) {
-            logger::notice(get_class($this).": Detected insane relation, removing reference to non existent element with id [".$data->internal."]");
+            logger::notice("Detected insane relation, removing reference to non existent element with id [".$data->internal."]");
             $object->$key = null;
             $sane = false;
         }

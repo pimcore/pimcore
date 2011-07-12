@@ -97,7 +97,7 @@ class Document_Tag_Link extends Document_Tag {
                 $doc = Document::getById($this->data["internalId"]);
                 if (!$doc) {
                     $sane = false;
-                    logger::notice(get_class($this).": Detected insane relation, removing reference to non existent document with id [".$this->getDocumentId()."]");
+                    logger::notice("Detected insane relation, removing reference to non existent document with id [".$this->getDocumentId()."]");
                     $new = Document_Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
@@ -106,7 +106,7 @@ class Document_Tag_Link extends Document_Tag {
                 $asset = Asset::getById($this->data["internalId"]);
                 if (!$asset) {
                     $sane = false;
-                    logger::notice(get_class($this).": Detected insane relation, removing reference to non existent asset with id [".$this->getDocumentId()."]");
+                    logger::notice("Detected insane relation, removing reference to non existent asset with id [".$this->getDocumentId()."]");
                     $new = Document_Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
@@ -343,20 +343,20 @@ class Document_Tag_Link extends Document_Tag {
                     if ($this->data["internalType"] == "document") {
                         $referencedDocument = Document::getById($this->data["internalId"]);
                         if (!$referencedDocument instanceof Document) {
-                            throw new Exception(get_class($this) . ": cannot get values from web service import - link references unknown document with id [ " . $this->data["internalId"] . " ] ");
+                            throw new Exception("cannot get values from web service import - link references unknown document with id [ " . $this->data["internalId"] . " ] ");
                         }
                     }
                     else if ($this->data["internalType"] == "asset") {
                         $referencedAsset = Asset::getById($this->data["internalId"]);
                         if (!$referencedAsset instanceof Asset) {
-                            throw new Exception(get_class($this) . ": cannot get values from web service import - link references unknown asset with id [ " . $this->data["internalId"] . " ] ");
+                            throw new Exception("cannot get values from web service import - link references unknown asset with id [ " . $this->data["internalId"] . " ] ");
                         }
                     }
                 }
             }
 
         } else {
-            throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
 
     }

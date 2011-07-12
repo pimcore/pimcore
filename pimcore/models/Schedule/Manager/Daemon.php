@@ -45,7 +45,7 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
 
         if(!function_exists("pcntl_fork") or !function_exists("pcntl_waitpid") or !function_exists("pcntl_wexitstatus") or !function_exists("pcntl_signal")){
             //throw exception if someone tries to instantiate this without having pcntl enabled
-            throw new Exception("pcntnl not available. Cannot create ".get_class($this));
+            throw new Exception("pcntnl not available. Cannot create ");
         }
 
         parent::__construct($pidFileName);
@@ -60,7 +60,7 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
      * @return void
      */
     public function run() {
-        Logger::info(get_class($this) . ": Running with PID " . $this->parentPID);
+        Logger::info("Running with PID " . $this->parentPID);
         $this->setLastExecution();
 
         foreach ($this->jobs as $job) {
@@ -72,9 +72,9 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
             while (count($this->currentJobs)) {
                 sleep(1);
             }
-            Logger::info(get_class($this).": finished Jobs, all child threads are done.");
+            Logger::info("finished Jobs, all child threads are done.");
         } else {
-            Logger::info(get_class($this).": spawned all children, not waiting for them to finish.");   
+            Logger::info("spawned all children, not waiting for them to finish.");
         }
 
     }
@@ -87,7 +87,7 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
         $pid = pcntl_fork();
         if ($pid == -1) {
             //Problem launching the job
-            Logger::error(get_class($this) . ': Could not launch new job with id [ ' . $job->getId() . ' ], exiting');
+            Logger::error('Could not launch new job with id [ ' . $job->getId() . ' ], exiting');
             return false;
         }
         else if ($pid) {
@@ -100,15 +100,15 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
         else {
             //Forked child
             try {
-                Logger::debug(get_class($this) . ": Executing job [ " . $job->getId() . " ] as forked child");
+                Logger::debug("Executing job [ " . $job->getId() . " ] as forked child");
                 Pimcore_Resource::reset();
                 $job->execute();
             } catch (Exception $e) {
                 Logger::error($e);
-                Logger::error(get_class($this) . ": Failed to execute job with id [ " . $job->getId() . " ] and method [ ".$job->getMethod()." ]");
+                Logger::error("Failed to execute job with id [ " . $job->getId() . " ] and method [ ".$job->getMethod()." ]");
             }
             $job->unlock();
-            Logger::debug(get_class($this) . ": Done with job [ " . $job->getId() . " ]");
+            Logger::debug("Done with job [ " . $job->getId() . " ]");
             exit(0);
 
         }
@@ -134,7 +134,7 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
             if ($pid && isset($this->currentJobs[$pid])) {
                 $exitCode = pcntl_wexitstatus($status);
                 if ($exitCode != 0) {
-                    Logger::error(get_class($this) . ": $pid exited with status " . $exitCode);
+                    Logger::error("$pid exited with status " . $exitCode);
                 }
                 unset($this->currentJobs[$pid]);
             }

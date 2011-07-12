@@ -263,11 +263,11 @@ class Object_Class_Data_Slider extends Object_Class_Data {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and $data === NULL){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ] ".strval($data));
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ] ".strval($data));
         }
 
         if(!empty($data) and !is_numeric($data)){
-            throw new Exception(get_class($this).": invalid slider data");
+            throw new Exception("invalid slider data");
         }
     }
 

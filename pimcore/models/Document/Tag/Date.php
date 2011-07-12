@@ -136,7 +136,7 @@ class Document_Tag_Date extends Document_Tag {
            }else if(is_numeric($wsElement->value)){
                $this->date = new Pimcore_Date($wsElement->value);
            } else {
-               throw new Exception(get_class($this).": cannot get document tag date from WS - invalid value [  ".$wsElement->value." ]");
+               throw new Exception("cannot get document tag date from WS - invalid value [  ".$wsElement->value." ]");
            }
 
 

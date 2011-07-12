@@ -200,12 +200,12 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
                 if($point["longitude"]!=null and  $point["latitude"]!=null){
                     $points[] = new Object_Data_Geopoint($point["longitude"], $point["latitude"]);
                 } else {
-                    throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data");
+                    throw new Exception("cannot get values from web service import - invalid data");
                 }
             }
             return $points;
         } else {
-            throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
     }
 

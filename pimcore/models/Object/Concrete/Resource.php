@@ -321,7 +321,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                 }
 
                 if (in_array($key, $untouchable) and $relations===null) {
-                    logger::debug(get_class($this) . ": Excluding untouchable relation value for object [ " . $this->model->getId() . " ] key [ $key ] because it has not been loaded");
+                    logger::debug("Excluding untouchable relation value for object [ " . $this->model->getId() . " ] key [ $key ] because it has not been loaded");
                 }
 
             } else if ($value->getColumnType()) {
@@ -412,7 +412,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                         }
 
                     } else {
-                        logger::debug(get_class($this) . ": Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                        logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                     }
                 }
             }

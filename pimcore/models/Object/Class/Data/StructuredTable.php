@@ -306,12 +306,12 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
                 }
             }
             if($empty) {
-                throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+                throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
             }
         }
 
        if(!empty($data) and !$data instanceof Object_Data_StructuredTable){
-            throw new Exception(get_class($this).": invalid table data");     
+            throw new Exception("invalid table data");
        }
     }
 
@@ -407,7 +407,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
 
             return new Object_Data_StructuredTable($dataArray);
         } else {
-            throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
     }
 

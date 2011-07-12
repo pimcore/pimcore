@@ -86,7 +86,7 @@ class Document_Tag_Numeric extends Document_Tag {
            if($data->number === null or is_numeric($data->number)){
                 $this->number = $data->number;
            } else {
-               throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+               throw new Exception("cannot get values from web service import - invalid data");
            }
 
        }

@@ -95,7 +95,7 @@ class Document_Tag_Checkbox extends Document_Tag {
            if($data->bool === null or is_bool($data)){
                 $this->value = (bool) $data->value;
            } else {
-               throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+               throw new Exception("cannot get values from web service import - invalid data");
            }
 
        }

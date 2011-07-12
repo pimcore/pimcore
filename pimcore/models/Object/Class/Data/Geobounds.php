@@ -220,7 +220,7 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
             $sw = new Object_Data_Geopoint($value["SWlongitude"], $value["SWlatitude"]);
             return new Object_Data_Geobounds($ne,$sw);
         } else {
-            throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
     }
 }

@@ -104,7 +104,7 @@ class Document_Tag_Table extends Document_Tag {
         if ($data->data === null or is_array($data->data)) {
             $this->data = $data->data;
         } else {
-            throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
 
     }

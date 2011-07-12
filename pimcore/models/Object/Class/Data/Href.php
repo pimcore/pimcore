@@ -312,7 +312,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         
@@ -325,7 +325,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         } else if(empty($data)){
             $allow = true;
         } else {
-            logger::error(get_class($this).": invalid data in href");
+            logger::error("invalid data in href");
             $allow = false;
         }
 
@@ -459,11 +459,11 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         } else if(is_array($value) and key_exists("id",$value) and key_exists("type",$value)){
             $el =  $this->getDataFromEditmode($value);
             if(!empty($value['id']) and !$el instanceof Element_Interface){
-                throw new Exception(get_class($this).": cannot get values from web service import - invalid href relation");
+                throw new Exception("cannot get values from web service import - invalid href relation");
             }
             return $el;
         } else {
-            throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
     }
 

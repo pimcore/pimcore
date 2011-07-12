@@ -99,7 +99,7 @@ class Document_Tag_Textarea extends Document_Tag {
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
         } else {
-            throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
 
     }

@@ -152,7 +152,7 @@ class Object_Concrete extends Object_Abstract {
                     // and everybody uses the save method for new object creation - so now let's evict the mandatory check
                     // if the object was created within the last 5 seconds
                     $omitMandatoryCheck=true;
-                    logger::debug(get_class($this).": executing mandatory fields check for object [ ".$this->getId()." ]");
+                    logger::debug("executing mandatory fields check for object [ ".$this->getId()." ]");
                 }
 
                 //check throws Exception

@@ -254,7 +254,7 @@ class Object_Class_Data_Image extends Object_Class_Data {
         } else if (is_numeric($value) and $asset instanceof Asset) {
             return $asset;
         } else {
-            throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
+            throw new Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
         }
     }
 

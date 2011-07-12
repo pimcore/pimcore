@@ -63,13 +63,13 @@ class Object_Class_Data_User extends Object_Class_Data_Select {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
         
         if(!empty($data)){
             $user = User::getById($data);
             if(!$user instanceof User){
-                throw new Exception(get_class($this).": invalid user reference");
+                throw new Exception("invalid user reference");
             }
         }
     }
@@ -87,7 +87,7 @@ class Object_Class_Data_User extends Object_Class_Data_Select {
         try{
             $this->checkValidity($object->$key,true);
         } catch (Exception $e){
-            logger::notice(get_class($this).": Detected insane relation, removing reference to non existent user with username [".$object->$key."]");
+            logger::notice("Detected insane relation, removing reference to non existent user with username [".$object->$key."]");
             $object->$key = null;
             $sane = false;
         }

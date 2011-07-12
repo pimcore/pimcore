@@ -142,7 +142,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         } else if (is_array($data) && count($data) === 0){
             return "";
         } else {
-            throw new Exception(get_class($this).": invalid data passed to getDataForQueryResource - must be array");
+            throw new Exception("invalid data passed to getDataForQueryResource - must be array");
         }
     }
 
@@ -263,7 +263,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (is_array($data)) {
@@ -400,11 +400,11 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
                 if($object instanceof Object_Abstract){
                     $objects[] = $object;
                 } else {
-                    throw new Exception(get_class($this).": cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
+                    throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
                 }
             }
         } else {
-            throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
         return $objects;
     }

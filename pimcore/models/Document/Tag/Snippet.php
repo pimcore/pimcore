@@ -177,10 +177,10 @@ class Document_Tag_Snippet extends Document_Tag {
             if (is_numeric($this->id)) {
                 $this->snippet = Document_Snippet::getById($this->id);
                 if (!$this->snippet instanceof Document_Snippet) {
-                    throw new Exception(get_class($this) . ": cannot get values from web service import - referenced snippet with id [ " . $this->id . " ] is unknown");
+                    throw new Exception("cannot get values from web service import - referenced snippet with id [ " . $this->id . " ] is unknown");
                 }
             } else {
-                throw new Exception(get_class($this) . ": cannot get values from web service import - id is not valid");
+                throw new Exception("cannot get values from web service import - id is not valid");
             }
 
 

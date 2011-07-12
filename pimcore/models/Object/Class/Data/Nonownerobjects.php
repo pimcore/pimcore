@@ -164,7 +164,7 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
     public function checkValidity($data, $omitMandatoryCheck = false){
            //TODO
         if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (is_array($data)) {

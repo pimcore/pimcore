@@ -294,7 +294,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     Object_Objectbrick_Definition::getByKey($allowedTypes[$i]);
                 } catch (Exception $e) {
 
-                    Logger::warn(get_class($this) . ": Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
+                    Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
                     unset($allowedTypes[$i]);
                 }
             }

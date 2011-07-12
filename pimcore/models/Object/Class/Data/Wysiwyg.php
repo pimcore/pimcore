@@ -180,14 +180,14 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-           throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+           throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
         $dependencies = Pimcore_Tool_Text::getDependenciesOfWysiwygText($data);
         if (is_array($dependencies)) {
             foreach ($dependencies as $key => $value) {
                 $el = Element_Service::getElementById($value['type'], $value['id']);
                 if (!$el) {              
-                    throw new Exception(get_class($this) . ": invalid dependency in wysiwyg text");
+                    throw new Exception("invalid dependency in wysiwyg text");
                 }
             }
         }
@@ -208,7 +208,7 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
         $object->$key = $cleanedText;
         if($originalText!=$cleanedText){
             $sane=false;
-            logger::notice(get_class($this).": Detected insane relation, removed invalid links in html");
+            logger::notice("Detected insane relation, removed invalid links in html");
         }
         return $sane;
     }

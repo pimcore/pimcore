@@ -276,7 +276,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         } else if (is_array($data) && count($data) === 0) {
             return "";
         } else {
-            throw new Exception(get_class($this) . ": invalid data passed to getDataForQueryResource - must be array");
+            throw new Exception("invalid data passed to getDataForQueryResource - must be array");
         }
     }
 
@@ -428,7 +428,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     {
 
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Exception(get_class($this) . ": Empty mandatory field [ " . $this->getName() . " ]");
+            throw new Exception("Empty mandatory field [ " . $this->getName() . " ]");
         }
 
         $allow = true;
@@ -611,13 +611,13 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
                     if ($e instanceof Element_Interface) {
                         $hrefs[] = $e;
                     } else {
-                        throw new Exception(get_class($this) . ": cannot get values from web service import - unknown element of type [ " . $href["type"] . " ] with id [" . $href["id"] . "] is referenced");
+                        throw new Exception("cannot get values from web service import - unknown element of type [ " . $href["type"] . " ] with id [" . $href["id"] . "] is referenced");
                     }
                 }
             }
             return $hrefs; 
         } else {
-            throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
     }
 

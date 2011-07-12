@@ -174,7 +174,7 @@ abstract class Object_Class_Data {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
 
     }

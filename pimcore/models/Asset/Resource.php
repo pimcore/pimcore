@@ -219,7 +219,7 @@ class Asset_Resource extends Element_Resource {
                 $properties[$propertyRaw["name"]] = $property;
             }
             catch (Exception $e) {
-                Logger::error(get_class($this) . ": can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getFullPath());
+                Logger::error("can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getFullPath());
             }
         }
         
@@ -408,7 +408,7 @@ class Asset_Resource extends Element_Resource {
             $data = $this->db->fetchRow("SELECT CONCAT(path,filename) as path FROM assets WHERE id = ?", $this->model->getId());
         }
         catch (Exception $e) {
-            Logger::error(get_class($this) . ": could not get current asset path from DB");
+            Logger::error("could not get  current asset path from DB");
         }
 
         return $data['path'];

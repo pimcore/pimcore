@@ -187,7 +187,7 @@ class Object_Abstract_Resource extends Element_Resource {
             $data = $this->db->fetchRow("SELECT CONCAT(o_path,`o_key`) as o_path FROM objects WHERE o_id = ?", $this->model->getId());
         }
         catch (Exception $e) {
-            Logger::error(get_class($this) . ": could not get current object path from DB");
+            Logger::error("could not get current object path from DB");
         }
         return $data['o_path'];
     }

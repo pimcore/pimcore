@@ -185,11 +185,11 @@ class Object_Class_Data_Multiselect extends Object_Class_Data {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if(!is_array($data) and !empty($data)){
-            throw new Exception(get_class($this).": Invalid multiselect data");
+            throw new Exception("Invalid multiselect data");
         }
     }
 

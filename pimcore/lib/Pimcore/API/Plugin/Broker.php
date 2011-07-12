@@ -54,7 +54,7 @@ class Pimcore_API_Plugin_Broker {
         if (class_exists($module)) {
             $this->_systemModules[] = new $module();
         } else {
-            throw new Exception(get_class($this) . ": unknown module [ $module ].");
+            throw new Exception("unknown module [ $module ].");
         }
 
     }

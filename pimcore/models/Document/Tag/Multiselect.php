@@ -90,7 +90,7 @@ class Document_Tag_Multiselect extends Document_Tag {
         if ($data->values === null or is_array($data->values)) {
             $this->values = $data->values;
         } else {
-            throw new Exception(get_class($this) . ": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
 
     }

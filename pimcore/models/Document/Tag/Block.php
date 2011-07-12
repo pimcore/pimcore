@@ -339,7 +339,7 @@ class Document_Tag_Block extends Document_Tag {
             $this->indices = $data->indices;
             $this->current = $data->current;
         } else  {
-            throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get  values from web service import - invalid data");
         }
 
 

@@ -116,7 +116,7 @@ class Document_Tag_Video extends Document_Tag
             $el = Asset::getById($this->id);
             if (!$el instanceof Asset) {
                 $sane = false;
-                logger::notice(get_class($this) . ": Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+                logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
                 $this->id = null;
                 $this->type = null;
             }
@@ -378,7 +378,7 @@ class Document_Tag_Video extends Document_Tag
                 $this->id = $data->id;
                 $asset = Asset::getById($data->id);
                 if(!$asset){
-                    throw new Exception(get_class($this) . ": Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
+                    throw new Exception("Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
                 }
                 $this->type = $data->type;
 
@@ -386,7 +386,7 @@ class Document_Tag_Video extends Document_Tag
                   $this->id = $data->id;
                   $this->type = $data->type;
             } else {
-                throw new Exception(get_class($this) . ": cannot get values from web service import - type must be asset,youtube,url or vimeo ");
+                throw new Exception("cannot get values from web service import - type must be asset,youtube,url or vimeo ");
             }
         }
 

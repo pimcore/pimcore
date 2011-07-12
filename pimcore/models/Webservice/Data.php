@@ -70,7 +70,7 @@ abstract class Webservice_Data {
                 if (in_array($type, array("object", "document", "asset"))) {
                     $dat = Element_Service::getElementById($propertyWs->type, $propertyWs->data);
                     if (is_numeric($propertyWs->data) and !$dat) {
-                        throw new Exception(get_class($this) . ": cannot import property [ " . $propertyWs->name . " ] because it references unknown " . $propertyWs->type);
+                        throw new Exception("cannot import property [ " . $propertyWs->name . " ] because it references unknown " . $propertyWs->type);
                     }
                 } else if ($type == "date"){
                     $dat = new Pimcore_Date(strtotime($propertyWs->data));

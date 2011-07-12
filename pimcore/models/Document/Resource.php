@@ -194,7 +194,7 @@ class Document_Resource extends Element_Resource {
             $data = $this->db->fetchRow("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
         }
         catch (Exception $e) {
-            Logger::error(get_class($this) . ": could not get current document path from DB");
+            Logger::error("could not  get current document path from DB");
 
         }
 

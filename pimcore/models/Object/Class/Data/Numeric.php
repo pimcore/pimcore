@@ -161,11 +161,11 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and $data === NULL){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if(!empty($data) and !is_numeric($data)){
-            throw new Exception(get_class($this).": invalid numeric data");
+            throw new Exception("invalid numeric data");
         }
     }
 

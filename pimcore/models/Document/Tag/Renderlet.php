@@ -249,24 +249,24 @@ class Document_Tag_Renderlet extends Document_Tag {
                 if ($this->type == "asset") {
                     $this->o = Asset::getById($this->id);
                     if(!$this->o instanceof Asset){
-                        throw new Exception(get_class($this) . ": cannot get values from web service import - referenced asset with id [ ".$this->id." ] is unknown");
+                        throw new Exception("cannot get values from web service import - referenced asset with id [ ".$this->id." ] is unknown");
                     }
                 } else if ($this->type == "document") {
                     $this->o = Document::getById($this->id);
                     if(!$this->o instanceof Document){
-                        throw new Exception(get_class($this) . ": cannot get values from web service import - referenced document with id [ ".$this->id." ] is unknown");
+                        throw new Exception("cannot get values from web service import - referenced document with id [ ".$this->id." ] is unknown");
                     }
                 } else if ($this->type == "object") {
                     $this->o = Object_Abstract::getById($this->id);
                     if(!$this->o instanceof Object_Abstract){
-                        throw new Exception(get_class($this) . ": cannot get values from web service import - referenced object with id [ ".$this->id." ] is unknown");
+                        throw new Exception("cannot get values from web service import - referenced object with id [ ".$this->id." ] is unknown");
                     }
                 } else {
                     p_r($this);
-                    throw new Exception(get_class($this) . ": cannot get values from web service import - type is not valid");
+                    throw new Exception("cannot get values from web service import - type is not valid");
                 }
             } else {
-                throw new Exception(get_class($this) . ": cannot get values from web service import - id is not valid");
+                throw new Exception("cannot get values from web service import - id is not valid");
             }
         }
     }
@@ -281,7 +281,7 @@ class Document_Tag_Renderlet extends Document_Tag {
             $el = Element_Service::getElementById($this->type, $this->id);
             if(!$el instanceof Element_Interface){
                 $sane = false;
-                logger::notice(get_class($this).": Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
+                logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
                 $this->id = null;
                 $this->type = null;
                 $this->o=null;

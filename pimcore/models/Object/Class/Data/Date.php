@@ -186,7 +186,7 @@ class Object_Class_Data_Date extends Object_Class_Data {
         } else if($timestamp!==FALSE){
             return new Pimcore_Date($timestamp);
         } else {
-            throw new Exception(get_class($this).": cannot get values from web service import - invalid data");
+            throw new Exception("cannot get values from web service import - invalid data");
         }
     }
 }

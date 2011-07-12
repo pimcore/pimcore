@@ -114,9 +114,9 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         }
 
         if($object instanceof Object_Abstract){
-            Logger::debug(get_class($this) . ": checked object relation to target object [" . $object->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+            Logger::debug("checked object relation to target object [" . $object->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
         } else {
-            Logger::debug(get_class($this) . ": checked object relation to target in field [" . $this->getName() . "], not allowed, target ist not an object");
+            Logger::debug("checked object relation to target in field [" . $this->getName() . "], not allowed, target ist not an object");
             Logger::debug($object);
         }
         return $allowed;
@@ -145,7 +145,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
             //don't check if no allowed asset types set
         }
 
-        Logger::debug(get_class($this) . ": checked object relation to target asset [" . $asset->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+        Logger::debug("checked object relation to target asset [" . $asset->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
         return $allowed;
 
     }
@@ -174,7 +174,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
             //don't check if no allowed document types set
         }
 
-        Logger::debug(get_class($this) . ": checked object relation to target document [" . $document->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+        Logger::debug("checked object relation to target document [" . $document->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
         return $allowed;
 
     }
@@ -208,7 +208,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         $diff = array_diff($objectRelationIds, $resourceRelationIds);
         if (count($diff) > 0) {
             $sane = false;
-            logger::notice(get_class($this).": Detected insane relation(s), removing reference to non existent elements with ids [".implode(',',$diff)."]");
+            logger::notice("Detected insane relation(s), removing reference to non existent elements with ids [".implode(',',$diff)."]");
         }
 
         return $sane;

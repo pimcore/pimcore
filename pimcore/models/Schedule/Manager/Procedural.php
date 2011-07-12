@@ -45,7 +45,7 @@ class Schedule_Manager_Procedural {
                 $job->execute();     
             }
             catch (Exception $e) {
-                Logger::error(get_class($this).": Failed to execute job with id: " . $job->getId());
+                Logger::error("Failed to execute job with id: " . $job->getId());
                 Logger::error($e);
             }
             $job->unlock();

@@ -245,11 +245,11 @@ class Object_Class_Data_Table extends Object_Class_Data {
     public function checkValidity($data, $omitMandatoryCheck = false){
 
         if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-            throw new Exception(get_class($this).": Empty mandatory field [ ".$this->getName()." ]");
+            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         }
 
        if(!empty($data) and !is_array($data)){
-            throw new Exception(get_class($this).": invalid table data");     
+            throw new Exception("invalid table data");
        }
     }
 

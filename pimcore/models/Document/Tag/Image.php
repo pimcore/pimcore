@@ -319,10 +319,10 @@ class Document_Tag_Image extends Document_Tag {
             if (is_numeric($this->id)) {
                 $this->image = Asset_Image::getById($this->id);
                 if (!$this->image instanceof Asset_Image) {
-                    throw new Exception(get_class($this) . ": cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
+                    throw new Exception("cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
                 }
             } else {
-                throw new Exception(get_class($this) . ": cannot get values from web service import - id is not valid");
+                throw new Exception("cannot get values from web service import - id is not valid");
             }
 
 

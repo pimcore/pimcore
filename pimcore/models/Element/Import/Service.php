@@ -136,7 +136,7 @@ class Element_Import_Service
                 $element->setKey("home_" . uniqid());
             }
         } else if (empty($key)) {
-            throw new Exception (get_class($this) . ": Cannot create element without key ");
+            throw new Exception ("Cannot create element without key ");
         }
 
         $parent = $parentClassName::getByPath($path);
@@ -345,7 +345,7 @@ class Element_Import_Service
     {
         $user = $this->user;
         if (!$user instanceof User) {
-            throw new Exception(get_class($this) . ": No user present");
+            throw new Exception("No user present");
         }
         if ($creation) {
             $element->setUserOwner($user->getId());

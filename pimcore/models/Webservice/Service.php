@@ -725,7 +725,7 @@ class Webservice_Service
         $this->setModificationParams($element, true);
         $key = $element->getKey();
         if (empty($key)) {
-            throw new Exception (get_class($this) . ": Cannot create element without key");
+            throw new Exception ("Cannot create element without key");
         }
 
         $element->save();
@@ -836,7 +836,7 @@ class Webservice_Service
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            throw new Exception(get_class($this) . ": No user present");
+            throw new Exception("No user present");
         }
         if ($creation) {
             $element->setUserOwner($user->getId());
