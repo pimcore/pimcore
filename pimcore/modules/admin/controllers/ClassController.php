@@ -131,7 +131,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         if (!$class instanceof Object_Class) {
             $errorMessage = ": Class with id [ " . $this->_getParam("id") . " not found. ]";
-            Logger::error(get_class($this) . $errorMessage);
+            Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $xml = Object_Class_Service::generateClassDefinitionXml($class);
@@ -268,7 +268,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $fieldCollection = Object_Fieldcollection_Definition::getByKey($this->_getParam("id"));
         if (!$fieldCollection instanceof Object_Fieldcollection_Definition) {
             $errorMessage = ": Field-Collection with id [ " . $this->_getParam("id") . " not found. ]";
-            Logger::error(get_class($this) . $errorMessage);
+            Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $xml = Object_Class_Service::generateFieldCollectionXml($fieldCollection);
@@ -432,7 +432,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $objectBrick = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
         if (!$objectBrick instanceof Object_Objectbrick_Definition) {
             $errorMessage = ": Object-Brick with id [ " . $this->_getParam("id") . " not found. ]";
-            Logger::error(get_class($this) . $errorMessage);
+            Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $xml = Object_Class_Service::generateFieldCollectionXml($objectBrick);

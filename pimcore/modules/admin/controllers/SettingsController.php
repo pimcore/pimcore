@@ -55,10 +55,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
             else {
                 if ($this->getUser() != null) {
-                    Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to modify properties predefined, but has no permission to do so.");
+                    Logger::err("user [" . $this->getUser()->getId() . "] attempted to modify properties predefined, but has no permission to do so.");
                 }
                 else {
-                    Logger::err(get_class($this) . ": attempt to modify properties predefined, but no user in session.");
+                    Logger::err("attempt to modify properties predefined, but no user in session.");
                 }
             }
         }
@@ -200,9 +200,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $this->_helper->json($response);
         } else {
             if ($this->getUser() != null) {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to view system settings, but has no permission to do so.");
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to view system settings, but has no permission to do so.");
             } else {
-                Logger::err(get_class($this) . ": attempt to view system settings, but no user in session.");
+                Logger::err("attempt to view system settings, but no user in session.");
             }
         }
 
@@ -357,9 +357,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $this->_helper->json(array("success" => true));
         } else {
             if ($this->getUser() != null) {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to change system settings, but has no permission to do so.");
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to change system settings, but has no permission to do so.");
             } else {
-                Logger::err(get_class($this) . ": attempt to change system settings, but no user in session.");
+                Logger::err("attempt to change system settings, but no user in session.");
             }
         }
 
@@ -384,9 +384,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
         else {
             if ($this->getUser() != null) {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to clear cache, but has no permission to do so.");
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to clear cache, but has no permission to do so.");
             } else {
-                Logger::err(get_class($this) . ": attempt to clear cache, but no user in session.");
+                Logger::err("attempt to clear cache, but no user in session.");
             }
         }
         $this->_helper->json(false);
@@ -415,10 +415,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
         else {
             if ($this->getUser() != null) {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to clear temporary files, but has no permission to do so.");
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to clear temporary files, but has no permission to do so.");
             }
             else {
-                Logger::err(get_class($this) . ": attempt to clear temporary files, but no user in session.");
+                Logger::err("attempt to clear temporary files, but no user in session.");
             }
         }
 
@@ -466,7 +466,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $this->_helper->json(array("data" => $route, "success" => true));
                 }
             } else {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
             }
         }
         else {
@@ -588,7 +588,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             }
 
         } else {
-            Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to import translations csv, but has no permission to do so.");
+            Logger::err("user [" . $this->getUser()->getId() . "] attempted to import translations csv, but has no permission to do so.");
             die();
         }
 
@@ -653,7 +653,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             echo $csv;
             die();
         } else {
-            Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to export translations csv, but has no permission to do so.");
+            Logger::err("user [" . $this->getUser()->getId() . "] attempted to export translations csv, but has no permission to do so.");
             die();
         }
 
@@ -806,7 +806,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $this->_helper->json(array("data" => $translations, "success" => true, "total" => $list->getTotalCount()));
             }
         } else {
-            Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to access translations, but has no permission to do so.");
+            Logger::err("user [" . $this->getUser()->getId() . "] attempted to access translations, but has no permission to do so.");
         }
 
         $this->_helper->json(false);
@@ -903,7 +903,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $this->_helper->json(array("data" => $redirect, "success" => true));
                 }
             } else {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
             }
         }
         else {
@@ -1018,7 +1018,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $this->_helper->json(array("data" => $glossary, "success" => true));
                 }
             } else {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
             }
         }
         else {

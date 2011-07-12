@@ -433,7 +433,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $success = true;
         }
         else {
-            Logger::debug(get_class($this) . ": prevented creating asset because of missing permissions");
+            Logger::debug("prevented creating asset because of missing permissions");
         }
 
         return $success;
@@ -506,7 +506,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             }
         }
         else {
-            Logger::debug(get_class($this) . ": prevented creating asset because of missing permissions");
+            Logger::debug("prevented creating asset because of missing permissions");
         }
 
         $this->_helper->json(array("success" => $success));
@@ -730,7 +730,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
                 if($this->_getParam("filename") != $asset->getFilename() and !$asset->isAllowed("rename")){
                     unset($updateData["filename"]);
-                    Logger::debug(get_class($this) . ": prevented renaming asset because of missing permissions ");
+                    Logger::debug("prevented renaming asset because of missing permissions ");
                 }
 
                 $asset->setValues($updateData);
@@ -746,7 +746,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
             }
             else {
-                Logger::debug(get_class($this) . ": prevented moving asset, asset with same path+key already exists at target location ");
+                Logger::debug("prevented moving asset, asset with same path+key already exists at target location ");
             }
         } else if ($asset->isAllowed("rename") &&  $this->_getParam("filename")  ) {
             //just rename
@@ -758,7 +758,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
             }
         } else {
-            Logger::debug(get_class($this) . ": prevented update asset because of missing permissions ");
+            Logger::debug("prevented update asset because of missing permissions ");
         }
 
         $this->_helper->json(array("success" => $success));
@@ -872,7 +872,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 }
             }
             else {
-                Logger::debug(get_class($this) . ": prevented save asset because of missing permissions ");
+                Logger::debug("prevented save asset because of missing permissions ");
             }
 
             $this->_helper->json(array("success" => $success));
@@ -1109,10 +1109,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $success = true;
             }
             else {
-                Logger::debug(get_class($this) . ": prevended copy/paste because document with same path+key already exists in this location");
+                Logger::debug("prevended copy/paste because document with same path+key already exists in this location");
             }
         } else {
-            Logger::error(get_class($this) . ": could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
+            Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
             $this->_helper->json(array("error" => false, "message" => "missing_permission"));
         }
 
@@ -1225,7 +1225,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     ));
                 }
                 else {
-                    Logger::debug(get_class($this) . ": prevented creating asset because of missing permissions");
+                    Logger::debug("prevented creating asset because of missing permissions ");
                 }
             }
         }

@@ -52,10 +52,15 @@ class Logger {
 		}
 		
 		if(in_array($code,self::$priorities)) {
-			if(is_object($message) || is_array($message)) {
+
+            $backtrace = debug_backtrace();
+            $call = $backtrace[2];
+            $call["line"] = $backtrace[1]["line"];
+
+            if(is_object($message) || is_array($message)) {
                 // special formatting for exception
 				if($message instanceof Exception) {
-					$message = "[Exception] with message: ".$message->getMessage()
+					$message = $call["class"] . $call["type"] . $call["function"] . "() -> " . $call["line"] . ": [Exception] with message: ".$message->getMessage()
                         ."\n"
                         ."In file: "
                         .$message->getFile()
@@ -67,7 +72,9 @@ class Logger {
 				else {
 					$message = print_r($message,true);
 				}
-			}
+			} else {
+                $message = $call["class"] . $call["type"] . $call["function"] . "() -> " . $call["line"] . ": " . $message;
+            }
 
             foreach (self::$logger as $logger) {
                 $logger->log($message,$code);

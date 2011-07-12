@@ -35,7 +35,7 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
         $success = move_uploaded_file($tmp_name, $archive);
 
         if (!$success) {
-            throw new Exception(get_class($this) . ": Could not move uploaded file");
+            throw new Exception("Could not move uploaded file");
         }
 
         $zip = new ZipArchive;

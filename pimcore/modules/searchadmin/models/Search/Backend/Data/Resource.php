@@ -87,7 +87,7 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
                 "properties" => $this->model->getProperties()
             ));
         } else {
-            Logger::alert(get_class(this).": Cannot create Search_Backend_Data, ID is empty");
+            Logger::alert("Cannot create Search_Backend_Data, ID is empty");
         }
 
     }
@@ -116,7 +116,7 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
 
             $this->db->update("search_backend_data", $data, "id='" . $data["id"] . "' AND maintype ='" . $data["maintype"] . "'");
         } else {
-            Logger::alert(get_class(this).": Cannot update Search_Backend_Data, ID is empty");
+            Logger::alert("Cannot update Search_Backend_Data, ID is empty");
         }
     }
 
@@ -130,7 +130,7 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
         if($this->model->getId() instanceof Search_Backend_Data_Id ){
             $this->db->delete("search_backend_data", "id='" . $this->model->getId()->getId() . "' AND maintype ='" .$this->model->getId()->getType() . "'");
         } else {
-            Logger::alert(get_class(this).": Cannot delete Search_Backend_Data, ID is empty");
+            Logger::alert("Cannot delete Search_Backend_Data, ID is empty");
         }
     }
 

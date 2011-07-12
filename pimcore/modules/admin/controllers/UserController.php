@@ -180,7 +180,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 $user->save();
                 $this->_helper->json(array("success" => true));
             } else {
-                Logger::warn(get_class($this) . ": prevented save current user, because ids do not match. ");
+                Logger::warn("prevented save current user, because ids do not match. ");
                 $this->_helper->json(false);
             }
         } else {

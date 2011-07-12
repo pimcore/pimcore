@@ -20,9 +20,9 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
 
         if (!$this->getUser()->isAllowed("plugins")) {
             if ($this->getUser() != null) {
-                Logger::err(get_class($this) . ": user [" . $this->getUser()->getId() . "] attempted to install plugin, but has no permission to do so.");
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to install plugin, but has no permission to do so.");
             } else {
-                Logger::err(get_class($this) . ": attempt to install plugin, but no user in session.");
+                Logger::err("attempt to install plugin, but no user in session.");
             }
         }
     }

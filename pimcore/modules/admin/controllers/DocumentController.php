@@ -395,16 +395,16 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         }
                         break;
                     default:
-                        Logger::debug(get_class($this) . ": Unknown document type, can't add [ " . $this->_getParam("type") . " ] ");
+                        Logger::debug("Unknown document type, can't add [ " . $this->_getParam("type") . " ] ");
                         break;
                 }
             }
             else {
-                Logger::debug(get_class($this) . ": prevented adding a document because document with same path+key [ $intendedPath ] already exists");
+                Logger::debug("prevented adding a document because document with same path+key [ $intendedPath ] already exists");
             }
         }
         else {
-            Logger::debug(get_class($this) . ": prevented adding a document because of missing permissions");
+            Logger::debug("prevented adding a document because of missing permissions");
         }
 
         if ($success) {
@@ -435,7 +435,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             $success = true;
         }
         else {
-            Logger::debug(get_class($this) . ": prevented deleting document id [ " . $this->_getParam("id") . " ] because of missing permissions");
+            Logger::debug("prevented deleting document id [ " . $this->_getParam("id") . " ] because of missing permissions");
         }
 
         $this->_helper->json(array("success" => $success));
@@ -529,7 +529,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
                 if(!$document->isAllowed("rename") && $this->_getParam("key")){
                     $blockedVars[]="key";
-                    Logger::debug(get_class($this) . ": prevented renaming document because of missing permissions ");
+                    Logger::debug("prevented renaming document because of missing permissions ");
                 }
 
                 foreach ($this->_getAllParams() as $key => $value) {
@@ -566,7 +566,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 }
             }
             else {
-                Logger::debug(get_class($this) . ": Prevented moving document, because document with same path+key already exists.");
+                Logger::debug("Prevented moving document, because document with same path+key already exists.");
             }
         } else if ($document->isAllowed("rename") &&  $this->_getParam("key") ) {
             //just rename
@@ -579,7 +579,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 }
         }
         else {
-            Logger::debug(get_class($this) . ": Prevented update document, because of missing permissions.");
+            Logger::debug("Prevented update document, because of missing permissions.");
         }
 
         $this->_helper->json(array("success" => $success));
@@ -786,10 +786,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 $success = true;
             }
             else {
-                Logger::debug(get_class($this) . ": prevended copy/paste because document with same path+key already exists in this location");
+                Logger::debug("prevended copy/paste because document with same path+key already exists in this location");
             }
         }  else {
-            Logger::error(get_class($this) . ": could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
+            Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
             $this->_helper->json(array("error" => false, "message" => "missing_permission"));
         }
 

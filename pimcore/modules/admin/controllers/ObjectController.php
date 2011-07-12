@@ -597,7 +597,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $this->_helper->json($objectData);
         }
         else {
-            Logger::debug(get_class($this) . ": prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
+            Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
             $this->_helper->json(array("success" => false, "message" => "missing_permission"));
         }
 
@@ -752,7 +752,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $this->_helper->json($objectData);
         }
         else {
-            Logger::debug(get_class($this) . ": prevented getting folder id [ " . $object->getId() . " ] because of missing permissions");
+            Logger::debug("prevented getting folder id [ " . $object->getId() . " ] because of missing permissions");
             $this->_helper->json(array("success" => false, "message" => "missing_permission"));
         }
     }
@@ -799,11 +799,11 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             } else {
                 $message = "prevented creating object because object with same path+key already exists";
-                Logger::debug(get_class($this) . ": prevented creating object because object with same path+key [ $intendedPath ] already exists");
+                Logger::debug("prevented creating object because object with same path+key [ $intendedPath ] already exists");
             }
         } else {
             $message = "prevented adding object because of missing permissions";
-            Logger::debug(get_class($this) . ": " . $message);
+            Logger::debug($message);
         }
 
         if ($success) {
@@ -856,7 +856,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
         }
         else {
-            Logger::debug(get_class($this) . ": prevented creating object id because of missing permissions");
+            Logger::debug("prevented creating object id because of missing permissions");
         }
 
         $this->_helper->json(array("success" => $success));
@@ -923,7 +923,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if ($values["key"] && $object->isAllowed("rename")) {
                 $object->setKey($values["key"]);
             } else if ($values["key"]!= $object->getKey()){
-                Logger::debug(get_class($this) . ": prevented renaming object because of missing permissions ");
+                Logger::debug("prevented renaming object because of missing permissions ");
             }
 
             if ($values["parentId"]) {
@@ -965,7 +965,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 }
             }
             else {
-                Logger::debug(get_class($this) . ": prevented move of object, object with same path+key alredy exists in this location.");
+                Logger::debug("prevented move of object, object with same path+key alredy exists in this location.");
             }
         } else if ($object->isAllowed("rename") &&  $values["key"] ) {
             //just rename
@@ -977,7 +977,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
         } else {
-            Logger::debug(get_class($this) . ": prevented update object because of missing permissions.");
+            Logger::debug("prevented update object because of missing permissions.");
         }
 
         $this->_helper->json(array("success" => $success));
@@ -1779,11 +1779,11 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 }
             }
             else {
-                Logger::error(get_class($this) . ": could not execute copy/paste, source object with id [ $sourceId ] not found");
+                Logger::error("could not execute copy/paste, source object with id [ $sourceId ] not found");
                 $this->_helper->json(array("success" => false, "message" => "source object not found"));
             }
         } else {
-            Logger::error(get_class($this) . ": could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
+            Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
             $this->_helper->json(array("error" => false, "message" => "missing_permission"));
         }
 
