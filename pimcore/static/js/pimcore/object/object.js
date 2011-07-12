@@ -484,7 +484,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 } else if(task != "session") {
                     this.newerVersionNotification.show();
                 }
-
             }
 
             Ext.Ajax.request({
