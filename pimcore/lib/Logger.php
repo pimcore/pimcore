@@ -60,7 +60,7 @@ class Logger {
             if(is_object($message) || is_array($message)) {
                 // special formatting for exception
 				if($message instanceof Exception) {
-					$message = $call["class"] . $call["type"] . $call["function"] . "() -> " . $call["line"] . ": [Exception] with message: ".$message->getMessage()
+					$message = $call["class"] . $call["type"] . $call["function"] . "() [" . $call["line"] . "]: [Exception] with message: ".$message->getMessage()
                         ."\n"
                         ."In file: "
                         .$message->getFile()
@@ -73,7 +73,7 @@ class Logger {
 					$message = print_r($message,true);
 				}
 			} else {
-                $message = $call["class"] . $call["type"] . $call["function"] . "() -> " . $call["line"] . ": " . $message;
+                $message = $call["class"] . $call["type"] . $call["function"] . "() [" . $call["line"] . "]: " . $message;
             }
 
             foreach (self::$logger as $logger) {
