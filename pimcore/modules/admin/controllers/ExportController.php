@@ -120,7 +120,7 @@ class Admin_ExportController extends Pimcore_Controller_Action_Admin
                     if ($file != '.' && $file != '..') {
                         $fullFilePath = $exportDir . "/" . $file;
                         if (is_file($fullFilePath)) {
-                            $zip->addFile($fullFilePath, str_replace($exportDir, "", $fullFilePath));
+                            $zip->addFile($fullFilePath, str_replace($exportDir . "/", "", $fullFilePath));
                         }
                     }
                 }
