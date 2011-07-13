@@ -599,9 +599,8 @@ pimcore.asset.tree = Class.create({
     },
     
     enableHtml5Upload: function (tree, parent, node, index) {
-        
-        // support only FF
-        if (!Ext.isGecko) {
+
+        if (!window.FileList) {
             return;
         }
         
@@ -663,53 +662,62 @@ pimcore.asset.tree = Class.create({
                     if (window.FileList && file.type && file.name) { 
                         
                         this.activeUploads++;
-                        
-                        var boundary = '------multipartformboundary' + (new Date).getTime();
-                        var dashdash = '--';
-                        var crlf     = '\r\n';
-                    
-                        var builder = '';
-                    
-                        builder += dashdash;
-                        builder += boundary;
-                        builder += crlf;
-                        
-                        var xhr = new XMLHttpRequest();
-                                 
-                        builder += 'Content-Disposition: form-data; name="Filedata"';
-                        if (file.fileName) {
-                          builder += '; filename="' + file.name + '"';
-                        }
-                        builder += crlf;
-                
-                        builder += 'Content-Type: ' + file.type;
-                        builder += crlf;
-                        builder += crlf;
 
-                        builder += file.getAsBinary();
-                        builder += crlf;
-                
-                        builder += dashdash;
-                        builder += boundary;
-                        builder += crlf;
-                        
-                        builder += dashdash;
-                        builder += boundary;
-                        builder += dashdash;
-                        builder += crlf;
-                    
-                        xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid=" + pimcore.settings.sessionId + "&parentId=" + node.id, true);
-                        xhr.setRequestHeader('content-type', 'multipart/form-data; boundary=' 
-                            + boundary);
-                        xhr.sendAsBinary(builder);        
-                        
-                        xhr.onload = function () {
-                            this.activeUploads--;
-                            if(this.activeUploads < 1) {
-                               win.close();
-                                node.reload(); 
+                        var reader = new FileReader();
+                        reader.onload = function(file, node, win, e) {
+
+                            var boundary = '------multipartformboundary' + (new Date).getTime();
+                            var dashdash = '--';
+                            var crlf     = '\r\n';
+
+                            var builder = '';
+
+                            builder += dashdash;
+                            builder += boundary;
+                            builder += crlf;
+
+                            var xhr = new XMLHttpRequest();
+
+                            builder += 'Content-Disposition: form-data; name="Filedata"';
+                            if (file.fileName) {
+                              builder += '; filename="' + file.name + '"';
                             }
-                        }.bind(this,node,win);
+                            builder += crlf;
+
+                            builder += 'Content-Type: ' + file.type;
+                            builder += crlf;
+                            builder += crlf;
+
+
+
+                            builder += e.target.result;
+                            builder += crlf;
+
+                            builder += dashdash;
+                            builder += boundary;
+                            builder += crlf;
+
+                            builder += dashdash;
+                            builder += boundary;
+                            builder += dashdash;
+                            builder += crlf;
+
+                            xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid=" + pimcore.settings.sessionId + "&parentId=" + node.id, true);
+                            xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
+                                + boundary);
+                            xhr.sendAsBinary(builder);
+
+                            xhr.onload = function () {
+                                this.activeUploads--;
+                                if(this.activeUploads < 1) {
+                                   win.close();
+                                    node.reload();
+                                }
+                            }.bind(this,node,win);
+
+                        }.bind(this, file, node, win);
+
+                        reader.readAsBinaryString(file);
                     }
                 }
             }.bind(this, node),true);
