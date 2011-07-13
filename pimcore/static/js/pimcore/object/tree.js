@@ -292,13 +292,12 @@ pimcore.object.tree = Class.create({
                 menu: [{
                     text: t('import_archive'),
                     iconCls: "pimcore_icon_archive_import",
-                    hideOnClick: false,
                     handler: function(){
                         new pimcore.element.importer("object",this.id);
-                        console.log(this);
                     }.bind(this)
                 },{
                     text: t('import_csv'),
+                    hideOnClick: false,
                     iconCls: "pimcore_icon_object_csv_import",
                     menu:objectMenu.importer
                 }]
