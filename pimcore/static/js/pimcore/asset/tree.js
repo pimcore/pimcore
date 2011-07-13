@@ -617,8 +617,11 @@ pimcore.asset.tree = Class.create({
                 el.addEventListener("dragover", function (e) {
                     e.stopPropagation();
                     e.preventDefault();
-                    
+                    e.dataTransfer.dropEffect = 'copy';
+
                     node.select();
+
+                    return false;
                 }.bind(node),true);
             }
             catch (e) {
@@ -626,6 +629,7 @@ pimcore.asset.tree = Class.create({
             }
             
             el.addEventListener("drop", function (node, e) {
+
                 e.stopPropagation();
                 e.preventDefault();
 
