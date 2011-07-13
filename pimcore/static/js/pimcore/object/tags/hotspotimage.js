@@ -14,31 +14,22 @@
 
 pimcore.registerNS("pimcore.object.tags.hotspotimage");
 pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
-    selectorCount: 0,
+    hotspotCount: 0,
     type: "hotspotimage",
-//    dirty: false,
-//
-//    initialize: function (data, layoutConf) {
-//        if (data) {
-//            this.data = data;
-//        }
-//        this.layoutConf = layoutConf;
-//
-//    },
-//
-//    getGridColumnConfig: function(field) {
-//
-//        return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-//            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-//                metaData.css += " grid_value_inherited";
-//            }
-//
-//            if (value && value.id) {
-//                return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id + '/width/88/aspectratio/true" />';
-//            }
-//        }.bind(this, field.key)};
-//    },
-//
+
+    data: null,
+    hotspots: {},
+    initialize: function (data, layoutConf) {
+        if (data) {
+            this.data = data.image;
+            if(data.hotspots && data.hotspots != "null") {
+                this.loadedHotspots = data.hotspots;
+            }
+        }
+        this.layoutConf = layoutConf;
+
+    },
+
     getLayoutEdit: function () {
 
         if (intval(this.layoutConf.width) < 1) {
@@ -48,12 +39,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             this.layoutConf.height = 100;
         }
 
-        this.panel = new Ext.Panel({
-            width: this.layoutConf.width,
-            height: this.layoutConf.height-27,
-            bodyCssClass: "pimcore_droptarget_image"}
-        );
-        
         var conf = {
             width: this.layoutConf.width,
             height: this.layoutConf.height,
@@ -82,13 +67,22 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 xtype: "button",
                 iconCls: "pimcore_icon_search",
                 handler: this.openSearchEditor.bind(this)
-            }],
-            items: [this.panel]
-//            cls: "object_field"
-//            bodyCssClass: "pimcore_droptarget_image"
+            }]
         };
 
         this.layout = new Ext.Panel(conf);
+        this.createImagePanel();
+
+        return this.layout;
+    },
+
+    createImagePanel: function() {
+        this.panel = new Ext.Panel({
+            width: this.layoutConf.width,
+            height: this.layoutConf.height-27,
+            bodyCssClass: "pimcore_droptarget_image"}
+        );
+        this.layout.add(this.panel);
 
 
         this.panel.on("render", function (el) {
@@ -123,100 +117,55 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
         }.bind(this));
 
+        this.layout.doLayout();
 
-        return this.layout;
     },
-//
-//
-//    getLayoutShow: function () {
-//
-//        if (intval(this.layoutConf.width) < 1) {
-//            this.layoutConf.width = 100;
-//        }
-//        if (intval(this.layoutConf.height) < 1) {
-//            this.layoutConf.height = 100;
-//        }
-//
-//        var conf = {
-//            width: this.layoutConf.width,
-//            height: this.layoutConf.height,
-//            title: this.layoutConf.title,
-//            cls: "object_field"
-//        };
-//
-//        this.layout = new Ext.Panel(conf);
-//
-//        this.layout.on("render", function (el) {
-//            if (this.data) {
-//                this.updateImage();
-//            }
-//        }.bind(this));
-//
-//        return this.layout;
-//    },
-//
-//    onNodeDrop: function (target, dd, e, data) {
-//        if (data.node.attributes.type == "image") {
-//            if(this.data != data.node.attributes.id) {
-//                this.dirty = true;
-//            }
-//            this.data = data.node.attributes.id;
-//
-//            this.updateImage();
-//            return true;
-//        }
-//    },
-//
-//    openSearchEditor: function () {
-//        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-//            type: ["asset"],
-//            subtype: {
-//                asset: ["image"]
-//            }
-//        });
-//    },
-//
-//    addDataFromSelector: function (item) {
-//        if (item) {
-//            if(this.data != item.id) {
-//                this.dirty = true;
-//            }
-//
-//            this.data = item.id;
-//
-//            this.updateImage();
-//            return true;
-//        }
-//    },
-//
-//    openImage: function () {
-//        if(this.data) {
-//            pimcore.helpers.openAsset(this.data, "image");
-//        }
-//    },
-//
+
     updateImage: function () {
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.layoutConf.width - 20) + "/aspectratio/true";
         this.panel.getEl().update('<img id="selectorImage" style="padding: 10px 0;padding-left:8px" class="pimcore_droptarget_image" src="' + path + '" />');
 
-//        this.getBody().setStyle({
-//            backgroundImage: "url(" + path + ")"
-//        });
-//        this.panel.getBody().repaint();
+
+        console.log(this.loadedHotspots);
+        if(this.loadedHotspots.length > 0) {
+            for(var i = 0; i < this.loadedHotspots.length; i++) {
+                this.addHotspot(this.loadedHotspots[i]);
+            }
+
+        }
+
     },
 
     addSelector: function() {
-        this.selectorCount++;
-        console.log(this.panel.getEl());
-//        this.panel.getEl().appendChild('<div id="selector" style="cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;"></div>');
+        Ext.MessageBox.prompt(t('hotspotimage_add_selector'), t('hotspotimage_enter_name_of_new_hotspot'), this.completeAddSelector.bind(this), null, null, "");
+    },
+
+    completeAddSelector: function(button, value, object) {
+        if(button == "ok") {
+            var hotspot = {
+                name: value,
+                top: 10,
+                left: 10,
+                width: 100,
+                height: 100
+            };
+            this.addHotspot(hotspot);
+        }
+    },
+
+    addHotspot: function(hotspot) {
+        this.hotspotCount++;
+        var number = this.hotspotCount;
+        console.log("add hotspot: " + hotspot.name + " => " + number);
 
         this.panel.getEl().createChild({
             tag: 'div',
-            id: 'selector' + this.selectorCount,
-            style: 'cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;'
+            id: 'selector' + number,
+            style: 'cursor:move; position: absolute; top: ' + hotspot.top + '; left: ' + hotspot.left + ';z-index:9000;',
+            html: this.getSelectorHtml(hotspot.name)
         });
 
-        this.resizer = new Ext.Resizable('selector' + this.selectorCount, {
+        var resizer = new Ext.Resizable('selector' + number, {
             pinned:true,
             minWidth:50,
             minHeight: 50,
@@ -224,39 +173,40 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             dynamic:true,
             handles: 'all',
             draggable:true,
-            width: 100,
-            height: 100
+            width: hotspot.width,
+            height: hotspot.height
+
         });
 
-        this.resizer.addListener("resize", function(item, width, height, e) {
-            var dimensions = Ext.get("selector1").getStyles("top","left","width","height");
-            console.log(dimensions);
+        this.hotspots[number] = hotspot;
+        this.dirty = true;
 
-            console.log(item);
-            console.log(width);
-            console.log(height);
-            console.log(e);
-        });
+        resizer.addListener("resize", function(item, width, height, e) {
+            this.handleSelectorChanged(number);
+        }.bind(this));
 
-//        Ext.get('selector' + this.selectorCount).on('click', function(){
-//            console.log("meins");
-//        });
-//
-//        Ext.get('selector' + this.selectorCount).on('dblclick', function(){
-//            console.log("meins22");
-//        });
+        Ext.get('selector' + number).on('mouseup', function(){
+            this.handleSelectorChanged(number);
+        }.bind(this));
 
-        Ext.get('selector' + this.selectorCount).on("contextmenu", this.onContextMenu2.bind(this, this.selectorCount));
+        Ext.get('selector' + number).on("contextmenu", this.onSelectorContextMenu.bind(this, number));
     },
 
-//
-//    getBody: function () {
-//        // get the id from the body element of the panel because there is no method to set body's html (only in configure)
-//        var bodyId = Ext.get(this.layout.getEl().dom).query(".x-panel-body")[0].getAttribute("id");
-//        return Ext.get(bodyId);
-//    },
-//
-    onContextMenu2: function (id, e) {
+    getSelectorHtml: function(text) {
+        return '<p style="background-color:#FFF;padding-top:5px;padding-left:7px;font: normal 11px arial,tahoma, helvetica">' + text + '</p>';
+    },
+
+    handleSelectorChanged: function(selectorNumber) {
+        var dimensions = Ext.get("selector" + selectorNumber).getStyles("top","left","width","height");
+        this.hotspots[selectorNumber].top = dimensions.top;
+        this.hotspots[selectorNumber].left = dimensions.left;
+        this.hotspots[selectorNumber].width = dimensions.width;
+        this.hotspots[selectorNumber].height = dimensions.height;
+
+        this.dirty = true;
+    },
+
+    onSelectorContextMenu: function (id, e) {
         var menu = new Ext.menu.Menu();
         menu.add(new Ext.menu.Item({
             text: t('delete'),
@@ -269,50 +219,30 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             }.bind(this)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('edit'),
-            iconCls: "pimcore_icon_open",
-            handler: function (item) {
-                item.parentMenu.destroy();
-
-                this.openImage();
-            }.bind(this)
-        }));
+//        menu.add(new Ext.menu.Item({
+//            text: t('edit'),
+//            iconCls: "pimcore_icon_open",
+//            handler: function (item) {
+//                item.parentMenu.destroy();
+//
+//                this.openImage();
+//            }.bind(this)
+//        }));
 
         menu.showAt(e.getXY());
 
         e.stopEvent();
     },
-//
-//    empty: function () {
-//        this.data = null;
-//        this.getBody().setStyle({
-//            backgroundImage: "url(/pimcore/static/img/icon/drop-40.png)"
-//        });
-//        this.dirty = true;
-//        this.getBody().repaint();
-//    },
-//
-//    getValue: function () {
-//        return this.data;
-//    },
-//
-//    getName: function () {
-//        return this.layoutConf.name;
-//    },
-//
-//    isInvalidMandatory: function () {
-//        if (this.getValue()) {
-//            return false;
-//        }
-//        return true;
-//    },
-//
-//    isDirty: function() {
-//        if(!this.layout.rendered) {
-//            return false;
-//        }
-//
-//        return this.dirty;
-//    }
+
+    empty: function () {
+        this.data = null;
+        this.hotspots = null;
+        this.dirty = true;
+        this.layout.removeAll();
+        this.createImagePanel();
+    },
+
+    getValue: function () {
+        return {image: this.data, hotspots: this.hotspots};
+    }
 });

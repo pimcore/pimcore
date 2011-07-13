@@ -427,7 +427,6 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             $this->db->update("object_query_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
         }
 
-
         // HACK: see a few lines above!
         Object_Abstract::setGetInheritedValues($inheritedValues);
     }

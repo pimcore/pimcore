@@ -24,239 +24,193 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
      */
     public $fieldtype = "hotspotimage";
 
-//    /**
-//     * @var integer
-//     */
-//    public $width;
-//
-//    /**
-//     * Type for the column to query
-//     *
-//     * @var integer
-//     */
-//    public $height;
-//
-//    /**
-//     * Type for the column to query
-//     *
-//     * @var string
-//     */
-//    public $queryColumnType = "int(11)";
-//
-//    /**
-//     * Type for the column
-//     *
-//     * @var string
-//     */
-//    public $columnType = "int(11)";
-//
-//    /**
-//     * Type for the generated phpdoc
-//     *
-//     * @var string
-//     */
-//    public $phpdocType = "Asset_Image";
-//
-//    /**
-//     * @return integer
-//     */
-//    public function getWidth() {
-//        return $this->width;
-//    }
-//
-//    /**
-//     * @param integer $width
-//     * @return void
-//     */
-//    public function setWidth($width) {
-//        $this->width = $width;
-//    }
-//
-//    /**
-//     * @return integer
-//     */
-//    public function getHeight() {
-//        return $this->height;
-//    }
-//
-//    /**
-//     * @param integer $height
-//     * @return void
-//     */
-//    public function setHeight($height) {
-//        $this->height = $height;
-//    }
-//
-//    public function getDefaultValue() {
-//        return null;
-//    }
-//
-//
-//    /**
-//     * @see Object_Class_Data::getDataForResource
-//     * @param Asset $data
-//     * @param null|Object_Abstract $object
-//     * @return integer|null
-//     */
-//    public function getDataForResource($data, $object = null) {
-//        if ($data instanceof Asset) {
-//            return $data->getId();
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * @see Object_Class_Data::getDataFromResource
-//     * @param integer $data
-//     * @return Asset
-//     */
-//    public function getDataFromResource($data) {
-//        if (intval($data) > 0) {
-//            return Asset_Image::getById($data);
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * @see Object_Class_Data::getDataForQueryResource
-//     * @param Asset $data
-//     * @param null|Object_Abstract $object
-//     * @return integer|null
-//     */
-//    public function getDataForQueryResource($data, $object = null) {
-//
-//
-//        if ($data instanceof Asset) {
-//            return $data->getId();
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * @see Object_Class_Data::getDataForEditmode
-//     * @param Asset $data
-//     * @param null|Object_Abstract $object
-//     * @return integer
-//     */
-//    public function getDataForEditmode($data, $object = null) {
-//        return $this->getDataForResource($data, $object);
-//    }
-//
-//    /**
-//     * @see Object_Class_Data::getDataFromEditmode
-//     * @param integer $data
-//     * @param null|Object_Abstract $object
-//     * @return Asset
-//     */
-//    public function getDataFromEditmode($data, $object = null) {
-//        return $this->getDataFromResource($data);
-//    }
-//
-//    /**
-//     * @see Object_Class_Data::getVersionPreview
-//     * @param Asset_Image $data
-//     * @return string
-//     */
-//    public function getVersionPreview($data) {
-//        if ($data instanceof Asset_Image) {
-//            return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getId() . '/width/100/height/100/aspectratio/true" />';
-//        }
-//    }
-//
-//    /**
-//     * converts object data to a simple string value or CSV Export
-//     * @abstract
-//     * @param Object_Abstract $object
-//     * @return string
-//     */
-//    public function getForCsvExport($object) {
-//        $key = $this->getName();
-//        $getter = "get".ucfirst($key);
-//        if ($object->$getter() instanceof Element_Interface) {
-//            return $object->$getter()->getFullPath();
-//        } else return null;
-//    }
-//
-//    /**
-//     * fills object field data values from CSV Import String
-//     * @abstract
-//     * @param string $importValue
-//     * @param Object_Abstract $abstract
-//     * @return Object_Class_Data
-//     */
-//    public function getFromCsvImport($importValue) {
-//        $value = null;
-//        if ($el = Asset::getByPath($importValue)) {
-//            $value = $el;
-//        }
-//        else {
-//            $value = null;
-//        }
-//        return $value;
-//    }
-//
-//    /**
-//     * @param mixed $data
-//     * @param Object_Concrete $ownerObject
-//     * @param array $blockedTags
-//     */
-//    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
-//        $tags = array();
-//
-//        if ($data instanceof Asset_Image) {
-//            $tags = array_merge($tags, $data->getCacheTags($blockedTags));
-//        }
-//        return $tags;
-//    }
-//
-//    /**
-//     * @param mixed $data
-//     */
-//    public function resolveDependencies($data) {
-//
-//        $dependencies = array();
-//
-//        if ($data instanceof Asset) {
-//            $dependencies["asset_" . $data->getId()] = array(
-//                "id" => $data->getId(),
-//                "type" => "asset"
-//            );
-//        }
-//
-//        return $dependencies;
-//    }
-//
-//
-//        /**
-//     * converts data to be exposed via webservices
-//     * @param string $object
-//     * @return mixed
-//     */
-//    public function getForWebserviceExport ($object) {
-//        $key = $this->getName();
-//        $getter = "get".ucfirst($key);
-//        if($object->$getter() instanceof Asset){
-//            return  $object->$getter()->getId();
-//        }
-//    }
-//
-//
-//    /**
-//     * converts data to be imported via webservices
-//     * @param mixed $value
-//     * @return mixed
-//     */
-//    public function getFromWebserviceImport($value) {
-//
-//        $asset = Asset::getById($value);
-//        if(empty($value)){
-//            return null;
-//        } else if (is_numeric($value) and $asset instanceof Asset) {
-//            return $asset;
-//        } else {
-//            throw new Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
-//        }
-//    }
+    /**
+     * Type for the column to query
+     *
+     * @var string
+     */
+    public $queryColumnType = array("image" => "int(11)","hotspots" => "text");
+
+    /**
+     * Type for the column
+     *
+     * @var string
+     */
+    public $columnType = array("image" => "int(11)","hotspots" => "text");
+
+    /**
+     * Type for the generated phpdoc
+     *
+     * @var string
+     */
+    public $phpdocType = "Object_Data_Hotspotimage";
+
+
+    /**
+     * @see Object_Class_Data::getDataForResource
+     * @param Object_Data_Hotspotimage $data
+     * @param null|Object_Abstract $object
+     * @return integer|null
+     */
+    public function getDataForResource($data, $object = null) {
+        if ($data instanceof Object_Data_Hotspotimage) {
+            $imageId = null;
+            if($data->getImage()) {
+                $imageId = $data->getImage()->getId();
+            }
+            return array(
+                $this->getName() . "__image" => $imageId,
+                $this->getName() . "__hotspots" => json_encode($data->getHotspots())
+            );
+        }
+        return null;
+    }
+
+    /**
+     * @see Object_Class_Data::getDataFromResource
+     * @param Object_Data_Hotspotimage $data
+     * @return Asset
+     */
+    public function getDataFromResource($data) {
+        if($data[$this->getName() . "__image"] && $data[$this->getName() . "__hotspots"]) {
+            return new Object_Data_Hotspotimage($data[$this->getName() . "__image"], json_decode($data[$this->getName() . "__hotspots"]));
+        }
+        return null;
+
+    }
+
+    /**
+     * @see Object_Class_Data::getDataForQueryResource
+     * @param Object_Data_Hotspotimage $data
+     * @param null|Object_Abstract $object
+     * @return integer|null
+     */
+    public function getDataForQueryResource($data, $object = null) {
+        return $this->getDataForResource($data, $object);
+    }
+
+    /**
+     * @see Object_Class_Data::getDataForEditmode
+     * @param Object_Data_Hotspotimage $data
+     * @param null|Object_Abstract $object
+     * @return integer
+     */
+    public function getDataForEditmode($data, $object = null) {
+        if ($data instanceof Object_Data_Hotspotimage) {
+            $imageId = null;
+            if($data->getImage()) {
+                $imageId = $data->getImage()->getId();
+            }
+            return array(
+                "image" => $imageId,
+                "hotspots" => $data->getHotspots()
+            );
+        }
+        return null;
+    }
+
+    /**
+     * @see Object_Class_Data::getDataFromEditmode
+     * @param Object_Data_Hotspotimage $data
+     * @param null|Object_Abstract $object
+     * @return Asset
+     */
+    public function getDataFromEditmode($data, $object = null) {
+        return new Object_Data_Hotspotimage($data["image"], $data["hotspots"]);
+    }
+
+    /**
+     * @see Object_Class_Data::getVersionPreview
+     * @param Asset_Image $data
+     * @return string
+     */
+    public function getVersionPreview($data) {
+        if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset_Image) {
+            return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getId() . '/width/100/height/100/aspectratio/true" />';
+        }
+    }
+
+    /**
+     * converts object data to a simple string value or CSV Export
+     * @abstract
+     * @param Object_Abstract $object
+     * @return string
+     */
+    public function getForCsvExport($object) {
+        $key = $this->getName();
+        $getter = "get".ucfirst($key);
+        if ($object->$getter() instanceof Object_Data_Hotspotimage) {
+            return base64_encode(serialize($object->$getter()));
+        } else return null;
+    }
+
+    /**
+     * fills object field data values from CSV Import String
+     * @abstract
+     * @param string $importValue
+     * @param Object_Abstract $abstract
+     * @return Object_Class_Data
+     */
+    public function getFromCsvImport($importValue) {
+        $value = null;
+        $value = unserialize(base64_decode($importValue));
+        if ($value instanceof Object_Data_Hotspotimage) {
+            return $value;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param mixed $data
+     * @param Object_Concrete $ownerObject
+     * @param array $blockedTags
+     */
+    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
+        $tags = array();
+
+        if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset_Image) {
+            $tags = array_merge($tags, $data->getImage()->getCacheTags($blockedTags));
+        }
+        return $tags;
+    }
+
+    /**
+     * @param mixed $data
+     */
+    public function resolveDependencies($data) {
+
+        $dependencies = array();
+
+        if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset_Image) {
+            $dependencies["asset_" . $data->getImage()->getId()] = array(
+                "id" => $data->getImage()->getId(),
+                "type" => "asset"
+            );
+        }
+
+        return $dependencies;
+    }
+
+
+        /**
+     * converts data to be exposed via webservices
+     * @param string $object
+     * @return mixed
+     */
+    public function getForWebserviceExport ($object) {
+        return $this->getForCsvExport($object);
+    }
+
+
+    /**
+     * converts data to be imported via webservices
+     * @param mixed $value
+     * @return mixed
+     */
+    public function getFromWebserviceImport($value) {
+        return $this->getFromCsvImport($value);
+    }
 
 
 }

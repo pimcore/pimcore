@@ -213,16 +213,16 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                 }
                 
                 // everything else
-                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
-                    if ($value->getQueryColumnType()) {
+//                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
+                    if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
                         $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), $defaultvalue, $nullable);
                         $protectedColums[] = $key;
                     }
-                    if ($value->getColumnType() && !$value->isRelationType()) {
+                    if (!is_array($value->getColumnType()) && $value->getColumnType() && !$value->isRelationType()) {
                         $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), $defaultvalue, $nullable);
                         $protectedDatastoreColumns[] = $key;
                     }
-                }
+//                }
                 
                 // add indices
                 $this->addIndexToField($value, $objectTable);
