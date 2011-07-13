@@ -83,14 +83,14 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
 
         });
 
-          console.log(this.datax);
         this.fieldComboStore = new Ext.data.JsonStore({
             url: '/admin/object/grid-get-column-config',
             baseParams: {
                 types: 'objects',
                 id: this.datax.ownerClassId
             },
-            fields: ['key', 'label',],
+            root: "availableFields",
+            fields: ['key', 'label'],
             autoLoad: false,
             forceSelection:true
         });

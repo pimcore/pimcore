@@ -141,6 +141,9 @@
         // PIMCORE SCRIPTS
         $scripts = array(
 
+            // fixes for browsers
+            "pimcore/browserfixes.js",
+
             // fixes for libraries
             "pimcore/libfixes.js",
 

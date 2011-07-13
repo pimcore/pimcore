@@ -612,7 +612,7 @@ pimcore.asset.tree = Class.create({
         
         // timeout because there is no afterrender function
         window.setTimeout(function (tree, parent, node, index) {
-            
+
             var el = Ext.get(node.getUI().getEl()).dom;
             try {
                 el.addEventListener("dragover", function (e) {
@@ -629,7 +629,16 @@ pimcore.asset.tree = Class.create({
             el.addEventListener("drop", function (node, e) {
                 e.stopPropagation();
                 e.preventDefault();
-                
+
+                var dt = e.dataTransfer;
+                var files = dt.files;
+                var file;
+                this.activeUploads = 0;
+
+                if(files.length < 1) {
+                    return;
+                }
+
                 var pbar = new Ext.ProgressBar({
                     id:'pbar3',
                     width:500
@@ -647,11 +656,7 @@ pimcore.asset.tree = Class.create({
                 });
                 win.show();
                 
-                var dt = e.dataTransfer;
-                var files = dt.files;
-                var file;
-                this.activeUploads = 0;
-                
+
                 for (var i=0; i<files.length; i++) {
                     file = files[i];
                     
@@ -679,8 +684,8 @@ pimcore.asset.tree = Class.create({
                 
                         builder += 'Content-Type: ' + file.type;
                         builder += crlf;
-                        builder += crlf; 
-                
+                        builder += crlf;
+
                         builder += file.getAsBinary();
                         builder += crlf;
                 

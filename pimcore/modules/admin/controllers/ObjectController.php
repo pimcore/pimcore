@@ -1261,7 +1261,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
 
         $fields = $class->getFieldDefinitions();
-        //        p_r($fields); die();
 
         $types = array();
         if ($this->_getParam("types")) {
@@ -1361,19 +1360,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                             }
                         }
                     }
-
-
                 } else {
                     if (empty($types) || in_array($field->getFieldType(), $types)) {
-                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count);
+                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, !empty($types));
                         if(!empty($fieldConfig)) {
                             $availableFields[] = $fieldConfig;
                             $count++;
                         }
                     }
                 }
-
-
             }
         } else {
             $savedColumns = $gridConfig['columns'];
