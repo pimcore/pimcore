@@ -420,7 +420,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                                 width: (imageWidth * (this.datax.cropWidth / 100)) + "px",
                                 height: (imageHeight * (this.datax.cropHeight / 100)) + "px",
                                 top: (imageHeight * (this.datax.cropTop / 100)) + "px",
-                                left: (imageWidth * (this.datax.cropLeft / 100)) + "px",
+                                left: (imageWidth * (this.datax.cropLeft / 100)) + "px"
                             });
                         }
                     }
