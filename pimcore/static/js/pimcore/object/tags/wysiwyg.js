@@ -90,7 +90,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             var iframeContent = this.data;
             iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
             document.body.innerHTML = iframeContent;
-            document.body.setAttribute("style", "height: 80%;");
+            document.body.setAttribute("style", "height: 80%; cursor: pointer;");
             Ext.get(document.body).on("click", this.initCkEditor.bind(this));
 
         }.bind(this);
