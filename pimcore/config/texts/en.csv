@@ -914,3 +914,6 @@
 "columns","columns"
 "children_grid","Children Grid"
 "only_children","just direct child objects"
+"hotspotimage_add_selector","Add Hotspot"
+"hotspotimage_enter_name_of_new_hotspot","Enter name of new Hotspot"
+"hotspotimage","Image with Hotspots"

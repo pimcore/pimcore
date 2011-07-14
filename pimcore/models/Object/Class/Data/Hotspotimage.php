@@ -58,9 +58,16 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
             if($data->getImage()) {
                 $imageId = $data->getImage()->getId();
             }
+
+            $hotspots = $data->getHotspots();
+            if($hotspots != "null" && !empty($hotspots)) {
+                $hotspots = json_encode($data->getHotspots());
+            } else {
+                $hotspots = null;
+            }
             return array(
                 $this->getName() . "__image" => $imageId,
-                $this->getName() . "__hotspots" => json_encode($data->getHotspots())
+                $this->getName() . "__hotspots" => $hotspots
             );
         }
         return null;
@@ -72,8 +79,13 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
      * @return Asset
      */
     public function getDataFromResource($data) {
-        if($data[$this->getName() . "__image"] && $data[$this->getName() . "__hotspots"]) {
-            return new Object_Data_Hotspotimage($data[$this->getName() . "__image"], json_decode($data[$this->getName() . "__hotspots"]));
+        if($data[$this->getName() . "__image"] || $data[$this->getName() . "__hotspots"]) {
+            $hotspots = json_decode($data[$this->getName() . "__hotspots"]);
+            if($hotspots == "null") {
+                $hotspots = null;
+            }
+
+            return new Object_Data_Hotspotimage($data[$this->getName() . "__image"], $hotspots);
         }
         return null;
 

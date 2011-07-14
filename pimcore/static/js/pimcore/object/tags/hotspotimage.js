@@ -126,13 +126,23 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     updateImage: function () {
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.layoutConf.width - 20) + "/aspectratio/true";
-        this.panel.getEl().update('<img id="' + this.getName() + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />');
+        this.panel.getEl().update(
+            '<img id="' + this.getName() + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />',
+            false,
+            this.loadHotspots.bind(this)
+        );
+    },
 
-        if(this.loadedHotspots.length > 0) {
-            for(var i = 0; i < this.loadedHotspots.length; i++) {
-                this.addHotspot(this.loadedHotspots[i]);
+    loadHotspots: function() {
+        var box = Ext.get(this.getName() + '_selectorImage').getBox();
+        if(box.height < 1 || box.width < 1) {
+            setTimeout(this.loadHotspots.bind(this), 500);
+        } else {
+            if(this.loadedHotspots && this.loadedHotspots.length > 0) {
+                for(var i = 0; i < this.loadedHotspots.length; i++) {
+                    this.addHotspot(this.loadedHotspots[i]);
+                }
             }
-
         }
 
     },
@@ -159,6 +169,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         var number = this.hotspotCount;
 
         var box = Ext.get(this.getName() + '_selectorImage').getBox();
+
         var height = this.convertToAbsolute(hotspot.height, box.height);
         var width = this.convertToAbsolute(hotspot.width, box.width);
         var left = this.convertToAbsolute(hotspot.left, box.width) + this.marginLeft;
@@ -241,7 +252,9 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     empty: function () {
         this.data = null;
-        this.hotspots = null;
+
+        this.hotspots = {};
+        this.loadedHotspots = null;
         this.dirty = true;
         this.layout.removeAll();
         this.createImagePanel();
