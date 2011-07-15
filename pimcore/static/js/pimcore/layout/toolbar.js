@@ -114,7 +114,7 @@ pimcore.layout.toolbar = Class.create({
         if (user.isAllowed("system_settings")) {
             if(pimcore.settings.staging_active == false) {
                 extrasItems.push({
-                    text: t("development_stage_mode"),
+                    text: t("development_stage_mode") + "(alpha)",
                     iconCls: "pimcore_icon_staging",
                     hideOnClick: false,
                     menu: [{
