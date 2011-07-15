@@ -15,10 +15,18 @@
 
 class Pimcore_Resource_Mysql {
 
+    /**
+     * @static
+     * @return string
+     */
     public static function getType () {
         return "mysql";
     }
 
+    /**
+     * @static
+     * @return Zend_Db_Adapter_Abstract
+     */
     public static function getConnection () {
 
         $conf = Pimcore_Config::getSystemConfig();
@@ -27,21 +35,28 @@ class Pimcore_Resource_Mysql {
         $db->getConnection()->exec("SET NAMES UTF8");
         $db->getConnection()->exec("SET storage_engine=InnoDB;");
 
+        if(PIMCORE_DEVMODE) {
+            $profiler = new Pimcore_Resource_Mysql_Profiler('All DB Queries');
+            $profiler->setEnabled(true);
+            $db->setProfiler($profiler);
+        }
+
         return $db;
     }
 
-    public static function reset(){  
+    /**
+     * @static
+     * @return Zend_Db_Adapter_Abstract
+     */
+    public static function reset(){
 
+        // close old connections
+        self::close();
+
+        // get new connection
         try {
             $db = self::getConnection();
-
-            Zend_Registry::set("Pimcore_Resource_Mysql", $db);
-
-            if(PIMCORE_DEVMODE) {
-                $profiler = new Pimcore_Resource_Mysql_Profiler('All DB Queries');
-                $profiler->setEnabled(true);
-                $db->setProfiler($profiler);
-            }
+            self::set($db);
 
             return $db;
         }
@@ -55,7 +70,10 @@ class Pimcore_Resource_Mysql {
         }
     }
 
-
+    /**
+     * @static
+     * @return mixed|Zend_Db_Adapter_Abstract
+     */
     public static function get() {
         try {
             $connection = Zend_Registry::get("Pimcore_Resource_Mysql");
@@ -66,8 +84,26 @@ class Pimcore_Resource_Mysql {
         }
     }
 
+    /**
+     * @static
+     * @param $connection
+     * @return void
+     */
     public static function set($connection) {
         Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
     }
 
+    /**
+     * @static
+     * @return void
+     */
+    public static function close () {
+        try {
+            $db = Zend_Registry::get("Pimcore_Resource_Mysql");
+            $db->closeConnection();
+            
+        } catch (Exception $e) {
+            Logger::debug("No active resource connection.");
+        }
+    }
 }
