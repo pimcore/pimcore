@@ -32,18 +32,17 @@ foreach ($plugins as $plugin) {
 
     $jobRegistered = null;
 
-    if(method_exists($plugin, "maintainance")) {
-        //legacy hack
-        $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintainance"));
-    } else  if(method_exists($plugin, "maintenance")) {
-        $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenance"));
+    if(method_exists($plugin, "maintenanceForce")) {
+             $jobRegistered =  $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenanceForce"), true);
+    } else {
+            if(method_exists($plugin, "maintainance")) {
+                    //legacy hack
+                    $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintainance"));
+            } else  if(method_exists($plugin, "maintenance")) {
+                    $jobRegistered = $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenance"));
+            }
     }
 
-    if($jobRegistered === false) {
-        if(method_exists($plugin, "maintenanceForce")) {
-            $manager->registerJob(new Schedule_Maintenance_Job($id, $plugin, "maintenanceForce"), true);
-        }
-    }
 }
 
 $manager->run();
