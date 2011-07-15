@@ -25,6 +25,11 @@ abstract class Pimcore_Image_Adapter {
      */
     protected $height;
 
+    /**
+     * @var array
+     */
+    protected $tmpFiles = array();
+
 
     /**
      * @param int $height
@@ -56,6 +61,21 @@ abstract class Pimcore_Image_Adapter {
     public function getWidth()
     {
         return $this->width;
+    }
+
+
+    /**
+     * @return void
+     */
+    protected function removeTmpFiles () {
+        // remove tmp files
+        if(!empty($this->tmpFiles)) {
+            foreach ($this->tmpFiles as $tmpFile) {
+                if(file_exists($tmpFile)) {
+                    unlink($tmpFile);
+                }
+            }
+        }
     }
 
 
@@ -289,4 +309,31 @@ abstract class Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public abstract function save ($path, $format, $quality = null);
+
+
+    /**
+     * @abstract
+     * @return void
+     */
+    protected abstract function destroy ();
+
+    /**
+     * @return void
+     */
+    protected function reinitializeImage() {
+
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file.png";
+        $this->tmpFiles[] = $tmpFile;
+
+        $this->save($tmpFile, "PNG");
+        $this->destroy();
+        $this->load($tmpFile);
+    }
+
+    /**
+     * 
+     */
+    public function __destruct() {
+        $this->removeTmpFiles();
+    }
 }

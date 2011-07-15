@@ -21,6 +21,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     protected $resource;
 
+
     public function load ($imagePath) {
 
         $this->resource = new Imagick();
@@ -53,6 +54,12 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         return $this;
     }
 
+    /**
+     * @return void
+     */
+    protected function destroy() {
+        $this->resource->destroy();
+    }
 
     /**
      * @param  $width
@@ -64,6 +71,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $this->setWidth($width);
         $this->setHeight($height);
+
+        $this->reinitializeImage();
 
         return $this;
     }
@@ -80,6 +89,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         $this->setWidth($width);
         $this->setHeight($height);
+
+        $this->reinitializeImage();
 
         return $this;
     }
@@ -107,6 +118,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
+        $this->reinitializeImage();
+
         return $this;
     }
 
@@ -120,6 +133,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT , 0, 0);
         $this->resource = $newImage;
 
+        $this->reinitializeImage();
+
         return $this;
     }
 
@@ -131,6 +146,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     protected  function createImage ($width, $height, $color = "transparent") {
         $newImage = new Imagick();
         $newImage->newimage($width, $height, $color);
+
+        $this->reinitializeImage();
+
         return $newImage;
     }
 
@@ -147,6 +165,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->setWidth($this->resource->getimagewidth());
         $this->setHeight($this->resource->getimageheight());
 
+        $this->reinitializeImage();
+
         return $this;
     }
 
@@ -159,6 +179,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public function roundCorners ($x, $y) {
 
         $this->resource->roundCorners($x, $y);
+
+        $this->reinitializeImage();
 
         return $this;
     }
@@ -180,6 +202,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $newImage->compositeImage($this->resource, Imagick::COMPOSITE_DEFAULT, 0 ,0);
             $this->resource = $newImage;
         }
+
+        $this->reinitializeImage();
 
         return $this;
     }
@@ -204,6 +228,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource->compositeImage($newImage, Imagick::COMPOSITE_DEFAULT, $x ,$y);
         }
 
+        $this->reinitializeImage();
+
         return $this;
     }
 
@@ -224,6 +250,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $newImage->resizeimage($this->getWidth(), $this->getHeight(), Imagick::FILTER_UNDEFINED, 1, false);
             $this->resource->compositeImage($newImage, Imagick::COMPOSITE_DSTIN, 0 ,0);
         }
+
+        $this->reinitializeImage();
 
         return $this;
     }

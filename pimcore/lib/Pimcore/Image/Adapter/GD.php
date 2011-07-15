@@ -65,6 +65,13 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
     }
 
     /**
+     * @return void
+     */
+    protected function destroy() {
+        imagedestroy($this->resource);
+    }
+
+    /**
      * @param $width
      * @param $height
      * @return resource
@@ -95,6 +102,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
+        $this->reinitializeImage();
+
         return $this;
     }
 
@@ -119,6 +128,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         $this->setWidth($width);
         $this->setHeight($height);
+
+        $this->reinitializeImage();
 
         return $this;
     }
@@ -145,6 +156,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->setWidth($width);
         $this->setHeight($height);
 
+        $this->reinitializeImage();
+
         return $this;
     }
 
@@ -157,6 +170,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         list($r,$g,$b) = $this->colorhex2colorarray($color);
         $color = imagecolorallocate($this->resource, $r, $g, $b);
         imagefill($this->resource, 0, 0, $color);
+
+        $this->reinitializeImage();
 
         return $this;
     }
