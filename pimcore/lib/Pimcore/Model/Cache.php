@@ -37,7 +37,7 @@ class Pimcore_Model_Cache {
      */
     public static function getInstance() {
         
-        if (!empty($_REQUEST["nocache"]) || PIMCORE_STAGING_ACTIVE) {
+        if (!empty($_REQUEST["nocache"])) {
             self::disable();
         }
         

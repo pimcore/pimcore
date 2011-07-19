@@ -1151,39 +1151,6 @@ pimcore.settings.system = Class.create({
                                 }]
                             }
                         ]
-                    },
-                    {
-                        xtype:'fieldset',
-                        title: t('development_stage_mode'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight:true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 150},
-                        items :[
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("staging_settings_description"),
-                                cls: "pimcore_extra_label_bottom"
-                            },
-                            {
-                                fieldLabel: t('domain'),
-                                disabled: false,
-                                width:300,
-                                name: 'staging.domain',
-                                value: this.getValue("staging.domain")
-                            },
-                            {
-                                fieldLabel: t('database_name'),
-                                disabled: false,
-                                width:300,
-                                name: 'staging.database.params.dbname',
-                                value: this.getValue("staging.database.params.dbname")
-                            }
-                        ]
                     }
                 ]
             });
