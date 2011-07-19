@@ -912,3 +912,4 @@
 "hotspotimage_add_selector","Add Hotspot"
 "hotspotimage_enter_name_of_new_hotspot","Enter name of new Hotspot"
 "hotspotimage","Image with Hotspots"
+"hotspotimage_no_image","Please define an image first"

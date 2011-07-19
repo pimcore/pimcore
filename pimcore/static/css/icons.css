@@ -552,6 +552,10 @@
 	background: url(/pimcore/static/img/icon/picture.png) no-repeat !important;
 }
 
+.pimcore_icon_hotspotimage {
+	background: url(/pimcore/static/img/icon/pictures_thumbs.png) no-repeat !important;
+}
+
 .pimcore_icon_numeric {
 	background: url(/pimcore/static/img/icon/text_list_numbers.png) no-repeat !important;
 }

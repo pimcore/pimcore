@@ -22,6 +22,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     data: null,
     hotspots: {},
+
+
     initialize: function (data, layoutConf) {
         if (data) {
             this.data = data.image;
@@ -30,7 +32,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             }
         }
         this.layoutConf = layoutConf;
-
+        this.uniqeFieldId = uniqid();
     },
 
     getLayoutEdit: function () {
@@ -148,7 +150,11 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     addSelector: function() {
-        Ext.MessageBox.prompt(t('hotspotimage_add_selector'), t('hotspotimage_enter_name_of_new_hotspot'), this.completeAddSelector.bind(this), null, null, "");
+        if(this.data) {
+            Ext.MessageBox.prompt(t('hotspotimage_add_selector'), t('hotspotimage_enter_name_of_new_hotspot'), this.completeAddSelector.bind(this), null, null, "");
+        } else {
+            Ext.MessageBox.alert(t("hotspotimage_no_image"));
+        }
     },
 
     completeAddSelector: function(button, value, object) {
@@ -177,12 +183,12 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
         this.panel.getEl().createChild({
             tag: 'div',
-            id: 'selector' + number,
+            id: 'selector' + number + this.uniqeFieldId,
             style: 'cursor:move; position: absolute; top: ' + top + 'px; left: ' + left + 'px;z-index:9000;',
             html: this.getSelectorHtml(hotspot.name)
         });
 
-        var resizer = new Ext.Resizable('selector' + number, {
+        var resizer = new Ext.Resizable('selector' + number + this.uniqeFieldId, {
             pinned:true,
             minWidth:50,
             minHeight: 50,
@@ -192,7 +198,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             draggable:true,
             width: width,
             height: height
-
         });
 
         this.hotspots[number] = hotspot;
@@ -202,11 +207,11 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             this.handleSelectorChanged(number);
         }.bind(this));
 
-        Ext.get('selector' + number).on('mouseup', function(){
+        Ext.get('selector' + number + this.uniqeFieldId).on('mouseup', function(){
             this.handleSelectorChanged(number);
         }.bind(this));
 
-        Ext.get('selector' + number).on("contextmenu", this.onSelectorContextMenu.bind(this, number));
+        Ext.get('selector' + number + this.uniqeFieldId).on("contextmenu", this.onSelectorContextMenu.bind(this, number));
     },
 
     getSelectorHtml: function(text) {
@@ -214,7 +219,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     handleSelectorChanged: function(selectorNumber) {
-        var dimensions = Ext.get("selector" + selectorNumber).getStyles("top","left","width","height");
+        var dimensions = Ext.get("selector" + selectorNumber + this.uniqeFieldId).getStyles("top","left","width","height");
         var box = Ext.get(this.getName() + '_selectorImage').getBox();
         this.hotspots[selectorNumber].top = this.convertToRelative(intval(dimensions.top) - this.marginTop, box.height);
         this.hotspots[selectorNumber].left = this.convertToRelative(intval(dimensions.left) - this.marginLeft, box.width);
@@ -239,8 +244,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             text: t('delete'),
             iconCls: "pimcore_icon_delete",
             handler: function (item) {
-                Ext.get('selector' + id).hide();
-                Ext.get('selector' + id).remove();
+                Ext.get('selector' + id + this.uniqeFieldId).hide();
+                Ext.get('selector' + id + this.uniqeFieldId).remove();
                 delete this.hotspots[id];
             }.bind(this)
         }));

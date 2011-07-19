@@ -31,7 +31,7 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
     },
 
     getIconClass: function () {
-        return "pimcore_icon_image";
+        return "pimcore_icon_hotspotimage";
     }/*,
 
     getLayout: function ($super) {
