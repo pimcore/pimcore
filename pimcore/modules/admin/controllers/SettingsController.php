@@ -102,15 +102,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         if ($this->getUser()->isAllowed("system_settings")) {
             $values = Pimcore_Config::getSystemConfig();
 
-            $timezoneData = new Zend_Config_Xml(PIMCORE_PATH . "/config/supplementalData.xml");
-            $timezoneData = $timezoneData->timezoneData->mapTimezones->toArray();
-            $timezoneData = $timezoneData[0]["mapZone"];
-
-            $timezones = array();
-            foreach ($timezoneData as $timezone) {
-                $timezones[] = $timezone["type"];
+            if (($handle = fopen(PIMCORE_PATH . "/config/timezones.csv", "r")) !== FALSE) {
+                while (($rowData = fgetcsv($handle, 10000, ",", '"')) !== false) {
+                    $timezones[] = $rowData[0];
+                }
+                fclose($handle);
             }
-
 
             $languages = Zend_Locale::getTranslationList('language');
 
