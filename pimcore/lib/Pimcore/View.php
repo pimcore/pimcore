@@ -15,6 +15,12 @@
 
 class Pimcore_View extends Zend_View {
 
+    /**
+     * @param $type
+     * @param $name
+     * @param array $options
+     * @return Tag
+     */
     public function tag($type, $name, $options = array()) {
 
         try {
@@ -74,7 +80,13 @@ class Pimcore_View extends Zend_View {
         }
     }
 
-    // includes a template
+    /**
+     * includes a template
+     *
+     * @param $scriptPath
+     * @param array $params
+     * @return void
+     */
     public function template($scriptPath, $params = array()) {
 
         foreach ($params as $key => $value) {
@@ -101,7 +113,13 @@ class Pimcore_View extends Zend_View {
         }
     }
 
-    // includes a document
+    /**
+     * includes a document
+     *
+     * @param $include
+     * @param array $params
+     * @return string
+     */
     public function inc($include, $params = array()) {
 
         $editmodeBackup = Zend_Registry::get("pimcore_editmode");
@@ -142,25 +160,52 @@ class Pimcore_View extends Zend_View {
         
         return "";
     }
-    
+
+    /**
+     * @param $key
+     * @return mixed
+     */
     public function getParam($key) {
         if(is_array($this->params)) {
             return $this->params[$key];
         }
     }
-    
+
+    /**
+     * @return array
+     */
     public function getAllParams () {
         return $this->params;
     }
 
+    /**
+     * @param $key
+     * @return mixed
+     */
     public function _getParam($key) {
         return $this->getParam($key);
     }
 
+    /**
+     * @return array
+     */
     public function _getAllParams () {
         return $this->getAllParams();
     }
 
+    /**
+     * @return Zend_Controller_Request_Http
+     */
+    public function getRequest() {
+        return $this->request;
+    }
+
+    /**
+     * @throws Exception
+     * @param $method
+     * @param $arguments
+     * @return mixed|string|Tag
+     */
     public function __call($method, $arguments) {
 
         $class = "Document_Tag_" . ucfirst(strtolower($method));

@@ -6,7 +6,6 @@
 
     <style type="text/css">
 
-        /* hide from ie on mac \*/
         html {
             height: 100%;
             overflow: hidden;
@@ -15,8 +14,6 @@
         #flashcontent {
             height: 100%;
         }
-
-        /* end hide */
 
         body {
             height: 100%;
@@ -30,7 +27,7 @@
 
 <body>
 
-<iframe src="http://docs.google.com/viewer?embedded=true&url=<?= urlencode($_SERVER["HTTP_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . $this->asset->getFullPath()) ?>" frameborder="0" width="100%" height="100%"></iframe>
+<iframe src="http://docs.google.com/viewer?embedded=true&url=<?= urlencode($this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $this->asset->getFullPath()) ?>" frameborder="0" width="100%" height="100%"></iframe>
 
 </body>
 </html>

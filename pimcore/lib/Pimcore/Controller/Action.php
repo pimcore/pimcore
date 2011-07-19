@@ -30,6 +30,10 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         catch (Exception $e) {
             $this->initCustomView();
         }
+
+        // add some parameters
+        $this->view->params = $this->_getAllParams();
+        $this->view->request = $this->getRequest();
     }
 
     protected function removeViewRenderer() {

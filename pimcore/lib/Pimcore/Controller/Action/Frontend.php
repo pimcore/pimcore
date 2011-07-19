@@ -178,7 +178,6 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         // set some parameters
         $this->editmode = Zend_Registry::get("pimcore_editmode");
         $this->view->editmode = Zend_Registry::get("pimcore_editmode");
-        $this->view->params = $this->_getAllParams();
     }
     
     public function getConfig () {

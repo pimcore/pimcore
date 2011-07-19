@@ -814,8 +814,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         // unlock the current session to access the version files
         session_write_close();
 
-        $fromSource = file_get_html($_SERVER["HTTP_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . $docFrom->getPath() . $docFrom->getKey() . "?pimcore_version=" . $this->_getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
-        $toSource = file_get_html($_SERVER["HTTP_SCHEME"] . "://" . $_SERVER["HTTP_HOST"] . $docTo->getPath() . $docTo->getKey() . "?pimcore_version=" . $this->_getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $fromSource = file_get_html($this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $docFrom->getPath() . $docFrom->getKey() . "?pimcore_version=" . $this->_getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $toSource = file_get_html($this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $docTo->getPath() . $docTo->getKey() . "?pimcore_version=" . $this->_getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
 
         if ($docFrom instanceof Document_Page) {
             $from = $fromSource->find("body", 0);

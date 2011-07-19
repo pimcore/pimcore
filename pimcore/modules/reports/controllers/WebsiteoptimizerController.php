@@ -122,7 +122,7 @@ class Reports_WebsiteoptimizerController extends Pimcore_Controller_Action_Admin
                 $pageUrl = "";
                 if($this->_getParam("page_url_".$i)) {
                     if($variantDoc = Document::getByPath($this->_getParam("page_url_".$i))) {
-                        $pageUrl = $_SERVER["HTTP_SCHEME"] . "://" . Pimcore_Tool::getHostname() . $variantDoc->getFullPath();
+                        $pageUrl = $this->getRequest()->getScheme() . "://" . Pimcore_Tool::getHostname() . $variantDoc->getFullPath();
                         
                         // add properties to variant page
                         $variantDoc = $this->clearProperties($variantDoc);
