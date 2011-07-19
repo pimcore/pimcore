@@ -663,4 +663,52 @@ pimcore.settings.thumbnail.items = {
 
         return item;
     },
+
+    itemGrayscale: function (panel, data) {
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.Panel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(t("grayscale"), myId, panel),
+            html: t("nothing_to_configure"),
+            items: [{
+                xtype: "hidden",
+                name: "item." + myId  + ".type",
+                value: "grayscale"
+            }]
+        });
+
+        return item;
+    },
+
+    itemSepia: function (panel, data) {
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.Panel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(t("sepia"), myId, panel),
+            html: t("nothing_to_configure"),
+            items: [{
+                xtype: "hidden",
+                name: "item." + myId  + ".type",
+                value: "sepia"
+            }]
+        });
+
+        return item;
+    }
 }

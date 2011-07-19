@@ -30,7 +30,9 @@ class Asset_Image_Thumbnail_Processor {
         "setBackgroundImage" => array("path"),
         "addOverlay" => array("path", "x", "y", "alpha"),
         "applyMask" => array("path"),
-        "cropPercent" => array("width","height","x","y")
+        "cropPercent" => array("width","height","x","y"),
+        "grayscale" => array(),
+        "sepia" => array()
     );
 
     /**
@@ -71,22 +73,11 @@ class Asset_Image_Thumbnail_Processor {
             return $path;
         }
 
-        // check dimensions
-        //$width = $asset->getWidth();
-        //$height = $asset->getHeight();
-
         // transform image
         $image = Asset_Image::getImageTransformInstance();
         if(!$image->load($asset->getFileSystemPath())) {
             return "/pimcore/static/img/image-not-supported.png";
         }
-
-        // create image with original dimensions, as a fallback
-        //$imageFallback = Asset_Image::getImageTransformInstance();
-        //$imageFallback->load($asset->getFileSystemPath());
-        //$imageFallback->resize($width, $height);
-        //$imageFallback->save($fsPath, $format, $config->getQuality());
-
 
         $transformations = $config->getItems();
         if(is_array($transformations) && count($transformations) > 0) {
@@ -94,12 +85,16 @@ class Asset_Image_Thumbnail_Processor {
                 if(!empty($transformation)) {
                     $arguments = array();
                     $mapping = self::$argumentMapping[$transformation["method"]];
-                    foreach ($transformation["arguments"] as $key => $value) {
-                        $position = array_search($key, $mapping);
-                        if($position !== false) {
-                            $arguments[$position] = $value;
+
+                    if(is_array($transformation["arguments"])) {
+                        foreach ($transformation["arguments"] as $key => $value) {
+                            $position = array_search($key, $mapping);
+                            if($position !== false) {
+                                $arguments[$position] = $value;
+                            }
                         }
                     }
+                    
                     ksort($arguments);
                     if(count($mapping) == count($arguments)) {
                         call_user_func_array(array($image,$transformation["method"]),$arguments);

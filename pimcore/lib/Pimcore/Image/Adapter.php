@@ -281,6 +281,13 @@ abstract class Pimcore_Image_Adapter {
         return $this;
     }
 
+    /**
+     * @param $width
+     * @param $height
+     * @param $x
+     * @param $y
+     * @return Pimcore_Image_Adapter
+     */
     public function  cropPercent ($width, $height, $x, $y) {
 
         $originalWidth = $this->getWidth();
@@ -292,6 +299,22 @@ abstract class Pimcore_Image_Adapter {
         $yPixel = $originalHeight * ($y / 100);
 
         return $this->crop($xPixel, $yPixel, $widthPixel, $heightPixel);
+    }
+
+    /**
+     * @return Pimcore_Image_Adapter
+     */
+    public function grayscale () {
+
+        return $this;
+    }
+
+    /**
+     * @return Pimcore_Image_Adapter
+     */
+    public function sepia () {
+
+        return $this;
     }
 
 

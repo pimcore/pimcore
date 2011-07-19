@@ -255,4 +255,27 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         return $this;
     }
+
+
+    /**
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function grayscale () {
+
+        $this->resource->setImageType(imagick::IMGTYPE_GRAYSCALEMATTE);
+        $this->reinitializeImage();
+
+        return $this;
+    }
+
+    /**
+     * @return Pimcore_Image_Adapter_Imagick
+     */
+    public function sepia () {
+
+        $this->resource->sepiatoneimage(85);
+        $this->reinitializeImage();
+
+        return $this;
+    }
 }

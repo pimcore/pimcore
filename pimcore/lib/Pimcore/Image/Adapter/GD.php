@@ -175,4 +175,28 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         return $this;
     }
+
+    /**
+     * @return Pimcore_Image_Adapter_GD
+     */
+    public function grayscale () {
+        imagefilter($this->resource, IMG_FILTER_GRAYSCALE);
+
+        $this->reinitializeImage();
+
+        return $this;
+    }
+
+    /**
+     * @return Pimcore_Image_Adapter_GD
+     */
+    public function sepia () {
+
+        imagefilter($this->resource, IMG_FILTER_GRAYSCALE);
+        imagefilter($this->resource, IMG_FILTER_COLORIZE, 100, 50, 0);
+
+        $this->reinitializeImage();
+
+        return $this;
+    }
 }
