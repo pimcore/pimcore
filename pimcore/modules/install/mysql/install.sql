@@ -225,6 +225,7 @@ CREATE TABLE `objects` (
   PRIMARY KEY (`o_id`),
   KEY `key` (`o_key`),
   KEY `path` (`o_path`),
+  KEY `type` (`o_type`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
   KEY `o_locked` (`o_locked`)
