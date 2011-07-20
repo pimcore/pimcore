@@ -29,7 +29,8 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
             accesskey: "",
             rel: "",
             tabindex: "",
-            target: ""
+            target: "",
+            class: ""
         };
 
         this.data = mergeObject(this.defaultData, data);
@@ -40,6 +41,8 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         if (!options) {
             options = {};
         }
+
+        this.options = options;
 
         Ext.get(id).setStyle({
             display:"inline"
@@ -172,6 +175,11 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
                                     fieldLabel: ('tabindex'),
                                     name: 'tabindex',
                                     value: this.data.tabindex
+                                },
+                                {
+                                    fieldLabel: ('class'),
+                                    name: 'class',
+                                    value: this.data.class
                                 }
                             ]
                         }
@@ -206,7 +214,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
             modal: true,
             width: 500,
             height: 330,
-            title: "Edit link",
+            title: t("edit_link"),
             items: [this.form],
             layout: "fit"
         });
@@ -276,6 +284,14 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
         // set text
         Ext.get(this.id).query(".pimcore_tag_link_text")[0].innerHTML = this.getLinkContent();
+
+        this.reload();
+    },
+
+    reload : function () {
+        if (this.options.reload) {
+            this.reloadDocument();
+        }
     },
 
     empty: function () {

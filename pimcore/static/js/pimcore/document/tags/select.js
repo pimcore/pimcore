@@ -29,7 +29,7 @@ pimcore.document.tags.select = Class.create(pimcore.document.tag, {
         }
 
         if (options.reload) {
-            options.listeners.select = this.reload;
+            options.listeners.select = this.reloadDocument;
         }
 
         options.name = id + "_editable";

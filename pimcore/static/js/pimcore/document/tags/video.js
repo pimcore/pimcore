@@ -134,10 +134,6 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
     },
 
-    reloadDocument : function () {
-        editWindow.reload();
-    },
-
     getValue: function () {
         return this.data;
     },

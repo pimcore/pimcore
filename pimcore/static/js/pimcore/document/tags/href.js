@@ -100,7 +100,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         this.element.setValue(this.data.path);
 
         if (this.options.reload) {
-            this.reload();
+            this.reloadDocument();
         }
 
         return true;
@@ -169,7 +169,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
                 this.data = {};
                 this.element.setValue(this.data.path);
                 if (this.options.reload) {
-                    this.reload();
+                    this.reloadDocument();
                 }
 
             }.bind(this)

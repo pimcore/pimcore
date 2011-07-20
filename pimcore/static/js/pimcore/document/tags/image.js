@@ -181,7 +181,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax.id = data.node.attributes.id;
 
             this.updateImage();
-            this.reloadDocument();
+            this.reload();
 
             return true;
         }
@@ -210,7 +210,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax.id = item.id;
 
             this.updateImage();
-            this.reloadDocument();
+            this.reload();
 
             return true;
         }
@@ -231,7 +231,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.altBar.setStyle({
             display: "none"
         });
-        this.reloadDocument();
+        this.reload();
     },
 
     getBody: function () {
@@ -281,9 +281,9 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.updateDimensionsInterval = window.setInterval(this.updateDimensions.bind(this), 1000);
     },
 
-    reloadDocument : function () {
+    reload : function () {
         if (this.options.reload) {
-            editWindow.reload();
+            this.reloadDocument();
         }
     },
 

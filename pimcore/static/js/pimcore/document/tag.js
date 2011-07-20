@@ -31,10 +31,8 @@ pimcore.document.tag = Class.create({
         return this.name;
     },
 
-    reload: function () {
-        var f = editWindow.reload.bind(editWindow);
-        f();
+    reloadDocument: function () {
+        window.editWindow.reload();
     }
-
 });
 

@@ -34,7 +34,7 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
             options.listeners.check = eval(options.onchange);
         }
         if (options.reload) {
-            options.listeners.check = this.reload;
+            options.listeners.check = this.reloadDocument;
         }
 
         options.checked = data;

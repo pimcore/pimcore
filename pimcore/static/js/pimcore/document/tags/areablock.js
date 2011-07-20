@@ -210,7 +210,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
         
         this.elements.splice.apply(this.elements, args);
-        this.reload();
+        this.reloadDocument();
     },
 
     removeBlock: function (element) {
@@ -227,7 +227,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         //Even though reload is not necessary after remove, some sites change their appearance
         //according to the amount of block elements they contain and this arose the need for reload anyway
-        this.reload();
+        this.reloadDocument();
     },
 
     moveBlockDown: function (element) {
@@ -241,7 +241,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.elements[index + 1] = x;
             this.elements[index] = y;
 
-            this.reload();
+            this.reloadDocument();
 
         }
     },
@@ -257,7 +257,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.elements[index - 1] = x;
             this.elements[index] = y;
 
-            this.reload();
+            this.reloadDocument();
         }
     },
 
@@ -329,11 +329,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     editmodeSave: function () {
         this.editmodeWindow.close();
 
-        this.reload();
-    },
-
-    reload: function () {
-        window.editWindow.reload();
+        this.reloadDocument();
     },
 
     getValue: function () {
