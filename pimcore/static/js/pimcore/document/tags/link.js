@@ -177,7 +177,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
                                     value: this.data.tabindex
                                 },
                                 {
-                                    fieldLabel: ('class'),
+                                    fieldLabel: t('class'),
                                     name: 'class',
                                     value: this.data.class
                                 }
