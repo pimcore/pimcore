@@ -1021,3 +1021,11 @@
 .pimcore_icon_grid_column_config {
     background: url(/pimcore/static/img/icon/table_gear.png) left center no-repeat !important;
 }
+
+.pimcore_icon_info {
+    background: url(/pimcore/static/img/icon/computer_magnify.png) left center no-repeat !important;
+}
+
+.pimcore_icon_php {
+    background: url(/pimcore/static/img/icon/page_white_php.png) left center no-repeat !important;
+}

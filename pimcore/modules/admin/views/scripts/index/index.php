@@ -161,6 +161,7 @@
 
             // tools
             "pimcore/tool/paralleljobs.js",
+            "pimcore/tool/genericiframewindow.js",
 
             // settings
             "pimcore/settings/user/panel.js",

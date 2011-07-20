@@ -177,6 +177,19 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("system_settings") && user.admin) {
+            extrasItems.push({
+                text: t("system_infos"),
+                iconCls: "pimcore_icon_info",
+                hideOnClick: false,
+                menu: [{
+                    text: "PHP Info",
+                    iconCls: "pimcore_icon_php",
+                    handler: this.showPhpInfo
+                }]
+            });
+        }
+
 
         if (extrasItems.length > 0) {
             this.extrasMenu = new Ext.menu.Menu({
@@ -516,15 +529,6 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    editForms: function () {
-        try {
-            pimcore.globalmanager.get("forms").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("forms", new pimcore.form.forms());
-        }
-    },
-
     editRoutes: function () {
 
         try {
@@ -604,18 +608,6 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
         }
     },
-    
-    /*pluginsOverview: function () {
-
-        try {
-            pimcore.globalmanager.get("plugins_overview").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("plugins_overview", new pimcore.plugins.overview());
-
-
-        }
-    },*/
 
     editClasses: function () {
         try {
@@ -707,5 +699,18 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("extensionmanager_download", new pimcore.extensionmanager.download());
         }
+    },
+
+    showPhpInfo: function () {
+
+        var id = "phpinfo";
+
+        try {
+            pimcore.globalmanager.get(this.id).activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add(this.id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo", "pimcore_icon_php", "PHP Info"));
+        }
+
     }
 });
