@@ -129,16 +129,16 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     updateImage: function () {
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.layoutConf.width - 20) + "/aspectratio/true";
         this.panel.getEl().update(
-            '<img id="' + this.getName() + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />',
+            '<img id="' + this.getName() + this.uniqeFieldId + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />',
             false,
             this.loadHotspots.bind(this)
         );
     },
 
     loadHotspots: function() {
-        var box = Ext.get(this.getName() + '_selectorImage').getBox();
-        if(box.height < 1 || box.width < 1) {
-            setTimeout(this.loadHotspots.bind(this), 500);
+        var box = Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage');
+        if(box.getHeight() < 1 || box.getWidth() < 1) {
+            setTimeout(this.loadHotspots.bind(this), 1000);
         } else {
             if(this.loadedHotspots && this.loadedHotspots.length > 0) {
                 for(var i = 0; i < this.loadedHotspots.length; i++) {
@@ -146,7 +146,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 }
             }
         }
-
     },
 
     addSelector: function() {
@@ -174,18 +173,22 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         this.hotspotCount++;
         var number = this.hotspotCount;
 
-        var box = Ext.get(this.getName() + '_selectorImage').getBox();
+        var box = Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage').getBox();
 
         var height = this.convertToAbsolute(hotspot.height, box.height);
         var width = this.convertToAbsolute(hotspot.width, box.width);
         var left = this.convertToAbsolute(hotspot.left, box.width) + this.marginLeft;
         var top = this.convertToAbsolute(hotspot.top, box.height) + this.marginTop;
 
+        if(intval(height) < 1 || intval(width) < 1) {
+            return;
+        }
+
         this.panel.getEl().createChild({
             tag: 'div',
             id: 'selector' + number + this.uniqeFieldId,
             style: 'cursor:move; position: absolute; top: ' + top + 'px; left: ' + left + 'px;z-index:9000;',
-            html: this.getSelectorHtml(hotspot.name)
+            html: this.getSelectorHtml(number, hotspot.name)
         });
 
         var resizer = new Ext.Resizable('selector' + number + this.uniqeFieldId, {
@@ -193,6 +196,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             minWidth:50,
             minHeight: 50,
             preserveRatio: false,
+            resizeChild: true,
             dynamic:true,
             handles: 'all',
             draggable:true,
@@ -205,6 +209,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
         resizer.addListener("resize", function(item, width, height, e) {
             this.handleSelectorChanged(number);
+            this.updateSelectorBody(number);
         }.bind(this));
 
         Ext.get('selector' + number + this.uniqeFieldId).on('mouseup', function(){
@@ -212,15 +217,17 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         }.bind(this));
 
         Ext.get('selector' + number + this.uniqeFieldId).on("contextmenu", this.onSelectorContextMenu.bind(this, number));
+
+        this.updateSelectorBody(number);
     },
 
-    getSelectorHtml: function(text) {
-        return '<p style="background-color:#FFF;padding-top:5px;padding-left:7px;font: normal 11px arial,tahoma, helvetica">' + text + '</p>';
+    getSelectorHtml: function(number, text) {
+        return '<p id="selectorbody' + number + this.uniqeFieldId + '" class="pimcore_hotspot_body">' + text + '</p>';
     },
 
     handleSelectorChanged: function(selectorNumber) {
         var dimensions = Ext.get("selector" + selectorNumber + this.uniqeFieldId).getStyles("top","left","width","height");
-        var box = Ext.get(this.getName() + '_selectorImage').getBox();
+        var box = Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage').getBox();
         this.hotspots[selectorNumber].top = this.convertToRelative(intval(dimensions.top) - this.marginTop, box.height);
         this.hotspots[selectorNumber].left = this.convertToRelative(intval(dimensions.left) - this.marginLeft, box.width);
         this.hotspots[selectorNumber].width = this.convertToRelative(intval(dimensions.width), box.width);
@@ -237,6 +244,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         return value / 100 * totalValue;
     },
 
+    updateSelectorBody: function (selectorNumber) {
+        // update selector body dimensions
+        var dimensions = Ext.get("selector" + selectorNumber + this.uniqeFieldId).getStyles("top","left","width","height");
+        Ext.get('selectorbody' + selectorNumber + this.uniqeFieldId).applyStyles({
+            width: dimensions.width,
+            height: (intval(dimensions.height)-5) + "px"
+        });
+    },
 
     onSelectorContextMenu: function (id, e) {
         var menu = new Ext.menu.Menu();
