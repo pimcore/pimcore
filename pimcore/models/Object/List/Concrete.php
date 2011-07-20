@@ -38,6 +38,11 @@ abstract class Object_List_Concrete extends Object_List {
     public $ignoreLocale;
 
     /**
+     * @var bool
+     */
+    public $ignoreLocalizedFields = false;
+
+    /**
      * @return void
      */
     public function __construct() {
@@ -124,6 +129,23 @@ abstract class Object_List_Concrete extends Object_List {
     public function getIgnoreLocale()
     {
         return $this->ignoreLocale;
+    }
+
+    /**
+     * @param bool $ignoreLocale
+     * @return void
+     */
+    public function setIgnoreLocalizedFields($ignoreLocalizedFields)
+    {
+        $this->ignoreLocalizedFields = $ignoreLocalizedFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIgnoreLocalizedFields()
+    {
+        return $this->ignoreLocalizedFields;
     }
 
 

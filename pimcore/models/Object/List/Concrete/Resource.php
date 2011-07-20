@@ -17,7 +17,15 @@
 
 class Object_List_Concrete_Resource extends Object_List_Resource {
 
+    /**
+     * @var bool
+     */
     protected $firstException = true;
+
+     /**
+     * @var string
+     */
+    private $tableName = null;
 
     /**
      * Loads a list of objects for the specicifies parameters, returns an array of Object_Abstract elements
@@ -42,6 +50,9 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         return $objects;
     }
 
+    /**
+     * @return array
+     */
     public function getTotalCount() {
 
         try {
@@ -53,6 +64,9 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         return $amount["amount"];
     }
 
+    /**
+     * @return array|int
+     */
     public function getCount() {
         if (count($this->model->getObjects()) > 0) {
             return count($this->model->getObjects());
@@ -67,6 +81,10 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         return $amount["amount"];
     }
 
+    /**
+     * @param $e
+     * @return array
+     */
     protected function exceptionHandler ($e) {
 
         // create view if it doesn't exist already // HACK
@@ -83,12 +101,18 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         throw $e;
     }
 
-    private $tableName = null; 
+    /**
+     * @return string
+     */
     protected function getTableName () {
-
+ 
         if(empty($this->tableName)) {
-            // check for a localized fields
-            if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields")) {
+
+            // default
+            $this->tableName = "object_" . $this->model->getClassId();
+
+            // check for a localized field and if they should be used for this list
+            if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields") && !$this->model->getIgnoreLocalizedFields()) {
                 $language = "default";
 
                 if(!$this->model->getIgnoreLocale()) {
@@ -107,13 +131,14 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                 }
 
                 $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
-            } else {
-                $this->tableName = "object_" . $this->model->getClassId();
             }
         }
         return $this->tableName;
     }
 
+    /**
+     * @return string
+     */
     protected function getJoins() {
         $join = ""; 
 
@@ -148,6 +173,9 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         return $join;
     }
 
+    /**
+     * @return string
+     */
     protected function getCondition() {
         $condition = parent::getCondition();
 
