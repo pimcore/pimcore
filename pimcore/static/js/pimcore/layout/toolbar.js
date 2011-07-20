@@ -706,10 +706,10 @@ pimcore.layout.toolbar = Class.create({
         var id = "phpinfo";
 
         try {
-            pimcore.globalmanager.get(this.id).activate();
+            pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(this.id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo", "pimcore_icon_php", "PHP Info"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo", "pimcore_icon_php", "PHP Info"));
         }
 
     }
