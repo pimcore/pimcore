@@ -242,7 +242,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     ),
                     "devmode" => $values["general.devmode"],
                     "logrecipient" => $values["general.logrecipient"],
-                    "welcomescreen" => $values["general.welcomescreen"]
+                    "welcomescreen" => $values["general.welcomescreen"],
+                    "viewSuffix" => $values["general.viewSuffix"]
                 ),
                 "database" => $oldValues["database"], // db cannot be changed here
                 "documents" => array(

@@ -236,6 +236,19 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("general.theme"),
                                 width: 100,
                                 listWidth: 100
+                            },
+                            {
+                                fieldLabel: t("view_suffix"),
+                                xtype: "combo",
+                                width: 250,
+                                name: "general.viewSuffix",
+                                value: this.getValue("general.viewSuffix"),
+                                store: [
+                                    ["", ".php (pimcore standard)"],
+                                    ["phtml","phtml (zend framework standard)"]
+                                ],
+                                mode: "local",
+                                triggerAction: "all"
                             }
                         ]
                     },

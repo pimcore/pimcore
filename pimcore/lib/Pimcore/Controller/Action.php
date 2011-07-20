@@ -47,7 +47,7 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         Zend_Layout::startMvc();
         $layout = Zend_Layout::getMvcInstance();
 
-        $layout->setViewSuffix("php");
+        $layout->setViewSuffix($this->getViewSuffix());
     }
 
     protected function disableLayout() {
@@ -106,11 +106,27 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
 
         // add helper to controller
         $viewHelper->setView($view);
-        $viewHelper->setViewSuffix('php');
+        $viewHelper->setViewSuffix($this->getViewSuffix());
         Zend_Controller_Action_HelperBroker::addHelper($viewHelper);
 
         $this->view = $view;
 
         Zend_Registry::set("pimcore_custom_view", true);
+    }
+
+    protected function getViewSuffix () {
+
+        // default is php
+        $viewSuffix = "php";
+
+        // custom view suffixes are only available for the frontend module (website)
+        if($this->getRequest()->getModuleName() == PIMCORE_FRONTEND_MODULE) {
+            $customViewSuffix = Pimcore_Config::getSystemConfig()->general->viewSuffix;
+            if(!empty($customViewSuffix)) {
+                $viewSuffix = $customViewSuffix;
+            }
+        }
+
+        return $viewSuffix;
     }
 }
