@@ -71,18 +71,6 @@ class Object_Abstract_Resource extends Element_Resource {
     }
 
     /**
-     * Save object to database
-     *
-     * @return void
-     */
-    public function save() {
-        if ($this->model->getO_id()) {
-            return $this->update();
-        }
-        return $this->create();
-    }
-
-    /**
      * Create a new record for the object in database
      *
      * @return boolean
@@ -96,7 +84,7 @@ class Object_Abstract_Resource extends Element_Resource {
         if (!$this->model->geto_key()) {
             $this->model->setO_key($this->db->lastInsertId());
         }
-        $this->save();
+        $this->model->save();
 
 
     }

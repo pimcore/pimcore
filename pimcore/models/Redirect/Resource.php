@@ -87,7 +87,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }
 
-            $this->db->update("redirects", $data, $this->db->quoteInto("id = ?", $this->model->getId() . "'"));
+            $this->db->update("redirects", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;

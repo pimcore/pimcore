@@ -65,7 +65,7 @@ class Staticroute extends Pimcore_Model_Abstract {
     /**
      * @var integer
      */
-    public $priority;
+    public $priority = 1;
 
 
     private static $_currentRoute;
@@ -257,14 +257,14 @@ class Staticroute extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setPriority($priority) {
-        $this->priority = $priority;
+        $this->priority = intval($priority);
     }
 
     /**
      * @return integer
      */
     public function getPriority() {
-        return $this->priority;
+        return intval($this->priority);
     }
     
     /**

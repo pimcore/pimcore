@@ -109,7 +109,7 @@ CREATE TABLE `documents_doctypes` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `type` enum('page','snippet') DEFAULT NULL,
-  `priority` int(3) NOT NULL default '0',
+  `priority` int(3) DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`)
 ) DEFAULT CHARSET=utf8;
@@ -275,14 +275,14 @@ CREATE TABLE `properties` (
 DROP TABLE IF EXISTS `properties_predefined`;
 CREATE TABLE `properties_predefined` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
+  `name` varchar(255) DEFAULT '',
   `description` text,
   `key` varchar(255) DEFAULT NULL,
   `type` enum('text','document','asset','bool','select','object') DEFAULT NULL,
   `data` text,
   `config` text,
   `ctype` enum('document','asset','object') DEFAULT NULL,
-  `inheritable` tinyint(1) unsigned NOT NULL default '0',
+  `inheritable` tinyint(1) unsigned DEFAULT '0',
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -343,7 +343,7 @@ CREATE TABLE `staticroutes` (
   `action` varchar(255) collate utf8_bin default NULL,
   `variables` varchar(255) collate utf8_bin default NULL,
   `defaults` varchar(255) collate utf8_bin default NULL,
-  `priority` int(3) NOT NULL default '0',
+  `priority` int(3) DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)

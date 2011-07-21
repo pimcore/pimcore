@@ -126,6 +126,16 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
             $document = get_object_vars($this->model);
 
             foreach ($document as $key => $value) {
+
+                // check if the getter exists
+                $getter = "get" . ucfirst($key);
+                if(!method_exists($this->model,$getter)) {
+                    continue;
+                }
+
+                // get the value from the getter
+                $value = $this->model->$getter();
+
                 if(is_bool($value)) {
                     $value = (int)$value;
                 }

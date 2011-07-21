@@ -60,7 +60,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
     /**
      * @var bool
      */
-    public $inheritable;
+    public $inheritable = false;
 
 
     /**
@@ -206,7 +206,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      * @return string
      */
     public function getInheritable() {
-        return $this->inheritable;
+        return (bool) $this->inheritable;
     }
 
     /**

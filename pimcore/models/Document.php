@@ -163,7 +163,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     /**
      * @var string
      */
-    public $locked;
+    public $locked = null;
 
     /**
      * get possible types
@@ -584,6 +584,9 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return string
      */
     public function getLocked(){
+        if(empty($this->locked)) {
+            return null;
+        }
         return $this->locked;
     }
 
@@ -592,7 +595,9 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setLocked($locked){
-        $this->locked = $locked;
+        if(!empty($locked) || $locked === null) {
+            $this->locked = $locked;
+        }
     }
 
     /**

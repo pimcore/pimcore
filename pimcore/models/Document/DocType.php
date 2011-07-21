@@ -62,7 +62,7 @@ class Document_DocType extends Pimcore_Model_Abstract {
     /**
      * @var integer
      */
-    public $priority;
+    public $priority = 0;
 
 
     /**
@@ -188,7 +188,7 @@ class Document_DocType extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setPriority($priority) {
-        $this->priority = $priority;
+        $this->priority = intval($priority);
     }
 
     /**

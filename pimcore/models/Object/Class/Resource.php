@@ -265,9 +265,11 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
     private function getDefaultValueAndNullableForField ($field) {
         
         $nullable = "NULL";
-        if ($field->getMandatory()) {
+
+        // this doesn't work with the mysql strict-mode
+        /*if ($field->getMandatory()) {
             $nullable = "NOT NULL";
-        }
+        }*/
         
         $defaultvalue = "";
         if (method_exists($field, 'getDefaultValue') && $field->getDefaultValue() !== null) {

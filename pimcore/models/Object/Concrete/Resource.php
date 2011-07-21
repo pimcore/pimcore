@@ -163,8 +163,6 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getO_classId() . " WHERE src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", $this->model->getO_id());
 
-//        p_r($this->model->geto_class()->getFieldDefinitions()); die();
-
         foreach ($this->model->geto_class()->getFieldDefinitions() as $key => $value) {
 
             if ($value->isRelationType()) {
@@ -215,18 +213,6 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
     }
 
     /**
-     * Save object to database
-     *
-     * @return void
-     */
-    public function save() {
-        if ($this->model->getO_id()) {
-            return $this->update();
-        }
-        return $this->create();
-    }
-
-    /**
      * Create a new record for the object in database
      *
      * @return boolean
@@ -237,7 +223,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         $this->createDataRows();
 
-        $this->save();
+        $this->model->save();
     }
 
 

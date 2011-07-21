@@ -70,7 +70,10 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
                 $this->getName() . "__hotspots" => $hotspots
             );
         }
-        return null;
+        return array(
+            $this->getName() . "__image" => null,
+            $this->getName() . "__hotspots" => null
+        );
     }
 
     /**

@@ -776,6 +776,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if ($equalObject == null) {
 
                 $object = new $className();
+                if($object instanceof Object_Concrete) {
+                    $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
+                }
                 $object->setClassId($this->_getParam("classId"));
                 $object->setClassName($this->_getParam("className"));
                 $object->setParentId($this->_getParam("parentId"));
