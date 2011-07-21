@@ -134,7 +134,11 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
                 }
 
                 // get the value from the getter
-                $value = $this->model->$getter();
+                if(in_array($key, $this->validColumnsDocument) || in_array($key, $this->validColumnsPage)) {
+                    $value = $this->model->$getter();
+                } else {
+                    continue;
+                }
 
                 if(is_bool($value)) {
                     $value = (int)$value;

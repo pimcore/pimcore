@@ -573,12 +573,21 @@ class Element_ElementCreateTest extends PHPUnit_Framework_TestCase
     {
         $class = "Object_" . ucfirst($type);
         $object = new $class();
+
+        if($object instanceof Object_Concrete) {
+            $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
+        }
+
         $object->setParentId(1);
         $object->setUserOwner(1);
         $object->setUserModification(1);
         $object->setCreationDate(time());
         $object->setKey(uniqid() . rand(10, 99));
         $object->save();
+
+        if($object instanceof Object_Concrete) {
+            $object->setOmitMandatoryCheck(false);
+        }
 
         return $object;
     }

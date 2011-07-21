@@ -135,7 +135,11 @@ class Document_Link_Resource extends Document_Resource {
                 }
 
                 // get the value from the getter
-                $value = $this->model->$getter();
+                if(in_array($key, $this->validColumnsDocument) || in_array($key, $this->validColumnsLink)) {
+                    $value = $this->model->$getter();
+                } else {
+                    continue;
+                }
 
                 if(is_bool($value)) {
                     $value = (int)$value;

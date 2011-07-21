@@ -66,12 +66,15 @@ class Element_CopyAndDeleteTest extends PHPUnit_Framework_TestCase {
 
         //create empty object
         $emptyObject = new Object_Unittest();
+        $emptyObject->setOmitMandatoryCheck(true);
         $emptyObject->setParentId(1);
         $emptyObject->setUserOwner(1);
         $emptyObject->setUserModification(1);
         $emptyObject->setCreationDate(time());
         $emptyObject->setKey(uniqid() . rand(10, 99));
         $emptyObject->save();
+
+        $emptyObject->setOmitMandatoryCheck(false);
 
         $this->assertFalse(Test_Tool::objectsAreEqual($emptyObject, $copy, true));
 
