@@ -137,6 +137,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
             var details = [];
 
+            var downloadDefaultWidth = 800;
+            if(this.data.imageInfo) {
+                if(this.data.imageInfo.dimensions && this.data.imageInfo.dimensions.width) {
+                    downloadDefaultWidth = intval(this.data.imageInfo.dimensions.width);
+                }
+            }
+
             this.downloadBox = new Ext.form.FormPanel({
                 title: t("download"),
                 bodyStyle: "padding: 10px;",
@@ -154,7 +161,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     xtype: "spinnerfield",
                     name: "width",
                     fieldLabel: t("width"),
-                    value: 800
+                    value: downloadDefaultWidth
                 },{
                     xtype: "spinnerfield",
                     name: "height",
@@ -168,11 +175,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     xtype: "checkbox",
                     name: "aspectratio",
                     fieldLabel: t("aspect_ratio"),
-                    checked: true
-                },{
-                    xtype: "checkbox",
-                    name: "interlace",
-                    fieldLabel: t("interlace"),
                     checked: true
                 }],
                 buttons: [{
