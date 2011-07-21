@@ -15,7 +15,43 @@
 
 include_once("startup.php");    
 
-$manager = Schedule_Manager_Factory::getManager("maintenance.pid");
+
+try {
+    $opts = new Zend_Console_Getopt(array(
+        'manager|m=s' => 'force a specific manager (valid options: procedural, daemon)',
+        'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
+        'help|h' => 'display this help'
+    ));
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
+try {
+    $opts->parse();
+} catch (Zend_Console_Getopt_Exception $e) {
+    echo $e->getMessage();
+}
+
+
+// display help message
+if($opts->getOption("help")) {
+    echo $opts->getUsageMessage();
+    exit;
+}
+
+if($opts->getOption("verbose")) {
+    $writer = new Zend_Log_Writer_Stream('php://output');
+    $logger = new Zend_Log($writer);
+    Logger::addLogger($logger);
+}
+
+$forceType = null;
+if($opts->getOption("manager")) {
+    $forceType = $opts->getOption("manager");
+}
+
+// create manager
+$manager = Schedule_Manager_Factory::getManager("maintenance.pid", $forceType);
 
 // register scheduled tasks
 $manager->registerJob(new Schedule_Maintenance_Job("scheduledtasks", new Schedule_Task_Executor(), "execute"));

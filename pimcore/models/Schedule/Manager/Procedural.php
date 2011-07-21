@@ -31,6 +31,8 @@ class Schedule_Manager_Procedural {
             $this->jobs[] = $job;
             $job->lock();
 
+            Logger::info("Registered job with ID: " . $job->getId());
+
             return true;
         }
         return false;
@@ -42,7 +44,8 @@ class Schedule_Manager_Procedural {
         foreach ($this->jobs as $job) {
             Logger::info("Executing job with ID: " . $job->getId());
             try {
-                $job->execute();     
+                $job->execute();
+                Logger::info("Finished job with ID: " . $job->getId());
             }
             catch (Exception $e) {
                 Logger::error("Failed to execute job with id: " . $job->getId());

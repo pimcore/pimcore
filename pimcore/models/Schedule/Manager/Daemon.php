@@ -65,6 +65,7 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
 
         foreach ($this->jobs as $job) {
             $this->launchJob($job);
+            Logger::info("Finished job with ID: " . $job->getId());
         }
 
         if($this->waitForChildrenToFinish){
