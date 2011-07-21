@@ -164,13 +164,18 @@ pimcore.document.properties = Class.create(pimcore.settings.properties,{
                 items: [navigationBasic,navigationEnhanced]
             });
 
+            var systempropertiesItems = [this.languagesPanel];
+            if(this.element.type == "page" || this.element.type == "link") {
+                systempropertiesItems = [this.languagesPanel,this.navigationPanel];
+            }
+
             this.systemPropertiesPanel = new Ext.Panel({
                 title: t("system_properties"),
                 width: 300,
                 region: "east",
                 autoScroll: true,
                 collapsible: true,
-                items: [this.languagesPanel,this.navigationPanel]
+                items: systempropertiesItems
             });
 
             this.layout.add(this.systemPropertiesPanel);
