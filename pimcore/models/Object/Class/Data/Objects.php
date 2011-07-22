@@ -446,4 +446,20 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
 
         return $data;
     }
+
+    /**
+     * @param string $fieldtype
+     */
+    public function setFieldtype($fieldtype)
+    {
+        $this->fieldtype = $fieldtype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFieldtype()
+    {
+        return $this->fieldtype;
+    }
 }

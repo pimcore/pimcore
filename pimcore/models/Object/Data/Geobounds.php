@@ -53,4 +53,19 @@ class Object_Data_Geobounds {
     public function setSouthWest($southWest) {
         $this->southWest = $southWest;
     }
+
+    public function __toString() {
+        $string = "";
+        if($this->nortEast) {
+            $string .= $this->nortEast;
+        }
+        if(!empty($string)) {
+            $string .= " - ";
+        }
+        if($this->nortEast) {
+            $string .= $this->nortWest;
+        }
+
+        return $string;
+    }
 }

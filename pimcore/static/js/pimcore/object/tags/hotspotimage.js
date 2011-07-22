@@ -146,6 +146,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 }
             }
         }
+        this.dirty = false;
     },
 
     addSelector: function() {

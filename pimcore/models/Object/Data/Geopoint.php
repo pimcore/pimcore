@@ -53,4 +53,8 @@ class Object_Data_Geopoint {
     public function setLatitude($latitude) {
         $this->latitude = (double) $latitude;
     }
+
+    public function __toString() {
+        return $this->longitude . "; " . $this->latitude;
+    }
 }

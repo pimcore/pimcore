@@ -60,5 +60,12 @@ class Object_Data_Hotspotimage {
         return $this->image;
     }
 
+    public function __toString() {
+        if($this->image) {
+            return $this->image->__toString();
+        }
+        return ""; 
+    }
+
 
 }
