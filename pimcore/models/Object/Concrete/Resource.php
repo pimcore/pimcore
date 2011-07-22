@@ -256,6 +256,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         $this->createDataRows();
 
+        // get fields which shouldn't be updated
         $fd = $this->model->geto_class()->getFieldDefinitions();
         $untouchable = array();
         foreach ($fd as $key => $value) {
@@ -268,12 +269,8 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                 }
             }
         }
-
-        // HACK
-        $inheritedValues = Object_Abstract::doGetInheritedValues();
-        Object_Abstract::setGetInheritedValues(false);
-
-        // update data for store table
+        
+        // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
             $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND fieldname not in (" . $untouchables . ") AND ownertype = 'object'", $this->model->getO_id()));
@@ -281,36 +278,17 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             $this->db->delete("object_relations_" . $this->model->getO_classId(), $this->db->quoteInto("src_id = ? AND ownertype = 'object'",  $this->model->getO_id()));
         }
 
+        
+        $inheritedValues = Object_Abstract::doGetInheritedValues();
+        Object_Abstract::setGetInheritedValues(false);
+
         $data = array();
         $data["oo_id"] = $this->model->getO_id();
         foreach ($fd as $key => $value) {
 
             $getter = "get" . ucfirst($key);
 
-            if ($value->isRelationType()) {
-                if (method_exists($this->model, $getter)) {
-                    $relations = $value->getDataForResource($this->model->$getter(), $this->model);
-                }
-
-                if (is_array($relations) && !empty($relations)) {
-                    foreach ($relations as $relation) {
-                        $relation["src_id"] = $this->model->getId();
-                        $relation["ownertype"] = "object";
-
-                        /*relation needs to be an array with src_id, dest_id, type, fieldname*/
-                        try {
-                            $this->db->insert("object_relations_" . $this->model->getO_classId(), $relation);
-                        } catch (Exception $e) {
-                            Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
-                        }
-                    }
-                }
-
-                if (in_array($key, $untouchable) and $relations===null) {
-                    logger::debug("Excluding untouchable relation value for object [ " . $this->model->getId() . " ] key [ $key ] because it has not been loaded");
-                }
-
-            } else if ($value->getColumnType()) {
+            if ($value->getColumnType()) {
                 if (is_array($value->getColumnType())) {
                     $insertDataArray = $value->getDataForResource($this->model->$getter(), $this->model);
                     if(is_array($insertDataArray)) {
@@ -413,7 +391,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             $this->db->update("object_query_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
         }
 
-        // HACK: see a few lines above!
+        
         Object_Abstract::setGetInheritedValues($inheritedValues);
     }
 

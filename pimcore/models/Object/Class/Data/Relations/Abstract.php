@@ -215,4 +215,33 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
     }
 
 
+    /**
+     * @param Object_Concrete $object
+     * @return void
+     */
+    public function save ($object) {
+
+        $db = Pimcore_Resource::get();
+        $getter = "get" . ucfirst($this->getName());
+
+        if (method_exists($object, $getter)) {
+            $relations = $this->getDataForResource($object->$getter(), $object);
+        }
+
+        if (is_array($relations) && !empty($relations)) {
+            foreach ($relations as $relation) {
+                $relation["src_id"] = $object->getId();
+                $relation["ownertype"] = "object";
+
+                /*relation needs to be an array with src_id, dest_id, type, fieldname*/
+                try {
+                    $db->insert("object_relations_" . $object->getO_classId(), $relation);
+                } catch (Exception $e) {
+                    Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
+                }
+            }
+        }
+    }
+
+
 }
