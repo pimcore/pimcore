@@ -120,7 +120,8 @@ if (!$skipInstall) {
         }
     }
     catch (Exception $e) {
-        die("Couldn't establish connection to mysql");
+        echo $e->getMessage() . "\n";
+        die("Couldn't establish connection to mysql" . "\n");
     }
 
     $db->getConnection()->exec("DROP database IF EXISTS pimcore_phpunit;");
