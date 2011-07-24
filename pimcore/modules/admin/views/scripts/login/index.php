@@ -5,11 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, nofollow" />
     
-    <title>Welcome to Pimcore!</title>    
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/login.css?_dc=<?php echo Pimcore_Version::$revision ?>"/>
+    <title>Welcome to pimcore!</title>
 
-<?php // load plugin scripts ?>
+    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/login.css?_dc=<?php echo Pimcore_Version::$revision ?>"/>
     <?php
+        // load plugin scripts
         try {
             $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
             if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
@@ -33,7 +33,6 @@
         }
         catch (Exception $e) {}
     ?>
-
 
 </head>
 
