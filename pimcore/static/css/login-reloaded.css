@@ -1,3 +1,18 @@
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+
 body {
     height: 100%;
     padding: 0;
@@ -12,6 +27,9 @@ html {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+
+    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/pimcore/static/img/login-reloaded/background.jpg', sizingMethod='scale');
+    -ms-filter:"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/pimcore/static/img/login-reloaded/background.jpg', sizingMethod='scale')";
 }
 
 #vcenter {
@@ -188,6 +206,11 @@ input.submit {
     padding: 12px 15px 0 0;
 }
 
+#footer a {
+    color: #fff;
+    text-decoration: underline;
+}
+
 #browserinfo {
     text-align: center;
 }
@@ -199,3 +222,4 @@ input.submit {
 #browserinfo .links {
     padding: 0 0 10px 0;
 }
+

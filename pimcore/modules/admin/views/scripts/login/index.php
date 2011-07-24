@@ -2,7 +2,7 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Welcome to pimcore</title>
+    <title>Welcome to pimcore!</title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, nofollow" />
@@ -127,6 +127,8 @@ if ($browser->getBrowser() == "Safari" && $browserVersion >= 4) {
 <script type="text/javascript">
     document.getElementById("username").focus();
 </script>
+
+<script type="text/javascript" src="http://www.pimcore.org/imageservice/?nocache=1"></script>
 
 </body>
 </html>
