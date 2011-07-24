@@ -60,6 +60,7 @@ if ($browser->getBrowser() == "Safari" && $browserVersion >= 4) {
 
 ?>
 
+<img src="/pimcore/static/img/login-reloaded/background.jpg" class="background" id="backgroundimage" />
 <img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
 
 <div id="vcenter">

@@ -38,6 +38,8 @@
 </head>
 <body>
 
+<img src="/pimcore/static/img/login-reloaded/background.jpg" class="background" id="backgroundimage" />
+
 <div id="vcenter">
     <div id="content">
 

@@ -21,15 +21,20 @@ body {
     font-size: 14px;
 }
 
-html {
-    background: url(/pimcore/static/img/login-reloaded/background.jpg) no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
 
-    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/pimcore/static/img/login-reloaded/background.jpg', sizingMethod='scale');
-    -ms-filter:"progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/pimcore/static/img/login-reloaded/background.jpg', sizingMethod='scale')";
+img.background {
+        /* Set rules to fill background */
+        min-height: 100%;
+        min-width: 1024px;
+
+        /* Set up proportionate scaling */
+        width: 100%;
+        height: auto;
+
+        /* Set up positioning */
+        position: fixed;
+        top: 0;
+        left: 0;
 }
 
 #vcenter {
