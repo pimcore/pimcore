@@ -64,9 +64,9 @@ img {
     box-shadow: 0 0 5px rgba(0,0,0,0.6);
 
     background-color: #f6f7f8;
-    background: -moz-linear-gradient(100% 100% 90deg, rgba(230,233,235,1), rgba(255,255,255,1));
-    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,1)), to(rgba(230,233,235,1)));
-    background: linear-gradient(rgba(255,255,255,1), rgba(230,233,235,1));
+    background: -moz-linear-gradient(100% 100% 90deg, rgba(230,233,235,1), rgba(255,255,255,0.9));
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.9)), to(rgba(230,233,235,1)));
+    background: linear-gradient(rgba(255,255,255,0.9), rgba(230,233,235,1));
 }
 
 .logo {
