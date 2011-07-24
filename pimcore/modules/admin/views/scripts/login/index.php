@@ -1,13 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 <head>
+    <title>Welcome to pimcore</title>
+
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, nofollow" />
-    
-    <title>Welcome to pimcore!</title>
 
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/login.css?_dc=<?php echo Pimcore_Version::$revision ?>"/>
+    <link rel="stylesheet" href="/pimcore/static/css/login-reloaded.css" type="text/css" />
+
     <?php
         // load plugin scripts
         try {
@@ -35,16 +36,15 @@
     ?>
 
 </head>
-
 <body>
 
 <?php
 
 //detect browser
 $supported = false;
-$browser = new Pimcore_Browser();  
+$browser = new Pimcore_Browser();
 $browserVersion = (int) $browser->getVersion();
-        
+
 if ($browser->getBrowser() == "Firefox" && $browserVersion >= 3) {
     $supported = true;
 }
@@ -62,65 +62,65 @@ if ($browser->getBrowser() == "Safari" && $browserVersion >= 4) {
 
 <img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
 
-<div id="wrap">
-    <div id="error">
+<div id="vcenter">
+    <div id="content">
+
         <?php if ($this->error) { ?>
-            <div class="message">
+            <div class="error">
                 <?php echo $this->translate($this->error) ?>
             </div>
+        <?php } else { ?>
+            <div class="logo"></div>
         <?php } ?>
-    </div>
-    <div id="login">
-        <form id="form" action="/admin/login/login" method="post" enctype="application/x-www-form-urlencoded">
-            <p>
-                <label>User</label>
-                <input type="text" name="username" id="username"/>
-            </p>
 
+        <form id="loginform" action="/admin/login/login" method="post" enctype="application/x-www-form-urlencoded">
+            <p>
+                <label>Username</label>
+                <input class="credential" name="username" id="username" type="text" />
+                <span class="clear"></span>
+            </p>
             <p>
                 <label>Password</label>
-                <input type="password" name="password"/>
+                <input class="credential" name="password" type="password" />
+                <span class="clear"></span>
             </p>
-            <input type="image" name="submit" src="/pimcore/static/img/login/submit.png" value="Login" class="submit"
-                   alt="Login" title="Login"/>
-            <span class="clear"></span>
-            <div class="link" ><a href="/admin/login/lostpassword">lost password?</a></div>
+            <p class="submit">
+                <input class="submit" type="submit" value="Login" />
+                <a href="/admin/login/lostpassword" class="lostpassword">Forgot your password?</a>
+            </p>
         </form>
 
-    <?php if (!$supported) { ?>
-        <div class="browsernotsupported">
-            <div class="text">Your browser is out of date! Please install the newest version of one of the following
-                browsers.
+        <?php if (!$supported) { ?>
+            <div id="browserinfo">
+                <div class="message">Your browser is not supported. Please install the latest version of one of the following browsers.</div>
+                <div class="links">
+                    <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/firefox.png"/></a>
+                    <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login-reloaded/chrome.png"/></a>
+                    <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login-reloaded/safari.png"/></a>
+                    <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/ie.png"/></a>
+                </div>
+                <div class="proceed" style="cursor: pointer;" onclick="showLogin();">Click here to proceed</div>
             </div>
-            <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login/firefox.png"/></a>
-            <a href="http://www.google.com/chrome/" target="_blank"><img
-                    src="/pimcore/static/img/login/chrome.png"/></a>
-            <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login/safari.png"/></a>
-            <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login/ie.png"/></a>
-
-            <div class="text" style="cursor: pointer;" onclick="showLogin();">Click here to proceed</div>
-        </div>
-
-        <script type="text/javascript">
-            function showLogin() {
-                document.getElementById("form").style.display = "block";
-            }
-        </script>
-        <style type="text/css">
-            #form {
-                display: none;
-            }
-        </style>
-    <?php } ?>
-
-        <div id="footer">
-            <a href="http://www.pimcore.org/">Pimcore | Open-Source Content Management Framework</a>
-            <br/>
-            &copy; 2009-<?php echo date("Y") ?> <a href="http://www.elements.at/">elements.at New Media Solutions
-            GmbH</a>
-        </div>
+            <script type="text/javascript">
+                function showLogin() {
+                    document.getElementById("loginform").style.display = "block";
+                    document.getElementById("browserinfo").style.display = "none";
+                }
+            </script>
+            <style type="text/css">
+                #loginform {
+                    display: none;
+                }
+            </style>
+        <?php } ?>
 
     </div>
+</div>
+
+<div id="footer">
+    <div class="left" id="imageinfo"></div>
+    <div class="right">pimcore. Open Source Framework for Content and Product Information Management<br />&copy; <?php echo date("Y") ?>-2011 elements.at New Media Solutions GmbH</div>
+    <div class="background"></div>
 </div>
 
 

@@ -1,15 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 <head>
+    <title>pimcore - Lost Password Service</title>
+
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, nofollow" />
-    
-    <title>Pimcore Lost Password Service</title>
-    <link rel="stylesheet" type="text/css" href="/pimcore/static/css/login.css?_dc=<?php echo Pimcore_Version::$revision ?>"/>
 
-    <?php // load plugin scripts ?>
+    <link rel="stylesheet" href="/pimcore/static/css/login-reloaded.css" type="text/css" />
+
     <?php
+        // load plugin scripts
         try {
             $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
             if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
@@ -35,47 +36,53 @@
     ?>
 
 </head>
-
 <body>
 
+<div id="vcenter">
+    <div id="content">
 
-<img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
-<div id="wrap">
-    <div id="error">
         <?php if ($this->error) { ?>
-            <div class="message">
+            <div class="error">
                 <?php echo $this->translate($this->error) ?>
             </div>
-        <?php } ?>
-    </div>
-    <div id="login" class="lost">
-        <?php if($this->success){?>
-            <p>A temporary login link has been sent to your email address. Please check your mailbox.</p>
-            <p class="back"><a href="/admin/login/">back to login</a></p>    
         <?php } else { ?>
-            <h1>Enter your username and pimcore will send a login link to your email address:</h1>    
-        <form id="form" action="/admin/login/lostpassword" method="post" enctype="application/x-www-form-urlencoded">
-
-            <p>
-                <label>User</label>
-                <input type="text" name="username" id="username"/>
-            </p>
-            <input type="image" name="submit" src="/pimcore/static/img/login/submit.png" value="Send" class="submit"
-                   alt="Send" title="Send"/>
-            <span class="clear"></span>
-            <div class="link" ><a href="/admin/login/">back to login</a></div>
-        </form>
+            <div class="logo"></div>
         <?php } ?>
 
-
-        <div id="footer">
-            <a href="http://www.pimcore.org/">Pimcore | Open-Source Content Management Framework</a>
-            <br/>
-            &copy; 2009-<?php echo date("Y") ?> <a href="http://www.elements.at/">elements.at New Media Solutions
-            GmbH</a>
-        </div>
-
+        <?php if($this->success) { ?>
+            <form action="/admin/login/" id="loginform" method="post">
+                <p style="text-align: center;">
+                    A temporary login link has been sent to your email address.
+                    <br />
+                    Please check your mailbox.
+                </p>
+                <p class="submit">
+                    <input class="submit" type="submit" value="Back to Login" />
+                </p>
+            </form>
+        <?php } else { ?>
+            <form action="/admin/login/lostpassword" id="loginform" method="post" enctype="application/x-www-form-urlencoded">
+                <p>
+                    Enter your username and pimcore will send a login link to your email address:
+                </p>
+                <p>
+                    <label>Username</label>
+                    <input class="credential" name="username" id="username" type="text" />
+                    <span class="clear"></span>
+                </p>
+                <p class="submit">
+                    <input class="submit" type="submit" value="Submit" />
+                    <a href="/admin/login/" class="lostpassword">Back to Login</a>
+                </p>
+            </form>
+        <?php } ?>
     </div>
+</div>
+
+<div id="footer">
+    <div class="left" id="imageinfo"></div>
+    <div class="right">pimcore. Open Source Framework for Content and Product Information Management<br />&copy; <?php echo date("Y") ?>-2011 elements.at New Media Solutions GmbH</div>
+    <div class="background"></div>
 </div>
 
 

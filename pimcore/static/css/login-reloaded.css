@@ -1,0 +1,201 @@
+body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Verdana;
+    font-size: 14px;
+}
+
+html {
+    background: url(/pimcore/static/img/login-reloaded/background.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+#vcenter {
+    position: absolute;
+    top: 50%;
+    height: 290px;
+    margin-top: -145px;
+    width:100%;
+}
+
+img {
+    border: 0;
+}
+
+#content {
+    background: #ff6600;
+    width: 400px;
+    height: 230px;
+    margin: 0 auto;
+    padding: 30px;
+
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.6);
+    box-shadow: 0 0 5px rgba(0,0,0,0.6);
+
+    background-color: #f6f7f8;
+    background: -moz-linear-gradient(100% 100% 90deg, rgba(230,233,235,1), rgba(255,255,255,1));
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,1)), to(rgba(230,233,235,1)));
+    background: linear-gradient(rgba(255,255,255,1), rgba(230,233,235,1));
+}
+
+.logo {
+    background: url(/pimcore/static/img/login-reloaded/logo.png) top center no-repeat;
+    width: 100%;
+    height: 75px;
+    border-bottom: 1px solid #bbbbbb;
+    margin-bottom: 25px;
+}
+
+.error {
+    width: 100%;
+    height: 64px;
+    border: 1px solid #c0272b;
+    margin-bottom: 25px;
+    color: #c0272b;
+    font-size: 18px;
+    text-align: center;
+    padding: 10px 0 0 0;
+}
+
+form {
+    padding: 0;
+    margin: 0;
+}
+
+label {
+    float: left;
+    line-height: 33px;
+    font-size: 18px;
+    color: #001428;
+    width: 110px;
+    display: inline-block;
+}
+
+.credential {
+    float: left;
+    font-size: 18px;
+    display: inline-block;
+    border: 1px solid #bbbbbb;
+    color: #001428;
+
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+
+    height: 33px;
+    width: 265px;
+    padding: 0 10px 0 10px;
+    line-height: 33px;
+
+    -moz-box-shadow: inset 0 0 3px #bbbbbb;
+    -webkit-box-shadow: inset 0 0 3px #bbbbbb;
+    box-shadow: inset 0 0 3px #bbbbbb;
+}
+
+p {
+    padding: 0 0 10px 0;
+    margin: 0;
+}
+
+.clear {
+    clear: both;
+    display: block;
+    width:0;
+    height: 0;
+}
+
+p.submit {
+    height: 50px;
+    position: relative;
+}
+
+input.submit {
+    font-size: 24px;
+    color: #001428;
+    padding: 0 50px 0 0;
+    margin: 0;
+    border: 0;
+
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 40px;
+    cursor: pointer;
+    outline: none;
+
+    background: url(/pimcore/static/img/login-reloaded/submit.png) top right no-repeat;
+}
+
+.lostpassword {
+    position: absolute;
+    color: #001428;
+    text-decoration: underline;
+    font-weight: bold;
+
+    position: absolute;
+    left: 0;
+    top: 15px;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    height: 60px;
+    width: 100%;
+    line-height: 18px;
+    overflow: hidden;
+}
+
+#footer .background {
+    position: absolute;
+    left:0;
+    top:0;
+    background: #000;
+    width:100%;
+    height: 60px;
+    z-index: 1;
+
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+    -moz-opacity: 0.8;
+}
+
+#footer .left {
+    position: absolute;
+    left: 0;
+    top:0;
+    text-align: left;
+    color: #fff;
+    z-index: 10;
+    padding: 12px 0 0 15px;
+}
+
+#footer .right {
+    position: absolute;
+    right: 0;
+    top:0;
+    text-align: right;
+    color: #fff;
+    z-index: 10;
+    padding: 12px 15px 0 0;
+}
+
+#browserinfo {
+    text-align: center;
+}
+
+#browserinfo .message {
+    padding: 0 0 10px 0;
+}
+
+#browserinfo .links {
+    padding: 0 0 10px 0;
+}
