@@ -94,8 +94,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             } else if(this.layoutConf.columns[i].type == "select" && !readOnly) {
                 var selectDataRaw = this.layoutConf.columns[i].value.split(";");
                 var selectData = [];
-                for(var i = 0; i < selectDataRaw.length; i++) {
-                    selectData.push([selectDataRaw[i], selectDataRaw[i]]);
+                for(var j = 0; j < selectDataRaw.length; j++) {
+                    selectData.push([selectDataRaw[j], selectDataRaw[j]]);
                 }
 
                 editor = new Ext.form.ComboBox({

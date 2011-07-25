@@ -165,7 +165,14 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             if (method_exists($value, "load")) {
                 // datafield has it's own loader
 
+//                $x = uniqid();
+//
+//                p_r($this->model->getId() . ": " . $key . " - " . $x);
+//                p_r($value);
                 $value = $value->load($this->model);
+                
+//                p_r($this->model->getId() . ": " . $key . " - " . $x);
+//                var_dump($value);
                 if($value === 0 || !empty($value)) {
                     $this->model->setValue($key, $value);
                 }

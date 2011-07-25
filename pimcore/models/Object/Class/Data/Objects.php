@@ -411,9 +411,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
 
 
     public function preGetData ($object) { 
-
-        $data = $object->{$this->getName()}; 
-
+        $data = $object->{$this->getName()};
         if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
             $data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
 
@@ -422,7 +420,6 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
                 $object->$setter($data);
             }
         }
-
         if(Object_Abstract::doHideUnpublished() and is_array($data)) {
             $publishedList = array();
             foreach($data as $listElement){
@@ -432,7 +429,6 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
             }
             return $publishedList;
         }
-
         return $data;
     }
 
@@ -443,7 +439,6 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
             $object->addO__loadedLazyField($this->getName());
         }
-
         return $data;
     }
 

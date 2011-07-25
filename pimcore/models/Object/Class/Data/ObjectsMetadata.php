@@ -93,7 +93,6 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                 }
             }
         }
-
         //must return array - otherwise this means data is not loaded
         return $objects;
     }
@@ -439,13 +438,35 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $db = Pimcore_Resource::get();
         if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading()) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
+            return $this->getDataFromResource($relations);
         } else {
-            $relations = null;
+            return null;
         }
 
-        if (!empty($relations)) {
-            return $this->getDataFromResource($relations);
+    }
+
+    public function preGetData ($object) {
+        $data = $object->{$this->getName()};
+        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+            $data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+
+            $setter = "set" . ucfirst($this->getName());
+            if(method_exists($object, $setter)) {
+                $object->$setter($data);
+            }
         }
+        if(Object_Abstract::doHideUnpublished() and is_array($data)) {
+            $publishedList = array();
+            foreach($data as $listElement){
+
+                if(Element_Service::isPublished($listElement->getObject())){
+                    $publishedList[] = $listElement;
+                }
+            }
+            return $publishedList;
+        }
+
+        return $data;
     }
 
     /**
