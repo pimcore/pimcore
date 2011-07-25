@@ -1305,23 +1305,28 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         if(empty($gridConfig)) {
             $count = 0;
 
-            foreach($systemColumns as $sc) {
-                $vis = $class->getPropertyVisibility();
+            if(!$this->_getParam("no_system_columns")) {
+                foreach($systemColumns as $sc) {
+                    $vis = $class->getPropertyVisibility();
 
-                $key = $sc;
-                if($key == "fullpath") {
-                    $key = "path";
+                    $key = $sc;
+                    if($key == "fullpath") {
+                        $key = "path";
+                    }
+
+                    if(empty($types) && ($vis[$gridType][$key] || $gridType == "all")) {
+                        $availableFields[] = array(
+                            "key" => $sc,
+                            "type" => "system",
+                            "label" => $sc,
+                            "position" => $count);
+                        $count++;
+                    }
                 }
 
-                if(empty($types) && ($vis[$gridType][$key] || $gridType == "all")) {
-                    $availableFields[] = array(
-                        "key" => $sc,
-                        "type" => "system",
-                        "label" => $sc,
-                        "position" => $count);
-                    $count++;
-                }
             }
+
+            $includeBricks = !$this->_getParam("no_brick_columns");
 
             foreach ($fields as $key => $field) {
                 if ($field instanceof Object_Class_Data_Localizedfields) {
@@ -1336,7 +1341,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                         }
                     }
 
-                } else if($field instanceof Object_Class_Data_Objectbricks) {
+                } else if($field instanceof Object_Class_Data_Objectbricks && $includeBricks) {
 
                     if (in_array($field->getFieldType(), $types)) {
                         $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count);

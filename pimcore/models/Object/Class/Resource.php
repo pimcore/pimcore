@@ -374,11 +374,13 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
         $objectDatastoreTableRelation = "object_relations_" . $this->model->getId();
+        $objectMetadataTable = "object_metadata_" . $this->model->getId();
+
         
-        
-        $this->dbexec('DROP TABLE `' . $objectTable);
-        $this->dbexec('DROP TABLE `' . $objectDatastoreTable);
-        $this->dbexec('DROP TABLE `' . $objectDatastoreTableRelation);
+        $this->dbexec('DROP TABLE `' . $objectTable . '`');
+        $this->dbexec('DROP TABLE `' . $objectDatastoreTable . '`');
+        $this->dbexec('DROP TABLE `' . $objectDatastoreTableRelation . '`');
+        $this->dbexec('DROP TABLE IF EXISTS `' . $objectMetadataTable . '`');
 
         $this->dbexec('DROP VIEW `object_' . $this->model->getId() . '`');
         

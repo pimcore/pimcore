@@ -98,6 +98,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         this.fieldStore = new Ext.data.JsonStore({
             url: '/admin/object/grid-get-column-config',
             baseParams: {
+                no_system_columns: "true",
+                no_brick_columns: "true",
                 gridtype: 'all',
                 id: this.datax.allowedClassId
             },

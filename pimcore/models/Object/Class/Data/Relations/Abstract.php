@@ -243,5 +243,19 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         }
     }
 
+    /**
+     * @param $object
+     * @return null | array
+     */
+    public function load($object) {
+        $db = Pimcore_Resource::get();
+        if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading()) {
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
+            return $this->getDataFromResource($relations);
+        } else {
+            return null;
+        }
+    }
+
 
 }

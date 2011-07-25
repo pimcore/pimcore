@@ -161,37 +161,15 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         $data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getO_classId() . ' WHERE oo_id = ?', $this->model->getO_id());
 
-        $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $this->model->getO_classId() . " WHERE src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", $this->model->getO_id());
-
         foreach ($this->model->geto_class()->getFieldDefinitions() as $key => $value) {
-
-            if ($value->isRelationType()) {
-
-                if (!method_exists($value, "getLazyLoading") or !$value->getLazyLoading()) {
-
-                    $relations = array();
-                    foreach ($allRelations as $relation) {
-                        if ($relation["fieldname"] == $key) {
-                            $relations[] = $relation;
-                        }
-                    }
-                } else {
-                    $relations = null;
-                }
-
-
-                if (!empty($relations)) {
-                    $this->model->setValue(
-                        $key,
-                        $value->getDataFromResource($relations));
-                }
-
-
-            } else if (method_exists($value, "load")) {
+            if (method_exists($value, "load")) {
                 // datafield has it's own loader
-                $this->model->setValue(
-                    $key,
-                    $value->load($this->model));
+
+                $value = $value->load($this->model);
+                if($value === 0 || !empty($value)) {
+                    $this->model->setValue($key, $value);
+                }
+
             } else {
                 // if a datafield requires more than one field
                 if (is_array($value->getColumnType())) {

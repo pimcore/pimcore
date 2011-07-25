@@ -390,7 +390,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value) {
+    public function getFromWebserviceImport ($value, $object = null) {
         $objects = array();
         if(empty($value)){
            return null;  

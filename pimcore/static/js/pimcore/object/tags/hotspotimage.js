@@ -117,7 +117,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
             if (this.data) {
-                this.updateImage();
+                this.updateImage(true);
             }
 
         }.bind(this));
@@ -126,19 +126,19 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     },
 
-    updateImage: function () {
+    updateImage: function (initialLoad) {
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.layoutConf.width - 20) + "/aspectratio/true";
         this.panel.getEl().update(
             '<img id="' + this.getName() + this.uniqeFieldId + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />',
             false,
-            this.loadHotspots.bind(this)
+            this.loadHotspots.bind(this, initialLoad)
         );
     },
 
-    loadHotspots: function() {
+    loadHotspots: function(initialLoad) {
         var box = Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage');
         if(box.getHeight() < 1 || box.getWidth() < 1) {
-            setTimeout(this.loadHotspots.bind(this), 1000);
+            setTimeout(this.loadHotspots.bind(this, initialLoad), 1000);
         } else {
             if(this.loadedHotspots && this.loadedHotspots.length > 0) {
                 for(var i = 0; i < this.loadedHotspots.length; i++) {
@@ -146,7 +146,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 }
             }
         }
-        this.dirty = false;
+
+        if(initialLoad) {
+            this.dirty = false;
+        }
     },
 
     addSelector: function() {

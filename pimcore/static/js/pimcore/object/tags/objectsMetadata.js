@@ -58,8 +58,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         });
     },
 
-    getLayoutEdit: function () {
 
+    createLayout: function(readOnly) {
         var autoHeight = false;
         if (intval(this.layoutConf.height) < 15) {
             autoHeight = true;
@@ -86,12 +86,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             var renderer = null;
             var listeners = null;
 
-            if(this.layoutConf.columns[i].type == "number") {
+            if(this.layoutConf.columns[i].type == "number" && !readOnly) {
                 editor = new Ext.form.NumberField({});
 
-            } else if(this.layoutConf.columns[i].type == "text") {
+            } else if(this.layoutConf.columns[i].type == "text" && !readOnly) {
                 editor = new Ext.form.TextField({});
-            } else if(this.layoutConf.columns[i].type == "select") {
+            } else if(this.layoutConf.columns[i].type == "select" && !readOnly) {
                 var selectDataRaw = this.layoutConf.columns[i].value.split(";");
                 var selectData = [];
                 for(var i = 0; i < selectDataRaw.length; i++) {
@@ -114,21 +114,25 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     displayField: 'label'
                 });
             } else if(this.layoutConf.columns[i].type == "bool") {
-                editor = new Ext.form.Checkbox();
+                if(!readOnly) {
+                    editor = new Ext.form.Checkbox();
+
+                    listeners = {
+                        "mousedown": function (col, grid, rowIndex, event) {
+                            var store = grid.getStore();
+                            var record = store.getAt(rowIndex);
+                            record.set(col.dataIndex, !record.data[col.dataIndex]);
+                            this.dataChanged = true;
+                        }.bind(this)
+                    };
+
+                }
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     metaData.css += ' x-grid3-check-col-td';
                     return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
                 };
-                listeners = {
-                    "mousedown": function (col, grid, rowIndex, event) {
-                        var store = grid.getStore();
-                        var record = store.getAt(rowIndex);
-                        record.set(col.dataIndex, !record.data[col.dataIndex]);
-                        this.dataChanged = true;
-                    }.bind(this)
-                };
-            }
 
+            }
 
             columns.push({
                 header: ts(this.layoutConf.columns[i].label),
@@ -155,19 +159,22 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                             }
                         ]
                     });
-        columns.push({
-                        xtype: 'actioncolumn',
-                        width: 30,
-                        items: [
-                            {
-                                tooltip: t('remove'),
-                                icon: "/pimcore/static/img/icon/cross.png",
-                                handler: function (grid, rowIndex) {
-                                    grid.getStore().removeAt(rowIndex);
-                                }.bind(this)
-                            }
-                        ]
-                    });
+        if(!readOnly) {
+            columns.push({
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [
+                    {
+                        tooltip: t('remove'),
+                        icon: "/pimcore/static/img/icon/cross.png",
+                        handler: function (grid, rowIndex) {
+                            grid.getStore().removeAt(rowIndex);
+                        }.bind(this)
+                    }
+                ]
+            });
+
+        }
 
 
         this.grid = new Ext.grid.EditorGridPanel({
@@ -217,56 +224,65 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
         this.grid.reference = this;
 
-        this.grid.on("afterrender", function () {
+        if(!readOnly) {
+            this.grid.on("afterrender", function () {
 
-            var dropTargetEl = this.grid.getEl();
-            var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                ddGroup    : 'element',
-                getTargetFromEvent: function(e) {
-                    return this.grid.getEl().dom;
-                    //return e.getTarget(this.grid.getView().rowSelector);
-                }.bind(this),
-                onNodeOver: function (overHtmlNode, ddSource, e, data) {
+                var dropTargetEl = this.grid.getEl();
+                var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
+                    ddGroup    : 'element',
+                    getTargetFromEvent: function(e) {
+                        return this.grid.getEl().dom;
+                        //return e.getTarget(this.grid.getView().rowSelector);
+                    }.bind(this),
+                    onNodeOver: function (overHtmlNode, ddSource, e, data) {
 
-                    if (data.node.attributes.elementType == "object" && this.dndAllowed(data)) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
-                    } else {
-                        return Ext.dd.DropZone.prototype.dropNotAllowed;
-                    }
+                        if (data.node.attributes.elementType == "object" && this.dndAllowed(data)) {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        } else {
+                            return Ext.dd.DropZone.prototype.dropNotAllowed;
+                        }
 
-                }.bind(this),
-                onNodeDrop : function(target, dd, e, data) {
+                    }.bind(this),
+                    onNodeDrop : function(target, dd, e, data) {
 
-                    // check if data is a treenode, if not allow drop because of the reordering
-                    if (!this.sourceIsTreeNode(data)) {
-                        return true;
-                    }
-
-                    if (data.node.attributes.elementType != "object") {
-                        return false;
-                    }
-
-                    if (this.dndAllowed(data)) {
-                        var initData = {
-                            id: data.node.attributes.id,
-                            path: data.node.attributes.path,
-                            type: data.node.attributes.className
-                        };
-
-                        if (!this.objectAlreadyExists(initData.id)) {
-                            this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+                        // check if data is a treenode, if not allow drop because of the reordering
+                        if (!this.sourceIsTreeNode(data)) {
                             return true;
                         }
-                    }
-                    return false;
-                }.bind(this)
-            });
-        }.bind(this));
+
+                        if (data.node.attributes.elementType != "object") {
+                            return false;
+                        }
+
+                        if (this.dndAllowed(data)) {
+                            var initData = {
+                                id: data.node.attributes.id,
+                                path: data.node.attributes.path,
+                                type: data.node.attributes.className
+                            };
+
+                            if (!this.objectAlreadyExists(initData.id)) {
+                                this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+                                return true;
+                            }
+                        }
+                        return false;
+                    }.bind(this)
+                });
+            }.bind(this));
+        }
 
 
         return this.grid;
-    }
-    ,
+    },
+
+    getLayoutEdit: function () {
+        return this.createLayout(false);
+    },
+
+    getLayoutShow: function () {
+        return this.createLayout(true);
+    },
 //
 //
 //    getLayoutShow: function () {
