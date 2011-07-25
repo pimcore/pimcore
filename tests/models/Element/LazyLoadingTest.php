@@ -31,7 +31,7 @@ class Element_LazyLoadingTest extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue($objects[0]->lazyHref === null);
         $this->assertTrue(is_object($objects[0]->getLazyHref()));
-
+        
     }
 
 }

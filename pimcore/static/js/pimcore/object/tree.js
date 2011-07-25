@@ -583,7 +583,7 @@ pimcore.object.tree = Class.create({
 
         // check for dependencies
         Ext.Ajax.request({
-            url: "/admin/object/has-dependencies/",
+            url: "/admin/object/delete-info/",
             params: {id: this.id},
             success: this.attributes.reference.deleteCheckDependencyComplete.bind(this)
         });

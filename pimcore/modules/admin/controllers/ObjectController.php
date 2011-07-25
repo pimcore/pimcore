@@ -880,7 +880,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
-    public function hasDependenciesAction()
+    public function deleteInfoAction()
     {
 
         $hasDependency = false;
@@ -890,17 +890,32 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $hasDependency = $object->getDependencies()->isRequired();
         }
         catch (Exception $e) {
-            logger::err("Admin_ObjectController->hasDependenciesAction: failed to access object with id: " . $this->_getParam("id"));
+            logger::err("failed to access object with id: " . $this->_getParam("id"));
         }
 
+        $deleteJobs = array();
+
         // check for childs
-        if (!$hasDependency && $object instanceof Object_Abstract) {
-            $hasDependency = $object->hasChilds();
+        if($object instanceof Object_Abstract) {
+            $hasChilds = $object->hasChilds();
+            if (!$hasDependency) {
+                $hasDependency = $hasChilds;
+            }
+
+            $childs = 0;
+            if($hasChilds) {
+                // get amount of childs
+                $list = new Object_List();
+                $list->setCondition("o_path LIKE '" . $object->getFullPath() . "/%'");
+                $childs = $list->getTotalCount();
+            }
         }
 
         $this->_helper->json(array(
-                                  "hasDependencies" => $hasDependency
-                             ));
+              "hasDependencies" => $hasDependency,
+              "childs" => $childs,
+              "deletejobs" => $deleteJobs
+        ));
     }
 
 
