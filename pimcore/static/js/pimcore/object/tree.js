@@ -679,7 +679,7 @@ pimcore.object.tree = Class.create({
                 failure: function (message) {
                     this.deleteWindow.close();
 
-                    pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error", t(rdata.message));
+                    pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error", t(message));
                     this.parentNode.reload();
                 }.bind(this),
                 jobs: r.deletejobs

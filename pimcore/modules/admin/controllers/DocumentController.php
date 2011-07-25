@@ -423,43 +423,100 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     }
 
-    public function deleteAction() {
+    public function deleteAction()
+    {
+        if ($this->_getParam("type") == "childs") {
 
-        $success = false;
-        $document = Document::getById($this->_getParam("id"));
-        $document->getPermissionsForUser($this->getUser());
-        if ($document->isAllowed("delete")) {
-            Element_Recyclebin_Item::create($document, $this->getUser());
-            $document->delete();
+            $parentDocument = Document::getById($this->_getParam("id"));
 
-            $success = true;
+            $list = new Document_List();
+            $list->setCondition("path LIKE '" . $parentDocument->getFullPath() . "/%'");
+            $list->setLimit(intval($this->_getParam("amount")));
+            $list->setOrderKey("LENGTH(path)", false);
+            $list->setOrder("DESC");
+
+            $documents = $list->load();
+
+            $deletedItems = array();
+            foreach ($documents as $document) {
+                $deletedItems[] = $document->getFullPath();
+                $document->delete();
+            }
+
+            $this->_helper->json(array("success" => true, "deleted" => $deletedItems));
+
+        } else if($this->_getParam("id")) {
+            $document = Document::getById($this->_getParam("id"));
+            $document->getPermissionsForUser($this->getUser());
+
+            if ($document->isAllowed("delete")) {
+                Element_Recyclebin_Item::create($document, $this->getUser());
+                $document->delete();
+
+                $this->_helper->json(array("success" => true));
+            }
         }
-        else {
-            Logger::debug("prevented deleting document id [ " . $this->_getParam("id") . " ] because of missing permissions");
-        }
 
-        $this->_helper->json(array("success" => $success));
+        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
-    public function hasDependenciesAction() {
-
+    public function deleteInfoAction()
+    {
         $hasDependency = false;
 
         try {
-            $doc = Document::getById($this->_getParam("id"));
-            $hasDependency = $doc->getDependencies()->isRequired();
+            $document = Document::getById($this->_getParam("id"));
+            $hasDependency = $document->getDependencies()->isRequired();
         }
         catch (Exception $e) {
-            logger::err("Admin_DocumentController->hasDependenciesAction: failed to access document with id: " . $this->_getParam("id"));
+            logger::err("failed to access document with id: " . $this->_getParam("id"));
         }
 
+        $deleteJobs = array();
+
         // check for childs
-        if (!$hasDependency && $doc instanceof Document) {
-            $hasDependency = $doc->hasChilds();
+        if($document instanceof Document) {
+            $hasChilds = $document->hasChilds();
+            if (!$hasDependency) {
+                $hasDependency = $hasChilds;
+            }
+
+            $childs = 0;
+            if($hasChilds) {
+                // get amount of childs
+                $list = new Document_List();
+                $list->setCondition("path LIKE '" . $document->getFullPath() . "/%'");
+                $childs = $list->getTotalCount();
+
+                if($childs > 0) {
+                    $deleteObjectsPerRequest = 5;
+                    for($i=0; $i<ceil($childs/$deleteObjectsPerRequest); $i++) {
+                        $deleteJobs[] = array(array(
+                            "url" => "/admin/document/delete",
+                            "params" => array(
+                                "step" => $i,
+                                "amount" => $deleteObjectsPerRequest,
+                                "type" => "childs",
+                                "id" => $document->getId()
+                            )
+                        ));
+                    }
+                }
+            }
+
+            // the object itself is the last one
+            $deleteJobs[] = array(array(
+                "url" => "/admin/document/delete",
+                "params" => array(
+                    "id" => $document->getId()
+                )
+            ));
         }
 
         $this->_helper->json(array(
-            "hasDependencies" => $hasDependency
+              "hasDependencies" => $hasDependency,
+              "childs" => $childs,
+              "deletejobs" => $deleteJobs
         ));
     }
 

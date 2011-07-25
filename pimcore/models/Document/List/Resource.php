@@ -23,7 +23,6 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
      * @return array
      */
     public function load() {
-
         $documents = array();
         $documentsData = $this->db->fetchAll("SELECT id,type FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 

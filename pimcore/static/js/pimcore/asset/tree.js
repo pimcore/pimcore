@@ -888,7 +888,7 @@ pimcore.asset.tree = Class.create({
 
         // check for dependencies
         Ext.Ajax.request({
-            url: "/admin/asset/has-dependencies/",
+            url: "/admin/asset/delete-info/",
             params: {id: this.id},
             success: this.attributes.reference.deleteCheckDependencyComplete.bind(this)
         });
@@ -898,64 +898,97 @@ pimcore.asset.tree = Class.create({
 
         try {
             var res = Ext.decode(response.responseText);
-            var rm = this.attributes.reference.deleteAssetFromServer.bind(this);
+            var rm = this.attributes.reference.deleteAssetFromServer.bind(this, res);
             var message = t('delete_message');
             if (res.hasDependencies) {
                 var message = t('delete_message_dependencies');
             }
             Ext.MessageBox.show({
-                    title:t('delete'),
-                    msg: message,
-                    buttons: Ext.Msg.OKCANCEL ,
-                    icon: Ext.MessageBox.INFO ,
-                    fn: function(buttonId){
-                        if(buttonId == "ok"){
-                            rm();
-                        }
+                title:t('delete'),
+                msg: message,
+                buttons: Ext.Msg.OKCANCEL ,
+                icon: Ext.MessageBox.INFO ,
+                fn: function(buttonId){
+                    if(buttonId == "ok"){
+                        rm();
                     }
-                });
-
-
+                }
+            });
         }
         catch (e) {
         }
     },
 
-    deleteAssetFromServer: function () {
-        
-        pimcore.helpers.addTreeNodeLoadingIndicator("asset",this.id);
-        this.getUI().addClass("pimcore_delete");
-        
-        /*this.originalClass = Ext.get(this.getUI().getIconEl()).getAttribute("class");
-        Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
-        
+    deleteAssetFromServer: function (r) {
 
-        if (pimcore.globalmanager.exists("asset_" + this.id)) {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove("asset_" + this.id);
-        }
-        
-        Ext.Ajax.request({
-            url: "/admin/asset/delete/",
-            params: {id: this.id },
-            success: function (response) {
-                try{
-                    this.getUI().removeClass("pimcore_delete");
-                    //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
-                    pimcore.helpers.removeTreeNodeLoadingIndicator("asset",this.id);
-                     var rdata = Ext.decode(response.responseText);
-                    if (rdata && rdata.success) {
+        if (r.deletejobs) {
+
+            pimcore.helpers.addTreeNodeLoadingIndicator("asset", this.id);
+            this.getUI().addClass("pimcore_delete");
+            /*this.originalClass = Ext.get(this.getUI().getIconEl()).getAttribute("class");
+             Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
+
+
+            if (pimcore.globalmanager.exists("asset_" + this.id)) {
+                var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                tabPanel.remove("asset_" + this.id);
+            }
+
+            if(r.deletejobs.length > 2) {
+                this.deleteProgressBar = new Ext.ProgressBar({
+                    text: t('initializing')
+                });
+
+                this.deleteWindow = new Ext.Window({
+                    title: t("delete"),
+                    layout:'fit',
+                    width:500,
+                    bodyStyle: "padding: 10px;",
+                    closable:false,
+                    plain: true,
+                    modal: true,
+                    items: [this.deleteProgressBar]
+                });
+
+                this.deleteWindow.show();
+            }
+
+
+            var pj = new pimcore.tool.paralleljobs({
+                success: function () {
+
+                    try {
+                        this.getUI().removeClass("pimcore_delete");
+                        //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
+                        pimcore.helpers.removeTreeNodeLoadingIndicator("asset", this.id);
                         this.remove();
-                    }
-                    else {
-                        pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_during_deleting"), "error",t(rdata.message));
+                    } catch(e) {
+                        console.log(e);
+                        pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_during_deleting"), "error");
                         this.parentNode.reload();
                     }
-                } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_during_deleting"), "error");
+
+                    if(this.deleteWindow) {
+                        this.deleteWindow.close();
+                    }
+
+                    this.deleteProgressBar = null;
+                    this.deleteWindow = null;
+                }.bind(this),
+                update: function (currentStep, steps, percent) {
+                    if(this.deleteProgressBar) {
+                        var status = currentStep / steps;
+                        this.deleteProgressBar.updateProgress(status, percent + "%");
+                    }
+                }.bind(this),
+                failure: function (message) {
+                    this.deleteWindow.close();
+
+                    pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_during_deleting"), "error", t(message));
                     this.parentNode.reload();
-                }
-            }.bind(this)
-        });
-    }
+                }.bind(this),
+                jobs: r.deletejobs
+            });
+        }
+    },
 });

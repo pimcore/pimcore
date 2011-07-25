@@ -49,10 +49,10 @@ class Asset_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_A
     public function isValidOrderKey($key) {
         return true;
 
-        if (in_array($key, $this->validOrderKeys)) {
+        /*if (in_array($key, $this->validOrderKeys)) {
             return true;
         }
-        return false;
+        return false;*/
     }
 
     /**

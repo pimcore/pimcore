@@ -55,10 +55,11 @@ class Document_List extends Pimcore_Model_List_Abstract implements Zend_Paginato
      * @return boolean
      */
     public function isValidOrderKey($key) {
-        if (in_array($key, $this->validOrderKeys)) {
+        return true;
+        /*if (in_array($key, $this->validOrderKeys)) {
             return true;
         }
-        return false;
+        return false;*/
     }
 
     /**

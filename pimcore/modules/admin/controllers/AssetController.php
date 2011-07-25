@@ -512,22 +512,45 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => $success));
     }
 
-    public function deleteAction() {
-        $asset = Asset::getById($this->_getParam("id"));
-        $asset->getPermissionsForUser($this->getUser());
+    public function deleteAction()
+    {
+        if ($this->_getParam("type") == "childs") {
 
-        if ($asset->isAllowed("delete")) {
-            Element_Recyclebin_Item::create($asset, $this->getUser());
-            $asset->delete();
+            $parentAsset = Asset::getById($this->_getParam("id"));
 
-            $this->_helper->json(array("success" => true));
+            $list = new Asset_List();
+            $list->setCondition("path LIKE '" . $parentAsset->getFullPath() . "/%'");
+            $list->setLimit(intval($this->_getParam("amount")));
+            $list->setOrderKey("LENGTH(path)", false);
+            $list->setOrder("DESC");
+
+            $assets = $list->load();
+
+            $deletedItems = array();
+            foreach ($assets as $asset) {
+                $deletedItems[] = $asset->getFullPath();
+                $asset->delete();
+            }
+
+            $this->_helper->json(array("success" => true, "deleted" => $deletedItems));
+
+        } else if($this->_getParam("id")) {
+            $asset = Asset::getById($this->_getParam("id"));
+            $asset->getPermissionsForUser($this->getUser());
+
+            if ($asset->isAllowed("delete")) {
+                Element_Recyclebin_Item::create($asset, $this->getUser());
+                $asset->delete();
+
+                $this->_helper->json(array("success" => true));
+            }
         }
 
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
-    public function hasDependenciesAction() {
-
+    public function deleteInfoAction()
+    {
         $hasDependency = false;
 
         try {
@@ -535,16 +558,54 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $hasDependency = $asset->getDependencies()->isRequired();
         }
         catch (Exception $e) {
-            logger::err("Admin_AssetController->hasDependenciesAction: failed to access asset with id: " . $this->_getParam("id"));
+            logger::err("failed to access asset with id: " . $this->_getParam("id"));
         }
 
+        $deleteJobs = array();
+
         // check for childs
-        if (!$hasDependency && $asset instanceof Asset) {
-            $hasDependency = $asset->hasChilds();
+        if($asset instanceof Asset) {
+            $hasChilds = $asset->hasChilds();
+            if (!$hasDependency) {
+                $hasDependency = $hasChilds;
+            }
+
+            $childs = 0;
+            if($hasChilds) {
+                // get amount of childs
+                $list = new Asset_List();
+                $list->setCondition("path LIKE '" . $asset->getFullPath() . "/%'");
+                $childs = $list->getTotalCount();
+
+                if($childs > 0) {
+                    $deleteObjectsPerRequest = 5;
+                    for($i=0; $i<ceil($childs/$deleteObjectsPerRequest); $i++) {
+                        $deleteJobs[] = array(array(
+                            "url" => "/admin/asset/delete",
+                            "params" => array(
+                                "step" => $i,
+                                "amount" => $deleteObjectsPerRequest,
+                                "type" => "childs",
+                                "id" => $asset->getId()
+                            )
+                        ));
+                    }
+                }
+            }
+
+            // the object itself is the last one
+            $deleteJobs[] = array(array(
+                "url" => "/admin/asset/delete",
+                "params" => array(
+                    "id" => $asset->getId()
+                )
+            ));
         }
 
         $this->_helper->json(array(
-            "hasDependencies" => $hasDependency
+              "hasDependencies" => $hasDependency,
+              "childs" => $childs,
+              "deletejobs" => $deleteJobs
         ));
     }
 
