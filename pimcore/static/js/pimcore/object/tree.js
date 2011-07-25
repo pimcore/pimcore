@@ -593,7 +593,7 @@ pimcore.object.tree = Class.create({
 
         try {
             var res = Ext.decode(response.responseText);
-            var rm = this.attributes.reference.deleteObjectFromServer.bind(this);
+            var rm = this.attributes.reference.deleteObjectFromServer.bind(this,res);
             var message = t('delete_message');
             if (res.hasDependencies) {
                 var message = t('delete_message_dependencies');
@@ -614,44 +614,77 @@ pimcore.object.tree = Class.create({
         }
     },
 
-    deleteObjectFromServer: function () {
+    deleteObjectFromServer: function (r) {
 
-        pimcore.helpers.addTreeNodeLoadingIndicator("object", this.id);
-        this.getUI().addClass("pimcore_delete");
-        /*this.originalClass = Ext.get(this.getUI().getIconEl()).getAttribute("class");
-         Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
+        if (r.deletejobs) {
+            
+            pimcore.helpers.addTreeNodeLoadingIndicator("object", this.id);
+            this.getUI().addClass("pimcore_delete");
+            /*this.originalClass = Ext.get(this.getUI().getIconEl()).getAttribute("class");
+             Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
 
 
-        if (pimcore.globalmanager.exists("object_" + this.id)) {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove("object_" + this.id);
-        }
+            if (pimcore.globalmanager.exists("object_" + this.id)) {
+                var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                tabPanel.remove("object_" + this.id);
+            }
 
-        Ext.Ajax.request({
-            url: "/admin/object/delete",
-            params: {
-                id: this.id
-            },
-            success: function (response) {
+            if(r.deletejobs.length > 2) {
+                this.deleteProgressBar = new Ext.ProgressBar({
+                    text: t('initializing')
+                });
 
-                try {
-                    this.getUI().removeClass("pimcore_delete");
-                    //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
-                    pimcore.helpers.removeTreeNodeLoadingIndicator("object", this.id);
-                    var rdata = Ext.decode(response.responseText);
-                    if (rdata && rdata.success) {
+                this.deleteWindow = new Ext.Window({
+                    title: t("delete"),
+                    layout:'fit',
+                    width:500,
+                    bodyStyle: "padding: 10px;",
+                    closable:false,
+                    plain: true,
+                    modal: true,
+                    items: [this.deleteProgressBar]
+                });
+
+                this.deleteWindow.show();
+            }
+
+
+            var pj = new pimcore.tool.paralleljobs({
+                success: function () {
+
+                    try {
+                        this.getUI().removeClass("pimcore_delete");
+                        //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
+                        pimcore.helpers.removeTreeNodeLoadingIndicator("object", this.id);
                         this.remove();
-                    }
-                    else {
-                        pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error", t(rdata.message));
+                    } catch(e) {
+                        console.log(e);
+                        pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error");
                         this.parentNode.reload();
                     }
-                } catch(e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error");
+
+                    if(this.deleteWindow) {
+                        this.deleteWindow.close();
+                    }
+                    
+                    this.deleteProgressBar = null;
+                    this.deleteWindow = null;
+                }.bind(this),
+                update: function (currentStep, steps, percent) {
+                    if(this.deleteProgressBar) {
+                        var status = currentStep / steps;
+                        this.deleteProgressBar.updateProgress(status, percent + "%");
+                    }
+                }.bind(this),
+                failure: function (message) {
+                    this.deleteWindow.close();
+
+                    pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error", t(rdata.message));
                     this.parentNode.reload();
-                }
-            }.bind(this)
-        });
+                }.bind(this),
+                jobs: r.deletejobs
+            });
+        }
     },
 
 

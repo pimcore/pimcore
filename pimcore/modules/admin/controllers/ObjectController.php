@@ -867,14 +867,36 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
     public function deleteAction()
     {
-        $object = Object_Abstract::getById($this->_getParam("id"));
-        $object->getPermissionsForUser($this->getUser());
+        if ($this->_getParam("type") == "childs") {
 
-        if ($object->isAllowed("delete")) {
-            Element_Recyclebin_Item::create($object, $this->getUser());
-            $object->delete();
+            $parentObject = Object_Abstract::getById($this->_getParam("id"));
+            
+            $list = new Object_List();
+            $list->setCondition("o_path LIKE '" . $parentObject->getFullPath() . "/%'");
+            $list->setLimit(intval($this->_getParam("amount")));
+            $list->setOrderKey("LENGTH(o_path)", false);
+            $list->setOrder("DESC");
 
-            $this->_helper->json(array("success" => true));
+            $objects = $list->load();
+
+            $deletedItems = array();
+            foreach ($objects as $object) {
+                $deletedItems[] = $object->getFullPath();
+                $object->delete();
+            }
+
+            $this->_helper->json(array("success" => true, "deleted" => $deletedItems));
+            
+        } else if($this->_getParam("id")) {
+            $object = Object_Abstract::getById($this->_getParam("id"));
+            $object->getPermissionsForUser($this->getUser());
+
+            if ($object->isAllowed("delete")) {
+                Element_Recyclebin_Item::create($object, $this->getUser());
+                $object->delete();
+
+                $this->_helper->json(array("success" => true));
+            }
         }
 
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
@@ -908,7 +930,30 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $list = new Object_List();
                 $list->setCondition("o_path LIKE '" . $object->getFullPath() . "/%'");
                 $childs = $list->getTotalCount();
+
+                if($childs > 0) {
+                    $deleteObjectsPerRequest = 5;
+                    for($i=0; $i<ceil($childs/$deleteObjectsPerRequest); $i++) {
+                        $deleteJobs[] = array(array(
+                            "url" => "/admin/object/delete",
+                            "params" => array(
+                                "step" => $i,
+                                "amount" => $deleteObjectsPerRequest,
+                                "type" => "childs",
+                                "id" => $object->getId()
+                            )
+                        ));
+                    }
+                }
             }
+
+            // the object itself is the last one
+            $deleteJobs[] = array(array(
+                "url" => "/admin/object/delete",
+                "params" => array(
+                    "id" => $object->getId()
+                )
+            ));
         }
 
         $this->_helper->json(array(
