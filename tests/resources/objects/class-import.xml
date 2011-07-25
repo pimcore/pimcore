@@ -29,10 +29,6 @@
       <style>border-right:1px solid green;</style>
       <permissions></permissions>
       <datatype>data</datatype>
-      <columnType>
-        <id>int(11)</id>
-        <type>enum('document','asset','object')</type>
-      </columnType>
       <invisible></invisible>
       <visibleGridView>1</visibleGridView>
       <visibleSearch>1</visibleSearch>
@@ -121,10 +117,6 @@ Please select a value</tooltip>
       <style>border-right:1px solid green;</style>
       <permissions></permissions>
       <datatype>data</datatype>
-      <columnType>
-        <id>int(11)</id>
-        <type>enum('document','asset','object')</type>
-      </columnType>
       <invisible></invisible>
       <visibleGridView>1</visibleGridView>
       <visibleSearch>1</visibleSearch>

@@ -288,7 +288,11 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
             $getter = "get" . ucfirst($key);
 
-            if ($value->getColumnType()) {
+            if (method_exists($value, "save")) {
+                // for fieldtypes which have their own save algorithm eg. fieldcollections
+                $value->save($this->model);
+            } else if ($value->getColumnType()) {
+                // pimcore saves the values with getDataForResource
                 if (is_array($value->getColumnType())) {
                     $insertDataArray = $value->getDataForResource($this->model->$getter(), $this->model);
                     if(is_array($insertDataArray)) {
@@ -298,9 +302,6 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                     $insertData = $value->getDataForResource($this->model->$getter(), $this->model);
                     $data[$key] = $insertData;
                 }
-            } else if (method_exists($value, "save")) {
-                // for fieldtypes which have their own save algorithm eg. fieldcollections
-                $value->save($this->model);
             }
         }
 
