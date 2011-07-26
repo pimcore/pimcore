@@ -109,13 +109,13 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
 
         $this->order = array();
 
-        if (is_string($order)) {
+        if (is_string($order) && !empty($order)) {
             $order = strtoupper($order);
             if (in_array($order, $this->validOrders)) {
                 $this->order[] = $order;
             }
         }
-        else if (is_array($order)) {
+        else if (is_array($order) && !empty($order)) {
             $this->order = array();
             foreach ($order as $o) {
                 $o = strtoupper($o);
@@ -142,12 +142,12 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
 
         $this->orderKey = array();
 
-        if (is_string($orderKey)) {
+        if (is_string($orderKey) && !empty($orderKey)) {
             if ($this->isValidOrderKey($orderKey)) {
                 $this->orderKey[] = $orderKey;
             }
         }
-        else if (is_array($orderKey)) {
+        else if (is_array($orderKey) && !empty($orderKey)) {
             $this->orderKey = array();
             foreach ($orderKey as $o) {
                 if ($this->isValidOrderKey($orderKey)) {
