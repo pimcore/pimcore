@@ -9,6 +9,7 @@ RewriteRule ^(.*)$ /website/var/assets%{REQUEST_URI} [PT,L]
 RewriteRule ^website/var/tmp.* - [PT,L]
 RewriteRule ^website/var/assets.* - [PT,L]
 RewriteRule ^website/var/plugins.* - [PT,L]
+RewriteRule ^website/var/areas.* - [PT,L]
 RewriteRule ^plugins/.*/static.* - [PT,L]
 RewriteRule ^pimcore/static.* - [PT,L]
 
