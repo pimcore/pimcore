@@ -130,7 +130,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                 $this->_redirect("/admin/?_dc=" . time());
             } else {
                 $this->writeLogFile($this->_getParam("username"), $e->getMessage());
-                Logger::info("Admin_LoginController: Login Exception" . $e);
+                Logger::info("Login Exception" . $e);
 
                 $this->_redirect("/admin/login/?auth_failed=true&inactive=" . $userInactive);
                 $this->getResponse()->sendResponse();

@@ -204,10 +204,17 @@ pimcore.settings.system = Class.create({
                                 listWidth: 400
                             },
                             {
-                                fieldLabel: t('show_welcome_screen'),
-                                xtype: "checkbox",
-                                name: "general.welcomescreen",
-                                checked: this.getValue("general.welcomescreen")
+                                fieldLabel: t("view_suffix"),
+                                xtype: "combo",
+                                width: 250,
+                                name: "general.viewSuffix",
+                                value: this.getValue("general.viewSuffix"),
+                                store: [
+                                    ["", ".php (pimcore standard)"],
+                                    ["phtml","phtml (zend framework standard)"]
+                                ],
+                                mode: "local",
+                                triggerAction: "all"
                             },
                             {
                                 xtype:'combo',
@@ -238,17 +245,22 @@ pimcore.settings.system = Class.create({
                                 listWidth: 100
                             },
                             {
-                                fieldLabel: t("view_suffix"),
-                                xtype: "combo",
-                                width: 250,
-                                name: "general.viewSuffix",
-                                value: this.getValue("general.viewSuffix"),
-                                store: [
-                                    ["", ".php (pimcore standard)"],
-                                    ["phtml","phtml (zend framework standard)"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all"
+                                fieldLabel: t('show_welcome_screen'),
+                                xtype: "checkbox",
+                                name: "general.welcomescreen",
+                                checked: this.getValue("general.welcomescreen")
+                            },
+                            {
+                                fieldLabel: t('show_random_pictures_on_login_screen'),
+                                xtype: "checkbox",
+                                name: "general.loginscreenimageservice",
+                                checked: this.getValue("general.loginscreenimageservice")
+                            },
+                            {
+                                fieldLabel: t("url_to_custom_image_on_login_screen"),
+                                xtype: "textfield",
+                                name: "general.loginscreencustomimage",
+                                value: this.getValue("general.loginscreencustomimage")
                             }
                         ]
                     },

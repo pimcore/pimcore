@@ -227,6 +227,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "language" => $values["general.language"],
                     "validLanguages" => $values["general.validLanguages"],
                     "theme" => $values["general.theme"],
+                    "loginscreenimageservice" => $values["general.loginscreenimageservice"],
+                    "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                     "debug" => $values["general.debug"],
                     "debug_ip" => $values["general.debug_ip"],
                     "firephp" => $values["general.firephp"],

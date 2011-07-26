@@ -58,9 +58,16 @@ if ($browser->getBrowser() == "Safari" && $browserVersion >= 4) {
     $supported = true;
 }
 
+$config = Pimcore_Config::getSystemConfig();
+
 ?>
 
-<img src="/pimcore/static/img/login-reloaded/background.jpg" class="background" id="backgroundimage" />
+<?php if ($config->general->loginscreencustomimage) { ?>
+    <img src="<?php echo $config->general->loginscreencustomimage; ?>" class="background" id="backgroundimage" />
+<?php } else { ?>
+    <img src="/pimcore/static/img/login-reloaded/background.jpg" class="background" id="backgroundimage" />
+<?php } ?>
+
 <img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
 
 <div id="vcenter">
@@ -129,7 +136,9 @@ if ($browser->getBrowser() == "Safari" && $browserVersion >= 4) {
     document.getElementById("username").focus();
 </script>
 
-<script type="text/javascript" src="http://www.pimcore.org/imageservice/?nocache=1"></script>
+<?php if ($config->general->loginscreenimageservice) { ?>
+    <script type="text/javascript" src="http://www.pimcore.org/imageservice/?nocache=1"></script>
+<?php } ?>
 
 </body>
 </html>
