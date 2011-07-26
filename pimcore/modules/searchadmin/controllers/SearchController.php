@@ -39,7 +39,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
         $searcherList = new Search_Backend_Data_List();
         $conditionParts = array();
-
+        $db = Pimcore_Resource::get();
 
         //exclude forbidden assets
         if (!$user->isAllowed("assets")) {
@@ -87,7 +87,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
 
         if (!empty($query)) {
-            $conditionParts[] = "(id = '". mysql_escape_string($query) ."' or fullpath like '%". mysql_escape_string($query) ."%' or  data like '%" . mysql_escape_string($query) . "%' or  localizeddata like '%" . mysql_escape_string($query) . "%' or  fieldcollectiondata like '%" . mysql_escape_string($query) . "%' or properties like '%" . mysql_escape_string($query) . "%')";
+            $conditionParts[] = "(id = ". $db->quote($query) ." or fullpath like ". $db->quote("%".$query."%") ." or  data like ". $db->quote("%".$query."%") ." or  localizeddata like ". $db->quote("%".$query."%") ." or  fieldcollectiondata like ". $db->quote("%".$query."%") ." or properties like ". $db->quote("%".$query."%") .")";
         }                      
 
 
@@ -122,14 +122,14 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
         if (is_array($types) and !empty($types[0])) {
             foreach ($types as $type) {
-                $conditionTypeParts[] = "maintype='" . mysql_escape_string($type) . "'";
+                $conditionTypeParts[] = "maintype = " . $db->quote($type);
             }
             $conditionParts[] = "(" . implode(" OR ", $conditionTypeParts) . ")";
         }
 
         if (is_array($subtypes) and !empty($subtypes[0])) {
             foreach ($subtypes as $subtype) {
-                $conditionSubtypeParts[] = "type='" . mysql_escape_string($subtype) . "'";
+                $conditionSubtypeParts[] = "type = " . $db->quote($subtype);
             }
             $conditionParts[] = "(" . implode(" OR ", $conditionSubtypeParts) . ")";
         }
@@ -139,7 +139,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
                 $classnames[]="folder";    
             }
             foreach ($classnames as $classname) {
-                $conditionClassnameParts[] = "subtype='" . mysql_escape_string($classname) . "'";
+                $conditionClassnameParts[] = "subtype = " . $db->quote($classname);
             }
             $conditionParts[] = "(" . implode(" OR ", $conditionClassnameParts) . ")";
         }
