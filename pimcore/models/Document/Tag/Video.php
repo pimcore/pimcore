@@ -213,8 +213,6 @@ class Document_Tag_Video extends Document_Tag
         $code = "";
         $uid = "video_" . uniqid();
 
-        $code .= $this->getSwfObject();
-
         // get youtube id
         $parts = parse_url($this->id);
         parse_str($parts["query"], $vars);
@@ -223,6 +221,8 @@ class Document_Tag_Video extends Document_Tag
             return $this->getEmptyCode();
             //return $this->getFlowplayerCode();
         }
+
+        $code .= $this->getSwfObject();
 
         $youtubeId = $vars["v"];
 
@@ -247,8 +247,6 @@ class Document_Tag_Video extends Document_Tag
         $code = "";
         $uid = "video_" . uniqid();
 
-        $code .= $this->getSwfObject();
-
         // get youtube id
         $parts = parse_url($this->id);
         $pathParts = explode("/", $parts["path"]);
@@ -258,6 +256,8 @@ class Document_Tag_Video extends Document_Tag
             return $this->getEmptyCode();
             //return $this->getFlowplayerCode();
         }
+
+        $code .= $this->getSwfObject();
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '"><div id="' . $uid . '"></div></div>';
         $code .= '
@@ -297,17 +297,6 @@ class Document_Tag_Video extends Document_Tag
             $scriptPath = $options["scriptPath"];
         }
 
-
-        if (!Document_Tag_Video::$playerJsEmbedded) {
-            $code .= '<script type="text/javascript" src="' . $scriptPath . '"></script>';
-            $code .= '<script type="text/javascript" src="/pimcore/static/js/lib/array_merge.js"></script>';
-            $code .= '<script type="text/javascript" src="/pimcore/static/js/lib/array_merge_recursive.js"></script>';
-            Document_Tag_Video::$playerJsEmbedded = true;
-        }
-
-        $code .= '<div id="pimcore_video_' . $this->getName() . '"><div id="' . $uid . '"></div></div>';
-
-
         $preConfig = Zend_Json::encode(array("dummy" => true));
         if ($options["config"]) {
             if (is_string($options["config"])) {
@@ -325,6 +314,15 @@ class Document_Tag_Video extends Document_Tag
             return $this->getEmptyCode();
             //$config["clip"]["url"] = "/pimcore/static/f4v/pimcore.f4v";
         }
+
+        if (!Document_Tag_Video::$playerJsEmbedded) {
+            $code .= '<script type="text/javascript" src="' . $scriptPath . '"></script>';
+            $code .= '<script type="text/javascript" src="/pimcore/static/js/lib/array_merge.js"></script>';
+            $code .= '<script type="text/javascript" src="/pimcore/static/js/lib/array_merge_recursive.js"></script>';
+            Document_Tag_Video::$playerJsEmbedded = true;
+        }
+
+        $code .= '<div id="pimcore_video_' . $this->getName() . '"><div id="' . $uid . '"></div></div>';
 
         Zend_Json::encode($config);
 
