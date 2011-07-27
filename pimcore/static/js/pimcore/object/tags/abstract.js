@@ -16,7 +16,9 @@ pimcore.registerNS("pimcore.object.tags.abstract");
 pimcore.object.tags.abstract = Class.create({
 
     object: null,
-    myName: null, 
+    name: null,
+    title: "",
+    initialData: null,
 
     setObject: function (object) {
         this.object = object;
@@ -27,11 +29,27 @@ pimcore.object.tags.abstract = Class.create({
     },
 
     setName: function (name) {
-        this.myName = name;
+        this.name = name;
     },
 
     getName: function () {
-        return this.myName;
+        return this.name;
+    },
+
+    setTitle: function (title) {
+        this.title = title;
+    },
+
+    getTitle: function () {
+        return this.title;
+    },
+
+    setInitialData: function (initialData) {
+        this.initialData = initialData;
+    },
+
+    getInitialData: function () {
+        return this.initialData;
     },
 
     getGridColumnEditor: function(field) {
@@ -54,30 +72,12 @@ pimcore.object.tags.abstract = Class.create({
         return null;
     },
 
-    markMandatory: function () {
-        var el = this.getEl();
-        if (el) {
-            el.addClass("object_mendatory_error");
-        }
-    },
-
-    unmarkMandatory: function () {
-        var el = this.getEl();
-        if (el) {
-            el.removeClass("object_mendatory_error");
-        }
-    },
-
     getEl: function () {
-        if (this.layout) {
-            return this.layout.getEl()
+        if (this.component) {
+            return this.component.getEl()
         }
-        if(this.grid) {
-            return this.grid.getEl();
-        }
-        if(this.panel) {
-            return this.panel.getEl();
-        }
+
+        throw "the component `" + this.getName() + "´ doesn't implement the method getEl() and is not standard-compliant!";
     },
 
     unmarkInherited: function () {
@@ -148,29 +148,47 @@ pimcore.object.tags.abstract = Class.create({
     },
 
     isInvalidMandatory: function () {
+
+        if(!this.isRendered() && !empty(this.getInitialData())) {
+            return false;
+        } else if (!this.isRendered()) {
+            return true;
+        }
+        
         if (this.getValue().length < 1) {
             return true;
         }
         return false;
     },
+    
 
     isMandatory: function () {
-        return this.layoutConf.mandatory;
+        return this.fieldConfig.mandatory;
+    },
+
+    isRendered: function () {
+        if(this.component) {
+            return this.component.rendered;
+        }
+
+        throw "it seems that the field `" + this.getName() + "´ does not implement the isRendered() method and doesn't contain this.component";
     },
 
     isDirty: function () {
         var dirty = false;
-        if(this.layout && typeof this.layout.isDirty == "function") {
+        if(this.component && typeof this.component.isDirty == "function") {
 
-            if(!this.layout.rendered) {
+            if(!this.component.rendered) {
                 return false;
             } else {
-                dirty = this.layout.isDirty();
-                if(this.layout["__pimcore_dirty"]) {
+                dirty = this.component.isDirty();
+
+                // once a field is dirty it should be always dirty (not an ExtJS behavior)
+                if(this.component["__pimcore_dirty"]) {
                     dirty = true;
                 }
                 if(dirty) {
-                    this.layout["__pimcore_dirty"] = true;
+                    this.component["__pimcore_dirty"] = true;
                 }
 
                 return dirty;

@@ -17,14 +17,14 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
     type: "checkbox",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
         this.data = "";
 
         if (data) {
             this.data = data;
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
     },
 
     getGridColumnConfig: function(field) {
@@ -48,38 +48,38 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var checkbox = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             itemCls: "object_field"
         };
 
 
-        if (this.layoutConf.width) {
-            checkbox.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            checkbox.width = this.fieldConfig.width;
         }
 
-        this.layout = new Ext.form.Checkbox(checkbox);
+        this.component = new Ext.form.Checkbox(checkbox);
 
-        this.layout.setValue(this.data);
+        this.component.setValue(this.data);
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        return this.layout.getValue();
+        return this.component.getValue();
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {

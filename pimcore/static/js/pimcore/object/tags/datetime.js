@@ -17,9 +17,9 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
     type: "datetime",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -65,23 +65,23 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
         this.datefield = new Ext.form.DateField(date);
         this.timefield = new Ext.form.TimeField(time);
 
-        this.layout = new Ext.form.CompositeField({
+        this.component = new Ext.form.CompositeField({
             xtype: 'compositefield',
-            fieldLabel: this.layoutConf.title,
+            fieldLabel: this.fieldConfig.title,
             combineErrors: false,
             items: [this.datefield, this.timefield],
             itemCls: "object_field"
         });
 
-        return this.layout;
+        return this.component;
     },
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
@@ -101,10 +101,12 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {
+
+        // no render check is necessary because the date compontent returns the right values even if it is not rendered
         if (this.getValue() == false) {
             return true;
         }

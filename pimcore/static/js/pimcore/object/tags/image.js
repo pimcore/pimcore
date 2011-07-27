@@ -18,11 +18,11 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     type: "image",
     dirty: false,
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         if (data) {
             this.data = data;
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -41,16 +41,16 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
 
-        if (intval(this.layoutConf.width) < 1) {
-            this.layoutConf.width = 100;
+        if (intval(this.fieldConfig.width) < 1) {
+            this.fieldConfig.width = 100;
         }
-        if (intval(this.layoutConf.height) < 1) {
-            this.layoutConf.height = 100;
+        if (intval(this.fieldConfig.height) < 1) {
+            this.fieldConfig.height = 100;
         }
 
         var conf = {
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
             tbar: [{
                 xtype: "tbspacer",
                 width: 20,
@@ -59,7 +59,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             },
             {
                 xtype: "tbtext",
-                text: "<b>" + this.layoutConf.title + "</b>"
+                text: "<b>" + this.fieldConfig.title + "</b>"
             },"->",{
                 xtype: "button",
                 iconCls: "pimcore_icon_edit",
@@ -77,17 +77,17 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             bodyCssClass: "pimcore_droptarget_image"
         };
 
-        this.layout = new Ext.Panel(conf);
+        this.component = new Ext.Panel(conf);
 
 
-        this.layout.on("render", function (el) {
+        this.component.on("render", function (el) {
 
             // add drop zone
             new Ext.dd.DropZone(el.getEl(), {
                 reference: this,
                 ddGroup: "element",
                 getTargetFromEvent: function(e) {
-                    return this.reference.layout.getEl();
+                    return this.reference.component.getEl();
                 },
 
                 onNodeOver : function(target, dd, e, data) {
@@ -113,35 +113,35 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         }.bind(this));
 
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        if (intval(this.layoutConf.width) < 1) {
-            this.layoutConf.width = 100;
+        if (intval(this.fieldConfig.width) < 1) {
+            this.fieldConfig.width = 100;
         }
-        if (intval(this.layoutConf.height) < 1) {
-            this.layoutConf.height = 100;
+        if (intval(this.fieldConfig.height) < 1) {
+            this.fieldConfig.height = 100;
         }
 
         var conf = {
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
-            title: this.layoutConf.title,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
+            title: this.fieldConfig.title,
             cls: "object_field"
         };
 
-        this.layout = new Ext.Panel(conf);
+        this.component = new Ext.Panel(conf);
 
-        this.layout.on("render", function (el) {
+        this.component.on("render", function (el) {
             if (this.data) {
                 this.updateImage();
             }
         }.bind(this));
 
-        return this.layout;
+        return this.component;
     },
 
     onNodeDrop: function (target, dd, e, data) {
@@ -185,7 +185,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
     
     updateImage: function () {
-        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.layoutConf.width - 20) + "/aspectratio/true";
+        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/aspectratio/true";
         this.getBody().setStyle({
             backgroundImage: "url(" + path + ")"
         });
@@ -194,7 +194,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
     getBody: function () {
         // get the id from the body element of the panel because there is no method to set body's html (only in configure)
-        var bodyId = Ext.get(this.layout.getEl().dom).query(".x-panel-body")[0].getAttribute("id");
+        var bodyId = Ext.get(this.component.getEl().dom).query(".x-panel-body")[0].getAttribute("id");
         return Ext.get(bodyId);
     },
 
@@ -249,7 +249,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {
@@ -260,7 +260,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
-        if(!this.layout.rendered) {
+        if(!this.isRendered()) {
             return false;
         }
 

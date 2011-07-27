@@ -17,54 +17,54 @@ pimcore.object.tags.password = Class.create(pimcore.object.tags.abstract, {
 
     type: "password",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
         if (data) {
             this.data = data;
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
     getLayoutEdit: function () {
 
         var input = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             itemCls: "object_field"
         };
 
         input.value = "********";
 
-        if (this.layoutConf.width) {
-            input.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            input.width = this.fieldConfig.width;
         }
 
         input.maxLength = 30;
         input.inputType = "password";
 
-        this.layout = new Ext.form.TextField(input);
+        this.component = new Ext.form.TextField(input);
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        if(this.layout.isDirty()) {
-            return this.layout.getValue();
+        if(this.component.isDirty()) {
+            return this.component.getValue();
         }
         return this.data;
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     }
 });

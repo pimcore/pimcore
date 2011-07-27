@@ -18,9 +18,9 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
     type: "geopolygon",
     dirty: false,
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -30,8 +30,8 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
             
             this.mapImageID = uniqid();
             
-            this.layout = new Ext.Panel({
-                title: this.layoutConf.title,
+            this.component = new Ext.Panel({
+                title: this.fieldConfig.title,
                 height: 370,
                 width: 490,
                 cls: "object_field",
@@ -53,14 +53,14 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 }]
             });
     
-            this.layout.on("afterrender", function () {
+            this.component.on("afterrender", function () {
                 this.updatePreviewImage();
             }.bind(this))
         }
         else {
             // gmaps is not configured
-            this.layout = new Ext.Panel({
-                title: this.layoutConf.title,
+            this.component = new Ext.Panel({
+                title: this.fieldConfig.title,
                 width: 490,
                 bodyStyle: "padding: 10px;",
                 cls: "object_field",
@@ -69,15 +69,15 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
         }
 
 
-        return this.layout;
+        return this.component;
     },
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     updatePreviewImage: function () {
@@ -299,7 +299,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {
@@ -314,7 +314,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
-        if(!this.layout.rendered) {
+        if(!this.isRendered()) {
             return false;
         }
         

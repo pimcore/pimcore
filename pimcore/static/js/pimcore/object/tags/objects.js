@@ -18,9 +18,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     type: "objects",
     dataChanged:false,
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = [];
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
         if (data) {
             this.data = data;
         }
@@ -195,10 +195,10 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         var allowedClasses;
         var classStore = pimcore.globalmanager.get("object_types_store");
-        if (this.layoutConf.classes != null && this.layoutConf.classes.length > 0) {
+        if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             allowedClasses = [];
-            for (i = 0; i < this.layoutConf.classes.length; i++) {
-                allowedClasses.push(this.layoutConf.classes[i].classes);
+            for (i = 0; i < this.fieldConfig.classes.length; i++) {
+                allowedClasses.push(this.fieldConfig.classes[i].classes);
             }
         } else if (classStore.data && classStore.data.items && classStore.data.items.length > 0) {
             allowedClasses = [];
@@ -248,13 +248,13 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var autoHeight = false;
-        if (intval(this.layoutConf.height) < 15) {
+        if (intval(this.fieldConfig.height) < 15) {
             autoHeight = true;
         }
 
         var cls = 'object_field';
 
-        this.grid = new Ext.grid.GridPanel({
+        this.component = new Ext.grid.GridPanel({
             plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
             colModel: new Ext.grid.ColumnModel({
@@ -296,8 +296,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             }),
             cls: cls,
             autoExpandColumn: 'path',
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
             tbar: [
                 {
                     xtype: "tbspacer",
@@ -307,7 +307,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 },
                 {
                     xtype: "tbtext",
-                    text: "<b>" + this.layoutConf.title + "</b>"
+                    text: "<b>" + this.fieldConfig.title + "</b>"
                 },
                 "->",
                 {
@@ -326,16 +326,16 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             bodyCssClass: "pimcore_object_tag_objects"
         });
 
-        this.grid.on("rowcontextmenu", this.onRowContextmenu);
-        this.grid.reference = this;
+        this.component.on("rowcontextmenu", this.onRowContextmenu);
+        this.component.reference = this;
 
-        this.grid.on("afterrender", function () {
+        this.component.on("afterrender", function () {
 
-            var dropTargetEl = this.grid.getEl();
+            var dropTargetEl = this.component.getEl();
             var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
                 ddGroup    : 'element',
                 getTargetFromEvent: function(e) {
-                    return this.grid.getEl().dom;
+                    return this.component.getEl().dom;
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
@@ -376,7 +376,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         }.bind(this));
 
 
-        return this.grid;
+        return this.component;
     }
     ,
 
@@ -384,11 +384,11 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         var autoHeight = false;
-        if (intval(this.layoutConf.height) < 15) {
+        if (intval(this.fieldConfig.height) < 15) {
             autoHeight = true;
         }
 
-        this.grid = new Ext.grid.GridPanel({
+        this.component = new Ext.grid.GridPanel({
             store: this.store,
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
@@ -414,15 +414,15 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     }
                 ]
             }),
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
             autoHeight:autoHeight,
             cls: "object_field",
             autoExpandColumn: 'path',
-            title: this.layoutConf.title
+            title: this.fieldConfig.title
         });
 
-        return this.grid;
+        return this.component;
     }
     ,
 
@@ -466,10 +466,10 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
     openSearchEditor: function () {
         var allowedClasses;
-        if (this.layoutConf.classes != null && this.layoutConf.classes.length > 0) {
+        if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             allowedClasses = [];
-            for (i = 0; i < this.layoutConf.classes.length; i++) {
-                allowedClasses.push(this.layoutConf.classes[i].classes);
+            for (i = 0; i < this.fieldConfig.classes.length; i++) {
+                allowedClasses.push(this.fieldConfig.classes[i].classes);
             }
         }
 
@@ -540,7 +540,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         var tmData = [];
 
-        if (this.layoutConf.lazyLoading && !this.dataChanged) {
+        if (this.fieldConfig.lazyLoading && !this.dataChanged) {
             return false;
         }
 
@@ -557,7 +557,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     ,
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     }
     ,
 
@@ -588,9 +588,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         var classname = data.node.attributes.className;
         var isAllowedClass = false;
-        if (this.layoutConf.classes != null && this.layoutConf.classes.length > 0) {
-            for (i = 0; i < this.layoutConf.classes.length; i++) {
-                if (this.layoutConf.classes[i].classes == classname) {
+        if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
+            for (i = 0; i < this.fieldConfig.classes.length; i++) {
+                if (this.fieldConfig.classes[i].classes == classname) {
                     isAllowedClass = true;
                     break;
                 }
@@ -603,7 +603,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
-        if(!this.grid.rendered) {
+        if(!this.isRendered()) {
             return false;
         }
         

@@ -17,14 +17,14 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
 
     type: "input",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
         this.data = "";
 
         if (data) {
             this.data = data;
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
     },
 
     getGridColumnEditor: function(field) {
@@ -54,8 +54,8 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var input = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             itemCls: "object_field"
         };
 
@@ -63,32 +63,32 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
             input.value = this.data;
         }
 
-        if (this.layoutConf.width) {
-            input.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            input.width = this.fieldConfig.width;
         }
-        if(this.layoutConf.columnLength) {
-            input.autoCreate = {tag: 'input', type: 'text', maxlength: this.layoutConf.columnLength};
+        if(this.fieldConfig.columnLength) {
+            input.autoCreate = {tag: 'input', type: 'text', maxlength: this.fieldConfig.columnLength};
         }
 
-        this.layout = new Ext.form.TextField(input);
+        this.component = new Ext.form.TextField(input);
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        return this.layout.getValue();
+        return this.component.getValue();
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     }
 });

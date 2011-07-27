@@ -17,9 +17,9 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
 
     type: "time",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
     },
 
     getGridColumnFilter: function(field) {
@@ -27,8 +27,8 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
     },    
 
     getLayoutEdit: function () {
-        this.layout = new Ext.form.TimeField({
-            fieldLabel: this.layoutConf.title,
+        this.component = new Ext.form.TimeField({
+            fieldLabel: this.fieldConfig.title,
             format: "H:i",
             emptyText: "",
             width: 60,
@@ -36,23 +36,23 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
             itemCls: "object_field"
         });
 
-        return this.layout;
+        return this.component;
     },
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        return this.layout.getValue();
+        return this.component.getValue();
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {

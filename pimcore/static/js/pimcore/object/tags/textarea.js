@@ -17,9 +17,9 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
 
     type: "textarea",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -50,17 +50,17 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
 
-        if (intval(this.layoutConf.width) < 1) {
-            this.layoutConf.width = 100;
+        if (intval(this.fieldConfig.width) < 1) {
+            this.fieldConfig.width = 100;
         }
-        if (intval(this.layoutConf.height) < 1) {
-            this.layoutConf.height = 100;
+        if (intval(this.fieldConfig.height) < 1) {
+            this.fieldConfig.height = 100;
         }
 
         var conf = {
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
-            fieldLabel: this.layoutConf.title,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
+            fieldLabel: this.fieldConfig.title,
             itemCls: "object_field"
         };
 
@@ -68,25 +68,25 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
             conf.value = this.data;
         }
 
-        this.layout = new Ext.form.TextArea(conf);
+        this.component = new Ext.form.TextArea(conf);
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        return this.layout.getValue();
+        return this.component.getValue();
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     }
 });

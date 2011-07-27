@@ -18,15 +18,15 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     type: "objectsMetadata",
     dataChanged:false,
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = [];
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
         if (data) {
             this.data = data;
         }
 
         var fields = [];
-        var visibleFields = this.layoutConf.visibleFields.split(",");
+        var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         fields.push("id");
 
@@ -34,8 +34,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             fields.push(visibleFields[i]);
         }
 
-        for(var i = 0; i < this.layoutConf.columns.length; i++) {
-            fields.push(this.layoutConf.columns[i].key);
+        for(var i = 0; i < this.fieldConfig.columns.length; i++) {
+            fields.push(this.fieldConfig.columns[i].key);
         }
 
         this.store = new Ext.data.ArrayStore({
@@ -61,13 +61,13 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
     createLayout: function(readOnly) {
         var autoHeight = false;
-        if (intval(this.layoutConf.height) < 15) {
+        if (intval(this.fieldConfig.height) < 15) {
             autoHeight = true;
         }
 
         var cls = 'object_field';
 
-        var visibleFields = this.layoutConf.visibleFields.split(",");
+        var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         var columns = [];
         columns.push({header: 'ID', dataIndex: 'id', width: 50});
@@ -76,23 +76,23 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null, renderer: renderer});
         }
 
-        for(var i = 0; i < this.layoutConf.columns.length; i++) {
+        for(var i = 0; i < this.fieldConfig.columns.length; i++) {
             var width = 100;
-            if(this.layoutConf.columns[i].width) {
-                width = this.layoutConf.columns[i].width
+            if(this.fieldConfig.columns[i].width) {
+                width = this.fieldConfig.columns[i].width
             }
 
             var editor = null;
             var renderer = null;
             var listeners = null;
 
-            if(this.layoutConf.columns[i].type == "number" && !readOnly) {
+            if(this.fieldConfig.columns[i].type == "number" && !readOnly) {
                 editor = new Ext.form.NumberField({});
 
-            } else if(this.layoutConf.columns[i].type == "text" && !readOnly) {
+            } else if(this.fieldConfig.columns[i].type == "text" && !readOnly) {
                 editor = new Ext.form.TextField({});
-            } else if(this.layoutConf.columns[i].type == "select" && !readOnly) {
-                var selectDataRaw = this.layoutConf.columns[i].value.split(";");
+            } else if(this.fieldConfig.columns[i].type == "select" && !readOnly) {
+                var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
                 var selectData = [];
                 for(var j = 0; j < selectDataRaw.length; j++) {
                     selectData.push([selectDataRaw[j], selectDataRaw[j]]);
@@ -113,7 +113,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     valueField: 'value',
                     displayField: 'label'
                 });
-            } else if(this.layoutConf.columns[i].type == "bool") {
+            } else if(this.fieldConfig.columns[i].type == "bool") {
                 if(!readOnly) {
                     editor = new Ext.form.Checkbox();
 
@@ -135,8 +135,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             }
 
             columns.push({
-                header: ts(this.layoutConf.columns[i].label),
-                dataIndex: this.layoutConf.columns[i].key,
+                header: ts(this.fieldConfig.columns[i].label),
+                dataIndex: this.fieldConfig.columns[i].key,
                 editor: editor,
                 renderer: renderer,
                 listeners: listeners,
@@ -177,7 +177,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
 
 
-        this.grid = new Ext.grid.EditorGridPanel({
+        this.component = new Ext.grid.EditorGridPanel({
             //plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
             colModel: new Ext.grid.ColumnModel({
@@ -191,8 +191,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             },
             cls: cls,
             //autoExpandColumn: 'id',
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
             tbar: [
                 {
                     xtype: "tbspacer",
@@ -202,7 +202,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 },
                 {
                     xtype: "tbtext",
-                    text: "<b>" + this.layoutConf.title + "</b>"
+                    text: "<b>" + this.fieldConfig.title + "</b>"
                 },
                 "->",
                 {
@@ -221,17 +221,17 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             bodyCssClass: "pimcore_object_tag_objects"
         });
 
-        this.grid.on("rowcontextmenu", this.onRowContextmenu);
-        this.grid.reference = this;
+        this.component.on("rowcontextmenu", this.onRowContextmenu);
+        this.component.reference = this;
 
         if(!readOnly) {
-            this.grid.on("afterrender", function () {
+            this.component.on("afterrender", function () {
 
-                var dropTargetEl = this.grid.getEl();
+                var dropTargetEl = this.component.getEl();
                 var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
                     ddGroup    : 'element',
                     getTargetFromEvent: function(e) {
-                        return this.grid.getEl().dom;
+                        return this.component.getEl().dom;
                         //return e.getTarget(this.grid.getView().rowSelector);
                     }.bind(this),
                     onNodeOver: function (overHtmlNode, ddSource, e, data) {
@@ -273,7 +273,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
 
 
-        return this.grid;
+        return this.component;
     },
 
     getLayoutEdit: function () {
@@ -288,7 +288,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 //    getLayoutShow: function () {
 //
 //        var autoHeight = false;
-//        if (intval(this.layoutConf.height) < 15) {
+//        if (intval(this.fieldConfig.height) < 15) {
 //            autoHeight = true;
 //        }
 //
@@ -318,12 +318,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 //                    }
 //                ]
 //            }),
-//            width: this.layoutConf.width,
-//            height: this.layoutConf.height,
+//            width: this.fieldConfig.width,
+//            height: this.fieldConfig.height,
 //            autoHeight:autoHeight,
 //            cls: "object_field",
 //            autoExpandColumn: 'path',
-//            title: this.layoutConf.title
+//            title: this.fieldConfig.title
 //        });
 //
 //        return this.grid;
@@ -348,7 +348,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var classId = classStore.getAt(classStore.findExact("text", classname));
         var isAllowedClass = false;
         if(classId) {
-            if (this.layoutConf.allowedClassId == classId.id) {
+            if (this.fieldConfig.allowedClassId == classId.id) {
                 isAllowedClass = true;
             }
         }

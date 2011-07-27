@@ -171,6 +171,7 @@ pimcore.object.helpers.edit = {
                 }
 
                 // add asterisk to mandatory field
+                l.titleOriginal = l.title;
                 if(l.mandatory && !l.mandatoryStarAdded) {
                     l.title += ' <span style="color:red;">*</span>';
                     l.mandatoryStarAdded = true;
@@ -180,6 +181,8 @@ pimcore.object.helpers.edit = {
 
                 field.setObject(this.object);
                 field.setName(l.name);
+                field.setTitle(l.titleOriginal);
+                field.setInitialData(data);
 
                 this.addToDataFields(field, l.name);
 

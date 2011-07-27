@@ -17,9 +17,9 @@ pimcore.object.tags.language = Class.create(pimcore.object.tags.select, {
 
     type: "language",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
-        this.layoutConf.width = 350;
+        this.fieldConfig = fieldConfig;
+        this.fieldConfig.width = 350;
     }
 });

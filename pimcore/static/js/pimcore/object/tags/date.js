@@ -17,9 +17,9 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
     type: "date",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -46,8 +46,8 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var date = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             itemCls: "object_field",
             width: 100
         };
@@ -57,30 +57,32 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
             date.value = tmpDate;
         }
 
-        this.layout = new Ext.form.DateField(date);
-        return this.layout;
+        this.component = new Ext.form.DateField(date);
+        return this.component;
     },
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        if (this.layout.getValue()) {
-            return this.layout.getValue().getTime();
+        if (this.component.getValue()) {
+            return this.component.getValue().getTime();
         }
         return false;
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {
+
+        // no render check is necessary because the date compontent returns the right values even it is not rendered
         if (this.getValue() == false) {
             return true;
         }

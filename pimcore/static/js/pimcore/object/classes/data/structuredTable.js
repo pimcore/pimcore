@@ -203,7 +203,6 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         u.data.key = "name";
         editor.stopEditing();
         store.add(u);
-        console.log(store.getCount());
         editor.startEditing(store.getCount()-1);
     },
 

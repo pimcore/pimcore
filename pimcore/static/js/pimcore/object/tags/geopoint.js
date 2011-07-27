@@ -17,9 +17,9 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
     type: "geopoint",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -77,8 +77,8 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
         // fallback without map
         if (!pimcore.settings.google_maps_api_key) {
-            this.layout = new Ext.Panel({
-                title: this.layoutConf.title,
+            this.component = new Ext.Panel({
+                title: this.fieldConfig.title,
                 width: 490,
                 bodyStyle: "padding: 10px;",
                 cls: "object_field",
@@ -86,7 +86,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
                 bbar: [t("latitude"), this.latitude, "-", t("longitude"), this.longitude]
             });
 
-            return this.layout;
+            return this.component;
         }
 
 
@@ -95,8 +95,8 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
         this.longitude.on("keyup", this.updatePreviewImage.bind(this));
         this.latitude.on("keyup", this.updatePreviewImage.bind(this));
 
-        this.layout = new Ext.Panel({
-            title: this.layoutConf.title,
+        this.component = new Ext.Panel({
+            title: this.fieldConfig.title,
             height: 370,
             width: 490,
             cls: "object_field",
@@ -109,19 +109,19 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
             }]
         });
 
-        this.layout.on("afterrender", function () {
+        this.component.on("afterrender", function () {
             this.updatePreviewImage();
         }.bind(this))
 
-        return this.layout;
+        return this.component;
     },
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     updatePreviewImage: function () {
@@ -289,10 +289,12 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {
+
+        // no render check is necessary because the input compontent returns the right values even if it is not rendered
         var value = this.getValue();
         if (value.longitude && value.latitude) {
             return false;
@@ -301,7 +303,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
-        if(!this.layout.rendered) {
+        if(!this.isRendered()) {
             return false;
         }
         

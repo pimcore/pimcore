@@ -95,7 +95,7 @@ pimcore.object.edit = Class.create({
         var dataKeys = Object.keys(this.dataFields);
         var values = {};
         var currentField;
-        var mendatoryError = false;
+        var invalidMandatoryFields = [];
 
         for (var i = 0; i < dataKeys.length; i++) {
 
@@ -104,12 +104,7 @@ pimcore.object.edit = Class.create({
                     currentField = this.dataFields[dataKeys[i]];
                     if (currentField.isMandatory() == true && this.object.ignoreMandatoryFields != true) {
                         if (currentField.isInvalidMandatory()) {
-                            Ext.MessageBox.alert(t("error"), t("mandatory_field_empty") + "<br />- " + currentField.getName());
-                            currentField.markMandatory();
-                            mendatoryError = true;
-                        }
-                        else {
-                            currentField.unmarkMandatory();
+                            invalidMandatoryFields.push(currentField.getTitle() + " (" + currentField.getName() + ")");
                         }
                     }
 
@@ -127,7 +122,8 @@ pimcore.object.edit = Class.create({
             }
         }
 
-        if (mendatoryError) {
+        if (invalidMandatoryFields.length > 0) {
+            Ext.MessageBox.alert(t("error"), t("mandatory_field_empty") + "<br />- " + invalidMandatoryFields.join("<br />- "));
             return false;
         }
 

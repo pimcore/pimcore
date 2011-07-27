@@ -17,7 +17,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     type: "link",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
         this.data = "";
         this.defaultData = {
@@ -37,7 +37,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         else {
             this.data = this.defaultData;
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -59,8 +59,8 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var input = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             itemCls: "object_field"
         };
 
@@ -77,25 +77,25 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             value: textValue
         });
 
-        this.layout = new Ext.form.CompositeField({
+        this.component = new Ext.form.CompositeField({
             xtype: 'compositefield',
-            fieldLabel: this.layoutConf.title,
+            fieldLabel: this.fieldConfig.title,
             combineErrors: false,
             items: [this.displayField, this.button],
             itemCls: "object_field"
         });
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
+        this.component = this.getLayoutEdit();
         //this.layout.disable();
-        this.layout.items.splice(1,1); // remove the edit buttom
+        this.component.items.splice(1,1); // remove the edit buttom
         
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
@@ -103,7 +103,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     openEditor: function () {

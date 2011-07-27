@@ -17,9 +17,9 @@ pimcore.object.tags.country = Class.create(pimcore.object.tags.select, {
 
     type: "country",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
-        this.layoutConf.width = 350;
+        this.fieldConfig = fieldConfig;
+        this.fieldConfig.width = 350;
     }
 });

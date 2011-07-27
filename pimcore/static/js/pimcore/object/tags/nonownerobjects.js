@@ -77,18 +77,18 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
     getLayoutEdit: function () {
 
         var autoHeight = false;
-        if (intval(this.layoutConf.height) < 15) {
+        if (intval(this.fieldConfig.height) < 15) {
             autoHeight = true;
         }
 
         var cls = 'object_field';
 
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var record = classStore.getAt(classStore.find('id', this.layoutConf.ownerClassId));
+        var record = classStore.getAt(classStore.find('id', this.fieldConfig.ownerClassId));
         var className = record.data.text;
 
 
-        this.grid = new Ext.grid.GridPanel({
+        this.component = new Ext.grid.GridPanel({
             plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
             colModel: new Ext.grid.ColumnModel({
@@ -128,12 +128,12 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
             }),
             cls: cls,
             autoExpandColumn: 'path',
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
             tbar: [
                 {
                     xtype: "tbtext",
-                    text: "<b>" + this.layoutConf.title + "</b>" + ' <span class="warning">' + t('nonownerobject_warning') + " | " + t('owner_class') + ':<b>' + ts(className) + "</b> " + t('owner_field') + ': <b>' + ts('this.layoutConf.ownerFieldName') + '</b></span>'
+                    text: "<b>" + this.fieldConfig.title + "</b>" + ' <span class="warning">' + t('nonownerobject_warning') + " | " + t('owner_class') + ':<b>' + ts(className) + "</b> " + t('owner_field') + ': <b>' + ts('this.fieldConfig.ownerFieldName') + '</b></span>'
                 },
                 "->",
                 {
@@ -152,16 +152,16 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
             bodyCssClass: "pimcore_object_tag_objects"
         });
 
-        this.grid.on("rowcontextmenu", this.onRowContextmenu);
-        this.grid.reference = this;
+        this.component.on("rowcontextmenu", this.onRowContextmenu);
+        this.component.reference = this;
 
-        this.grid.on("afterrender", function () {
+        this.component.on("afterrender", function () {
 
-            var dropTargetEl = this.grid.getEl();
+            var dropTargetEl = this.component.getEl();
             var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
                 ddGroup    : 'element',
                 getTargetFromEvent: function(e) {
-                    return this.grid.getEl().dom;
+                    return this.component.getEl().dom;
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
@@ -196,7 +196,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
         }.bind(this));
 
 
-        return this.grid;
+        return this.component;
     },
 
 
@@ -223,7 +223,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
         var record = classStore.getAt(classStore.find('text', classname));
         var id = record.data.id;
 
-        if (this.layoutConf.ownerClassId == id) {
+        if (this.fieldConfig.ownerClassId == id) {
             return true;
         } else return false;
 
@@ -233,7 +233,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
     openSearchEditor: function () {
         var allowedClasses = [];
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var record = classStore.getAt(classStore.find('id', this.layoutConf.ownerClassId));
+        var record = classStore.getAt(classStore.find('id', this.fieldConfig.ownerClassId));
         allowedClasses.push(record.data.text);
 
 

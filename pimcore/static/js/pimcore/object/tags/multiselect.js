@@ -17,9 +17,9 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
     type: "multiselect",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -57,52 +57,52 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         // generate store
         var store = [];
         var validValues = [];
-        for (var i = 0; i < this.layoutConf.options.length; i++) {
-            store.push([this.layoutConf.options[i].value, this.layoutConf.options[i].key]);
-            validValues.push(this.layoutConf.options[i].value);
+        for (var i = 0; i < this.fieldConfig.options.length; i++) {
+            store.push([this.fieldConfig.options[i].value, this.fieldConfig.options[i].key]);
+            validValues.push(this.fieldConfig.options[i].value);
         }
 
         var options = {
-            name: this.layoutConf.name,
+            name: this.fieldConfig.name,
             triggerAction: "all",
             editable: false,
-            fieldLabel: this.layoutConf.title,
+            fieldLabel: this.fieldConfig.title,
             store: store,
             itemCls: "object_field"
         };
 
-        if (this.layoutConf.width) {
-            options.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            options.width = this.fieldConfig.width;
         }
-        if (this.layoutConf.height) {
-            options.height = this.layoutConf.height;
+        if (this.fieldConfig.height) {
+            options.height = this.fieldConfig.height;
         }
 
         if (typeof this.data == "string" || typeof this.data == "number") {
             options.value = this.data;
         }
 
-        this.layout = new Ext.ux.form.MultiSelect(options);
+        this.component = new Ext.ux.form.MultiSelect(options);
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        if(this.layout.rendered) {
-            return this.layout.getValue();
+        if(this.isRendered()) {
+            return this.component.getValue();
         }
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     }
 });

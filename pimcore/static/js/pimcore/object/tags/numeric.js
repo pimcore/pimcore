@@ -17,10 +17,10 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
 
     type: "numeric",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
     },
 
     getGridColumnEditor: function(field) {
@@ -51,8 +51,8 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var input = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             itemCls: "object_field"
         };
 
@@ -60,23 +60,23 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             input.value = this.data;
         }
 
-        if (this.layoutConf.width) {
-            input.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            input.width = this.fieldConfig.width;
         }
 
         input.decimalPrecision = 20;
 
-        this.layout = new Ext.ux.form.SpinnerField(input);
+        this.component = new Ext.ux.form.SpinnerField(input);
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
         var input = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             cls: "object_field"
         };
 
@@ -84,28 +84,35 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             input.value = this.data;
         }
 
-        if (this.layoutConf.width) {
-            input.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            input.width = this.fieldConfig.width;
         }
 
-        this.layout = new Ext.form.TextField(input);
-        this.layout.disable();
+        this.component = new Ext.form.TextField(input);
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        if(this.layout.rendered) {
-            return this.layout.getValue().toString();
+        if(this.isRendered()) {
+            return this.component.getValue().toString();
         }
         return null;
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {
+
+        if(!this.isRendered() && (!empty(this.getInitialData() || this.getInitialData() === 0) )) {
+            return false;
+        } else if (!this.isRendered()) {
+            return true;
+        }
+
         if (this.getValue()) {
             return false;
         }

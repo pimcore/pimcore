@@ -24,29 +24,29 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     hotspots: {},
 
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         if (data) {
             this.data = data.image;
             if(data.hotspots && data.hotspots != "null") {
                 this.loadedHotspots = data.hotspots;
             }
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
         this.uniqeFieldId = uniqid();
     },
 
     getLayoutEdit: function () {
 
-        if (intval(this.layoutConf.width) < 1) {
-            this.layoutConf.width = 100;
+        if (intval(this.fieldConfig.width) < 1) {
+            this.fieldConfig.width = 100;
         }
-        if (intval(this.layoutConf.height) < 1) {
-            this.layoutConf.height = 100;
+        if (intval(this.fieldConfig.height) < 1) {
+            this.fieldConfig.height = 100;
         }
 
         var conf = {
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
             tbar: [{
                 xtype: "tbspacer",
                 width: 20,
@@ -55,7 +55,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             },
             {
                 xtype: "tbtext",
-                text: "<b>" + this.layoutConf.title + "</b>"
+                text: "<b>" + this.fieldConfig.title + "</b>"
             },"->",{
                 xtype: "button",
                 iconCls: "pimcore_icon_add",
@@ -75,19 +75,19 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             }]
         };
 
-        this.layout = new Ext.Panel(conf);
+        this.component = new Ext.Panel(conf);
         this.createImagePanel();
 
-        return this.layout;
+        return this.component;
     },
 
     createImagePanel: function() {
         this.panel = new Ext.Panel({
-            width: this.layoutConf.width,
-            height: this.layoutConf.height-27,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height-27,
             bodyCssClass: "pimcore_droptarget_image"}
         );
-        this.layout.add(this.panel);
+        this.component.add(this.panel);
 
 
         this.panel.on("render", function (el) {
@@ -97,7 +97,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 reference: this,
                 ddGroup: "element",
                 getTargetFromEvent: function(e) {
-                    return this.reference.layout.getEl();
+                    return this.reference.component.getEl();
                 },
 
                 onNodeOver : function(target, dd, e, data) {
@@ -122,12 +122,12 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
         }.bind(this));
 
-        this.layout.doLayout();
+        this.component.doLayout();
 
     },
 
     updateImage: function (initialLoad) {
-        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.layoutConf.width - 20) + "/aspectratio/true";
+        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/aspectratio/true";
         this.panel.getEl().update(
             '<img id="' + this.getName() + this.uniqeFieldId + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />',
             false,
@@ -280,7 +280,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         this.hotspots = {};
         this.loadedHotspots = null;
         this.dirty = true;
-        this.layout.removeAll();
+        this.component.removeAll();
         this.createImagePanel();
     },
 

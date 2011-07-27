@@ -18,27 +18,27 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     type: "table",
     dirty: false,
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
         if (!data) {
             data = [
                 [" "]
             ];
-            if (this.layoutConf.cols) {
-                for (var i = 0; i < (this.layoutConf.cols - 1); i++) {
+            if (this.fieldConfig.cols) {
+                for (var i = 0; i < (this.fieldConfig.cols - 1); i++) {
                     data[0].push(" ");
                 }
             }
-            if (this.layoutConf.rows) {
-                for (var i = 0; i < (this.layoutConf.rows - 1); i++) {
+            if (this.fieldConfig.rows) {
+                for (var i = 0; i < (this.fieldConfig.rows - 1); i++) {
                     data.push(data[0]);
                 }
             }
-            if (this.layoutConf.data) {
+            if (this.fieldConfig.data) {
                 try {
-                    var dataRows = this.layoutConf.data.split("\n");
+                    var dataRows = this.fieldConfig.data.split("\n");
                     var dataGrid = [];
                     for (var i = 0; i < dataRows.length; i++) {
                         dataGrid.push(dataRows[i].split("|"));
@@ -83,35 +83,35 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
 
         var options = {};
-        options.name = this.layoutConf.name;
+        options.name = this.fieldConfig.name;
         options.frame = true;
         options.layout = "fit";
-        options.title = this.layoutConf.title;
+        options.title = this.fieldConfig.title;
         options.cls = "object_field";
 
-        if (!this.panel) {
-            this.panel = new Ext.Panel(options);
+        if (!this.component) {
+            this.component = new Ext.Panel(options);
         }
 
         this.initStore(this.data);
         this.initGrid();
 
-        return this.panel;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
 
     initGrid: function () {
 
-        this.panel.removeAll();
+        this.component.removeAll();
 
         var data = this.store.queryBy(function(record, id) {
             return true;
@@ -164,8 +164,8 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                 }
             ]
         });
-        this.panel.add(this.grid);
-        this.panel.doLayout();
+        this.component.add(this.grid);
+        this.component.doLayout();
     },
 
     emptyStore: function() {
@@ -264,11 +264,11 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isDirty: function() {
-        if((this.panel && !this.panel.rendered) || (this.layout && !this.layout.rendered)) {
+        if((this.component && !this.isRendered())) {
             return false;
         }
         

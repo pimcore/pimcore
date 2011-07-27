@@ -17,7 +17,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     type: "localizedfields",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
         this.data = {};
         this.languageElements = {};
@@ -25,7 +25,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         if (data) {
             this.data = data;
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
     },
 
     getLayoutEdit: function () {
@@ -46,39 +46,39 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
 
 
-        if(!this.layoutConf.width) {
+        if(!this.fieldConfig.width) {
             panelConf.listeners = {
                 afterrender: function () {
-                    this.layout.ownerCt.doLayout();
-                    this.layout.setWidth(this.layout.ownerCt.getWidth()-45);
+                    this.component.ownerCt.doLayout();
+                    this.component.setWidth(this.component.ownerCt.getWidth()-45);
                 }.bind(this)
             };
         }
 
-        if(this.layoutConf.width) {
-            panelConf.width = this.layoutConf.width;
+        if(this.fieldConfig.width) {
+            panelConf.width = this.fieldConfig.width;
         }
 
-        if(this.layoutConf.height) {
-            panelConf.height = this.layoutConf.height;
+        if(this.fieldConfig.height) {
+            panelConf.height = this.fieldConfig.height;
             panelConf.autoHeight = false;
         }
 
-        if(this.layoutConf.layout) {
-            panelConf.layout = this.layoutConf.layout;
+        if(this.fieldConfig.layout) {
+            panelConf.layout = this.fieldConfig.layout;
         }
 
-        if(this.layoutConf.region) {
-            panelConf.region = this.layoutConf.region;
+        if(this.fieldConfig.region) {
+            panelConf.region = this.fieldConfig.region;
         }
 
-        if(this.layoutConf.title) {
-            panelConf.title = this.layoutConf.title;
+        if(this.fieldConfig.title) {
+            panelConf.title = this.fieldConfig.title;
         }
 
 
-        this.layoutConf.datatype ="layout";
-        this.layoutConf.fieldtype = "panel";
+        this.fieldConfig.datatype ="layout";
+        this.fieldConfig.fieldtype = "panel";
 
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
 
@@ -93,22 +93,22 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 deferredRender: false,
                 hideMode: "offsets",
                 title: pimcore.available_languages[pimcore.settings.websiteLanguages[i]],
-                items: this.getRecursiveLayout(this.layoutConf).items
+                items: this.getRecursiveLayout(this.fieldConfig).items
             });
 
         }
 
-        this.layout = new Ext.TabPanel(panelConf);
+        this.component = new Ext.TabPanel(panelConf);
 
-        return this.layout;
+        return this.component;
     },
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getDataForField: function (name) {
@@ -155,11 +155,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isDirty: function() {
-        if(!this.layout.rendered) {
+        if(!this.isRendered()) {
             return false;
         }
 
@@ -209,10 +209,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isMandatory()) {
                     if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
-                        this.languageElements[currentLanguage][s].markMandatory();
                         isInvalid = true;
-                    } else {
-                        this.languageElements[currentLanguage][s].unmarkMandatory();
                     }
                 }
             }

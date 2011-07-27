@@ -18,14 +18,14 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     type: "href",
     dataChanged:false,
     
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
         this.data = {};
 
         if (data) {
             this.data = data;
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -33,8 +33,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var href = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name
         };
 
         if (this.data) {
@@ -43,21 +43,21 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if (this.layoutConf.width) {
-            href.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            href.width = this.fieldConfig.width;
         }
         href.enableKeyEvents = true;
         href.cls = "pimcore_droptarget_input";
-        this.layout = new Ext.form.TextField(href);
+        this.component = new Ext.form.TextField(href);
 
-        this.layout.on("render", function (el) {
+        this.component.on("render", function (el) {
 
             // add drop zone
             new Ext.dd.DropZone(el.getEl(), {
                 reference: this,
                 ddGroup: "element",
                 getTargetFromEvent: function(e) {
-                    return this.reference.layout.getEl();
+                    return this.reference.component.getEl();
                 },
 
                 onNodeOver : function(target, dd, e, data) {
@@ -80,12 +80,12 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         }.bind(this));
 
         // disable typing into the textfield
-        this.layout.on("keyup", function (element, event) {
+        this.component.on("keyup", function (element, event) {
             element.setValue(this.data.path);
         }.bind(this));
         
         this.composite = new Ext.form.CompositeField({
-            items: [this.layout, {
+            items: [this.component, {
                 xtype: "button",
                 iconCls: "pimcore_icon_edit",
                 handler: this.openElement.bind(this)
@@ -108,8 +108,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         var href = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             cls: "object_field"
         };
 
@@ -119,15 +119,15 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if (this.layoutConf.width) {
-            href.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            href.width = this.fieldConfig.width;
         }
         href.disabled = true;
 
-        this.layout = new Ext.form.TextField(href);
+        this.component = new Ext.form.TextField(href);
 
         this.composite = new Ext.form.CompositeField({
-            items: [this.layout, {
+            items: [this.component, {
                 xtype: "button",
                 iconCls: "pimcore_icon_edit",
                 handler: this.openElement.bind(this)
@@ -145,7 +145,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             this.data.type = data.node.attributes.elementType;
             this.data.subtype = data.node.attributes.type;
             this.dataChanged = true;
-            this.layout.setValue(data.node.attributes.path);
+            this.component.setValue(data.node.attributes.path);
 
             return true;
         } else {
@@ -194,33 +194,33 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         var allowedSpecific = {};
         var allowedSubtypes = {};
         
-        if (this.layoutConf.objectsAllowed) {
+        if (this.fieldConfig.objectsAllowed) {
             allowedTypes.push("object");
-            if (this.layoutConf.classes != null && this.layoutConf.classes.length > 0) {
+            if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
                 allowedSpecific.classes = [];
                 allowedSubtypes.object = ["object"];
-                for (i = 0; i < this.layoutConf.classes.length; i++) {
-                    allowedSpecific.classes.push(this.layoutConf.classes[i].classes);
+                for (i = 0; i < this.fieldConfig.classes.length; i++) {
+                    allowedSpecific.classes.push(this.fieldConfig.classes[i].classes);
                 }
             } else {
                 allowedSubtypes.object = ["object","folder","variant"];
             }
         }
-        if (this.layoutConf.assetsAllowed) {
+        if (this.fieldConfig.assetsAllowed) {
             allowedTypes.push("asset");
-            if (this.layoutConf.assetTypes != null && this.layoutConf.assetTypes.length > 0) {
+            if (this.fieldConfig.assetTypes != null && this.fieldConfig.assetTypes.length > 0) {
                 allowedSubtypes.asset = [];
-                for (i = 0; i < this.layoutConf.assetTypes.length; i++) {
-                    allowedSubtypes.asset.push(this.layoutConf.assetTypes[i].assetTypes);
+                for (i = 0; i < this.fieldConfig.assetTypes.length; i++) {
+                    allowedSubtypes.asset.push(this.fieldConfig.assetTypes[i].assetTypes);
                 }
             }            
         } 
-        if (this.layoutConf.documentsAllowed) {
+        if (this.fieldConfig.documentsAllowed) {
             allowedTypes.push("document");
-            if (this.layoutConf.documentTypes != null && this.layoutConf.documentTypes.length > 0) {
+            if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
                 allowedSubtypes.document = [];
-                for (i = 0; i < this.layoutConf.documentTypes.length; i++) {
-                    allowedSubtypes.document.push(this.layoutConf.documentTypes[i].documentTypes);
+                for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
+                    allowedSubtypes.document.push(this.fieldConfig.documentTypes[i].documentTypes);
                 }
             }
         }
@@ -238,7 +238,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         this.data.subtype = data.subtype;
         this.dataChanged = true;
 
-        this.layout.setValue(data.fullpath);
+        this.component.setValue(data.fullpath);
     },
     
     openElement: function () {
@@ -250,12 +250,12 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     empty: function () {
         this.data = {};
         this.dataChanged=true;
-        this.layout.setValue("");
+        this.component.setValue("");
     },
 
     getValue: function () {
 
-        if(this.layoutConf.lazyLoading && !this.dataChanged){
+        if(this.fieldConfig.lazyLoading && !this.dataChanged){
             return false;
         } else {
             return this.data;
@@ -263,19 +263,19 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     dndAllowed: function(data) {
         var type = data.node.attributes.elementType;
         var isAllowed = false;
-        if (type == "object" && this.layoutConf.objectsAllowed) {
+        if (type == "object" && this.fieldConfig.objectsAllowed) {
 
             var classname = data.node.attributes.className;
             var isAllowed = false;
-            if (this.layoutConf.classes != null && this.layoutConf.classes.length > 0) {
-                for (i = 0; i < this.layoutConf.classes.length; i++) {
-                    if (this.layoutConf.classes[i].classes == classname) {
+            if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
+                for (i = 0; i < this.fieldConfig.classes.length; i++) {
+                    if (this.fieldConfig.classes[i].classes == classname) {
                         isAllowed = true;
                         break;
                     }
@@ -286,12 +286,12 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             }
 
 
-        } else if (type == "asset" && this.layoutConf.assetsAllowed) {
+        } else if (type == "asset" && this.fieldConfig.assetsAllowed) {
             var subType = data.node.attributes.type;
             var isAllowed = false;
-            if (this.layoutConf.assetTypes != null && this.layoutConf.assetTypes.length > 0) {
-                for (i = 0; i < this.layoutConf.assetTypes.length; i++) {
-                    if (this.layoutConf.assetTypes[i].assetTypes == subType) {
+            if (this.fieldConfig.assetTypes != null && this.fieldConfig.assetTypes.length > 0) {
+                for (i = 0; i < this.fieldConfig.assetTypes.length; i++) {
+                    if (this.fieldConfig.assetTypes[i].assetTypes == subType) {
                         isAllowed = true;
                         break;
                     }
@@ -301,12 +301,12 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 isAllowed = true;
             }
 
-        } else if (type == "document" && this.layoutConf.documentsAllowed) {
+        } else if (type == "document" && this.fieldConfig.documentsAllowed) {
             var subType = data.node.attributes.type;
             var isAllowed = false;
-            if (this.layoutConf.documentTypes != null && this.layoutConf.documentTypes.length > 0) {
-                for (i = 0; i < this.layoutConf.documentTypes.length; i++) {
-                    if (this.layoutConf.documentTypes[i].documentTypes == subType) {
+            if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
+                for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
+                    if (this.fieldConfig.documentTypes[i].documentTypes == subType) {
                         isAllowed = true;
                         break;
                     }

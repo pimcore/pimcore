@@ -17,18 +17,18 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     type: "wysiwyg",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = "";
         if (data) {
             this.data = data;
         }
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
-        if (intval(this.layoutConf.width) < 1) {
-            this.layoutConf.width = 400;
+        if (intval(this.fieldConfig.width) < 1) {
+            this.fieldConfig.width = 400;
         }
-        if (intval(this.layoutConf.height) < 1) {
-            this.layoutConf.height = 300;
+        if (intval(this.fieldConfig.height) < 1) {
+            this.fieldConfig.height = 300;
         }
 
         this.editableDivId = "object_wysiwyg_" + uniqid();
@@ -65,19 +65,20 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
         this.getLayout();
-        this.layout.on("afterrender", this.getPreview.bind(this));
-        return this.layout;
+        this.disableEditing = false;
+        this.component.on("afterrender", this.getPreview.bind(this));
+        return this.component;
     },
 
     getLayout: function () {
         var pConf = {
-            title: this.layoutConf.title,
-            width: this.layoutConf.width,
+            title: this.fieldConfig.title,
+            width: this.fieldConfig.width,
             html: '<div style="position:relative;" id="' + this.editableDivId + '"></div>',
             cls: "object_field"
         };
 
-        this.layout = new Ext.Panel(pConf);
+        this.component = new Ext.Panel(pConf);
     },
 
     getPreview: function() {
@@ -91,7 +92,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
             document.body.innerHTML = iframeContent;
             document.body.setAttribute("style", "height: 80%; cursor: pointer;");
-            Ext.get(document.body).on("click", this.initCkEditor.bind(this));
+
+            if(this.disableEditing == false) {
+                Ext.get(document.body).on("click", this.initCkEditor.bind(this));
+            }
 
         }.bind(this);
 
@@ -100,21 +104,23 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
 
         // set dimensions of iframe
-        if (this.layoutConf.height) {
+        if (this.fieldConfig.height) {
             Ext.get(this.previewIframeId).setStyle({
-                height: this.layoutConf.height + "px"
+                height: this.fieldConfig.height + "px"
             });
         }
-        if (this.layoutConf.width) {
+        if (this.fieldConfig.width) {
             Ext.get(this.previewIframeId).setStyle({
-                width: this.layoutConf.width + "px"
+                width: this.fieldConfig.width + "px"
             });
         }
     },
 
     getLayoutShow: function () {
         this.getLayout();
-        return this.layout;
+        this.disableEditing = true;
+        this.component.on("afterrender", this.getPreview.bind(this));
+        return this.component;
     },
 
     initCkEditor: function () {
@@ -137,18 +143,18 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         var eConfig = {
             uiColor: "#f2f2f2",
             toolbar: toolbar_Full,
-            width: this.layoutConf.width,
-            height: this.layoutConf.height,
+            width: this.fieldConfig.width,
+            height: this.fieldConfig.height,
             resize_enabled: false
         };
 
         eConfig.extraPlugins = "close_object";
         
-        if (intval(this.layoutConf.width) > 1) {
-            eConfig.width = this.layoutConf.width;
+        if (intval(this.fieldConfig.width) > 1) {
+            eConfig.width = this.fieldConfig.width;
         }
-        if (intval(this.layoutConf.height) > 1) {
-            eConfig.height = this.layoutConf.height;
+        if (intval(this.fieldConfig.height) > 1) {
+            eConfig.height = this.fieldConfig.height;
         }
 
         Ext.get(this.editableDivId).update(this.data);
@@ -158,7 +164,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     mask: function () {
         try {
-            var pan = this.layout.el;
+            var pan = this.component.el;
 
             if (pan) {
                 pan.setStyle({
@@ -293,11 +299,11 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isDirty: function() {
-        if(!this.layout.rendered) {
+        if(!this.isRendered()) {
             return false;
         }
         

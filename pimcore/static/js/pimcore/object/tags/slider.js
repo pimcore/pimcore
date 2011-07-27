@@ -17,7 +17,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
     type: "slider",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
 
         this.data = "";
 
@@ -25,11 +25,11 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
             this.data = data;
         }
         
-        if (!layoutConf.width) {
-            layoutConf.width = 300;
+        if (!fieldConfig.width) {
+            fieldConfig.width = 300;
         }
         
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -40,8 +40,8 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
     getLayoutEdit: function () {
 
         var slider = {
-            fieldLabel: this.layoutConf.title,
-            name: this.layoutConf.name,
+            fieldLabel: this.fieldConfig.title,
+            name: this.fieldConfig.name,
             itemCls: "object_field"
         };
 
@@ -49,67 +49,67 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
             slider.value = this.data;
         }
 
-        if (this.layoutConf.width) {
-            slider.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            slider.width = this.fieldConfig.width;
         }
-        if (this.layoutConf.height) {
-            slider.height = this.layoutConf.height;
+        if (this.fieldConfig.height) {
+            slider.height = this.fieldConfig.height;
         }
-        if (this.layoutConf.minValue) {
-            slider.minValue = this.layoutConf.minValue;
+        if (this.fieldConfig.minValue) {
+            slider.minValue = this.fieldConfig.minValue;
         }
-        if (this.layoutConf.maxValue) {
-            slider.maxValue = this.layoutConf.maxValue;
+        if (this.fieldConfig.maxValue) {
+            slider.maxValue = this.fieldConfig.maxValue;
         }
-        if (this.layoutConf.vertical) {
+        if (this.fieldConfig.vertical) {
             slider.vertical = true;
         }
-        if (this.layoutConf.increment) {
-            slider.increment = this.layoutConf.increment;
-            slider.keyIncrement = this.layoutConf.increment;
+        if (this.fieldConfig.increment) {
+            slider.increment = this.fieldConfig.increment;
+            slider.keyIncrement = this.fieldConfig.increment;
         }
-        if (this.layoutConf.decimalPrecision) {
-            slider.decimalPrecision = this.layoutConf.decimalPrecision;
+        if (this.fieldConfig.decimalPrecision) {
+            slider.decimalPrecision = this.fieldConfig.decimalPrecision;
         }
         
         slider.plugins = new Ext.slider.Tip();
         
-        this.layout = new Ext.Slider(slider);
+        this.component = new Ext.Slider(slider);
         
-        this.layout.on("afterrender", this.showValueInLabel.bind(this));
-        this.layout.on("dragend", this.showValueInLabel.bind(this));
-        this.layout.on("change", this.showValueInLabel.bind(this));
+        this.component.on("afterrender", this.showValueInLabel.bind(this));
+        this.component.on("dragend", this.showValueInLabel.bind(this));
+        this.component.on("change", this.showValueInLabel.bind(this));
 
-        this.layout.on("change", function() {
+        this.component.on("change", function() {
             this.dirty = true;
         }.bind(this));
         
-        return this.layout;
+        return this.component;
     },
 
     showValueInLabel: function () {
-        var labelEl = Ext.get(this.layout.getEl().parent(".object_field").query("label")[0]);
+        var labelEl = Ext.get(this.component.getEl().parent(".object_field").query("label")[0]);
         
         if(!this.labelText) {
             this.labelText = labelEl.dom.innerHTML;
         }
-        var el = labelEl.update(this.labelText + " (" + this.layout.getValue() + ")");
+        var el = labelEl.update(this.labelText + " (" + this.component.getValue() + ")");
     },
     
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        return this.layout.getValue().toString();
+        return this.component.getValue().toString();
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     },
 
     isInvalidMandatory: function () {
@@ -117,7 +117,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty: function() {
-        if(!this.layout.rendered) {
+        if(!this.isRendered()) {
             return false;
         }
         

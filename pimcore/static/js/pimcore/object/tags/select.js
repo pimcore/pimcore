@@ -17,9 +17,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
     type: "select",
 
-    initialize: function (data, layoutConf) {
+    initialize: function (data, fieldConfig) {
         this.data = data;
-        this.layoutConf = layoutConf;
+        this.fieldConfig = fieldConfig;
 
     },
 
@@ -80,27 +80,27 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         var store = [];
         var validValues = [];
 
-        if(!this.layoutConf.mandatory) {
+        if(!this.fieldConfig.mandatory) {
             store.push(["","(" + t("empty") + ")"]);
         }
 
-        for (var i = 0; i < this.layoutConf.options.length; i++) {
-            store.push([this.layoutConf.options[i].value, ts(this.layoutConf.options[i].key)]);
-            validValues.push(this.layoutConf.options[i].value);
+        for (var i = 0; i < this.fieldConfig.options.length; i++) {
+            store.push([this.fieldConfig.options[i].value, ts(this.fieldConfig.options[i].key)]);
+            validValues.push(this.fieldConfig.options[i].value);
         }
 
         var options = {
-            name: this.layoutConf.name,
+            name: this.fieldConfig.name,
             triggerAction: "all",
             editable: false,
-            fieldLabel: this.layoutConf.title,
+            fieldLabel: this.fieldConfig.title,
             store: store,
             itemCls: "object_field",
             width: 300
         };
 
-        if (this.layoutConf.width) {
-            options.width = this.layoutConf.width;
+        if (this.fieldConfig.width) {
+            options.width = this.fieldConfig.width;
         }
 
         if (typeof this.data == "string" || typeof this.data == "number") {
@@ -113,25 +113,25 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             options.value = "";
         }
 
-        this.layout = new Ext.form.ComboBox(options);
+        this.component = new Ext.form.ComboBox(options);
 
-        return this.layout;
+        return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.layout = this.getLayoutEdit();
-        this.layout.disable();
+        this.component = this.getLayoutEdit();
+        this.component.disable();
 
-        return this.layout;
+        return this.component;
     },
 
     getValue: function () {
-        return this.layout.getValue();
+        return this.component.getValue();
     },
 
     getName: function () {
-        return this.layoutConf.name;
+        return this.fieldConfig.name;
     }
 });
