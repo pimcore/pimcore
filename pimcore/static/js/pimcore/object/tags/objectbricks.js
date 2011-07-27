@@ -51,7 +51,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             },
             baseParams: {
                 class_id: this.object.data.general.o_classId,
-                field_name: this.myName
+                field_name: this.getName()
             }
         });
         
@@ -171,7 +171,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         this.component.remove(blockElement);
         this.addedTypes[blockElement.fieldtype] = false;
-        this.component.remove(this.layout.get(0));
+        this.component.remove(this.component.get(0));
         this.component.insert(0, this.getControls());
         this.component.doLayout();
 

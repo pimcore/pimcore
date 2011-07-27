@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.image");
 pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.data, {
 
     type: "image",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "image";

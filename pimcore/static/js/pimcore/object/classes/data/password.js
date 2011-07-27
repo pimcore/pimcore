@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.password");
 pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.data, {
 
     type: "password",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "password";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","visibleGridView","visibleSearch","index","style"];
 
         this.treeNode = treeNode;
     },

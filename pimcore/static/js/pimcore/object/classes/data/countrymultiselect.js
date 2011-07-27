@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.countrymultiselect");
 pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.classes.data.multiselect, {
 
     type: "countrymultiselect",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "countrymultiselect";

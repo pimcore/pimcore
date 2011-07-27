@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.user");
 pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data, {
 
     type: "user",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "user";

@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.checkbox");
 pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.data, {
 
     type: "checkbox",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "checkbox";

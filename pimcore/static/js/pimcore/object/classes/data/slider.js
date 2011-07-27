@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.slider");
 pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.data, {
 
     type: "slider",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "slider";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","visibleGridView","visibleSearch","index","style"];
 
         this.treeNode = treeNode;
     },

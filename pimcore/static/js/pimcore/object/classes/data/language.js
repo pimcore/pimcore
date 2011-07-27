@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.language");
 pimcore.object.classes.data.language = Class.create(pimcore.object.classes.data.data, {
 
     type: "language",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "language";

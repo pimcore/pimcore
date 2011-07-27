@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.wysiwyg");
 pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.data, {
 
     type: "wysiwyg",
-    allowIndex: false,
 
     initialize: function (treeNode, initData) {
         this.type = "wysiwyg";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },

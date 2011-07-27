@@ -68,8 +68,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.component = new Ext.Panel(panelConf);
 
         this.component.addListener("render", function() {
-            if(this.object.data.metaData[this.myName] && this.object.data.metaData[this.myName].hasParentValue) {
-                this.addInheritanceSourceButton(this.object.data.metaData[this.myName]);
+            if(this.object.data.metaData[this.getName()] && this.object.data.metaData[this.getName()].hasParentValue) {
+                this.addInheritanceSourceButton(this.object.data.metaData[this.getName()]);
             }
         }.bind(this));
 

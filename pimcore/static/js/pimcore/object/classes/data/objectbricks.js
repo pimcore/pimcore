@@ -16,12 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.objectbricks");
 pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.data.data, {
 
     type: "objectbricks",
-    allowIndex: false,
 
     initialize: function (treeNode, initData) {
         this.type = "objectbricks";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","invisible","style"];
+
         this.treeNode = treeNode;
     },
 

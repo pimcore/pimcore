@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.multihref");
 pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data.data, {
 
     type: "multihref",
-    allowIndex: false,
 
     initialize: function (treeNode, initData) {
         this.type = "multihref";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },

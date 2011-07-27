@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.languagemultiselect");
 pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.classes.data.multiselect, {
 
     type: "languagemultiselect",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "languagemultiselect";

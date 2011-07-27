@@ -188,7 +188,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
                         if (!this.objectAlreadyExists(initData.id) && initData.id != this.object.id) {
                             this.addObject(initData);
-
+                            return true;
                         } else return false;
                     } else return false;
                 }.bind(this)

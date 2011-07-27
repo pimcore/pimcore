@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.select");
 pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.data, {
 
     type: "select",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "select";

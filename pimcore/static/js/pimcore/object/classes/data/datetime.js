@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.datetime");
 pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.data, {
 
     type: "datetime",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "datetime";

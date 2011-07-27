@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.geopolygon");
 pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.data.data, {
 
     type: "geopolygon",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "geopolygon";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","noteditable","invisible","style"];
 
         this.treeNode = treeNode;
     },

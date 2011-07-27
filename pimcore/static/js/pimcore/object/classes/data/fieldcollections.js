@@ -16,12 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.fieldcollections");
 pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.classes.data.data, {
 
     type: "fieldcollections",
-    allowIndex: false,
 
     initialize: function (treeNode, initData) {
         this.type = "fieldcollections";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","noteditable","invisible","style"];
+
         this.treeNode = treeNode;
     },
 

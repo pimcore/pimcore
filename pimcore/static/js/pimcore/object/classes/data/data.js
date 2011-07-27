@@ -30,6 +30,9 @@ pimcore.object.classes.data.data = Class.create({
                 }
             }
         }
+
+        // per default all settings are available
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","index","style"];
     },
 
     getGroup: function () {
@@ -59,14 +62,16 @@ pimcore.object.classes.data.data = Class.create({
                 maxLength: 70,
                 autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
                 enableKeyEvents: true,
-                value: this.datax.name
+                value: this.datax.name,
+                disabled: !in_array("name",this.availableSettingsFields)
             },
             {
                 xtype: "textfield",
                 fieldLabel: t("title") + " (" + t("label") + ")",
                 name: "title",
                 width: 300,
-                value: this.datax.title
+                value: this.datax.title,
+                disabled: !in_array("title",this.availableSettingsFields)
             },
             {
                 xtype: "textarea",
@@ -74,37 +79,49 @@ pimcore.object.classes.data.data = Class.create({
                 name: "tooltip",
                 width: 300,
                 height: 100,
-                value: this.datax.tooltip
+                value: this.datax.tooltip,
+                disabled: !in_array("tooltip",this.availableSettingsFields)
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("mandatoryfield"),
                 name: "mandatory",
-                checked: this.datax.mandatory
+                checked: this.datax.mandatory,
+                disabled: !in_array("mandatory",this.availableSettingsFields)
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("not_editable"),
                 name: "noteditable",
-                checked: this.datax.noteditable
+                checked: this.datax.noteditable,
+                disabled: !in_array("noteditable",this.availableSettingsFields)
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("invisible"),
                 name: "invisible",
-                checked: this.datax.invisible
+                checked: this.datax.invisible,
+                disabled: !in_array("invisible",this.availableSettingsFields)
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("visible_in_gridview"),
                 name: "visibleGridView",
-                checked: this.datax.visibleGridView
+                checked: this.datax.visibleGridView,
+                disabled: !in_array("visibleGridView",this.availableSettingsFields)
             },
             {
                 xtype: "checkbox",
                 fieldLabel: t("visible_in_searchresult"),
                 name: "visibleSearch",
-                checked: this.datax.visibleSearch
+                checked: this.datax.visibleSearch,
+                disabled: !in_array("visibleSearch",this.availableSettingsFields)
+            },{
+                xtype: "checkbox",
+                fieldLabel: t("index"),
+                name: "index",
+                checked: this.datax.index,
+                disabled: !in_array("index",this.availableSettingsFields)
             }
         ];
 
@@ -114,18 +131,10 @@ pimcore.object.classes.data.data = Class.create({
                 fieldLabel: t("css_style") + " (float: left; margin:10px; ...)",
                 name: "style",
                 value: this.datax.style,
-                width: 400
+                width: 400,
+                disabled: !in_array("style",this.availableSettingsFields)
             }
         ];
-
-        if (this.allowIndex) {
-            standardSettings.push({
-                xtype: "checkbox",
-                fieldLabel: t("index"),
-                name: "index",
-                checked: this.datax.index
-            });
-        }
 
         this.layout = new Ext.Panel({
             bodyStyle: "padding: 10px;",
@@ -146,40 +155,8 @@ pimcore.object.classes.data.data = Class.create({
                     labelWidth: 230,
                     items: layoutSettings
                 },
-                this.specificPanel/*,{
-                 xtype: "form",
-                 title: t("display_field_to_users"),
-                 bodyStyle: "padding: 10px;",
-                 style: "margin: 10px 0 10px 0",
-                 items: [new Ext.ux.form.SuperField({
-                 allowEdit: true,
-                 name: "permissions",
-                 values:this.datax.permissions,
-                 stripeRows:false,
-                 items: [
-                 new Ext.form.ComboBox({
-                 fieldLabel: t("username"),
-                 name: "username",
-                 triggerAction: 'all',
-                 editable: false,
-                 store: new Ext.data.JsonStore({
-                 url: '/admin/user/get-all-users',
-                 fields: ["username"],
-                 root: "users"
-                 }),
-                 displayField: "username",
-                 valueField: "username",
-                 summaryDisplay:true
-                 })
-                 ]
-                 })
-                 ]
-                 }*/
-            ]/*,
-             buttons: [{
-             text: t("apply"),
-             handler: this.applyData.bind(this)
-             }]*/
+                this.specificPanel
+            ]
         });
 
         this.layout.on("render", this.layoutRendered.bind(this));

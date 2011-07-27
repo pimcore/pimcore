@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.numeric");
 pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.data, {
 
     type: "numeric",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "numeric";

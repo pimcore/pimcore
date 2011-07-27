@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.href");
 pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data, {
 
     type: "href",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "href";

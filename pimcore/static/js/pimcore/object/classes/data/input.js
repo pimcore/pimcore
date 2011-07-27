@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.input");
 pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.data, {
 
     type: "input",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "input";

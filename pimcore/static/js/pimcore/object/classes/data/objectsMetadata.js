@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.objectsMetadata");
 pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classes.data.objects, {
 
     type: "objectsMetadata",
-    allowIndex: false,
 
     initialize: function (treeNode, initData) {
         this.type = "objectsMetadata";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },

@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classes.data.geopoint");
 pimcore.object.classes.data.geopoint = Class.create(pimcore.object.classes.data.data, {
 
     type: "geopoint",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "geopoint";

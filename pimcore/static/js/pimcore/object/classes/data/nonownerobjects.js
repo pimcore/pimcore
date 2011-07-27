@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.nonownerobjects");
 pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classes.data.data, {
 
     type: "nonownerobjects",
-    allowIndex: false,
 
     initialize: function (treeNode, initData) {
         this.type = "nonownerobjects";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","style"];
 
         this.treeNode = treeNode;
     },

@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.geobounds");
 pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data.data, {
 
     type: "geobounds",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "geobounds";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","mandatory","noteditable","invisible","index","style"];
 
         this.treeNode = treeNode;
     },

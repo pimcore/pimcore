@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.link");
 pimcore.object.classes.data.link = Class.create(pimcore.object.classes.data.data, {
 
     type: "link",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "link";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },

@@ -16,12 +16,14 @@ pimcore.registerNS("pimcore.object.classes.data.hotspotimage");
 pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.data.image, {
 
     type: "hotspotimage",
-    allowIndex: true,
 
     initialize: function (treeNode, initData) {
         this.type = "hotspotimage";
 
         this.initData(initData);
+
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },
@@ -32,29 +34,5 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
 
     getIconClass: function () {
         return "pimcore_icon_hotspotimage";
-    }/*,
-
-    getLayout: function ($super) {
-
-        $super();
-
-        this.specificPanel.removeAll();
-        this.specificPanel.add([
-            {
-                xtype: "spinnerfield",
-                fieldLabel: t("width"),
-                name: "width",
-                value: this.datax.width
-            },
-            {
-                xtype: "spinnerfield",
-                fieldLabel: t("height"),
-                name: "height",
-                value: this.datax.height
-            }
-        ]);
-
-        return this.layout;
-    }*/
-
+    }
 });
