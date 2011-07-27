@@ -77,7 +77,7 @@ pimcore.object.tags.abstract = Class.create({
             return this.component.getEl()
         }
 
-        throw "the component `" + this.getName() + "´ doesn't implement the method getEl() and is not standard-compliant!";
+        throw "the component `" + this.getName() + "ï¿½ doesn't implement the method getEl() and is not standard-compliant!";
     },
 
     unmarkInherited: function () {
@@ -171,7 +171,7 @@ pimcore.object.tags.abstract = Class.create({
             return this.component.rendered;
         }
 
-        throw "it seems that the field `" + this.getName() + "´ does not implement the isRendered() method and doesn't contain this.component";
+        throw "it seems that the field -" + this.getName() + "- does not implement the isRendered() method and doesn't contain this.component";
     },
 
     isDirty: function () {
