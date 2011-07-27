@@ -104,7 +104,7 @@ pimcore.object.edit = Class.create({
                     currentField = this.dataFields[dataKeys[i]];
                     if (currentField.isMandatory() == true && this.object.ignoreMandatoryFields != true) {
                         if (currentField.isInvalidMandatory()) {
-                            Ext.MessageBox.alert(t("error"), t("mandatory_field_empty"));
+                            Ext.MessageBox.alert(t("error"), t("mandatory_field_empty") + "<br />- " + currentField.getName());
                             currentField.markMandatory();
                             mendatoryError = true;
                         }
