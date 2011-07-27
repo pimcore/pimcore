@@ -128,10 +128,10 @@ class Asset_Image extends Asset {
      * @return string
      */
     public function getFormat() {
-        if ($this->getWith() > $this->getHeight()) {
+        if ($this->getWidth() > $this->getHeight()) {
             return "landscape";
         }
-        else if ($this->getWith() == $this->getHeight()) {
+        else if ($this->getWidth() == $this->getHeight()) {
             return "square";
         }
         else if ($this->getHeight() > $this->getWidth()) {
