@@ -623,7 +623,7 @@ class Object_Concrete extends Object_Abstract {
                 $finalVars[] = $key;
             }
 
-        }
+        } 
 
         return $finalVars;
     }

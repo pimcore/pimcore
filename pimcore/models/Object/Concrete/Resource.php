@@ -232,12 +232,10 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         $fd = $this->model->geto_class()->getFieldDefinitions();
         $untouchable = array();
         foreach ($fd as $key => $value) {
-            if ($value->isRelationType()) {
-                if ($value->getLazyLoading()) {
-                    if (!in_array($key, $this->model->getLazyLoadedFields())) {
-                        //this is a relation subject to lazy loading - it has not been loaded
-                        $untouchable[] = $key;
-                    }
+            if (method_exists($value, "getLazyLoading") && $value->getLazyLoading()) {
+                if (!in_array($key, $this->model->getLazyLoadedFields())) {
+                    //this is a relation subject to lazy loading - it has not been loaded
+                    $untouchable[] = $key;
                 }
             }
         }

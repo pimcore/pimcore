@@ -75,7 +75,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
      * @return void
      */
     public function setLazyLoading($lazyLoading){
-        $this->lazyLoading = $lazyLoading;                 
+        $this->lazyLoading = $lazyLoading;
     }
 
     /**
@@ -289,7 +289,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         $db = Pimcore_Resource::get();
 
         if($object instanceof Object_Concrete) {
-            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading()) {
+            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or $params["force"]) {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
                 return $this->getDataFromResource($relations);
             } else {

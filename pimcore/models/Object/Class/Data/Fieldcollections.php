@@ -37,6 +37,26 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public $allowedTypes = array();
 
+    /**
+     * @var boolean
+     */
+    public $lazyLoading;
+
+
+    /**
+     * @return boolean
+     */
+    public function getLazyLoading(){
+        return $this->lazyLoading;
+    }
+
+    /**
+     * @param  $lazyLoading
+     * @return void
+     */
+    public function setLazyLoading($lazyLoading){
+        $this->lazyLoading = $lazyLoading;
+    }
 
     /**
      * @see Object_Class_Data::getDataForEditmode
@@ -160,14 +180,18 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
 
     public function load($object, $params = array())
     {
-        $container = new Object_Fieldcollection(null, $this->getName());
-        $container->load($object);
+        if (!$this->getLazyLoading() or $params["force"]) {
+            $container = new Object_Fieldcollection(null, $this->getName());
+            $container->load($object);
 
-        if ($container->isEmpty()) {
-            return null;
+            if ($container->isEmpty()) {
+                return null;
+            }
+
+            return $container;
         }
 
-        return $container;
+        return null;
     }
 
     public function delete($object)
@@ -312,15 +336,6 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     }
 
 
-    public function preSetData($object, $value)
-    {
-        if ($value instanceof Object_Fieldcollection) {
-            $value->setFieldname($this->getName());
-        }
-        return $value;
-    }
-
-
     /**
      * @param mixed $data
      */
@@ -420,6 +435,36 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
             }
         }
     }
+ 
+
+    public function preGetData ($object) {
+        $data = $object->{$this->getName()};
+        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+            $data = $this->load($object, array("force" => true));
+
+            $setter = "set" . ucfirst($this->getName());
+            if(method_exists($object, $setter)) {
+                $object->$setter($data);
+            }
+        }
+        return $data;
+    }
+
+    public function preSetData ($object, $data) {
+
+        if($data === null) $data = array();
+
+        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+            $object->addO__loadedLazyField($this->getName());
+        }
+
+        if ($data instanceof Object_Fieldcollection) {
+            $data->setFieldname($this->getName());
+        }
+
+        return $data;
+    }
+
 
     //TODO: sanity check
 }

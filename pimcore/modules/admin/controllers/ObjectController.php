@@ -624,7 +624,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     private function getDataForField($object, $key, $fielddefinition, $level = 0) {
         $parent = Object_Service::hasInheritableParentObject($object);
         $getter = "get" . ucfirst($key);
-        if (method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading()) {
+
+        // relations
+        if ($fielddefinition instanceof Object_Class_Data_Relations_Abstract and $fielddefinition->getLazyLoading()) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {

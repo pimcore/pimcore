@@ -413,7 +413,8 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function preGetData ($object) { 
         $data = $object->{$this->getName()};
         if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
-            $data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+            //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+            $data = $this->load($object, array("force" => true));
 
             $setter = "set" . ucfirst($this->getName());
             if(method_exists($object, $setter)) {

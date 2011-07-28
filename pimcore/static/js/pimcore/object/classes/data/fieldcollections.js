@@ -72,8 +72,14 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 value: this.datax.allowedTypes,
                 displayField: "key",
                 valueField: "key"
-            })
+            }), {
+                xtype: "checkbox",
+                fieldLabel: t("lazy_loading"),
+                name: "lazyLoading",
+                checked: this.datax.lazyLoading
+            }
         ]);
+
         this.specificPanel.doLayout();
     }
 
