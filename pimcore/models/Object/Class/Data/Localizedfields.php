@@ -287,18 +287,16 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     }
 
 
-    public function save($object)
+    public function save($object, $params = array())
     {
-        $localizedFields = $object->{
-        "get" . ucfirst($this->getName())
-        }();
+        $localizedFields = $object->{  "get" . ucfirst($this->getName()) }();
         if ($localizedFields instanceof Object_Localizedfield) {
             $localizedFields->setObject($object);
             $localizedFields->save();
         }
     }
 
-    public function load($object)
+    public function load($object, $params = array())
     {
         $localizedFields = new Object_Localizedfield();
         $localizedFields->setObject($object);
@@ -309,9 +307,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function delete($object)
     {
-        $localizedFields = $object->{
-        "get" . ucfirst($this->getName())
-        }();
+        $localizedFields = $object->{ "get" . ucfirst($this->getName()) }();
 
         if ($localizedFields instanceof Object_Localizedfield) {
             $localizedFields->setObject($object);

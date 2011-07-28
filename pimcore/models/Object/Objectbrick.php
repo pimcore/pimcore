@@ -16,20 +16,41 @@
  */
 
 class Object_Objectbrick extends Pimcore_Model_Abstract {
-    
+
+    /**
+     * @var array
+     */
     public $items = array();
+
+    /**
+     * @var string
+     */
     public $fieldname;
 
-    protected $__object = null;
+    /**
+     * @var Object_Concrete
+     */
+    public $object;
+
+    /**
+     * @var array
+     */
     protected $brickGetters = array();
 
+    /**
+     * @param Object_Concrete $object
+     * @param string $fieldname
+     */
     public function __construct ($object, $fieldname) {
-        $this->__object = $object;
+        $this->setObject($object);
         if($fieldname) {
             $this->setFieldname($fieldname);
         }
     }
-    
+
+    /**
+     * @return array
+     */
     public function getItems () {
         if(empty($this->items)) {
             foreach(get_object_vars($this) as $var) {
@@ -40,19 +61,33 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
         }
         return $this->items;
     }
-    
+
+    /**
+     * @param $items
+     * @return void
+     */
     public function setItems ($items) {
         $this->items = $items;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getFieldname () {
         return $this->fieldname;
     }
-    
+
+    /**
+     * @param $fieldname
+     * @return void
+     */
     public function setFieldname ($fieldname) {
         $this->fieldname = $fieldname;
     }
 
+    /**
+     * @return array
+     */
     public function getBrickGetters() {
         $getters = array();
         foreach($this->brickGetters as $bg) {
@@ -61,6 +96,9 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
         return $getters;
     }
 
+    /**
+     * @return array
+     */
     public function getItemDefinitions () {
         $definitions = array();
         foreach ($this->getItems() as $item) {
@@ -69,7 +107,11 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
         
         return $definitions;
     }
-    
+
+    /**
+     * @param Object_Concrete $object
+     * @return void
+     */
     public function save ($object) {
 
         $getters = $this->getBrickGetters();
@@ -77,14 +119,10 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
         foreach($getters as $getter) {
             $brick = $this->$getter();
 
-//            var_dump($object); die();
-
             if($brick instanceof Object_Objectbrick_Data_Abstract) {
                 if($brick->getDoDelete()) {
                     $brick->delete($object);
 
-//                    echo $getter . "<br/>";
- 
                     $setter = "s" . substr($getter, 1);
                     $this->$setter(null);
 
@@ -133,20 +171,30 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
                         $brick->setFieldname($this->getFieldname());
                         $brick->save($object);
                     }
-
-
                 }
-
             }
-  
-
         }
     }
 
+    /**
+     * @return Object_Concrete
+     */
     public function getObject() {
-        return $this->__object;
+        return $this->object;
     }
 
+    /**
+     * @param Object_Concrete $object
+     * @return void
+     */
+    public function setObject($object) {
+        $this->object = $object;
+    }
+
+    /**
+     * @param Object_Concrete $object
+     * @return void 
+     */
     public function delete(Object_Concrete $object) {
         if(is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {

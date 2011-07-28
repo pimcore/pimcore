@@ -610,8 +610,6 @@ class Pimcore {
 
         $protectedItems = array(
             "pimcore_config_system",
-            "Pimcore_Resource",
-            "Pimcore_Resource_Mysql",
             "Zend_Locale",
             "pimcore_tag_block_current",
             "pimcore_tag_block_numeration",

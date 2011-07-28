@@ -416,7 +416,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      * @param Object_Concrete $object
      * @return void
      */
-    public function save($object) {
+    public function save($object, $params = array()) {
 
         $getter = "get" . ucfirst($this->getName());
         $objectsMetadata = $object->$getter();
@@ -431,10 +431,10 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             }
         }
 
-        parent::save($object);
+        parent::save($object, $params);
     }
 
-    public function load($object) {
+    public function load($object, $params = array()) {
         $db = Pimcore_Resource::get();
         if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading()) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));

@@ -16,21 +16,12 @@
  */
 
 class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
-    
+
+    /**
+     * @param Object_Concrete $object
+     * @return array
+     */
     public function load(Object_Concrete $object) {
-
-//        $fieldName = $this->model->getFieldname();
-
-//        p_r($this->model);
-
-//        $className = $object->getClass()->getName();
-
-//        $containerClass = "Object_" . ucfirst($className) . "_" . ucfirst($fieldName);
-//        $container = new $containerClass($object, $fieldName);
-//        p_r($container->getItems());
-//        echo $containerClass;
-
-
 
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = array();
@@ -42,7 +33,7 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
             } catch (Exception $e) {
                 continue;
             }
-            
+             
             $tableName = $definition->getTableName($object->getClass(), false);
             
             try {
@@ -59,10 +50,11 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
             foreach ($results as $result) {
                 $brick = new $brickClass($object);
                 $brick->setFieldname($result["fieldname"]);
+                $brick->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
 
-                    if ($fd->isRelationType()) {
+                    /*if ($fd->isRelationType()) {
 
                         $relations = array();
                         foreach ($allRelations as $relation) {
@@ -72,6 +64,13 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
                         }
 
                         $brick->setValue( $key, $fd->getDataFromResource($relations));
+                    }*/
+                    if (method_exists($fd, "load")) {
+                        // datafield has it's own loader
+                        $value = $fd->load($brick);
+                        if($value === 0 || !empty($value)) {
+                            $brick->setValue($key, $value);
+                        }
                     } else {
                         if (is_array($fd->getColumnType())) {
                             $multidata = array();
@@ -99,28 +98,13 @@ class Object_Objectbrick_Resource extends Object_Fieldcollection_Resource {
         }
         return $values;
     }
-    
+
+    /**
+     * @throws Exception
+     * @param Object_Concrete $object
+     * @return void
+     */
     public function delete (Object_Concrete $object) {
         throw new Exception("Not implemented yet");
-        // empty or create all relevant tables 
-//        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
-//
-//        foreach ($fieldDef->getAllowedTypes() as $type) {
-//
-//            try {
-//                $definition = Object_ObjectBrick_Definition::getByKey($type);
-//            } catch (Exception $e) {
-//                continue;
-//            }
-//
-//            $tableName = $definition->getTableName($object->getClass());
-//
-//            try {
-//                $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
-//            } catch (Exception $e) {
-//                // create definition if it does not exist
-//                $definition->createUpdateTable($object->getClass());
-//            }
-//        }
     }
 }

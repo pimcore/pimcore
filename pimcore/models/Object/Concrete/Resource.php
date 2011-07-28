@@ -164,19 +164,10 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         foreach ($this->model->geto_class()->getFieldDefinitions() as $key => $value) {
             if (method_exists($value, "load")) {
                 // datafield has it's own loader
-
-//                $x = uniqid();
-//
-//                p_r($this->model->getId() . ": " . $key . " - " . $x);
-//                p_r($value);
                 $value = $value->load($this->model);
-                
-//                p_r($this->model->getId() . ": " . $key . " - " . $x);
-//                var_dump($value);
                 if($value === 0 || !empty($value)) {
                     $this->model->setValue($key, $value);
                 }
-
             } else {
                 // if a datafield requires more than one field
                 if (is_array($value->getColumnType())) {
@@ -184,14 +175,10 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $multidata[$key . "__" . $fkey] = $data[$key . "__" . $fkey];
                     }
-                    $this->model->setValue(
-                        $key,
-                        $this->model->geto_class()->getFieldDefinition($key)->getDataFromResource($multidata));
+                    $this->model->setValue( $key, $this->model->geto_class()->getFieldDefinition($key)->getDataFromResource($multidata));
 
                 } else {
-                    $this->model->setValue(
-                        $key,
-                        $value->getDataFromResource($data[$key]));
+                    $this->model->setValue( $key, $value->getDataFromResource($data[$key]));
                 }
             }
         }
@@ -274,7 +261,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             $getter = "get" . ucfirst($key);
 
             if (method_exists($value, "save")) {
-                // for fieldtypes which have their own save algorithm eg. fieldcollections
+                // for fieldtypes which have their own save algorithm eg. fieldcollections, objects, multihref, ...
                 $value->save($this->model);
             } else if ($value->getColumnType()) {
                 // pimcore saves the values with getDataForResource

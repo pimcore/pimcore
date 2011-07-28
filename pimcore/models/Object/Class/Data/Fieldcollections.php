@@ -147,7 +147,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     }
 
 
-    public function save($object)
+    public function save($object, $params = array())
     {
 
         $getter = "get" . ucfirst($this->getName());
@@ -158,7 +158,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         }
     }
 
-    public function load($object)
+    public function load($object, $params = array())
     {
         $container = new Object_Fieldcollection(null, $this->getName());
         $container->load($object);

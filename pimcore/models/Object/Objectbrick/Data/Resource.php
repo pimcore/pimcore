@@ -45,6 +45,10 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
         }
     }
 
+    /**
+     * @param Object_Concrete $object
+     * @return void
+     */
     public function save (Object_Concrete $object) {
 
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
@@ -62,54 +66,26 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
         Object_Abstract::setGetInheritedValues(false);
 
         $fd = $this->model->getDefinition()->getFieldDefinitions();
-        $untouchable = array();
-        foreach ($fd as $key => $value) {
-            if ($value->isRelationType()) {
-                if ($value->getLazyLoading()) {
-                    if (!in_array($key, $this->model->getLazyLoadedFields())) {
-                        //this is a relation subject to lazy loading - it has not been loaded
-                        $untouchable[] = $key;
-                    }
-                }
-            }
-        }
-
 
         $data = array();
         $data["o_id"] = $object->getId();
         $data["fieldname"] = $this->model->getFieldname();
 
+        // remove all relations
+        try {
+            $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "'");
+        } catch(Exception $e) {
+            Logger::warning("Error during removing old relations: " . $e);
+        }
+
         foreach ($fd as $key => $value) {
             $getter = "get" . ucfirst($value->getName());
-            if ($value->isRelationType()) {
+            
+                if (method_exists($fd, "save")) {
+                    // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
+                    $value->save($this->model);
 
-                $relations = null;
-                if (method_exists($this->model, $getter)) {
-                    $relations = $value->getDataForResource($this->model->$getter(), $object);
-                }
-
-
-                try {
-                    $this->db->delete("object_relations_" . $object->getO_classId(), "src_id = " . $object->getId() . " AND fieldname = '" . $value->getName() . "' AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "'");
-                } catch(Exception $e) {
-                    Logger::warning("Error during removing old relations: " . $e);
-                }
-
-                if (is_array($relations) && !empty($relations)) {
-                    foreach ($relations as $relation) {
-                        $relation["src_id"] = $object->getId();
-                        $relation["ownertype"] = "objectbrick";
-                        $relation["ownername"] = $this->model->getFieldname();
-
-                        /*relation needs to be an array with src_id, dest_id, type, fieldname*/
-                        try {
-                            $this->db->insert("object_relations_" . $object->getO_classId(), $relation);
-                        } catch (Exception $e) {
-                            Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
-                        }
-                    }
-                }
-            } else {
+                } else {
                 if ($value->getColumnType()) {
                     if (is_array($value->getColumnType())) {
                         $insertDataArray = $value->getDataForResource($this->model->$getter(), $object);
@@ -128,8 +104,8 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
         $this->db->update($storetable, $data, $this->db->quoteInto("o_id = ?", $object->getId()));
 
 
-        // get data for query table
-        //        $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
+        // get data for query table 
+        // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
         // this is special because we have to call each getter to get the inherited values from a possible parent object
 
 
@@ -149,10 +125,10 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
             if ($fd) {
                 if ($fd->getQueryColumnType()) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
-                    if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                    if (!is_array($this->model->$key)) {
                         $method = "get" . $key;
                         $insertData = $fd->getDataForQueryResource($this->model->$method(), $object);
-//                        p_R($this->model->$method());
+                        
                         if (is_array($insertData)) {
                             $data = array_merge($data, $insertData);
                         }
@@ -201,7 +177,6 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
             }
         }
         $this->db->update($querytable, $data, "o_id = " . $object->getId());
-        //p_r($data); die();
 
         $this->inheritanceHelper->doUpdate($object->getId());
         $this->inheritanceHelper->resetFieldsToCheck();
@@ -211,6 +186,10 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
 
     }
 
+    /**
+     * @param Object_Concrete $object
+     * @return void
+     */
     public function delete(Object_Concrete $object) {
         // update data for store table
         $tableName = $this->model->getDefinition()->getTableName($object->getClass(), false);

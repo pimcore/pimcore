@@ -42,7 +42,7 @@ class Object_Fieldcollection_Resource extends Pimcore_Model_Resource_Abstract {
                 $results = array();
             }
 
-            $allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'fieldcollection' AND ownername = ? ORDER BY `index` ASC", array($object->getO_id(), $this->model->getFieldname()));
+            //$allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'fieldcollection' AND ownername = ? ORDER BY `index` ASC", array($object->getO_id(), $this->model->getFieldname()));
             
             $fieldDefinitions = $definition->getFieldDefinitions();
             $collectionClass = "Object_Fieldcollection_Data_" . ucfirst($type);
@@ -53,33 +53,25 @@ class Object_Fieldcollection_Resource extends Pimcore_Model_Resource_Abstract {
                 $collection = new $collectionClass();
                 $collection->setIndex($result["index"]);
                 $collection->setFieldname($result["fieldname"]);
+                $collection->setObject($object);
                 
                 foreach ($fieldDefinitions as $key => $fd) {
-
-                    if ($fd->isRelationType()) {
-                        
-                        $relations = array();
-                        foreach ($allRelations as $relation) {
-                            if ($relation["fieldname"] == $key && $relation["position"] == $result["index"]) {
-                                $relations[] = $relation;
-                            }
+                    if (method_exists($fd, "load")) {
+                        // datafield has it's own loader
+                        $value = $fd->load($collection);
+                        if($value === 0 || !empty($value)) {
+                            $collection->setValue($key, $value);
                         }
-
-                        $collection->setValue( $key, $fd->getDataFromResource($relations));
                     } else {
                         if (is_array($fd->getColumnType())) {
                             $multidata = array();
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key . "__" . $fkey] = $result[$key . "__" . $fkey];
                             }
-                            $collection->setValue(
-                                $key,
-                                $fd->getDataFromResource($multidata));
+                            $collection->setValue($key, $fd->getDataFromResource($multidata));
 
                         } else {
-                            $collection->setValue(
-                                $key,
-                                $fd->getDataFromResource($result[$key]));
+                            $collection->setValue( $key, $fd->getDataFromResource($result[$key]));
                         }
                     }
                 }

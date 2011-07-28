@@ -16,32 +16,86 @@
  */
 
 abstract class Object_Fieldcollection_Data_Abstract extends Pimcore_Model_Abstract {
-    
+
+    /**
+     * @var int
+     */
     public $index;
-    public $fieldname;    
-    
+
+    /**
+     * @var string
+     */
+    public $fieldname;
+
+    /**
+     * @var Object_Concrete
+     */
+    public $object;
+
+    /**
+     * @var string
+     */
+    public $type;
+
+    /**
+     * @return int
+     */
     public function getIndex () {
         return $this->index;
     }
-    
+
+    /**
+     * @param int $index
+     * @return void
+     */
     public function setIndex ($index) {
         $this->index = (int) $index;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getFieldname () {
         return $this->fieldname;
     }
-    
+
+    /**
+     * @param $fieldname
+     * @return void
+     */
     public function setFieldname ($fieldname) {
         $this->fieldname = $fieldname;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getType () {
         return $this->type;
     }
-    
+
+    /**
+     * @return mixed
+     */
     public function getDefinition () {
         $definition = Object_Fieldcollection_Definition::getByKey($this->getType());
         return $definition;
+    }
+
+    /**
+     * @param Object_Concrete $object
+     * @return void
+     */
+    public function setObject($object)
+    {
+        $this->object = $object;
+    }
+
+    /**
+     * @return Object_Concrete
+     */
+    public function getObject()
+    {
+        return $this->object;
     }
 }

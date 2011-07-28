@@ -22,14 +22,33 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
      */
     public $classDefinitions;
 
+     /**
+     * @var array
+     */
+    private $oldClassDefinitions = array();
+
+
+    /**
+     * @param $classDefinitions
+     * @return void
+     */
     public function setClassDefinitions($classDefinitions) {
         $this->classDefinitions = $classDefinitions;
     }
 
+    /**
+     * @return array()
+     */
     public function getClassDefinitions() {
         return $this->classDefinitions;
     }
 
+    /**
+     * @static
+     * @throws Exception
+     * @param $key
+     * @return mixed
+     */
     public static function getByKey ($key) {
         $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
         
@@ -43,7 +62,11 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         
         throw new Exception("Object-Brick with key: " . $key . " does not exist.");
     }
-    
+
+    /**
+     * @throws Exception
+     * @return void
+     */
     public function save () {
 
         if(!$this->getKey()) {
@@ -114,7 +137,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                 $cd .= '*/' . "\n";
                 $cd .= "public function get" . ucfirst($key) . " () {\n";
 
-                $cd .= "\t" . 'if(!$this->' . $key . ' && Object_Abstract::doGetInheritedValues($this->getBaseObject())) {' . "\n";
+                $cd .= "\t" . 'if(!$this->' . $key . ' && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
                 $cd .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
                 $cd .= "\t" . '}' . "\n";
 
@@ -129,10 +152,10 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                 $cd .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
                 $cd .= "}\n\n";
 
-            }
+            } 
         }
 
-        $cd .= "}\n";
+        $cd .= "}\n"; 
         $cd .= "\n";
 
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
@@ -148,7 +171,11 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         $this->updateDatabase(); 
     }
 
-    private $oldClassDefinitions = array();
+
+    /**
+     * @param $serializedFilename
+     * @return void
+     */
     private function cleanupOldFiles($serializedFilename) {
         $this->oldClassDefinitions = array();
         if(file_exists($serializedFilename)) {
@@ -183,6 +210,9 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         }
     }
 
+    /**
+     * @return void
+     */
     private function updateDatabase() {
 
         $processedClasses = array(); 
@@ -222,6 +252,9 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
     }
 
+    /**
+     * @return void
+     */
     private function createContainerClasses() {
         $containerDefinition = array();
 
@@ -281,10 +314,10 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                     $cd .= "public function get" . ucfirst($brickKey) . "() { \n";
 
                     if($class->getAllowInherit()) {
-                        $cd .= "\t" . 'if(!$this->' . $brickKey . ' && Object_Abstract::doGetInheritedValues($this->__object)) { ' . "\n";
-                        $cd .= "\t\t" . '$brick = $this->__object->getValueFromParent("' . $fieldname . '");' . "\n";
+                        $cd .= "\t" . 'if(!$this->' . $brickKey . ' && Object_Abstract::doGetInheritedValues($this->getObject())) { ' . "\n";
+                        $cd .= "\t\t" . '$brick = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
                         $cd .= "\t\t" . 'if(!empty($brick)) {' . "\n";
-                        $cd .= "\t\t\t" . 'return $this->__object->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
+                        $cd .= "\t\t\t" . 'return $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
                         $cd .= "\t\t" . "}\n";
                         $cd .= "\t" . "}\n";
                     }
@@ -318,13 +351,26 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
     }
 
+    /**
+     * @param $classname
+     * @param $fieldname
+     * @return string
+     */
     private function getContainerClassName($classname, $fieldname) {
         return "Object_" . ucfirst($classname) . "_" . ucfirst($fieldname);
     }
+
+    /**
+     * @param $classname
+     * @return string
+     */
     private function getContainerClassFolder($classname) {
         return PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($classname);
     }
-    
+
+    /**
+     * @return void
+     */
     public function delete () {
         $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
         $fieldFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";

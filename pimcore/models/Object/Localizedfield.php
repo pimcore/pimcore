@@ -102,11 +102,17 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         return $this->class;
     }
 
+    /**
+     * @throws Exception
+     * @param null $language
+     * @return string
+     */
     public function getLanguage ($language = null) {
         if($language) {
             return (string) $language;
         }
 
+        // try to get the language from the registry
         try {
             $locale = Zend_Registry::get("Zend_Locale");
             if(Pimcore_Tool::isValidLanguage((string) $locale)) {
@@ -123,10 +129,19 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         }
     }
 
+    /**
+     * @param $language
+     * @return bool
+     */
     public function languageExists ($language) {
         return array_key_exists($language, $this->getItems());
     }
 
+    /**
+     * @param $name
+     * @param null $language
+     * @return 
+     */
     public function getLocalizedValue ($name, $language = null) {
         $language = $this->getLanguage($language);
         if($this->languageExists($language)) {
@@ -136,6 +151,12 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         }
     }
 
+    /**
+     * @param $name
+     * @param $value
+     * @param null $language
+     * @return void
+     */
     public function setLocalizedValue ($name, $value, $language = null) {
         $language = $this->getLanguage($language);
         if(!$this->languageExists($language)) {

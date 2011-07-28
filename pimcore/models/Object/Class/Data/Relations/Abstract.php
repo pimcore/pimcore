@@ -216,26 +216,64 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
 
 
     /**
-     * @param Object_Concrete $object
+     * @param Object_Concrete|Object_Fieldcollection_Data_Abstract|Object_Localizedfield $object
      * @return void
      */
-    public function save ($object) {
+    public function save ($object, $params = array()) {
 
         $db = Pimcore_Resource::get();
         $getter = "get" . ucfirst($this->getName());
 
+
         if (method_exists($object, $getter)) {
+            // for fieldcollections and objects
             $relations = $this->getDataForResource($object->$getter(), $object);
+        } else if ($object instanceof Object_Localizedfield) {
+            // since Object_Localizedfield doesn't have their own getters, because they are located in the wrapping-object
+            $relations = $this->getDataForResource($object->getLocalizedValue($this->getName(), $params["language"]), $object);
         }
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
-                $relation["src_id"] = $object->getId();
-                $relation["ownertype"] = "object";
+
+
+                if($object instanceof Object_Concrete) {
+
+                    $relation["src_id"] = $object->getId();
+                    $relation["ownertype"] = "object";
+
+                    $classId = $object->getClassId();
+
+                } else if($object instanceof Object_Fieldcollection_Data_Abstract) {
+
+                    $relation["src_id"] = $object->getObject()->getId(); // use the id from the object, not from the field collection
+                    $relation["ownertype"] = "fieldcollection";
+                    $relation["ownername"] = $object->getFieldname();
+                    $relation["position"] = $object->getIndex();
+
+                    $classId = $object->getObject()->getClassId();
+
+                } else if ($object instanceof Object_Localizedfield) {
+                    
+                    $relation["src_id"] = $object->getObject()->getId();
+                    $relation["ownertype"] = "localizedfield";
+                    $relation["ownername"] = "localizedfield";
+                    $relation["position"] = $params["language"];
+
+                    $classId = $object->getObject()->getClassId();
+                    
+                } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
+
+                    $relation["src_id"] = $object->getObject()->getId();
+                    $relation["ownertype"] = "objectbrick";
+                    $relation["ownername"] = $object->getFieldname();
+
+                    $classId = $object->getObject()->getClassId();
+                }
 
                 /*relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {
-                    $db->insert("object_relations_" . $object->getO_classId(), $relation);
+                    $db->insert("object_relations_" . $classId, $relation);
                 } catch (Exception $e) {
                     Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
                 }
@@ -244,18 +282,28 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
     }
 
     /**
-     * @param $object
+     * @param Object_Concrete|Object_Fieldcollection_Data_Abstract|Object_Localizedfield $object
      * @return null | array
      */
-    public function load($object) {
+    public function load($object, $params = array()) {
         $db = Pimcore_Resource::get();
-        if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading()) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
+
+        if($object instanceof Object_Concrete) {
+            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading()) {
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
+                return $this->getDataFromResource($relations);
+            } else {
+                return null;
+            }
+        } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));
             return $this->getDataFromResource($relations);
-        } else {
-            return null;
+        } else if ($object instanceof Object_Localizedfield) {
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $params["language"]));
+            return $this->getDataFromResource($relations);
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
+            return $this->getDataFromResource($relations);
         }
     }
-
-
 }

@@ -246,7 +246,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     }
 
 
-    public function save($object)
+    public function save($object, $params = array())
     {
         $getter = "get" . ucfirst($this->getName());
         $container = $object->$getter();
@@ -255,7 +255,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         }
     }
 
-    public function load($object)
+    public function load($object, $params = array())
     {
         $classname = "Object_" . ucfirst($object->getClass()->getName()) . "_" . ucfirst($this->getName());
 
