@@ -143,5 +143,4 @@ class Object_Objectbrick_Data_Abstract extends Pimcore_Model_Abstract {
         return $this->object;
     }
 
-
 }

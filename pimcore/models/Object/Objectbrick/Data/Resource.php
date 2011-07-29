@@ -204,4 +204,57 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
 
+    /**
+     * @param  string $field
+     * @return array
+     */
+    public function getRelationData($field, $forOwner, $remoteClassId) {
+
+        $id = $this->model->getObject()->getId();
+        if ($remoteClassId) {
+            $classId = $remoteClassId;
+        } else {
+            $classId = $this->model->getObject()->getClassId();
+        }
+
+
+        $params = array($field, $id, $field, $id, $field, $id);
+
+        $dest = "dest_id";
+        $src = "src_id";
+        if (!$forOwner) {
+            $dest = "src_id";
+            $src = "dest_id";
+        }
+
+        $relations = $this->db->fetchAll("SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index
+            FROM objects o, object_relations_" . $classId . " r
+            WHERE r.fieldname= ?
+            AND r.ownertype = 'objectbrick'
+            AND r." . $src . " = ?
+            AND o.o_id = r." . $dest . "
+            AND r.type='object'
+
+            UNION SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index
+            FROM assets a, object_relations_" . $classId . " r
+            WHERE r.fieldname= ?
+            AND r.ownertype = 'objectbrick'
+            AND r." . $src . " = ?
+            AND a.id = r." . $dest . "
+            AND r.type='asset'
+
+            UNION SELECT r." . $dest . " as dest_id, r." . $dest . " as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index
+            FROM documents d, object_relations_" . $classId . " r
+            WHERE r.fieldname= ?
+            AND r.ownertype = 'objectbrick'
+            AND r." . $src . " = ?
+            AND d.id = r." . $dest . "
+            AND r.type='document'
+
+            ORDER BY `index` ASC", $params);
+
+        if (is_array($relations) and count($relations) > 0) {
+            return $relations;
+        } else return array();
+    }
 }

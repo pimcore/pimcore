@@ -421,9 +421,35 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $getter = "get" . ucfirst($this->getName());
         $objectsMetadata = $object->$getter();
 
-        $table = "object_metadata_" . $object->getClassId();
+        $classId = null;
+        $objectId = null;
+
+        if($object instanceof Object_Concrete) {
+            $objectId = $object->getId();
+            $classId = $object->getClassId();
+            $class = $object->getClass();
+        } else if($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $objectId = $object->getObject()->getId();
+            $classId = $object->getObject()->getClassId();
+            $class = $object->getObject()->getClass();
+        } else if ($object instanceof Object_Localizedfield) {
+            $objectId = $object->getObject()->getId();
+            $classId = $object->getObject()->getClassId();
+            $class = $object->getObject()->getClass();
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
+            $objectId = $object->getObject()->getId();
+            $classId = $object->getObject()->getClassId();
+            $class = $object->getObject()->getClass();
+        }
+
+        $table = "object_metadata_" . $classId;
         $db = Pimcore_Resource::get();
-        $db->delete($table, $db->quoteInto("o_id = ?", $object->getId()) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
+
+        if(!empty($objectsMetadata)) {
+            $objectsMetadata[0]->getResource()->createOrUpdateTable($class);
+        }
+
+        $db->delete($table, $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
 
         if(!empty($objectsMetadata)) {
             foreach($objectsMetadata as $meta) {

@@ -112,7 +112,9 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         $result = new stdClass();
         $parent = Object_Service::hasInheritableParentObject($baseObject);
         $valueGetter = "get" . ucfirst($key);
-        if (method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading()) {
+
+        // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
+        if (method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading() and !$fielddefinition instanceof Object_Class_Data_ObjectsMetadata) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {
@@ -121,6 +123,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             } else {
                 $refKey = $key;
             }
+
             $relations = $item->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             if(empty($relations) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}();
