@@ -20,6 +20,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
     initialize: function (data, fieldConfig) {
 
+        this.dirty = false;
         this.data = [];
         this.currentElements = [];
         this.layoutDefinitions = {};
@@ -345,6 +346,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     isDirty: function() {
+
+        // check elements
         var element;
 
         for(var s=0; s<this.component.items.items.length; s++) {
@@ -359,7 +362,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             }
         }
 
-        return false;
+        return this.dirty;
     },
 
     isMandatory: function () {
