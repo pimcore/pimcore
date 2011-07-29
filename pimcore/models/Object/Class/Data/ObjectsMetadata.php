@@ -434,17 +434,6 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         parent::save($object, $params);
     }
 
-    public function load($object, $params = array()) {
-        $db = Pimcore_Resource::get();
-        if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading()) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
-            return $this->getDataFromResource($relations);
-        } else {
-            return null;
-        }
-
-    }
-
     public function preGetData ($object) {
         $data = $object->{$this->getName()};
         if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){

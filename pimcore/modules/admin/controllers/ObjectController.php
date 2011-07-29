@@ -625,8 +625,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $parent = Object_Service::hasInheritableParentObject($object);
         $getter = "get" . ucfirst($key);
 
-        // relations
-        if ($fielddefinition instanceof Object_Class_Data_Relations_Abstract and $fielddefinition->getLazyLoading()) {
+        // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
+        if ($fielddefinition instanceof Object_Class_Data_Relations_Abstract and $fielddefinition->getLazyLoading() and !$fielddefinition instanceof Object_Class_Data_ObjectsMetadata) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {
