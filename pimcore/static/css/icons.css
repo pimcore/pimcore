@@ -581,6 +581,10 @@
 	background: url(/pimcore/static/img/icon/database.png) no-repeat !important;
 }
 
+.pimcore_icon_objectsMetadata {
+    background: url(/pimcore/static/img/icon/database_link.png) no-repeat !important;
+}
+
 .pimcore_icon_object_add {
 	background: url(/pimcore/static/img/icon/database_add.png) no-repeat !important;
 }

@@ -33,7 +33,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
     },
 
     getIconClass: function () {
-        return "pimcore_icon_object";
+        return "pimcore_icon_objectsMetadata";
     },
 
     getLayout: function ($super) {
