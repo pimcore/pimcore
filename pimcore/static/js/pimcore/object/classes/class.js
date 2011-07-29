@@ -277,7 +277,7 @@ pimcore.object.classes.klass = Class.create({
             button: [],
             text: [],
             root: ["panel","region","tabpanel","accordion","text"],
-            localizedfields: ["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg","textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect", "countrymultiselect","languagemultiselect","objects","multihref","href"]
+            localizedfields: ["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg","textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect", "countrymultiselect","languagemultiselect","objects","multihref","href","hotspotimage","geopoint","geobounds","geopolygon","structuredTable"]
         };
 
         var parentType = "root";
@@ -313,6 +313,7 @@ pimcore.object.classes.klass = Class.create({
             var dataMenu = [];
             var dataComps = Object.keys(pimcore.object.classes.data);
 
+            var parentRestrictions;
             var groups = new Array();
             var groupNames = ["text","numeric","date","select","relation","structured","geo","other"];
             for (var i = 0; i < dataComps.length; i++) {
@@ -324,6 +325,17 @@ pimcore.object.classes.klass = Class.create({
 
                 if (dataComps[i] != "data") { // class data is an abstract class => disallow
                     if (in_array("data", allowedTypes[parentType]) || in_array(dataComps[i], allowedTypes[parentType])) {
+
+                        // check for restrictions from a parent field (eg. localized fields)
+                        if(in_array("data", allowedTypes[parentType])) {
+                            parentRestrictions = this.attributes.reference.getRestrictionsFromParent(this);
+                            if(parentRestrictions != null) {
+                                if(!in_array(dataComps[i], allowedTypes[parentRestrictions])) {
+                                    continue;
+                                }
+                            }
+                        }
+
                         var group = pimcore.object.classes.data[dataComps[i]].prototype.getGroup();
                         if (!groups[group]) {
                             if (!in_array(group, groupNames)) {
@@ -336,7 +348,6 @@ pimcore.object.classes.klass = Class.create({
                             iconCls: pimcore.object.classes.data[dataComps[i]].prototype.getIconClass(),
                             handler: this.attributes.reference.addDataChild.bind(this, dataComps[i])
                         });
-
                     }
                 }
             }
@@ -388,6 +399,21 @@ pimcore.object.classes.klass = Class.create({
         }
 
         menu.show(this.ui.getAnchor());
+    },
+
+    getRestrictionsFromParent: function (node) {
+        if(node.attributes.object.type == "localizedfields") {
+            return "localizedfields";
+        } else {
+            if(node.parentNode && node.parentNode.getDepth() > 0) {
+                var parentType = this.getRestrictionsFromParent(node.parentNode);
+                if(parentType != null) {
+                    return parentType;
+                }
+            }
+        }
+
+        return null;
     },
 
     setCurrentNode: function (cn) {

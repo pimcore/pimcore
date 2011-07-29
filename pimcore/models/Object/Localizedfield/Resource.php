@@ -104,7 +104,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                         foreach ($fd->getColumnType() as $fkey => $fvalue) {
                             $multidata[$key . "__" . $fkey] = $row[$key . "__" . $fkey];
                         }
-                        $items[$row["language"]][$key]->setValue($key, $fd->getDataFromResource($multidata));
+                        $items[$row["language"]][$key] = $fd->getDataFromResource($multidata);
 
                     } else {
                         $items[$row["language"]][$key] = $fd->getDataFromResource($row[$key]);
@@ -140,8 +140,8 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
         $concats = array();
         foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
-            // only add non-relational fields to the group-concat
-            if(!$fd->isRelationType()) {
+            // only add non-relational fields with one column to the group-concat
+            if(!$fd->isRelationType() && !is_array($fd->getColumnType())) {
                 $concats[] = "group_concat(" . $this->getTableName() . "." . $fd->getName() . ") AS `" . $fd->getName() . "`";
             }
         }
@@ -153,6 +153,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $furtherSelects = "," . $furtherSelects;
         }
 
+        echo 'CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.* ' . $furtherSelects . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;';exit;
         $this->dbexec('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.* ' . $furtherSelects . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
     }
 
