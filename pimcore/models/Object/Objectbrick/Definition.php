@@ -197,7 +197,6 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                         $allowedTypes = $fieldDef->getAllowedTypes();
                         $idx = array_search($this->getKey(), $allowedTypes);
                         if($idx !== false) {
-                            echo "remove";
                             array_splice($allowedTypes, $idx, 1);
                         }
                         $fieldDef->setAllowedTypes($allowedTypes);
