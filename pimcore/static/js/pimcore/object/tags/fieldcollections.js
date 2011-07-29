@@ -345,12 +345,21 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     isDirty: function() {
-        if(!this.isRendered()) {
-            return false;
+        var element;
+
+        for(var s=0; s<this.component.items.items.length; s++) {
+            if(this.currentElements[this.component.items.items[s].key]) {
+                element = this.currentElements[this.component.items.items[s].key];
+
+                for (var u=0; u<element.fields.length; u++) {
+                    if(element.fields[u].isDirty()) {
+                        return true;
+                    }
+                }
+            }
         }
-        
-        // HACK: always true - always transfer the values of the fieldcollection to the server
-        return true;
+
+        return false;
     },
 
     isMandatory: function () {
