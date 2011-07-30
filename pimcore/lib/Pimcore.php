@@ -215,6 +215,8 @@ class Pimcore {
             @ini_set("display_errors", "On");
             @ini_set("display_startup_errors", "On");
 
+            $autoloader = Zend_Loader_Autoloader::getInstance();
+            $autoloader->suppressNotFoundWarnings(false);
             $front->throwExceptions(true);
 
             try {
@@ -494,7 +496,6 @@ class Pimcore {
         $autoloader->registerNamespace('System_');
         $autoloader->registerNamespace('PEAR_');
         $autoloader->registerNamespace('Thumbnail');
-        $autoloader->registerNamespace('Image_');
         $autoloader->registerNamespace('Staticroute');
         $autoloader->registerNamespace('Redirect');
         $autoloader->registerNamespace('Dependency');
