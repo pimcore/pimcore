@@ -322,7 +322,8 @@ class Asset_Image_Thumbnail_Config {
         if ($config["cover"]) {
             $pipe->addItem("cover", array(
                 "width" => $config["width"],
-                "height" => $config["height"]
+                "height" => $config["height"],
+                "positioning" => "center"
             ));
         }
         else if ($config["contain"]) {

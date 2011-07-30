@@ -237,6 +237,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $tmpUser["leaf"] = false;
             $tmpUser["iconCls"] = "pimcore_icon_usergroup";
             $tmpUser["expanded"] = true;
+
+            if($user->hasChilds()) {
+                $tmpUser["expanded"] = false;
+            }
         }
         else {
             $tmpUser["leaf"] = true;

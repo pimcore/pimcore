@@ -83,28 +83,6 @@ pimcore.document.tree = Class.create({
                 enableTextPaging:false,
                 pagingModel:'remote',
                 requestMethod: "GET",
-                listeners: {
-                    "loadexception": function (response, node, loader) {
-                        // only try it 5 times to get a valid response
-                        var reload = true;
-                        try {
-                            var ro = Ext.decode(response.responseText);
-                            if (typeof ro.total != "undefined") {
-                                reload = false;
-                            }
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
-
-                        if (reload) {
-                            node.reloadsOnFail = (node.reloadsOnFail ? node.reloadsOnFail + 1 : 1);
-                            if (node.reloadsOnFail < 5) {
-                                window.setTimeout(node.reload.bind(node), 100);
-                            }
-                        }
-                    }
-                },
                 baseAttrs: {
                     listeners: this.getTreeNodeListeners(),
                     reference: this,

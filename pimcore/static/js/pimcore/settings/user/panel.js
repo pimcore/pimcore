@@ -281,7 +281,6 @@ pimcore.settings.user.panel = Class.create({
                 loader: new Ext.tree.TreeLoader({
                     dataUrl: '/admin/user/tree-get-childs-by-id/',
                     requestMethod: "GET",
-                    preloadChildren: true,
                     baseAttrs: {
                         listeners: this.getTreeNodeListeners(),
                         reference: this,
