@@ -106,7 +106,6 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function getDataFromEditmode($data, $object = null)
     {
-
         $values = array();
         $count = 0;
 
@@ -117,7 +116,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                 $collectionDef = Object_Fieldcollection_Definition::getByKey($collectionRaw["type"]);
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if ($collectionRaw["data"][$fd->getName()]) {
+                    if (array_key_exists($fd->getName(),$collectionRaw["data"])) {
                         $collectionData[$fd->getName()] = $fd->getDataFromEditmode($collectionRaw["data"][$fd->getName()]);
                     }
                 }

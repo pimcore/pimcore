@@ -254,12 +254,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     },
 
     getValue: function () {
-
-        if(this.fieldConfig.lazyLoading && !this.dataChanged){
-            return false;
-        } else {
-            return this.data;
-        }
+        return this.data;
     },
 
     getName: function () {

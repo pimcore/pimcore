@@ -540,10 +540,6 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
         var tmData = [];
 
-        if (this.fieldConfig.lazyLoading && !this.dataChanged) {
-            return false;
-        }
-
         var data = this.store.queryBy(function(record, id) {
             return true;
         });

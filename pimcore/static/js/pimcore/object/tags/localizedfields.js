@@ -37,13 +37,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             activeTab: 0,
             height: 200,
             items: [],
-            deferredRender: false,
+            deferredRender: true,
             forceLayout: true,
             hideMode: "offsets",
             enableTabScroll:true
         };
-
-
 
 
         if(!this.fieldConfig.width) {
@@ -147,7 +145,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             localizedData[currentLanguage] = {};
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
-                localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()] = this.languageElements[currentLanguage][s].getValue();
+                if(this.languageElements[currentLanguage][s].isDirty()) {
+                    localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()] = this.languageElements[currentLanguage][s].getValue();
+                }
             }
         }
 

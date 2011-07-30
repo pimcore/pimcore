@@ -101,17 +101,24 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      */
     public function getDataFromEditmode($data, $object = null)
     {
+        $localFields = $object->{"get" . ucfirst($this->getName())}();
+        $localData = array();
+
+        // get existing data
+        if($localFields instanceof Object_Localizedfield) {
+            $localData = $localFields->getItems();
+        }
+
 
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
-                    $data[$language][$name] = $this->getFielddefinition($name)->getDataFromEditmode($fdata);
+                    $localData[$language][$name] = $this->getFielddefinition($name)->getDataFromEditmode($fdata);
                 }
             }
-
         }
 
-        $localizedFields = new Object_Localizedfield($data);
+        $localizedFields = new Object_Localizedfield($localData);
 
         return $localizedFields;
     }

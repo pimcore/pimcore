@@ -102,17 +102,17 @@ pimcore.object.edit = Class.create({
             try {
                 if (this.dataFields[dataKeys[i]] && typeof this.dataFields[dataKeys[i]] == "object") {
                     currentField = this.dataFields[dataKeys[i]];
-                    if (currentField.isMandatory() == true && this.object.ignoreMandatoryFields != true) {
-                        if (currentField.isInvalidMandatory()) {
-                            invalidMandatoryFields.push(currentField.getTitle() + " (" + currentField.getName() + ")");
+                    if (this.object.ignoreMandatoryFields != true) {
+                        if(currentField.isMandatory() == true) {
+                            if (currentField.isInvalidMandatory()) {
+                                invalidMandatoryFields.push(currentField.getTitle() + " (" + currentField.getName() + ")");
+                            }
                         }
                     }
 
-                    var currentValue =  currentField.getValue();
-
                     //only include changed values in save response.
                     if(currentField.isDirty()) {
-                        values[currentField.getName()] =  currentValue;
+                        values[currentField.getName()] =  currentField.getValue();
                     }
                 }
             }

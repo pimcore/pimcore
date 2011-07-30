@@ -326,7 +326,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             elementData = {};
             if(this.currentElements[this.component.items.items[s].key]) {
                 element = this.currentElements[this.component.items.items[s].key];
-                
+
+                // no check for dirty, ... always send all field to the server
                 for (var u=0; u<element.fields.length; u++) {
                     elementData[element.fields[u].getName()] = element.fields[u].getValue();
                 }
@@ -349,6 +350,14 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         // check elements
         var element;
+
+        if(!this.isRendered()) {
+            return false;
+        }
+
+        if(typeof this.component.items == "undefined") {
+            return false;
+        }
 
         for(var s=0; s<this.component.items.items.length; s++) {
             if(this.currentElements[this.component.items.items[s].key]) {

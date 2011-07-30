@@ -399,9 +399,6 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     getValue: function () {
 
         var tmData = [];
-        if(this.fieldConfig.lazyLoading && !this.dataChanged){
-            return false;
-        }
 
         var data = this.store.queryBy(function(record, id) {
             return true;
