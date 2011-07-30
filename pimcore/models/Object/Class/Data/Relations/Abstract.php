@@ -288,22 +288,22 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
     public function load($object, $params = array()) {
         $db = Pimcore_Resource::get();
 
-        if($object instanceof Object_Concrete) {
-            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or $params["force"]) {
+        if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or $params["force"]) {
+            if($object instanceof Object_Concrete) {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
                 return $this->getDataFromResource($relations);
-            } else {
-                return null;
+            } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));
+                return $this->getDataFromResource($relations);
+            } else if ($object instanceof Object_Localizedfield) {
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $params["language"]));
+                return $this->getDataFromResource($relations);
+            } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
+                return $this->getDataFromResource($relations);
             }
-        } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));
-            return $this->getDataFromResource($relations);
-        } else if ($object instanceof Object_Localizedfield) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $params["language"]));
-            return $this->getDataFromResource($relations);
-        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
-            return $this->getDataFromResource($relations);
+        } else {
+            return null;
         }
     }
 }
