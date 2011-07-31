@@ -86,6 +86,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
                     "validLanguages" => "en",
                     "debug" => "1",
                     "theme" => "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css",
+                    "loginscreenimageservice" => "1",
                     "welcomescreen" => "1",
                     "loglevel" => array(
                         "debug" => "1",
