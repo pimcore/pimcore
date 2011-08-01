@@ -12,7 +12,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-// only a dummy because the real function is in startup.js
-function pimcoreOnUnload() {
-}
 
+
+
+// disable reload & links, this function is here because it has to be in the header (body attribute)
+function pimcoreOnUnload() {
+    editWindow.protectLocation();
+}

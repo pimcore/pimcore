@@ -47,6 +47,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
         
         $editmodeScripts = array(
             "/pimcore/static/js/pimcore/functions.js",
+            "/pimcore/static/js/pimcore/document/edit/helper.js",
             "/pimcore/static/js/pimcore/document/edit/dnd.js",
             "/pimcore/static/js/pimcore/document/tag.js",
             "/pimcore/static/js/pimcore/document/tags/block.js",

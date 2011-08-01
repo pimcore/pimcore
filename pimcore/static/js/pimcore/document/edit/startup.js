@@ -55,13 +55,6 @@ Ext.onReady(function () {
         editWindow.frame = window;
     }
     
-    // disable reload & links
-    function pimcoreOnUnload() {
-        editWindow.protectLocation();
-        //garbageCollect();
-        //Event.unloadCache();
-    }
-    
     
     function getEditable(config) {
         var id = config.id;

@@ -30,7 +30,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
             rel: "",
             tabindex: "",
             target: "",
-            class: ""
+            "class": ""
         };
 
         this.data = mergeObject(this.defaultData, data);
@@ -179,7 +179,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
                                 {
                                     fieldLabel: t('class'),
                                     name: 'class',
-                                    value: this.data.class
+                                    value: this.data["class"]
                                 }
                             ]
                         }
