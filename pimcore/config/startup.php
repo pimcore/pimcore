@@ -48,7 +48,7 @@ $includePaths = array(
     PIMCORE_WEBSITE_PATH . "/models",
     PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY,
-    PIMCORE_PATH . "/lib/_depricated",  // depricated libraries and classes
+    PIMCORE_PATH . "/lib/_deprecated",  // depricated libraries and classes
     get_include_path()
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
