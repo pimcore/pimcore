@@ -29,7 +29,7 @@ class Pimcore_Image {
                     throw new Exception("Image-transform adapter `" . $adapter . "´ does not exist.");
                 }
             } else {
-                if(class_exists("Imagick")) {
+                if(extension_loaded("imagick")) {
                     return new Pimcore_Image_Adapter_Imagick();
                 } else {
                     return new Pimcore_Image_Adapter_GD();
