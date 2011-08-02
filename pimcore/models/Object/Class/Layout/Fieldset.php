@@ -38,7 +38,7 @@ class Object_Class_Layout_Fieldset extends Object_Class_Layout {
     public function setLabelWidth($labelWidth)
     {
         if(!empty($labelWidth)) {
-            $this->labelWidth = $labelWidth;
+            $this->labelWidth = intval($labelWidth);
         }
     }
 
