@@ -76,6 +76,13 @@ class Pimcore_ExtensionManager {
         }
         $config->$type->$id = true;
         self::setConfig($config);
+
+        // call enable.php inside the extension
+        $extensionDir = self::getPathForExtension($id, $type);
+        $enableScript = $extensionDir . "/enable.php";
+        if(is_file($enableScript)) {
+            include($enableScript);
+        }
     }
 
     /**
@@ -91,6 +98,13 @@ class Pimcore_ExtensionManager {
         }
         $config->$type->$id = false;
         self::setConfig($config);
+
+        // call disable.php inside the extension
+        $extensionDir = self::getPathForExtension($id, $type);
+        $disableScript = $extensionDir . "/disable.php";
+        if(is_file($disableScript)) {
+            include($disableScript);
+        }
     }
 
 
