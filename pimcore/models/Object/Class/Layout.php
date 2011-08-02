@@ -182,8 +182,10 @@ class Object_Class_Layout {
      * @return void
      */
     public function setWidth($width) {
-        if (!empty($width)) {
+        if (!empty($width) && is_numeric($width)) {
             $this->width = intval($width);
+        } else {
+            $this->width = $width;
         }
     }
 
@@ -192,8 +194,10 @@ class Object_Class_Layout {
      * @return void
      */
     public function setHeight($height) {
-        if (!empty($height)) {
+        if (!empty($height) && is_numeric($height)) {
             $this->height = intval($height);
+        } else {
+            $this->height = $height;
         }
     }
 
