@@ -609,6 +609,9 @@ class Pimcore {
      */
     public static function collectGarbage ($keepItems = array()) {
 
+        // close mysql-connection
+        Pimcore_Resource::close();
+
         $protectedItems = array(
             "pimcore_config_system",
             "Zend_Locale",

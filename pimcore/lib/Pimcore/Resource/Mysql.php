@@ -83,7 +83,7 @@ class Pimcore_Resource_Mysql {
         try {
             if(Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
                 $connection = Zend_Registry::get("Pimcore_Resource_Mysql");
-                if($connection instanceof Zend_Db) {
+                if($connection instanceof Zend_Db_Adapter_Abstract) {
                     return $connection;
                 }
             }
@@ -112,7 +112,10 @@ class Pimcore_Resource_Mysql {
         try {
             if(Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
                 $db = Zend_Registry::get("Pimcore_Resource_Mysql");
-                $db->closeConnection();
+
+                if($db instanceof Zend_Db_Adapter_Abstract) {
+                    $db->closeConnection();
+                }
 
                 // set it explicit to null to be sure it can be removed by the GC
                 self::set("Pimcore_Resource_Mysql", null);
