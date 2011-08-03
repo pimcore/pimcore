@@ -75,6 +75,15 @@ class Document_Tag_Areablock extends Document_Tag {
             if($count > 0) {
                 $this->blockEnd();
             }
+
+            // create info object and assign it to the view
+            $info = new Document_Tag_Area_Info();
+            $info->setId($index["type"]);
+            $info->setIndex($count);
+            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($index["type"],"brick")));
+            $info->setConfig(Pimcore_ExtensionManager::getBrickConfig($index["type"]));
+
+            $this->getView()->brick = $info;
             
             $this->blockStart();
             

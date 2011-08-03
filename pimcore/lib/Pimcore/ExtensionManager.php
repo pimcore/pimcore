@@ -190,6 +190,19 @@ class Pimcore_ExtensionManager {
         return $configs;
     }
 
+    public static function getBrickConfig ($id) {
+
+        $brickConfigs = self::getBrickConfigs();
+
+        foreach ($brickConfigs as $brickId => $config) {
+            if($brickId == $id) {
+                return $config;
+            }
+        }
+
+        throw new Exception("Areabrick with id: " . $id . " does not exists");
+    }
+
     public static function delete ($id, $type) {
         if($type == "plugin") {
             $pluginDir = PIMCORE_PLUGINS_PATH . "/" . $id;
