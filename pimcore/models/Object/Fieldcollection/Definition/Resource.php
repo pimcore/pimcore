@@ -75,9 +75,10 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
     protected function getDefaultValueAndNullableForField ($field) {
         
         $nullable = "NULL";
-        if ($field->getMandatory()) {
+
+        /*if ($field->getMandatory()) {
             $nullable = "NOT NULL";
-        }
+        }*/
         
         $defaultvalue = "";
         if (method_exists($field, 'getDefaultValue') && $field->getDefaultValue() !== null) {
