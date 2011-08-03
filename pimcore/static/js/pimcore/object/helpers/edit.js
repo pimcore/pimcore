@@ -172,9 +172,8 @@ pimcore.object.helpers.edit = {
 
                 // add asterisk to mandatory field
                 l.titleOriginal = l.title;
-                if(l.mandatory && !l.mandatoryStarAdded) {
+                if(l.mandatory) {
                     l.title += ' <span style="color:red;">*</span>';
-                    l.mandatoryStarAdded = true;
                 }
 
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
@@ -197,6 +196,9 @@ pimcore.object.helpers.edit = {
                 else {
                     dLayout = field.getLayoutEdit();
                 }
+
+                // set title back to original (necessary for localized fields because they use the same config several times, for each language )
+                l.title = l.titleOriginal;
 
 
                 try {
