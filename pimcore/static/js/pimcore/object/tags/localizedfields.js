@@ -201,6 +201,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         var currentLanguage;
         var isInvalid = false;
+        var invalidMandatoryFields = [];
 
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
 
@@ -209,10 +210,16 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isMandatory()) {
                     if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
+                        invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - " + currentLanguage.toUpperCase() + " (" + this.languageElements[currentLanguage][s].getName() + ")");
                         isInvalid = true;
                     }
                 }
             }
+        }
+
+        // return the error messages not bool, this is handled in object/edit.js
+        if(isInvalid) {
+            return invalidMandatoryFields;
         }
 
         return isInvalid;

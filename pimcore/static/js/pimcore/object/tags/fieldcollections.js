@@ -412,6 +412,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             }
         }
 
+        // return the error messages not bool, this is handled in object/edit.js
         if(isInvalid) {
             return invalidMandatoryFields;
         }

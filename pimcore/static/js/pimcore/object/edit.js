@@ -107,6 +107,8 @@ pimcore.object.edit = Class.create({
                         if(currentField.isMandatory() == true) {
                             isInvalidMandatory = currentField.isInvalidMandatory();
                             if (isInvalidMandatory != false) {
+
+                                // some fields can return their own error messages like fieldcollections, ...
                                 if(typeof isInvalidMandatory == "object") {
                                     invalidMandatoryFields = array_merge(isInvalidMandatory, invalidMandatoryFields);
                                 } else {
