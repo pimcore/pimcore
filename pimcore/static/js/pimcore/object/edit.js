@@ -96,6 +96,7 @@ pimcore.object.edit = Class.create({
         var values = {};
         var currentField;
         var invalidMandatoryFields = [];
+        var isInvalidMandatory;
 
         for (var i = 0; i < dataKeys.length; i++) {
 
@@ -104,8 +105,13 @@ pimcore.object.edit = Class.create({
                     currentField = this.dataFields[dataKeys[i]];
                     if (this.object.ignoreMandatoryFields != true) {
                         if(currentField.isMandatory() == true) {
-                            if (currentField.isInvalidMandatory()) {
-                                invalidMandatoryFields.push(currentField.getTitle() + " (" + currentField.getName() + ")");
+                            isInvalidMandatory = currentField.isInvalidMandatory();
+                            if (isInvalidMandatory != false) {
+                                if(typeof isInvalidMandatory == "object") {
+                                    invalidMandatoryFields = array_merge(isInvalidMandatory, invalidMandatoryFields);
+                                } else {
+                                    invalidMandatoryFields.push(currentField.getTitle() + " (" + currentField.getName() + ")");
+                                }
                             }
                         }
                     }
