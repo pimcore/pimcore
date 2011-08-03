@@ -341,7 +341,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
 
             if(empty($options["allowed"]) || in_array($areaName,$options["allowed"])) {
-                $availableAreasSort[$this->view->translateAdmin((string) $areaConfig->name)] = array(
+                $availableAreas[] = array(
                     "name" => $this->view->translateAdmin((string) $areaConfig->name),
                     "description" => $this->view->translateAdmin((string) $areaConfig->description),
                     "type" => $areaName
@@ -349,12 +349,14 @@ class Document_Tag_Areablock extends Document_Tag {
             }
         }
 
-        // sort with translated names 
-        ksort($availableAreasSort);
-        foreach ($availableAreasSort as $a) {
-            $availableAreas[] = $a;
-        }
-        
+        // sort with translated names
+        usort($availableAreas,function($a, $b) {
+            if ($a["name"] == $b["name"]) {
+                return 0;
+            }
+            return ($a["name"] < $b["name"]) ? -1 : 1;
+        });
+
         $options["types"] = $availableAreas;
 
         if(is_array($options["group"])) {
