@@ -298,7 +298,7 @@ pimcore.settings.update = Class.create({
                             }
                         } catch (e) {
                             clearInterval(this.parallelJobsInterval);
-                            this.showErrorMessage("Download fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + response);
+                            this.showErrorMessage("Download fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + this.formatError(response));
                         }
                         
                         this.parallelJobsFinished++;
@@ -313,9 +313,9 @@ pimcore.settings.update = Class.create({
                         } catch (e) {}
                                                 
                     }.bind(this),
-                    failure: function () {
+                    failure: function (response) {
                         clearInterval(this.parallelJobsInterval);
-                        this.showErrorMessage("Download fails, see debug.log for more details.");
+                        this.showErrorMessage("Download fails, see debug.log for more details.<br /><hr />" + this.formatError(response) );
                     }.bind(this),
                     params: this.jobs.parallel[this.parallelJobsStarted]
                 });
@@ -450,7 +450,7 @@ pimcore.settings.update = Class.create({
         if(typeof error == "string" || typeof error == "number") {
             return error;
         } else if (typeof error == "object") {
-            return "<pre>"  + FormatJSON(Ext.encode(error)) + "</pre>";
+            return "<pre>"  + htmlentities(FormatJSON(Ext.encode(error))) + "</pre>";
         }
 
         return "No valid error message";
