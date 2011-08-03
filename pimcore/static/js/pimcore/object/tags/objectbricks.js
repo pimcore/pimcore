@@ -336,7 +336,9 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 element = this.currentElements[types[t]];
                 if(element.action != "deleted") {
                     for (var u=0; u<element.fields.length; u++) {
-                        return element.fields[u].isMandatory();
+                        if(element.fields[u].isMandatory()) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -347,7 +349,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
     isInvalidMandatory: function () {
         var element;
-        var isInvalid;
+        var isInvalid = false;
+        var invalidMandatoryFields = [];
 
         var types = Object.keys(this.currentElements);
         for(var t=0; t < types.length; t++) {
@@ -357,12 +360,18 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     for (var u=0; u<element.fields.length; u++) {
                         if(element.fields[u].isMandatory()) {
                             if(element.fields[u].isInvalidMandatory()) {
+                                invalidMandatoryFields.push(element.fields[u].getTitle() + " (" + element.fields[u].getName() + "|" + types[t] + ")");
                                 isInvalid = true;
                             }
                         }
                     }
                 }
             }
+        }
+
+        // return the error messages not bool, this is handled in object/edit.js
+        if(isInvalid) {
+            return invalidMandatoryFields;
         }
 
         return isInvalid;
