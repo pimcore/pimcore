@@ -21,23 +21,25 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
+console.log(fieldConfig);
 
-        if (data) {
-            if(data.length == 0) {
-
-                for(var i = 0; i < fieldConfig.rows.length; i++) {
-                    var dataRow = {};
-                    dataRow.__row_identifyer = fieldConfig.rows[i].key;
-                    dataRow.__row_label = fieldConfig.rows[i].label;
-
-                    for(var j = 0; j < fieldConfig.cols.length; j++) {
-                        dataRow[fieldConfig.cols[j].key] = null;
-                    }
-                    data.push(dataRow);
-                }
-            }
-            this.data = data;
+        if (!data) {
+            data = [];
         }
+        if(data.length == 0) {
+
+            for(var i = 0; i < fieldConfig.rows.length; i++) {
+                var dataRow = {};
+                dataRow.__row_identifyer = fieldConfig.rows[i].key;
+                dataRow.__row_label = fieldConfig.rows[i].label;
+
+                for(var j = 0; j < fieldConfig.cols.length; j++) {
+                    dataRow[fieldConfig.cols[j].key] = null;
+                }
+                data.push(dataRow);
+            }
+        }
+        this.data = data;
 
         var fields = [
             "__row_identifyer",
@@ -59,7 +61,10 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             fields: fields
         });
 
+        console.log("before load");
+        console.log(this.data);
         this.store.loadData(this.data);
+        console.log("after load");
     },
 
     getGridColumnConfig: function(field) {
