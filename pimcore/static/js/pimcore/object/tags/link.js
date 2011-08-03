@@ -113,6 +113,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: t("path"),
             value: this.data.path,
             name: "path",
+            width: 320,
             cls: "pimcore_droptarget_input"
         });
 
