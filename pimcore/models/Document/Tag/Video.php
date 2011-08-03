@@ -177,7 +177,7 @@ class Document_Tag_Video extends Document_Tag
         if ($options["width"]) {
             return $options["width"];
         }
-        return 400;
+        return "100%";
     }
 
     public function getHeight()
@@ -332,7 +332,7 @@ class Document_Tag_Video extends Document_Tag
                 
                 flowplayer("' . $uid . '", {
             		src: "' . $swfPath . '",
-            		width: ' . $this->getWidth() . ',
+            		width: "' . $this->getWidth() . '",
             		height: ' . $this->getHeight() . ',
                     wmode: "transparent"
             	},player_config_' . $uid . ');

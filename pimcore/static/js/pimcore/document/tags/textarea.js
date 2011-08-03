@@ -29,6 +29,10 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
         options.value = data;
         options.name = id + "_editable";
 
+        if(!options.width) {
+            options.width = Ext.get(id).getWidth()-2;
+        }
+
         this.element = new Ext.form.TextArea(options);
         this.element.render(id);
     },
