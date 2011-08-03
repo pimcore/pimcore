@@ -48,7 +48,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $forbiddenAssetPaths = Element_Service::findForbiddenPaths("asset", $user);
             if (count($forbiddenAssetPaths) > 0) {
                 for ($i = 0; $i < count($forbiddenAssetPaths); $i++) {
-                    $forbiddenAssetPaths[$i] = " maintype || '_' || fullpath not like 'asset_'" . $forbiddenAssetPaths[$i] . "%'";
+                    $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like ''" . $forbiddenAssetPaths[$i] . "%')";
                 }
                 $forbiddenConditions[] = implode(" AND ", $forbiddenAssetPaths) ;
             }
@@ -62,7 +62,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $forbiddenDocumentPaths = Element_Service::findForbiddenPaths("document", $user);
             if (count($forbiddenDocumentPaths) > 0) {
                 for ($i = 0; $i < count($forbiddenDocumentPaths); $i++) {
-                    $forbiddenDocumentPaths[$i] = " maintype || '_' || fullpath not like 'document_" . $forbiddenDocumentPaths[$i] . "%'";
+                    $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like '" . $forbiddenDocumentPaths[$i] . "%')";
                 }
                 $forbiddenConditions[] =  implode(" AND ", $forbiddenDocumentPaths) ;
             }
@@ -75,7 +75,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $forbiddenObjectPaths = Element_Service::findForbiddenPaths("object", $user);
             if (count($forbiddenObjectPaths) > 0) {
                 for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
-                    $forbiddenObjectPaths[$i] = " maintype || '_' || fullpath not like 'object_" . $forbiddenObjectPaths[$i] . "%'";
+                    $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like '" . $forbiddenObjectPaths[$i] . "%')";
                 }
                 $forbiddenConditions[] = implode(" AND ", $forbiddenObjectPaths);
             }
@@ -175,7 +175,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
             $element = Element_Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             $element->getPermissionsForUser($user);
-            if ($element->isAllowed("view")) {
+            if ($element->isAllowed("list")) {
                 if ($element instanceof Object_Abstract) {
                     $data = Object_Service::gridObjectData($element, $fields);
                 } else if ($element instanceof Document) {
@@ -183,11 +183,13 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
                 } else if ($element instanceof Asset) {
                     $data = Asset_Service::gridAssetData($element);
                 }
+
+                $elements[] = $data;
             } else {
                 //TODO: any message that view is blocked?
-                $data = Element_Service::gridElementData($element);
+                //$data = Element_Service::gridElementData($element);
             }
-            $elements[] = $data;
+
         }
 
         $this->_helper->json(array("data" => $elements, "success" => true, "total" => $totalMatches));
