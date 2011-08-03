@@ -186,9 +186,6 @@ pimcore.object.search = Class.create({
             }
         });
 
-        this.labelOnlyDirectChildren = new Ext.form.Label({
-            text: t("only_children")
-        });
         this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
             name: "onlyDirectChildren",
             style: "margin-bottom: 5px; margin-left: 5px",
@@ -242,11 +239,11 @@ pimcore.object.search = Class.create({
             viewConfig: {
                 forceFit: false
             },
-            tbar: [this.languageInfo, "|", this.toolbarFilterInfo
+            tbar: [this.languageInfo, "-", this.toolbarFilterInfo
             ,"->"
-            ,this.labelOnlyDirectChildren,this.checkboxOnlyDirectChildren
-            ,this.sqlEditor
-            ,this.sqlButton,{
+            ,this.checkboxOnlyDirectChildren,t("only_children")
+            ,"-",this.sqlEditor
+            ,this.sqlButton,"-",{
                 text: t("export_csv"),
                 iconCls: "pimcore_icon_export",
                 handler: function(){
@@ -266,7 +263,7 @@ pimcore.object.search = Class.create({
 
 
                 }.bind(this)
-            },{
+            },"-",{
                 text: t("grid_column_config"),
                 iconCls: "pimcore_icon_grid_column_config",
                 handler: this.openColumnConfig.bind(this)

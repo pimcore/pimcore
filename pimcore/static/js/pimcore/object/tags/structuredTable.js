@@ -21,7 +21,6 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
-console.log(fieldConfig);
 
         if (!data) {
             data = [];
@@ -61,10 +60,7 @@ console.log(fieldConfig);
             fields: fields
         });
 
-        console.log("before load");
-        console.log(this.data);
         this.store.loadData(this.data);
-        console.log("after load");
     },
 
     getGridColumnConfig: function(field) {
