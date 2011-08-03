@@ -79,13 +79,20 @@ class Pimcore_Resource_Mysql {
      * @return mixed|Zend_Db_Adapter_Abstract
      */
     public static function get() {
+
         try {
-            $connection = Zend_Registry::get("Pimcore_Resource_Mysql");
-            return $connection;
+            if(Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
+                $connection = Zend_Registry::get("Pimcore_Resource_Mysql");
+                if($connection instanceof Zend_Db) {
+                    return $connection;
+                }
+            }
         }
         catch (Exception $e) {
-            return self::reset();
+            Logger::error($e);
         }
+
+        return self::reset();
     }
 
     /**
@@ -103,11 +110,15 @@ class Pimcore_Resource_Mysql {
      */
     public static function close () {
         try {
-            $db = Zend_Registry::get("Pimcore_Resource_Mysql");
-            $db->closeConnection();
-            
+            if(Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
+                $db = Zend_Registry::get("Pimcore_Resource_Mysql");
+                $db->closeConnection();
+
+                // set it explicit to null to be sure it can be removed by the GC
+                self::set("Pimcore_Resource_Mysql", null);
+            }
         } catch (Exception $e) {
-            Logger::debug("No active resource connection.");
+            Logger::error($e);
         }
     }
 }
