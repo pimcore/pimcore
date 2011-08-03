@@ -227,6 +227,8 @@ pimcore.settings.user.panel = Class.create({
     getTabPanel: function () {
 
 
+
+
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_users",
@@ -469,6 +471,7 @@ pimcore.settings.user.panel = Class.create({
 
     addSettingsPanel: function (transport) {
 
+        var user = pimcore.globalmanager.get("user");
         this.forceReloadOnSave = false;
         this.data = Ext.decode(transport.responseText);
         this.currentUser = this.data.user;
@@ -562,6 +565,7 @@ pimcore.settings.user.panel = Class.create({
             fieldLabel: t("admin"),
             name: "admin",
             checked: this.currentUser.admin,
+            disabled: !user.admin,
             handler: function (box, checked) {
                 var pfs = Ext.getCmp("users_permissions_fieldset");
                 var childs = pfs.findByType("checkbox");
@@ -657,6 +661,13 @@ pimcore.settings.user.panel = Class.create({
         this.settingsPanel.add(this.userPanel);
         this.editPanel.setTitle(t("user") + ": " + this.currentUser.username);
         this.editPanel.activate(0);
+
+        if(this.currentUser.admin && !user.admin) {
+            this.editPanel.disable();
+        } else {
+            this.editPanel.enable();
+        }
+
 
         this.updatePermissionsTabs(this.currentUser.permissionInfo.assets.granted, this.currentUser.permissionInfo.documents.granted, this.currentUser.permissionInfo.objects.granted);
 
