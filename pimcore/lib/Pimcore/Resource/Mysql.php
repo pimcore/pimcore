@@ -29,10 +29,14 @@ class Pimcore_Resource_Mysql {
      */
     public static function getConnection () {
 
-        $conf = Pimcore_Config::getSystemConfig();
+        $charset = "UTF8";
 
-        $db = Zend_Db::factory($conf->database);
-        $db->getConnection()->exec("SET NAMES UTF8");
+        // explicit set charset for connection (to the adapter)
+        $config = Pimcore_Config::getSystemConfig()->toArray();
+        $config["database"]["params"]["charset"] = $charset;
+
+        $db = Zend_Db::factory($config["database"]["adapter"],$config["database"]["params"]);
+        $db->getConnection()->exec("SET NAMES " . $charset);
         $db->getConnection()->exec("SET storage_engine=InnoDB;");
 
         if(PIMCORE_DEVMODE) {
