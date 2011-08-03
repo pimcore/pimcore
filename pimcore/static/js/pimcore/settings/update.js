@@ -377,7 +377,7 @@ pimcore.settings.update = Class.create({
                             }
                         } catch (e) {
                             clearInterval(this.proceduralJobsInterval);
-                            this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + response);
+                            this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + this.formatError(response) );
                         }
                         
                         this.proceduralJobsFinished++;
@@ -392,9 +392,9 @@ pimcore.settings.update = Class.create({
                         } catch (e) {}
                                                 
                     }.bind(this),
-                    failure: function () {
+                    failure: function (response) {
                         clearInterval(this.proceduralJobsInterval);
-                        this.showErrorMessage("Install of update fails, see debug.log for more details.");
+                        this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><hr />" + this.formatError(response) );
                     }.bind(this),
                     params: this.jobs.procedural[this.proceduralJobsStarted]
                 });
@@ -443,6 +443,17 @@ pimcore.settings.update = Class.create({
             html: '<div class="pimcore_error">' + message + "</div>"
         }));
         this.window.doLayout();   
+    },
+
+    formatError: function (error) {
+        
+        if(typeof error == "string" || typeof error == "number") {
+            return error;
+        } else if (typeof error == "object") {
+            return "<pre>"  + FormatJSON(Ext.encode(error)) + "</pre>";
+        }
+
+        return "No valid error message";
     }
     
 });
