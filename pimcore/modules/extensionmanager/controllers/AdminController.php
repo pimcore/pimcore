@@ -111,10 +111,6 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                 $className = $config["plugin"]["pluginClassName"];
 
                 $message = $className::install();
-                $success = Pimcore_Update::downloadPluginLanguages($id);
-                if(!$success){
-                    $message.="\ncould not download all plugin translations";
-                }
 
                 $this->_helper->json(array(
                     "message" => $message,

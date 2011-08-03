@@ -66,7 +66,7 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
         } else if ($this->_getParam("type") == "languages") {
             Pimcore_Update::downloadLanguage();
         }
-        
+
         $this->_helper->json($status);
     }
     

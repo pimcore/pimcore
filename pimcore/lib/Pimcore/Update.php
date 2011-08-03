@@ -347,112 +347,12 @@ class Pimcore_Update {
                             $success = false;
                         }
                     }
-    
-                    if ($success) {
-                        //do plugins
-                        $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
-                        $counter = 0;
-                        foreach ($pluginConfigs as $config) {
-                            try {
-                                $server = $pluginConfigs[$counter]["plugin"]["pluginServer"];
-                                $className = $pluginConfigs[$counter]["plugin"]["pluginClassName"];
-                                $pluginName = $pluginConfigs[$counter]["plugin"]["pluginName"];
-                                
-                                if(class_exists($className)) {
-                                    if(method_exists($className, "getTranslationFileDirectory")) {
-                                        $dir = $className::getTranslationFileDirectory();
-                                        $success= Pimcore_Update::doPluginLanguageDownload($pluginName,$language,$server,$dir);
-                                    }
-                                }    
-                            } catch (Exception $e) {
-                                Logger::error("could not download language file");
-                                Logger::error($e);
-                                $success = false;
-                            }
-                            $counter++;
-                        }
-                    }
                 }
             }
         } else {
             Logger::warning("Pimcore_Update: Could not create language dir [  $langDir ]");
         }
         return $success;
-
-    }
-
-    /**
-     * @static
-     * @param  string $pluginName
-     * @param  string $language
-     * @param  string $server
-     * @param  string $translationFileDirectory
-     * @return bool
-     */
-    private static function doPluginLanguageDownload($pluginName, $language, $server, $translationFileDirectory) {
-        $success = true;
-        //just official repository supported
-        //TODO: remove hard coded
-        if ($server == "plugins.pimcore.org" and is_dir($translationFileDirectory)) {
-            if (is_writable($translationFileDirectory)) {
-
-                //TODO: remove hard coded
-                $src = "http://www.pimcore.org/?controller=plugin&action=translation-download&plugin=" . $pluginName . "&language=" . $language;
-                $pluginData = Pimcore_Tool::getHttpData($src);
-
-                if (!empty($pluginData)) {
-                    $languageFile = $translationFileDirectory . "/" . $language . ".csv";
-                    $fh = fopen($languageFile, 'w');
-                    fwrite($fh, $pluginData);
-                    fclose($fh);
-                } else {
-                    $success = false;
-                    Logger::error("could not get any data from  [ $src ]");
-                }
-
-            } else {
-                $success = false;
-                Logger::error("could not write to [ $translationFileDirectory ]");
-            }
-        }
-        return $success;
-    }
-
-
-    /**
-     * download all language files for a specific plugin for all available system languages
-     * @static
-     * @param  string $plugin
-     * @return void
-     */
-    public static function downloadPluginLanguages($plugin) {
-
-        $languages = Pimcore_Tool_Admin::getLanguages();
-
-        $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
-        $counter = 0;
-        $returnSuccess=true;
-        foreach ($pluginConfigs as $config) {
-            $pluginName = $pluginConfigs[$counter]["plugin"]["pluginName"];
-            if ($pluginName == $plugin) {
-                $server = $pluginConfigs[$counter]["plugin"]["pluginServer"];
-                $className = $pluginConfigs[$counter]["plugin"]["pluginClassName"];
-                $dir = $className::getTranslationFileDirectory();
-                foreach($languages as $language){
-                    //omit core language
-                    if($language!="en"){
-                        $success= Pimcore_Update::doPluginLanguageDownload($pluginName,$language,$server, $dir);
-                        if(!$success){
-                            $returnSuccess = false;
-                        }
-                    }
-
-                }
-            }
-            $counter++;
-        }
-        return $returnSuccess;
-
 
     }
 }
