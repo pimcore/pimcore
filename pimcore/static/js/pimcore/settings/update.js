@@ -26,6 +26,7 @@ pimcore.settings.update = Class.create({
                     layout:'fit',
                     width:500,
                     height:310,
+                    autoScroll: true,
                     closeAction:'close',
                     modal: true
                 });
@@ -298,6 +299,9 @@ pimcore.settings.update = Class.create({
                             }
                         } catch (e) {
                             clearInterval(this.parallelJobsInterval);
+                            if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
+                                response = response.responseText;
+                            }
                             this.showErrorMessage("Download fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + this.formatError(response));
                         }
                         
@@ -315,6 +319,9 @@ pimcore.settings.update = Class.create({
                     }.bind(this),
                     failure: function (response) {
                         clearInterval(this.parallelJobsInterval);
+                        if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
+                            response = response.responseText;
+                        }
                         this.showErrorMessage("Download fails, see debug.log for more details.<br /><hr />" + this.formatError(response) );
                     }.bind(this),
                     params: this.jobs.parallel[this.parallelJobsStarted]
@@ -377,6 +384,9 @@ pimcore.settings.update = Class.create({
                             }
                         } catch (e) {
                             clearInterval(this.proceduralJobsInterval);
+                            if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
+                                response = response.responseText;
+                            }
                             this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + this.formatError(response) );
                         }
                         
@@ -394,6 +404,9 @@ pimcore.settings.update = Class.create({
                     }.bind(this),
                     failure: function (response) {
                         clearInterval(this.proceduralJobsInterval);
+                        if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
+                            response = response.responseText;
+                        }
                         this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><hr />" + this.formatError(response) );
                     }.bind(this),
                     params: this.jobs.procedural[this.proceduralJobsStarted]
@@ -439,6 +452,7 @@ pimcore.settings.update = Class.create({
         this.window.removeAll();
         this.window.add(new Ext.Panel({
             title: "ERROR",
+            autoHeight: true,
             bodyStyle: "padding: 20px;",
             html: '<div class="pimcore_error">' + message + "</div>"
         }));
@@ -450,7 +464,7 @@ pimcore.settings.update = Class.create({
         if(typeof error == "string" || typeof error == "number") {
             return error;
         } else if (typeof error == "object") {
-            return "<pre>"  + htmlentities(FormatJSON(Ext.encode(error))) + "</pre>";
+            return "<pre>"  + htmlentities(FormatJSON(error)) + "</pre>";
         }
 
         return "No valid error message";
