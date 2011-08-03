@@ -26,10 +26,8 @@ class Object_Class_Service  {
      * @return string
      */
     public static function generateClassDefinitionXml($class){
-        $classJson = Zend_Json::encode($class);
-        $data = Zend_Json::decode($classJson);
 
-
+        $data = object2array($class);
 
         unset($data["id"]);
         unset($data["name"]);
@@ -37,7 +35,7 @@ class Object_Class_Service  {
         unset($data["modificationDate"]);
         unset($data["userOwner"]);
         unset($data["userModification"]);
-
+        unset($data["fieldDefinitions"]);
 
         $referenceFunction =  function(&$value,$key){
             $value = htmlspecialchars($value);

@@ -108,10 +108,19 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $values["modificationDate"] = time();
         $values["userModification"] = $this->user->getId();
 
+        // set layout-definition
         $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
         $class->setLayoutDefinitions($layout);
-        $class->setValues($values);
+
+        // set properties of class
+        $class->setModificationDate(time());
+        $class->setUserModification($this->user->getId());
         $class->setIcon($importData["icon"]);
+        $class->setAllowInherit($importData["allowInherit"]);
+        $class->setAllowVariants($importData["allowVariants"]);
+        $class->setParentClass($importData["parentClass"]);
+        $class->setPreviewUrl($importData["previewUrl"]);
+
         $class->setPropertyVisibility($importData["propertyVisibility"]);
         $class->save();
 
@@ -120,7 +129,6 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array(
             "success" => true
         ));
-
     }
 
 

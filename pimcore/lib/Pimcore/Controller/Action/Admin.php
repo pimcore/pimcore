@@ -15,7 +15,14 @@
 
 abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action {
 
+    /**
+     * @var User
+     */
     protected $user;
+
+    /**
+     * @var string
+     */
     protected $language = "en";
 
     public function init() {
