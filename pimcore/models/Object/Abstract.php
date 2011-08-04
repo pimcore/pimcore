@@ -193,6 +193,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
 
     /**
+     * @var Element_AdminStyle
+     */
+    public $o_elementAdminStyle;
+
+
+    /**
      * get possible types
      * @return array
      */
@@ -1261,6 +1267,24 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setPermissions($o_permissions) {
         $this->setO_permissions($o_permissions);
+    }
+
+
+    /**
+     * @return Element_AdminStyle
+     */
+    public function getO_elementAdminStyle() {
+        return $this->getElementAdminStyle();
+    }
+
+    /**
+     * @return Element_AdminStyle
+     */
+    public function getElementAdminStyle() {
+        if(empty($this->o_elementAdminStyle)) {
+            $this->o_elementAdminStyle = new Element_AdminStyle($this);
+        }
+        return $this->o_elementAdminStyle;
     }
 
 

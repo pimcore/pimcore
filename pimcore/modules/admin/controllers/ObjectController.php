@@ -478,6 +478,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         return $tmpObject;
     }
 
+    /**
+     * @param Object_Abstract $child
+     * @return array
+     */
     protected function getTreeNodeConfig($child)
     {
 
@@ -498,7 +502,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $tmpObject["allowChildren"] = false;
 
         $tmpObject["leaf"] = $child->hasNoChilds();
-        $tmpObject["iconCls"] = "pimcore_icon_object";
+//        $tmpObject["iconCls"] = "pimcore_icon_object";
 
         $tmpObject["isTarget"] = true;
         $tmpObject["allowDrop"] = true;
@@ -507,7 +511,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $tmpObject["cls"] = "";
 
         if ($child->getType() == "folder") {
-            $tmpObject["iconCls"] = "pimcore_icon_folder";
+//            $tmpObject["iconCls"] = "pimcore_icon_folder";
             $tmpObject["qtipCfg"] = array(
                 "title" => "ID: " . $child->getId()
             );
@@ -523,11 +527,21 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if (!$child->isPublished()) {
                 $tmpObject["cls"] .= "pimcore_unpublished ";
             }
-            if ($child->getClass()->getIcon()) {
-                unset($tmpObject["iconCls"]);
-                $tmpObject["icon"] = $child->getClass()->getIcon();
-            }
+//            if ($child->getClass()->getIcon()) {
+//                unset($tmpObject["iconCls"]);
+//                $tmpObject["icon"] = $child->getClass()->getIcon();
+//            }
         }
+        if($child->getElementAdminStyle()->getElementIcon()) {
+            $tmpObject["icon"] = $child->getO_elementAdminStyle()->getElementIcon();
+        }
+        if($child->getElementAdminStyle()->getElementIconClass()) {
+            $tmpObject["iconCls"] = $child->getO_elementAdminStyle()->getElementIconClass();
+        }
+        if($child->getElementAdminStyle()->getElementCssClass()) {
+            $tmpObject["cls"] .= $child->getO_elementAdminStyle()->getElementCssClass() . " ";
+        }
+
 
         $tmpObject["expanded"] = $child->hasNoChilds();
         $tmpObject["permissions"] = $child->getUserPermissions($this->getUser());
