@@ -125,7 +125,7 @@ class Document_Tag_Areablock extends Document_Tag {
                             $params = array_merge($this->view->getAllParams(), $params);
                             $actionObj->setParams($params);
                             $actionObj->setBrick($info);
-                            
+
                             if(method_exists($actionObj,"action")) {
                                 $actionObj->action();
                             }
