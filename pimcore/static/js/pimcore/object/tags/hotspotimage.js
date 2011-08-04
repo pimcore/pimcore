@@ -25,6 +25,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
 
     initialize: function (data, fieldConfig) {
+        this.hotspots = {};
+        this.data = null;
         if (data) {
             this.data = data.image;
             if(data.hotspots && data.hotspots != "null") {
@@ -33,7 +35,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         }
         this.fieldConfig = fieldConfig;
         this.uniqeFieldId = uniqid();
-        console.log(this.uniqeFieldId);
     },
 
     getLayoutEdit: function () {
@@ -130,7 +131,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     updateImage: function (initialLoad) {
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/aspectratio/true";
         var name = this.getName();
-        console.log("name2: " + name);
         this.panel.getEl().update(
             '<img id="' + name + this.uniqeFieldId + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />',
             false,
@@ -139,6 +139,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     loadHotspots: function(initialLoad) {
+        this.hotspots = {};
         var box = Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage');
         if(box.getHeight() < 1 || box.getWidth() < 1) {
             setTimeout(this.loadHotspots.bind(this, initialLoad), 1000);
@@ -214,14 +215,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         this.hotspots[number] = hotspot;
         this.dirty = true;
 
-        resizer.addListener("resize", function(item, width, height, e) {
+        resizer.addListener("resize", function(number, item, width, height, e) {
             this.handleSelectorChanged(number);
             this.updateSelectorBody(number);
-        }.bind(this));
+        }.bind(this, number));
 
-        Ext.get('selector' + number + this.uniqeFieldId).on('mouseup', function(){
+        Ext.get('selector' + number + this.uniqeFieldId).on('mouseup', function(number){
             this.handleSelectorChanged(number);
-        }.bind(this));
+        }.bind(this, number));
 
         Ext.get('selector' + number + this.uniqeFieldId).on("contextmenu", this.onSelectorContextMenu.bind(this, number));
 
