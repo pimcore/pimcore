@@ -100,9 +100,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
                 editor = new Ext.form.ComboBox({
                     typeAhead: true,
+                    forceSelection: true,
                     triggerAction: 'all',
                     lazyRender:true,
                     mode: 'local',
+
                     store: new Ext.data.ArrayStore({
                         fields: [
                             'value',
