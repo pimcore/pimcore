@@ -201,7 +201,7 @@ class Pimcore_Model_Cache {
                 }
 
                 $tags = array_unique(array_merge($data->getCacheTags(), $tags));
-                $type = $data::getClassName($data);
+                $type = get_class($data);
         
                 Logger::debug("prepared " . $type . " " . $data->getFullPath() . " for object cache with tags: " . implode(",", $tags));
             }

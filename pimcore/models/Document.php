@@ -174,15 +174,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     }
 
     /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName() {
-        return __CLASS__;
-    }
-
-    /**
      * Static helper to get a Document by it's path, only type Document is returned, not Document_Page, ... (see getConcreteByPath() )
      *
      * @param string $path

@@ -18,16 +18,6 @@
 class Asset_Folder extends Asset {
 
     /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName() {
-        return __CLASS__;
-    }
-
-
-    /**
         * set the children of the document
         *
         * @return array

@@ -70,17 +70,6 @@ class Document_Link extends Document
 
 
     /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName()
-    {
-        return __CLASS__;
-    }
-
-
-    /**
      * @see Document::resolveDependencies
      * @return array
      */

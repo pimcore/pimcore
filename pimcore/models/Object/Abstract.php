@@ -206,17 +206,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         return self::$types;
     }
 
-    
-    /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName() {
-        return __CLASS__;
-    }
-
-
     /**
      * @param integer $id
      * @return Object_Abstract

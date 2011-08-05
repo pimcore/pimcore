@@ -47,13 +47,13 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
                 metaData.css += " grid_value_inherited";
             }
             if(value) {
-                return value.title;
+                return value.text;
             }
-            return value;
+            return t("empty");
 
         }.bind(this, field.key);
 
-        return {header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer, editor: this.getGridColumnEditor(field)};
+        return {header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer};
     },
 
     getLayoutEdit: function () {

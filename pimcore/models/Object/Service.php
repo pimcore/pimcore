@@ -229,6 +229,13 @@ class Object_Service extends Element_Service {
                         $brickGetter = "get".ucfirst($brickKey);
                     }
 
+                    // if the definition is not set try to get the definition from localized fields
+                    if(!$def) {
+                        if($locFields = $object->getClass()->getFieldDefinition("localizedfields")) {
+                            $def = $locFields->getFieldDefinition($key);
+                        }
+                    }
+
                     //relation type fields with remote owner do not have a getter
                     if(method_exists($object,$getter)) {
                         $valueObject = self::getValueForObject($object, $getter, $brickType, $brickGetter);

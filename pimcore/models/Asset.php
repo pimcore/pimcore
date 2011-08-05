@@ -281,15 +281,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     }
 
     /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName() {
-        return __CLASS__;
-    }
-
-    /**
      * Helper to quickly create a new asset
      *
      * @param integer $parentId

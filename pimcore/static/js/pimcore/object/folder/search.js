@@ -119,8 +119,6 @@ pimcore.object.search = Class.create({
             this.fieldObject[fields[i].key] = fields[i];
         }
 
-//        console.log(this.fieldObject);
-
         var plugins = [];
 
         // get current class

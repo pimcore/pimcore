@@ -17,12 +17,4 @@
 
 class Asset_Video extends Asset {
 
-    /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName() {
-        return __CLASS__;
-    }
 }

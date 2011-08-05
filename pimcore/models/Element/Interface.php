@@ -124,4 +124,8 @@ interface Element_Interface {
      */
     public function getParentId();
 
+    /**
+     *
+     */
+
 }

@@ -1655,7 +1655,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 $data = Zend_Json::decode($this->_getParam("data"));
 
-                // save glossary
+                // save
                 $object = Object_Abstract::getById($data["id"]);
 
                 $objectData = array();

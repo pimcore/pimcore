@@ -48,16 +48,6 @@ class Document_Page extends Document_PageSnippet {
 
 
     /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName() {
-        return __CLASS__;
-    }
-
-
-    /**
      * @see Document::delete and Document_PageSnippet::delete
      * @return void
      */

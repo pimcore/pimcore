@@ -88,14 +88,14 @@ pimcore.object.helpers.grid = Class.create({
             writer = new Ext.data.JsonWriter();
             listeners.write = function(store, action, result, response, rs) {};
             listeners.exception = function (conn, mode, action, request, response, store) {
-                    if(action == "update") {
-                        Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
-                        this.store.rejectChanges();
-                    }
-                }.bind(this);
+                if(action == "update") {
+                    Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
+                    this.store.rejectChanges();
+                }
+            }.bind(this);
         }
 
-        var store = new Ext.data.Store({
+        this.store = new Ext.data.Store({
             restful: false,
             idProperty: 'id',
             remoteSort: true,
@@ -106,7 +106,7 @@ pimcore.object.helpers.grid = Class.create({
             baseParams: this.baseParams
         });
 
-        return store;
+        return this.store;
 
     },
 

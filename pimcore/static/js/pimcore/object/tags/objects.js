@@ -53,7 +53,15 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             }
 
             if (value && value.length > 0) {
-                return value.join(",");
+
+                // only show 10 relations in the grid
+                var maxAmount = 10;
+                if(value.length > maxAmount) {
+                    value.splice(maxAmount, (value.length - maxAmount) );
+                    value.push("...");
+                }
+
+                return value.join("<br />");
             }
         }.bind(this, field.key)};
     },    

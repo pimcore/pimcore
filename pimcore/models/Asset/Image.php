@@ -18,15 +18,6 @@
 class Asset_Image extends Asset {
 
     /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName() {
-        return __CLASS__;
-    }
-
-    /**
      * @return void
      */
     public function update() {

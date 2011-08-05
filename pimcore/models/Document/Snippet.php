@@ -24,12 +24,4 @@ class Document_Snippet extends Document_PageSnippet {
      */
     public $type = "snippet";
 
-    /**
-     * Get the current name of the class
-     *
-     * @return string
-     */
-    public static function getClassName() {
-        return __CLASS__;
-    }
 }

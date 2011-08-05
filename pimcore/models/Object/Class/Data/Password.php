@@ -129,6 +129,10 @@ class Object_Class_Data_Password extends Object_Class_Data {
         return "******";
     }
 
+    public function getDataForGrid ($data, $object) {
+        return "******";
+    }
+
 
 
 

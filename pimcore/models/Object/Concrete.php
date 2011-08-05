@@ -419,6 +419,13 @@ class Object_Concrete extends Object_Abstract {
     }
 
     /**
+     * @return string
+     */
+    public function getClassName() {
+        return $this->getO_className();
+    }
+
+    /**
      * @param string $o_className
      * @return void
      */
