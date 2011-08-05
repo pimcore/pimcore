@@ -1918,6 +1918,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 $name = $this->_getParam("name");
                 $parts = explode("~", $name);
+
+                // check for bricks
                 if(count($parts) > 1) {
                     $brickType = $parts[0];
                     $brickKey = $parts[1];
@@ -1940,9 +1942,23 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $brick->$valueSetter($field->getDataFromEditmode($value, $object));
 
                 } else {
+                    // everything else
                     $field = $class->getFieldDefinition($name);
-                    $object->setValue($name, $field->getDataFromEditmode($value, $object));
+                    if($field) {
+                        $object->setValue($name, $field->getDataFromEditmode($value, $object));
+                    } else {
+                        // seems to be a system field, this is actually only possible for the "published" field yet
+                        if($name == "published") {
+                            if($value == "false" || empty($value)) {
+                                $object->setPublished(false);
+                            } else {
+                                $object->setPublished(true);
+                            }
+                        }
+                    }
                 }
+
+
                 try {
                     $object->save();
                     $success = true;

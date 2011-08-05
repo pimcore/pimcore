@@ -156,7 +156,16 @@ pimcore.object.helpers.grid = Class.create({
             } else if(field.key == "id") {
                 gridColumns.push({header: 'ID', width: 40, sortable: true, dataIndex: 'id'/*, hidden: !propertyVisibility.id*/});
             } else if(field.key == "published") {
-                gridColumns.push({header: t("published"), width: 40, sortable: true, dataIndex: 'published'/*, hidden: !propertyVisibility.published*/});                
+                gridColumns.push(new Ext.grid.CheckColumn({
+                    header: t("published"),
+                    width: 40,
+                    sortable: true,
+                    dataIndex: "published",
+                    renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
+                        metaData.css += ' x-grid3-check-col-td';
+                        return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
+                    }.bind(this, field.key)
+                }));
             } else if(field.key == "fullpath") {
                 gridColumns.push({header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'/*, hidden: !propertyVisibility.path*/});
             } else if(field.key == "filename") {

@@ -14,7 +14,7 @@
 
 pimcore.registerNS("pimcore.object.search");
 pimcore.object.search = Class.create({
-    systemColumns: ["id", "fullpath", "published", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
+    systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
     fieldObject: {},
 
     title: t('search_edit'),
@@ -297,12 +297,12 @@ pimcore.object.search = Class.create({
 
             grid.getView().hmenu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, view) {
                 // no batch for system properties
-                if(this.systemColumns.indexOf(view.cm.config[view.hdCtxIndex].dataIndex) > 0) {
-                    batchAllMenu.hide();
-                    batchSelectedMenu.hide();
-                } else {
+                if(this.systemColumns.indexOf(view.cm.config[view.hdCtxIndex].dataIndex) < 0) {
                     batchAllMenu.show();
                     batchSelectedMenu.show();
+                } else {
+                    batchAllMenu.hide();
+                    batchSelectedMenu.hide();
                 }
                 
             }.bind(this, batchAllMenu, batchSelectedMenu, grid.getView()));
@@ -435,12 +435,9 @@ pimcore.object.search = Class.create({
 
     batchPrepare: function(columnIndex, onlySelected){
         // no batch for system properties
-        if(this.systemColumns.indexOf(this.grid.getColumnModel().config[columnIndex].dataIndex) > 0) {
+        if(this.systemColumns.indexOf(this.grid.getColumnModel().config[columnIndex].dataIndex) > -1) {
             return;
         }
-//        if (columnIndex <= 8) {
-//            return;
-//        }
 
         var jobs = [];
         if(onlySelected) {
@@ -493,6 +490,19 @@ pimcore.object.search = Class.create({
         columnIndex = columnIndex-1;
 
         var fieldInfo = this.grid.getColumnModel().config[columnIndex+1];
+
+        // HACK: typemapping for published (systemfields) because they have no edit masks, so we use them from the data-types
+        if(fieldInfo.dataIndex == "published") {
+            fieldInfo.layout = {
+                layout: {
+                    title: t("published"),
+                    name: "published"
+                },
+                type: "checkbox"
+            }
+        }
+        // HACK END
+
         if(!fieldInfo.layout || !fieldInfo.layout.layout) {
             return;
         }
@@ -504,6 +514,7 @@ pimcore.object.search = Class.create({
 
         var editor = new pimcore.object.tags[fieldInfo.layout.type](null, fieldInfo.layout.layout);
         this.batchWin = new Ext.Window({
+            modal: true,
             title: t("batch_edit_field") + " " + fieldInfo.header,
             items: [
                 {
