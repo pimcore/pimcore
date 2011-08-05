@@ -82,13 +82,12 @@ class Document_Tag_Areablock extends Document_Tag {
             $info->setIndex($count);
             $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($index["type"],"brick")));
             $info->setConfig(Pimcore_ExtensionManager::getBrickConfig($index["type"]));
-
-            $this->getView()->brick = $info;
             
             $this->blockStart();
             
             if($this->getView() instanceof Zend_View) {
-                
+
+                $this->getView()->brick = $info;
                 $areas = $this->getAreaDirs();
                 
                 $view = $areas[$index["type"]] . "/view.php";
