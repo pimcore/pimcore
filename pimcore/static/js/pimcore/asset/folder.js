@@ -26,9 +26,9 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         this.addLoadingPanel();
         this.id = intval(id);
 
-        this.properties = new pimcore.settings.properties(this, "asset");
+        this.properties = new pimcore.element.properties(this, "asset");
         this.permissions = new pimcore.asset.permissions(this);
-        this.dependencies = new pimcore.settings.dependencies(this, "asset");
+        this.dependencies = new pimcore.element.dependencies(this, "asset");
 
         this.getData();
     },

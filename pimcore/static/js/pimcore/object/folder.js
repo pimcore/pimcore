@@ -31,13 +31,13 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.search = new pimcore.object.search(this);
 
         if (this.isAllowed("properties")) {
-            this.properties = new pimcore.settings.properties(this, "object");
+            this.properties = new pimcore.element.properties(this, "object");
         }
         if (this.isAllowed("permissions")) {
             this.permissions = new pimcore.object.permissions(this);
         }
 
-        //this.dependencies = new pimcore.settings.dependencies(this, "object");
+        //this.dependencies = new pimcore.element.dependencies(this, "object");
     },
 
 

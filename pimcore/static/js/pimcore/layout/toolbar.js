@@ -403,7 +403,7 @@ pimcore.layout.toolbar = Class.create({
             handler: function () {
                 pimcore.helpers.itemselector(false, function (selection) {
                     pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
-                });
+                }, null, {moveToTab: true} );
             }
         });
         
@@ -465,7 +465,7 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get("predefined_properties").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("predefined_properties", new pimcore.settings.property.predefined());
+            pimcore.globalmanager.add("predefined_properties", new pimcore.settings.properties.predefined());
         }
     },
 

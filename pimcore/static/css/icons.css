@@ -1033,3 +1033,8 @@
 .pimcore_icon_php {
     background: url(/pimcore/static/img/icon/page_white_php.png) left center no-repeat !important;
 }
+
+
+.pimcore_icon_movetotab {
+    background: url(/pimcore/static/img/icon/tab_go.png) left center no-repeat !important;
+}

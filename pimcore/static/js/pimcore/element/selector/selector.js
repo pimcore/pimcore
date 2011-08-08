@@ -16,12 +16,13 @@ pimcore.registerNS("pimcore.element.selector.selector");
 pimcore.element.selector.selector = Class.create({
 
     
-    initialize: function (multiselect, callback, restrictions) {
+    initialize: function (multiselect, callback, restrictions, config) {
         
         this.initialRestrictions = restrictions ? restrictions: {};
         this.callback = callback;
         this.restrictions = restrictions;
         this.multiselect = multiselect;
+        this.config = typeof config != "undefined" ? config : {};
         
         if(!this.multiselect) {
             this.multiselect = false;
@@ -55,13 +56,19 @@ pimcore.element.selector.selector = Class.create({
             this.callback = function () {};            
             //throw "";
         }
-        
+
+        this.panel = new Ext.Panel({
+            tbar: this.getToolbar(),
+            border: false,
+            layout: "fit"
+        });
+
         this.window = new Ext.Window({
             width: 850,
             height: 550,
             modal: true,
-            tbar: this.getToolbar(),
-            layout: "fit"
+            layout: "fit",
+            items: [this.panel]
         });
         
         this.window.show();
@@ -98,6 +105,7 @@ pimcore.element.selector.selector = Class.create({
         }
         
         if(in_array("asset", this.restrictions.type) && user.isAllowed("assets")) {
+            items.push("-");
             this.toolbarbuttons.asset = new Ext.Button({
                 text: t("assets"),
                 handler: this.searchAssets.bind(this),
@@ -108,6 +116,7 @@ pimcore.element.selector.selector = Class.create({
         }
         
         if(in_array("object", this.restrictions.type) && user.isAllowed("objects")) {
+            items.push("-");
             this.toolbarbuttons.object = new Ext.Button({
                 text: t("objects"),
                 handler: this.searchObjects.bind(this),
@@ -115,6 +124,17 @@ pimcore.element.selector.selector = Class.create({
                 enableToggle: true
             });
             items.push(this.toolbarbuttons.object);
+        }
+
+        if(this.config["moveToTab"]) {
+            items.push("->");
+            this.toolbarbuttons.moveToTab = new Ext.Button({
+                text: t("move_to_tab"),
+                handler: this.moveToTab.bind(this),
+                iconCls: "pimcore_icon_movetotab",
+                enableToggle: false
+            });
+            items.push(this.toolbarbuttons.moveToTab);
         }
         
         if(items.length > 1) {
@@ -125,13 +145,39 @@ pimcore.element.selector.selector = Class.create({
         
         return toolbar;
     },
-    
+
+    moveToTab: function () {
+
+        this.toolbarbuttons.moveToTab.hide();
+
+        // create new tab-panel
+        this.myTabId = "pimcore_search_" + uniqid();
+
+        this.tabpanel = new Ext.Panel({
+            id: this.myTabId,
+            iconCls: "pimcore_icon_search",
+            title: t("search"),
+            border: false,
+            layout: "fit",
+            closable:true,
+            items: [this.panel]
+        });
+
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.add(this.tabpanel);
+        tabPanel.activate(this.myTabId);
+
+        pimcore.layout.refresh();
+
+        this.window.close();
+    },
+
     setSearch: function (panel) {
         delete this.current;
-        this.window.removeAll();
-        this.window.add(panel);
+        this.panel.removeAll();
+        this.panel.add(panel);
         
-        this.window.doLayout();
+        this.panel.doLayout();
     },
     
     resetToolbarButtons: function () {

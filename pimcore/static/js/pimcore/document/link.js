@@ -33,7 +33,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         if (this.isAllowed("permissions")) {
             this.permissions = new pimcore.document.permissions(this);
         }
-        this.dependencies = new pimcore.settings.dependencies(this, "document");
+        this.dependencies = new pimcore.element.dependencies(this, "document");
     },
 
     getSaveData : function () {

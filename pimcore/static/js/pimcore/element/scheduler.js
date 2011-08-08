@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.settings.scheduler");
-pimcore.settings.scheduler = Class.create({
+pimcore.registerNS("pimcore.element.scheduler");
+pimcore.element.scheduler = Class.create({
 
     initialize: function(element, type) {
         this.element = element;

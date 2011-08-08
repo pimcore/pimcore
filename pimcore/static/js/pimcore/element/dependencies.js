@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.settings.dependencies");
-pimcore.settings.dependencies = Class.create({
+pimcore.registerNS("pimcore.element.dependencies");
+pimcore.element.dependencies = Class.create({
 
     initialize: function(element, type) {
         this.element = element;

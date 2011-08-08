@@ -32,7 +32,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
 
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.snippets.settings(this);
-            this.scheduler = new pimcore.settings.scheduler(this, "document");
+            this.scheduler = new pimcore.element.scheduler(this, "document");
         }
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
@@ -44,7 +44,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
             this.permissions = new pimcore.document.permissions(this);
         }
 
-        this.dependencies = new pimcore.settings.dependencies(this, "document");
+        this.dependencies = new pimcore.element.dependencies(this, "document");
         this.reports = new pimcore.report.panel("document_snippet", this);
     },
 

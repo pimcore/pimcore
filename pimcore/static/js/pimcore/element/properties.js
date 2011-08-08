@@ -13,8 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
-pimcore.registerNS("pimcore.settings.properties");
-pimcore.settings.properties = Class.create({
+pimcore.registerNS("pimcore.element.properties");
+pimcore.element.properties = Class.create({
 
     disallowedKeys: [],
 

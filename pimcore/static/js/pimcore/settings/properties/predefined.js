@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.settings.property.predefined");
-pimcore.settings.property.predefined = Class.create({
+pimcore.registerNS("pimcore.settings.properties.predefined");
+pimcore.settings.properties.predefined = Class.create({
 
     initialize: function () {
         this.getTabPanel();

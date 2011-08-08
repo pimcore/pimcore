@@ -26,11 +26,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.edit = new pimcore.object.edit(this);
 
         this.preview = new pimcore.object.preview(this);
-        this.properties = new pimcore.settings.properties(this, "object");
+        this.properties = new pimcore.element.properties(this, "object");
         this.versions = new pimcore.object.versions(this);
-        this.scheduler = new pimcore.settings.scheduler(this, "object");
+        this.scheduler = new pimcore.element.scheduler(this, "object");
         this.permissions = new pimcore.object.permissions(this);
-        this.dependencies = new pimcore.settings.dependencies(this, "object");
+        this.dependencies = new pimcore.element.dependencies(this, "object");
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
         this.getData();

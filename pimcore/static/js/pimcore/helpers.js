@@ -350,8 +350,8 @@ pimcore.helpers.loadingHide = function () {
     pimcore.globalmanager.get("loadingmask").hide();
 }
 
-pimcore.helpers.itemselector = function (muliselect, callback, restrictions) {
-    var itemselector = new pimcore.element.selector.selector(muliselect, callback, restrictions);
+pimcore.helpers.itemselector = function (muliselect, callback, restrictions, config) {
+    var itemselector = new pimcore.element.selector.selector(muliselect, callback, restrictions, config);
 }
 
 
