@@ -62,7 +62,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
             $specialAdminRequest = true;
 
-            Pimcore_Controller_Action_Admin::initSession();
+            Pimcore_Tool_Authentication::initSession();
             // start admin session
             $adminSession = new Zend_Session_Namespace("pimcore_admin");
         }

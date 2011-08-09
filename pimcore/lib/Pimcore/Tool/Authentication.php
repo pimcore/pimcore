@@ -15,6 +15,115 @@
 
 class Pimcore_Tool_Authentication {
 
+
+    /**
+     * @static
+     * @throws Exception
+     * @return User
+     */
+    public static function authenticateSession () {
+
+        // start session if necessary
+        self::initSession();
+
+        // get session namespace
+        $adminSession = new Zend_Session_Namespace("pimcore_admin");
+
+        $thawedUser = User::thaw($adminSession->frozenuser);
+        if ($thawedUser instanceof User) {
+            return $thawedUser;
+        }
+    }
+
+    /**
+     * @static
+     * @throws Exception
+     * @return User
+     */
+    public static function authenticateDigest () {
+
+        // the following is a fix for Basic Auth in an FastCGI Environment
+        if (isset($_SERVER['Authorization']) && !empty($_SERVER['Authorization'])) {
+            $parts = explode(" ", $_SERVER['Authorization']);
+            $type = array_shift($parts);
+            $cred = implode(" ", $parts);
+
+            if ($type == 'Digest') {
+                $_SERVER["PHP_AUTH_DIGEST"] = $cred;
+            }
+        }
+
+        // only digest auth is supported anymore
+        try {
+
+            $auth = new Sabre_HTTP_DigestAuth();
+            $auth->setRealm("pimcore");
+            $auth->init();
+
+            if ($user = User::getByName($auth->getUsername())) {
+                if(!$user->isAdmin()) {
+                    throw new Exception("Only admins can access WebDAV");
+                }
+                if ($auth->validateA1($user->getPassword())) {
+                    return $user;
+                }
+            }
+            throw new Exception("Authentication required");
+        }
+        catch (Exception $e) {
+            $auth->requireLogin();
+            echo "Authentication required\n";
+            die();
+        }
+    }
+
+
+    /**
+     * @static
+     * @return void
+     */
+    public static function initSession() {
+
+        Zend_Session::setOptions(array(
+            "throw_startup_exceptions" => false,
+            "gc_maxlifetime" => 7200,
+            "name" => "pimcore_admin_sid",
+            "strict" => false,
+            "use_only_cookies" => false
+        ));
+
+        try {
+            // register session
+            $front = Zend_Controller_Front::getInstance();
+            if ($front->getRequest() != null && $front->getRequest()->getParam("pimcore_admin_sid")) {
+                // hack to get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
+                $_REQUEST["pimcore_admin_sid"] = $front->getRequest()->getParam("pimcore_admin_sid");
+                $_COOKIE["pimcore_admin_sid"] = $front->getRequest()->getParam("pimcore_admin_sid");
+            }
+            if (!empty($_GET["pimcore_admin_sid"])) {
+                // hack to get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
+                $_REQUEST["pimcore_admin_sid"] = $_GET["pimcore_admin_sid"];
+                $_COOKIE["pimcore_admin_sid"] = $_GET["pimcore_admin_sid"];
+            }
+
+            try {
+                if(!Zend_Session::isStarted()) {
+                    Zend_Session::start();
+                }
+            }
+            catch (Exception $e) {
+                logger::error("Problem while starting session");
+                logger::error($e);
+            }
+
+        }
+        catch (Exception $e) {
+            logger::emergency("there is a problem with admin session");
+            die();
+        }
+    }
+
+
     /**
      * @static
      * @param  string $plainTextPassword

@@ -1,0 +1,93 @@
+Linfo - PHP server health/information script
+
+Currently runs on: Linux; FreeBSD; NetBSD; OpenBSD; Minix (alpha); Darwin/Mac OSX (alpha); SunOS/Solaris(alpha); Windows
+
+Etymology:
+ - The name 'Linfo' was decided upon before I intended it to be cross platform.
+   It was originally only going to be for Linux, and hence I called it Linux-Info,
+   and Linfo sounded really catchy. It stuck.
+
+Goals: 
+ - Provide info such as disk space, temperatures, cpu, ram, etc
+ - Be very fast; generation in under a second is most desired.
+ - Call very few external programs (like df/load/uptime/etc), if any. (parse
+   the file system for info, if possible)
+ - Linux version not use external programs *at all* and rely exclusively on
+   /proc and /sys and connecting to locally listening daemons. (except for extensions, listed below)
+ - Don't go nuts with eye candy. Don't use ajax. Make viewing the info on
+   text only browsers possible and easy.
+ - Any javascript ever used must be *extremely* subtle and degrade gracefully
+ - Don't bother finding Linux distro since it's irrelevant; the kernel and
+   other specs are what matters most
+ - Don't give info that can be exploited and turned into a security risk, especially
+   not names and command line arguments given to running programs.
+ - Don't use blatantly slow methods such as preg_split(), especially not in loops
+ - Prefer speed over code conciseness. Where possible, use for/while loops instead of foreach.
+
+Usable clients:
+ - Any web browser should work, including text only ones
+ - Tested with: Firefox (1.x+), iOS Safari, Chrome, IE (6+), Opera, Lynx, Elinks, Dillo
+
+Global System requirements: 
+ - At least PHP 5
+ - Access to php's preg (PCRE) library, specifically preg_match() 
+   and preg_match_all(). You most likely already have this.
+ - note: PCRE is Linfo's only php requirement :)
+
+Linux system requirements:
+ - /proc and /sys mounted appropriately, and readable by php
+ - Tested with the 2.6 series of kernels. I'm not sure if it works with older ones.
+
+FreeBSD system requirements:
+ - PHP able to execute usual programs under /bin, /usr/bin, /usr/local/bin, etc
+ - Known to work under 8.0-RELEASE; older versions may work
+
+NetBSD system requirements:
+ - PHP able to execute usual programs under /bin, /usr/bin, /usr/local/bin, /usr/pkg/bin, etc
+ - Known to work under NetBSD 5.0.2; older versions may work
+
+OpenBSD system requirements/notes:
+ - PHP able to execute usual programs under /bin, /usr/bin, /usr/local/bin,  etc
+ - Known to work under OpenBSD 4.7; older versions may work
+ - It will not work under the default httpd chroot
+
+Installation/usage:
+ 1) Extract tarball contents to somewhere under your web root
+ 2) Rename sample.config.inc.php to config.inc.php, after optionally changing values in it
+ 3) Visit page in web browser
+ 4) Pass URL to your friends to show off
+
+For other forms of output, aside from usual HTML, append the following to the URL:
+ - ?out=xml - XML output (requires SimpleXML extension)
+ - ?out=json - JSON output
+ - ?out=php_array - PHP serialized associative array
+ - ?out=html - Usual lightweight HTML (default)
+ - ncurses - call ./linfo from the CLI. It will attempt to use http://php.net/manual/en/book.ncurses.php
+
+Known issues:
+ - OS support other than Linux/Windows is relatively meager at times
+
+Linux system temps/voltages/etc requirments:
+ - Have hddtemp listening or periodically writing to syslog, and/or
+ - Have mbmon listening, and/or
+ - Have sensord periodically writing to syslog and/or
+ - Have hwmon set up in /sys. This is enabled by default and works by default 
+   at least on recent ubuntu versions
+ 
+For cups/samba/truecrypt support:
+ - Look at the extensions part of the site
+
+TODO:
+ - Support for other Unix operating systems (Hurd, IRIX, AIX, HP UX, etc)
+ - Support for strange operating systems: Haiku/BeOS
+ - More superfluous features/extensions
+
+Please send suggestions, patches (diff's), help requests, comments, complaints, beer, pizza, and hookers to:
+ - joe@u13.net 
+ - IRC - #linfo @ freenode
+
+License: GNU General Public License
+Author/project leader: Joseph Robert Gillotti <joe@u13.net>
+Additional author(s): (See AUTHORS)
+URL: http://linfo.sourceforge.net/
+Favicon by: Lee Bradley

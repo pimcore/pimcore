@@ -56,8 +56,6 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             Object_Abstract::setGetInheritedValues(false);
             Pimcore::setAdminMode();
 
-            // init session
-            self::initSession();
 
             // init translations
             self::initTranslations($this);
@@ -65,63 +63,30 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             // init zend action helpers
             Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
-
-            // get session namespace
-            $adminSession = new Zend_Session_Namespace("pimcore_admin");
-
-            // user informations
-            $thawedUser = User::thaw($adminSession->frozenuser);
-            if ($thawedUser instanceof User) {
-                $this->setUser($thawedUser);
+            // authenticate user, first try to authenticate with session information
+            $user = Pimcore_Tool_Authentication::authenticateSession();
+            if($user instanceof User) {
+                $this->setUser($user);
                 if ($this->getUser()->getLanguage()) {
                     $this->setLanguage($this->getUser()->getLanguage());
                 }
-            }
-            else {
-                // auth for WebDAV
+            } else {
+                // try to authenticate with digest, but this is only allowed for WebDAV
                 if ($this->_getParam("module") == "admin" && $this->_getParam("controller") == "asset" && $this->_getParam("action") == "webdav") {
-
-                    // the following is a fix for Basic Auth in an FastCGI Environment
-                    if (isset($_SERVER['Authorization']) && !empty($_SERVER['Authorization'])) {
-                        $parts = explode(" ", $_SERVER['Authorization']);
-                        $type = array_shift($parts);
-                        $cred = implode(" ", $parts);
-                        
-                        if ($type == 'Digest') {
-                            $_SERVER["PHP_AUTH_DIGEST"] = $cred;
-                        }
-                    }
-
-                    // only digest auth is supported anymore
-                    try {
-
-                        $auth = new Sabre_HTTP_DigestAuth();
-                        $auth->setRealm("pimcore");
-                        $auth->init();
-
-                        if ($user = User::getByName($auth->getUsername())) {
-                            if(!$user->isAdmin()) {
-                                throw new Exception("Only admins can access WebDAV");
-                            }
-                            if ($auth->validateA1($user->getPassword())) {
-                                $this->setUser($user);
-                                return;
-                            }
-                        }
-                        throw new Exception("Authentication required");
-                    }
-                    catch (Exception $e) {
-                        $auth->requireLogin();
-                        echo "Authentication required\n";
-                        die();
+                    $user = Pimcore_Tool_Authentication::authenticateDigest();
+                    if($user instanceof User) {
+                        $this->setUser($user);
+                        return;
                     }
                 }
             }
-            
+
+            // send a auth header for the client (is covered by the ajax object in javascript)
             if (!$this->getUser() instanceof User) {
                 $this->getResponse()->setHeader("X-Pimcore-Auth","required");
             }
 
+            // redirect to the login-page if the user isn't authenticated
             if (!$this->getUser() instanceof User && !($this->_getParam("module") == "admin" && $this->_getParam("controller") == "login")) {
                 $this->_redirect("/admin/login");
                 $this->getResponse()->sendResponse();
@@ -129,7 +94,6 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             }
 
             Zend_Registry::set("pimcore_admin_user", $this->getUser());
-
             Zend_Registry::set("pimcore_admin_initialized", true);
         }
     }
@@ -176,46 +140,13 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         }
     }
 
+    /**
+     * @deprecated
+     * @static
+     * @return void
+     */
     public static function initSession() {
-
-        $sessionLifetime = 7200;
-        Zend_Session::setOptions(array(
-            "throw_startup_exceptions" => false,
-            "gc_maxlifetime" => $sessionLifetime,
-            "name" => "pimcore_admin_sid",
-            "strict" => false,
-            "use_only_cookies" => false
-        ));
-        
-        try {
-            // register session
-            $front = Zend_Controller_Front::getInstance();
-            if ($front->getRequest() != null && $front->getRequest()->getParam("pimcore_admin_sid")) {
-                // hack to get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                $_REQUEST["pimcore_admin_sid"] = $front->getRequest()->getParam("pimcore_admin_sid");
-                $_COOKIE["pimcore_admin_sid"] = $front->getRequest()->getParam("pimcore_admin_sid");
-            }
-            if (!empty($_GET["pimcore_admin_sid"])) {
-                // hack to get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                $_REQUEST["pimcore_admin_sid"] = $_GET["pimcore_admin_sid"];
-                $_COOKIE["pimcore_admin_sid"] = $_GET["pimcore_admin_sid"];
-            }
-            
-            try {
-                if(!Zend_Session::isStarted()) {
-                    Zend_Session::start();
-                }
-            }
-            catch (Exception $e) {
-                logger::error("Problem while starting session");
-                logger::error($e);
-            }
-            
-        }
-        catch (Exception $e) {
-            logger::emergency("there is a problem with admin session");
-            die();
-        }
+        Pimcore_Tool_Authentication::initSession();
     }
 
     public static function initTranslations($instance) {

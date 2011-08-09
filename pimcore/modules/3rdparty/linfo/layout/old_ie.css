@@ -1,0 +1,6 @@
+/* Versions of IE under 8 suck even more than usual */
+
+/* This make the columns actually appear side by side since it's too feeble to undersand widths correctly. */
+.col2 .col {width: 49%;}
+.col2_side_right {float: left; width: 19%;}
+
