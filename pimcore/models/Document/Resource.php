@@ -424,7 +424,7 @@ class Document_Resource extends Element_Resource {
      * @return boolean
      */
     public function hasChilds() {
-        $c = $this->db->fetchRow("SELECT id FROM documents WHERE parentId = ?", $this->model->getId());
+        $c = $this->db->fetchRow("SELECT id FROM documents WHERE parentId = ? LIMIT 1", $this->model->getId());
 
         $state = false;
         if ($c["id"]) {
