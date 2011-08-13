@@ -24,6 +24,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
     public function load ($imagePath) {
 
+        if($this->resource) {
+            unset($this->resource);
+            $this->resource = null;
+        }
+
         $this->resource = new Imagick();
         if(!$this->resource->readImage($imagePath)) {
             return false;
@@ -42,6 +47,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function save ($path, $format, $quality = null) {
 
+        $this->resource->stripimage();
         $this->resource->setImageFormat($format);
 
         if($quality) {
