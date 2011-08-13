@@ -91,7 +91,11 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
         this.data.type = data.node.attributes.elementType;
         this.data.subtype = data.node.attributes.type;
 
-        this.updateContent();
+        if (this.options.reload) {
+            this.reloadDocument();
+        } else {
+            this.updateContent();
+        }
 
         return true;
     },
@@ -150,6 +154,10 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
                 this.getBody().addClass("pimcore_tag_snippet_empty");
                 this.getBody().setHeight(height + "px");
 
+                if (this.options.reload) {
+                    this.reloadDocument();
+                }
+
             }.bind(this)
         }));
 
@@ -189,8 +197,12 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
             this.data.id = item.id;
             this.data.type = item.type;
             this.data.subtype = item.subtype;
-    
-            this.updateContent();
+
+            if (this.options.reload) {
+                this.reloadDocument();
+            } else {
+                this.updateContent();
+            }
         }
     },
     

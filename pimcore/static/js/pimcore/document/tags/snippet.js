@@ -91,7 +91,12 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
 
             this.data.id = data.node.attributes.id;
             this.data.path = uri;
-            this.updateContent(uri);
+
+            if (this.options.reload) {
+                this.reloadDocument();
+            } else {
+                this.updateContent(uri);
+            }
 
             return true;
         }
@@ -168,6 +173,10 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
                 this.getBody().addClass("pimcore_tag_snippet_empty");
                 this.getBody().setStyle(height + "px");
 
+                if (this.options.reload) {
+                    this.reloadDocument();
+                }
+
             }.bind(this)
         }));
 
@@ -215,7 +224,12 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
     
             this.data.id = item.id;
             this.data.path = uri;
-            this.updateContent(uri);
+
+            if (this.options.reload) {
+                this.reloadDocument();
+            } else {
+                this.updateContent(uri);
+            }
         }
     },
 
