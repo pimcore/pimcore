@@ -189,7 +189,7 @@ class Object_Concrete extends Object_Abstract {
 
         $this->getResource()->update();
         $this->saveScheduledTasks();
-        $this->saveVersion(false);
+        $this->saveVersion(false, false);
         $this->saveChilds();
         
         Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
@@ -242,10 +242,15 @@ class Object_Concrete extends Object_Abstract {
     /**
      * @return void
      */
-    public function saveVersion($setMOdificationDate = true) {
+    public function saveVersion($setModificationDate = true, $callPluginHook = true) {
 
-        if ($setMOdificationDate) {
+        if ($setModificationDate) {
             $this->setO_modificationDate(time());
+        }
+
+        // hook should be also called if "save only new version" is selected
+        if($callPluginHook) {
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
         }
 
         // scheduled tasks are saved always, they are not versioned!
