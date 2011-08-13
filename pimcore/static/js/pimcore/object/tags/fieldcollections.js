@@ -237,7 +237,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.component.remove(blockElement, false);
         this.object.edit.layout.add(blockElement);
         this.object.edit.layout.doLayout();
-        this.layout.doLayout();
+        this.component.doLayout();
         
         // move the element to the right position
         this.object.edit.layout.remove(blockElement,false);

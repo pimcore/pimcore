@@ -142,7 +142,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     loadHotspots: function(initialLoad) {
         this.hotspots = {};
         var box = Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage');
-        if(box.getHeight() < 1 || box.getWidth() < 1) {
+        if(box && (box.getHeight() < 1 || box.getWidth() < 1)) {
             setTimeout(this.loadHotspots.bind(this, initialLoad), 1000);
         } else {
             if(this.loadedHotspots && this.loadedHotspots.length > 0) {
