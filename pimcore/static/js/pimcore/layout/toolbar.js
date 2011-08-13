@@ -186,6 +186,10 @@ pimcore.layout.toolbar = Class.create({
                     text: "PHP Info",
                     iconCls: "pimcore_icon_php",
                     handler: this.showPhpInfo
+                },{
+                    text: "Server Info",
+                    iconCls: "pimcore_icon_server_info",
+                    handler: this.showServerInfo
                 }]
             });
         }
@@ -712,5 +716,18 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo", "pimcore_icon_php", "PHP Info"));
         }
 
-    }
+    },
+
+    showServerInfo: function () {
+
+        var id = "serverinfo";
+
+        try {
+            pimcore.globalmanager.get(id).activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/linfo/index.php", "pimcore_icon_server_info", "Server Info"));
+        }
+
+    },
 });

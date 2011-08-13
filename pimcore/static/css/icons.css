@@ -1038,3 +1038,8 @@
 .pimcore_icon_movetotab {
     background: url(/pimcore/static/img/icon/tab_go.png) left center no-repeat !important;
 }
+
+.pimcore_icon_server_info {
+    background: url(/pimcore/static/img/icon/server_chart.png) left center no-repeat !important;
+}
+

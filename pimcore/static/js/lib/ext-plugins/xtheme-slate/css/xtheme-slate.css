@@ -598,7 +598,7 @@ td.x-grid3-hd-over, td.sort-desc, td.sort-asc, td.x-grid3-hd-menu-open {
 /* Progress Bar */
 
 .x-progress-bar{
-	background:#9CBFEE url( ../../resources/images/slate/progress/progress-bg.gif ) repeat-x left center;
+	background:#9CBFEE url( ../images/slate/progress/progress-bg.gif ) repeat-x left center;
 	border-top:1px solid #ddd;
 	border-bottom:1px solid #ddd;
 }
