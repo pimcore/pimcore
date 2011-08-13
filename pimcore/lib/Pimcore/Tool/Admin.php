@@ -104,12 +104,18 @@ class Pimcore_Tool_Admin {
     public static function determineCsvDialect ($file) {
 
         // minimum 10 lines, to be sure take more
+        $sample = "";
         for ($i=0; $i<10; $i++) {
             $sample .= implode("", array_slice(file($file), 0, 11)); // grab 20 lines
         }
 
-        $sniffer = new Csv_AutoDetect();
-        $dialect = $sniffer->detect($sample);
+        try {
+            $sniffer = new Csv_AutoDetect();
+            $dialect = $sniffer->detect($sample);
+        } catch (Exception $e) {
+            // use default settings
+            $dialect = new Csv_Dialect();
+        }
 
         return $dialect;
     }
