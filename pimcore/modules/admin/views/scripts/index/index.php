@@ -336,11 +336,8 @@
             "pimcore/object/customviews/tree.js",
             
             //plugins
-            //"pimcore/plugin/overview.js",
-            //"pimcore/plugin/settings.js",
             "pimcore/plugin/broker.js",
             "pimcore/plugin/plugin.js",
-            //"pimcore/plugin/update.js",
         
             // reports
             "pimcore/report/panel.js",
