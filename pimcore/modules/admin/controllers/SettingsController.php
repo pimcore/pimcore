@@ -384,6 +384,24 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(false);
     }
 
+    public function clearOutputCacheAction() {
+        if ($this->getUser()->isAllowed("clear_cache")) {
+
+            // empty document cache
+            Pimcore_Model_Cache::clearTag("output");
+
+            $this->_helper->json(array("success" => true));
+        }
+        else {
+            if ($this->getUser() != null) {
+                Logger::err("user [" . $this->getUser()->getId() . "] attempted to clear ouput cache, but has no permission to do so.");
+            } else {
+                Logger::err("attempt to clear output cache, but no user in session.");
+            }
+        }
+        $this->_helper->json(false);
+    }
+
     public function clearTemporaryFilesAction() {
         if ($this->getUser()->isAllowed("clear_temp_files")) {
 

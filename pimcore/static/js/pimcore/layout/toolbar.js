@@ -327,6 +327,14 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
+            if (user.isAllowed("clear_cache")) {
+                cacheMenu.menu.push({
+                    text: t("clear_only_output_cache"),
+                    iconCls: "pimcore_icon_menu_clear_cache",
+                    handler: this.clearOutputCache
+                });
+            }
+
             settingsItems.push(cacheMenu);
         }
 
@@ -652,6 +660,12 @@ pimcore.layout.toolbar = Class.create({
     clearCache: function () {
         Ext.Ajax.request({
             url: '/admin/settings/clear-cache'
+        });
+    },
+
+    clearOutputCache: function () {
+        Ext.Ajax.request({
+            url: '/admin/settings/clear-output-cache'
         });
     },
 
