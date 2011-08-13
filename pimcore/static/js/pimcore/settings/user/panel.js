@@ -1169,7 +1169,10 @@ pimcore.settings.user.panel = Class.create({
                     }
                 }));
             }
-            if (this.childNodes == 0 && !this.allowChildren) {
+
+
+            if (this.childNodes == 0 && !this.allowChildren && this.id != user.id) {
+                // users
                 menu.add(new Ext.menu.Item({
                     text: t('delete_user'),
                     iconCls: "pimcore_icon_user_delete",
@@ -1177,8 +1180,8 @@ pimcore.settings.user.panel = Class.create({
                         "click": this.attributes.reference.deleteUser.bind(this)
                     }
                 }));
-            } else {
-
+            } else if(this.allowChildren) {
+                // groups
                 var isEnabled = true;
                 if (this.childNodes == 0) {
                     isEnabled = false;
@@ -1192,7 +1195,10 @@ pimcore.settings.user.panel = Class.create({
                     disabled: isEnabled
                 }));
             }
-            menu.show(this.ui.getAnchor());
+
+            if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined" && menu.items.items.length > 0) {
+                menu.show(this.ui.getAnchor());
+            }
         }
     },
 
