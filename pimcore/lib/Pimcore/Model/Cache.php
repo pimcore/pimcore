@@ -142,6 +142,9 @@ class Pimcore_Model_Cache {
 
             $key = self::$cachePrefix . $key;
             $data = $cache->load($key);
+
+            // unserialize data, use custom serializer
+            $data = Pimcore_Tool_Serialize::unserialize($data);
     
             if ($data) {
                 Logger::debug("Successfully get object for key " . $key . " from cache");
@@ -217,7 +220,8 @@ class Pimcore_Model_Cache {
                 }
             }
 
-            
+            // serialize data, use custom serializer
+            $data = Pimcore_Tool_Serialize::serialize($data);
     
             $key = self::$cachePrefix . $key;
             $success = $cache->save($data, $key, $tags);

@@ -44,7 +44,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     public function restore () {
         
         $raw = file_get_contents($this->getStoreageFile());
-        $element = unserialize($raw);
+        $element = Pimcore_Tool_Serialize::unserialize($raw);
 
         // check for element with the same name
         if($element instanceof Document) {
@@ -98,7 +98,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
         // serialize data
         $this->element->_fulldump = true;
-        $data = serialize($this->getElement());
+        $data = Pimcore_Tool_Serialize::serialize($this->getElement());
         
         $this->getResource()->save();
         

@@ -94,7 +94,7 @@ class Version extends Pimcore_Model_Abstract {
         if (is_object($data) or is_array($data)) {
             $this->setSerialized(true);
             $data->_fulldump = true;
-            $dataString = serialize($this->getData());
+            $dataString = Pimcore_Tool_Serialize::serialize($this->getData());
             unset($this->_fulldump);
         } else {
             $dataString = $data;
@@ -146,7 +146,7 @@ class Version extends Pimcore_Model_Abstract {
         $data = file_get_contents($this->getFilePath());
 
         if ($this->getSerialized()) {
-            $data = unserialize($data);
+            $data = Pimcore_Tool_Serialize::unserialize($data);
         }
 
         $data = Element_Service::renewReferences($data);
