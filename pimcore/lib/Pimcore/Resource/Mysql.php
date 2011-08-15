@@ -37,7 +37,13 @@ class Pimcore_Resource_Mysql {
 
         $db = Zend_Db::factory($config["database"]["adapter"],$config["database"]["params"]);
         $db->getConnection()->exec("SET NAMES " . $charset);
-        $db->getConnection()->exec("SET storage_engine=InnoDB;");
+
+        // try to set innodb as default storage-engine
+        try {
+            $db->getConnection()->exec("SET storage_engine=InnoDB;");
+        } catch (Exception $e) {
+            Logger::warn($e);
+        }
 
         if(PIMCORE_DEVMODE) {
             $profiler = new Pimcore_Resource_Mysql_Profiler('All DB Queries');
