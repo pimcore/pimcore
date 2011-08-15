@@ -178,7 +178,7 @@ class Object_Concrete extends Object_Abstract {
                             throw new Exception($e->getMessage() . " fieldname=" . $fd->getName());
                         }
                     } else {
-                        throw new Exception($e->getMessage() . " fieldname=" . $fd->getName());
+                        throw new Exception($e->getMessage() . " fieldname=" . $fd->getName() . " data=" . print_r($value,true));
                     }
                 }
             }

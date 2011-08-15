@@ -100,6 +100,9 @@ class Pimcore_Tool_Serialize {
                 foreach ($vars as $key => $value) {
                     $data->$key = self::reverseMapElementReferences($value);
                 }
+
+                // remove recursion detection property
+                unset($data->__pimcore_tool_serialize_active);
             }
         } else if (is_array($data)) {
             foreach ($data as &$value) {
