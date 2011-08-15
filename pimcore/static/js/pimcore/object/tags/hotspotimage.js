@@ -182,6 +182,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         this.hotspotCount++;
         var number = this.hotspotCount;
 
+        if(!Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage')) {
+            return;
+        }
+
         var box = Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage').getBox();
 
         var height = this.convertToAbsolute(hotspot.height, box.height);
