@@ -91,8 +91,12 @@ class Pimcore_Tool_Serialize {
         if(is_object($data)) {
             if($data instanceof Element_Reference_Placeholder) {
                 return Element_Service::getElementById($data->getType(), $data->getId());
-            } else {
+            } else if(!isset($data->__pimcore_tool_serialize_active)) {
                 $vars = get_object_vars($data);
+
+                // recursion detection
+                $data->__pimcore_tool_serialize_active = true;
+
                 foreach ($vars as $key => $value) {
                     $data->$key = self::reverseMapElementReferences($value);
                 }
