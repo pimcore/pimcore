@@ -569,6 +569,15 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         }
     }
 
+    /**
+     * @param $data
+     * @param Object_Concrete $object
+     * @return string
+     */
+    public function getDataForGrid($data, $object = null) {
+        return "NOT SUPPORTED";
+    }
+
 
     //TODO: sanity check
 }
