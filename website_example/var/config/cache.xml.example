@@ -20,10 +20,12 @@
         <type>Website_Cache_CustomMemcached</type>
         <custom>true</custom>
         <options>
-            <host>localhost</host>
-            <port>11211</port>
-            <persistent>true</persistent>
-            <compatibility>true</compatibility>
+            <servers>
+                <host>localhost</host>
+                <port>11211</port>
+                <persistent>true</persistent>
+                <compatibility>true</compatibility>
+            </servers>
         </options>
     </backend>-->
 </zend-config>
