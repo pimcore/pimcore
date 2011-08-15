@@ -198,34 +198,6 @@ class Object_Class_Data_Link extends Object_Class_Data {
     }
 
     /**
-     * @param mixed $data
-     * @param Object_Concrete $ownerObject
-     * @param array $blockedTags
-     */
-    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
-        $cacheTags = array();
-
-        if ($data instanceof Object_Data_Link and $data->getInternal()) {
-
-            if (intval($data->getInternal()) > 0) {
-                if ($data->getInternalType() == "document") {
-
-                    if ($doc = Document::getById($data->getInternal())) {
-                        $cacheTags[] = $doc->getCacheTag();
-                    }
-                }
-                else if ($data->getInternalType() == "asset") {
-                    if ($asset = Asset::getById($data->getInternal())) {
-                        $cacheTags[] = $asset->getCacheTag();
-                    }
-                }
-            }
-        }
-
-        return $cacheTags;
-    }
-    
-    /**
      * converts object data to a simple string value or CSV Export
      * @abstract
      * @param Object_Abstract $object
