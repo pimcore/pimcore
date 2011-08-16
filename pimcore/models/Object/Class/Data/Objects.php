@@ -142,7 +142,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         } else if (is_array($data) && count($data) === 0){
             return "";
         } else {
-            throw new Exception("invalid data passed to getDataForQueryResource - must be array");
+            throw new Exception("invalid data passed to getDataForQueryResource - must be array and it is: " . print_r($data, true));
         }
     }
 
