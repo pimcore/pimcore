@@ -624,17 +624,11 @@ class Object_Concrete extends Object_Abstract {
             if (in_array($key, $this->getLazyLoadedFields())) {
                 // prevent lazyloading properties to go into the cache, only to version and recyclebin, ... (_fulldump)
                 if(isset($this->_fulldump)) {
-                    // be sure that lazy load data is available for fulldump
-                    $method = "get" . ucfirst($key);
-                    if(method_exists($this, $method)) {
-                        $this->$method();
-                        $finalVars[] = $key;
-                    }
+                    $finalVars[] = $key;
                 }
             } else {
                 $finalVars[] = $key;
             }
-
         } 
 
         return $finalVars;

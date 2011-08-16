@@ -22,6 +22,12 @@ class Pimcore_Tool_Serialize {
      * @return string
      */
     public static function serialize ($data) {
+
+        // load all data if it is an object
+        if($data instanceof Object_Concrete) {
+            Object_Service::loadAllObjectFields($data);
+        }
+
         $filteredData = self::mapElementReferences($data, true);
         $serializedData = serialize($filteredData);
 
