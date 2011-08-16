@@ -3677,7 +3677,7 @@ Please select a value</tooltip>
       <visibleSearch></visibleSearch>
     </fieldcollection>
     <nonowner>
-      <ownerClassId>1</ownerClassId>
+      <ownerClassName>allfields</ownerClassName>
       <ownerFieldName>objects</ownerFieldName>
       <lazyLoading>1</lazyLoading>
       <fieldtype>nonownerobjects</fieldtype>
@@ -9686,7 +9686,7 @@ Please select a value</tooltip>
           <locked></locked>
         </childs>
         <childs>
-          <ownerClassId>1</ownerClassId>
+          <ownerClassName>allfields</ownerClassName>
           <ownerFieldName>objects</ownerFieldName>
           <lazyLoading>1</lazyLoading>
           <fieldtype>nonownerobjects</fieldtype>

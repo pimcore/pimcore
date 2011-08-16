@@ -23,9 +23,6 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
     public static $remoteOwner = true;
 
 
-
-
-
     /**
      * @return bool
      */
@@ -34,21 +31,15 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
     }
 
     /**
-     *
-
-
-    /**
-     * @var int
+     * @var string
      */
-    public $ownerClassId;
+    public $ownerClassName;
+
 
     /**
      * @var string
      */
     public $ownerFieldName;
-
-
- 
 
     /**
      * NonOwnerObjects must be lazy loading!
@@ -86,18 +77,25 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
 
 
     /**
-     * @return int
+     * @param string $ownerClassName
+     * @return void
      */
-    public function getOwnerClassId(){
-        return $this->ownerClassId;
+    public function setOwnerClassName($ownerClassName)
+    {
+        $this->ownerClassName = $ownerClassName;
     }
 
     /**
-     * @param  int $id
-     * @return void
+     * @return string
      */
-    public function setOwnerClassId($id){
-        $this->ownerClassId=$id;
+    public function getOwnerClassName()
+    {
+        //fallback for legacy data
+        if(empty($this->ownerClassName)){
+            $class = Object_Class::getById($this->ownerClassId);
+            $this->ownerClassName =  $class->getName();
+        }
+        return $this->ownerClassName;
     }
 
     /**
@@ -144,7 +142,7 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
      */
     protected function allowObjectRelation($object) {
         //only relations of owner type are allowed
-        $ownerClass = Object_Class::getById($this->getOwnerClassId());
+        $ownerClass = Object_Class::getByName($this->getOwnerClassName());
         if($ownerClass->getId()>0 and $ownerClass->getId() == $object->getO_classId()){
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
             if($fd instanceof Object_Class_Data_Objects){

@@ -16,8 +16,9 @@
 class Admin_MiscController extends Pimcore_Controller_Action_Admin
 {
 
-    public function liveconnectAction () {
-        
+    public function liveconnectAction()
+    {
+
         $token = $this->_getParam("token");
         Pimcore_Liveconnect::setToken($token);
         $this->view->token = $token;
@@ -25,8 +26,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function jsonTranslationsAdminAction()
     {
-        $this->getResponse()->setHeader("Content-Type","text/javascript", true);
-        
+        $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
+
         $language = $this->_getParam("language");
 
         $list = new Translation_Admin_List();
@@ -43,7 +44,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function jsonTranslationsSystemAction()
     {
-        $this->getResponse()->setHeader("Content-Type","text/javascript", true);
+        $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
 
         $language = $this->_getParam("language");
 
@@ -69,7 +70,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function jsonTransliterationAction()
     {
-        $this->getResponse()->setHeader("Content-Type","text/javascript", true);
+        $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
         $translitTable = Pimcore_Tool_Transliteration::getTransliterationTable();
 
         $search = array();
@@ -145,7 +146,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function availableLanguagesAction()
     {
-        $this->getResponse()->setHeader("Content-Type","text/javascript", true);
+        $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
 
         $languages = Zend_Locale::getTranslationList('language');
 
@@ -302,8 +303,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-              "success" => $success
-        ));
+                                  "success" => $success
+                             ));
     }
 
     public function maintenanceAction()
@@ -314,20 +315,22 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         if ($this->_getParam("deactivate")) {
             Pimcore_Tool_Admin::deactivateMaintenanceMode();
-        } 
+        }
 
         $this->_helper->json(array(
-              "success" => true
-        ));
+                                  "success" => true
+                             ));
     }
 
-    public function phpinfoAction () {
+    public function phpinfoAction()
+    {
         phpinfo();
         exit;
     }
 
     public function testAction()
     {
+
         die("done");
     }
 }

@@ -70,26 +70,28 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
             typeAhead: true,
             triggerAction: 'all',
             store: pimcore.globalmanager.get("object_types_store"),
-            valueField: 'id',
+            valueField: 'text',
             displayField: 'text',
             listWidth: 'auto',
             fieldLabel: t('owner_class'),
-            name: 'ownerClassId',
-            value: this.datax.ownerClassId,
+            name: 'ownerClassName',
+            value: this.datax.ownerClassName,
             forceSelection:true,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
-                    this.datax.ownerClassId=classNamevalue;
+                    this.datax.ownerClassName=classNamevalue;
                 }.bind(this)
             }
 
         });
 
+
+
         this.fieldComboStore = new Ext.data.JsonStore({
             url: '/admin/object/grid-get-column-config',
             baseParams: {
                 types: 'objects',
-                id: this.datax.ownerClassId
+                name: this.datax.ownerClassName
             },
             root: "availableFields",
             fields: ['key', 'label'],
@@ -110,8 +112,8 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
             name: 'ownerFieldName',
             listeners: {
                 focus: function(){
-                    if (this.datax.ownerClassId != null) {
-                        this.fieldCombo.store.load({params:{id:this.datax.ownerClassId}});
+                    if (this.datax.ownerClassName != null) {
+                        this.fieldCombo.store.load({params:{name:this.datax.ownerClassName}});
                     }   
                 }.bind(this) 
             }

@@ -208,6 +208,9 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             for (i = 0; i < this.fieldConfig.classes.length; i++) {
                 allowedClasses.push(this.fieldConfig.classes[i].classes);
             }
+        } else if (this.fieldConfig.ownerClassName) {
+            allowedClasses = [];
+            allowedClasses.push(this.fieldConfig.ownerClassName);
         } else if (classStore.data && classStore.data.items && classStore.data.items.length > 0) {
             allowedClasses = [];
             for (i = 0; i < classStore.data.items.length; i++) {
