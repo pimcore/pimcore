@@ -23,7 +23,7 @@ class Pimcore_Tool_Serialize {
      */
     public static function serialize ($data) {
 
-        // load all data if it is an object
+        // load all data if it is an object, because of lazyloaded fields and _fulldump
         if($data instanceof Object_Concrete) {
             Object_Service::loadAllObjectFields($data);
         }
@@ -33,7 +33,6 @@ class Pimcore_Tool_Serialize {
 
         // now we have to remap the elements, because of pass by reference (because of combination of version/caching, ...)
         self::reverseMapElementReferences($filteredData);
-
 
         return $serializedData;
     }
