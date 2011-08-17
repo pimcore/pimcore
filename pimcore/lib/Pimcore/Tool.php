@@ -346,15 +346,32 @@ class Pimcore_Tool {
 
     /**
      * @static
-     * @param  $url
+     * @param $url
+     * @param array $paramsGet
+     * @param array $paramsPost
      * @return bool|string
      */
-    public static function getHttpData($url) {
+    public static function getHttpData($url, $paramsGet = array(), $paramsPost = array()) {
         
         $client = self::getHttpClient();
         $client->setUri($url);
+        $requestType = Zend_Http_Client::GET;
 
-        $response = $client->request();
+        if(is_array($paramsGet) && count($paramsGet) > 0) {
+            foreach ($paramsGet as $key => $value) {
+                $client->setParameterGet($key, $value);
+            }
+        }
+
+        if(is_array($paramsPost) && count($paramsPost) > 0) {
+            foreach ($paramsPost as $key => $value) {
+                $client->setParameterPost($key, $value);
+            }
+
+            $requestType = Zend_Http_Client::POST;
+        }
+
+        $response = $client->request($requestType);
 
         if ($response->isSuccessful()) {
             return $response->getBody();

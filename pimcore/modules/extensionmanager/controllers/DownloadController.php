@@ -53,7 +53,7 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
 
 
         $remoteConfig["token"] = Pimcore_Liveconnect::getToken();
-        $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/download/getExtensions.php?data=" . base64_encode(serialize($remoteConfig)));
+        $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/download/getExtensions.php", null, array("data" => base64_encode(serialize($remoteConfig))));
 
         if(!$rawData) {
             header('HTTP/1.1 403 Forbidden');
@@ -75,7 +75,7 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
             "type" => $type
         );
 
-        $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/download/getDownloadInformation.php?data=" . base64_encode(serialize($remoteConfig)));
+        $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/download/getDownloadInformation.php", null, array("data" => base64_encode(serialize($remoteConfig))));
 
         if(!$rawData) {
             header('HTTP/1.1 403 Forbidden');
