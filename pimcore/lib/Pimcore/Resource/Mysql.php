@@ -51,6 +51,9 @@ class Pimcore_Resource_Mysql {
             $db->setProfiler($profiler);
         }
 
+        // put the connection into a wrapper to handle connection timeouts, ...
+        $db = new Pimcore_Resource_Wrapper($db);
+
         return $db;
     }
 
@@ -129,5 +132,30 @@ class Pimcore_Resource_Mysql {
         } catch (Exception $e) {
             Logger::error($e);
         }
+    }
+
+
+    /**
+     * @static
+     * @param Exception $exception
+     * @return void
+     */
+    public static function errorHandler ($method, $args, $exception) {
+        
+        if(strpos(strtolower($exception->getMessage()), "mysql server has gone away") !== false) {
+            // the connection to the server has probably been lost, try to reconnect and call the method again
+            try {
+                self::reset();
+                $r = self::get()->callResourceMethod($method, $args);
+                return $r;
+            } catch (Exception $e) {
+                logger::emergency($e);
+                throw $e;
+            }
+        }
+
+        // no handler just log the exception and then throw it
+        logger::emergency($exception);
+        throw $exception;
     }
 }
