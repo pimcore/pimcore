@@ -127,7 +127,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         foreach ($data as $key => $value) {
             $setsql[] = "`" . $key . "` = '" . $value . "'";
         }
-        $this->logSql("UPDATE classes SET ". implode(",",$setsql) ." WHERE id = '" . $this->db->quote($this->model->getId()) . "';");
+        $this->logSql("UPDATE classes SET ". implode(",",$setsql) ." WHERE id = " . $this->db->quote($this->model->getId()) . ";");
         
         
          // save definition as a serialized file
