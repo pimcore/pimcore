@@ -152,7 +152,9 @@ class Pimcore_Resource_Mysql {
         if(strpos(strtolower($exception->getMessage()), "mysql server has gone away") !== false) {
             // the connection to the server has probably been lost, try to reconnect and call the method again
             try {
+                Logger::info("the connection to the MySQL-Server has probably been lost, try to reconnect...");
                 self::reset();
+                Logger::info("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
                 $r = self::get()->callResourceMethod($method, $args);
                 return $r;
             } catch (Exception $e) {
