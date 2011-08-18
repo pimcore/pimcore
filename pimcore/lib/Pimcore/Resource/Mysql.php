@@ -54,6 +54,8 @@ class Pimcore_Resource_Mysql {
         // put the connection into a wrapper to handle connection timeouts, ...
         $db = new Pimcore_Resource_Wrapper($db);
 
+        Logger::debug("Successfully established connection to MySQL-Server");
+
         return $db;
     }
 
@@ -92,7 +94,7 @@ class Pimcore_Resource_Mysql {
         try {
             if(Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
                 $connection = Zend_Registry::get("Pimcore_Resource_Mysql");
-                if($connection instanceof Zend_Db_Adapter_Abstract) {
+                if($connection instanceof Pimcore_Resource_Wrapper) {
                     return $connection;
                 }
             }
@@ -122,7 +124,7 @@ class Pimcore_Resource_Mysql {
             if(Zend_Registry::isRegistered("Pimcore_Resource_Mysql")) {
                 $db = Zend_Registry::get("Pimcore_Resource_Mysql");
 
-                if($db instanceof Zend_Db_Adapter_Abstract) {
+                if($db instanceof Pimcore_Resource_Wrapper) {
                     $db->closeConnection();
                 }
 
@@ -136,6 +138,8 @@ class Pimcore_Resource_Mysql {
 
 
     /**
+     * The error handler is called by the wrapper if an error occurs during __call()
+     *
      * @static
      * @param Exception $exception
      * @return void

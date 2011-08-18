@@ -52,7 +52,6 @@ class Pimcore_Resource_Wrapper {
      * @return mixed
      */
     public function __call($method, $args) {
-
         try {
             $r = $this->callResourceMethod($method, $args);
             return $r;
