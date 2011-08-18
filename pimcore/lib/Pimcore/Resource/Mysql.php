@@ -141,8 +141,11 @@ class Pimcore_Resource_Mysql {
      * The error handler is called by the wrapper if an error occurs during __call()
      *
      * @static
+     * @throws Exception
+     * @param string $method
+     * @param array $args
      * @param Exception $exception
-     * @return void
+     * @return
      */
     public static function errorHandler ($method, $args, $exception) {
         
