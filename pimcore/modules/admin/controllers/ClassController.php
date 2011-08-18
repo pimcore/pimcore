@@ -120,8 +120,8 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $class->setAllowVariants($importData["allowVariants"]);
         $class->setParentClass($importData["parentClass"]);
         $class->setPreviewUrl($importData["previewUrl"]);
-
         $class->setPropertyVisibility($importData["propertyVisibility"]);
+        
         $class->save();
 
         $this->removeViewRenderer();
