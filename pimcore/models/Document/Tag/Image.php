@@ -250,7 +250,20 @@ class Document_Tag_Image extends Document_Tag {
       */
     public function getThumbnail($conf) {
         if ($this->image instanceof Asset) {
-            return $this->image->getThumbnail($conf);
+
+            $thumbConfig = $this->image->getThumbnailConfig($conf);
+            if($this->cropPercent) {
+                $thumbConfig->addItemAt(0,"cropPercent", array(
+                    "width" => $this->cropWidth,
+                    "height" => $this->cropHeight,
+                    "y" => $this->cropTop,
+                    "x" => $this->cropLeft
+                ));
+                $hash = md5(serialize($thumbConfig->getItems()));
+                $thumbConfig->setName("auto_" . $hash);
+            }
+
+            return $this->image->getThumbnail($thumbConfig);
         }
         return "";
     }
