@@ -148,8 +148,11 @@ class Pimcore_Resource_Mysql {
      * @return
      */
     public static function errorHandler ($method, $args, $exception) {
-        
-        if(strpos(strtolower($exception->getMessage()), "mysql server has gone away") !== false) {
+
+        $lowerErrorMessage = strtolower($exception->getMessage());
+
+        // check if the mysql-connection is the problem
+        if(strpos($lowerErrorMessage, "mysql server has gone away") !== false || strpos($lowerErrorMessage, "lost connection") !== false) {
             // the connection to the server has probably been lost, try to reconnect and call the method again
             try {
                 Logger::info("the connection to the MySQL-Server has probably been lost, try to reconnect...");
@@ -163,7 +166,7 @@ class Pimcore_Resource_Mysql {
             }
         }
 
-        // no handler just log the exception and then throw it
+        // no handling just log the exception and then throw it
         logger::debug($exception);
         throw $exception;
     }
