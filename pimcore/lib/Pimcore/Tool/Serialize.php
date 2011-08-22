@@ -73,8 +73,20 @@ class Pimcore_Tool_Serialize {
                 return new Element_Reference_Placeholder($data->getId(), Element_Service::getType($data));
             } else {
                 $vars = get_object_vars($data);
+
+                // check for blocked vars by $data::__sleep();
+                // same behavior like serialize();
+                // per default all keys are valid
+                if(method_exists($data, "__sleep")) {
+                    $allowedVars = $data->__sleep();
+                } else {
+                    $allowedVars = array_keys($vars);
+                }
+
                 foreach ($vars as $key => $value) {
-                    $data->$key = self::mapElementReferences($value, false);
+                    if(in_array($key, $allowedVars)) {
+                        $data->$key = self::mapElementReferences($value, false);
+                    }
                 }
             }
         } else if (is_array($data)) {
