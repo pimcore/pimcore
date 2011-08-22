@@ -151,8 +151,11 @@ class Pimcore_Resource_Mysql {
 
         $lowerErrorMessage = strtolower($exception->getMessage());
 
-        // check if the mysql-connection is the problem
+        // check if the mysql-connection is the problem (timeout issues, ...)
         if(strpos($lowerErrorMessage, "mysql server has gone away") !== false || strpos($lowerErrorMessage, "lost connection") !== false) {
+            // wait a few seconds
+            sleep(5);
+
             // the connection to the server has probably been lost, try to reconnect and call the method again
             try {
                 Logger::info("the connection to the MySQL-Server has probably been lost, try to reconnect...");
