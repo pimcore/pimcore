@@ -395,7 +395,7 @@ class Pimcore_Tool {
 
         $targetClassName = $sourceClassName;
 
-        if($map = self::getModelClassMappingConfig()) {
+        if($map = Pimcore_Config::getModelClassMappingConfig()) {
             $tmpClassName = $map->{$sourceClassName};
             if($tmpClassName) {
                 if(class_exists($tmpClassName)) {
@@ -411,30 +411,12 @@ class Pimcore_Tool {
 
     /**
      * @static
-     * @return Zend_Config_Xml
-     */
-    public static function getModelClassMappingConfig () {
-        $mappingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/classmap.xml";
-
-        if(is_file($mappingFile) && is_readable($mappingFile)) {
-            try {
-                $map = new Zend_Config_Xml($mappingFile);
-                return $map;
-            } catch (Exception $e) {
-                Logger::error("classmap.xml exists but it is not a valid Zend_Config_Xml configuration. Maybe there is a syntaxerror in the XML.");
-            }
-        }
-        return;
-    }
-
-    /**
-     * @static
      * @return void
      */
     public static function registerClassModelMappingNamespaces () {
 
         $autoloader = Zend_Loader_Autoloader::getInstance();
-        if($map = self::getModelClassMappingConfig()) {
+        if($map = Pimcore_Config::getModelClassMappingConfig()) {
             $map = $map->toArray();
 
             foreach ($map as $targetClass) {
