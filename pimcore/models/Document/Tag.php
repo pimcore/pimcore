@@ -101,7 +101,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
             "id" => "pimcore_editable_" . $this->getName(),
             "type" => $this->getType()
         );
-        $options = @Zend_Json::encode($options);
+        $options = @Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
 
         return '
             <script type="text/javascript">
