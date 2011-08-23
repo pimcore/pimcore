@@ -542,7 +542,7 @@ abstract class Object_Class_Data {
             } else if ($operator == "!="){
                 $operator = "IS NOT";
             }
-        } else {
+        } else if (!is_array($value) && !is_object($value)) {
             if($operator == "LIKE"){
                 $value = "'%".$value."%'";
             } else {

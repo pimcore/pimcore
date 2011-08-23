@@ -1775,7 +1775,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if($this->_getParam("only_direct_children") == "true") {
                 $pathCondition = "o_parentId = " . $folder->getId();
             } else {
-                $pathCondition = "o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'";
+                $pathCondition = "(o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%')";
             }
 
             $list->setCondition($pathCondition . $conditionFilters);
