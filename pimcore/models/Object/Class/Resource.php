@@ -69,9 +69,6 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
         $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE name = ?", $name);
         $this->assignVariablesToModel($classRaw);
-
-        $this->model->setPropertyVisibility(unserialize($classRaw["propertyVisibility"]));
-        $this->model->setLayoutDefinitions($this->getLayoutData());
     }
     
     /**

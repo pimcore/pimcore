@@ -68,10 +68,17 @@ class Pimcore_Tool_Serialize {
      */
     public static function mapElementReferences ($data, $isOrigin = true) {
 
+        // possibility to ignore classes (recursion)
+        $ignoreTypes = array();
+
         if(is_object($data)) {
             if($data instanceof Element_Interface && !$isOrigin) {
                 return new Element_Reference_Placeholder($data->getId(), Element_Service::getType($data));
-            } else {
+            } else if(!isset($data->__pimcore_tool_serialize_active)) {
+
+                // recursion detection
+                $data->__pimcore_tool_serialize_active = true;
+
                 $vars = get_object_vars($data);
 
                 // check for blocked vars by $data::__sleep();
@@ -83,15 +90,22 @@ class Pimcore_Tool_Serialize {
                     $allowedVars = array_keys($vars);
                 }
 
-                foreach ($vars as $key => $value) {
-                    if(in_array($key, $allowedVars)) {
-                        $data->$key = self::mapElementReferences($value, false);
+                foreach ($allowedVars as $key) {
+                    if(array_key_exists($key, $vars)) {
+                        if(is_array($data->$key) || (is_object($data->$key) && !in_array(get_class($data->$key), $ignoreTypes)) ) {
+                            $data->$key = self::mapElementReferences($data->$key, false);
+                        }
                     }
                 }
+
+                // remove recursion detection property
+                unset($data->__pimcore_tool_serialize_active);
             }
         } else if (is_array($data)) {
             foreach ($data as &$value) {
-                $value = self::mapElementReferences($value, false);
+                if(is_array($value) || (is_object($value) && !in_array(get_class($value), $ignoreTypes)) ) {
+                    $value = self::mapElementReferences($value, false);
+                }
             }
         }
 
@@ -105,17 +119,24 @@ class Pimcore_Tool_Serialize {
      */
     public static function reverseMapElementReferences ($data) {
 
+        $ignoreTypes = array("Object_Class");
+        //$ignoreTypes = array();
+
         if(is_object($data)) {
+
             if($data instanceof Element_Reference_Placeholder) {
                 return Element_Service::getElementById($data->getType(), $data->getId());
             } else if(!isset($data->__pimcore_tool_serialize_active)) {
-                $vars = get_object_vars($data);
 
                 // recursion detection
                 $data->__pimcore_tool_serialize_active = true;
 
+                $vars = get_object_vars($data);
+
                 foreach ($vars as $key => $value) {
-                    $data->$key = self::reverseMapElementReferences($value);
+                    if(is_array($data->$key) || (is_object($data->$key) && !in_array(get_class($data->$key), $ignoreTypes)) ) {
+                        $data->$key = self::reverseMapElementReferences($data->$key);
+                    }
                 }
 
                 // remove recursion detection property
@@ -123,7 +144,9 @@ class Pimcore_Tool_Serialize {
             }
         } else if (is_array($data)) {
             foreach ($data as &$value) {
-                $value = self::reverseMapElementReferences($value);
+                if(is_array($value) || (is_object($value) && !in_array(get_class($value), $ignoreTypes)) ) {
+                    $value = self::reverseMapElementReferences($value);
+                }
             }
         }
 

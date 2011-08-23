@@ -133,7 +133,11 @@ class Object_Class extends Pimcore_Model_Abstract {
     public static function getByName($name) {
         $class = new self();
         $class->getResource()->getByName($name);
-        return $class;
+
+        // to have a singleton in a way. like all instances of Element_Interface do also, like Object_Abstract
+        if($class->getId() > 0) {
+            return self::getById($class->getId());
+        }
     }
 
     /**
