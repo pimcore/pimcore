@@ -77,7 +77,7 @@ class Pimcore_Resource_Mysql {
         }
         catch (Exception $e) {
 
-            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log";
+            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log. \nReason: " . $e->getMessage();
 
             Logger::emergency($errorMessage);
             Logger::emergency($e);
