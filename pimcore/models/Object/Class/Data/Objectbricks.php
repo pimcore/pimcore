@@ -119,8 +119,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {
                 $refKey = $fielddefinition->getOwnerFieldName();
-                $refClass = Object_Class::getByName($fielddefinition->getOwnerClassName());
-                $refId = $refClass->getId();
+                $refId = $fielddefinition->getOwnerClassId();
             } else {
                 $refKey = $key;
             }
