@@ -119,6 +119,7 @@ class Pimcore_Tool_Serialize {
      */
     public static function reverseMapElementReferences ($data) {
 
+        // possibility to ignore classes (recursion)
         $ignoreTypes = array("Object_Class");
         //$ignoreTypes = array();
 
