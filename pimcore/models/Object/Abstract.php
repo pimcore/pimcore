@@ -1317,15 +1317,16 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->o_properties !== null) {
             unset($this->_fulldump);
+            $this->renewInheritedProperties();
+        }
 
+        if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element ( element was renamed or moved )
             $originalElement = Object_Abstract::getById($this->getId());
             if($originalElement) {
                 $this->setO_key($originalElement->getO_key());
                 $this->setO_path($originalElement->getO_path());
             }
-
-            $this->renewInheritedProperties();
         }
     }
     

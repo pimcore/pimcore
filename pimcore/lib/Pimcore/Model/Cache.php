@@ -147,7 +147,7 @@ class Pimcore_Model_Cache {
             $data = Pimcore_Tool_Serialize::unserialize($data);
     
             if ($data) {
-                Logger::debug("Successfully get object for key " . $key . " from cache");
+                Logger::debug("Successfully get data for key " . $key . " from cache");
             }
             else {
                 Logger::debug("Key " . $key . " doesn't exist in cache");
@@ -207,7 +207,7 @@ class Pimcore_Model_Cache {
                 $tags = array_unique(array_merge($data->getCacheTags(), $tags));
                 $type = get_class($data);
         
-                Logger::debug("prepared " . $type . " " . $data->getFullPath() . " for object cache with tags: " . implode(",", $tags));
+                Logger::debug("prepared " . $type . " " . $data->getFullPath() . " for data cache with tags: " . implode(",", $tags));
             }
             
             

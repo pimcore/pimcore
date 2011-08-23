@@ -33,7 +33,6 @@ class Pimcore_Tool_Serialize {
 
         // now we have to remap the elements, because of pass by reference (because of combination of version/caching, ...)
         self::reverseMapElementReferences($filteredData);
-
         return $serializedData;
     }
 
@@ -68,9 +67,6 @@ class Pimcore_Tool_Serialize {
      */
     public static function mapElementReferences ($data, $isOrigin = true) {
 
-        // possibility to ignore classes (recursion)
-        $ignoreTypes = array();
-
         if(is_object($data)) {
             if($data instanceof Element_Interface && !$isOrigin) {
                 return new Element_Reference_Placeholder($data->getId(), Element_Service::getType($data));
@@ -92,7 +88,7 @@ class Pimcore_Tool_Serialize {
 
                 foreach ($allowedVars as $key) {
                     if(array_key_exists($key, $vars)) {
-                        if(is_array($data->$key) || (is_object($data->$key) && !in_array(get_class($data->$key), $ignoreTypes)) ) {
+                        if(is_array($data->$key) || is_object($data->$key)) {
                             $data->$key = self::mapElementReferences($data->$key, false);
                         }
                     }
@@ -103,7 +99,7 @@ class Pimcore_Tool_Serialize {
             }
         } else if (is_array($data)) {
             foreach ($data as &$value) {
-                if(is_array($value) || (is_object($value) && !in_array(get_class($value), $ignoreTypes)) ) {
+                if(is_array($value) || is_object($value)) {
                     $value = self::mapElementReferences($value, false);
                 }
             }
@@ -119,10 +115,6 @@ class Pimcore_Tool_Serialize {
      */
     public static function reverseMapElementReferences ($data) {
 
-        // possibility to ignore classes (recursion)
-        $ignoreTypes = array("Object_Class");
-        //$ignoreTypes = array();
-
         if(is_object($data)) {
 
             if($data instanceof Element_Reference_Placeholder) {
@@ -134,9 +126,25 @@ class Pimcore_Tool_Serialize {
 
                 $vars = get_object_vars($data);
 
-                foreach ($vars as $key => $value) {
-                    if(is_array($data->$key) || (is_object($data->$key) && !in_array(get_class($data->$key), $ignoreTypes)) ) {
-                        $data->$key = self::reverseMapElementReferences($data->$key);
+                // check for blocked vars by $data::__sleep();
+                // same behavior like serialize();
+                // per default all keys are valid
+                if(method_exists($data, "__sleep")) {
+                    $allowedVars = $data->__sleep();
+
+                    // call __wakeup() because __sleep() can do some modifications on the object, and we don't know if the object is used after this serialization eg. Versions, ...
+                    if(method_exists($data, "__wakeup")) {
+                        $data->__wakeup();
+                    }
+                } else {
+                    $allowedVars = array_keys($vars);
+                }
+
+                foreach ($allowedVars as $key) {
+                    if(array_key_exists($key, $vars)) {
+                        if(is_array($data->$key) || is_object($data->$key)) {
+                            $data->$key = self::reverseMapElementReferences($data->$key);
+                        }
                     }
                 }
 
@@ -145,7 +153,7 @@ class Pimcore_Tool_Serialize {
             }
         } else if (is_array($data)) {
             foreach ($data as &$value) {
-                if(is_array($value) || (is_object($value) && !in_array(get_class($value), $ignoreTypes)) ) {
+                if(is_array($value) || is_object($value)) {
                     $value = self::reverseMapElementReferences($value);
                 }
             }

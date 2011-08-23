@@ -1066,15 +1066,16 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->properties !== null) {
             unset($this->_fulldump);
+            $this->renewInheritedProperties();
+        }
 
+        if(isset($this->_fulldump)) {
             // set current key and path this is necessary because the serialized data can have a different path than the original element (element was renamed or moved)
             $originalElement = Document::getById($this->getId());
             if($originalElement) {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getPath());
             }
-
-            $this->renewInheritedProperties();
         }
     }
     
