@@ -48,12 +48,15 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE id = ?", $id);
-        $this->assignVariablesToModel($classRaw);
+
+        if($classRaw["id"]) {
+            $this->assignVariablesToModel($classRaw);
         
-        $this->model->setPropertyVisibility(unserialize($classRaw["propertyVisibility"]));
-        $this->model->setLayoutDefinitions($this->getLayoutData());
-
-
+            $this->model->setPropertyVisibility(unserialize($classRaw["propertyVisibility"]));
+            $this->model->setLayoutDefinitions($this->getLayoutData());
+        } else {
+            throw new Exception("Class with ID " . $id . " doesn't exist");
+        }
     }
 
     /**
@@ -68,7 +71,12 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE name = ?", $name);
-        $this->assignVariablesToModel($classRaw);
+
+        if($classRaw["id"]) {
+            $this->assignVariablesToModel($classRaw);
+        } else {
+            throw new Exception("Class with name " . $name . " doesn't exist");
+        }
     }
     
     /**

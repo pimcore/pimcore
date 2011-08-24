@@ -118,9 +118,14 @@ class Object_Class extends Pimcore_Model_Abstract {
         }
         catch (Exception $e) {
 
-            $class = new self();
-            Zend_Registry::set($cacheKey, $class);
-            $class->getResource()->getById($id);
+            try {
+                $class = new self();
+                Zend_Registry::set($cacheKey, $class);
+                $class->getResource()->getById($id);
+            } catch (Exception $e) {
+                Logger::error($e);
+                return null;
+            }
         }
 
         return $class;
@@ -132,7 +137,13 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public static function getByName($name) {
         $class = new self();
-        $class->getResource()->getByName($name);
+
+        try {
+            $class->getResource()->getByName($name);
+        } catch (Exception $e) {
+            Logger::error($e);
+            return null;
+        }
 
         // to have a singleton in a way. like all instances of Element_Interface do also, like Object_Abstract
         if($class->getId() > 0) {
