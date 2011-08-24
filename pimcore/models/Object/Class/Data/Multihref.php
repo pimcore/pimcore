@@ -440,6 +440,8 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
                     $allow = $this->allowAssetRelation($d);
                 } else if ($d instanceof Object_Abstract) {
                     $allow = $this->allowObjectRelation($d);
+                } else if (empty($d)) {
+                    $allow = true;
                 } else {
                     $allow = false;
                 }

@@ -268,8 +268,12 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
 
         if (is_array($data)) {
             foreach ($data as $o) {
+                if(empty($o)) {
+                    continue;
+                }
+                
                 $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or!($o instanceof Object_Concrete)) {
+                if (!$allowClass or !($o instanceof Object_Concrete)) {
                     if(!$allowClass && $o instanceof Object_Concrete){
                         $id = $o->getId();
                     } else {
