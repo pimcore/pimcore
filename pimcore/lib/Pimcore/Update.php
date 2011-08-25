@@ -159,7 +159,7 @@ class Pimcore_Update {
         
         $db = Pimcore_Resource::get();
         
-        $db->exec("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
+        $db->query("CREATE TABLE IF NOT EXISTS `" . self::$tmpTable . "` (
           `revision` int(11) NULL DEFAULT NULL,
           `path` varchar(255) NULL DEFAULT NULL,
           `action` varchar(50) NULL DEFAULT NULL
@@ -272,7 +272,7 @@ class Pimcore_Update {
         
         // remove database tmp table
         $db = Pimcore_Resource::get();
-        $db->exec("DROP TABLE IF EXISTS `" . self::$tmpTable . "`");
+        $db->query("DROP TABLE IF EXISTS `" . self::$tmpTable . "`");
         
         //delete tmp data
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update", true);

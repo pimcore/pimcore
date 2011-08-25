@@ -86,7 +86,7 @@ class Object_Data_ObjectMetadata_Resource extends Pimcore_Model_Resource_Abstrac
 
     private function dbexec($sql, $classId) {
         $db = Pimcore_Resource::get();
-        $db->exec($sql);
+        $db->query($sql);
         $this->logSql($sql, $classId);
     }
 

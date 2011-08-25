@@ -438,7 +438,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
     }
     
     private function dbexec($sql) {
-        $this->db->exec($sql);
+        $this->db->query($sql);
         $this->logSql($sql);
     }
     

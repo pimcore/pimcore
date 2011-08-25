@@ -23,9 +23,9 @@
     <welcomescreen>1</welcomescreen>
   </general>
   <database>
-    <adapter>Pdo_Mysql</adapter>
+    <adapter>Mysqli</adapter>
     <params>
-      <host>mysql</host>
+      <host>localhost</host>
       <username>root</username>
       <password>elements</password>
       <dbname>pimcore_phpunit</dbname>

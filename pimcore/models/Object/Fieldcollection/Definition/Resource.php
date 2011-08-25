@@ -158,7 +158,7 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
     }
     
     protected function dbexec($sql) {
-        $this->db->exec($sql);
+        $this->db->query($sql);
         $this->logSql($sql);
     }
     

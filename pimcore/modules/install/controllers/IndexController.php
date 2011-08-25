@@ -51,7 +51,8 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
         // try to establish a mysql connection
         try {
-            $db = new Zend_Db_Adapter_Pdo_Mysql(array(
+
+            $db = Zend_Db::factory($this->_getParam("mysql_adapter"),array(
                 'host' => $this->_getParam("mysql_host"),
                 'username' => $this->_getParam("mysql_username"),
                 'password' => $this->_getParam("mysql_password"),
@@ -161,7 +162,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 $sql = trim($m);
                 if(strlen($sql) > 0) {
                     $sql .= ";";
-                    $db->exec($m);
+                    $db->query($m);
                 }
             }
 

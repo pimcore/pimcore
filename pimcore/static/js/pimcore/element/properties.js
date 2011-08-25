@@ -216,7 +216,8 @@ pimcore.element.properties = Class.create({
                         editor: new Ext.form.TextField({
                             allowBlank: false
                         }),
-                        sortable: true
+                        sortable: true,
+                        width: 230
                     },
                     {
                         id: "property_value_col",

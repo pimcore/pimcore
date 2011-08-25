@@ -142,7 +142,7 @@ class Pimcore_Tool_Serialize {
 
                 foreach ($allowedVars as $key) {
                     if(array_key_exists($key, $vars)) {
-                        if(is_array($data->$key) || is_object($data->$key)) {
+                        if((is_array($data->$key) || is_object($data->$key)) && !$data->$key instanceof Element_Interface) {
                             $data->$key = self::reverseMapElementReferences($data->$key);
                         }
                     }
@@ -153,7 +153,7 @@ class Pimcore_Tool_Serialize {
             }
         } else if (is_array($data)) {
             foreach ($data as &$value) {
-                if(is_array($value) || is_object($value)) {
+                if((is_array($value) || is_object($value)) && !$value instanceof Element_Interface) {
                     $value = self::reverseMapElementReferences($value);
                 }
             }

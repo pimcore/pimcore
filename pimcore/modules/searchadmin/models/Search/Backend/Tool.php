@@ -125,13 +125,13 @@ class Search_Backend_Tool
         $fieldcollectionQuery = null;
         if (count($fieldcollectionQueries) > 0) {
                 $fieldcollectionQuery = "CREATE OR REPLACE VIEW search_backend_fieldcollection_view AS " . implode(" UNION ", $fieldcollectionQueries);
-                $db->exec($fieldcollectionQuery);
+                $db->query($fieldcollectionQuery);
         }
 
         $localizedQuery = null;
         if (count($localizedQueries) > 0) {
                 $localizedQuery = "CREATE OR REPLACE VIEW search_backend_localized_view AS " . implode(" UNION ", $localizedQueries);
-                $db->exec($localizedQuery);
+                $db->query($localizedQuery);
         }
 
 
@@ -154,11 +154,11 @@ class Search_Backend_Tool
         //echo $query;
 
 
-        $db->exec($query);
+        $db->query($query);
 
-        $db->exec("DROP TABLE IF EXISTS `search_backend_data`;");
+        $db->query("DROP TABLE IF EXISTS `search_backend_data`;");
 
-        $db->exec("CREATE TABLE `search_backend_data` (
+        $db->query("CREATE TABLE `search_backend_data` (
                        `id` int(11) NOT NULL,
                        `fullpath` VARCHAR(510),
                        `maintype` VARCHAR(8),
@@ -215,12 +215,12 @@ class Search_Backend_Tool
 
 
 
-        $db->exec($insertQuery);
+        $db->query($insertQuery);
 
 
-        $db->exec("DROP VIEW IF EXISTS `search_backend_dataview`;");
-        $db->exec("DROP VIEW IF EXISTS `search_backend_fieldcollection_view`;");
-        $db->exec("DROP VIEW IF EXISTS `search_backend_localized_view`;");
+        $db->query("DROP VIEW IF EXISTS `search_backend_dataview`;");
+        $db->query("DROP VIEW IF EXISTS `search_backend_fieldcollection_view`;");
+        $db->query("DROP VIEW IF EXISTS `search_backend_localized_view`;");
     }
 
 }

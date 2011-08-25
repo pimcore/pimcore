@@ -36,11 +36,11 @@ class Pimcore_Resource_Mysql {
         $config["database"]["params"]["charset"] = $charset;
 
         $db = Zend_Db::factory($config["database"]["adapter"],$config["database"]["params"]);
-        $db->getConnection()->exec("SET NAMES " . $charset);
+        $db->query("SET NAMES " . $charset);
 
         // try to set innodb as default storage-engine
         try {
-            $db->getConnection()->exec("SET storage_engine=InnoDB;");
+            $db->query("SET storage_engine=InnoDB;");
         } catch (Exception $e) {
             Logger::warn($e);
         }

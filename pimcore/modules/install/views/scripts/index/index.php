@@ -79,7 +79,19 @@ $scripts = array(
                         {
                             title: "MySQL Settings",
                             xtype: "fieldset",
-                            items: [
+                            items: [{
+                                    xtype: "combo",
+                                    name: "mysql_adapter",
+                                    fieldLabel: "Adapter",
+                                    store: [
+                                        ["Mysqli", "Mysqli"],
+                                        ["Pdo_Mysql", "Pdo_Mysql"]
+                                    ],
+                                    mode: "local",
+                                    value: "Mysqli",
+                                    width: 120,
+                                    triggerAction: "all"
+                                },
                                 {
                                     xtype: "textfield",
                                     name: "mysql_host",
