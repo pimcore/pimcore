@@ -18,6 +18,7 @@ include_once("startup.php");
 
 try {
     $opts = new Zend_Console_Getopt(array(
+        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, youtubepreview, logmaintenance, sanitycheck, cleanupoldpidfiles, versioncleanup, and plugin classes if you want to call a plugin maintenance)',
         'manager|m=s' => 'force a specific manager (valid options: procedural, daemon)',
         'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
         'help|h' => 'display this help'
@@ -50,8 +51,14 @@ if($opts->getOption("manager")) {
     $forceType = $opts->getOption("manager");
 }
 
+$validJobs = array();
+if($opts->getOption("job")) {
+    $validJobs = explode(",",$opts->getOption("job"));
+}
+
 // create manager
 $manager = Schedule_Manager_Factory::getManager("maintenance.pid", $forceType);
+$manager->setValidJobs($validJobs);
 
 // register scheduled tasks
 $manager->registerJob(new Schedule_Maintenance_Job("scheduledtasks", new Schedule_Task_Executor(), "execute"));
@@ -80,7 +87,5 @@ foreach ($plugins as $plugin) {
     }
 
 }
-
-$manager->run();
 
 ?>

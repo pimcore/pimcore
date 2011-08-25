@@ -20,13 +20,27 @@ class Schedule_Manager_Procedural {
 
     public $jobs = array();
 
+    protected $validJobs = array();
+
     protected $_pidFileName;
 
     public function __construct($pidFileName){
         $this->_pidFileName = $pidFileName;
     }
 
+
+    public function setValidJobs ($validJobs) {
+        if(is_array($validJobs)) {
+            $this->validJobs = $validJobs;
+        }
+    }
+
     public function registerJob(Schedule_Maintenance_Job $job, $force = false) {
+
+        if(!empty($this->validJobs) and !in_array($job->getId(),$this->validJobs)) {
+            Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
+        }
+
         if (!$job->isLocked() || $force) {
             $this->jobs[] = $job;
             $job->lock();
@@ -34,7 +48,10 @@ class Schedule_Manager_Procedural {
             Logger::info("Registered job with ID: " . $job->getId());
 
             return true;
+        } else {
+            Logger::info("Skipped job with ID: " . $job->getId() . " because it is still locked.");
         }
+        
         return false;
     }
 
