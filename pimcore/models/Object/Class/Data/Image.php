@@ -197,6 +197,20 @@ class Object_Class_Data_Image extends Object_Class_Data {
 
     /**
      * @param mixed $data
+     * @param Object_Concrete $ownerObject
+     * @param array $blockedTags
+     */
+    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
+        $tags = array();
+
+        if ($data instanceof Asset_Image) {
+            $tags = array_merge($tags, $data->getCacheTags($blockedTags));
+        }
+        return $tags;
+    }
+
+    /**
+     * @param mixed $data
      */
     public function resolveDependencies($data) {
 

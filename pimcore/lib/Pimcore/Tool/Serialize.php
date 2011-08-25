@@ -22,18 +22,7 @@ class Pimcore_Tool_Serialize {
      * @return string
      */
     public static function serialize ($data) {
-
-        // load all data if it is an object, because of lazyloaded fields and _fulldump
-        if($data instanceof Object_Concrete) {
-            Object_Service::loadAllObjectFields($data);
-        }
-
-        $filteredData = self::mapElementReferences($data, true);
-        $serializedData = serialize($filteredData);
-
-        // now we have to remap the elements, because of pass by reference (because of combination of version/caching, ...)
-        self::reverseMapElementReferences($filteredData);
-        return $serializedData;
+        return serialize($data);
     }
 
     /**
@@ -42,123 +31,7 @@ class Pimcore_Tool_Serialize {
      * @return mixed
      */
     public static function unserialize ($data) {
-
-        // only strings are allowed ;-)
-        if(!is_string($data)) {
-            return $data;
-        }
-
-        $unserialized = unserialize($data);
-
-        // put the origin object directly to the registry, this is because of cyclic references which should be resolved by self::reverseMapElementReferences()
-        if($unserialized instanceof Element_Interface) {
-            Zend_Registry::set(Element_Service::getType($unserialized) . "_" . $unserialized->getId(), $unserialized);
-        }
-
-        $remappedData = self::reverseMapElementReferences($unserialized);
-        return $remappedData;
+        return unserialize($data);
     }
-
-    /**
-     * @static
-     * @param $data
-     * @param bool $isOrigin
-     * @return mixed
-     */
-    public static function mapElementReferences ($data, $isOrigin = true) {
-
-        if(is_object($data)) {
-            if($data instanceof Element_Interface && !$isOrigin) {
-                return new Element_Reference_Placeholder($data->getId(), Element_Service::getType($data));
-            } else if(!isset($data->__pimcore_tool_serialize_active)) {
-
-                // recursion detection
-                $data->__pimcore_tool_serialize_active = true;
-
-                $vars = get_object_vars($data);
-
-                // check for blocked vars by $data::__sleep();
-                // same behavior like serialize();
-                // per default all keys are valid
-                if(method_exists($data, "__sleep")) {
-                    $allowedVars = $data->__sleep();
-                } else {
-                    $allowedVars = array_keys($vars);
-                }
-
-                foreach ($allowedVars as $key) {
-                    if(array_key_exists($key, $vars)) {
-                        if(is_array($data->$key) || is_object($data->$key)) {
-                            $data->$key = self::mapElementReferences($data->$key, false);
-                        }
-                    }
-                }
-
-                // remove recursion detection property
-                unset($data->__pimcore_tool_serialize_active);
-            }
-        } else if (is_array($data)) {
-            foreach ($data as &$value) {
-                if(is_array($value) || is_object($value)) {
-                    $value = self::mapElementReferences($value, false);
-                }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * @static
-     * @param $data
-     * @return mixed
-     */
-    public static function reverseMapElementReferences ($data) {
-
-        if(is_object($data)) {
-
-            if($data instanceof Element_Reference_Placeholder) {
-                return Element_Service::getElementById($data->getType(), $data->getId());
-            } else if(!isset($data->__pimcore_tool_serialize_active)) {
-
-                // recursion detection
-                $data->__pimcore_tool_serialize_active = true;
-
-                $vars = get_object_vars($data);
-
-                // check for blocked vars by $data::__sleep();
-                // same behavior like serialize();
-                // per default all keys are valid
-                if(method_exists($data, "__sleep")) {
-                    $allowedVars = $data->__sleep();
-
-                    // call __wakeup() because __sleep() can do some modifications on the object, and we don't know if the object is used after this serialization eg. Versions, ...
-                    if(method_exists($data, "__wakeup")) {
-                        $data->__wakeup();
-                    }
-                } else {
-                    $allowedVars = array_keys($vars);
-                }
-
-                foreach ($allowedVars as $key) {
-                    if(array_key_exists($key, $vars)) {
-                        if((is_array($data->$key) || is_object($data->$key)) && !$data->$key instanceof Element_Interface) {
-                            $data->$key = self::reverseMapElementReferences($data->$key);
-                        }
-                    }
-                }
-
-                // remove recursion detection property
-                unset($data->__pimcore_tool_serialize_active);
-            }
-        } else if (is_array($data)) {
-            foreach ($data as &$value) {
-                if((is_array($value) || is_object($value)) && !$value instanceof Element_Interface) {
-                    $value = self::reverseMapElementReferences($value);
-                }
-            }
-        }
-
-        return $data;
-    }
+    
 }

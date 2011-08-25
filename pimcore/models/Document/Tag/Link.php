@@ -262,6 +262,34 @@ class Document_Tag_Link extends Document_Tag {
         return (strlen($this->getHref()) < 1);
     }
 
+
+    /**
+     * This is a dummy and is mostly implemented by relation types
+     * @param $ownerDocument
+     * @param array $blockedTags
+     */
+    public function getCacheTags($ownerDocument, $blockedTags = array()) {
+
+        $tags = array();
+
+        if ($this->data["internal"]) {
+            if ($this->data["internalType"] == "document") {
+                if ($doc = Document::getById($this->data["internalId"])) {
+                    if ($doc->getId() != $ownerDocument->getId() and !in_array($doc->getCacheTag(), $blockedTags)) {
+                        $tags = array_merge($tags, $doc->getCacheTags($blockedTags));
+                    }
+                }
+            }
+            else if ($this->data["internalType"] == "asset") {
+                if ($asset = Asset::getById($this->data["internalId"])) {
+                    $tags = array_merge($tags, $asset->getCacheTags($blockedTags));
+                }
+            }
+        }
+
+        return $tags;
+    }
+
     /**
      * @return array
      */

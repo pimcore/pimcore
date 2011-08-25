@@ -203,7 +203,7 @@ class Pimcore_Model_Cache {
                     unset($data->_fulldump);
                 }
 
-                // get dependencies for this elements, this is no longer required for relational data-types because they are replaced with a placeholder
+                // get dependencies for this element
                 $tags = array_unique(array_merge($data->getCacheTags(), $tags));
                 $type = get_class($data);
         

@@ -280,6 +280,23 @@ class Document_Tag_Image extends Document_Tag {
 
 
     /**
+     * @param $ownerDocument
+     * @param array $blockedTags
+     */
+    public function getCacheTags($ownerDocument, $blockedTags = array()) {
+
+        $tags = array();
+
+        if ($this->image instanceof Asset) {
+            if (!in_array($this->image->getCacheTag(), $blockedTags)) {
+                $tags = array_merge($tags, $this->image->getCacheTags($blockedTags));
+            }
+        }
+
+        return $tags;
+    }
+
+    /**
      * @return array
      */
     public function resolveDependencies() {

@@ -199,6 +199,15 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
 
     /**
      * @param mixed $data
+     * @param Object_Concrete $ownerObject
+     * @param array $blockedTags
+     */
+    public function getCacheTags ($data, $ownerObject, $blockedTags = array()) {
+        return array();
+    }
+
+    /**
+     * @param mixed $data
      */
     public function resolveDependencies ($data) {
          return array();

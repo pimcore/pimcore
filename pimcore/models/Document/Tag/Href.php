@@ -192,6 +192,35 @@ class Document_Tag_Href extends Document_Tag {
         return true;
     }
 
+
+    /**
+     * This is a dummy and is mostly implemented by relation types
+     * @param $ownerDocument
+     * @param array $blockedTags
+     */
+    public function getCacheTags($ownerDocument, $blockedTags = array()) {
+
+        $tags = array();
+
+        if ($this->element instanceof Document) {
+            if ($this->element->getId() != $ownerDocument->getId() and !in_array($this->element->getCacheTag(), $blockedTags)) {
+                $tags = array_merge($tags, $this->element->getCacheTags($blockedTags));
+            }
+        }
+        else if ($this->element instanceof Asset) {
+            if (!in_array($this->element->getCacheTag(), $blockedTags)) {
+                $tags = array_merge($tags, $this->element->getCacheTags($blockedTags));
+            }
+        }
+        else if ($this->element instanceof Object_Abstract) {
+            if (!in_array($this->element->getCacheTag(), $blockedTags)) {
+                $tags = array_merge($tags, $this->element->getCacheTags($blockedTags));
+            }
+        }
+
+        return $tags;
+    }
+
     /**
      * @return array
      */

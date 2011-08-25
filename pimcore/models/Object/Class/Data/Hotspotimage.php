@@ -176,6 +176,19 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
         }
     }
 
+    /**
+     * @param mixed $data
+     * @param Object_Concrete $ownerObject
+     * @param array $blockedTags
+     */
+    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
+        $tags = array();
+
+        if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset_Image) {
+            $tags = array_merge($tags, $data->getImage()->getCacheTags($blockedTags));
+        }
+        return $tags;
+    }
 
     /**
      * @param mixed $data

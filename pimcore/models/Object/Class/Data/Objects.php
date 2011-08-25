@@ -325,6 +325,28 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         return $value;
     }
 
+
+    /**
+     * @param mixed $data
+     * @param Object_Concrete $ownerObject
+     * @param array $blockedTags
+     */
+    public function getCacheTags ($data, $ownerObject, $blockedTags = array()) {
+        $tags = array();
+
+        if (is_array($data) && count($data) > 0) {
+            foreach ($data as $object) {
+                if (!in_array($object->getCacheTag(), $blockedTags)) {
+                    if(!$ownerObject instanceof Element_Interface || $object->getId() != $ownerObject->getId()) {
+                        $tags = array_merge($tags, $object->getCacheTags($blockedTags));
+                        $blockedTags = array_merge($tags, $blockedTags);
+                    }
+                }
+            }
+        }
+        return $tags;
+    }
+
     /**
      * @param mixed $data
      */

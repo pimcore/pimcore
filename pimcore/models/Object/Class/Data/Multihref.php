@@ -511,6 +511,29 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         return $value;
     }
 
+
+    /**
+     * @param mixed $data
+     * @param Object_Concrete $ownerObject
+     * @param array $blockedTags
+     */
+    public function getCacheTags($data, $ownerObject, $blockedTags = array())
+    {
+        $tags = array();
+
+        if (is_array($data) && count($data) > 0) {
+            foreach ($data as $element) {
+                if (!in_array($element->getCacheTag(), $blockedTags)) {
+                    if(!$ownerObject instanceof Element_Interface || $element->getId() != $ownerObject->getId()) {
+                        $tags = array_merge($tags, $element->getCacheTags($blockedTags));
+                        $blockedTags = array_merge($tags, $blockedTags);
+                    }
+                }
+            }
+        }
+        return $tags;
+    }
+
     /**
      * @param mixed $data
      */
