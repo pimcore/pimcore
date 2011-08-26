@@ -17,7 +17,10 @@
 class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
     private $db;
-    
+
+    /**
+     * @return Zend_Db_Adapter_Abstract
+     */
     private function getDb () {
         if(!$this->db) {
             $this->db = Pimcore_Resource::get();
@@ -31,7 +34,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
     }
 
     private function saveTags($id, $tags) {
-        
+
         foreach ($tags as $tag) {
             try {
                 $this->getDb()->insert("cache_tags", array(
