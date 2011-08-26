@@ -67,6 +67,11 @@ class Version extends Pimcore_Model_Abstract {
      */
     public $serialized = false;
 
+    /**
+     * @var bool
+     */
+    public static $disabled = false;
+
 
     /**
      * @param integer $id
@@ -81,9 +86,37 @@ class Version extends Pimcore_Model_Abstract {
     }
 
     /**
+     * disables the versioning for the current process, this is useful for importers, ...
+     * There are no new versions created, the read continues to operate normally
+     *
+     * @static
+     * @return void
+     */
+    public static function disable () {
+        self::$disabled = true;
+    }
+
+    /**
+     * see @ self::disable()
+     * just enabled the creation of versioning in the current process
+     *
+     * @static
+     * @return void
+     */
+    public static function enable () {
+        self::$disabled = false;
+    }
+
+
+    /**
      * @return void
      */
     public function save() {
+
+        // check if versioning is disabled for this process
+        if(self::$disabled) {
+            return;
+        }
 
         if (!$this->date) {
             $this->setDate(time());

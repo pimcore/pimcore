@@ -77,27 +77,6 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
     public function setEnabled($enable)
     {
         parent::setEnabled($enable);
-
-        /*if ($this->getEnabled()) {
-
-            if (!$this->_message) {
-                $this->_message = new Zend_Wildfire_Plugin_FirePhp_TableMessage($this->_label);
-                $this->_message->setBuffered(true);
-                $this->_message->setHeader(array('Time','Event','Parameters'));
-                $this->_message->setDestroy(true);
-                $this->_message->setOption('includeLineNumbers', false);
-                Zend_Wildfire_Plugin_FirePhp::getInstance()->send($this->_message);
-            }
-
-        } else {
-
-            if ($this->_message) {
-                $this->_message->setDestroy(true);
-                $this->_message = null;
-            }
-
-        }*/
-
         return $this;
     }
 
@@ -115,10 +94,6 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
         if (!$this->getEnabled() || $state == self::IGNORED) {
             return;
         }
-        
-        /*
-        $this->_message->setDestroy(false);
-        */
         
         $profile = $this->getQueryProfile($queryId);
         $this->_totalElapsedTime += $profile->getElapsedSecs();

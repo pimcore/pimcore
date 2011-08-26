@@ -313,6 +313,14 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("clear_cache")) {
                 cacheMenu.menu.push({
+                    text: t("clear_only_output_cache"),
+                    iconCls: "pimcore_icon_menu_clear_cache",
+                    handler: this.clearOutputCache
+                });
+            }
+
+            if (user.isAllowed("clear_cache")) {
+                cacheMenu.menu.push({
                     text: t("clear_cache"),
                     iconCls: "pimcore_icon_menu_clear_cache",
                     handler: this.clearCache
@@ -324,14 +332,6 @@ pimcore.layout.toolbar = Class.create({
                     text: t("clear_temporary_files"),
                     iconCls: "pimcore_icon_menu_clear_cache",
                     handler: this.clearTemporaryFiles
-                });
-            }
-
-            if (user.isAllowed("clear_cache")) {
-                cacheMenu.menu.push({
-                    text: t("clear_only_output_cache"),
-                    iconCls: "pimcore_icon_menu_clear_cache",
-                    handler: this.clearOutputCache
                 });
             }
 
