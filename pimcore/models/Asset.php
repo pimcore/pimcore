@@ -196,6 +196,11 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
     public static function getByPath($path) {
 
+        // remove trailing slash
+        if($path != "/") {
+            $path = rtrim($path,"/ ");
+        }
+
         // correct wrong path (root-node problem)
         $path = str_replace("//", "/", $path);
 

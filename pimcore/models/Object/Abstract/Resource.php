@@ -52,15 +52,17 @@ class Object_Abstract_Resource extends Element_Resource {
     /**
      * Get the data for the object from database for the given path
      *
-     * @param integer $path
+     * @param string $path
      * @return void
      */
     public function getByPath($path) {
-        // remove trailing slash if exists
-        if (substr($path, -1) == "/" and strlen($path) > 1) {
-            $path = substr($path, 0, count($path) - 2);
-        }
-        $data = $this->db->fetchRow("SELECT * FROM objects WHERE CONCAT(o_path,`o_key`) = ?", $path);
+
+        // check for root node
+        $_path = $path != "/" ? $_path = dirname($path) : $path;
+        $_key = basename($path);
+        $_path .= $_path != "/" ? "/" : "";
+
+        $data = $this->db->fetchRow("SELECT id FROM objects WHERE o_path = " . $this->db->quote($_path) . " and `o_key` = " . $this->db->quote($_key));
 
         if ($data["o_id"]) {
             $this->assignVariablesToModel($data);
@@ -69,6 +71,7 @@ class Object_Abstract_Resource extends Element_Resource {
             throw new Exception("object doesn't exist");
         }
     }
+
 
     /**
      * Create a new record for the object in database

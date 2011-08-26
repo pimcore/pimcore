@@ -55,31 +55,28 @@ class Document_Resource extends Element_Resource {
     }
 
     /**
-     * Get the data for the object by the given path
+     * Get the data for the document from database for the given path
      *
      * @param string $path
      * @return void
      */
     public function getByPath($path) {
-        try {
-            // remove trailing slash if exists
-            if (substr($path, -1) == "/" and strlen($path) > 1) {
-                $path = substr($path, 0, count($path) - 2);
-            }
-            $data = $this->db->fetchRow("SELECT * FROM documents WHERE CONCAT(path,`key`) = ?", $path);
 
-            if ($data["id"]) {
-                $this->assignVariablesToModel($data);
-            }
-            else {
-                throw new Exception("document doesn't exist");
-            }
-        }
-        catch (Exception $e) {
-            throw $e;
-        }
+        // check for root node
+        $_path = $path != "/" ? $_path = dirname($path) : $path;
+        $_key = basename($path);
+        $_path .= $_path != "/" ? "/" : "";
 
+        $data = $this->db->fetchRow("SELECT id FROM documents WHERE path = " . $this->db->quote($_path) . " and `key` = " . $this->db->quote($_key));
+
+        if ($data["id"]) {
+            $this->assignVariablesToModel($data);
+        }
+        else {
+            throw new Exception("document doesn't exist");
+        }
     }
+
 
     /**
      * Create a new record for the object in the database
@@ -90,8 +87,6 @@ class Document_Resource extends Element_Resource {
 
 
         try {
-
-
             $this->db->insert("documents", array(
                 "path" => $this->model->getPath(),
                 "parentId" => $this->model->getParentId()

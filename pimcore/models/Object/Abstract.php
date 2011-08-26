@@ -290,10 +290,15 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return Object_Abstract
      */
     public static function getByPath($path) {
-        
+
+        // remove trailing slash
+        if($path != "/") {
+            $path = rtrim($path,"/ ");
+        }
+
         // correct wrong path (root-node problem)
         $path = str_replace("//","/",$path);
-        
+
         try {
             $object = new self();
 

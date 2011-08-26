@@ -51,24 +51,25 @@ class Asset_Resource extends Element_Resource {
     }
 
     /**
-     * Get the data for the object by path from database and assign it to the object (model)
+     * Get the data for the asset from database for the given path
      *
-     * @param integer $id
+     * @param string $path
      * @return void
      */
     public function getByPath($path) {
-        // remove trailing slash if exists
-        if (substr($path, -1) == "/" and strlen($path) > 1) {
-            $path = substr($path, 0, count($path) - 2);
-        }
 
-        $data = $this->db->fetchRow("SELECT * FROM assets WHERE CONCAT(path,`filename`) = " . $this->db->quote($path));
+        // check for root node
+        $_path = $path != "/" ? $_path = dirname($path) : $path;
+        $_key = basename($path);
+        $_path .= $_path != "/" ? "/" : "";
+
+        $data = $this->db->fetchRow("SELECT id FROM assets WHERE path = " . $this->db->quote($_path) . " and `filename` = " . $this->db->quote($_key));
 
         if ($data["id"]) {
             $this->assignVariablesToModel($data);
         }
         else {
-            throw new Exception("asset " . $path . " doesn't exist");
+            throw new Exception("asset doesn't exist");
         }
     }
 

@@ -62,29 +62,6 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
     }
 
     /**
-     * Get the data for the object from database for the given path
-     *
-     * @param string $path
-     * @return void
-     */
-    public function getByPath($path) {
-        // remove trailing slash if exists
-        if (substr($path, -1) == "/" and strlen($path) > 1) {
-            $path = substr($path, 0, count($path) - 2);
-        }
-
-        $data = $this->db->fetchRow("SELECT * FROM objects WHERE CONCAT(o_path,`o_key`) = ?", $path);
-
-        if ($data["id"]) {
-            $this->assignVariablesToModel($data);
-            //$this->getData();
-        }
-        else {
-            throw new Exception("object " . $path . " doesn't exist");
-        }
-    }
-
-    /**
      * @param  string $fieldName
      * @return array
      */
