@@ -42,14 +42,14 @@ abstract class Pimcore_Model_List_Resource_Abstract extends Pimcore_Model_Resour
 
     }
 
-    /*protected  function getGroupBy() {
+    protected  function getGroupBy() {
         if ($this->model->getGroupBy()) {
             return " GROUP BY " . $this->model->getGroupBy();
         }
         return "";
-    }*/
+    }
 
-    protected  function getGroupBy($distinct = false) {
+    /*protected  function getGroupBy($distinct = false) {
         if ($this->model->getGroupBy()) {
             if($distinct) {
                 return " GROUP BY o_id, " . $this->model->getGroupBy();
@@ -62,7 +62,7 @@ abstract class Pimcore_Model_List_Resource_Abstract extends Pimcore_Model_Resour
         }
 
         return "";
-    }
+    }*/
 
 
     protected function getOffsetLimit() {

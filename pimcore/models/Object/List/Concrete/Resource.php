@@ -37,8 +37,8 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         $objects = array();
 
         try {
-            //$objectsData = $this->db->fetchAll("SELECT DISTINCT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
-            $objectsData = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy(true) . $this->getOrder() . $this->getOffsetLimit());
+            $objectsData = $this->db->fetchAll("SELECT DISTINCT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+            //$objectsData = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy(true) . $this->getOrder() . $this->getOffsetLimit());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
