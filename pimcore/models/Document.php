@@ -49,6 +49,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public $parentId;
 
     /**
+     * @var Document
+     */
+    public $parent;
+
+    /**
      * Type of the document as string (enum)
      * Possible values: page,snippet,link,folder
      *
@@ -994,6 +999,25 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $this->properties[$name] = $property;
     }
 
+    /**
+     * @return Document
+     */
+    public function getParent() {
+
+        if($this->parent === null) {
+            $this->setParent(Document::getById($this->getParentId()));
+        }
+
+        return $this->parent;
+    }
+
+    /**
+     * @param Document $parent
+     * @return void
+     */
+    public function setParent ($parent) {
+        $this->parent = $parent;
+    }
 
     /**
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
@@ -1050,12 +1074,12 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions", "scheduledTasks");
+            $blockedVars = array("dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions", "scheduledTasks", "parent");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("dependencies", "userPermissions", "permissions", "childs", "hasChilds", "_oldPath", "versions", "scheduledTasks", "properties");
+            $blockedVars = array("dependencies", "userPermissions", "permissions", "childs", "hasChilds", "_oldPath", "versions", "scheduledTasks", "properties", "parent");
         }
         
 

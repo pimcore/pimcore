@@ -62,7 +62,7 @@ class Object_Abstract_Resource extends Element_Resource {
         $_key = basename($path);
         $_path .= $_path != "/" ? "/" : "";
 
-        $data = $this->db->fetchRow("SELECT id FROM objects WHERE o_path = " . $this->db->quote($_path) . " and `o_key` = " . $this->db->quote($_key));
+        $data = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_path = " . $this->db->quote($_path) . " and `o_key` = " . $this->db->quote($_key));
 
         if ($data["o_id"]) {
             $this->assignVariablesToModel($data);
@@ -193,6 +193,8 @@ class Object_Abstract_Resource extends Element_Resource {
 
         $properties = array();
 
+        /*
+        // collect property via path
         $pathParts = explode("/", $this->model->getO_Path() . $this->model->getO_Key());
         unset($pathParts[0]);
         $tmpPathes = array();
@@ -205,6 +207,22 @@ class Object_Abstract_Resource extends Element_Resource {
         $pathCondition = implode(" OR ", $pathConditionParts);
 
         $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = ?)  AND ctype='object' ORDER BY cpath ASC", $this->model->getId());
+
+        */
+        
+        // collect properties via parent - ids
+        $parentIds = array(1);
+        $obj = $this->model->getParent();
+
+        if($obj) {
+            while($obj) {
+                $parentIds[] = $obj->getId();
+                $obj = $obj->getParent();
+            }
+        }
+        
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='object' ORDER BY cpath ASC", $this->model->getId());
+
 
         foreach ($propertiesRaw as $propertyRaw) {
 

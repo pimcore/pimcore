@@ -218,6 +218,8 @@ class Document_Resource extends Element_Resource {
 
         $properties = array();
 
+        /*
+        // collect property via path
         $pathParts = explode("/", $this->model->getRealFullPath());
         unset($pathParts[0]);
         $tmpPathes = array();
@@ -230,6 +232,24 @@ class Document_Resource extends Element_Resource {
         $pathCondition = implode(" OR ", $pathConditionParts);
 
         $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = ?)  AND ctype='document' ORDER BY cpath ASC", $this->model->getId());
+        
+        */
+
+
+        // collect properties via parent - ids
+        $parentIds = array(1);
+        $obj = $this->model->getParent();
+
+        if($obj) {
+            while($obj) {
+                $parentIds[] = $obj->getId();
+                $obj = $obj->getParent();
+            }
+        }
+
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='document' ORDER BY cpath ASC", $this->model->getId());
+
+
 
         foreach ($propertiesRaw as $propertyRaw) {
 

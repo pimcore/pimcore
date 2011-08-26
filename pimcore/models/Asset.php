@@ -41,6 +41,11 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public $parentId;
 
     /**
+     * @var Asset
+     */
+    public $parent;
+
+    /**
      * Type
      *
      * @var string
@@ -1242,6 +1247,25 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         return round($size, $precision) . ' ' . $format;
     }
 
+    /**
+     * @return Asset
+     */
+    public function getParent() {
+
+        if($this->parent === null) {
+            $this->setParent(Asset::getById($this->getParentId()));
+        }
+
+        return $this->parent;
+    }
+
+    /**
+     * @param Asset $parent
+     * @return void
+     */
+    public function setParent ($parent) {
+        $this->parent = $parent;
+    }
 
     /**
      * @return string
@@ -1260,12 +1284,12 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions");
+            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions", "parent");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions", "childs", "properties", "data");
+            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions", "childs", "properties", "data", "parent");
         }
 
 
