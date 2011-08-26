@@ -76,8 +76,11 @@ CREATE TABLE `dependencies` (
   `targetid` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`sourcetype`,`sourceid`,`targetid`,`targettype`),
   KEY `sourceid` (`sourceid`),
-  KEY `targetid` (`targetid`)
+  KEY `targetid` (`targetid`),
+  KEY `sourcetype` (`sourcetype`),
+  KEY `targettype` (`targettype`)
 ) DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
