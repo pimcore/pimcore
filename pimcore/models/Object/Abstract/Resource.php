@@ -221,8 +221,12 @@ class Object_Abstract_Resource extends Element_Resource {
             }
         }
         
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='object' ORDER BY cpath ASC", $this->model->getId());
+        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='object'", $this->model->getId());
 
+        // because this should be faster than mysql
+        usort($propertiesRaw, function($left,$right) {
+           return strcmp($left["cpath"],$right["cpath"]);
+        });
 
         foreach ($propertiesRaw as $propertyRaw) {
 

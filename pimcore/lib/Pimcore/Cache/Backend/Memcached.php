@@ -16,6 +16,9 @@
 
 class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
+    /**
+     * @var Zend_Db_Adapter_Abstract
+     */
     private $db;
 
     /**
