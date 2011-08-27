@@ -37,13 +37,17 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         $objects = array();
 
         try {
-            $objectsData = $this->db->fetchAll("SELECT DISTINCT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+            $objectsData = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
 
+        $tmpIds = array();
         foreach ($objectsData as $objectData) {
-            $objects[] = Object_Abstract::getById($objectData["o_id"]);
+            if(!in_array($objectData["o_id"], $tmpIds)) {
+                $objects[] = Object_Abstract::getById($objectData["o_id"]);
+                $tmpIds[] = $objectData["o_id"];
+            }
         }
 
         $this->model->setObjects($objects);
@@ -56,12 +60,18 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT COUNT(DISTINCT oo_id) as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy());
+            $amount = $this->db->fetchRow("SELECT o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy());
+
+            $tmpIds = array();
+            if(!in_array($amount["o_id"], $tmpIds)) {
+                $tmpIds = $amount["o_id"];
+            }
+
+            return count($tmpIds);
+
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
-
-        return $amount["amount"];
     }
 
     /**
@@ -73,12 +83,18 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         }
 
         try {
-            $amount = $this->db->fetchAll("SELECT COUNT(DISTINCT oo_id) as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+            $amount = $this->db->fetchAll("SELECT o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+
+            $tmpIds = array();
+            if(!in_array($amount["o_id"], $tmpIds)) {
+                $tmpIds = $amount["o_id"];
+            }
+
+            return count($tmpIds);
+
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
-        
-        return $amount["amount"];
     }
 
     /**
