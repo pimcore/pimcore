@@ -1043,3 +1043,6 @@
     background: url(/pimcore/static/img/icon/server_chart.png) left center no-repeat !important;
 }
 
+.pimcore_icon_mysql {
+    background: url(/pimcore/static/img/icon/mysql.png) left center no-repeat !important;
+}
