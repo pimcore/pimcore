@@ -286,7 +286,13 @@ CREATE TABLE `properties_predefined` (
   `config` text,
   `ctype` enum('document','asset','object') DEFAULT NULL,
   `inheritable` tinyint(1) unsigned DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `id` (`id`),
+  KEY `key` (`key`),
+  KEY `type` (`type`),
+  KEY `ctype` (`ctype`),
+  KEY `inheritable` (`inheritable`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `recyclebin`;
