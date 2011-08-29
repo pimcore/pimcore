@@ -59,6 +59,7 @@ class Object_Abstract_Resource extends Element_Resource {
 
         // check for root node
         $_path = $path != "/" ? $_path = dirname($path) : $path;
+        $_path = str_replace("\\", "/", $_path); // windows patch
         $_key = basename($path);
         $_path .= $_path != "/" ? "/" : "";
 
