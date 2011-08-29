@@ -88,4 +88,6 @@ foreach ($plugins as $plugin) {
 
 }
 
+$manager->run();
+
 ?>
