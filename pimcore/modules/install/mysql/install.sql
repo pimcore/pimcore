@@ -130,7 +130,7 @@ CREATE TABLE `documents_elements` (
 DROP TABLE IF EXISTS `documents_link`;
 CREATE TABLE `documents_link` (
   `id` int(11) unsigned NOT NULL default '0',
-  `internalType` enum('document','asset') character set utf8 collate utf8_bin default NULL,
+  `internalType` enum('document','asset') default NULL,
   `internal` int(11) unsigned default NULL,
   `direct` varchar(255) default NULL,
   `linktype` enum('direct','internal') default NULL,
@@ -187,27 +187,27 @@ DROP TABLE IF EXISTS `edit_lock`;
 CREATE TABLE `edit_lock` (
   `id` int(11) NOT NULL auto_increment,
   `cid` int(11) unsigned NOT NULL default '0',
-  `ctype` enum('document','asset','object') collate utf8_bin default NULL,
+  `ctype` enum('document','asset','object') default NULL,
   `userId` int(11) unsigned NOT NULL default '0',
-  `sessionId` varchar(255) collate utf8_bin default NULL,
+  `sessionId` varchar(255) default NULL,
   `date` int(11) unsigned default NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `glossary`;
 CREATE TABLE `glossary` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `language` varchar(2) COLLATE utf8_bin DEFAULT NULL,
-  `text` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `link` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `abbr` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `acronym` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `language` varchar(2) DEFAULT NULL,
+  `text` varchar(255) DEFAULT NULL,
+  `link` varchar(255) DEFAULT NULL,
+  `abbr` varchar(255) DEFAULT NULL,
+  `acronym` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `language` (`language`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `objects`;
 CREATE TABLE `objects` (
@@ -238,7 +238,7 @@ DROP TABLE IF EXISTS `objects_permissions`;
 CREATE TABLE `objects_permissions` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `cid` int(11) unsigned DEFAULT NULL,
-  `cpath` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `cpath` varchar(255) DEFAULT NULL,
   `userId` int(11) unsigned DEFAULT NULL,
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -309,28 +309,28 @@ CREATE TABLE `recyclebin` (
 DROP TABLE IF EXISTS `redirects`;
 CREATE TABLE `redirects` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `source` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `target` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `statusCode` varchar(3) COLLATE utf8_bin DEFAULT NULL,
+  `source` varchar(255) DEFAULT NULL,
+  `target` varchar(255) DEFAULT NULL,
+  `statusCode` varchar(3) DEFAULT NULL,
   `priority` int(2) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `schedule_tasks`;
 CREATE TABLE `schedule_tasks` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `cid` int(11) unsigned DEFAULT NULL,
-  `ctype` enum('document','asset','object') COLLATE utf8_bin DEFAULT NULL,
+  `ctype` enum('document','asset','object') DEFAULT NULL,
   `date` bigint(20) unsigned DEFAULT NULL,
-  `action` enum('publish','unpublish','delete','publish-version') COLLATE utf8_bin DEFAULT NULL,
+  `action` enum('publish','unpublish','delete','publish-version') DEFAULT NULL,
   `version` bigint(20) unsigned DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `active` (`active`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
@@ -344,19 +344,19 @@ CREATE TABLE `sites` (
 DROP TABLE IF EXISTS  `staticroutes`;
 CREATE TABLE `staticroutes` (
   `id` int(11) unsigned NOT NULL auto_increment,
-  `name` varchar(50) collate utf8_bin default NULL,
-  `pattern` varchar(255) collate utf8_bin default NULL,
-  `reverse` varchar(255) collate utf8_bin default NULL,
-  `module` varchar(255) collate utf8_bin default NULL,
-  `controller` varchar(255) collate utf8_bin default NULL,
-  `action` varchar(255) collate utf8_bin default NULL,
-  `variables` varchar(255) collate utf8_bin default NULL,
-  `defaults` varchar(255) collate utf8_bin default NULL,
+  `name` varchar(50) default NULL,
+  `pattern` varchar(255) default NULL,
+  `reverse` varchar(255) default NULL,
+  `module` varchar(255) default NULL,
+  `controller` varchar(255) default NULL,
+  `action` varchar(255) default NULL,
+  `variables` varchar(255) default NULL,
+  `defaults` varchar(255) default NULL,
   `priority` int(3) DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `thumbnails`;
 CREATE TABLE `thumbnails` (
@@ -377,9 +377,9 @@ CREATE TABLE `thumbnails` (
 
 DROP TABLE IF EXISTS `translations_website`;
 CREATE TABLE `translations_website` (
-  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-  `language` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-  `text` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `language` varchar(10) NOT NULL DEFAULT '',
+  `text` text,
   `date` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
@@ -389,9 +389,9 @@ CREATE TABLE `translations_website` (
 
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
-  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-  `language` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-  `text` text CHARACTER SET utf8 COLLATE utf8_bin,
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `language` varchar(10) NOT NULL DEFAULT '',
+  `text` text,
   `date` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
@@ -423,10 +423,10 @@ ALTER TABLE `users` AUTO_INCREMENT = 1;
 
 DROP TABLE IF EXISTS `users_permission_definitions`;
 CREATE TABLE `users_permission_definitions` (
-  `key` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '',
-  `translation` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `key` varchar(50) NOT NULL DEFAULT '',
+  `translation` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`key`)
-) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `users_permissions`;
 CREATE TABLE `users_permissions` (

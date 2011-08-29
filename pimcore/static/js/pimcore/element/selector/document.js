@@ -20,7 +20,10 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
             autoDestroy: true,
             root: "data",
             remoteSort: true,
-            url: "/admin/search/search/find",
+            proxy : new Ext.data.HttpProxy({
+                method: 'POST',
+                url: "/admin/search/search/find"
+            }),
             fields: ["id","fullpath","type","subtype","published","title","description","keywords","name","filename"]
         });
     },
