@@ -106,7 +106,7 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
         $logEntry = "DB Query: " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
         Logger::debug($logEntry);
 
-        if(PIMCORE_DEVMODE && !empty($_REQUEST["dbprofile"])) {
+        /*if(PIMCORE_DEVMODE && !empty($_REQUEST["dbprofile"])) {
             if(!is_resource($this->logFile)) {
                 $logFile = dirname(PIMCORE_LOG_DEBUG) . "/dbprofile-" . $_REQUEST["dbprofile"] . ".log";
                 file_put_contents($logFile,"");
@@ -114,15 +114,15 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
             }
 
             fwrite($this->logFile, $logEntry);
-        }
+        }*/
     }
 
     /**
      * 
      */
-    public function __destruct() {
+    /*public function __destruct() {
         fclose($this->logFile);
-    }
+    }*/
 
     /**
      * Update the label of the message holding the profile info.

@@ -31,7 +31,10 @@ class Pimcore_Tool_Serialize {
      * @return mixed
      */
     public static function unserialize ($data) {
-        return unserialize($data);
+        if(!empty($data) && is_string($data)) {
+            return unserialize($data);
+        }
+        return null;
     }
     
 }
