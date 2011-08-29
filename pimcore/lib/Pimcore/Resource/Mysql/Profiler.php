@@ -54,6 +54,11 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
     protected $_totalElapsedTime = 0;
 
     /**
+     * @var resource
+     */
+    protected $logFile;
+
+    /**
      * Constructor
      *
      * @param string $label OPTIONAL Label for the profiling info.
@@ -97,7 +102,26 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
         
         $profile = $this->getQueryProfile($queryId);
         $this->_totalElapsedTime += $profile->getElapsedSecs();
-        Logger::debug("DB Query: " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | ");
+
+        $logEntry = "DB Query: " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
+        Logger::debug($logEntry);
+
+        if(PIMCORE_DEVMODE && !empty($_REQUEST["dbprofile"])) {
+            if(!is_resource($this->logFile)) {
+                $logFile = dirname(PIMCORE_LOG_DEBUG) . "/dbprofile-" . $_REQUEST["dbprofile"] . ".log";
+                file_put_contents($logFile,"");
+                $this->logFile = fopen($logFile, "a+");
+            }
+
+            fwrite($this->logFile, $logEntry);
+        }
+    }
+
+    /**
+     * 
+     */
+    public function __destruct() {
+        fclose($this->logFile);
     }
 
     /**
