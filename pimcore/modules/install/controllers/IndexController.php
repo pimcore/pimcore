@@ -101,7 +101,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
                     )
                 ),
                 "database" => array(
-                    "adapter" => "Pdo_Mysql",
+                    "adapter" => $this->_getParam("mysql_adapter"),
                     "params" => array(
                         "host" => $this->_getParam("mysql_host"),
                         "username" => $this->_getParam("mysql_username"),
