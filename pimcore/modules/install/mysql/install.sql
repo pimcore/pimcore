@@ -461,22 +461,35 @@ CREATE TABLE `sanitycheck` (
 
 DROP TABLE IF EXISTS `search_backend_data`;
 CREATE TABLE `search_backend_data` (
-   `id` int(11) NOT NULL,
-   `fullpath` VARCHAR(510),
-   `maintype` VARCHAR(8),
-   `type` VARCHAR(20) ,
-   `subtype` VARCHAR(255) ,
-   `published` bigint(20) ,
-   `creationDate` bigint(20) ,
-   `modificationDate` bigint(20) ,
-   `userOwner` int(11) ,
-   `userModification` int(11) ,
-   `data` LONGTEXT ,
-   `fieldcollectiondata` LONGTEXT ,
-   `localizeddata` LONGTEXT ,
-   `properties` TEXT ,
-  PRIMARY KEY  (`id`,`maintype`)
-) DEFAULT CHARSET=utf8;
+  `id` int(11) NOT NULL,
+  `fullpath` varchar(510) DEFAULT NULL,
+  `maintype` varchar(8) NOT NULL DEFAULT '',
+  `type` varchar(20) DEFAULT NULL,
+  `subtype` varchar(255) DEFAULT NULL,
+  `published` bigint(20) DEFAULT NULL,
+  `creationDate` bigint(20) DEFAULT NULL,
+  `modificationDate` bigint(20) DEFAULT NULL,
+  `userOwner` int(11) DEFAULT NULL,
+  `userModification` int(11) DEFAULT NULL,
+  `data` longtext,
+  `fieldcollectiondata` longtext,
+  `localizeddata` longtext,
+  `properties` text,
+  PRIMARY KEY (`id`,`maintype`),
+  KEY `id` (`id`),
+  KEY `fullpath` (`fullpath`),
+  KEY `maintype` (`maintype`),
+  KEY `type` (`type`),
+  KEY `subtype` (`subtype`),
+  KEY `published` (`published`),
+  FULLTEXT KEY `data` (`data`),
+  FULLTEXT KEY `fieldcollectiondata` (`fieldcollectiondata`),
+  FULLTEXT KEY `localizeddata` (`localizeddata`),
+  FULLTEXT KEY `properties` (`properties`),
+  FULLTEXT KEY `fulltext` (`data`,`fieldcollectiondata`,`localizeddata`,`properties`,`fullpath`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
 
 
 /* ------ DON'T REMOVE OR MODIFY THE FOLLOWING COMMENT, IT IS REQUIRED FOR BACKUPS ------ */

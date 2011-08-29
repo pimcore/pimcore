@@ -87,7 +87,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
 
         if (!empty($query)) {
-            $conditionParts[] = "(id = ". $db->quote($query) ." or fullpath like ". $db->quote("%".$query."%") ." or  data like ". $db->quote("%".$query."%") ." or  localizeddata like ". $db->quote("%".$query."%") ." or  fieldcollectiondata like ". $db->quote("%".$query."%") ." or properties like ". $db->quote("%".$query."%") .")";
+            $conditionParts[] = "( MATCH (`data`,`fieldcollectiondata`,`localizeddata`,`properties`,`fullpath`) AGAINST (" . $db->quote($query) . ") )";
         }                      
 
 
@@ -122,16 +122,16 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
         if (is_array($types) and !empty($types[0])) {
             foreach ($types as $type) {
-                $conditionTypeParts[] = "maintype = " . $db->quote($type);
+                $conditionTypeParts[] = $db->quote($type);
             }
-            $conditionParts[] = "(" . implode(" OR ", $conditionTypeParts) . ")";
+            $conditionParts[] = "( maintype IN (" . implode(",", $conditionTypeParts) . ") )";
         }
 
         if (is_array($subtypes) and !empty($subtypes[0])) {
             foreach ($subtypes as $subtype) {
-                $conditionSubtypeParts[] = "type = " . $db->quote($subtype);
+                $conditionSubtypeParts[] = $db->quote($subtype);
             }
-            $conditionParts[] = "(" . implode(" OR ", $conditionSubtypeParts) . ")";
+            $conditionParts[] = "( type IN (" . implode(",", $conditionSubtypeParts) . ") )";
         }
 
         if (is_array($classnames) and !empty($classnames[0])) {
@@ -139,9 +139,9 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
                 $classnames[]="folder";    
             }
             foreach ($classnames as $classname) {
-                $conditionClassnameParts[] = "subtype = " . $db->quote($classname);
+                $conditionClassnameParts[] = $db->quote($classname);
             }
-            $conditionParts[] = "(" . implode(" OR ", $conditionClassnameParts) . ")";
+            $conditionParts[] = "( subtype IN (" . implode(",", $conditionClassnameParts) . ") )";
         }
 
 
@@ -151,6 +151,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             //echo $condition; die();
             $searcherList->setCondition($condition);
         }
+
 
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);

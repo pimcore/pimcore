@@ -143,7 +143,7 @@ class Zend_Json
 
         // Encoding
         if (function_exists('json_encode') && self::$useBuiltinEncoderDecoder !== true) {
-            $encodedResult = json_encode($valueToEncode);
+            $encodedResult = @json_encode($valueToEncode);
         } else {
             require_once 'Zend/Json/Encoder.php';
             $encodedResult = Zend_Json_Encoder::encode($valueToEncode, $cycleCheck, $options);
