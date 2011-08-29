@@ -144,13 +144,15 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: "pimcore_icon_translations",
                 handler: this.editTranslations
             });
+        }
 
+        // admin translations only for admins
+        if(user.admin) {
             extrasItems.push({
                 text: t("translations_admin"),
                 iconCls: "pimcore_icon_translations",
                 handler: this.editTranslationsSpecific
             });
-
         }
 
         if (user.isAllowed("system_settings")) {
