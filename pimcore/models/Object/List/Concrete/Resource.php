@@ -64,7 +64,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
             $tmpIds = array();
             if(!in_array($amount["o_id"], $tmpIds)) {
-                $tmpIds = $amount["o_id"];
+                $tmpIds[] = $amount["o_id"];
             }
 
             return count($tmpIds);
@@ -87,7 +87,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
             $tmpIds = array();
             if(!in_array($amount["o_id"], $tmpIds)) {
-                $tmpIds = $amount["o_id"];
+                $tmpIds[] = $amount["o_id"];
             }
 
             return count($tmpIds);
