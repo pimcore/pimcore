@@ -63,8 +63,10 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
             $amount = $this->db->fetchRow("SELECT o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy());
 
             $tmpIds = array();
-            if(!in_array($amount["o_id"], $tmpIds)) {
-                $tmpIds[] = $amount["o_id"];
+            foreach ($amount as $a) {
+                if(!in_array($a["o_id"], $tmpIds)) {
+                    $tmpIds[] = $a["o_id"];
+                }
             }
 
             return count($tmpIds);
@@ -86,8 +88,10 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
             $amount = $this->db->fetchAll("SELECT o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
 
             $tmpIds = array();
-            if(!in_array($amount["o_id"], $tmpIds)) {
-                $tmpIds[] = $amount["o_id"];
+            foreach ($amount as $a) {
+                if(!in_array($a["o_id"], $tmpIds)) {
+                    $tmpIds[] = $a["o_id"];
+                }
             }
 
             return count($tmpIds);
