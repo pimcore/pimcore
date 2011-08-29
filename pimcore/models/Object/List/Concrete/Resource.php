@@ -60,7 +60,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy());
+            $amount = $this->db->fetchAll("SELECT o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy());
 
             $tmpIds = array();
             foreach ($amount as $a) {
