@@ -1959,8 +1959,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     }
                 }
 
-
                 try {
+                    // don't check for mandatory fields here
+                    $object->setOmitMandatoryCheck(true);
                     $object->save();
                     $success = true;
                 } catch (Exception $e) {
@@ -1969,13 +1970,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
             else {
                 logger::debug("ObjectController::batchAction => There is no object left to update.");
-                $success = false;
+                $this->_helper->json(array("success" => false, "message" => "ObjectController::batchAction => There is no object left to update."));
             }
 
         }
         catch (Exception $e) {
-            $success = false;
             logger::err($e);
+            $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
         }
 
         $this->_helper->json(array("success" => $success));

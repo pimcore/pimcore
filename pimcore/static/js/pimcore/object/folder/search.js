@@ -583,12 +583,11 @@ pimcore.object.search = Class.create({
 
             // error handling
             if (this.batchErrors.length > 0) {
-
-                var jobs = [];
+                var jobErrors = [];
                 for (var i = 0; i < this.batchErrors.length; i++) {
-                    jobs.push(this.batchErrors[i].job);
+                    jobErrors.push(this.batchErrors[i].job);
                 }
-                Ext.Msg.alert(t("error"), t("error_jobs") + ": " + jobs.join(","));
+                Ext.Msg.alert(t("error"), t("error_jobs") + ": " + jobErrors.join(","));
             }
 
             return;
@@ -602,19 +601,18 @@ pimcore.object.search = Class.create({
         Ext.Ajax.request({
             url: "/admin/object/batch",
             params: this.batchParameters,
-            success: function (jobs, response) {
-                
-                var rdata = Ext.decode(response.responseText);
-                if (rdata) {
-                    if (!rdata.success) {
-                        this.batchErrors.push({
-                            job: response.request.parameters.job
-                        });
+            success: function (jobs, currentJob, response) {
+
+                try {
+                    var rdata = Ext.decode(response.responseText);
+                    if (rdata) {
+                        if (!rdata.success) {
+                            throw "not successful";
+                        }
                     }
-                }
-                else {
+                } catch (e) {
                     this.batchErrors.push({
-                        job: response.request.parameters.job
+                        job: currentJob
                     });
                 }
 
@@ -622,7 +620,7 @@ pimcore.object.search = Class.create({
                     this.batchJobCurrent++;
                     this.batchProcess(jobs);
                 }.bind(this), 400);
-            }.bind(this,jobs)
+            }.bind(this,jobs, this.batchParameters.job)
         });
     },
 
