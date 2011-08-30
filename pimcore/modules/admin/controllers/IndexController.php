@@ -87,5 +87,11 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
         // live connect
         $liveconnectToken = Pimcore_Liveconnect::getToken();
         $this->view->liveconnectToken = $liveconnectToken;
+
+        // adding css minify filter because of IE issues with CkEditor and more than 31 stylesheets
+        if(!PIMCORE_DEVMODE) {
+            $front = Zend_Controller_Front::getInstance();
+            $front->registerPlugin(new Pimcore_Controller_Plugin_CssMinify(), 800);
+        }
     }
 }

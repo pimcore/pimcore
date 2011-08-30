@@ -60,7 +60,7 @@
 
     <!-- stylesheets -->
     <?php foreach ($styles as $style) { ?>
-        <link rel="stylesheet" type="text/css" href="<?php echo $style ?>?_dc=<?php echo Pimcore_Version::$revision ?>" />
+        <link rel="stylesheet" type="text/css" href="<?php echo $style ?>" />
     <?php } ?>
 
 

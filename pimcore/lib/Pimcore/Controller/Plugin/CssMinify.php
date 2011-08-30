@@ -38,21 +38,21 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
     }
 
     public function dispatchLoopShutdown() {
-        
+
         if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
-        
+
         if ($this->enabled) {
             include_once("simple_html_dom.php");
-            
+
             $body = $this->getResponse()->getBody();
             
             $html = str_get_html($body);
             $styles = $html->find("link[rel=stylesheet], style[type=text/css]");
             
             $stylesheetContent = "";
-            
+
             foreach ($styles as $style) {
                 if($style->tag == "style") {
                     $stylesheetContent .= $style->innertext;
