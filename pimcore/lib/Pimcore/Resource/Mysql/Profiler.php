@@ -106,7 +106,7 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
         $logEntry = "DB Query: " . (string)round($profile->getElapsedSecs(),5) . " | " . $profile->getQuery() . " | " . implode(",",$profile->getQueryParams());
         Logger::debug($logEntry);
 
-        if(PIMCORE_DEBUG && !empty($_REQUEST["pimcore_dbprofile"])) {
+        if(!empty($_REQUEST["pimcore_dbprofile"])) {
             if(!is_resource($this->logFile)) {
                 $logFile = dirname(PIMCORE_LOG_DEBUG) . "/dbprofile-" . $_REQUEST["pimcore_dbprofile"] . ".log";
                 file_put_contents($logFile,"");
@@ -121,7 +121,7 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
      * 
      */
     public function __destruct() {
-        if(PIMCORE_DEBUG && is_resource($this->logFile)) {
+        if(is_resource($this->logFile)) {
             fclose($this->logFile);    
         }
     }

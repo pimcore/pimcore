@@ -66,9 +66,9 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT * FROM staticroutes WHERE name = ?", $this->model->getName());
+        $data = $this->db->fetchRow("SELECT id FROM staticroutes WHERE name = ?", $this->model->getName());
         
-        if($data["name"]) {
+        if($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
             throw new Exception("Route with name: " . $this->model->getName() . " does not exist");

@@ -68,12 +68,33 @@ class Staticroute extends Pimcore_Model_Abstract {
     public $priority = 1;
 
 
+    /**
+     * this is a small per request cache to know which route is which is, this info is used in self::getByName()
+     *
+     * @var array
+     */
+    protected static $nameIdMappingCache = array();
+
+    /**
+     * contains the static route which the current request matches (it he does), this is used in the view to get the current route
+     *
+     * @var Staticroute
+     */
     private static $_currentRoute;
 
+    /**
+     * @static
+     * @param $route
+     * @return void
+     */
     public static function setCurrentRoute($route) {
         self::$_currentRoute = $route;
     }
 
+    /**
+     * @static
+     * @return Staticroute
+     */
     public static function getCurrentRoute() {
         return self::$_currentRoute;
     }
@@ -84,17 +105,26 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public static function getById($id) {
         
+        $cacheKey = "staticroute_" . $id;
+
         try {
-            $route = new self();
-            $route->setId(intval($id));
-            $route->getResource()->getById();
-    
-            return $route;
-        } catch (Exception $e) {
-            Logger::warning($e);
+            $route = Zend_Registry::get($cacheKey);
         }
-        
-        return;
+        catch (Exception $e) {
+
+            try {
+                $route = new self();
+                Zend_Registry::set($cacheKey, $route);
+                $route->setId(intval($id));
+                $route->getResource()->getById();
+
+            } catch (Exception $e) {
+                Logger::error($e);
+                return null;
+            }
+        }
+
+        return $route;
     }
     
     /**
@@ -102,18 +132,29 @@ class Staticroute extends Pimcore_Model_Abstract {
      * @return Staticroute
      */
     public static function getByName($name) {
-        
-        try {
-            $route = new self();
-            $route->setName($name);
-            $route->getResource()->getByName();
-    
-            return $route;
-        } catch (Exception $e) {
-            Logger::warning($e);
+
+
+        // check if pimcore already knows the id for this $name, if yes just return it
+        if(array_key_exists($name, self::$nameIdMappingCache)) {
+            return self::getById(self::$nameIdMappingCache[$name]);
         }
-        
-        return;
+
+        // create a tmp object to obtain the id
+        $route = new self();
+
+        try {
+            $route->getResource()->getByName($name);
+        } catch (Exception $e) {
+            Logger::error($e);
+            return null;
+        }
+
+        // to have a singleton in a way. like all instances of Element_Interface do also, like Object_Abstract
+        if($route->getId() > 0) {
+            // add it to the mini-per request cache
+            self::$nameIdMappingCache[$name] = $route->getId();
+            return self::getById($route->getId());
+        }
     }
 
     /**
