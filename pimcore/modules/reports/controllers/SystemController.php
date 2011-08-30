@@ -18,7 +18,7 @@ class Reports_SystemController extends Pimcore_Controller_Action_Admin {
     public function indexAction () {
 
 
-        die("asd");
+        die("index");
     }
 
     public function mysqlAction () {
