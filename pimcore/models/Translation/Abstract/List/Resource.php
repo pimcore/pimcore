@@ -62,7 +62,7 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
                 }
             }
 
-            Pimcore_Model_Cache::save($translations, $cacheKey, array("translator","translate"));
+            Pimcore_Model_Cache::save($translations, $cacheKey, array("translator","translate"), 999);
         }
 
         

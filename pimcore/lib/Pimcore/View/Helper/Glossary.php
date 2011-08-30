@@ -121,7 +121,7 @@ class Pimcore_View_Helper_Glossary_Controller {
 
             $data = $this->prepareData($data);
 
-            Pimcore_Model_Cache::save($data, $cacheKey, array("glossary"));
+            Pimcore_Model_Cache::save($data, $cacheKey, array("glossary"), null, 995);
             Zend_Registry::set($cacheKey, $data);
         }
 

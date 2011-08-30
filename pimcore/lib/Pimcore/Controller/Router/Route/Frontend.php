@@ -169,7 +169,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                     $list->setOrder("DESC");
                     $routes = $list->load();
                     
-                    Pimcore_Model_Cache::save($routes, $cacheKey, array("system","staticroute","route"));
+                    Pimcore_Model_Cache::save($routes, $cacheKey, array("system","staticroute","route"), null, 998);
                 }
                 
                 foreach ($routes as $route) {
@@ -276,7 +276,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 $list->setOrderKey("priority");
                 $this->redirects = $list->load();
 
-                Pimcore_Model_Cache::save($this->redirects, $cacheKey, array("system","redirect","route"));
+                Pimcore_Model_Cache::save($this->redirects, $cacheKey, array("system","redirect","route"), null, 998);
             }
 
             foreach ($this->redirects as $redirect) {

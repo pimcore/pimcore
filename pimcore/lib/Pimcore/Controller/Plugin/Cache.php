@@ -115,7 +115,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
                     "content" => $this->getResponse()->getBody()
                 );
                 
-                Pimcore_Model_Cache::save($cacheItem, $this->cacheKey, array("output"), $this->lifetime);
+                Pimcore_Model_Cache::save($cacheItem, $this->cacheKey, array("output"), $this->lifetime, 1000);
             }
             catch (Exception $e) {
                 return;

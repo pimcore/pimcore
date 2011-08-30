@@ -165,7 +165,7 @@ class Pimcore_Model_Cache {
      * @param string $key
      * @return void
      */
-    public static function save($data, $key, $tags = array(), $lifetime = null) {
+    public static function save($data, $key, $tags = array(), $lifetime = null, $priority = 0) {
         self::addToSaveStack(func_get_args());
     }
     
@@ -175,24 +175,27 @@ class Pimcore_Model_Cache {
      * @param array $config
      * @return void
      */
-    public static function storeToCache ($data, $key, $tags = array(), $lifetime = null) {
+    public static function storeToCache ($data, $key, $tags = array(), $lifetime = null, $priority = null) {
         if (!self::$enabled) {
             return;
         }
-        
+
         // don't put anything into the cache, when cache is cleared
         if(in_array("__CLEAR_ALL__",self::$clearStack)) {
             return;
         }
-        
-        
+
+        // $priority is currently just for sorting the items in self::addToSaveStack()
+        // maybe it will be added to prioritize items for backends with volatile memories
+
+        // get cache instance
         if($cache = self::getInstance()) {
-            
+
             if ($lifetime !== null) {
                 $cache->setLifetime($lifetime);
             }
-            
-            
+
+
             if ($data instanceof Element_Interface) {
                 // check for currupt data
                 if ($data->getId() < 1) {
@@ -206,11 +209,11 @@ class Pimcore_Model_Cache {
                 // get dependencies for this element
                 $tags = array_unique(array_merge($data->getCacheTags(), $tags));
                 $type = get_class($data);
-        
+
                 Logger::debug("prepared " . $type . " " . $data->getFullPath() . " for data cache with tags: " . implode(",", $tags));
             }
-            
-            
+
+
             // check for cleared tags, only item which are not cleared within the same session are stored to the cache
             if(is_array($tags)){
                 foreach ($tags as $t) {
@@ -223,17 +226,17 @@ class Pimcore_Model_Cache {
 
             // serialize data, use custom serializer
             $data = Pimcore_Tool_Serialize::serialize($data);
-    
+
             $key = self::$cachePrefix . $key;
             $success = $cache->save($data, $key, $tags);
             if($success !== true) {
                 Logger::error("Failed to add entry $key to the cache");
             }
-            
+
             Logger::debug("Added " . $key . " to cache");
         }
     }
-    
+
     /**
      * Put the cache item info into the stack
      * array_unshift because the output cache has priority so the 1st item added to the stack will be for sure in the cache
@@ -246,6 +249,15 @@ class Pimcore_Model_Cache {
         // add the item to the save stack
         array_unshift(self::$saveStack, $config);
 
+        // sort by priority
+        usort(self::$saveStack, function ($a, $b) {
+            // the priority has the index 4
+            if ($a[4] == $b[4]) {
+                return 0;
+            }
+            return ($a[4] > $b[4]) ? -1 : 1;
+        });
+        
         // remove items which are too much, and cannot be added to the cache anymore
         array_splice(self::$saveStack,self::$maxWriteToCacheItems);
     }

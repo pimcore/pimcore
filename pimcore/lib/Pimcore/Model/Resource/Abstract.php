@@ -70,7 +70,7 @@ abstract class Pimcore_Model_Resource_Abstract implements Pimcore_Model_Resource
                 foreach ($data as $d) {
                     $columns[] = $d["Field"];
                 }
-                Pimcore_Model_Cache::save($columns, $cacheKey, array("system","resource"));
+                Pimcore_Model_Cache::save($columns, $cacheKey, array("system","resource"), null, 997);
             }
             
             Zend_Registry::set($cacheKey, $columns);

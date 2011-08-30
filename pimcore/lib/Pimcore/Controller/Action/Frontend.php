@@ -208,7 +208,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
                 if (!$translate = Pimcore_Model_Cache::load($cacheKey)) {
                     $translate = new Pimcore_Translate($locale);
-                    Pimcore_Model_Cache::save($translate, $cacheKey, array("translator","translator_website","translate"));
+                    Pimcore_Model_Cache::save($translate, $cacheKey, array("translator","translator_website","translate"), null, 999);
                 }
 
                 if(Pimcore_Tool::isValidLanguage($locale)) {
