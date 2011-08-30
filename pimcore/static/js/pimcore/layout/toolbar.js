@@ -192,11 +192,11 @@ pimcore.layout.toolbar = Class.create({
                     text: "Server Info",
                     iconCls: "pimcore_icon_server_info",
                     handler: this.showServerInfo
-                },{
-                    text: "MySQL Performance Tips",
+                }/*,{
+                    text: "MySQL Status",
                     iconCls: "pimcore_icon_mysql",
-                    handler: this.showMysqlPerformance
-                }]
+                    handler: this.showMysqlStatus
+                }*/]
             });
         }
 
@@ -751,15 +751,15 @@ pimcore.layout.toolbar = Class.create({
 
     },
 
-    showMysqlPerformance: function () {
+    showMysqlStatus: function () {
 
-        var id = "mysqlperformance";
+        var id = "mysqlstatus";
 
         try {
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/dbtuner/index.php", "pimcore_icon_mysql", "MySQL Performance Tips"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/reports/system/mysql", "pimcore_icon_mysql", "MySQL Status"));
         }
 
     }
