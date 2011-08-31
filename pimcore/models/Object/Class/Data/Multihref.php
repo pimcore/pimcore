@@ -647,7 +647,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
             return $publishedList;
         }
 
-        return $data;
+        return is_array($data) ? $data : array();
     }
 
     public function preSetData($object, $data)
