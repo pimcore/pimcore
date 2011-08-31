@@ -91,7 +91,11 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
-        this.component.disable();
+
+        this.component.on("afterrender", function () {
+            this.component.disable();
+        }.bind(this));
+
 
         return this.component;
     },
