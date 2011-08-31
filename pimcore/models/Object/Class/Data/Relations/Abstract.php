@@ -293,7 +293,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
                 return $this->getDataFromResource($relations);
             } else {
-                return array();
+                return null;
             }
         } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));

@@ -142,9 +142,9 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             if (method_exists($value, "load")) {
                 // datafield has it's own loader
                 $value = $value->load($this->model);
-                if($value === 0 || !empty($value)) {
-                    $this->model->setValue($key, $value);
-                }
+                //if($value === 0 || !empty($value)) {
+                $this->model->setValue($key, $value);
+                //}
             } else {
                 // if a datafield requires more than one field
                 if (is_array($value->getColumnType())) {
