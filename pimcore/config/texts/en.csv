@@ -267,7 +267,6 @@
 "cache_lifetime_description","Optional output-cache lifetime (in seconds) after the cache expires, if not defined the cache will be cleaned on every action inside the CMS"
 "cache_exclude_patterns_description","Regular Expressions like /^\/dir\/toexplude/"
 "google_account_description","The Google-Account is used for example for the YouTube and Analytics integration"
-"google_maps_api_key_description","The API-Key is recommended for the object field geographic point, this will enable a more advanced editmode"
 "analytics_trackid","Track-ID (eg. UA-XXXXX-X)"
 "analytics_settings_profile_description","Before you can select a profile you have to define your Google Analytics credentials for the account in the system settings (Google-Credentials) or in the fields below."
 "analytics_settings_username_description","Here you can define a seperate Google-Account for Analytics, if you leave this blank the Google-Account from the system settings is used."

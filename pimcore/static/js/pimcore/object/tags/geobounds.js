@@ -33,55 +33,44 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
 
-        if (pimcore.settings.google_maps_api_key) {
-            
-            this.mapImageID = uniqid();
-            
-            if (!this.data) {
-                this.data = {};
-            }
-            else {
-                this.data.ne = new GLatLng(this.data.NElatitude,this.data.NElongitude);
-                this.data.sw = new GLatLng(this.data.SWlatitude,this.data.SWlongitude);
-            }
-            
-            this.component = new Ext.Panel({
-                title: this.fieldConfig.title,
-                height: 370,
-                width: 490,
-                cls: "object_field",
-                html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"><img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
-                bbar: [{
-                    xtype: "button",
-                    text: t("empty"),
-                    icon: "/pimcore/static/img/icon/bin.png",
-                    handler: function () {
-                        this.data = {};
-                        this.dirty = true;
-                        this.updatePreviewImage();
-                    }.bind(this)
-                },"->",{
-                    xtype: "button",
-                    text: t("open_select_editor"),
-                    icon: "/pimcore/static/img/icon/magnifier.png",
-                    handler: this.openPicker.bind(this)
-                }]
-            });
-    
-            this.component.on("afterrender", function () {
-                this.updatePreviewImage();
-            }.bind(this))
+
+        this.mapImageID = uniqid();
+
+        if (!this.data) {
+            this.data = {};
         }
         else {
-            // gmaps is not configured
-            this.component = new Ext.Panel({
-                title: this.fieldConfig.title,
-                width: 490,
-                bodyStyle: "padding: 10px;",
-                cls: "object_field",
-                html: 'Please set the Google Maps API Key in the System Settings to use this widget.'
-            });
+            this.data.ne = new google.maps.LatLng(this.data.NElatitude,this.data.NElongitude);
+            this.data.sw = new google.maps.LatLng(this.data.SWlatitude,this.data.SWlongitude);
         }
+
+        this.component = new Ext.Panel({
+            title: this.fieldConfig.title,
+            height: 370,
+            width: 490,
+            cls: "object_field",
+            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"><img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
+            bbar: [{
+                xtype: "button",
+                text: t("empty"),
+                icon: "/pimcore/static/img/icon/bin.png",
+                handler: function () {
+                    this.data = {};
+                    this.dirty = true;
+                    this.updatePreviewImage();
+                }.bind(this)
+            },"->",{
+                xtype: "button",
+                text: t("open_select_editor"),
+                icon: "/pimcore/static/img/icon/magnifier.png",
+                handler: this.openPicker.bind(this)
+            }]
+        });
+
+        this.component.on("afterrender", function () {
+            this.updatePreviewImage();
+        }.bind(this))
+
 
 
         return this.component;
@@ -125,20 +114,20 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
         try {
             if (this.data.ne && this.data.sw) {
                 
-                var bounds = new GLatLngBounds(this.data.sw, this.data.ne);
+                var bounds = new google.maps.LatLngBounds(this.data.sw, this.data.ne);
                 var center = bounds.getCenter();
                 
                 // calculate zoom level without using the gmap2-object       
                 var s = 1.35; 
-                var xZoom = -(Math.log((this.data.ne.x - this.data.sw.x)/(px*s))/Math.log(2)); 
-                var yZoom = -(Math.log(((this.data.ne.y - this.data.sw.y)*Math.sec( center.y*Math.PI/180))/(py*s))/Math.log(2)); 
+                var xZoom = -(Math.log((this.data.ne.lng() - this.data.sw.lng())/(px*s))/Math.log(2));
+                var yZoom = -(Math.log(((this.data.ne.lat() - this.data.sw.lat())*Math.sec( center.y*Math.PI/180))/(py*s))/Math.log(2));
                 mapZoom = Math.min(Math.floor(xZoom), Math.floor(yZoom));
                 
-                var path = "rgba:0xff0000ff,weight:2|" + this.data.ne.y + "," + this.data.ne.x + "|" + this.data.sw.y + "," + this.data.ne.x + "|" + this.data.sw.y + "," + this.data.sw.x + "|" + this.data.ne.y + "," + this.data.sw.x + "|" + this.data.ne.y + "," + this.data.ne.x;
-                mapUrl = "http://maps.google.com/staticmap?center=" + center.y + "," + center.x + "&zoom=" + mapZoom + "&size=" + px + "x" + py + "&path=" + path + "&sensor=false&key=" + pimcore.settings.google_maps_api_key;
+                var path = "color:0xff0000ff|weight:2|" + this.data.ne.lat() + "," + this.data.ne.lng() + "|" + this.data.sw.lat() + "," + this.data.ne.lng() + "|" + this.data.sw.lat() + "," + this.data.sw.lng() + "|" + this.data.ne.lat() + "," + this.data.sw.lng() + "|" + this.data.ne.lat() + "," + this.data.ne.lng();
+                mapUrl = "http://maps.googleapis.com/maps/api/staticmap?center=" + center.y + "," + center.x + "&zoom=" + mapZoom + "&size=" + px + "x" + py + "&path=" + path + "&sensor=false";
             }
             else {
-                mapUrl = "http://maps.google.com/staticmap?center=0,0&zoom=1&size=" + px + "x" + py + "&sensor=false&key=" + pimcore.settings.google_maps_api_key;
+                mapUrl = "http://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size=" + px + "x" + py + "&sensor=false";
             }
         }
         catch (e) {
@@ -186,8 +175,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
                 icon: "/pimcore/static/img/icon/tick.png",
                 handler: function () {
                     
-                    this.data.ne = new GLatLng(this.NWmarker.getLatLng().y,this.SEmarker.getLatLng().x);
-                    this.data.sw = new GLatLng(this.SEmarker.getLatLng().y,this.NWmarker.getLatLng().x);
+                    this.data.ne = new google.maps.LatLng(this.NWmarker.getPosition().lat(),this.SEmarker.getPosition().lng());
+                    this.data.sw = new google.maps.LatLng(this.SEmarker.getPosition().lat(),this.NWmarker.getPosition().lng());
                     this.dirty = true;
                     
                     this.updatePreviewImage();
@@ -198,29 +187,35 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
         });
 
         this.searchWindow.on("afterrender", function () {
-            this.gmap = new GMap2(this.searchWindow.body.dom);
-            var customUI = this.gmap.getDefaultUI();
-            this.gmap.setUI(customUI);
 
-            var center = new GLatLng(0,0);
+            var center = new google.maps.LatLng(0,0);
             var mapZoom = 1;
+            var bounds;
             
             if (this.data.ne && this.data.sw) {
-               this.NWmarker = this.getMarker(new GLatLng(this.data.ne.y,this.data.sw.x),"nw");
-               this.SEmarker = this.getMarker(new GLatLng(this.data.sw.y,this.data.ne.x),"se");
-               
-               var bounds = new GLatLngBounds(this.data.sw, this.data.ne);
-               
-               this.redrawShape();
-               
-               mapZoom = this.gmap.getBoundsZoomLevel(bounds);
+               bounds = new google.maps.LatLngBounds(this.data.sw, this.data.ne);
                center = bounds.getCenter();
             }
 
-            this.gmap.setCenter(center, mapZoom);
-            this.geocoder = new GClientGeocoder();
+            this.gmap = new google.maps.Map(this.searchWindow.body.dom, {
+                zoom: mapZoom,
+                center: center,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+
+            if(bounds) {
+                this.gmap.fitBounds(bounds);
+
+                this.NWmarker = this.getMarker(new google.maps.LatLng(this.data.ne.lat(),this.data.sw.lng()),"nw");
+                this.SEmarker = this.getMarker(new google.maps.LatLng(this.data.sw.lat(),this.data.ne.lng()),"se");
+            }
+
+
+            this.redrawShape();
+
+            this.geocoder = new google.maps.Geocoder();
             
-            GEvent.addListener(this.gmap,"click",this.createOnClickMarker.bind(this));
+            google.maps.event.addListener(this.gmap,"click",this.createOnClickMarker.bind(this));
 
         }.bind(this))
 
@@ -235,52 +230,35 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
     },
 
     geocode: function () {
+
         if (this.geocoder) {
-            this.geocoder.getLatLng(
-                    this.searchfield.getValue(),
-                    function(point) {
-                        if (point) {
-                            this.gmap.setCenter(point, 16);
-                        }
-                    }.bind(this)
-                    );
-        }
-    },
-
-    reverseGeocode: function () {
-
-        if (this.marker) {
-
-            var latlng = this.marker.getLatLng();
-            if (latlng != this.lastPosition) {
-                if (latlng) {
-                    this.lastPosition = latlng;
-                    this.geocoder.getLocations(latlng, function (response) {
-                        try {
-                            var place = response.Placemark[0];
-                            this.currentLocationTextNode.setText("<b>" + t("current_address") + ": </b>" + place.address);
-                        }
-                        catch (e) {
-                            console.log(e);
-                        }
-                    }.bind(this));
+            var address = this.searchfield.getValue();
+            this.geocoder.geocode( { 'address': address}, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    this.gmap.setCenter(results[0].geometry.location, 16);
+                    this.gmap.setZoom(14);
                 }
-            }
+            }.bind(this));
         }
     },
     
     getMarker: function (point, type) {
-        var marker = new GMarker(point, {draggable: true});
-        
+        var marker = new google.maps.Marker({
+            position: point,
+            draggable: true,
+            map: this.gmap
+        });
+
         //GEvent.addListener(marker,"drag",this.redrawShape.bind(this));
-        GEvent.addListener(marker,"drag",this.observePosition.bind(this, type));
-        this.gmap.addOverlay(marker);
+        google.maps.event.addListener(marker, "drag", this.observePosition.bind(this, type));
         
         return marker;
     },
 
-    createOnClickMarker: function (tmp,point) {
-        
+    createOnClickMarker: function (e) {
+
+        var point = e.latLng;
+
         if(typeof this.NWmarker == "undefined" || this.NWmarker == null) {
             this.NWmarker = this.getMarker(point, "nw");
         }
@@ -294,9 +272,9 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
         var points = [];
         
         points.push(nw);
-        points.push(new GLatLng(nw.y,se.x));  
+        points.push(new google.maps.LatLng(nw.lat(),se.lng()));
         points.push(se);
-        points.push(new GLatLng(se.y,nw.x));  
+        points.push(new google.maps.LatLng(se.lat(),nw.lng()));
         points.push(nw);
         
         return points; 
@@ -304,19 +282,19 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
     
     observePosition: function (positionType) {
         if(positionType == "nw") {
-            if(this.NWmarker.getLatLng().x >= this.SEmarker.getLatLng().x) {
-                this.NWmarker.setLatLng(new GLatLng(this.NWmarker.getLatLng().y,this.SEmarker.getLatLng().x));
+            if(this.NWmarker.getPosition().lng() >= this.SEmarker.getPosition().lng()) {
+                this.NWmarker.setPosition(new google.maps.LatLng(this.NWmarker.getPosition().lat(),this.SEmarker.getPosition().lng()));
             }
-            if(this.NWmarker.getLatLng().y <= this.SEmarker.getLatLng().y) {
-                this.NWmarker.setLatLng(new GLatLng(this.SEmarker.getLatLng().y,this.NWmarker.getLatLng().x));
+            if(this.NWmarker.getPosition().lat() <= this.SEmarker.getPosition().lat()) {
+                this.NWmarker.setPosition(new google.maps.LatLng(this.SEmarker.getPosition().lat(),this.NWmarker.getPosition().lng()));
             }
         }
         else {
-            if(this.SEmarker.getLatLng().x <= this.NWmarker.getLatLng().x) {
-                this.SEmarker.setLatLng(new GLatLng(this.SEmarker.getLatLng().y,this.NWmarker.getLatLng().x));
+            if(this.SEmarker.getPosition().lng() <= this.NWmarker.getPosition().lng()) {
+                this.SEmarker.setPosition(new google.maps.LatLng(this.SEmarker.getPosition().lat(),this.NWmarker.getPosition().lng()));
             }
-            if(this.SEmarker.getLatLng().y >= this.NWmarker.getLatLng().y) {
-                this.SEmarker.setLatLng(new GLatLng(this.NWmarker.getLatLng().y,this.SEmarker.getLatLng().x));
+            if(this.SEmarker.getPosition().y >= this.NWmarker.getPosition().y) {
+                this.SEmarker.setPosition(new google.maps.LatLng(this.NWmarker.getPosition().lat(),this.SEmarker.getPosition().lng()));
             }
         }
         
@@ -326,21 +304,30 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
     redrawShape: function () {
         
         if(typeof this.polygon != "undefined") {
-            this.gmap.removeOverlay(this.polygon);
+            this.polygon.setMap(null);
         }
-        
-        this.polygon = new GPolygon(this.getRectanglePoints(this.NWmarker.getLatLng(),this.SEmarker.getLatLng()), "#f33f00", 2, 1, "#ff0000", 0.2);
-        this.gmap.addOverlay(this.polygon);
+
+        if( typeof this.NWmarker != "undefined" && this.NWmarker != null && typeof this.SEmarker != "undefined" && this.SEmarker != null ) {
+            this.polygon = new google.maps.Polygon({
+                paths: this.getRectanglePoints(this.NWmarker.getPosition(),this.SEmarker.getPosition()),
+                strokeColor: "#f33f00",
+                strokeOpacity: 1,
+                strokeWeight: 2,
+                fillColor: "#ff0000",
+                fillOpacity: 0.2,
+                map: this.gmap
+            });
+        }
     },
     
     
     getValue: function () {
         if(this.data.ne) {
             return {
-                NElatitude: this.data.ne.y,
-                NElongitude: this.data.ne.x,
-                SWlatitude: this.data.sw.y,
-                SWlongitude: this.data.sw.x
+                NElatitude: this.data.ne.lat(),
+                NElongitude: this.data.ne.lng(),
+                SWlatitude: this.data.sw.lat(),
+                SWlongitude: this.data.sw.lng()
             };
         }
         

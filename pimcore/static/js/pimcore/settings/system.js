@@ -830,7 +830,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: "<b>" + t('google_maps_api_key') + "</b><br />" + t("google_maps_api_key_description"),
+                                value: "<b>" + t('google_maps_api_key') + ' <b style="color:red;">DEPRECATED</b>',
                                 cls: "pimcore_extra_label"
                             },
                             {

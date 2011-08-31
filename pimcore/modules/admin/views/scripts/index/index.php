@@ -393,7 +393,6 @@
             mail: <?php echo $this->mail_settings_incomplete ?>,
             welcomescreen: <?php echo $this->config->general->welcomescreen ? "true" : "false"; ?>,
             debug: <?php echo $this->config->general->debug ? "true" : "false"; ?>,
-            google_maps_api_key: "<?php echo $this->config->services->googlemaps->apikey; ?>",
             google_analytics_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::isConfigured()) ?>,
             google_analytics_advanced: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::getSiteConfig()->advanced); ?>,
             google_webmastertools_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Webmastertools::isConfigured()) ?>,
@@ -407,10 +406,7 @@
     
     
     <?php // 3rd party libraries ?>
-    <?php if ($this->config->services->googlemaps->apikey) { ?>
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=<?php echo $this->config->services->googlemaps->apikey; ?>"
-            type="text/javascript"></script>
-    <?php } ?>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
     
     <script type="text/javascript" src="/admin/misc/json-transliteration"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/"></script>

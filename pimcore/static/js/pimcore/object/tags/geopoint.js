@@ -35,13 +35,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
                     var width = 140;
                     var mapZoom = 10;
 
-                    var mapUrl;
-                    //var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + value.longitude + "," + value.latitude + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=x80&points=" + value.longitude + "," + value.latitude + ",pointImagePattern:red";
-                    if (pimcore.settings.google_maps_api_key) {
-                        mapUrl = "http://maps.google.com/staticmap?center=" + value.latitude + "," + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + value.latitude + "," + value.longitude + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
-                    } else {
-                        return 'Google Maps API Key not present!';
-                    }
+                    var mapUrl = "http://maps.google.com/staticmap?center=" + value.latitude + "," + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + value.latitude + "," + value.longitude + ",red&sensor=false";
 
                     return '<img src="' + mapUrl + '" />';
                 }
@@ -74,22 +68,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
         this.longitude = new Ext.form.NumberField(longitudeConf);
         this.latitude = new Ext.form.NumberField(latitudeConf);
-
-        // fallback without map
-        if (!pimcore.settings.google_maps_api_key) {
-            this.component = new Ext.Panel({
-                title: this.fieldConfig.title,
-                width: 490,
-                bodyStyle: "padding: 10px;",
-                cls: "object_field",
-                html: 'Please set the Google Maps API Key in the System Settings to use this widget.',
-                bbar: [t("latitude"), this.latitude, "-", t("longitude"), this.longitude]
-            });
-
-            return this.component;
-        }
-
-
 
 
         this.longitude.on("keyup", this.updatePreviewImage.bind(this));
@@ -153,11 +131,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
             width = 300;
         }
 
-        //var mapUrl = "http://dev.openstreetmap.org/~pafciu17/?module=map&center=" + longitudeMap + "," + latitudeMap + "&zoom=" + mapZoom + "&type=mapnik&width=" + width + "&height=300&points=" + longitudeMap + "," + latitudeMap + ",pointImagePattern:red";
-        //if (pimcore.settings.google_maps_api_key) {
-        var mapUrl = "http://maps.google.com/staticmap?center=" + latitudeMap + "," + longitudeMap + "&zoom=" + mapZoom + "&size=" + width + "x300&markers=" + latitudeMap + "," + longitudeMap + ",red&sensor=false&key=" + pimcore.settings.google_maps_api_key;
-        //}
-
+        var mapUrl = "http://maps.googleapis.com/maps/api/staticmap?center=" + latitudeMap + "," + longitudeMap + "&zoom=" + mapZoom + "&size=" + width + "x300&markers=color:red|" + latitudeMap + "," + longitudeMap + "&sensor=false";
         return mapUrl;
     },
 
@@ -202,7 +176,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
                 text: "OK",
                 icon: "/pimcore/static/img/icon/tick.png",
                 handler: function () {
-                    var point = this.marker.getLatLng();
+                    var point = this.marker.getPosition();
                     this.latitude.setValue(point.lat());
                     this.longitude.setValue(point.lng());
                     this.updatePreviewImage();
@@ -214,9 +188,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
         });
 
         this.searchWindow.on("afterrender", function () {
-            this.gmap = new GMap2(this.searchWindow.body.dom);
-            var customUI = this.gmap.getDefaultUI();
-            this.gmap.setUI(customUI);
 
             var data = this.getValue();
             var latitudeMap = 0;
@@ -227,12 +198,21 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
                 longitudeMap = data.longitude;
                 mapZoom = 14;
             }
+            var startingPoint = new google.maps.LatLng(latitudeMap,longitudeMap);
 
-            this.gmap.setCenter(new GLatLng(latitudeMap, longitudeMap), mapZoom);
-            this.geocoder = new GClientGeocoder();
+            this.gmap = new google.maps.Map(this.searchWindow.body.dom, {
+                zoom: mapZoom,
+                center: startingPoint,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
 
-            this.marker = new GMarker(new GLatLng(latitudeMap, longitudeMap), {draggable: true});
-            this.gmap.addOverlay(this.marker);
+            this.geocoder = new google.maps.Geocoder();
+
+            this.marker =  new google.maps.Marker({
+                position: startingPoint,
+                map: this.gmap,
+                draggable: true
+            });
 
             this.reverseGeocodeInterval = window.setInterval(this.reverseGeocode.bind(this), 500)
 
@@ -246,34 +226,30 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
     },
 
     geocode: function () {
+
         if (this.geocoder) {
-            this.geocoder.getLatLng(
-                    this.searchfield.getValue(),
-                    function(point) {
-                        if (point) {
-                            this.marker.setLatLng(point);
-                            this.gmap.setCenter(point, 16);
-                        }
-                    }.bind(this)
-                    );
+            var address = this.searchfield.getValue();
+            this.geocoder.geocode( { 'address': address}, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    this.marker.setPosition(results[0].geometry.location);
+                    this.gmap.setCenter(results[0].geometry.location, 16);
+                    this.gmap.setZoom(14);
+                }
+            }.bind(this));
         }
     },
 
     reverseGeocode: function () {
-
         if (this.marker) {
 
-            var latlng = this.marker.getLatLng();
+            var latlng = this.marker.getPosition();
             if (latlng != this.lastPosition) {
                 if (latlng) {
-                    this.lastPosition = latlng;
-                    this.geocoder.getLocations(latlng, function (response) {
-                        try {
-                            var place = response.Placemark[0];
-                            this.currentLocationTextNode.setText("<b>" + t("current_address") + ": </b>" + place.address);
-                        }
-                        catch (e) {
-                            console.log(e);
+                    this.geocoder.geocode({'latLng': latlng}, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[1]) {
+                                this.currentLocationTextNode.setText(results[1].formatted_address);
+                            }
                         }
                     }.bind(this));
                 }
