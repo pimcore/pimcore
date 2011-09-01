@@ -230,7 +230,7 @@ class Pimcore_Model_Cache {
             $key = self::$cachePrefix . $key;
             $success = $cache->save($data, $key, $tags);
             if($success !== true) {
-                Logger::error("Failed to add entry $key to the cache");
+                Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen($data)));
             }
 
             Logger::debug("Added " . $key . " to cache");
