@@ -74,7 +74,7 @@ class Document_Resource extends Element_Resource {
             $this->assignVariablesToModel($data);
         }
         else {
-            throw new Exception("document doesn't exist");
+            throw new Exception("document with path $path doesn't exist");
         }
     }
 
