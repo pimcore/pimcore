@@ -63,7 +63,7 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
 
             $this->assignVariablesToModel($data);
 
-            $this->getElements();
+            //$this->getElements();
         }
         catch (Exception $e) {
         }

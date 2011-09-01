@@ -268,7 +268,7 @@ class Document_Tag_Link extends Document_Tag {
      * @param $ownerDocument
      * @param array $blockedTags
      */
-    public function getCacheTags($ownerDocument, $blockedTags = array()) {
+    /*public function getCacheTags($ownerDocument, $blockedTags = array()) {
 
         $tags = array();
 
@@ -288,7 +288,7 @@ class Document_Tag_Link extends Document_Tag {
         }
 
         return $tags;
-    }
+    }*/
 
     /**
      * @return array
