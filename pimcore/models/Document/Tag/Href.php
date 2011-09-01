@@ -73,7 +73,9 @@ class Document_Tag_Href extends Document_Tag {
      * @return mixed
      */
     public function getDataEditmode() {
-
+	
+		$this->setElement();
+	
         if ($this->element instanceof Element_Interface) {
             return array(
                 "id" => $this->id,
@@ -92,6 +94,8 @@ class Document_Tag_Href extends Document_Tag {
      */
     public function frontend() {
 
+		$this->setElement();
+	
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return "";
@@ -147,7 +151,9 @@ class Document_Tag_Href extends Document_Tag {
      * @return void
      */
     private function setElement() {
-        $this->element = Element_Service::getElementById($this->type, $this->id);
+		if(!$this->element) {
+			$this->element = Element_Service::getElementById($this->type, $this->id);
+		}
     }
 
     /**
@@ -157,6 +163,8 @@ class Document_Tag_Href extends Document_Tag {
      */
     public function getElement() {
 
+		$this->setElement();
+	
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return false;
@@ -172,6 +180,8 @@ class Document_Tag_Href extends Document_Tag {
      */
     public function getFullPath() {
 
+		$this->setElement();
+	
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element_Service::isPublished($this->element)) {
             return false;
@@ -186,6 +196,9 @@ class Document_Tag_Href extends Document_Tag {
      * @return boolean
      */
     public function isEmpty() {
+		
+		$this->setElement();
+	
         if ($this->element instanceof Element_Interface) {
             return false;
         }
@@ -200,6 +213,8 @@ class Document_Tag_Href extends Document_Tag {
      */
     public function getCacheTags($ownerDocument, $blockedTags = array()) {
 
+		$this->setElement();
+	
         $tags = array();
 
         if ($this->element instanceof Document) {
@@ -227,6 +242,7 @@ class Document_Tag_Href extends Document_Tag {
     public function resolveDependencies() {
 
         $dependencies = array();
+		$this->setElement();
 
         if ($this->element instanceof Document) {
 
@@ -319,4 +335,12 @@ class Document_Tag_Href extends Document_Tag {
         return $sane;
     
     }
+
+    /**
+     * @return array
+     */
+    public function __sleep() {
+        return array("id","type","subtype");
+    }
+
 }
