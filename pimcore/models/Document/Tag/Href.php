@@ -207,36 +207,6 @@ class Document_Tag_Href extends Document_Tag {
 
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     * @param $ownerDocument
-     * @param array $blockedTags
-     */
-    public function getCacheTags($ownerDocument, $blockedTags = array()) {
-
-		$this->setElement();
-	
-        $tags = array();
-
-        if ($this->element instanceof Document) {
-            if ($this->element->getId() != $ownerDocument->getId() and !in_array($this->element->getCacheTag(), $blockedTags)) {
-                $tags = array_merge($tags, $this->element->getCacheTags($blockedTags));
-            }
-        }
-        else if ($this->element instanceof Asset) {
-            if (!in_array($this->element->getCacheTag(), $blockedTags)) {
-                $tags = array_merge($tags, $this->element->getCacheTags($blockedTags));
-            }
-        }
-        else if ($this->element instanceof Object_Abstract) {
-            if (!in_array($this->element->getCacheTag(), $blockedTags)) {
-                $tags = array_merge($tags, $this->element->getCacheTags($blockedTags));
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
      * @return array
      */
     public function resolveDependencies() {
@@ -340,7 +310,27 @@ class Document_Tag_Href extends Document_Tag {
      * @return array
      */
     public function __sleep() {
-        return array("id","type","subtype");
+
+        $finalVars = array();
+        $parentVars = parent::__sleep();
+        $blockedVars = array("element");
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
+    }
+
+
+    /**
+     * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
+     * 
+     * @return void
+     */
+    public function load () {
+        $this->setElement();
     }
 
 }

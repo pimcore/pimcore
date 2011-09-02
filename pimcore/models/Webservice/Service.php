@@ -85,6 +85,8 @@ class Webservice_Service
         try {
             $page = Document::getById($id);
             if ($page instanceof Document_Page) {
+                // load all data (eg. href, snippet, ... which are lazy loaded)
+                Document_Service::loadAllDocumentFields($page);
                 $className = Webservice_Data_Mapper::findWebserviceClass($page, "out");
                 $apiPage = Webservice_Data_Mapper::map($page, $className, "out");
                 return $apiPage;
@@ -106,6 +108,8 @@ class Webservice_Service
         try {
             $snippet = Document::getById($id);
             if ($snippet instanceof Document_Snippet) {
+                // load all data (eg. href, snippet, ... which are lazy loaded)
+                Document_Service::loadAllDocumentFields($snippet);
                 $className = Webservice_Data_Mapper::findWebserviceClass($snippet, "out");
                 $apiSnippet = Webservice_Data_Mapper::map($snippet, $className, "out");
 
@@ -631,7 +635,10 @@ class Webservice_Service
     {
         try {
             $object = Object_Concrete::getById($id);
+
             if ($object instanceof Object_Concrete) {
+                // load all data (eg. lazy loaded fields like multihref, object, ...)
+                Object_Service::loadAllObjectFields($object);
                 $apiObject = Webservice_Data_Mapper::map($object, "Webservice_Data_Object_Concrete_Out", "out");
                 return $apiObject;
             }

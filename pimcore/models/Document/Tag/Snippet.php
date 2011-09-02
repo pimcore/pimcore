@@ -54,6 +54,9 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return mixed
      */
     public function getDataEditmode() {
+
+        $this->load();
+
         if ($this->snippet instanceof Document_Snippet) {
             return array(
                 "id" => $this->id,
@@ -68,6 +71,9 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return string
      */
     public function frontend() {
+
+        $this->load();
+
         if ($this->getView() instanceof Zend_View) {
             try {
                 if ($this->snippet instanceof Document_Snippet) {
@@ -116,6 +122,9 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return boolean
      */
     public function isEmpty() {
+
+        $this->load();
+
         if($this->snippet instanceof Document_Snippet) {
             return false;
         }
@@ -124,28 +133,12 @@ class Document_Tag_Snippet extends Document_Tag {
 
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     * @param $ownerDocument
-     * @param array $blockedTags
-     */
-    public function getCacheTags ($ownerDocument, $blockedTags = array()) {
-
-        $tags = array();
-
-        if ($this->snippet instanceof Document_Snippet) {
-            if ($this->snippet->getId() != $ownerDocument->getId() and !in_array($this->snippet->getCacheTag(), $blockedTags)) {
-                $tags = array_merge($tags, $this->snippet->getCacheTags($blockedTags));
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
      * @return array
      */
     public function resolveDependencies () {
-        
+
+        $this->load();
+
         $dependencies = array();
         
         if ($this->snippet instanceof Document_Snippet) {
@@ -185,7 +178,35 @@ class Document_Tag_Snippet extends Document_Tag {
 
 
         }
+    }
 
 
+    /**
+     * @return array
+     */
+    public function __sleep() {
+
+        $finalVars = array();
+        $parentVars = parent::__sleep();
+        $blockedVars = array("snippet");
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
+    }
+
+
+    /**
+     * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
+     *
+     * @return void
+     */
+    public function load () {
+        if(!$this->snippet) {
+            $this->snippet = Document_Snippet::getById($this->id);
+        }
     }
 }

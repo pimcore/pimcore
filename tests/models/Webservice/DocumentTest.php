@@ -128,6 +128,7 @@ class Webservice_DocumentTest extends PHPUnit_Framework_TestCase
 
 
         $localDocument = $localClass::getById($documentId);
+        Document_Service::loadAllDocumentFields($localDocument);
 
         //do that now, later id is null
         $localDocument->getProperties();
