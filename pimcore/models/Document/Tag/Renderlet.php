@@ -73,6 +73,9 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @return mixed
      */
     public function getDataEditmode() {
+
+        $this->load();
+
         if ($this->o instanceof Element_Interface) {
             return array(
                 "id" => $this->id,
@@ -88,6 +91,8 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @return string
      */
     public function frontend() {
+
+        $this->load();
 
         if (!$this->options["controller"] && !$this->options["action"]) {
             $this->options["controller"] = Pimcore_Config::getSystemConfig()->documents->default_controller;
@@ -170,6 +175,8 @@ class Document_Tag_Renderlet extends Document_Tag {
      */
     public function resolveDependencies() {
 
+        $this->load();
+
         $dependencies = array();
 
         if ($this->o instanceof Document) {
@@ -209,6 +216,9 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @return void
      */
     public function getObjectType($object = null) {
+
+        $this->load();
+
         if (!$object) {
             $object = $this->o;
         }
@@ -224,6 +234,9 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @return boolean
      */
     public function isEmpty () {
+
+        $this->load();
+
         if($this->o instanceof Element_Interface) {
             return false;
         }
@@ -290,5 +303,36 @@ class Document_Tag_Renderlet extends Document_Tag {
         }
         return $sane;     
 
-    }   
+    }
+
+
+
+    /**
+     * @return array
+     */
+    public function __sleep() {
+
+        $finalVars = array();
+        $parentVars = parent::__sleep();
+        $blockedVars = array("o");
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
+    }
+
+
+    /**
+     * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
+     *
+     * @return void
+     */
+    public function load () {
+        if(!$this->o) {
+            $this->setElement();
+        }
+    }
 }

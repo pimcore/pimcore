@@ -330,7 +330,9 @@ class Document_Tag_Href extends Document_Tag {
      * @return void
      */
     public function load () {
-        $this->setElement();
+        if(!$this->element) {
+            $this->setElement();
+        }
     }
 
 }
