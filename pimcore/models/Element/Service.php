@@ -381,7 +381,7 @@ class Element_Service
                 $properties[$key] = object2array($p);
             }
             else {
-                $properties[$key] = $p;
+                $properties[$key] = object2array($p);
             }
         }
 
