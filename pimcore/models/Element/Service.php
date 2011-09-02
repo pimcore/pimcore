@@ -376,8 +376,6 @@ class Element_Service
                         $pa[$k] = $p->getData()->$k;
                     }
                 }
-
-                $p->setData($pa);
                 $properties[$key] = object2array($p);
             }
             else {
@@ -389,7 +387,7 @@ class Element_Service
     }
 
 
-    /**
+    /** 
      * @param  Element_Interface $target the parent element
      * @param  Element_Interface $new the newly inserted child
      * @return void
