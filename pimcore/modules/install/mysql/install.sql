@@ -49,7 +49,7 @@ CREATE TABLE `cache_tags` (
   PRIMARY KEY (`id`(80),`tag`(80)),
   INDEX `id` (`id`(80)),
   INDEX `tag` (`tag`(80))
-) ENGINE=InnoDB;
+) ENGINE=MEMORY;
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (

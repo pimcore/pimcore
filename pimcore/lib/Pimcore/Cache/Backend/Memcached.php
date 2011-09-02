@@ -21,6 +21,20 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      */
     private $db;
 
+    public function __construct(array $options = array()) {
+        parent::__construct($options);
+
+        // if the cache_tags table is empty, flush the cache
+        // reason: the cache tags are stored in a MEMORY table, that means that a restart of the mysql server causes the loss
+        // of all data in this table but the cache still exists, so there is an inconsistency because then it's possible that
+        // there are outdated or just wrong items in the cache
+        $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
+        if(!$res) {
+            $this->clean(Zend_Cache::CLEANING_MODE_ALL);
+        }
+    }
+
+
     /**
      * @return Zend_Db_Adapter_Abstract
      */
@@ -38,7 +52,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
     private function saveTags($id, $tags) {
 
-        foreach ($tags as $tag) {
+        while ($tag = array_shift($tags)) {
             try {
                 $this->getDb()->insert("cache_tags", array(
                     "id" => $id, 
@@ -46,8 +60,18 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                 ));
             }
             catch (Exception $e) {
-                // already exists
-            } 
+                if(strpos(strtolower($e->getMessage()), "is full") !== false) {
+                    // it seems that the MEMORY table is on the limit an full
+                    // change the storage engine of the cache tags table to MyISAM
+                    $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+
+                    // try it again
+                    $tags[] = $tag;
+                } else {
+                    // it seems that the item does already exist
+                    continue;
+                }
+            }
         }
     }
     
@@ -119,6 +143,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return boolean True if no problem
      */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
+
         if ($mode == Zend_Cache::CLEANING_MODE_ALL) {
             $this->clearTags();
             return $this->_memcache->flush();
