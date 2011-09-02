@@ -354,7 +354,7 @@ class Element_Service
         $properties = array();
         foreach ($props as $key => $p) {
 
-            $p = object2array($p);
+            //$p = object2array($p);
             $allowedProperties = array(
                 "key",
                 "o_key",
@@ -365,18 +365,20 @@ class Element_Service
                 "o_id"
             );
 
-            if ($p["data"] instanceof Document || $p["data"] instanceof Asset || $p["data"] instanceof Object_Abstract) {
+            if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof Object_Abstract) {
 
                 $pa = array();
 
-                foreach ($p["data"] as $k => $value) {
+                $vars = get_object_vars($p->getData());
+
+                foreach ($vars as $k => $value) {
                     if (in_array($k, $allowedProperties)) {
-                        $pa[$k] = $value;
+                        $pa[$k] = $p->getData()->$k;
                     }
                 }
 
-                $p["data"] = $pa;
-                $properties[$key] = $p;
+                $p->setData($pa);
+                $properties[$key] = object2array($p);
             }
             else {
                 $properties[$key] = $p;
