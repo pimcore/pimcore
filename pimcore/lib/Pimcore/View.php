@@ -23,6 +23,8 @@ class Pimcore_View extends Zend_View {
      */
     public function tag($type, $name, $options = array()) {
 
+        $type = strtolower($type);
+
         try {
             // @todo add document-id to registry key | for example for embeded snippets
             // set suffixes if the tag is inside a block
