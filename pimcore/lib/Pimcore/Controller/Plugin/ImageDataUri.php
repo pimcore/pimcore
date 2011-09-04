@@ -81,41 +81,42 @@ class Pimcore_Controller_Plugin_ImageDataUri extends Zend_Controller_Plugin_Abst
             $body = $this->getResponse()->getBody();
 
             $html = str_get_html($body);
-            $images = $html->find("img");
 
-            foreach ($images as $image) {
-                $source = $image->src;
-                $path = null;
+            if($html) {
+                $images = $html->find("img");
 
-                if (strpos($source, "http") === false) {
-                    // check asset folder
-                    if (is_file(PIMCORE_ASSET_DIRECTORY . $source)) {
-                        $path = PIMCORE_ASSET_DIRECTORY . $source;
-                    }
-                    else if (is_file(PIMCORE_DOCUMENT_ROOT . $source)) {
-                        $path = PIMCORE_DOCUMENT_ROOT . $source;
-                    }
+                foreach ($images as $image) {
+                    $source = $image->src;
+                    $path = null;
 
-                    if (is_file($path)) {
-                        if (@filesize($path) < 20000) { // only files < 20k because of IE8, 20000 because it's better to be a little bit under the limit
+                    if (strpos($source, "http") === false) {
+                        // check asset folder
+                        if (is_file(PIMCORE_ASSET_DIRECTORY . $source)) {
+                            $path = PIMCORE_ASSET_DIRECTORY . $source;
+                        }
+                        else if (is_file(PIMCORE_DOCUMENT_ROOT . $source)) {
+                            $path = PIMCORE_DOCUMENT_ROOT . $source;
+                        }
 
-                            try {
-                                $mimetype = MIME_Type::autoDetect($path);
-                                if (is_string($mimetype)) {
-                                    $image->src = 'data:' . $mimetype . ';base64,' . base64_encode(file_get_contents($path));
+                        if (is_file($path)) {
+                            if (@filesize($path) < 20000) { // only files < 20k because of IE8, 20000 because it's better to be a little bit under the limit
+
+                                try {
+                                    $mimetype = MIME_Type::autoDetect($path);
+                                    if (is_string($mimetype)) {
+                                        $image->src = 'data:' . $mimetype . ';base64,' . base64_encode(file_get_contents($path));
+                                    }
                                 }
-                            }
-                            catch (Exception $e) {
+                                catch (Exception $e) {
+                                }
                             }
                         }
                     }
                 }
+
+                $body = $html->save();
+                $this->getResponse()->setBody($body);
             }
-
-            $body = $html->save();
-
-
-            $this->getResponse()->setBody($body);
         }
     }
 }

@@ -31,6 +31,10 @@ class Pimcore_Tool_Text
     {
 
         $html = str_get_html($text);
+        if(!$html) {
+            return $text;
+        }
+
         $s = $html->find("[pimcore_id]");
 
         foreach ($s as $el) {
@@ -117,11 +121,13 @@ class Pimcore_Tool_Text
      */
     public static function cleanWysiwygTextOfDependencies($text, $validDependencies)
     {
-
-
         if (!empty($text)) {
 
             $html = str_get_html($text);
+            if(!$html) {
+                return $text;
+            }
+
             $s = $html->find("[pimcore_id]");
 
             foreach ($s as $el) {
@@ -167,10 +173,13 @@ class Pimcore_Tool_Text
      */
     public static function replaceWysiwygTextRelationIds($idMapping, $text)
     {
-
         if (!empty($text)) {
 
             $html = str_get_html($text);
+            if(!$html) {
+                return $text;
+            }
+
             $s = $html->find("[pimcore_id]");
 
             foreach ($s as $el) {
@@ -235,6 +244,10 @@ class Pimcore_Tool_Text
         if (!empty($text)) {
 
             $html = str_get_html($text);
+            if(!$html) {
+                return $text;
+            }
+
             $s = $html->find("[pimcore_id]");
 
             foreach ($s as $el) {
@@ -290,6 +303,10 @@ class Pimcore_Tool_Text
         if (!empty($text)) {
 
             $html = str_get_html($text);
+            if(!$html) {
+                return $text;
+            }
+
             $s = $html->find("[pimcore_id]");
 
             foreach ($s as $el) {

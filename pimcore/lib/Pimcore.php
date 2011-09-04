@@ -71,7 +71,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_HtmlMinify(), 802);
             $front->registerPlugin(new Pimcore_Controller_Plugin_ImageDataUri(), 803);
             $front->registerPlugin(new Pimcore_Controller_Plugin_CDN(), 804);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching 
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
 
         // disable build-in error handler
@@ -338,6 +338,9 @@ class Pimcore {
         @ini_set("magic_quotes_gpc", 0);
         @ini_set("magic_quotes_runtime", 0);
         set_time_limit($maxExecutionTime);
+
+        // this is for simple_dom_html
+        ini_set('pcre.recursion-limit', 100000);
 
         // check some system variables
         if (version_compare(PHP_VERSION, '5.3.0', "<")) {

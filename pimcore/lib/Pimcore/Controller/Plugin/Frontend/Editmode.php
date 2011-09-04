@@ -204,20 +204,20 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             $body = $this->getResponse()->getBody();
 
             $html = str_get_html($body);
-            $head = $html->find("head", 0);
+            if($html) {
+                if($head = $html->find("head", 0)) {
 
-            // HACK: temp fix for extjs issues in IE9
-            //$head->innertext = "\n".'<meta http-equiv="X-UA-Compatible" content="IE=8" />' ."\n" . $head->innertext;
+                    $head->innertext = $head->innertext . "\n\n" . $editmodeHeadHtml;
 
-            $head->innertext = $head->innertext . "\n\n" . $editmodeHeadHtml;
+                    $bodyElement = $html->find("body", 0);
+                    $bodyElement->onunload = "pimcoreOnUnload();";
+                    $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static/js/pimcore/document/edit/startup.js?_dc=' . Pimcore_Version::$revision . '"></script>' . "\n\n";
 
-            $bodyElement = $html->find("body", 0);
-            $bodyElement->onunload = "pimcoreOnUnload();";
-            $bodyElement->innertext = $bodyElement->innertext . "\n\n" . '<script type="text/javascript" src="/pimcore/static/js/pimcore/document/edit/startup.js?_dc=' . Pimcore_Version::$revision . '"></script>' . "\n\n";
-            
-            $body = $html->save();
+                    $body = $html->save();
 
-            $this->getResponse()->setBody($body);
+                    $this->getResponse()->setBody($body);
+                }
+            }
         }
     }
 }

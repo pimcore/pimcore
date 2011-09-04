@@ -49,53 +49,55 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
             $body = $this->getResponse()->getBody();
             
             $html = str_get_html($body);
-            $styles = $html->find("link[rel=stylesheet], style[type=text/css]");
-            
-            $stylesheetContent = "";
+            if($html) {
+                $styles = $html->find("link[rel=stylesheet], style[type=text/css]");
 
-            foreach ($styles as $style) {
-                if($style->tag == "style") {
-                    $stylesheetContent .= $style->innertext;
-                }
-                else {
-                    if($style->media == "screen" || !$style->media) {
-                        $source = $style->href;
-                        $path = "";
-                        if (is_file(PIMCORE_ASSET_DIRECTORY . $source)) {
-                            $path = PIMCORE_ASSET_DIRECTORY . $source;
-                        }
-                        else if (is_file(PIMCORE_DOCUMENT_ROOT . $source)) {
-                            $path = PIMCORE_DOCUMENT_ROOT . $source;
-                        }
-    
-                        if (is_file("file://".$path)) {
-                            $content = file_get_contents($path);
-                            $content = $this->correctReferences($source,$content);
-                            $stylesheetContent .= $content;
-                            $style->outertext = "";
+                $stylesheetContent = "";
+
+                foreach ($styles as $style) {
+                    if($style->tag == "style") {
+                        $stylesheetContent .= $style->innertext;
+                    }
+                    else {
+                        if($style->media == "screen" || !$style->media) {
+                            $source = $style->href;
+                            $path = "";
+                            if (is_file(PIMCORE_ASSET_DIRECTORY . $source)) {
+                                $path = PIMCORE_ASSET_DIRECTORY . $source;
+                            }
+                            else if (is_file(PIMCORE_DOCUMENT_ROOT . $source)) {
+                                $path = PIMCORE_DOCUMENT_ROOT . $source;
+                            }
+
+                            if (is_file("file://".$path)) {
+                                $content = file_get_contents($path);
+                                $content = $this->correctReferences($source,$content);
+                                $stylesheetContent .= $content;
+                                $style->outertext = "";
+                            }
                         }
                     }
                 }
-            }
-                        
-            
-            if(strlen($stylesheetContent) > 1) {
-                $stylesheetPath = PIMCORE_TEMPORARY_DIRECTORY."/minified_css_".md5($stylesheetContent).".css";
-                
-                if(!is_file($stylesheetPath)) {
-                    $stylesheetContent = Minify_CSS::minify($stylesheetContent);
-                    
-                    // put minified contents into one single file
-                    file_put_contents($stylesheetPath, $stylesheetContent);
-                    chmod($stylesheetPath, 0766);
+
+
+                if(strlen($stylesheetContent) > 1) {
+                    $stylesheetPath = PIMCORE_TEMPORARY_DIRECTORY."/minified_css_".md5($stylesheetContent).".css";
+
+                    if(!is_file($stylesheetPath)) {
+                        $stylesheetContent = Minify_CSS::minify($stylesheetContent);
+
+                        // put minified contents into one single file
+                        file_put_contents($stylesheetPath, $stylesheetContent);
+                        chmod($stylesheetPath, 0766);
+                    }
+
+                    $head = $html->find("head",0);
+                    $head->innertext = $head->innertext . "\n" . '<link rel="stylesheet" media="screen" type="text/css" href="' . str_replace(PIMCORE_DOCUMENT_ROOT,"",$stylesheetPath) . '" />'."\n";
                 }
-                
-                $head = $html->find("head",0);
-                $head->innertext = $head->innertext . "\n" . '<link rel="stylesheet" media="screen" type="text/css" href="' . str_replace(PIMCORE_DOCUMENT_ROOT,"",$stylesheetPath) . '" />'."\n";
+
+                $body = $html->save();
+                $this->getResponse()->setBody($body);
             }
-            
-            $body = $html->save();
-            $this->getResponse()->setBody($body);
         }
     }
 

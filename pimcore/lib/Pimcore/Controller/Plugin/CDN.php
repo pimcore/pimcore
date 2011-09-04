@@ -116,31 +116,33 @@ class Pimcore_Controller_Plugin_CDN extends Zend_Controller_Plugin_Abstract {
             $body = $this->getResponse()->getBody();
             
             $html = str_get_html($body);
-            $elements = $html->find("link[rel=stylesheet], img, script[src]");
-            
-            foreach ($elements as $element) {
-                if($element->tag == "link") {
-                    if($this->pathMatch($element->href)) {
-                        $element->href = $this->rewritePath($element->href);
+            if($html) {
+                $elements = $html->find("link[rel=stylesheet], img, script[src]");
+
+                foreach ($elements as $element) {
+                    if($element->tag == "link") {
+                        if($this->pathMatch($element->href)) {
+                            $element->href = $this->rewritePath($element->href);
+                        }
+                    }
+                    else if ($element->tag == "img") {
+                        if($this->pathMatch($element->src)) {
+                            $element->src = $this->rewritePath($element->src);
+                        }
+                    }
+                    else if ($element->tag == "script") {
+                        if($this->pathMatch($element->src)) {
+                            $element->src = $this->rewritePath($element->src);
+                        }
                     }
                 }
-                else if ($element->tag == "img") {
-                    if($this->pathMatch($element->src)) {
-                        $element->src = $this->rewritePath($element->src);
-                    }
-                }
-                else if ($element->tag == "script") {
-                    if($this->pathMatch($element->src)) {
-                        $element->src = $this->rewritePath($element->src);
-                    }
-                }
+
+                $body = $html->save();
+                $this->getResponse()->setBody($body);
+
+                // save storage
+                Pimcore_Model_Cache::save($this->cachedItems, self::cacheKey, array(), 3600);
             }
-            
-            $body = $html->save();
-            $this->getResponse()->setBody($body);
-            
-            // save storage
-            Pimcore_Model_Cache::save($this->cachedItems, self::cacheKey, array(), 3600);
         }
     }
 }

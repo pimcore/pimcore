@@ -74,51 +74,49 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
             $body = $this->getResponse()->getBody();
             
             $html = str_get_html($body);
-            $scripts = $html->find("script[src]");
-            $hasParent = false;
-            $scripttext = "";
-            $scriptContent = "";
-            $scriptPathes = array();
-            
-            foreach ($scripts as $script) {
-                
-                $source = $script->src;
-                $path = "";
-                if (is_file("file://".PIMCORE_ASSET_DIRECTORY . $source)) {
-                    $path = "file://".PIMCORE_ASSET_DIRECTORY . $source;
-                }
-                else if (is_file("file://".PIMCORE_DOCUMENT_ROOT . $source)) {
-                    $path = "file://".PIMCORE_DOCUMENT_ROOT . $source;
-                }
-                
-                if (is_file($path)) {
-                    $scriptContent .= file_get_contents($path)."\n\n";
-                    
-                    if($script->next_sibling()->tag != "script" || !$script->next_sibling()->src) {
-                        $scriptPath = $this->writeJsTempFile($scriptContent);
-                        $scriptContent = "";
-                        
-                        $script->outertext = '<script type="text/javascript" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
-                    } 
-                    else {
-                        $script->outertext = "";
-                    }
-                }
-                else if ($script->prev_sibling()->tag == "script"){
-                    
-                    if (strlen($scriptContent) > 0) {
-                        $scriptPath = $this->writeJsTempFile($scriptContent);
-                        $scriptContent = "";
-                        
-                        $script->outertext = '<script type="text/javascript" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n" . $script->outertext;
-                    }
-                }
-                
-            }
 
-            $body = $html->save();
-            
-            $this->getResponse()->setBody($body);
+            if($html) {
+                $scripts = $html->find("script[src]");
+                $scriptContent = "";
+
+                foreach ($scripts as $script) {
+
+                    $source = $script->src;
+                    $path = "";
+                    if (is_file("file://".PIMCORE_ASSET_DIRECTORY . $source)) {
+                        $path = "file://".PIMCORE_ASSET_DIRECTORY . $source;
+                    }
+                    else if (is_file("file://".PIMCORE_DOCUMENT_ROOT . $source)) {
+                        $path = "file://".PIMCORE_DOCUMENT_ROOT . $source;
+                    }
+
+                    if (is_file($path)) {
+                        $scriptContent .= file_get_contents($path)."\n\n";
+
+                        if($script->next_sibling()->tag != "script" || !$script->next_sibling()->src) {
+                            $scriptPath = $this->writeJsTempFile($scriptContent);
+                            $scriptContent = "";
+
+                            $script->outertext = '<script type="text/javascript" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
+                        }
+                        else {
+                            $script->outertext = "";
+                        }
+                    }
+                    else if ($script->prev_sibling()->tag == "script"){
+
+                        if (strlen($scriptContent) > 0) {
+                            $scriptPath = $this->writeJsTempFile($scriptContent);
+                            $scriptContent = "";
+
+                            $script->outertext = '<script type="text/javascript" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n" . $script->outertext;
+                        }
+                    }
+                }
+
+                $body = $html->save();
+                $this->getResponse()->setBody($body);
+            }
         }
     }
     

@@ -46,33 +46,36 @@ class Pimcore_Controller_Plugin_Analytics extends Zend_Controller_Plugin_Abstrac
             $body = $this->getResponse()->getBody();
 
             $html = str_get_html($body);
-            $head = $html->find("head",0);
-            $head->innertext = $head->innertext . Pimcore_Google_Analytics::getCode();
-            
-            
-            
-            // website optimizer
-            if($this->document) {
-                $body = $html->find("body",0);
-                
-                $top = Pimcore_Google_Analytics::getOptimizerTop($this->document);
-                $bottom = Pimcore_Google_Analytics::getOptimizerBottom($this->document);
-                $conversion = Pimcore_Google_Analytics::getOptimizerConversion($this->document);
-                
-                if($top && $bottom) {
-                    $body->innertext = $top . $body->innertext . $bottom;
-                }
-                else if ($conversion) {
-                    $body->innertext = $body->innertext . $conversion;
-                }
-                else if($bottom) {
-                    $body->innertext = $body->innertext . $bottom;
+            if($html) {
+                if($head = $html->find("head",0)) {
+                    $head->innertext = $head->innertext . Pimcore_Google_Analytics::getCode();
+
+
+
+                    // website optimizer
+                    if($this->document) {
+                        $body = $html->find("body",0);
+
+                        $top = Pimcore_Google_Analytics::getOptimizerTop($this->document);
+                        $bottom = Pimcore_Google_Analytics::getOptimizerBottom($this->document);
+                        $conversion = Pimcore_Google_Analytics::getOptimizerConversion($this->document);
+
+                        if($top && $bottom) {
+                            $body->innertext = $top . $body->innertext . $bottom;
+                        }
+                        else if ($conversion) {
+                            $body->innertext = $body->innertext . $conversion;
+                        }
+                        else if($bottom) {
+                            $body->innertext = $body->innertext . $bottom;
+                        }
+                    }
+
+                    $html = $html->save();
+
+                    $this->getResponse()->setBody($html);
                 }
             }
-
-            $html = $html->save();
-            
-            $this->getResponse()->setBody($html);
         }
     }
 }

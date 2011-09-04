@@ -52,6 +52,10 @@ class Pimcore_View_Helper_Glossary_Controller {
             // kind of a hack but,
             // changed to this because of that: http://www.pimcore.org/issues/browse/PIMCORE-687
             $html = str_get_html($contents);
+            if(!$html) {
+                return $contents;
+            }
+
             $es = $html->find('text');
 
             $tmpData = array();

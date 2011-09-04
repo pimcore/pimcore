@@ -376,7 +376,11 @@ class Element_Service
                         $pa[$k] = $p->getData()->$k;
                     }
                 }
-                $properties[$key] = object2array($p);
+
+                // clone it because of caching
+                $tmp = clone $p;
+                $tmp->setData($pa);
+                $properties[$key] = object2array($tmp);
             }
             else {
                 $properties[$key] = object2array($p);

@@ -21,6 +21,11 @@ class Pimcore_Tool_Less {
 
     public static function processHtml ($body) {
         $html = str_get_html($body);
+
+        if(!$html) {
+            return $body;
+        }
+
         $styles = $html->find("link[rel=stylesheet/less]");
 
         $stylesheetContents = array();
