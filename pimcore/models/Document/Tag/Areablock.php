@@ -350,9 +350,17 @@ class Document_Tag_Areablock extends Document_Tag {
 
 
             if(empty($options["allowed"]) || in_array($areaName,$options["allowed"])) {
+
+                $n = (string) $areaConfig->name;
+                $d = (string) $areaConfig->description;
+                if($this->view){
+                    $n = $this->view->translateAdmin((string) $areaConfig->name);
+                    $d = $this->view->translateAdmin((string) $areaConfig->description);
+                }
+
                 $availableAreas[] = array(
-                    "name" => $this->view->translateAdmin((string) $areaConfig->name),
-                    "description" => $this->view->translateAdmin((string) $areaConfig->description),
+                    "name" => $n,
+                    "description" => $d,
                     "type" => $areaName
                 );
             }
@@ -376,7 +384,12 @@ class Document_Tag_Areablock extends Document_Tag {
             
             $groups = array();
             foreach ($options["group"] as $name => $areas) {
-                $groups[$this->view->translateAdmin($name)] = $areas;
+
+                $n = $name;
+                if($this->view){
+                    $n = $this->view->translateAdmin($name);
+                }
+                $groups[$n] = $areas;
 
                 foreach($areas as $area) {
                     unset($groupingareas[$area]);
@@ -388,7 +401,11 @@ class Document_Tag_Areablock extends Document_Tag {
                 foreach ($groupingareas as $area) {
                     $uncatAreas[] = $area;
                 }
-                $groups[$this->view->translateAdmin("uncategorized")] = $uncatAreas;
+                $n = "uncategorized";
+                if($this->view){
+                    $n= $this->view->translateAdmin($n);
+                }
+                $groups[$n] = $uncatAreas;
             }
 
             $options["group"] = $groups;
