@@ -77,12 +77,17 @@ class Document_Tag_Areablock extends Document_Tag {
             }
 
             // create info object and assign it to the view
-            $info = new Document_Tag_Area_Info();
-            $info->setId($index["type"]);
-            $info->setIndex($count);
-            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($index["type"],"brick")));
-            $info->setConfig(Pimcore_ExtensionManager::getBrickConfig($index["type"]));
-            
+            $info = null;
+            try {
+                $info = new Document_Tag_Area_Info();
+                $info->setId($index["type"]);
+                $info->setIndex($count);
+                $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($index["type"],"brick")));
+                $info->setConfig(Pimcore_ExtensionManager::getBrickConfig($index["type"]));
+            } catch (Exception $e) {
+                $info = null;
+            }
+
             $this->blockStart();
             
             if($this->getView() instanceof Zend_View) {
@@ -123,7 +128,10 @@ class Document_Tag_Areablock extends Document_Tag {
                             // params
                             $params = array_merge($this->view->getAllParams(), $params);
                             $actionObj->setParams($params);
-                            $actionObj->setBrick($info);
+
+                            if($info) {
+                                $actionObj->setBrick($info);
+                            }
 
                             if(method_exists($actionObj,"action")) {
                                 $actionObj->action();
