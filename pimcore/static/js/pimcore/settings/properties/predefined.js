@@ -162,6 +162,7 @@ pimcore.settings.properties.predefined = Class.create({
                 triggerAction: 'all',
                 editable: false,
                 store: ["text","document","asset","object","bool","select"]
+
             })},
             {header: t("value"), width: 50, sortable: false, dataIndex: 'data', editor: new Ext.form.TextField({})},
             {header: t("configuration"), width: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({})},
@@ -245,7 +246,8 @@ pimcore.settings.properties.predefined = Class.create({
         var u = new this.grid.store.recordType({
             name: t('new_property'),
             key: "new_key",
-            ctype: "document"
+            ctype: "document",
+            type: "text"
         });
         this.editor.stopEditing();
         this.grid.store.insert(0, u);
