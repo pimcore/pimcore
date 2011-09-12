@@ -474,5 +474,33 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         return "NOT SUPPORTED";
     }
 
+
+    public function getGetterCode ($class) {
+        // getter
+
+        $key = $this->getName();
+        $code = "";
+
+        $code .= '/**' . "\n";
+        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= "public function get" . ucfirst($key) . " () {\n";
+
+        // adds a hook preGetValue which can be defined in an extended class
+        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
+        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+
+        if(method_exists($this,"preGetData")) {
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        $code .= "\t return " . '$data' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
     //TODO: sanity check
 }
