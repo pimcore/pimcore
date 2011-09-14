@@ -429,7 +429,7 @@ pimcore.element.properties = Class.create({
  
             try {
                 var propertyName = Ext.get(rows[i]).query(".x-grid3-cell-first div div")[0].getAttribute("name");
-                var storeIndex = this.propertyGrid.getStore().find("name", propertyName);
+                var storeIndex = this.propertyGrid.getStore().findExact("name", propertyName);
  
                 var data = this.propertyGrid.getStore().getAt(storeIndex).data;
 
