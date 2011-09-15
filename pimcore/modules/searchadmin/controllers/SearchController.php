@@ -87,7 +87,14 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
 
         if (!empty($query)) {
-            $conditionParts[] = "( MATCH (`data`,`fieldcollectiondata`,`localizeddata`,`properties`,`fullpath`) AGAINST (" . $db->quote($query) . ") )";
+            $queryCondition = "( MATCH (`data`,`fieldcollectiondata`,`localizeddata`,`properties`,`fullpath`) AGAINST (" . $db->quote($query) . ") )";
+
+            // if the query is numeric the user might want to search by id
+            if(is_numeric($query)) {
+                $queryCondition = "(" . $queryCondition . " OR id = " . $db->quote($query) ." )";
+            }
+
+            $conditionParts[] = $queryCondition;
         }                      
 
 
