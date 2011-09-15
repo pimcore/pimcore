@@ -36,7 +36,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             items: [{
                 xtype: "textfield",
                 name: "query",
-                width: 400,
+                width: 370,
                 hideLabel: true,
                 enableKeyEvents: true,
                 listeners: {
@@ -46,7 +46,12 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                         }
                     }.bind(this)
                 }
-            }]
+            }, new Ext.Button({
+                handler: function () {
+                    window.open("http://dev.mysql.com/doc/refman/5.6/en/fulltext-boolean.html");
+                },
+                iconCls: "pimcore_icon_menu_help"
+            })]
         };
         
         // check for restrictions
