@@ -307,8 +307,9 @@ class Object_Concrete extends Object_Abstract {
      * @return void
      */
     public function getValueForFieldName($key) {
-        if ($this->$key) {
-            return $this->$key;
+        $getter = "get" . ucfirst($key);
+        if (method_exists($this, $getter)) {
+            return $this->$getter();
         }
         return false;
     }
