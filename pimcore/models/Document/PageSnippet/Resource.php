@@ -76,7 +76,7 @@ abstract class Document_PageSnippet_Resource extends Document_Resource {
     public function getLatestVersion() {
         $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
         
-        if($versionData["id"] && $versionData["date"] != $this->model->getModificationDate()) {
+        if($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) {
             $version = Version::getById($versionData["id"]);
             return $version;
         }

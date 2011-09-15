@@ -396,7 +396,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
     public function getLatestVersion() {
         $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getO_Id());
 
-        if ($versionData["id"]  && $versionData["date"] != $this->model->getO_modificationDate()) {
+        if ($versionData["id"] && $versionData["date"] > $this->model->getO_modificationDate()) {
             $version = Version::getById($versionData["id"]);
             return $version;
         }
