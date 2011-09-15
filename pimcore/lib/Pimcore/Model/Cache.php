@@ -131,7 +131,7 @@ class Pimcore_Model_Cache {
      * @param string $key
      * @return mixed
      */
-    public static function load($key) {
+    public static function load($key, $doNotTestCacheValidity = false) {
         
         if (!self::$enabled) {
             Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
@@ -141,7 +141,7 @@ class Pimcore_Model_Cache {
         if($cache = self::getInstance()) {
 
             $key = self::$cachePrefix . $key;
-            $data = $cache->load($key);
+            $data = $cache->load($key, $doNotTestCacheValidity);
 
             // unserialize data, use custom serializer
             $data = Pimcore_Tool_Serialize::unserialize($data);

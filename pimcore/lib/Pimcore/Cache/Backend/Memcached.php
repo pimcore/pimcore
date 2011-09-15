@@ -21,19 +21,41 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      */
     private $db;
 
-    public function __construct(array $options = array()) {
-        parent::__construct($options);
+    /**
+     * @var bool
+     */
+    private $checkedCacheConsistency = false;
 
+    /**
+     * @return void
+     */
+    private function checkCacheConsistency() {
         // if the cache_tags table is empty, flush the cache
         // reason: the cache tags are stored in a MEMORY table, that means that a restart of the mysql server causes the loss
         // of all data in this table but the cache still exists, so there is an inconsistency because then it's possible that
         // there are outdated or just wrong items in the cache
-        $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
-        if(!$res) {
-            $this->clean(Zend_Cache::CLEANING_MODE_ALL);
+        if(!$this->checkedCacheConsistency) {
+            $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
+            if(!$res) {
+                $this->clean(Zend_Cache::CLEANING_MODE_ALL);
+            }
+            $this->checkedCacheConsistency = true;
         }
     }
 
+    /**
+     * @param $id
+     * @param bool $doNotTestCacheValidity
+     * @return void
+     */
+    public function load($id, $doNotTestCacheValidity = false) {
+
+        if(!$doNotTestCacheValidity) {
+            $this->checkCacheConsistency();
+        }
+
+        return parent::load($id, $doNotTestCacheValidity);
+    }
 
     /**
      * @return Zend_Db_Adapter_Abstract
@@ -45,11 +67,19 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
         return $this->db;
     }
     
-    
+    /**
+     * @param string $tag
+     * @return void
+     */
     private function removeTag($tag) {
         $this->getDb()->delete("cache_tags", "tag = '".$tag."'");
     }
 
+    /**
+     * @param string $id
+     * @param array $tags
+     * @return void
+     */
     private function saveTags($id, $tags) {
 
         while ($tag = array_shift($tags)) {
@@ -74,12 +104,22 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
             }
         }
     }
-    
+
+    /**
+     * @return void
+     */
     private function clearTags () {
         $this->getDb()->delete("cache_tags");
     }
 
+    /**
+     * @param string $tag
+     * @return array
+     */
     private function getItemsByTag($tag) {
+
+        $this->checkCacheConsistency();
+
         $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE tag = '" . $tag . "'");
         $items = array();
         
@@ -104,6 +144,9 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return boolean True if no problem
      */
     public function save($data, $id, $tags = array(), $specificLifetime = false) {
+
+        $this->checkCacheConsistency();
+
         $lifetime = $this->getLifetime($specificLifetime);
         if ($this->_options['compression']) {
             $flag = MEMCACHE_COMPRESSED;
@@ -143,6 +186,8 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return boolean True if no problem
      */
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
+
+        $this->checkCacheConsistency();
 
         if ($mode == Zend_Cache::CLEANING_MODE_ALL) {
             $this->clearTags();
@@ -200,7 +245,9 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return bool true if OK
      */
     public function remove($id) {
-        
+
+        $this->checkCacheConsistency();
+
         $this->getDb()->delete("cache_tags", "id = '".$id."'");
 
         $result = parent::remove($id);
@@ -213,7 +260,9 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
         return $result;
     }
 
-
+    /**
+     * @return array
+     */
     public function getCapabilities() {
         $capabilities = parent::getCapabilities();
         $capabilities["tags"] = true;
