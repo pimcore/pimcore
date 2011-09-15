@@ -162,8 +162,14 @@ pimcore.settings.thumbnail.panel = Class.create({
                 params: {
                     name: value
                 },
-                success: function () {
+                success: function (response) {
+                    var data = Ext.decode(response.responseText);
+
                     this.tree.getRootNode().reload();
+
+                    if(!data || !data.success) {
+                        Ext.Msg.alert(t('add_thumbnail'), t('problem_creating_new_thumbnail'));
+                    }
                 }.bind(this)
             });
         }

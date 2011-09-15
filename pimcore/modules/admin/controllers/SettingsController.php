@@ -1211,11 +1211,23 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function thumbnailAddAction () {
 
-        $pipe = new Asset_Image_Thumbnail_Config();
-        $pipe->setName($this->_getParam("name"));
-        $pipe->save();
 
-        $this->_helper->json(array("success" => true));
+        $alreadyExist = false;
+
+        try {
+            Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
+            $alreadyExist = true;
+        } catch (Exception $e) {
+            $alreadyExist = false;
+        }
+
+        if(!$alreadyExist) {
+            $pipe = new Asset_Image_Thumbnail_Config();
+            $pipe->setName($this->_getParam("name"));
+            $pipe->save();
+        }
+
+        $this->_helper->json(array("success" => !$alreadyExist));
     }
 
     public function thumbnailDeleteAction () {
