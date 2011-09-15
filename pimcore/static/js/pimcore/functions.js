@@ -25,23 +25,30 @@ function ts(key) {
         return "";
     }
 
+    var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
+
     // remove plus at the start and the end to avoid double translations
     key = key.replace(/^[\+]+/,"");
     key = key.replace(/[\+]+$/,"");
 
     if (pimcore && pimcore.admin_i18n && pimcore.admin_i18n[key]) {
         // add here a "zero width joiner" to detect if a key is already translated
-        return pimcore.admin_i18n[key] + "&zwj;";
+
+        alreadyTranslated.push(pimcore.admin_i18n[key]);
+        pimcore.globalmanager.add("translations_admin_translated_values", alreadyTranslated);
+
+        return pimcore.admin_i18n[key];
     } else {
 
         // if the key contains a "zero width joiner" it is already translated
-        if(key.indexOf("&zwj;") > 0) {
+        if(in_array(key, alreadyTranslated)) {
             return key;
         }
 
         if(!in_array(key, pimcore.globalmanager.get("translations_admin_added"))){
              var missingTranslations =  pimcore.globalmanager.get("translations_admin_missing");
              missingTranslations.push(key);
+             pimcore.globalmanager.add("translations_admin_missing", missingTranslations);
         }
     }
     if(pimcore.settings.debug){

@@ -122,6 +122,7 @@ Ext.onReady(function() {
     //tranlsation admin keys
     pimcore.globalmanager.add("translations_admin_missing", new Array());
     pimcore.globalmanager.add("translations_admin_added", new Array());
+    pimcore.globalmanager.add("translations_admin_translated_values", new Array());
 
     // classes
     var proxyo = new Ext.data.HttpProxy({
@@ -388,7 +389,7 @@ window.setInterval(function(){
             addedTranslations.push(missingTranslations[i]);
         }
         pimcore.globalmanager.add("translations_admin_missing", new Array());
-            Ext.Ajax.request({
+        Ext.Ajax.request({
             method:"post",
             url: "/admin/settings/add-admin-translation-keys",
             params: {keys: params}
