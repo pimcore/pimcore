@@ -309,30 +309,34 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             autoExpandColumn: 'path',
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
-            tbar: [
-                {
-                    xtype: "tbspacer",
-                    width: 20,
-                    height: 16,
-                    cls: "pimcore_icon_droptarget"
-                },
-                {
-                    xtype: "tbtext",
-                    text: "<b>" + this.fieldConfig.title + "</b>"
-                },
-                "->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                },
-                this.getCreateControl()
-            ],
+            tbar: {
+                items: [
+                    {
+                        xtype: "tbspacer",
+                        width: 20,
+                        height: 16,
+                        cls: "pimcore_icon_droptarget"
+                    },
+                    {
+                        xtype: "tbtext",
+                        text: "<b>" + this.fieldConfig.title + "</b>"
+                    },
+                    "->",
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_delete",
+                        handler: this.empty.bind(this)
+                    },
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchEditor.bind(this)
+                    },
+                    this.getCreateControl()
+                ],
+                ctCls: "pimcore_force_auto_width",
+                cls: "pimcore_force_auto_width"
+            },
             autoHeight: autoHeight,
             bodyCssClass: "pimcore_object_tag_objects"
         });

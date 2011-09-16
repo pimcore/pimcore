@@ -119,29 +119,33 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             }),
             cls: cls,
             autoExpandColumn: 'path',
-            tbar: [
-                {
-                    xtype: "tbspacer",
-                    width: 20,
-                    height: 16,
-                    cls: "pimcore_icon_droptarget"
-                },
-                {
-                    xtype: "tbtext",
-                    text: "<b>" + this.fieldConfig.title + "</b>"
-                },
-                "->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                }
-            ],
+            tbar: {
+                items: [
+                    {
+                        xtype: "tbspacer",
+                        width: 20,
+                        height: 16,
+                        cls: "pimcore_icon_droptarget"
+                    },
+                    {
+                        xtype: "tbtext",
+                        text: "<b>" + this.fieldConfig.title + "</b>"
+                    },
+                    "->",
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_delete",
+                        handler: this.empty.bind(this)
+                    },
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchEditor.bind(this)
+                    }
+                ],
+                ctCls: "pimcore_force_auto_width",
+                cls: "pimcore_force_auto_width"
+            },
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             autoHeight: autoHeight,

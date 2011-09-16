@@ -130,24 +130,42 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
             autoExpandColumn: 'path',
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
-            tbar: [
-                {
+            tbar: {
+                items: [
+                    {
+                        xtype: "tbspacer",
+                        width: 20,
+                        height: 16,
+                        cls: "pimcore_icon_droptarget"
+                    },
+                    {
+                        xtype: "tbtext",
+                        text: "<b>" + this.fieldConfig.title + "</b>"
+                    },
+                    "->",
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_delete",
+                        handler: this.empty.bind(this)
+                    },
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchEditor.bind(this)
+                    },
+                    this.getCreateControl()
+                ],
+                ctCls: "pimcore_force_auto_width",
+                cls: "pimcore_force_auto_width"
+            },
+            bbar: {
+                items: [{
                     xtype: "tbtext",
-                    text: "<b>" + this.fieldConfig.title + "</b>" + ' <span class="warning">' + t('nonownerobject_warning') + " | " + t('owner_class') + ':<b>' + ts(className) + "</b> " + t('owner_field') + ': <b>' + ts('this.fieldConfig.ownerFieldName') + '</b></span>'
-                },
-                "->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                },
-                this.getCreateControl()
-            ],
+                    text: ' <span class="warning">' + t('nonownerobject_warning') + " | " + t('owner_class') + ':<b>' + ts(className) + "</b> " + t('owner_field') + ': <b>' + ts(this.fieldConfig.ownerFieldName) + '</b></span>'
+                }],
+                ctCls: "pimcore_force_auto_width",
+                cls: "pimcore_force_auto_width"
+            },
             autoHeight: autoHeight,
             bodyCssClass: "pimcore_object_tag_objects"
         });
