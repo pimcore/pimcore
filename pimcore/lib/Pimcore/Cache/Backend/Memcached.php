@@ -35,11 +35,12 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
         // of all data in this table but the cache still exists, so there is an inconsistency because then it's possible that
         // there are outdated or just wrong items in the cache
         if(!$this->checkedCacheConsistency) {
+            $this->checkedCacheConsistency = true;
+            
             $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
             if(!$res) {
                 $this->clean(Zend_Cache::CLEANING_MODE_ALL);
             }
-            $this->checkedCacheConsistency = true;
         }
     }
 
@@ -223,6 +224,18 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                 $this->remove($item);
             }
         }
+
+        // insert dummy for the consistency check
+        try {
+            $this->getDb()->insert("cache_tags", array(
+                "id" => "___consistency_check___",
+                "tag" => "___consistency_check___"
+            ));
+        } catch (Exception $e) {
+            // doesn't matter as long as the item exists
+        }
+
+        return true;
     }
     
     
