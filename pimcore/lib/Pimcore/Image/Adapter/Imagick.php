@@ -29,8 +29,12 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource = null;
         }
 
-        $this->resource = new Imagick();
-        if(!$this->resource->readImage($imagePath)) {
+        try {
+            $this->resource = new Imagick();
+            if(!$this->resource->readImage($imagePath)) {
+                return false;
+            }
+        } catch (Exception $e) {
             return false;
         }
 
