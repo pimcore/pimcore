@@ -265,7 +265,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         
         if (data.node.attributes.elementType == "asset") {
             if (data.node.attributes.type == "image" && textIsSelected == false) {
-                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" />');
+                // only use thumbnails
+                var defaultWidth = 400;
+                uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
+                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" style="width:' + defaultWidth + 'px;" />');
                 return true;
             }
             else {

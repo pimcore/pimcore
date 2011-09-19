@@ -42,6 +42,12 @@ class Pimcore_Tool_Text
             // image
             if ($el->src) {
                 if ($asset = Asset::getById($el->pimcore_id)) {
+
+                    // only for images
+                    if(!$asset instanceof Asset_Image) {
+                        continue;
+                    }
+                    
                     $el->src = $asset->getFullPath();
 
                     // resize image to the given attributes
@@ -71,6 +77,11 @@ class Pimcore_Tool_Text
 
                     if ($config) {
                         $el->src = $asset->getThumbnail($config);
+                    } else {
+                        $el->src = $asset->getThumbnail(array(
+                            "width" => $asset->getWidth(),
+                            "height" => $asset->getHeight()
+                        ));
                     }
                 }
                 else {
