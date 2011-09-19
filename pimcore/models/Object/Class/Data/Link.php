@@ -133,11 +133,11 @@ class Object_Class_Data_Link extends Object_Class_Data {
      */
     public function checkValidity($data, $omitMandatoryCheck = false){
 
-        if(!$omitMandatoryCheck and $this->getMandatory() and !$data instanceof Object_Data_Link ){
+        /*if(!$omitMandatoryCheck and $this->getMandatory() and !$data instanceof Object_Data_Link ){
             throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
         } else if ($data instanceof Object_Data_Link and !$data->getPath()){
             throw new Exception("Empty mandatory field [ ".$this->getName()." ] - no path set");
-        }
+        }*/
 
         if ($data) {
             if ($data instanceof Object_Data_Link) {
