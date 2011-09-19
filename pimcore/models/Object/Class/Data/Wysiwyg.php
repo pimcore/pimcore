@@ -165,8 +165,8 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
-        return Pimcore_Tool_Text::getCacheTagsOfWysiwygText($data, $blockedTags);
+    public function getCacheTags($data, $ownerObject, $tags = array()) {
+        return Pimcore_Tool_Text::getCacheTagsOfWysiwygText($data, $tags);
     }
 
 

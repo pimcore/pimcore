@@ -515,8 +515,8 @@ abstract class Object_Class_Data {
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags ($data, $ownerObject, $blockedTags = array()) {
-        return array();
+    public function getCacheTags ($data, $ownerObject, $tags = array()) {
+        return $tags;
     }
     
     /**

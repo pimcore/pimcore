@@ -316,17 +316,17 @@ class Object_Concrete extends Object_Abstract {
     /**
      * @return array
      */
-    public function getCacheTags($blockedTags = array()) {
+    public function getCacheTags($tags = array()) {
+        
+        $tags = is_array($tags) ? $tags : array();
 
-        $tags = parent::getCacheTags($blockedTags);
-        $blockedTags = array_merge($tags, $blockedTags);
+        $tags = parent::getCacheTags($tags);
 
-        $tags[] = "class_" . $this->getO_classId();
+        $tags["class_" . $this->getO_classId()] = "class_" . $this->getO_classId();
         foreach ($this->getO_class()->getFieldDefinitions() as $name => $def) {
             // no need to add lazy-loading fields to the cache tags
             if (!method_exists($def, "getLazyLoading") or !$def->getLazyLoading()) {
-                $tags = array_merge($tags, $def->getCacheTags($this->getValueForFieldName($name), $this, $blockedTags));
-                $blockedTags = array_merge($tags, $blockedTags);
+                $tags = $def->getCacheTags($this->getValueForFieldName($name), $this, $tags);
             }
         }
         return $tags;

@@ -306,11 +306,10 @@ class Pimcore_Tool_Text
     }
 
 
-    public static function getCacheTagsOfWysiwygText($text, $blockedTags = array())
+    public static function getCacheTagsOfWysiwygText($text, $tags = array())
     {
-
-        $cacheTags = array();
-
+        $tags = is_array($tags) ? $tags : array();
+        
         if (!empty($text)) {
 
             $html = str_get_html($text);
@@ -325,10 +324,7 @@ class Pimcore_Tool_Text
                 // image
                 if ($el->src) {
                     if ($asset = Asset::getById($el->pimcore_id)) {
-                        $tag = $asset->getCacheTag();
-                        if (!in_array($tag, $blockedTags)) {
-                            $cacheTags[] = $tag;
-                        }
+                        $tags = $asset->getCacheTags($tags);
                     }
                 }
 
@@ -336,26 +332,19 @@ class Pimcore_Tool_Text
                 if ($el->href) {
                     if ($el->pimcore_type == "asset") {
                         if ($asset = Asset::getById($el->pimcore_id)) {
-                            $tag = $asset->getCacheTag();
-                            if (!in_array($tag, $blockedTags)) {
-                                $cacheTags[] = $tag;
-                            }
+                            $tags = $asset->getCacheTags($tags);
                         }
                     }
                     else if ($el->pimcore_type == "document") {
                         if ($doc = Document::getById($el->pimcore_id)) {
-                            $tag = $doc->getCacheTag();
-                            if (!in_array($tag, $blockedTags)) {
-                                $cacheTags[] = $tag;
-                            }
+                            $tags = $doc->getCacheTags($tags);
                         }
                     }
                 }
             }
         }
 
-        array_unique($cacheTags);
-        return $cacheTags;
+        return $tags;
     }
 
     public static function detectEncoding($text)

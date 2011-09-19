@@ -439,18 +439,17 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags($data, $ownerObject, $blockedTags = array())
+    public function getCacheTags($data, $ownerObject, $tags = array())
     {
-        $tags = array();
+        $tags = is_array($tags) ? $tags : array();
 
         if (!$data instanceof Object_Localizedfield) {
-            return array();
+            return $tags;
         }
 
         foreach ($data->getItems() as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                $tags = array_merge($tags, $fd->getCacheTags($values[$fd->getName()], $ownerObject, $blockedTags));
-                $blockedTags = array_merge($tags, $blockedTags);
+                $tags = $fd->getCacheTags($values[$fd->getName()], $ownerObject, $tags);
             }
         }
 

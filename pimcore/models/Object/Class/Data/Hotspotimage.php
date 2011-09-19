@@ -181,11 +181,12 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
-        $tags = array();
+    public function getCacheTags($data, $ownerObject, $tags = array()) {
+
+        $tags = is_array($tags) ? $tags : array();
 
         if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset_Image) {
-            $tags = array_merge($tags, $data->getImage()->getCacheTags($blockedTags));
+            $tags = $data->getImage()->getCacheTags($tags);
         }
         return $tags;
     }

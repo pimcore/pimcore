@@ -200,11 +200,12 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
-        $tags = array();
+    public function getCacheTags($data, $ownerObject, $tags = array()) {
+
+        $tags = is_array($tags) ? $tags : array();
 
         if ($data instanceof Asset_Image) {
-            $tags = array_merge($tags, $data->getCacheTags($blockedTags));
+            $tags = $data->getCacheTags($tags);
         }
         return $tags;
     }

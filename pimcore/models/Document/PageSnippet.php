@@ -131,14 +131,14 @@ abstract class Document_PageSnippet extends Document {
      *
      * @return array
      */
-    public function getCacheTags($blockedTags = array()) {
+    public function getCacheTags($tags = array()) {
 
-        $tags = parent::getCacheTags($blockedTags);
-        $blockedTags = array_merge($tags, $blockedTags);
+        $tags = is_array($tags) ? $tags : array();
+        
+        $tags = parent::getCacheTags($tags);
 
         foreach ($this->getElements() as $element) {
-            $tags = array_merge($tags, $element->getCacheTags($this, $blockedTags));            
-            $blockedTags = array_merge($tags, $blockedTags);
+            $tags = $element->getCacheTags($this, $tags);
         }
 
         return $tags;

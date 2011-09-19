@@ -206,8 +206,8 @@ class Pimcore_Model_Cache {
                     unset($data->_fulldump);
                 }
 
-                // get dependencies for this element
-                $tags = array_unique(array_merge($data->getCacheTags(), $tags));
+                // get dependencies for this element, array_values() because the tags from Element_Interface came with keys eg. array("object_123" => "object_123")
+                $tags = array_values($data->getCacheTags($tags));
                 $type = get_class($data);
 
                 Logger::debug("prepared " . $type . " " . $data->getFullPath() . " for data cache with tags: " . implode(",", $tags));

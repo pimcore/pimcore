@@ -202,8 +202,9 @@ class Object_Class_Data_Link extends Object_Class_Data {
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags($data, $ownerObject, $blockedTags = array()) {
-        $cacheTags = array();
+    public function getCacheTags($data, $ownerObject, $tags = array()) {
+
+        $tags = is_array($tags) ? $tags : array();
 
         if ($data instanceof Object_Data_Link and $data->getInternal()) {
 
@@ -211,18 +212,18 @@ class Object_Class_Data_Link extends Object_Class_Data {
                 if ($data->getInternalType() == "document") {
 
                     if ($doc = Document::getById($data->getInternal())) {
-                        $cacheTags[] = $doc->getCacheTag();
+                        $tags = $doc->getCacheTags($tags);
                     }
                 }
                 else if ($data->getInternalType() == "asset") {
                     if ($asset = Asset::getById($data->getInternal())) {
-                        $cacheTags[] = $asset->getCacheTag();
+                        $tags = $asset->getCacheTags($tags);
                     }
                 }
             }
         }
 
-        return $cacheTags;
+        return $tags;
     }
 
     /**

@@ -266,8 +266,8 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      * @param $ownerDocument
      * @param array $blockedTags
      */
-    public function getCacheTags($ownerDocument, $blockedTags = array()) {
-        return array();
+    public function getCacheTags($ownerDocument, $tags = array()) {
+        return $tags;
     }
 
     /**

@@ -517,16 +517,15 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags($data, $ownerObject, $blockedTags = array())
+    public function getCacheTags($data, $ownerObject, $tags = array())
     {
-        $tags = array();
+        $tags = is_array($tags) ? $tags : array();
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
-                if (!in_array($element->getCacheTag(), $blockedTags)) {
+                if (!array_key_exists($element->getCacheTag(), $tags)) {
                     if(!$ownerObject instanceof Element_Interface || $element->getId() != $ownerObject->getId()) {
-                        $tags = array_merge($tags, $element->getCacheTags($blockedTags));
-                        $blockedTags = array_merge($tags, $blockedTags);
+                        $tags = $element->getCacheTags($tags);
                     }
                 }
             }

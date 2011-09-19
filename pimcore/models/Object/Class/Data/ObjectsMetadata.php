@@ -313,16 +313,16 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags ($data, $ownerObject, $blockedTags = array()) {
-        $tags = array();
+    public function getCacheTags ($data, $ownerObject, $tags = array()) {
+
+        $tags = is_array($tags) ? $tags : array();
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
-                if (!in_array($object->getCacheTag(), $blockedTags)) {
+                if (!array_key_exists($object->getCacheTag(), $tags)) {
                     if(!$ownerObject instanceof Element_Interface || $object->getId() != $ownerObject->getId()) {
-                        $tags = array_merge($tags, $object->getCacheTags($blockedTags));
-                        $blockedTags = array_merge($tags, $blockedTags);
+                        $tags = $object->getCacheTags($tags);
                     }
                 }
             }

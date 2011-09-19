@@ -386,14 +386,14 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags ($data, $ownerObject, $blockedTags = array()) {
+    public function getCacheTags ($data, $ownerObject, $tags = array()) {
 
-        $tags = array();
+        $tags = is_array($tags) ? $tags : array();
 
         if ($data instanceof Document || $data instanceof Asset || $data instanceof Object_Abstract) {
-            if (!in_array($data->getCacheTag(), $blockedTags)) {
+            if (!array_key_exists($data->getCacheTag(), $tags)) {
                 if(!$ownerObject instanceof Element_Interface || $data->getId() != $ownerObject->getId()) {
-                    $tags = array_merge($tags, $data->getCacheTags($blockedTags));
+                    $tags = $data->getCacheTags($tags);
                 }
             }
         }

@@ -498,9 +498,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      *
      * @return array
      */
-    public function getCacheTags($blockedTags = array()) {
+    public function getCacheTags($tags = array()) {
 
-        $tags = array($this->getCacheTag());
+        $tags = is_array($tags) ? $tags : array();
+        
+        $tags[$this->getCacheTag()] = $this->getCacheTag();
         return $tags;
     }
 

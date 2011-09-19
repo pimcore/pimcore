@@ -97,16 +97,16 @@ class Document_Link extends Document
      *
      * @return array
      */
-    public function getCacheTags($blockedTags = array())
+    public function getCacheTags($tags = array())
     {
-
-        $tags = parent::getCacheTags($blockedTags);
-        $blockedTags = array_merge($tags, $blockedTags);
+        $tags = is_array($tags) ? $tags : array();
+        
+        $tags = parent::getCacheTags($tags);
 
         if ($this->getLinktype() == "internal") {
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                if ($this->getObject()->getId() != $this->getId() and !in_array($this->getObject()->getCacheTag(), $blockedTags)) {
-                    $tags = array_merge($tags, $this->getObject()->getCacheTags($blockedTags));
+                if ($this->getObject()->getId() != $this->getId() and !array_key_exists($this->getObject()->getCacheTag(), $tags)) {
+                    $tags = $this->getObject()->getCacheTags($tags);
                 }
             }
         }

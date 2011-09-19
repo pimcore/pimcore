@@ -364,9 +364,11 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     /*
       * @return array
       */
-    public function getCacheTags($blockedTags = array()) {
-        $tags = array($this->getCacheTag());
+    public function getCacheTags($tags = array()) {
+        
+        $tags = is_array($tags) ? $tags : array();
 
+        $tags[$this->getCacheTag()] = $this->getCacheTag();
         return $tags;
     }
 

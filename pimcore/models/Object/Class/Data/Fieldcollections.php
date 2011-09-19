@@ -371,10 +371,9 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags($data, $ownerObject, $blockedTags = array())
+    public function getCacheTags($data, $ownerObject, $tags = array())
     {
-        $tags = array();
-
+        $tags = is_array($tags) ? $tags : array();
 
         if ($data instanceof Object_Fieldcollection) {
             foreach ($data as $item) {
@@ -392,8 +391,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $key = $fd->getName();
                     $getter = "get" . ucfirst($key);
-                    $tags = array_merge($tags, $fd->getCacheTags($item->$getter(), $item, $blockedTags));
-                    $blockedTags = array_merge($tags, $blockedTags);
+                    $tags = $fd->getCacheTags($item->$getter(), $item, $tags);
                 }
             }
         }
