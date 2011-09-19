@@ -101,6 +101,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                     $page->setAccesskey($child->getProperty("navigation_accesskey"));
                     $page->setTabindex($child->getProperty("navigation_tabindex"));
                     $page->setRelation($child->getProperty("navigation_relation"));
+                    $page->setDocument($child);
 
                     if($active and !$isRoot){
                         $page->setClass($page->getClass()." active");

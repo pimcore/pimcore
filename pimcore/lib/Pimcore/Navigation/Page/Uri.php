@@ -31,6 +31,11 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
      */
     protected $_relation;
 
+    /**
+     * @var Document
+     */
+    protected $_document;
+
 
     /**
      * @param  $tabindex
@@ -81,5 +86,21 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     public function getRelation()
     {
         return $this->_relation;
+    }
+
+    /**
+     * @param Document $document
+     */
+    public function setDocument($document)
+    {
+        $this->_document = $document;
+    }
+
+    /**
+     * @return Document
+     */
+    public function getDocument()
+    {
+        return $this->_document;
     }
 }
