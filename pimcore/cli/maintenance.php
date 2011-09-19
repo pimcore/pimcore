@@ -44,6 +44,18 @@ if($opts->getOption("verbose")) {
     $writer = new Zend_Log_Writer_Stream('php://output');
     $logger = new Zend_Log($writer);
     Logger::addLogger($logger);
+
+    // set all priorities
+    Logger::setPriorities(array(
+        Zend_Log::DEBUG,
+        Zend_Log::INFO,
+        Zend_Log::NOTICE,
+        Zend_Log::WARN,
+        Zend_Log::ERR,
+        Zend_Log::CRIT,
+        Zend_Log::ALERT,
+        Zend_Log::EMERG
+    ));
 }
 
 $forceType = null;
