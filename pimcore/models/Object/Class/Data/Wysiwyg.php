@@ -214,4 +214,13 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
     }
 
 
+    /**
+     * @param Object_Concrete $object
+     * @return string
+     */
+    public function preGetData ($object) {
+        $key = $this->getName();
+        return Pimcore_Tool_Text::wysiwygText($object->$key);
+    }
+
 }
