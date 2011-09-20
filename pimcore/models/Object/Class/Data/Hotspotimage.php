@@ -186,7 +186,9 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
         $tags = is_array($tags) ? $tags : array();
 
         if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset_Image) {
-            $tags = $data->getImage()->getCacheTags($tags);
+            if (!array_key_exists($data->getImage()->getCacheTag(), $tags)) {
+                $tags = $data->getImage()->getCacheTags($tags);
+            }
         }
         return $tags;
     }

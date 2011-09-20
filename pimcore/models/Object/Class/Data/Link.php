@@ -212,12 +212,16 @@ class Object_Class_Data_Link extends Object_Class_Data {
                 if ($data->getInternalType() == "document") {
 
                     if ($doc = Document::getById($data->getInternal())) {
-                        $tags = $doc->getCacheTags($tags);
+                        if (!array_key_exists($doc->getCacheTag(), $tags)) {
+                            $tags = $doc->getCacheTags($tags);
+                        }
                     }
                 }
                 else if ($data->getInternalType() == "asset") {
                     if ($asset = Asset::getById($data->getInternal())) {
-                        $tags = $asset->getCacheTags($tags);
+                        if (!array_key_exists($asset->getCacheTag(), $tags)) {
+                            $tags = $asset->getCacheTags($tags);
+                        }
                     }
                 }
             }

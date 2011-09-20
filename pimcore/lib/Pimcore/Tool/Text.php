@@ -324,7 +324,9 @@ class Pimcore_Tool_Text
                 // image
                 if ($el->src) {
                     if ($asset = Asset::getById($el->pimcore_id)) {
-                        $tags = $asset->getCacheTags($tags);
+                        if (!array_key_exists($asset->getCacheTag(), $tags)) {
+                            $tags = $asset->getCacheTags($tags);
+                        }
                     }
                 }
 
@@ -332,12 +334,16 @@ class Pimcore_Tool_Text
                 if ($el->href) {
                     if ($el->pimcore_type == "asset") {
                         if ($asset = Asset::getById($el->pimcore_id)) {
-                            $tags = $asset->getCacheTags($tags);
+                            if (!array_key_exists($asset->getCacheTag(), $tags)) {
+                                $tags = $asset->getCacheTags($tags);
+                            }
                         }
                     }
                     else if ($el->pimcore_type == "document") {
                         if ($doc = Document::getById($el->pimcore_id)) {
-                            $tags = $doc->getCacheTags($tags);
+                            if (!array_key_exists($doc->getCacheTag(), $tags)) {
+                                $tags = $doc->getCacheTags($tags);
+                            }
                         }
                     }
                 }

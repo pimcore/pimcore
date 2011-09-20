@@ -205,7 +205,9 @@ class Object_Class_Data_Image extends Object_Class_Data {
         $tags = is_array($tags) ? $tags : array();
 
         if ($data instanceof Asset_Image) {
-            $tags = $data->getCacheTags($tags);
+            if (!array_key_exists($data->getCacheTag(), $tags)) {
+                $tags = $data->getCacheTags($tags);
+            }
         }
         return $tags;
     }
