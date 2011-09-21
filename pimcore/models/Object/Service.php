@@ -449,4 +449,32 @@ class Object_Service extends Element_Service {
         Logger::log("ObjectController filter condition:" . $conditionFilters);
         return $conditionFilters;
     }
+    
+    public static function getOptionsForSelectField($object, $fieldname) {
+        $class = null;
+        $options = array();
+
+        if(is_object($object) && method_exists($object, "getClass")) {
+            $class = $object->getClass();
+        } else if(is_string($object)) {
+            $object = new $object();
+            $class = $object->getClass();
+        }
+
+        if($class) {
+            /**
+             * @var Object_Class_Data_Select $definition
+             */
+            $definition = $class->getFielddefinition($fieldname);
+            if($definition instanceof Object_Class_Data_Select) {
+                $_options = $definition->getOptions();
+
+                foreach($_options as $option) {
+                    $options[$option["key"]] = $option["value"];
+                }
+            }
+        }
+
+        return $options;
+    }
 }
