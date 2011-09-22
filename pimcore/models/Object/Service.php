@@ -470,7 +470,7 @@ class Object_Service extends Element_Service {
                 $_options = $definition->getOptions();
 
                 foreach($_options as $option) {
-                    $options[$option["key"]] = $option["value"];
+                    $options[$option["value"]] = $option["key"];
                 }
             }
         }
