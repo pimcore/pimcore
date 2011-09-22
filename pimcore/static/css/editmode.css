@@ -54,6 +54,11 @@
     display: block !important;
 }
 
+
+.pimcore_block_amount {
+    width: 40px;
+}
+
 .pimcore_block_type, .pimcore_block_type button {
     cursor:default !important;
 }
