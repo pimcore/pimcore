@@ -85,9 +85,9 @@ class Asset_Image extends Asset {
             try {
                 $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail);
             } catch (Exception $e) {
-                return "/pimcore/static/img/image-not-supported.png";
                 Logger::error("Couldn't create thumbnail of image " . $this->getFullPath());
                 Logger::error($e);
+                return "/pimcore/static/img/image-not-supported.png";
             }
         }
 
