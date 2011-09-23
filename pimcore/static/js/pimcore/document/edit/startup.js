@@ -118,6 +118,51 @@ Ext.onReady(function () {
             fn: parent.pimcore.helpers.handleF5,
             stopEvent: true
         });
+
+        // add contextmenu note in help tool-tips
+        var editablesForTooltip = Ext.query(".pimcore_editable");
+        var tmpEl;
+        for (var e=0; e<editablesForTooltip.length; e++) {
+            tmpEl = Ext.get(editablesForTooltip[e]);
+            if(tmpEl) {
+                if(tmpEl.hasClass("pimcore_tag_inc") || tmpEl.hasClass("pimcore_tag_href") || tmpEl.hasClass("pimcore_tag_image") || tmpEl.hasClass("pimcore_tag_renderlet") || tmpEl.hasClass("pimcore_tag_snippet")) {
+                    new Ext.ToolTip({
+                        target: tmpEl,
+                        showDelay: 100,
+                        title: t("click_right_for_more_options"),
+                        trackMouse:true
+                    });
+                }
+            }
+        }
+
+        // add contextmenu menu to elements included by $this->inc();
+        var incElements = Ext.query(".pimcore_tag_inc");
+        var tmpIncEl;
+        for (var q=0; q<incElements.length; q++) {
+            tmpIncEl = Ext.get(incElements[q]);
+            if(tmpIncEl) {
+                if(tmpIncEl.getAttribute("pimcore_id") && tmpIncEl.getAttribute("pimcore_type")) {
+                    tmpIncEl.on("contextmenu", function (e) {
+                        
+                        var menu = new Ext.menu.Menu();
+                        menu.add(new Ext.menu.Item({
+                            text: t('open'),
+                            iconCls: "pimcore_icon_open",
+                            handler: function (item) {
+                                item.parentMenu.destroy();
+                                pimcore.helpers.openDocument(this.getAttribute("pimcore_id"), this.getAttribute("pimcore_type"));
+                            }.bind(this)
+                        }));
+
+                        menu.showAt(e.getXY());
+
+                        e.stopEvent();
+                    });
+                }
+            }
+        }
+
     }
 });
 

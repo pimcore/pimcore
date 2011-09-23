@@ -147,20 +147,47 @@ class Pimcore_View extends Zend_View {
         }
 
         $params = array_merge($params, array("document" => $include));
+        $content = "";
 
         if ($include instanceof Document_PageSnippet && $include->isPublished()) {
             if ($include->getAction() && $include->getController()) {
-                return $this->action($include->getAction(), $include->getController(), null, $params);
+                $content = $this->action($include->getAction(), $include->getController(), null, $params);
             }
 
             if ($include->getTemplate()) {
-                return $this->action("default", "default", null, $params);
+                $content = $this->action("default", "default", null, $params);
+            }
+
+
+            // in editmode add events at hover an click to be able to edit the included document
+            if($this->editmode) {
+
+                include_once("simple_html_dom.php");
+
+                $class = " pimcore_editable pimcore_tag_inc ";
+
+    
+                // this is if the content if the include does already contain markup/html
+                if($html = str_get_html($content)) {
+                    $childs = $html->find("*");
+                    if(is_array($childs)) {
+                        foreach ($childs as $child) {
+                            $child->class = $child->class . $class;
+                            $child->pimcore_type = $include->getType();
+                            $child->pimcore_id = $include->getId();
+                        }
+                    }
+                    $content = $html->save();
+                } else {
+                    // add a div container if the include doesn't contain markup/html
+                    $content = '<div class="' . $class . '">' . $content . '</div>';
+                }
             }
         }
 
         Zend_Registry::set("pimcore_editmode", $editmodeBackup);
-        
-        return "";
+
+        return $content;
     }
 
     /**
