@@ -392,7 +392,7 @@
             maintenance_active: <?php echo $this->maintenance_enabled; ?>,
             mail: <?php echo $this->mail_settings_incomplete ?>,
             welcomescreen: <?php echo $this->config->general->welcomescreen ? "true" : "false"; ?>,
-            debug: <?php echo $this->config->general->debug ? "true" : "false"; ?>,
+            debug: <?php echo Pimcore::inDebugMode() ? "true" : "false"; ?>,
             google_analytics_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::isConfigured()) ?>,
             google_analytics_advanced: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::getSiteConfig()->advanced); ?>,
             google_webmastertools_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Webmastertools::isConfigured()) ?>,

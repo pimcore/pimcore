@@ -525,15 +525,7 @@ class Pimcore {
         try {
             $conf = Pimcore_Config::getSystemConfig();
 
-            $debug = (bool) $conf->general->debug;
-
-            // enable debug mode only for one IP
-            if($conf->general->debug_ip && $conf->general->debug) {
-                $debug = false;
-                if($_SERVER["REMOTE_ADDR"] == trim($conf->general->debug_ip)) {
-                    $debug = true;
-                }
-            }
+            $debug = self::inDebugMode();
             
             if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", $debug);
             if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
@@ -549,6 +541,26 @@ class Pimcore {
 
         if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", true);
         if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", false);
+    }
+
+    public static function inDebugMode () {
+
+        if(defined("PIMCORE_DEBUG")) {
+            return PIMCORE_DEBUG;
+        }
+
+        $conf = Pimcore_Config::getSystemConfig();
+        $debug = (bool) $conf->general->debug;
+
+        // enable debug mode only for one IP
+        if($conf->general->debug_ip && $conf->general->debug) {
+            $debug = false;
+            if($_SERVER["REMOTE_ADDR"] == trim($conf->general->debug_ip) || $_SERVER["HTTP_X_FORWARDED_FOR"] == trim($conf->general->debug_ip)) {
+                $debug = true;
+            }
+        }
+
+        return $debug;
     }
 
     public static function setupFramework () {
