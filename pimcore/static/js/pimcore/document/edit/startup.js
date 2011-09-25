@@ -133,6 +133,18 @@ Ext.onReady(function () {
                         trackMouse:true
                     });
                 }
+
+
+                if(!tmpEl.hasClass("pimcore_tag_block") && !tmpEl.hasClass("pimcore_tag_areablock")) {
+                    tmpEl.on("mouseenter", function (e) {
+                        pimcore.edithelpers.frameElement(this, Ext.getBody());
+                    });
+
+                    tmpEl.on("mouseleave", function () {
+                        pimcore.edithelpers.unFrameElement();
+                    });
+                }
+
             }
         }
 
@@ -165,6 +177,8 @@ Ext.onReady(function () {
 
     }
 });
+
+
 
        
 
