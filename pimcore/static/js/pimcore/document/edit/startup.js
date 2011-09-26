@@ -119,6 +119,7 @@ Ext.onReady(function () {
             stopEvent: true
         });
 
+        
         // add contextmenu note in help tool-tips
         var editablesForTooltip = Ext.query(".pimcore_editable");
         var tmpEl;
@@ -129,8 +130,8 @@ Ext.onReady(function () {
                     new Ext.ToolTip({
                         target: tmpEl,
                         showDelay: 100,
-                        title: t("click_right_for_more_options"),
-                        trackMouse:true
+                        anchor: "left",
+                        title: t("click_right_for_more_options")
                     });
                 }
 
@@ -174,6 +175,11 @@ Ext.onReady(function () {
                 }
             }
         }
+
+
+
+
+        
 
     }
 });
