@@ -358,10 +358,20 @@ class Asset_Image_Thumbnail_Config {
             }
         }
         else {
-            $pipe->addItem("resize", array(
-                "width" => $config["width"],
-                "height" => $config["height"]
-            ));
+            if(empty($config["width"]) && !empty($config["height"])) {
+                $pipe->addItem("scaleByHeight", array(
+                    "height" => $config["height"]
+                ));
+            } else if (!empty($config["width"]) && empty($config["height"])) {
+                $pipe->addItem("scaleByWidth", array(
+                    "width" => $config["width"]
+                ));
+            } else {
+                $pipe->addItem("resize", array(
+                    "width" => $config["width"],
+                    "height" => $config["height"]
+                ));
+            }
         }
 
         return $pipe;

@@ -27,6 +27,10 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     protected $resource;
 
+    /**
+     * @param $imagePath
+     * @return bool|Pimcore_Image_Adapter_GD
+     */
     public function load ($imagePath) {
 
         $this->path = $imagePath;
@@ -78,9 +82,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     protected function createImage ($width, $height) {
         $newImg = imagecreatetruecolor($width, $height);
-        //$black = imagecolorallocate($newImg, 0, 0, 0);
-        //imagecolortransparent($newImg, $black);
-
+        
         imagealphablending($newImg, false);
         $trans_colour = imagecolorallocatealpha($newImg, 255, 0, 0, 127);
         imagefill($newImg, 0, 0, $trans_colour);
