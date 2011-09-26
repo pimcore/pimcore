@@ -60,7 +60,8 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: (width + borderWidth*2) + "px",
         height: borderWidth + "px",
-        backgroundColor: "#a3bae9"
+        backgroundColor: "#a3bae9",
+        zIndex: 10000
     });
 
     var bottom = document.createElement("div");
@@ -72,7 +73,8 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: (width + borderWidth*2) + "px",
         height: borderWidth + "px",
-        backgroundColor: "#a3bae9"
+        backgroundColor: "#a3bae9",
+        zIndex: 10000
     });
 
     var left = document.createElement("div");
@@ -84,7 +86,8 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] - borderWidth) + "px",
         width: borderWidth + "px",
         height: (height + borderWidth*2) + "px",
-        backgroundColor: "#a3bae9"
+        backgroundColor: "#a3bae9",
+        zIndex: 10000
     });
 
     var right = document.createElement("div");
@@ -96,7 +99,8 @@ pimcore.edithelpers.frameElement = function (el, body) {
         left: (offsets[0] + width ) + "px",
         width: borderWidth + "px",
         height: (height + borderWidth*2) + "px",
-        backgroundColor: "#a3bae9"
+        backgroundColor: "#a3bae9",
+        zIndex: 10000
     });
 
     pimcore.edithelpers.frame.topEl= top;
