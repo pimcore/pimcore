@@ -339,6 +339,7 @@ Ext.onReady(function() {
                 }
             }
         }
+        
     }
     catch (e) {
         console.log(e);
@@ -346,6 +347,13 @@ Ext.onReady(function() {
 
     layoutToolbar = new pimcore.layout.toolbar();
     pimcore.globalmanager.add("layout_toolbar", layoutToolbar);
+
+
+    // check for activated maintenance-mode with this session-id
+    if(pimcore.settings.maintenance_mode) {
+        pimcore.helpers.showMaintenanceDisableButton();
+    }
+
     
     if (pimcore.settings.welcomescreen) {
         layoutPortal = new pimcore.layout.portal();

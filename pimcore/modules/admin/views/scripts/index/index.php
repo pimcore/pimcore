@@ -390,6 +390,7 @@
             version: "<?php echo Pimcore_Version::getVersion() ?>",
             build: "<?php echo Pimcore_Version::$revision ?>",
             maintenance_active: <?php echo $this->maintenance_enabled; ?>,
+            maintenance_mode: <?php echo Pimcore_Tool_Admin::isInMaintenanceMode() ? "true" : "false"; ?>,
             mail: <?php echo $this->mail_settings_incomplete ?>,
             welcomescreen: <?php echo $this->config->general->welcomescreen ? "true" : "false"; ?>,
             debug: <?php echo Pimcore::inDebugMode() ? "true" : "false"; ?>,

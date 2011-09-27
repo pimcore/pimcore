@@ -20,7 +20,7 @@ class Pimcore_Controller_Plugin_Maintenance extends Zend_Controller_Plugin_Abstr
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
 
         $maintenance = false;
-        $file = PIMCORE_CONFIGURATION_DIRECTORY . "/maintenance.xml";
+        $file = Pimcore_Tool_Admin::getMaintenanceModeFile();
 
         if(is_file($file)) {
             $conf = new Zend_Config_Xml($file);

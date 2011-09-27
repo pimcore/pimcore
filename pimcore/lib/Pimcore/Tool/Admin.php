@@ -163,4 +163,23 @@ class Pimcore_Tool_Admin {
     public static function deactivateMaintenanceMode () {
         unlink(self::getMaintenanceModeFile());
     }
+
+    /**
+     * @static
+     * @return bool
+     */
+    public static function isInMaintenanceMode() {
+        $file = Pimcore_Tool_Admin::getMaintenanceModeFile();
+
+        if(is_file($file)) {
+            $conf = new Zend_Config_Xml($file);
+            if($conf->sessionId) {
+                return true;
+            } else {
+                @unlink($file);
+            }
+        }
+
+        return false;
+    }
 }
