@@ -295,11 +295,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
              handler: this.remove.bind(this)
              });*/
 
+            if (this.isAllowed("save")) {
+                buttons.push(this.toolbarButtons.save);
+            }
             if (this.isAllowed("publish")) {
                 buttons.push(this.toolbarButtons.publish);
-            }
-            if (this.isAllowed("save") && !this.isAllowed("publish")) {
-                buttons.push(this.toolbarButtons.save);
             }
             if (this.isAllowed("unpublish")) {
                 buttons.push(this.toolbarButtons.unpublish);
@@ -348,6 +348,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 window.setTimeout(function () {
                     if (!this.data.general.o_published) {
                         this.toolbarButtons.unpublish.hide();
+                    } else if (this.isAllowed("publish")) {
+                        this.toolbarButtons.save.hide();
                     }
                 }.bind(this), 500);
             }.bind(this));
@@ -444,6 +446,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         if(this.save("publish", only)) {
             // toogle buttons
             this.toolbarButtons.unpublish.show();
+            this.toolbarButtons.save.hide();
 
             // remove class in tree panel
             try {
@@ -458,6 +461,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         if(this.save("unpublish")) {
             // toogle buttons
             this.toolbarButtons.unpublish.hide();
+            this.toolbarButtons.save.show();
     
             // set class in tree panel
             try {

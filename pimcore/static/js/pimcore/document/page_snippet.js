@@ -217,11 +217,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             var buttons = [];
 
+            if (this.isAllowed("save")) {
+                buttons.push(this.toolbarButtons.save);
+            }
             if (this.isAllowed("publish")) {
                 buttons.push(this.toolbarButtons.publish);
-            }
-            if (this.isAllowed("save") && !this.isAllowed("publish")) {
-                buttons.push(this.toolbarButtons.save);
             }
             if (this.isAllowed("unpublish")) {
                 buttons.push(this.toolbarButtons.unpublish);
@@ -287,6 +287,8 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 window.setTimeout(function () {
                     if (!this.data.published) {
                         this.toolbarButtons.unpublish.hide();
+                    } else if (this.isAllowed("publish")) {
+                        this.toolbarButtons.save.hide();
                     }
                 }.bind(this), 500);
             }.bind(this));
