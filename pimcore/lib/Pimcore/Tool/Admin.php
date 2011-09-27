@@ -136,12 +136,14 @@ class Pimcore_Tool_Admin {
      * @param  $sessionId
      * @return void
      */
-    public static function activateMaintenanceMode () {
-
-        $sessionId = session_id();
+    public static function activateMaintenanceMode ($sessionId = null) {
 
         if(empty($sessionId)) {
-            throw new Exception("It's not possible to activate the maintenance mode without a session");
+            $sessionId = session_id();
+        }
+        
+        if(empty($sessionId)) {
+            throw new Exception("It's not possible to activate the maintenance mode without a session-id");
         }
 
         $config = new Zend_Config(array(
