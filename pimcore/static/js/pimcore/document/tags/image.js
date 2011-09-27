@@ -391,6 +391,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             html: '<img id="selectorImage" src="' + imageUrl + '" /><div id="selector" style="cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;"></div>'
         });
 
+        this.editWindowInitCount = 0;
+
         this.editWindow.on("afterrender", function ( ){
             this.editWindowInterval = window.setInterval(function () {
                 var el = Ext.get("selectorImage");
@@ -398,8 +400,10 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                 var imageHeight = el.getHeight();
                 
                 if(el) {
-                    if(el.getWidth() > 10) {
+                    if(el.getWidth() > 30) {
                         clearInterval(this.editWindowInterval);
+                        this.editWindowInitCount = 0;
+                        
                         this.editWindow.setSize(imageWidth + 14, imageHeight + 32 + 27);
                         Ext.get("selectorImage").remove();
 
@@ -423,7 +427,16 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                                 left: (imageWidth * (this.datax.cropLeft / 100)) + "px"
                             });
                         }
+                        
+                        return;
+                        
+                    } else if (this.editWindowInitCount > 60) {
+                        // if more than 30 secs cancel and close the window
+                        this.resizer = null;
+                        this.editWindow.close();
                     }
+
+                    this.editWindowInitCount++;
                 }
             }.bind(this), 500);
             
