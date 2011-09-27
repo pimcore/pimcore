@@ -65,11 +65,6 @@ pimcore.object.edit = Class.create({
     },
 
     unmaskFrames: function () {
-        // remove the masks from iframes
-        var masks = Ext.query(".pimcore_iframe_mask");
-        for (var i = 0; i < masks.length; i++) {
-            masks[i].remove();
-        }
 
         // unmask wysiwyg editors
         for (var i = 0; i < this.fieldsToMask.length; i++) {

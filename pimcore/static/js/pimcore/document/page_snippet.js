@@ -103,7 +103,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
     unmaskFrames: function () {
         if (this.edit) {
-            this.edit.unmaskIframes();
+            this.edit.unmaskFrames();
         }
     },
 

@@ -68,8 +68,9 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         Ext.get(id).setStyle({
             width: options.width + "px"
         });
+
         
-        // create mask for dnd
+        // create mask for dnd, this is done here (in initialize) because we have to register the dom node in dndZones which is used in startup.js
         var mask = document.createElement("div");
         Ext.getBody().appendChild(mask);
         mask = Ext.get(mask);
@@ -77,14 +78,14 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         var offset = Ext.get(id).getOffsetsTo(Ext.getBody());
 
         mask.addClass("pimcore_wysiwyg_mask");
-        
+
         // single applyStyles because of IE, he doesn't like setStyle() here
         mask.applyStyles("top:" + offset[1] + "px;");
         mask.applyStyles("left:" + offset[0] + "px;");
         mask.applyStyles("width:" + options.width + "px;");
         mask.applyStyles("height:" + textareaHeight + "px;");
         mask.hide();
-        
+
 
         mask.dom.dndOver = false;
         mask.dom.reference = this;
@@ -99,19 +100,24 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         mask.reference = this;
 
-        this.mask = mask;
+        this.maskEl = mask;
     },
 
-    updateMask: function () {
+    mask: function () {
         var offset = Ext.get(this.id).getOffsetsTo(Ext.getBody());
 
-        this.mask.setStyle({
+        this.maskEl.setStyle({
             width: this.options.width + "px",
             height: Ext.get(this.id).getHeight() + "px",
             top: offset[1] + "px",
-            left: offset[0] + "px"
+            left: offset[0] + "px",
+            backgroundColor: "#ff6600"
         });
-        this.mask.show();
+        this.maskEl.show();
+    },
+
+    unmask: function () {
+        this.maskEl.hide();
     },
 
     startCKeditor: function () {

@@ -108,14 +108,15 @@ pimcore.document.edit = Class.create({
     },
 
     maskFrames: function () {
+        
         // this is for dnd over iframes, with this method it's not nessercery to register the dnd manager in each iframe (wysiwyg)
-
         var width;
         var height;
         var offset;
         var element;
 
 
+        // mask frames (iframes)
         try {
             // mask iframes
             if (typeof this.frame.Ext != "object") {
@@ -143,26 +144,37 @@ pimcore.document.edit = Class.create({
                 
                 element.addClass("pimcore_iframe_mask");
             }
-
-            // mask wysiwyg editors
-            var wysiwygs = this.frame.Ext.query(".pimcore_wysiwyg_mask");
-            for (var p = 0; p < wysiwygs.length; p++) {
-                if (wysiwygs[p].reference.ckeditor) {
-                    Ext.get(wysiwygs[p]).show();
-                    if (wysiwygs[p].reference) {
-                        wysiwygs[p].reference.updateMask();
-                    }
-                }
-            }
         }
         catch (e) {
             console.log(e); 
             console.log("there is no frame to mask");
         }
+
+        // mask fields
+        this.fieldsToMask = [];
+        try {
+            if (this.frame && this.frame.editables) {
+                var editables = this.frame.editables;
+
+                for (var i = 0; i < editables.length; i++) {
+                    try {
+                        if (typeof editables[i].mask == "function") {
+                            editables[i].mask();
+                            this.fieldsToMask.push(editables[i]);
+                        }
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
     },
 
-    unmaskIframes: function () {
+    unmaskFrames: function () {
 
+        // unmask frames
         try {
             if (typeof this.frame.Ext != "object") {
                 return;
@@ -173,16 +185,18 @@ pimcore.document.edit = Class.create({
             for (var i = 0; i < masks.length; i++) {
                 Ext.get(masks[i]).remove();
             }
-
-            // hide wysiwyg masks
-            var wysiwygs = this.frame.Ext.query(".pimcore_wysiwyg_mask");
-            for (var p = 0; p < wysiwygs.length; p++) {
-                Ext.get(wysiwygs[p]).hide();
-            }
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e);
             console.log("there is no frame to unmask");
+        }
+
+        // unmask editables
+        try {
+            for (var i = 0; i < this.fieldsToMask.length; i++) {
+                this.fieldsToMask[i].unmask();
+            }
+        } catch (e) {
+            console.log(e);
         }
     },
 
