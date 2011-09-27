@@ -516,7 +516,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         }
                     }
 
-                    if(callback) {
+                    if(typeof callback == "function") {
                         callback();
                     }
                 }.bind(this)
