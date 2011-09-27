@@ -155,8 +155,8 @@ pimcore.settings.system = Class.create({
                 fields: ['name', 'path'],
                 data: [
                     ["blue","/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css"],
-                    ["gray","/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css"],
-                    ["slate","/pimcore/static/js/lib/ext-plugins/xtheme-slate/css/xtheme-slate.css"]
+                    ["gray","/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css"]/*,
+                    ["slate","/pimcore/static/js/lib/ext-plugins/xtheme-slate/css/xtheme-slate.css"]*/
                 ]
             });
 
