@@ -253,15 +253,6 @@ class Document_Link extends Document
         return $this->getProperty("navigation_name");
     }
 
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
     /**
      * setProperty method should be used instead
      *
@@ -273,16 +264,6 @@ class Document_Link extends Document
     {
         $this->setProperty("navigation_name", "text", $name, false);
     }
-
-    /**
-     * @param string $type
-     * @return void
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
 
     /**
      * @return string

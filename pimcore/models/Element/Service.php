@@ -362,7 +362,9 @@ class Element_Service
                 "path",
                 "o_path",
                 "id",
-                "o_id"
+                "o_id",
+                "o_type",
+                "type"
             );
 
             if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof Object_Abstract) {

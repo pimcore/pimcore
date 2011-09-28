@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.document.link");
-pimcore.document.link = Class.create(pimcore.document.document, {
+pimcore.registerNS("pimcore.document.hardlink");
+pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
-    type: "link",
+    type: "hardlink",
 
     initialize: function(id) {
 
@@ -206,13 +206,13 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         if (!this.panel) {
 
             var path = "";
-            if (this.data.href) {
-                path = this.data.href;
+            if (this.data.sourcePath) {
+                path = this.data.sourcePath;
             }
 
             var pathField = new Ext.form.TextField({
-                name: "path",
-                fieldLabel: t("path"),
+                name: "sourcePath",
+                fieldLabel: t("source_path"),
                 value: path,
                 cls: "input_drop_target"
             });
@@ -237,20 +237,30 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             });
 
             this.panel = new Ext.form.FormPanel({
-                title: t('link_properties'),
+                title: t('hardlink_properties'),
                 autoHeight:true,
                 layout: "pimcoreform",
-                labelWidth: 200,
+                labelWidth: 120,
                 defaultType: 'textfield',
                 defaults: {width:500},
                 bodyStyle:'padding:10px;',
                 region: "center",
-                items :[
-                    pathField,
-                    new Ext.Spacer({
-                        height: 50
-                    })
-                ]
+                items :[pathField,{
+                    xtype:"checkbox",
+                    name: "propertiesFromSource",
+                    fieldLabel: t("properties_from_source"),
+                    checked: this.data.propertiesFromSource
+                },{
+                    xtype:"checkbox",
+                    name: "inheritedPropertiesFromSource",
+                    fieldLabel: t("inherited_properties_from_source"),
+                    checked: this.data.inheritedPropertiesFromSource
+                },{
+                    xtype:"checkbox",
+                    name: "childsFromSource",
+                    fieldLabel: t("childs_from_source"),
+                    checked: this.data.childsFromSource
+                }]
             });
         }
 

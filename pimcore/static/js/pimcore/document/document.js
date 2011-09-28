@@ -187,7 +187,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         // toogle buttons
         this.toolbarButtons.unpublish.show();
-        this.toolbarButtons.save.hide();
+
+        if(this.toolbarButtons.save) {
+            this.toolbarButtons.save.hide();
+        }
 
         // remove class in tree panel
         try {
@@ -204,7 +207,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         // toogle buttons
         this.toolbarButtons.unpublish.hide();
-        this.toolbarButtons.save.show();
+
+        if(this.toolbarButtons.save) {
+            this.toolbarButtons.save.show();
+        }
 
         // set class in tree panel
         try {

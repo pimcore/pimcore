@@ -387,6 +387,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         $document = Document_Link::create($this->_getParam("parentId"), $createValues);
                         $success = true;
                         break;
+                    case "hardlink":
+                        $document = Document_Hardlink::create($this->_getParam("parentId"), $createValues);
+                        $success = true;
+                        break;
                     case "folder":
                         $document = Document_Folder::create($this->_getParam("parentId"), $createValues);
                         $document->setPublished(true);
@@ -946,7 +950,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             catch (Exception $e) {
             }
         }
-        else if ($childDocument->getType() == "folder" || $childDocument->getType() == "link") {
+        else if ($childDocument->getType() == "folder" || $childDocument->getType() == "link" || $childDocument->getType() == "hardlink") {
             $tmpDocument["leaf"] = false;
             $tmpDocument["expanded"] = $childDocument->hasNoChilds();
 

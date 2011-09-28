@@ -218,6 +218,7 @@
             "pimcore/document/pages/preview.js",
             "pimcore/document/snippets/settings.js",
             "pimcore/document/link.js",
+            "pimcore/document/hardlink.js",
             "pimcore/document/folder.js",
             "pimcore/document/permissions.js",
             "pimcore/document/tree.js",

@@ -205,7 +205,7 @@ pimcore.document.tree = Class.create({
         var pasteMenu = [];
 
         var menu = new Ext.menu.Menu();
-        if ((this.attributes.type == "page" || this.attributes.type == "folder" || this.attributes.type == "link") && this.attributes.permissions.create) {
+        if ((this.attributes.type == "page" || this.attributes.type == "folder" || this.attributes.type == "link" || this.attributes.type == "hardlink") && this.attributes.permissions.create) {
 
             var document_types = pimcore.globalmanager.get("document_types_store");
 
@@ -265,6 +265,11 @@ pimcore.document.tree = Class.create({
                 text: t('add_link'),
                 iconCls: "pimcore_icon_link_add",
                 handler: this.attributes.reference.addDocument.bind(this, "link")
+            }));
+            menu.add(new Ext.menu.Item({
+                text: t('add_hardlink'),
+                iconCls: "pimcore_icon_hardlink_add",
+                handler: this.attributes.reference.addDocument.bind(this, "hardlink")
             }));
             menu.add(new Ext.menu.Item({
                 text: t('add_folder'),

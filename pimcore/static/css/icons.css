@@ -39,6 +39,10 @@
 	background: url(/pimcore/static/img/icon/link.png)  left center no-repeat !important;
 }
 
+.pimcore_icon_hardlink {
+	background: url(/pimcore/static/img/icon/page_link.png)  left center no-repeat !important;
+}
+
 .pimcore_icon_folder {
 	background: url(/pimcore/static/js/lib/ext/resources/images/default/tree/folder.gif) left center no-repeat !important;
 }
@@ -61,6 +65,10 @@
 
 .pimcore_icon_link_add {
 	background: url(/pimcore/static/img/icon/link_add.png);
+}
+
+.pimcore_icon_hardlink_add {
+	background: url(/pimcore/static/img/icon/page_link.png);
 }
 
 .pimcore_icon_folder_add {

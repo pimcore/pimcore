@@ -86,7 +86,7 @@ DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `type` enum('page','link','snippet','folder') DEFAULT NULL,
+  `type` enum('page','link','snippet','folder','hardlink') DEFAULT NULL,
   `key` varchar(255) DEFAULT '',
   `path` varchar(255) DEFAULT NULL,
   `index` int(11) unsigned DEFAULT '999999',
@@ -134,9 +134,20 @@ CREATE TABLE `documents_link` (
   `internal` int(11) unsigned default NULL,
   `direct` varchar(255) default NULL,
   `linktype` enum('direct','internal') default NULL,
-
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `documents_hardlink`;
+CREATE TABLE `documents_hardlink` (
+  `id` int(11) DEFAULT NULL,
+  `sourceId` int(11) DEFAULT NULL,
+  `propertiesFromSource` tinyint(1) DEFAULT NULL,
+  `inheritedPropertiesFromSource` tinyint(1) DEFAULT NULL,
+  `childsFromSource` tinyint(1) DEFAULT NULL,
+  UNIQUE KEY `id` (`id`)
+) DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (

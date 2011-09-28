@@ -99,8 +99,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             try {
                 $document = Document::getByPath($path);
 
+                // check for hardlink
+                if($document instanceof Document_Hardlink) {
+                    $document = Document_Hardlink_Wrapper::wrap($document);
+                }
+
                 if ($document instanceof Document) {
-                    
                     if ($document->getType() == "page" || $document->getType() == "snippet") {
 
                         if (!empty($params["pimcore_version"]) || !empty($params["pimcore_preview"]) || !empty($params["pimcore_admin"]) || !empty($params["pimcore_editmode"]) || $document->isPublished()) {
