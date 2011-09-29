@@ -185,6 +185,11 @@ class Pimcore_Model_Cache {
             return;
         }
 
+        // do not cache hardlink-wrappers
+        if($data instanceof Document_Hardlink_Wrapper_Interface) {
+            return;
+        }
+
         // $priority is currently just for sorting the items in self::addToSaveStack()
         // maybe it will be added to prioritize items for backends with volatile memories
 

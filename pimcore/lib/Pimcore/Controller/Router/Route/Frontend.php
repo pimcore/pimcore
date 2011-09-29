@@ -26,6 +26,11 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
     public $_defaults = array();
 
     /**
+     * @var string
+     */
+    protected $nearestDocumentByPath;
+
+    /**
      * @return int
      */
     public function getVersion() {
@@ -77,6 +82,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         // check for direct definition of controller/action
         if (!empty($_REQUEST["controller"]) && !empty($_REQUEST["action"])) {
             $matchFound = true;
+            $params["document"] = $this->getNearestDocumentByPath($path);
         }
         
         // you can also call a page by it's ID /?pimcore_document=XXXX
@@ -99,9 +105,28 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             try {
                 $document = Document::getByPath($path);
 
-                // check for hardlink
+                // check for a parent hardlink with childs
+                if(!$document instanceof Document) {
+                    $hardlinkParentDocument = $this->getNearestDocumentByPath($path);
+                    if($hardlinkParentDocument instanceof Document_Hardlink) {
+                        if($hardlinkParentDocument->getChildsFromSource() && $hardlinkParentDocument->getSourceDocument()) {
+                            $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlinkParentDocument->getFullpath()) . "@", $hardlinkParentDocument->getSourceDocument()->getFullpath(), $path);
+                            $hardLinkedDocument = Document::getByPath($hardlinkRealPath);
+                            if($hardLinkedDocument instanceof Document) {
+                                $hardLinkedDocument = Document_Hardlink_Wrapper::wrap($hardLinkedDocument);
+                                $hardLinkedDocument->setHardLinkSource($hardlinkParentDocument);
+                                $hardLinkedDocument->setPath(dirname($path));
+                                $document = $hardLinkedDocument;
+                            }
+                        }
+                    }
+                }
+
+                // check for direct hardlink
                 if($document instanceof Document_Hardlink) {
-                    $document = Document_Hardlink_Wrapper::wrap($document);
+                    $hardlinkParentDocument = $document;
+                    $document = Document_Hardlink_Wrapper::wrap($hardlinkParentDocument);
+                    $document->setHardLinkSource($hardlinkParentDocument);
                 }
 
                 if ($document instanceof Document) {
@@ -201,25 +226,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         }
 
                         // try to get nearest document to the route
-                        $pathes[] = "/";
-                        $pathParts = explode("/", $path);
-                        $tmpPathes = array();
-                        foreach ($pathParts as $pathPart) {
-                            $tmpPathes[] = $pathPart;
-                            $t = implode("/", $tmpPathes);
-                            if (!empty($t)) {
-                                $pathes[] = $t;
-                            }
-                        }
-
-                        $pathes = array_reverse($pathes);
-
-                        foreach ($pathes as $p) {
-                            if ($document = Document::getByPath($p)) {
-                                $params["document"] = $document;
-                                break;
-                            }
-                        }
+                        $params["document"] = $this->getNearestDocumentByPath($path);
 
                         $matchFound = true;
                         Staticroute::setCurrentRoute($route);
@@ -261,6 +268,42 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         unset($params["nocache"]);
         
         return $params;
+    }
+
+
+    /**
+     * @param string $path
+     * @return void
+     */
+    protected function getNearestDocumentByPath ($path) {
+
+        if($this->nearestDocumentByPath instanceof Document) {
+            return $this->nearestDocumentByPath;
+        }
+
+        $pathes = array();
+        
+        $pathes[] = "/";
+        $pathParts = explode("/", $path);
+        $tmpPathes = array();
+        foreach ($pathParts as $pathPart) {
+            $tmpPathes[] = $pathPart;
+            $t = implode("/", $tmpPathes);
+            if (!empty($t)) {
+                $pathes[] = $t;
+            }
+        }
+
+        $pathes = array_reverse($pathes);
+
+        foreach ($pathes as $p) {
+            if ($document = Document::getByPath($p)) {
+                $this->nearestDocumentByPath = $document;
+                return $document;
+            }
+        }
+
+        return null;
     }
 
     /**

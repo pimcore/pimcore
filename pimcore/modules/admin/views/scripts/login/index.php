@@ -127,7 +127,7 @@ $config = Pimcore_Config::getSystemConfig();
 
 <div id="footer">
     <div class="left" id="imageinfo"></div>
-    <div class="right">pimcore. Open Source Framework for Content and Product Information Management<br />&copy; <?php echo date("Y") ?>-2011 elements.at New Media Solutions GmbH</div>
+    <div class="right">pimcore. Open Source Framework for Content and Product Information Management<br />&copy; 2009-<?php echo date("Y") ?> elements.at New Media Solutions GmbH</div>
     <div class="background"></div>
 </div>
 

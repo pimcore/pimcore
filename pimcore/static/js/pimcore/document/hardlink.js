@@ -252,11 +252,6 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                     checked: this.data.propertiesFromSource
                 },{
                     xtype:"checkbox",
-                    name: "inheritedPropertiesFromSource",
-                    fieldLabel: t("inherited_properties_from_source"),
-                    checked: this.data.inheritedPropertiesFromSource
-                },{
-                    xtype:"checkbox",
                     name: "childsFromSource",
                     fieldLabel: t("childs_from_source"),
                     checked: this.data.childsFromSource

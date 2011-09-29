@@ -38,11 +38,6 @@ class Document_Hardlink extends Document
     /**
      * @var bool
      */
-    public $inheritedPropertiesFromSource;
-
-    /**
-     * @var bool
-     */
     public $childsFromSource;
 
 
@@ -145,20 +140,41 @@ class Document_Hardlink extends Document
         return $this->propertiesFromSource;
     }
 
-    /**
-     * @param boolean $inheritedPropertiesFromSource
-     */
-    public function setInheritedPropertiesFromSource($inheritedPropertiesFromSource)
-    {
-        $this->inheritedPropertiesFromSource = $inheritedPropertiesFromSource;
+
+    public function getProperties() {
+
+        if ($this->properties === null) {
+            $properties = parent::getProperties();
+
+            if($this->getPropertiesFromSource() && $this->getSourceDocument()) {
+                $sourceProperties = $this->getSourceDocument()->getProperties();
+                foreach ($sourceProperties as &$prop) {
+                    $prop = clone $prop; // because of cache
+                    $prop->setInherited(true);
+                }
+                $properties = array_merge($sourceProperties, $properties);
+            }
+
+            $this->setProperties($properties);
+        }
+
+        return $this->properties;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getInheritedPropertiesFromSource()
-    {
-        return $this->inheritedPropertiesFromSource;
+    public function getChilds() {
+
+        if ($this->childs === null) {
+            $childs = parent::getChilds();
+
+            if($this->getChildsFromSource() && $this->getSourceDocument() && !Pimcore::inAdmin()) {
+                $sourceChilds = $this->getSourceDocument()->getChilds();
+            }
+
+            $childs = array_merge($sourceChilds, $childs);
+            $this->setChilds($childs);
+        }
+
+        return $this->childs;
     }
 
 

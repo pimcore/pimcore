@@ -15,6 +15,49 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Hardlink_Wrapper_Folder extends Document_Link implements Document_Hardlink_Wrapper_Interface {
+class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_Hardlink_Wrapper_Interface {
 
+    // OVERWRITTEN METHODS
+    public function save() {
+        $this->raiseHardlinkError();
+    }
+
+    public function update() {
+        $this->raiseHardlinkError();
+    }
+
+    public function delete() {
+        $this->raiseHardlinkError();
+    }
+
+
+
+    /**
+     * @var Document_Hardlink
+     */
+    protected $hardLinkSource;
+
+    /**
+     * @throws Exception
+     * @return void
+     */
+    protected function raiseHardlinkError () {
+        throw new Exception("Method no supported by hardlinked documents");
+    }
+
+    /**
+     * @param \Document_Hardlink $hardLinkSource
+     */
+    public function setHardLinkSource($hardLinkSource)
+    {
+        $this->hardLinkSource = $hardLinkSource;
+    }
+
+    /**
+     * @return \Document_Hardlink
+     */
+    public function getHardLinkSource()
+    {
+        return $this->hardLinkSource;
+    }
 }
