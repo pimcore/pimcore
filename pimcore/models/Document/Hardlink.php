@@ -177,5 +177,10 @@ class Document_Hardlink extends Document
         return $this->childs;
     }
 
+    public function hasChilds() {
+        return count($this->getChilds()) > 0;
+    }
+
+
 
 }

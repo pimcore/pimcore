@@ -183,23 +183,6 @@ class Asset_Resource extends Element_Resource {
 
         $properties = array();
 
-        /*
-        // collect property via path
-        $pathParts = explode("/", $this->model->getPath() . $this->model->getKey());
-        unset($pathParts[0]);
-        $tmpPathes = array();
-        $pathConditionParts[] = "cpath = '/'";
-        foreach ($pathParts as $pathPart) {
-            $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
-        }
-
-        $pathCondition = implode(" OR ", $pathConditionParts);
-
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset' ORDER BY cpath ASC", $this->model->getId());
-        */
-
-        
         // collect properties via parent - ids
         $parentIds = array(1);
         $obj = $this->model->getParent();

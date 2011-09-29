@@ -27,7 +27,7 @@ class Document_Hardlink_Wrapper {
         if($doc instanceof Document_Hardlink) {
             if($sourceDoc = $doc->getSourceDocument()) {
                 $destDoc = self::upperCastDocument($sourceDoc);
-                $destDoc->setKey($sourceDoc->getKey());
+                $destDoc->setKey($doc->getKey());
                 return $destDoc;
             }
         } else {

@@ -115,7 +115,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                             if($hardLinkedDocument instanceof Document) {
                                 $hardLinkedDocument = Document_Hardlink_Wrapper::wrap($hardLinkedDocument);
                                 $hardLinkedDocument->setHardLinkSource($hardlinkParentDocument);
-                                $hardLinkedDocument->setPath(dirname($path));
+
+                                $_path = $path != "/" ? $_path = dirname($path) : $path;
+                                $_path = str_replace("\\", "/", $_path); // windows patch
+                                $_path .= $_path != "/" ? "/" : "";
+
+                                $hardLinkedDocument->setPath($_path);
                                 $document = $hardLinkedDocument;
                             }
                         }

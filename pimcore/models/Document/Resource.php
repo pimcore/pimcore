@@ -209,33 +209,14 @@ class Document_Resource extends Element_Resource {
 
     }
 
-
     /**
      * Get the properties for the object from database and assign it
      *
      * @return void
      */
-    public function getProperties($onlyInherited = false) {
+    public function getProperties($onlyInherited = false, $onlyDirect = false) {
 
         $properties = array();
-
-        /*
-        // collect property via path
-        $pathParts = explode("/", $this->model->getRealFullPath());
-        unset($pathParts[0]);
-        $tmpPathes = array();
-        $pathConditionParts[] = "cpath = '/'";
-        foreach ($pathParts as $pathPart) {
-            $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
-        }
-
-        $pathCondition = implode(" OR ", $pathConditionParts);
-
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE (((" . $pathCondition . ") AND inheritable = 1) OR cid = ?)  AND ctype='document' ORDER BY cpath ASC", $this->model->getId());
-        
-        */
-
 
         // collect properties via parent - ids
         $parentIds = array(1);
@@ -248,7 +229,11 @@ class Document_Resource extends Element_Resource {
             }
         }
 
-        $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='document'", $this->model->getId());
+        if($onlyDirect) {
+            $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE cid = ? AND ctype='document'", $this->model->getId());
+        } else {
+            $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='document'", $this->model->getId());
+        }
 
         // because this should be faster than mysql
         usort($propertiesRaw, function($left,$right) {
@@ -285,7 +270,7 @@ class Document_Resource extends Element_Resource {
         }
         
         // if only inherited then only return it and dont call the setter in the model
-        if($onlyInherited) {
+        if($onlyInherited || $onlyDirect) {
             return $properties;
         }
         

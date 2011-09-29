@@ -30,6 +30,29 @@ class Document_Hardlink_Wrapper_Page extends Document_Page implements Document_H
         $this->raiseHardlinkError();
     }
 
+    public function getProperties() {
+
+        if($this->properties == null) {
+
+            $directProperties = $this->getResource()->getProperties(false,true);
+            $inheritedProperties = $this->getResource()->getProperties(true);
+            $hardLinkSourceProperties = array();
+
+            if($this->getHardLinkSource()->getPropertiesFromSource()) {
+                $hardLinkSourceProperties = $this->getHardLinkSource()->getProperties();
+                foreach ($hardLinkSourceProperties as &$prop) {
+                    $prop = clone $prop;
+                    $prop->setInherited(true);
+                }
+            }
+
+            $properties = array_merge($inheritedProperties, $hardLinkSourceProperties, $directProperties);
+            $this->setProperties($properties);
+        }
+
+        return $this->properties;
+    }
+
 
 
     /**
