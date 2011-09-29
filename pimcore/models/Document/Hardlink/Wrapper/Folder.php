@@ -31,6 +31,57 @@ class Document_Hardlink_Wrapper_Folder extends Document_Folder implements Docume
         $this->raiseHardlinkError();
     }
 
+    public function getProperties() {
+
+        if($this->properties == null) {
+
+            $directProperties = $this->getResource()->getProperties(false,true);
+            $inheritedProperties = $this->getResource()->getProperties(true);
+            $hardLinkSourceProperties = array();
+
+            $hardLinkSourcePropertiesTmp = array();
+            if($this->getHardLinkSource()->getPropertiesFromSource()) {
+                $hardLinkSourceProperties = $this->getHardLinkSource()->getProperties();
+
+                foreach ($hardLinkSourceProperties as $key => $prop) {
+                    $prop = clone $prop;
+                    if($prop->getInheritable()) {
+                        $prop->setInherited(true);
+                        $hardLinkSourcePropertiesTmp[$key] = $prop;
+                    }
+                }
+            }
+
+            $properties = array_merge($inheritedProperties, $hardLinkSourcePropertiesTmp, $directProperties);
+            $this->setProperties($properties);
+        }
+
+        return $this->properties;
+    }
+
+    public function getChilds() {
+
+        if ($this->childs === null) {
+            $childs = parent::getChilds();
+
+            $hardLink = $this->getHardLinkSource();
+
+            if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+                foreach($childs as &$c) {
+                    $c = Document_Hardlink_Wrapper::wrap($c);
+                    $c->setHardLinkSource($hardLink);
+                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getFullpath()) . "@", $hardLink->getFullpath(), $c->getPath()));
+                }
+            }
+
+            $this->setChilds($childs);
+        }
+
+        return $this->childs;
+    }
+
+
+
     /**
      * @var Document_Hardlink
      */

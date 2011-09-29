@@ -153,6 +153,13 @@ class Document_Hardlink extends Document
                     $prop->setInherited(true);
                 }
                 $properties = array_merge($sourceProperties, $properties);
+            } else if ($this->getSourceDocument()) {
+                $sourceProperties = $this->getSourceDocument()->getResource()->getProperties(false,true);
+                foreach ($sourceProperties as &$prop) {
+                    $prop = clone $prop; // because of cache
+                    $prop->setInherited(true);
+                }
+                $properties = array_merge($sourceProperties, $properties);
             }
 
             $this->setProperties($properties);
@@ -166,8 +173,14 @@ class Document_Hardlink extends Document
         if ($this->childs === null) {
             $childs = parent::getChilds();
 
+            $sourceChilds = array();
             if($this->getChildsFromSource() && $this->getSourceDocument() && !Pimcore::inAdmin()) {
                 $sourceChilds = $this->getSourceDocument()->getChilds();
+                foreach($sourceChilds as &$c) {
+                    $c = Document_Hardlink_Wrapper::wrap($c);
+                    $c->setHardLinkSource($this);
+                    $c->setPath(preg_replace("@^" . preg_quote($this->getSourceDocument()->getFullpath()) . "@", $this->getFullpath(), $c->getPath()));
+                }
             }
 
             $childs = array_merge($sourceChilds, $childs);

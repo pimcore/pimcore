@@ -38,19 +38,45 @@ class Document_Hardlink_Wrapper_Page extends Document_Page implements Document_H
             $inheritedProperties = $this->getResource()->getProperties(true);
             $hardLinkSourceProperties = array();
 
+            $hardLinkSourcePropertiesTmp = array();
             if($this->getHardLinkSource()->getPropertiesFromSource()) {
                 $hardLinkSourceProperties = $this->getHardLinkSource()->getProperties();
-                foreach ($hardLinkSourceProperties as &$prop) {
+
+                foreach ($hardLinkSourceProperties as $key => $prop) {
                     $prop = clone $prop;
-                    $prop->setInherited(true);
+                    if($prop->getInheritable()) {
+                        $prop->setInherited(true);
+                        $hardLinkSourcePropertiesTmp[$key] = $prop;
+                    }
                 }
             }
 
-            $properties = array_merge($inheritedProperties, $hardLinkSourceProperties, $directProperties);
+            $properties = array_merge($inheritedProperties, $hardLinkSourcePropertiesTmp, $directProperties);
             $this->setProperties($properties);
         }
 
         return $this->properties;
+    }
+
+    public function getChilds() {
+
+        if ($this->childs === null) {
+            $childs = parent::getChilds();
+
+            $hardLink = $this->getHardLinkSource();
+
+            if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+                foreach($childs as &$c) {
+                    $c = Document_Hardlink_Wrapper::wrap($c);
+                    $c->setHardLinkSource($hardLink);
+                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getFullpath()) . "@", $hardLink->getFullpath(), $c->getPath()));
+                }
+            }
+
+            $this->setChilds($childs);
+        }
+
+        return $this->childs;
     }
 
 
