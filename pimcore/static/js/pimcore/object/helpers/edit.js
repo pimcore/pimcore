@@ -78,7 +78,7 @@ pimcore.object.helpers.edit = {
             }
         };
 
-        var validKeys = ["xtype","title","layout","border","items","region","width","height","name","text","html","handler","labelWidth","collapsible","collapsed","bodyStyle"];
+        var validKeys = ["xtype","title","layout","items","region","width","height","name","text","html","handler","labelWidth","collapsible","collapsed","bodyStyle"];
 
         var tmpItems;
 
@@ -112,7 +112,8 @@ pimcore.object.helpers.edit = {
                         l[configKeys[u]] = eval(l[configKeys[u]]);
                     }
 
-                    if (typeof l[configKeys[u]] != "undefined") {
+                    if(l[configKeys[u]]) {
+                    //if (typeof l[configKeys[u]] != "undefined") {
                         if(configKeys[u] == "html"){
                             newConfig[configKeys[u]] = ts(l[configKeys[u]]);
                         } else {

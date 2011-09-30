@@ -95,12 +95,6 @@ pimcore.object.classes.layout.layout = Class.create({
                         },
                         {
                             xtype: "checkbox",
-                            fieldLabel: t("border"),
-                            name: "border",
-                            checked: this.datax.border
-                        },
-                        {
-                            xtype: "checkbox",
                             fieldLabel: t("collapsible"),
                             name: "collapsible",
                             checked: this.datax.collapsible

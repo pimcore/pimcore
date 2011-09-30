@@ -55,11 +55,6 @@ class Object_Class_Layout {
     /**
      * @var boolean
      */
-    public $border;
-
-    /**
-     * @var boolean
-     */
     public $collapsible;
 
     /**
@@ -137,13 +132,6 @@ class Object_Class_Layout {
     /**
      * @return boolean
      */
-    public function getBorder() {
-        return $this->border;
-    }
-
-    /**
-     * @return boolean
-     */
     public function getCollapsible() {
         return $this->collapsible;
     }
@@ -209,14 +197,6 @@ class Object_Class_Layout {
         } else {
             $this->height = $height;
         }
-    }
-
-    /**
-     * @param boolean $border
-     * @return void
-     */
-    public function setBorder($border) {
-        $this->border = (bool) $border;
     }
 
     /**
