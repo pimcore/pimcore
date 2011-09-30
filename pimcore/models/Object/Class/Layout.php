@@ -63,6 +63,16 @@ class Object_Class_Layout {
     public $collapsible;
 
     /**
+     * @var bool
+     */
+    public $collapsed;
+
+    /**
+     * @var string
+     */
+    public $bodyStyle;
+
+    /**
      * @var string
      */
     public $datatype = "layout";
@@ -318,4 +328,37 @@ class Object_Class_Layout {
     public function setLocked($locked) {
         $this->locked = (bool) $locked;
     }
+
+    /**
+     * @param boolean $collapsed
+     */
+    public function setCollapsed($collapsed)
+    {
+        $this->collapsed = $collapsed;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCollapsed()
+    {
+        return $this->collapsed;
+    }
+
+    /**
+     * @param string $bodyStyle
+     */
+    public function setBodyStyle($bodyStyle)
+    {
+        $this->bodyStyle = $bodyStyle;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBodyStyle()
+    {
+        return $this->bodyStyle;
+    }
+
 }

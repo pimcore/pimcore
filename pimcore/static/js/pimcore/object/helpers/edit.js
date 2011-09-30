@@ -78,7 +78,7 @@ pimcore.object.helpers.edit = {
             }
         };
 
-        var validKeys = ["xtype","title","layout","border","items","region","width","height","name","text","html","handler","labelWidth"];
+        var validKeys = ["xtype","title","layout","border","items","region","width","height","name","text","html","handler","labelWidth","collapsible","collapsed","bodyStyle"];
 
         var tmpItems;
 
@@ -102,7 +102,9 @@ pimcore.object.helpers.edit = {
 
             var configKeys = Object.keys(l);
             var newConfig = {};
+            var currentKey;
             for (var u = 0; u < configKeys.length; u++) {
+                currentKey = configKeys[u];
                 if (in_array(configKeys[u], validKeys)) {
 
                     // handlers must be eval()
@@ -110,7 +112,7 @@ pimcore.object.helpers.edit = {
                         l[configKeys[u]] = eval(l[configKeys[u]]);
                     }
 
-                    if (l[configKeys[u]]) {
+                    if (typeof l[configKeys[u]] != "undefined") {
                         if(configKeys[u] == "html"){
                             newConfig[configKeys[u]] = ts(l[configKeys[u]]);
                         } else {

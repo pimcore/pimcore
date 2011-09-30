@@ -104,6 +104,19 @@ pimcore.object.classes.layout.layout = Class.create({
                             fieldLabel: t("collapsible"),
                             name: "collapsible",
                             checked: this.datax.collapsible
+                        },
+                        {
+                            xtype: "checkbox",
+                            fieldLabel: t("collapsed"),
+                            name: "collapsed",
+                            checked: this.datax.collapsed
+                        },
+                        {
+                            xtype: "textfield",
+                            fieldLabel: t("css_style") + " (float: left; margin:10px; ...)",
+                            name: "bodyStyle",
+                            width: 400,
+                            value: this.datax.bodyStyle
                         }
                     ]
                 }/*,
