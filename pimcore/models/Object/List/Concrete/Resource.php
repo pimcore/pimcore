@@ -44,9 +44,9 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
         $tmpIds = array();
         foreach ($objectsData as $objectData) {
-            if(!in_array($objectData["o_id"], $tmpIds)) {
+            if($tmpIds[$objectData["o_id"]]) {
                 $objects[] = Object_Abstract::getById($objectData["o_id"]);
-                $tmpIds[] = $objectData["o_id"];
+                $tmpIds[$objectData["o_id"]] = $objectData["o_id"];
             }
         }
 
@@ -80,9 +80,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
             $tmpIds = array();
             foreach ($amount as $a) {
-                if(!in_array($a["o_id"], $tmpIds)) {
-                    $tmpIds[] = $a["o_id"];
-                }
+                $tmpIds[$a["o_id"]] = $a["o_id"];
             }
 
             return count($tmpIds);
@@ -106,9 +104,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
             $tmpIds = array();
             foreach ($amount as $a) {
-                if(!in_array($a["o_id"], $tmpIds)) {
-                    $tmpIds[] = $a["o_id"];
-                }
+                $tmpIds[$a["o_id"]] = $a["o_id"];
             }
 
             return count($tmpIds);
