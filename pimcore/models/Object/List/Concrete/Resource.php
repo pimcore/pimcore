@@ -55,6 +55,21 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     }
 
     /**
+     * Loads a list of object ids for the specicifies parameters, returns an array of ids
+     *
+     * @return array
+     */
+    public function loadIdList() {
+        try {
+            $objectsData = $this->db->fetchCol("SELECT " . $this->getTableName() . ".o_id AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+        } catch (Exception $e) {
+            return $this->exceptionHandler($e);
+        }
+
+        return $objectsData;
+    }
+
+    /**
      * @return array
      */
     public function getTotalCount() {

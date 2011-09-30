@@ -1888,14 +1888,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $list->setCondition("o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'" . $conditionFilters);
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
-        $objects = $list->load();
-        $jobs = array();
-        if (count($objects)>0) {
 
-            foreach ($objects as $o) {
-                $jobs[] = $o->getId();
-            }
-        }
+        $jobs = $list->loadIdList();
 
         $this->_helper->json(array("success"=>true,"jobs"=>$jobs));
 
