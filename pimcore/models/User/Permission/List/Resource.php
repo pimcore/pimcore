@@ -26,14 +26,15 @@ class User_Permission_List_Resource extends Pimcore_Model_Resource_Abstract {
 
         $permissionNames = $this->db->fetchAll("SELECT name FROM users_permissions WHERE userId = ?", $user->getId());
 
+        $permissions = array();
         if (count($permissionNames) > 0) {
             foreach ($permissionNames as $permissionName) {
                 $permissions[] = new User_Permission($permissionName["name"], false);
             }
             $this->model->setPermissions($permissions);
         }
-        return $permissions;
 
+        return $permissions;
     }
 
     /**
