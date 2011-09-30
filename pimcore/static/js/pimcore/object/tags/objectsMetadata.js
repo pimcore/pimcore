@@ -21,6 +21,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var className = classStore.getById(fieldConfig.allowedClassId);
+
+        this.fieldConfig.classes = [{classes: className.data.text, id: fieldConfig.allowedClassId}];
+
         if (data) {
             this.data = data;
         }
@@ -313,6 +318,18 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             }
         }
         return isAllowedClass;
+    },
+
+    addDataFromSelector: function (items) {
+
+        if (items.length > 0) {
+            for (var i = 0; i < items.length; i++) {
+                var fields = this.fieldConfig.visibleFields.split(",");
+                if (!this.objectAlreadyExists(items[i].id)) {
+                    this.loadObjectData(items[i].id, fields);
+                }
+            }
+        }
     },
 
     loadObjectData: function(id, fields) {

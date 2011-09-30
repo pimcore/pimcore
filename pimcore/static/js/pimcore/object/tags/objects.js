@@ -483,11 +483,11 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         var allowedClasses;
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             allowedClasses = [];
-            for (i = 0; i < this.fieldConfig.classes.length; i++) {
+            for (var i = 0; i < this.fieldConfig.classes.length; i++) {
                 allowedClasses.push(this.fieldConfig.classes[i].classes);
             }
         }
-
+console.log(this.fieldConfig.classes);
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
             type: ["object"],
             subtype: {
