@@ -976,15 +976,16 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         return array_key_exists($name, $properties);
     }
 
+
     /**
-     * set a property
-     *
      * @param string $name
      * @param string $type
      * @param mixed $data
-     * @param boolean $inherited
+     * @param bool $inherited
+     * @param bool $inheritable
+     * @return void
      */
-    public function setProperty($name, $type, $data, $inherited = false) {
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = true) {
 
         $this->getProperties();
 
@@ -995,6 +996,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $property->setCtype("document");
         $property->setData($data);
         $property->setInherited($inherited);
+        $property->setInheritable($inheritable);
 
         $this->properties[$name] = $property;
     }
