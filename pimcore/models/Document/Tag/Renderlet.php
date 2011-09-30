@@ -326,6 +326,13 @@ class Document_Tag_Renderlet extends Document_Tag {
 
 
     /**
+     * @return void
+     */
+    public function __wakeUp() {
+        $this->load();
+    }
+
+    /**
      * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
      *
      * @return void

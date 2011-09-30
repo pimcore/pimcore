@@ -200,11 +200,18 @@ class Document_Tag_Snippet extends Document_Tag {
 
 
     /**
+     * @return void
+     */
+    public function __wakeUp() {
+        $this->load();
+    }
+
+    /**
      * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
      *
      * @return void
      */
     public function load () {
-        $this->snippet = Document_Snippet::getById($this->id);
+        $this->snippet = Document::getById($this->id);
     }
 }
