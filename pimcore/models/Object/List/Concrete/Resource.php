@@ -44,7 +44,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
         $tmpIds = array();
         foreach ($objectsData as $objectData) {
-            if($tmpIds[$objectData["o_id"]]) {
+            if(!$tmpIds[$objectData["o_id"]]) {
                 $objects[] = Object_Abstract::getById($objectData["o_id"]);
                 $tmpIds[$objectData["o_id"]] = $objectData["o_id"];
             }
