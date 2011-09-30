@@ -38,93 +38,141 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
     public function getVariantsAction() {
         // get list of variants
 
-        $parentObject = Object_Concrete::getById($this->_getParam("objectId"));
 
-        if(empty($parentObject)) {
-            throw new Exception("No Object found with id " . $this->_getParam("objectId"));
-        }
+        if ($this->_getParam("xaction") == "update") {
 
-        $class = $parentObject->getO_class();
-        $className = $parentObject->getO_class()->getName();
+            $data = Zend_Json::decode($this->_getParam("data"));
 
-        $start = 0;
-        $limit = 15;
-        $orderKey = "o_id";
-        $order = "ASC";
+            // save
+            $object = Object_Abstract::getById($data["id"]);
 
-        $fields = array();
-        $bricks = array();
-        if($this->_getParam("fields")) {
-            $fields = $this->_getParam("fields");
-
-            foreach($fields as $f) {
-                $parts = explode("~", $f);
+            $objectData = array();
+            foreach($data as $key => $value) {
+                $parts = explode("~", $key);
                 if(count($parts) > 1) {
-                    $bricks[$parts[0]] = $parts[0];
+                    $brickType = $parts[0];
+                    $brickKey = $parts[1];
+                    $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);
+
+                    $fieldGetter = "get" . ucfirst($brickField);
+                    $brickGetter = "get" . ucfirst($brickType);
+                    $valueSetter = "set" . ucfirst($brickKey);
+
+                    $brick = $object->$fieldGetter()->$brickGetter();
+                    if(empty($brick)) {
+                        $classname = "Object_Objectbrick_Data_" . ucfirst($brickType);
+                        $brickSetter = "set" . ucfirst($brickType);
+                        $brick = new $classname($object);
+                        $object->$fieldGetter()->$brickSetter($brick);
+                    }
+                    $brick->$valueSetter($value);
+
+                } else {
+                    $objectData[$key] = $value;
                 }
             }
-        }
 
-        if ($this->_getParam("limit")) {
-            $limit = $this->_getParam("limit");
-        }
-        if ($this->_getParam("start")) {
-            $start = $this->_getParam("start");
-        }
-        if ($this->_getParam("sort")) {
-            if ($this->_getParam("sort") == "fullpath") {
-                $orderKey = array("o_path", "o_key");
-            } else if ($this->_getParam("sort") == "id") {
-                $orderKey = "o_id";
-            } else if ($this->_getParam("sort") == "published") {
-                $orderKey = "o_published";
-            } else if ($this->_getParam("sort") == "modificationDate") {
-                $orderKey = "o_modificationDate";
-            } else if ($this->_getParam("sort") == "creationDate") {
-                $orderKey = "o_creationDate";
-            } else {
-                $orderKey = $this->_getParam("sort");
+            $object->setValues($objectData);
+
+            try {
+                $object->save();
+                $this->_helper->json(array("data" => Object_Service::gridObjectData($object, $this->_getParam("fields")), "success" => true));
+            } catch (Exception $e) {
+                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
             }
-        }
-        if ($this->_getParam("dir")) {
-            $order = $this->_getParam("dir");
-        }
 
-        $listClass = "Object_" . ucfirst($className) . "_List";
 
-        $conditionFilters = "o_parentId = " . $parentObject->getId();
-        // create filter condition
-        if ($this->_getParam("filter")) {
-            $conditionFilters .=  Object_Service::getFilterCondition($this->_getParam("filter"), $class);
-        }
-        if ($this->_getParam("condition")) {
-            $conditionFilters .= " AND (" . $this->_getParam("condition") . ")";
-        }
+        } else {
 
-        $list = new $listClass();
-        if(!empty($bricks)) {
-            foreach($bricks as $b) {
-                $list->addObjectbrick($b);
+            $parentObject = Object_Concrete::getById($this->_getParam("objectId"));
+
+            if(empty($parentObject)) {
+                throw new Exception("No Object found with id " . $this->_getParam("objectId"));
             }
-        }        
-        $list->setCondition($conditionFilters);
-        $list->setLimit($limit);
-        $list->setOffset($start);
-        $list->setOrder($order);
-        $list->setOrderKey($orderKey);
-        $list->setIgnoreLocale(true);
-        $list->setObjectTypes(array(Object_Abstract::OBJECT_TYPE_VARIANT));
 
-        $list->load();
+            $class = $parentObject->getO_class();
+            $className = $parentObject->getO_class()->getName();
 
-        $objects = array();
-        foreach ($list->getObjects() as $object) {
+            $start = 0;
+            $limit = 15;
+            $orderKey = "o_id";
+            $order = "ASC";
 
-            $o = Object_Service::gridObjectData($object, $fields);
+            $fields = array();
+            $bricks = array();
+            if($this->_getParam("fields")) {
+                $fields = $this->_getParam("fields");
 
-            $objects[] = $o;
-        }
-        $this->_helper->json(array("data" => $objects, "success" => true, "total" => $list->getTotalCount()));
+                foreach($fields as $f) {
+                    $parts = explode("~", $f);
+                    if(count($parts) > 1) {
+                        $bricks[$parts[0]] = $parts[0];
+                    }
+                }
+            }
+
+            if ($this->_getParam("limit")) {
+                $limit = $this->_getParam("limit");
+            }
+            if ($this->_getParam("start")) {
+                $start = $this->_getParam("start");
+            }
+            if ($this->_getParam("sort")) {
+                if ($this->_getParam("sort") == "fullpath") {
+                    $orderKey = array("o_path", "o_key");
+                } else if ($this->_getParam("sort") == "id") {
+                    $orderKey = "o_id";
+                } else if ($this->_getParam("sort") == "published") {
+                    $orderKey = "o_published";
+                } else if ($this->_getParam("sort") == "modificationDate") {
+                    $orderKey = "o_modificationDate";
+                } else if ($this->_getParam("sort") == "creationDate") {
+                    $orderKey = "o_creationDate";
+                } else {
+                    $orderKey = $this->_getParam("sort");
+                }
+            }
+            if ($this->_getParam("dir")) {
+                $order = $this->_getParam("dir");
+            }
+
+            $listClass = "Object_" . ucfirst($className) . "_List";
+
+            $conditionFilters = "o_parentId = " . $parentObject->getId();
+            // create filter condition
+            if ($this->_getParam("filter")) {
+                $conditionFilters .=  Object_Service::getFilterCondition($this->_getParam("filter"), $class);
+            }
+            if ($this->_getParam("condition")) {
+                $conditionFilters .= " AND (" . $this->_getParam("condition") . ")";
+            }
+
+            $list = new $listClass();
+            if(!empty($bricks)) {
+                foreach($bricks as $b) {
+                    $list->addObjectbrick($b);
+                }
+            }
+            $list->setCondition($conditionFilters);
+            $list->setLimit($limit);
+            $list->setOffset($start);
+            $list->setOrder($order);
+            $list->setOrderKey($orderKey);
+            $list->setIgnoreLocale(true);
+            $list->setObjectTypes(array(Object_Abstract::OBJECT_TYPE_VARIANT));
+
+            $list->load();
+
+            $objects = array();
+            foreach ($list->getObjects() as $object) {
+
+                $o = Object_Service::gridObjectData($object, $fields);
+
+                $objects[] = $o;
+            }
+            $this->_helper->json(array("data" => $objects, "success" => true, "total" => $list->getTotalCount()));
+
+            }
 
     }
 

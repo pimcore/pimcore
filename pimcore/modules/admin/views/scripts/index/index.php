@@ -202,6 +202,7 @@
             "pimcore/element/dependencies.js",
             "pimcore/object/helpers/grid.js",
             "pimcore/object/helpers/gridConfigDialog.js",
+            "pimcore/object/helpers/gridTabAbstract.js",
             "pimcore/element/selector/object.js",
 
             //element importer, exporter

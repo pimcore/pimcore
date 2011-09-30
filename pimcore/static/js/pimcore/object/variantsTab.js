@@ -13,16 +13,23 @@
  */
 
 pimcore.registerNS("pimcore.object.variantsTab");
-pimcore.object.variantsTab = Class.create({
+pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract, {
+    systemColumns: ["id", "fullpath"],
+    objecttype: "variant",
 
     fieldObject: {},
     initialize: function(element) {
         this.element = element;
-
     },
 
     getLayout: function () {
         this.selectedClass = this.element.data.general.o_className;
+
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var klassIndex = classStore.findExact("text", this.selectedClass);
+        var klass = classStore.getAt(klassIndex);
+        this.classId = klass.id;
+
         if (this.layout == null) {
 
             Ext.Ajax.request({
@@ -61,6 +68,7 @@ pimcore.object.variantsTab = Class.create({
         var gridHelper = new pimcore.object.helpers.grid(this.selectedClass, fields, "/admin/variants/get-variants", null, false);
         gridHelper.showSubtype = false;
         gridHelper.showKey = true;
+        gridHelper.enableEditor = true;
         gridHelper.baseParams.objectId = this.element.id;
 
         this.store = gridHelper.getStore();
@@ -99,7 +107,7 @@ pimcore.object.variantsTab = Class.create({
 
 
 
-        var gridfilters = gridHelper.getGridFilters();
+        this.gridfilters = gridHelper.getGridFilters();
 
         this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: 15,
@@ -113,18 +121,29 @@ pimcore.object.variantsTab = Class.create({
             text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]
         });
 
-        this.gridPanel = new Ext.grid.GridPanel({
+        this.toolbarFilterInfo = new Ext.Toolbar.TextItem({
+            text: ""
+        });
+
+        this.createSqlEditor();
+
+        var sm = gridHelper.getSelectionColumn();
+        var plugins = [this.gridfilters];
+
+        this.grid = new Ext.grid.EditorGridPanel({
+            frame: false,
             store: this.store,
-            border: false,
+            border: true,
             columns: gridColumns,
             loadMask: true,
             columnLines: true,
-            plugins: [gridfilters],
+            plugins: plugins,
             stripeRows: true,
+            trackMouseOver: true,
             viewConfig: {
                 forceFit: false
             },
-            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+            sm: sm,
             bbar: this.pagingtoolbar,
             tbar: [
                 {
@@ -132,7 +151,29 @@ pimcore.object.variantsTab = Class.create({
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 },
-                '-', this.languageInfo, '->', {
+                '-', this.languageInfo, '-', this.toolbarFilterInfo, '->'
+                ,"-",this.sqlEditor
+                ,this.sqlButton,"-",{
+                    text: t("export_csv"),
+                    iconCls: "pimcore_icon_export",
+                    handler: function(){
+
+                        Ext.MessageBox.show({
+                            title:t('warning'),
+                            msg: t('csv_object_export_warning'),
+                            buttons: Ext.Msg.OKCANCEL ,
+                            fn: function(btn){
+                                if (btn == 'ok'){
+                                    this.startCsvExport();
+                                }
+                            }.bind(this),
+                            icon: Ext.MessageBox.WARNING
+                        });
+
+
+
+                    }.bind(this)
+                },"-",{
                     text: t("grid_column_config"),
                     iconCls: "pimcore_icon_grid_column_config",
                     handler: this.openColumnConfig.bind(this)
@@ -144,73 +185,28 @@ pimcore.object.variantsTab = Class.create({
                 }.bind(this)
             }
         });
-        this.gridPanel.on("rowcontextmenu", this.onRowContextmenu.bind(this));
+        this.grid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
 
-        this.gridPanel.on("afterrender", function (grid) {
-            var columnConfig = new Ext.menu.Item({
-                text: t("grid_column_config"),
-                iconCls: "pimcore_icon_grid_column_config",
-                handler: this.openColumnConfig.bind(this)
-            });
-            grid.getView().hmenu.add(columnConfig);
+        this.grid.on("afterrender", function (grid) {
+            this.updateGridHeaderContextMenu(grid);
         }.bind(this));
+
+        this.grid.on("sortchange", function(grid, sortinfo) {
+            this.sortinfo = sortinfo;
+        }.bind(this));
+
+        // check for filter updates
+        this.grid.on("filterupdate", function () {
+            this.filterUpdateFunction(this.gridfilters, this.toolbarFilterInfo);
+        }.bind(this));
+
 
         this.store.load();
 
         this.layout.removeAll();
-        this.layout.add(this.gridPanel);
+        this.layout.add(this.grid);
         this.layout.doLayout();
     },
-
-    openColumnConfig: function() {
-        var fields = this.getGridConfig().columns;
-
-        var fieldKeys = Object.keys(fields);
-
-        var visibleColumns = [];
-        for(var i = 0; i < fieldKeys.length; i++) {
-            if(!fields[fieldKeys[i]].hidden) {
-                visibleColumns.push({
-                    key: fieldKeys[i],
-                    label: fields[fieldKeys[i]].fieldConfig.label,
-                    dataType: fields[fieldKeys[i]].fieldConfig.type,
-                    layout: fields[fieldKeys[i]].fieldConfig.layout
-                });
-            }
-        }
-
-        var columnConfig = {
-            language: this.gridLanguage,
-            classid: this.element.data.general.o_classId,
-            selectedGridColumns: visibleColumns
-        };
-        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
-            this.gridLanguage = data.language;
-            this.createGrid(data.columns);
-        }.bind(this) );
-    },
-
-    getGridConfig : function () {
-        var config = {
-            language: this.gridLanguage,
-            sortinfo: this.sortinfo,
-            columns: {}
-        };
-        var cm = this.gridPanel.getColumnModel();
-        for (var i=0; i<cm.config.length; i++) {
-            if(cm.config[i].dataIndex) {
-                config.columns[cm.config[i].dataIndex] = {
-                    name: cm.config[i].dataIndex,
-                    position: i,
-                    hidden: cm.config[i].hidden,
-                    fieldConfig: this.fieldObject[cm.config[i].dataIndex]
-                };
-            }
-        }
-
-        return config;
-    },
-
 
     onRowContextmenu: function (grid, rowIndex, event) {
         $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
@@ -274,6 +270,7 @@ pimcore.object.variantsTab = Class.create({
             });
         }
     },
+
 
     doDeleteVariant: function(id, answer) {
         if(answer == "yes") {

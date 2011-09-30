@@ -225,4 +225,5 @@ pimcore.object.helpers.grid = Class.create({
         return gridfilters;
 
     }
+
 });

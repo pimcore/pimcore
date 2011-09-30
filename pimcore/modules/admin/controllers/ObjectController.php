@@ -1593,6 +1593,11 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $list->setCondition("o_path LIKE '" . $folder->getFullPath() . "%'" . $conditionFilters);
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
+
+        if($this->_getParam("objecttype")) {
+            $list->setObjectTypes(array($this->_getParam("objecttype")));
+        }
+
         $list->load();
 
         $objects = array();
@@ -1605,25 +1610,28 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
         }
         //create csv
-        $columns = array_keys($objects[0]);
-        foreach ($columns as $key => $value) {
-            $columns[$key] = '"' . $value . '"';
-        }
-        $csv = implode(";", $columns) . "\r\n";
-        foreach ($objects as $o) {
-            foreach ($o as $key => $value) {
-
-                //clean value of evil stuff such as " and linebreaks
-                if (is_string($value)) {
-                    $value = strip_tags($value);
-                    $value = str_replace('"', '', $value);
-                    $value = str_replace("\r", "", $value);
-                    $value = str_replace("\n", "", $value);
-
-                    $o[$key] = '"' . $value . '"';
-                }
+        if(!empty($objects)) {
+            $columns = array_keys($objects[0]);
+            foreach ($columns as $key => $value) {
+                $columns[$key] = '"' . $value . '"';
             }
-            $csv .= implode(";", $o) . "\r\n";
+            $csv = implode(";", $columns) . "\r\n";
+            foreach ($objects as $o) {
+                foreach ($o as $key => $value) {
+
+                    //clean value of evil stuff such as " and linebreaks
+                    if (is_string($value)) {
+                        $value = strip_tags($value);
+                        $value = str_replace('"', '', $value);
+                        $value = str_replace("\r", "", $value);
+                        $value = str_replace("\n", "", $value);
+
+                        $o[$key] = '"' . $value . '"';
+                    }
+                }
+                $csv .= implode(";", $o) . "\r\n";
+            }
+
         }
         header("Content-type: text/csv");
         header("Content-Disposition: attachment; filename=\"export.csv\"");
@@ -1888,6 +1896,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $list->setCondition("o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'" . $conditionFilters);
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
+
+        if($this->_getParam("objecttype")) {
+            $list->setObjectTypes(array($this->_getParam("objecttype")));
+        }
 
         $jobs = $list->loadIdList();
 
