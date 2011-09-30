@@ -205,8 +205,6 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return void
      */
     public function load () {
-        if(!$this->snippet) {
-            $this->snippet = Document_Snippet::getById($this->id);
-        }
+        $this->snippet = Document_Snippet::getById($this->id);
     }
 }
