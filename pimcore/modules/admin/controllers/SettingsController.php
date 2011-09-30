@@ -804,7 +804,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $list->setLimit($this->_getParam("limit"));
                 $list->setOffset($this->_getParam("start"));
                 if ($this->_getParam("filter")) {
-                    $list->setCondition("lower(`key`) LIKE " . $list->quote("%".strtolower($this->_getParam("filter"))."%"));
+                    $filterTerm = $list->quote("%".strtolower($this->_getParam("filter"))."%");
+                    $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR `text` LIKE " . $filterTerm);
                 }
                 $list->load();
 
