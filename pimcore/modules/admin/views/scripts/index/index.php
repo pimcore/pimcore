@@ -410,11 +410,11 @@
     <?php // 3rd party libraries ?>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
     
-    <script type="text/javascript" src="/admin/misc/json-transliteration"></script>
-    <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/"></script>
-    <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/"></script>
-    <script type="text/javascript" src="/admin/user/get-current-user/"></script>
-    <script type="text/javascript" src="/admin/misc/available-languages"></script>
+    <script type="text/javascript" src="/admin/misc/json-transliteration?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <script type="text/javascript" src="/admin/user/get-current-user/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
+    <script type="text/javascript" src="/admin/misc/available-languages?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     
     
     <!-- library scripts -->
@@ -485,7 +485,7 @@
     ?>
 
     <?php // MUST BE THE LAST LINE ?>
-    <script type="text/javascript" src="/pimcore/static/js/pimcore/startup.js"></script>
+    <script type="text/javascript" src="/pimcore/static/js/pimcore/startup.js?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
 
 </body>
 </html>
