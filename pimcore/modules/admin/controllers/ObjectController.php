@@ -2453,4 +2453,5 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
         return $object;
     }
+
 }

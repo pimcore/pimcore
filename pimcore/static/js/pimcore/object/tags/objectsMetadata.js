@@ -268,7 +268,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                             };
 
                             if (!this.objectAlreadyExists(initData.id)) {
-                                this.store.add(new this.store.recordType(initData, this.store.getCount() + 1));
+                                this.loadObjectData(initData.id, this.fieldConfig.visibleFields.split(","));
                                 return true;
                             }
                         }
@@ -289,53 +289,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     getLayoutShow: function () {
         return this.createLayout(true);
     },
-//
-//
-//    getLayoutShow: function () {
-//
-//        var autoHeight = false;
-//        if (intval(this.fieldConfig.height) < 15) {
-//            autoHeight = true;
-//        }
-//
-//        this.grid = new Ext.grid.GridPanel({
-//            store: this.store,
-//            colModel: new Ext.grid.ColumnModel({
-//                defaults: {
-//                    sortable: false
-//                },
-//                columns: [
-//                    {header: 'ID', dataIndex: 'id', width: 50},
-//                    {id: "path", header: t("path"), dataIndex: 'path', width: 200},
-//                    {header: t("type"), dataIndex: 'type', width: 100},
-//                    {
-//                        xtype: 'actioncolumn',
-//                        width: 30,
-//                        items: [
-//                            {
-//                                tooltip: t('open'),
-//                                icon: "/pimcore/static/img/icon/pencil_go.png",
-//                                handler: function (grid, rowIndex) {
-//                                    var data = grid.getStore().getAt(rowIndex);
-//                                    pimcore.helpers.openObject(data.data.id, "object");
-//                                }.bind(this)
-//                            }
-//                        ]
-//                    }
-//                ]
-//            }),
-//            width: this.fieldConfig.width,
-//            height: this.fieldConfig.height,
-//            autoHeight:autoHeight,
-//            cls: "object_field",
-//            autoExpandColumn: 'path',
-//            title: this.fieldConfig.title
-//        });
-//
-//        return this.grid;
-//    }
-//    ,
-//
+
     dndAllowed: function(data) {
 
         // check if data is a treenode, if not allow drop because of the reordering
@@ -359,5 +313,23 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             }
         }
         return isAllowedClass;
+    },
+
+    loadObjectData: function(id, fields) {
+        Ext.Ajax.request({
+            url: "/admin/object-helper/load-object-data",
+            params: {
+                id: id,
+                'fields[]': fields
+            },
+            success: function (response) {
+                var rdata = Ext.decode(response.responseText);
+
+                if(rdata.success) {
+                    this.store.add(new this.store.recordType(rdata.fields, this.store.getCount() + 1));
+                }
+
+            }.bind(this)
+        });
     }
 });
