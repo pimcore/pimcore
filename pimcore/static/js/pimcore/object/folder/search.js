@@ -97,11 +97,11 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         Ext.Ajax.request({
             url: "/admin/object-helper/grid-get-column-config",
             params: {id: classId, objectId: this.object.id, gridtype: "grid"},
-            success: this.setEditableGrid.bind(this)
+            success: this.createGrid.bind(this)
         });
     },
 
-    setEditableGrid: function (response) {
+    createGrid: function (response) {
 
         var itemsPerPage = 20;
 

@@ -315,6 +315,10 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         }.bind(this) );
     },
 
+    createGrid: function(columnConfig) {
+
+    }, 
+
     getGridConfig : function () {
         var config = {
             language: this.gridLanguage,
