@@ -850,7 +850,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 $success = true;
             }
             else {
-                Logger::debug("prevended copy/paste because document with same path+key already exists in this location");
+                Logger::error("prevended copy/paste because document with same path+key already exists in this location");
             }
         }  else {
             Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
