@@ -233,7 +233,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         } else {
             // get class definition
             Ext.Ajax.request({
-                url: "/admin/object/grid-get-column-config",
+                url: "/admin/object-helper/grid-get-column-config",
                 params: {name: selectedClass},
                 success: this.initClassStore.bind(this, selectedClass)
             });

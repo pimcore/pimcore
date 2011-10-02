@@ -156,7 +156,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         }
 
         var fieldComboStore = new Ext.data.JsonStore({
-            url: '/admin/object/grid-get-column-config',
+            url: '/admin/object-helper/grid-get-column-config',
             baseParams: {
                 types: 'objectbricks',
                 gridtype: "all",

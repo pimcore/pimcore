@@ -69,7 +69,7 @@ pimcore.object.customviews.settings = Class.create({
 
     loadData: function () {
         Ext.Ajax.request({
-            url: "/admin/object/get-customviews",
+            url: "/admin/object-helper/get-customviews",
             success: this.loadDataComplete.bind(this)
         });
     },
@@ -196,7 +196,7 @@ pimcore.object.customviews.settings = Class.create({
         var values = this.panel.getForm().getFieldValues();
 
         Ext.Ajax.request({
-            url: "/admin/object/save-customviews",
+            url: "/admin/object-helper/save-customviews",
             params: values,
             success: function (response) {
                 Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {

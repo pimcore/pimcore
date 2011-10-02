@@ -134,7 +134,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
 
             Ext.Ajax.request({
-                url: "/admin/object/get-batch-jobs",
+                url: "/admin/object-helper/get-batch-jobs",
                 params: params,
                 success: function (columnIndex,response) {
                     var rdata = Ext.decode(response.responseText);
@@ -262,7 +262,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         this.batchParameters.job = jobs[this.batchJobCurrent];
         Ext.Ajax.request({
-            url: "/admin/object/batch",
+            url: "/admin/object-helper/batch",
             params: this.batchParameters,
             success: function (jobs, currentJob, response) {
 
@@ -350,7 +350,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }
         }
 
-        var path = "/admin/object/export/classId/" + this.classId + "/folderId/" + this.element.id ;
+        var path = "/admin/object-helper/export/classId/" + this.classId + "/folderId/" + this.element.id ;
         path = path + "/?" + Ext.urlEncode({
             filter: filters,
             condition: condition,

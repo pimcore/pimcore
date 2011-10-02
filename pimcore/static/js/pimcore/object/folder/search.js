@@ -95,7 +95,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     getTableDescription: function (classId) {
         Ext.Ajax.request({
-            url: "/admin/object/grid-get-column-config",
+            url: "/admin/object-helper/grid-get-column-config",
             params: {id: classId, objectId: this.object.id, gridtype: "grid"},
             success: this.setEditableGrid.bind(this)
         });

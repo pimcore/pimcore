@@ -98,7 +98,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         this.specificPanel.add(this.classCombo);
 
         this.fieldStore = new Ext.data.JsonStore({
-            url: '/admin/object/grid-get-column-config',
+            url: '/admin/object-helper/grid-get-column-config',
             baseParams: {
                 no_system_columns: "true",
                 no_brick_columns: "true",

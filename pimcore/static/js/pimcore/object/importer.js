@@ -29,7 +29,7 @@ pimcore.object.importer = Class.create({
 
         var uploadPanel = new Ext.ux.SwfUploadPanel({
             border: false,
-            upload_url: '/admin/object/import-upload/?pimcore_admin_sid=' + pimcore.settings.sessionId,
+            upload_url: '/admin/object-helper/import-upload/?pimcore_admin_sid=' + pimcore.settings.sessionId,
             debug: false,
             flash_url: "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/swfupload.swf",
             single_select: false,
@@ -63,7 +63,7 @@ pimcore.object.importer = Class.create({
         this.type = type;
 
         Ext.Ajax.request({
-            url: "/admin/object/import-get-file-info",
+            url: "/admin/object-helper/import-get-file-info",
             params: {
                 id: this.importId,
                 method: "post",
@@ -369,7 +369,7 @@ pimcore.object.importer = Class.create({
 
         this.jobRequest.job = this.importJobCurrent;
         Ext.Ajax.request({
-            url: "/admin/object/import-process",
+            url: "/admin/object-helper/import-process",
             params: this.jobRequest,
             method: "post",
             success: function (response) {

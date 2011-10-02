@@ -33,7 +33,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         if (this.layout == null) {
 
             Ext.Ajax.request({
-                url: "/admin/object/grid-get-column-config",
+                url: "/admin/object-helper/grid-get-column-config",
                 params: {name: this.selectedClass, gridtype: "grid"},
                 success: this.createGrid.bind(this)
             });
