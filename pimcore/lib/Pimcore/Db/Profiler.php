@@ -27,7 +27,7 @@ require_once 'Zend/Db/Profiler.php';
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
+class Pimcore_Db_Profiler extends Zend_Db_Profiler
 {
     /**
      * The original label for this profiler.
@@ -68,7 +68,7 @@ class Pimcore_Resource_Mysql_Profiler extends Zend_Db_Profiler
     {
         $this->_label = $label;
         if(!$this->_label) {
-            $this->_label = 'Pimcore_Resource_Mysql_Profiler';
+            $this->_label = 'Pimcore_Db_Profiler';
         }
     }
 
