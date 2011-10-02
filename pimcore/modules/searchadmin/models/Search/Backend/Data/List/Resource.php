@@ -23,7 +23,7 @@ class Search_Backend_Data_List_Resource extends Pimcore_Model_List_Resource_Abst
     public function load() {
 
         $entries = array();
-        $data = $this->db->fetchAll("SELECT * FROM search_backend_data" .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+        $data = $this->db->fetchAll("SELECT * FROM search_backend_data" .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
      
         foreach ($data as $entryData) {
 
@@ -55,7 +55,7 @@ class Search_Backend_Data_List_Resource extends Pimcore_Model_List_Resource_Abst
     }
 
     public function getTotalCount() {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM search_backend_data" . $this->getCondition() . $this->getGroupBy());
+        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM search_backend_data" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
         return $amount["amount"];
     }
 
@@ -64,7 +64,7 @@ class Search_Backend_Data_List_Resource extends Pimcore_Model_List_Resource_Abst
             return count($this->model->getEntries());
         }
 
-        $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM search_backend_data "  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+        $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM search_backend_data "  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $amount["amount"];
     }
 

@@ -118,7 +118,7 @@ class Pimcore_View_Helper_Glossary_Controller {
         if (!$data = Pimcore_Model_Cache::load($cacheKey)) {
 
             $list = new Glossary_List();
-            $list->setCondition("language = '" . $locale->getLanguage() . "'");
+            $list->setCondition("language = ?", $locale->getLanguage());
             $list->setOrderKey("LENGTH(`text`)", false);
             $list->setOrder("DESC");
             $data = $list->getDataArray();

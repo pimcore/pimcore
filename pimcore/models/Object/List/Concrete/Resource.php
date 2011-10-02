@@ -37,7 +37,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         $objects = array();
 
         try {
-            $objectsData = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+            $objectsData = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -61,7 +61,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
      */
     public function loadIdList() {
         try {
-            $objectsData = $this->db->fetchCol("SELECT " . $this->getTableName() . ".o_id AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+            $objectsData = $this->db->fetchCol("SELECT " . $this->getTableName() . ".o_id AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -76,7 +76,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
         try {
             // do not use DISTINCT in query because this forces MySQL to create a temp-table, in this case it's better to do the job with PHP wich is faster
-            $amount = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy());
+            $amount = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
 
             $tmpIds = array();
             foreach ($amount as $a) {
@@ -100,7 +100,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
 
         try {
             // do not use DISTINCT in query because this forces MySQL to create a temp-table, in this case it's better to do the job with PHP wich is faster
-            $amount = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+            $amount = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
             $tmpIds = array();
             foreach ($amount as $a) {

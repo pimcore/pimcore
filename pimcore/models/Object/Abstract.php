@@ -384,7 +384,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             $this->lastGetChildsObjectTypes = $objectTypes;
 
             $list = new Object_List(true);
-            $list->setCondition("o_parentId = '" . $this->getO_id() . "'");
+            $list->setCondition("o_parentId = ?", $this->getO_id());
             $list->setOrderKey("o_key");
             $list->setOrder("asc");
             $list->setObjectTypes($objectTypes);

@@ -310,7 +310,7 @@ class Object_Class extends Pimcore_Model_Abstract {
 
         // delete all objects using this class
         $list = new Object_List();
-        $list->setCondition("o_classId = '" . $this->getId() . "'");
+        $list->setCondition("o_classId = ?", $this->getId());
         $list->load();
 
         foreach ($list->getObjects() as $o) {

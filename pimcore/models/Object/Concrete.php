@@ -501,7 +501,7 @@ class Object_Concrete extends Object_Abstract {
     public function getScheduledTasks() {
         if ($this->scheduledTasks === null) {
             $taskList = new Schedule_Task_List();
-            $taskList->setCondition("cid = '" . $this->getO_Id() . "' AND ctype='object'");
+            $taskList->setCondition("cid = ? AND ctype='object'", $this->getO_Id());
             $this->scheduledTasks = $taskList->load();
         }
         return $this->scheduledTasks;

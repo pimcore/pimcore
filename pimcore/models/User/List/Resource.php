@@ -24,7 +24,7 @@ class User_List_Resource extends Pimcore_Model_List_Resource_Abstract {
      */
     public function load() {
 
-        $usersData = $this->db->fetchAll("SELECT id FROM users" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
+        $usersData = $this->db->fetchAll("SELECT id FROM users" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($usersData as $userData) {
             $users[] = User::getById($userData["id"]);

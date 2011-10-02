@@ -729,7 +729,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $className = $class->getName();
         $listClass = "Object_" . ucfirst($className) . "_List";
         $list = new $listClass();
-        $list->setCondition("o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'" . $conditionFilters);
+        $list->setCondition("o_path = ? OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'" . $conditionFilters, array($folder->getFullPath()));
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 

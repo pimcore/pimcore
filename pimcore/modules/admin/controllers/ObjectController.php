@@ -278,7 +278,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                         $total = $object->getChildAmount();
                         $list = new Object_List();
-                        $list->setCondition("o_parentId = '" . $object->getId() . "'");
+                        $list->setCondition("o_parentId = ?", $object->getId());
                         $list->setOrderKey("o_key");
                         $list->setOrder("asc");
 

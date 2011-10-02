@@ -25,7 +25,7 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     public function load() {
 
         $objects = array();
-        $objectsData = $this->db->fetchAll("SELECT o_id,o_type FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+        $objectsData = $this->db->fetchAll("SELECT o_id,o_type FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($objectsData as $objectData) {
             // return all documents as Type Document => fot trees an so on there isn't the whole data required
@@ -41,12 +41,12 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
             return count($this->model->getObjects());
         }
 
-        $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+        $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $amount["amount"];
     }
     
     public function getTotalCount() {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy());
+        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
 
         return $amount["amount"];
     }

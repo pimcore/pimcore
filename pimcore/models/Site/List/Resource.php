@@ -25,7 +25,7 @@ class Site_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     public function load() {
 
         $sites = array();
-        $sitesData = $this->db->fetchAll("SELECT id FROM sites" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
+        $sitesData = $this->db->fetchAll("SELECT id FROM sites" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($sitesData as $siteData) {
             $sites[] = Site::getById($siteData["id"]);

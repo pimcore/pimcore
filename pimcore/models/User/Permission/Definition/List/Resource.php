@@ -25,7 +25,7 @@ class User_Permission_Definition_List_Resource extends Pimcore_Model_List_Resour
     public function load() {
 
         $definitions = array();
-        $definitionsData = $this->db->fetchAll("SELECT * FROM users_permission_definitions" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
+        $definitionsData = $this->db->fetchAll("SELECT * FROM users_permission_definitions" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($definitionsData as $definitionData) {
             $definition = new User_Permission_Definition($definitionData);

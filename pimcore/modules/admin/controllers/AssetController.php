@@ -175,7 +175,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
             // get assets
             $childsList = new Asset_List();
-            $childsList->setCondition("parentId = '" . $asset->getId() . "'");
+            $childsList->setCondition("parentId = ?", $asset->getId());
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
             $childsList->setOrderKey("filename");
@@ -326,7 +326,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     if ($user instanceof User and $asset->hasChilds()) {
 
                         $list = new Asset_List();
-                        $list->setCondition("parentId = '" . $asset->getId() . "'");
+                        $list->setCondition("parentId = ?", $asset->getId());
                         $list->setOrderKey("filename");
                         $list->setOrder("asc");
 

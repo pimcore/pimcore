@@ -547,7 +547,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
         if ($this->childs === null) {
             $list = new Document_List();
-            $list->setCondition("parentId = '" . $this->getId() . "'");
+            $list->setCondition("parentId = ?", $this->getId());
             $list->setOrderKey("index");
             $list->setOrder("asc");
             $this->childs = $list->load();

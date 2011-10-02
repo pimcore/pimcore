@@ -26,7 +26,7 @@ class Asset_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     public function load() {
 
         $assets = array();
-        $assetsData = $this->db->fetchAll("SELECT id,type FROM assets" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
+        $assetsData = $this->db->fetchAll("SELECT id,type FROM assets" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($assetsData as $assetData) {
             if($assetData["type"]) {
@@ -39,7 +39,7 @@ class Asset_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     }
     
     public function getTotalCount() {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM assets" . $this->getCondition());
+        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM assets" . $this->getCondition(), $this->model->getConditionVariables());
 
         return $amount["amount"];
     }

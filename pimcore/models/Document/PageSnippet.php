@@ -318,7 +318,7 @@ abstract class Document_PageSnippet extends Document {
     public function getScheduledTasks() {
         if ($this->scheduledTasks == null) {
             $taskList = new Schedule_Task_List();
-            $taskList->setCondition("cid = '" . $this->getId() . "' AND ctype='document'");
+            $taskList->setCondition("cid = ? AND ctype='document'", $this->getId());
             $this->setScheduledTasks($taskList->load());
         }
         return $this->scheduledTasks;

@@ -28,7 +28,7 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
     public static abstract function getItemClass();
     
     public function getTotalCount() {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a");
+        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a", $this->model->getConditionVariables());
         return $amount["amount"];
     }
 
@@ -37,7 +37,7 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
             return count($this->model->getObjects());
         }
 
-        $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit() . ") AS a");
+        $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit() . ") AS a", $this->model->getConditionVariables());
         return $amount["amount"];
     }
 
@@ -74,7 +74,7 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
         $allTranslations = $this->getAllTranslations();
         $translations = array();
         $this->model->setGroupBy("key");
-        $translationsData = $this->db->fetchAll("SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit());
+        $translationsData = $this->db->fetchAll("SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
             $translations[] = $allTranslations[$t["key"]];

@@ -25,7 +25,7 @@ class Schedule_Task_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     public function load() {
 
         $tasks = array();
-        $tasksData = $this->db->fetchAll("SELECT id FROM schedule_tasks" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
+        $tasksData = $this->db->fetchAll("SELECT id FROM schedule_tasks" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($tasksData as $taskData) {
             $tasks[] = Schedule_Task::getById($taskData["id"]);

@@ -212,7 +212,7 @@ class Pimcore_Update {
     public static function installData ($revision) {
         
         $db = Pimcore_Resource::get();
-        $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = " . $revision);
+        $files = $db->fetchAll("SELECT * FROM `" . self::$tmpTable . "` WHERE revision = ?", $revision);
         
         foreach ($files as $file) { 
             if ($file["action"] == "update" || $file["action"] == "add") {

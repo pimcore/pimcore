@@ -32,7 +32,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     public function treeGetChildsByIdAction() {
 
         $list = new User_List();
-        $list->setCondition("parentId = '" . intval($this->_getParam("node")) . "'");
+        $list->setCondition("parentId = ?", intval($this->_getParam("node")));
         $list->load();
 
         $users = array();

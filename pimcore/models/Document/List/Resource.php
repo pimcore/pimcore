@@ -24,7 +24,7 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
      */
     public function load() {
         $documents = array();
-        $documentsData = $this->db->fetchAll("SELECT id,type FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
+        $documentsData = $this->db->fetchAll("SELECT id,type FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($documentsData as $documentData) {
             if($documentData["type"]) {
@@ -50,7 +50,7 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     }
     
     public function getTotalCount() {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM documents" . $this->getCondition());
+        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM documents" . $this->getCondition(), $this->model->getConditionVariables());
 
         return $amount["amount"];
     }

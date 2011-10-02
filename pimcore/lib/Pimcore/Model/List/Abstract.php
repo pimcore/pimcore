@@ -41,6 +41,11 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
     protected $condition;
 
     /**
+     * @var array
+     */
+    protected $conditionVariables = array();
+
+    /**
      * @var string
      */
     protected $groupBy;
@@ -52,6 +57,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         "ASC",
         "DESC"
     );
+
 
     /**
      * @abstract
@@ -175,8 +181,15 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
      * @param string $condition
      * @return void
      */
-    public function setCondition($condition) {
+    public function setCondition($condition, $conditionVariables = null) {
         $this->condition = $condition;
+
+        // statement variables
+        if(is_array($conditionVariables) && count($conditionVariables)) {
+            $this->setConditionVariables($conditionVariables);
+        } else if ($conditionVariables) {
+            $this->setConditionVariables(array($conditionVariables));
+        }
     }
 
     /**
@@ -220,5 +233,21 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
     public function quote ($value, $type = null) {
         $db = Pimcore_Resource::get();
         return $db->quote($value, $type);
+    }
+
+    /**
+     * @param array $conditionVariables
+     */
+    public function setConditionVariables($conditionVariables)
+    {
+        $this->conditionVariables = $conditionVariables;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConditionVariables()
+    {
+        return $this->conditionVariables;
     }
 }

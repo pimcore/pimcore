@@ -598,7 +598,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         if ($this->childs === null) {
             $list = new Asset_List();
-            $list->setCondition("parentId = '" . $this->getId() . "'");
+            $list->setCondition("parentId = ?", $this->getId());
             $list->setOrderKey("filename");
             $list->setOrder("asc");
 
@@ -1186,7 +1186,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public function getScheduledTasks() {
         if ($this->scheduledTasks === null) {
             $taskList = new Schedule_Task_List();
-            $taskList->setCondition("cid = '" . $this->getId() . "' AND ctype='asset'");
+            $taskList->setCondition("cid = ? AND ctype='asset'", $this->getId());
             $this->setScheduledTasks($taskList->load());
         }
         return $this->scheduledTasks;

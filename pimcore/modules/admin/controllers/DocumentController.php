@@ -228,7 +228,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     if ($document->hasChilds()) {
 
                         $list = new Document_List();
-                        $list->setCondition("parentId = '" . $document->getId() . "'");
+                        $list->setCondition("parentId = ?", $document->getId());
                         $list->setOrderKey("index");
                         $list->setOrder("asc");
                         $childsList = $list->load();
@@ -311,7 +311,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             $offset = intval($this->_getParam("start"));
 
             $list = new Document_List();
-            $list->setCondition("parentId = '" . $document->getId() . "'");
+            $list->setCondition("parentId = ?", $document->getId());
             $list->setOrderKey("index");
             $list->setOrder("asc");
             $list->setLimit($limit);
@@ -605,7 +605,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 // if changed the index change also all documents on the same level
                 if ($this->_getParam("index") !== null) {
                     $list = new Document_List();
-                    $list->setCondition("parentId = '" . $this->_getParam("parentId") . "' AND id != '" . $document->getId() . "'");
+                    $list->setCondition("parentId = ? AND id != ?", array($this->_getParam("parentId"), $document->getId()));
                     $list->setOrderKey("index");
                     $list->setOrder("asc");
                     $childsList = $list->load();
@@ -712,7 +712,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         if ($this->_getParam("type")) {
             $type = $this->_getParam("type");
             if ($type == "page" || $type == "snippet") {
-                $list->setCondition("type = '" . $type . "'");
+                $list->setCondition("type = ?", $type);
             }
         }
         $list->setOrderKey(array("priority", "name"));

@@ -20,7 +20,7 @@ class Schedule_Task_Executor {
     public static function execute() {
 
         $list = new Schedule_Task_List();
-        $list->setCondition("active = 1 AND date < '" . time() . "'");
+        $list->setCondition("active = 1 AND date < ?", time());
         $tasks = $list->load();
 
         foreach ($tasks as $task) {

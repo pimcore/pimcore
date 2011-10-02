@@ -25,7 +25,7 @@ class Property_Predefined_List_Resource extends Pimcore_Model_List_Resource_Abst
     public function load() {
 
         $properties = array();
-        $propertiesData = $this->db->fetchAll("SELECT id FROM properties_predefined" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
+        $propertiesData = $this->db->fetchAll("SELECT id FROM properties_predefined" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($propertiesData as $propertyData) {
             $properties[] = Property_Predefined::getById($propertyData["id"]);
@@ -38,7 +38,7 @@ class Property_Predefined_List_Resource extends Pimcore_Model_List_Resource_Abst
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM properties_predefined " . $this->getCondition());
+            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM properties_predefined " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }

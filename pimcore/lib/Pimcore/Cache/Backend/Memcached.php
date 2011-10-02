@@ -121,7 +121,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         $this->checkCacheConsistency();
 
-        $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE tag = '" . $tag . "'");
+        $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE tag = ?", $tag);
         $items = array();
         
         foreach ($itemIds as $item) {
@@ -244,7 +244,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return array tags for given id
      */
     protected function getTagsById($id) {
-        $itemIds = $this->getDb()->fetchAll("SELECT tag FROM cache_tags WHERE id = '" . $id . "'");
+        $itemIds = $this->getDb()->fetchAll("SELECT tag FROM cache_tags WHERE id = ?", $id);
         $items = array();
 
         foreach ($itemIds as $item) {
