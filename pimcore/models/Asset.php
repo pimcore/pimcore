@@ -783,7 +783,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return integer
      */
     public function getId() {
-        return $this->id;
+        return (int) $this->id;
     }
 
     /**

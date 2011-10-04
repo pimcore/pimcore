@@ -693,7 +693,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return integer
      */
     public function getId() {
-        return intval($this->id);
+        return (int) $this->id;
     }
 
     /**

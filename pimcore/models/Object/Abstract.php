@@ -779,7 +779,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return integer $id
      */
     public function getId() {
-        return $this->getO_id();
+        return (int) $this->getO_id();
     }
 
     /**
