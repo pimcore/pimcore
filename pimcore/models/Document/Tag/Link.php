@@ -395,4 +395,21 @@ class Document_Tag_Link extends Document_Tag {
     }
 
 
+    /**
+     * Rewrites id from source to target, $idMapping contains sourceId => targetId mapping
+     * @param array $idMapping
+     * @return void
+     */
+    public function rewriteIds($idMapping) {
+        if ($this->data["internal"]) {
+            if ($this->data["internalType"] == "document") {
+                if(array_key_exists((int) $this->data["internalId"], $idMapping)){
+                    $this->data["internalId"] = $idMapping[(int) $this->data["internalId"]];
+                    $this->getHref();
+                }
+            }
+        }
+    }
+
+
 }

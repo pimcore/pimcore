@@ -36,6 +36,17 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         return $documents;
     }
 
+    /**
+     * Loads a list of document ids for the specicifies parameters, returns an array of ids
+     *
+     * @return array
+     */
+    public function loadIdList() {
+
+        $documentIds = $this->db->fetchCol("SELECT id FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $documentIds;
+    }
+
     protected function getCondition() {
         if ($cond = $this->model->getCondition()) {
             if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {

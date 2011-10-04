@@ -283,12 +283,17 @@ pimcore.document.tree = Class.create({
                 pasteMenu.push({
                     text: t("paste_recursive_as_childs"),
                     iconCls: "pimcore_icon_paste",
-                    handler: this.attributes.reference.paste.bind(this, "recursive")
+                    handler: this.attributes.reference.pasteInfo.bind(this, "recursive")
+                });
+                pasteMenu.push({
+                    text: t("paste_recursive_updating_references"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.attributes.reference.pasteInfo.bind(this, "recursive-update-references")
                 });
                 pasteMenu.push({
                     text: t("paste_as_child"),
                     iconCls: "pimcore_icon_paste",
-                    handler: this.attributes.reference.paste.bind(this, "child")
+                    handler: this.attributes.reference.pasteInfo.bind(this, "child")
                 });
             }
         }
@@ -301,7 +306,7 @@ pimcore.document.tree = Class.create({
                 pasteMenu.push({
                     text: t("paste_contents"),
                     iconCls: "pimcore_icon_paste",
-                    handler: this.attributes.reference.paste.bind(this, "replace")
+                    handler: this.attributes.reference.pasteInfo.bind(this, "replace")
                 });
             }
 
@@ -478,40 +483,96 @@ pimcore.document.tree = Class.create({
         this.attributes.reference.cacheDocumentId = this.id;
     },
 
-    paste: function (type) {
-        this.attributes.reference.tree.loadMask.show();
 
-        /*var originalIconClass = Ext.get(this.getUI().getIconEl()).getAttribute("class");
-         Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
+
+    pasteInfo: function (type) {
+        this.attributes.reference.tree.loadMask.show();
 
         pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
 
         Ext.Ajax.request({
-            url: "/admin/document/copy/",
+            url: "/admin/document/copy-info/",
             params: {
                 targetId: this.id,
                 sourceId: this.attributes.reference.cacheDocumentId,
                 type: type
             },
-            success: this.attributes.reference.pasteComplete.bind(this)
+            success: this.attributes.reference.paste.bind(this)
         });
     },
 
-    pasteComplete: function (response) {
+    paste: function (response) {
 
         try {
-            this.attributes.reference.tree.loadMask.hide();
-            //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", originalIconClass);
+            var res = Ext.decode(response.responseText);
 
-            pimcore.helpers.removeTreeNodeLoadingIndicator("document", this.id);
-            var rdata = Ext.decode(response.responseText);
-            if (!rdata || !rdata.success) {
-                pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error", t(rdata.message));
+            if (res.pastejobs) {
+
+                this.pasteProgressBar = new Ext.ProgressBar({
+                    text: t('initializing')
+                });
+
+                this.pasteWindow = new Ext.Window({
+                    title: t("paste"),
+                    layout:'fit',
+                    width:500,
+                    bodyStyle: "padding: 10px;",
+                    closable:false,
+                    plain: true,
+                    modal: true,
+                    items: [this.pasteProgressBar]
+                });
+
+                this.pasteWindow.show();
+
+
+                var pj = new pimcore.tool.paralleljobs({
+                    success: function () {
+
+                        try {
+                            this.attributes.reference.pasteComplete(this);
+                        } catch(e) {
+                            console.log(e);
+                            pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error");
+                            this.parentNode.reload();
+                        }
+                    }.bind(this),
+                    update: function (currentStep, steps, percent) {
+                        if(this.pasteProgressBar) {
+                            var status = currentStep / steps;
+                            this.pasteProgressBar.updateProgress(status, percent + "%");
+                        }
+                    }.bind(this),
+                    failure: function (message) {
+                        this.pasteWindow.close();
+                        this.pasteProgressBar = null;
+
+                        pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error", t(message));
+                        this.parentNode.reload();
+                    }.bind(this),
+                    jobs: res.pastejobs
+                });
+            } else {
+                throw "There are no pasting jobs";
             }
-        } catch(e) {
-            pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error");
+        } catch (e) {
+            console.log(e);
+            Ext.MessageBox.alert(t('error'), e);
+            this.attributes.reference.pasteComplete(this);
         }
-        this.reload();
+    },
+
+    pasteComplete: function (node) {
+        if(node.pasteWindow) {
+            node.pasteWindow.close();
+        }
+
+        node.pasteProgressBar = null;
+        node.pasteWindow = null;
+
+        this.tree.loadMask.hide();
+        pimcore.helpers.removeTreeNodeLoadingIndicator("document", node.id);
+        node.reload();
     },
 
     useAsSite: function () {

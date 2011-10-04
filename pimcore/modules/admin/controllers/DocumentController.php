@@ -826,35 +826,178 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => true));
     }
 
+    public function copyInfoAction() {
+
+        $transactionId = time();
+        $pasteJobs = array();
+        $session = new Zend_Session_Namespace("pimcore_document_copy");
+        $session->$transactionId = array("idMapping" => array());
+
+        if ($this->_getParam("type") == "recursive" || $this->_getParam("type") == "recursive-update-references") {
+
+            $document = Document::getById($this->_getParam("sourceId"));
+
+            // first of all the new parent
+            $pasteJobs[] = array(array(
+                "url" => "/admin/document/copy",
+                "params" => array(
+                    "sourceId" => $this->_getParam("sourceId"),
+                    "targetId" => $this->_getParam("targetId"),
+                    "type" => "child",
+                    "transactionId" => $transactionId,
+                    "saveParentId" => true
+                )
+            ));
+
+
+            $childIds = array();
+            if($document->hasChilds()) {
+                // get amount of childs
+                $list = new Document_List();
+                $list->setCondition("path LIKE '" . $document->getFullPath() . "/%'");
+                $list->setOrderKey("LENGTH(path)", false);
+                $list->setOrder("ASC");
+                $childIds = $list->loadIdList();
+
+                if(count($childIds) > 0) {
+                    foreach ($childIds as $id) {
+                        $pasteJobs[] = array(array(
+                            "url" => "/admin/document/copy",
+                            "params" => array(
+                                "sourceId" => $id,
+                                "targetParentId" => $this->_getParam("targetId"),
+                                "sourceParentId" => $this->_getParam("sourceId"),
+                                "type" => "child",
+                                "transactionId" => $transactionId
+                            )
+                        ));
+                    }
+                }
+            }
+
+
+            // add id-rewrite steps
+            if($this->_getParam("type") == "recursive-update-references") {
+                for($i=0; $i<(count($childIds)+1); $i++) {
+                    $pasteJobs[] = array(array(
+                        "url" => "/admin/document/copy-rewrite-ids",
+                        "params" => array(
+                            "transactionId" => $transactionId,
+                            "_dc" => uniqid()
+                        )
+                    ));
+                }
+            }
+        }
+        else if ($this->_getParam("type") == "child" || $this->_getParam("type") == "replace") {
+            // the object itself is the last one
+            $pasteJobs[] = array(array(
+                "url" => "/admin/document/copy",
+                "params" => array(
+                    "sourceId" => $this->_getParam("sourceId"),
+                    "targetId" => $this->_getParam("targetId"),
+                    "type" => $this->_getParam("type"),
+                    "transactionId" => $transactionId
+                )
+            ));
+        }
+
+
+        $this->_helper->json(array(
+            "pastejobs" => $pasteJobs
+        ));
+    }
+
+    public function copyRewriteIdsAction () {
+
+        $session = new Zend_Session_Namespace("pimcore_document_copy");
+        $idStore = $session->{$this->_getParam("transactionId")};
+
+        if(!array_key_exists("rewrite-stack",$idStore)) {
+            $idStore["rewrite-stack"] = array_values($idStore["idMapping"]);
+        }
+
+        $id = array_shift($idStore["rewrite-stack"]);
+        $document = Document::getById($id);
+
+        // do the rewriting here
+        $elements = $document->getElements();
+        foreach ($elements as &$element) {
+            if(method_exists($element, "rewriteIds")) {
+                $element->rewriteIds($idStore["idMapping"]);
+            }
+        }
+        
+        $document->setElements($elements);
+        $document->save();
+        
+
+        // write the store back to the session
+        $session->{$this->_getParam("transactionId")} = $idStore;
+
+        $this->_helper->json(array(
+            "success" => true,
+            "id" => $id
+        ));
+    }
+
     public function copyAction() {
         $success = false;
         $sourceId = intval($this->_getParam("sourceId"));
+        $source = Document::getById($sourceId);
+        $session = new Zend_Session_Namespace("pimcore_document_copy");
+        
         $targetId = intval($this->_getParam("targetId"));
+        if($this->_getParam("targetParentId")) {
+            $sourceParent = Document::getById($this->_getParam("sourceParentId"));
 
-        $target = Document::getById($targetId);
-
-        $target->getPermissionsForUser($this->getUser());
-        if ($target->isAllowed("create")) {
-            $source = Document::getById($sourceId);
-            if ($source != null) {
-                if ($this->_getParam("type") == "recursive") {
-                    $this->_documentService->copyRecursive($target, $source);
-                }
-                else if ($this->_getParam("type") == "child") {
-                    $this->_documentService->copyAsChild($target, $source);
-                }
-                else if ($this->_getParam("type") == "replace") {
-                    $this->_documentService->copyContents($target, $source);
-                }
-
-                $success = true;
+            // this is because the key can get the prefix "_copy" if the target does already exists
+            if($session->{$this->_getParam("transactionId")}["parentId"]) {
+                $targetParent = Document::getById($session->{$this->_getParam("transactionId")}["parentId"]);
+            } else {
+                $targetParent = Document::getById($this->_getParam("targetParentId"));
             }
-            else {
-                Logger::error("prevended copy/paste because document with same path+key already exists in this location");
+
+
+            $targetPath = preg_replace("@^".$sourceParent->getFullPath()."@", $targetParent."/", $source->getPath());
+            $target = Document::getByPath($targetPath);
+        } else {
+            $target = Document::getById($targetId);
+        }
+
+        if($target instanceof Document) {
+            $target->getPermissionsForUser($this->getUser());
+            if ($target->isAllowed("create")) {
+                if ($source != null) {
+
+                    // this is now covered by type "child" because there is one request for each child
+                    /*if ($this->_getParam("type") == "recursive" || $this->_getParam("type") == "recursive-update-references") {
+                        //$this->_documentService->copyRecursive($target, $source);
+                    }
+                    else */
+
+                    if ($this->_getParam("type") == "child") {
+                        $newDocument = $this->_documentService->copyAsChild($target, $source);
+                        $session->{$this->_getParam("transactionId")}["idMapping"][(int) $source->getId()] = (int) $newDocument->getId();
+
+                        // this is because the key can get the prefix "_copy" if the target does already exists
+                        if($this->_getParam("saveParentId")) {
+                            $session->{$this->_getParam("transactionId")}["parentId"] = $newDocument->getId();
+                        }
+                    }
+                    else if ($this->_getParam("type") == "replace") {
+                        $this->_documentService->copyContents($target, $source);
+                    }
+
+                    $success = true;
+                }
+                else {
+                    Logger::error("prevended copy/paste because document with same path+key already exists in this location");
+                }
+            }  else {
+                Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
+                $this->_helper->json(array("success" => false, "message" => "missing_permission"));
             }
-        }  else {
-            Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");
-            $this->_helper->json(array("error" => false, "message" => "missing_permission"));
         }
 
         $this->_helper->json(array("success" => $success));

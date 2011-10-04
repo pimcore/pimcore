@@ -118,4 +118,34 @@ class Document_Tag_Wysiwyg extends Document_Tag {
     public function getCacheTags($ownerDocument, $blockedTags = array()) {
         return Pimcore_Tool_Text::getCacheTagsOfWysiwygText($this->text, $blockedTags);
     }
+
+
+    /**
+     * Rewrites id from source to target, $idMapping contains sourceId => targetId mapping
+     * @param array $idMapping
+     * @return void
+     */
+    public function rewriteIds($idMapping) {
+        
+        $html = str_get_html($this->text);
+        if(!$html) {
+            return $this->text;
+        }
+
+        $s = $html->find("[pimcore_id]");
+
+        if($s) {
+            foreach ($s as $el) {
+                if ($el->href) {
+                    if ($el->pimcore_type == "document") {
+                        if(array_key_exists( (int) $el->pimcore_id, $idMapping)) {
+                            $el->outertext = str_replace('="' . $el->pimcore_id . '"', '="' . $idMapping[$el->pimcore_id] . '"', $el->outertext);
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->text = $html->save();
+    }
 }

@@ -82,7 +82,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         // check for direct definition of controller/action
         if (!empty($_REQUEST["controller"]) && !empty($_REQUEST["action"])) {
             $matchFound = true;
-            $params["document"] = $this->getNearestDocumentByPath($path);
+            //$params["document"] = $this->getNearestDocumentByPath($path);
         }
         
         // you can also call a page by it's ID /?pimcore_document=XXXX

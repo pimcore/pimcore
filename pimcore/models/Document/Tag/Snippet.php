@@ -214,4 +214,17 @@ class Document_Tag_Snippet extends Document_Tag {
     public function load () {
         $this->snippet = Document::getById($this->id);
     }
+
+
+
+    /**
+     * Rewrites id from source to target, $idMapping contains sourceId => targetId mapping
+     * @param array $idMapping
+     * @return void
+     */
+    public function rewriteIds($idMapping) {
+        if(array_key_exists((int) $this->id, $idMapping)) {
+            $this->id = $idMapping[(int) $this->id];
+        }
+    }
 }
