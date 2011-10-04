@@ -54,7 +54,8 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         if (this.data.type != "asset") {
             this.urlField = new Ext.form.TextField({
                 name: "url",
-                value: this.data.id
+                value: this.data.id,
+                emptyText: t("insert_video_url_here")
             });
             toolbar.push(this.urlField);
             toolbar.push({
