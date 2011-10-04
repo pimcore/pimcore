@@ -830,7 +830,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         $transactionId = time();
         $pasteJobs = array();
-        $session = new Zend_Session_Namespace("pimcore_document_copy");
+        $session = new Zend_Session_Namespace("pimcore_copy");
         $session->$transactionId = array("idMapping" => array());
 
         if ($this->_getParam("type") == "recursive" || $this->_getParam("type") == "recursive-update-references") {
@@ -910,7 +910,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function copyRewriteIdsAction () {
 
-        $session = new Zend_Session_Namespace("pimcore_document_copy");
+        $session = new Zend_Session_Namespace("pimcore_copy");
         $idStore = $session->{$this->_getParam("transactionId")};
 
         if(!array_key_exists("rewrite-stack",$idStore)) {
@@ -961,7 +961,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $success = false;
         $sourceId = intval($this->_getParam("sourceId"));
         $source = Document::getById($sourceId);
-        $session = new Zend_Session_Namespace("pimcore_document_copy");
+        $session = new Zend_Session_Namespace("pimcore_copy");
         
         $targetId = intval($this->_getParam("targetId"));
         if($this->_getParam("targetParentId")) {
@@ -985,13 +985,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             $target->getPermissionsForUser($this->getUser());
             if ($target->isAllowed("create")) {
                 if ($source != null) {
-
-                    // this is now covered by type "child" because there is one request for each child
-                    /*if ($this->_getParam("type") == "recursive" || $this->_getParam("type") == "recursive-update-references") {
-                        //$this->_documentService->copyRecursive($target, $source);
-                    }
-                    else */
-
                     if ($this->_getParam("type") == "child") {
                         $newDocument = $this->_documentService->copyAsChild($target, $source);
                         $session->{$this->_getParam("transactionId")}["idMapping"][(int) $source->getId()] = (int) $newDocument->getId();

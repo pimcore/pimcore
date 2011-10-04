@@ -42,7 +42,6 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
      * @return array
      */
     public function loadIdList() {
-
         $documentIds = $this->db->fetchCol("SELECT id FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $documentIds;
     }

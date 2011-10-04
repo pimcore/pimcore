@@ -486,7 +486,7 @@ pimcore.document.tree = Class.create({
 
 
     pasteInfo: function (type) {
-        this.attributes.reference.tree.loadMask.show();
+        //this.attributes.reference.tree.loadMask.show();
 
         pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
 
@@ -570,7 +570,7 @@ pimcore.document.tree = Class.create({
         node.pasteProgressBar = null;
         node.pasteWindow = null;
 
-        this.tree.loadMask.hide();
+        //this.tree.loadMask.hide();
         pimcore.helpers.removeTreeNodeLoadingIndicator("document", node.id);
         node.reload();
     },

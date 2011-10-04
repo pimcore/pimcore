@@ -37,6 +37,16 @@ class Asset_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         $this->model->setAssets($assets);
         return $assets;
     }
+
+    /**
+     * Loads a list of document ids for the specicifies parameters, returns an array of ids
+     *
+     * @return array
+     */
+    public function loadIdList() {
+        $assetIds = $this->db->fetchCol("SELECT id FROM assets" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $assetIds;
+    }
     
     public function getTotalCount() {
         $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM assets" . $this->getCondition(), $this->model->getConditionVariables());

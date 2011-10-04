@@ -51,6 +51,16 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         return $amount["amount"];
     }
 
+    /**
+     * Loads a list of document ids for the specicifies parameters, returns an array of ids
+     *
+     * @return array
+     */
+    public function loadIdList() {
+        $objectIds = $this->db->fetchCol("SELECT o_id FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $objectIds;
+    }
+
     protected function getCondition() {
         if ($cond = $this->model->getCondition()) {
             if (Object_Abstract::doHideUnpublished() && !$this->model->getUnpublished()) {

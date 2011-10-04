@@ -623,7 +623,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             "permissions" => array(
                 "remove" => $asset->isAllowed("delete"),
                 "settings" => $asset->isAllowed("settings"),
-                "rename" => $asset->isAllowed("rename")
+                "rename" => $asset->isAllowed("rename"),
+                "publish" => $asset->isAllowed("publish")
             )
         );
 
@@ -1148,23 +1149,107 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         ));
     }
 
+    public function copyInfoAction() {
+
+        $transactionId = time();
+        $pasteJobs = array();
+        $session = new Zend_Session_Namespace("pimcore_copy");
+        $session->$transactionId = array();
+
+        if ($this->_getParam("type") == "recursive") {
+
+            $asset = Asset::getById($this->_getParam("sourceId"));
+
+            // first of all the new parent
+            $pasteJobs[] = array(array(
+                "url" => "/admin/asset/copy",
+                "params" => array(
+                    "sourceId" => $this->_getParam("sourceId"),
+                    "targetId" => $this->_getParam("targetId"),
+                    "type" => "child",
+                    "transactionId" => $transactionId,
+                    "saveParentId" => true
+                )
+            ));
+
+            if($asset->hasChilds()) {
+                // get amount of childs
+                $list = new Asset_List();
+                $list->setCondition("path LIKE '" . $asset->getFullPath() . "/%'");
+                $list->setOrderKey("LENGTH(path)", false);
+                $list->setOrder("ASC");
+                $childIds = $list->loadIdList();
+
+                if(count($childIds) > 0) {
+                    foreach ($childIds as $id) {
+                        $pasteJobs[] = array(array(
+                            "url" => "/admin/asset/copy",
+                            "params" => array(
+                                "sourceId" => $id,
+                                "targetParentId" => $this->_getParam("targetId"),
+                                "sourceParentId" => $this->_getParam("sourceId"),
+                                "type" => "child",
+                                "transactionId" => $transactionId
+                            )
+                        ));
+                    }
+                }
+            }
+        }
+        else if ($this->_getParam("type") == "child" || $this->_getParam("type") == "replace") {
+            // the object itself is the last one
+            $pasteJobs[] = array(array(
+                "url" => "/admin/asset/copy",
+                "params" => array(
+                    "sourceId" => $this->_getParam("sourceId"),
+                    "targetId" => $this->_getParam("targetId"),
+                    "type" => $this->_getParam("type"),
+                    "transactionId" => $transactionId
+                )
+            ));
+        }
+
+
+        $this->_helper->json(array(
+            "pastejobs" => $pasteJobs
+        ));
+    }
+
 
     public function copyAction() {
         $success = false;
         $sourceId = intval($this->_getParam("sourceId"));
-        $targetId = intval($this->_getParam("targetId"));
+        $source = Asset::getById($sourceId);
+        $session = new Zend_Session_Namespace("pimcore_copy");
 
-        $target = Asset::getById($targetId);
+        $targetId = intval($this->_getParam("targetId"));
+        if($this->_getParam("targetParentId")) {
+            $sourceParent = Asset::getById($this->_getParam("sourceParentId"));
+
+            // this is because the key can get the prefix "_copy" if the target does already exists
+            if($session->{$this->_getParam("transactionId")}["parentId"]) {
+                $targetParent = Asset::getById($session->{$this->_getParam("transactionId")}["parentId"]);
+            } else {
+                $targetParent = Asset::getById($this->_getParam("targetParentId"));
+            }
+
+            $targetPath = preg_replace("@^".$sourceParent->getFullPath()."@", $targetParent."/", $source->getPath());
+            $target = Asset::getByPath($targetPath);
+        } else {
+            $target = Asset::getById($targetId);
+        }
 
         $target->getPermissionsForUser($this->getUser());
         if ($target->isAllowed("create")) {
             $source = Asset::getById($sourceId);
             if ($source != null) {
-                if ($this->_getParam("type") == "recursive") {
-                    $this->_assetService->copyRecursive($target, $source);
-                }
-                else if ($this->_getParam("type") == "child") {
-                    $this->_assetService->copyAsChild($target, $source);
+                if ($this->_getParam("type") == "child") {
+                    $newAsset = $this->_assetService->copyAsChild($target, $source);
+
+                    // this is because the key can get the prefix "_copy" if the target does already exists
+                    if($this->_getParam("saveParentId")) {
+                        $session->{$this->_getParam("transactionId")}["parentId"] = $newAsset->getId();
+                    }
                 }
                 else if ($this->_getParam("type") == "replace") {
                     $this->_assetService->copyContents($target, $source);
@@ -1173,7 +1258,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $success = true;
             }
             else {
-                Logger::debug("prevended copy/paste because document with same path+key already exists in this location");
+                Logger::debug("prevended copy/paste because asset with same path+key already exists in this location");
             }
         } else {
             Logger::error("could not execute copy/paste because of missing permissions on target [ ".$targetId." ]");

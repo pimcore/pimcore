@@ -1496,25 +1496,109 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
     }
 
+    public function copyInfoAction() {
+
+        $transactionId = time();
+        $pasteJobs = array();
+        $session = new Zend_Session_Namespace("pimcore_copy");
+        $session->$transactionId = array();
+
+        if ($this->_getParam("type") == "recursive") {
+
+            $object = Object_Abstract::getById($this->_getParam("sourceId"));
+
+            // first of all the new parent
+            $pasteJobs[] = array(array(
+                "url" => "/admin/object/copy",
+                "params" => array(
+                    "sourceId" => $this->_getParam("sourceId"),
+                    "targetId" => $this->_getParam("targetId"),
+                    "type" => "child",
+                    "transactionId" => $transactionId,
+                    "saveParentId" => true
+                )
+            ));
+
+            if($object->hasChilds()) {
+                // get amount of childs
+                $list = new Object_List();
+                $list->setCondition("o_path LIKE '" . $object->getFullPath() . "/%'");
+                $list->setOrderKey("LENGTH(o_path)", false);
+                $list->setOrder("ASC");
+                $childIds = $list->loadIdList();
+
+                if(count($childIds) > 0) {
+                    foreach ($childIds as $id) {
+                        $pasteJobs[] = array(array(
+                            "url" => "/admin/object/copy",
+                            "params" => array(
+                                "sourceId" => $id,
+                                "targetParentId" => $this->_getParam("targetId"),
+                                "sourceParentId" => $this->_getParam("sourceId"),
+                                "type" => "child",
+                                "transactionId" => $transactionId
+                            )
+                        ));
+                    }
+                }
+            }
+        }
+        else if ($this->_getParam("type") == "child" || $this->_getParam("type") == "replace") {
+            // the object itself is the last one
+            $pasteJobs[] = array(array(
+                "url" => "/admin/object/copy",
+                "params" => array(
+                    "sourceId" => $this->_getParam("sourceId"),
+                    "targetId" => $this->_getParam("targetId"),
+                    "type" => $this->_getParam("type"),
+                    "transactionId" => $transactionId
+                )
+            ));
+        }
+
+
+        $this->_helper->json(array(
+            "pastejobs" => $pasteJobs
+        ));
+    }
+
 
     public function copyAction()
     {
         $success = false;
         $sourceId = intval($this->_getParam("sourceId"));
-        $targetId = intval($this->_getParam("targetId"));
+        $source = Object_Abstract::getById($sourceId);
+        $session = new Zend_Session_Namespace("pimcore_copy");
 
-        $target = Object_Abstract::getById($targetId);
+        $targetId = intval($this->_getParam("targetId"));
+        if($this->_getParam("targetParentId")) {
+            $sourceParent = Object_Abstract::getById($this->_getParam("sourceParentId"));
+
+            // this is because the key can get the prefix "_copy" if the target does already exists
+            if($session->{$this->_getParam("transactionId")}["parentId"]) {
+                $targetParent = Object_Abstract::getById($session->{$this->_getParam("transactionId")}["parentId"]);
+            } else {
+                $targetParent = Object_Abstract::getById($this->_getParam("targetParentId"));
+            }
+
+            $targetPath = preg_replace("@^".$sourceParent->getFullPath()."@", $targetParent."/", $source->getPath());
+            $target = Object_Abstract::getByPath($targetPath);
+        } else {
+            $target = Object_Abstract::getById($targetId);
+        }
 
         $target->getPermissionsForUser($this->getUser());
         if ($target->isAllowed("create")) {
             $source = Object_Abstract::getById($sourceId);
             if ($source != null) {
                 try {
-                    if ($this->_getParam("type") == "recursive") {
-                        $this->_objectService->copyRecursive($target, $source);
-                    }
-                    else if ($this->_getParam("type") == "child") {
-                        $this->_objectService->copyAsChild($target, $source);
+                    if ($this->_getParam("type") == "child") {
+                        $newObject = $this->_objectService->copyAsChild($target, $source);
+
+                        // this is because the key can get the prefix "_copy" if the target does already exists
+                        if($this->_getParam("saveParentId")) {
+                            $session->{$this->_getParam("transactionId")}["parentId"] = $newObject->getId();
+                        }
                     }
                     else if ($this->_getParam("type") == "replace") {
                         $this->_objectService->copyContents($target, $source);
