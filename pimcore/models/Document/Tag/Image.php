@@ -155,6 +155,7 @@ class Document_Tag_Image extends Document_Tag {
             $htmlEscapeAttributes = array("alt", "align", "border", "height", "hspace",  "longdesc", "usemap", "vspace", "width", "class", "dir", "id", "lang",  "title");
             $defaultAttributes = array(
                 "alt" => $this->alt,
+                "title" => $this->alt,
                 "height" => $height,
                 "width" => $width
             );
