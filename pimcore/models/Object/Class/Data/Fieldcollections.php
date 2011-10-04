@@ -42,6 +42,11 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public $lazyLoading;
 
+    /**
+     * @var int
+     */
+    public $maxItems;
+
 
     /**
      * @return boolean
@@ -498,6 +503,22 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         $code .= "}\n\n";
 
         return $code;
+    }
+
+    /**
+     * @param int $maxItems
+     */
+    public function setMaxItems($maxItems)
+    {
+        $this->maxItems = $maxItems;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems()
+    {
+        return $this->maxItems;
     }
 
     //TODO: sanity check

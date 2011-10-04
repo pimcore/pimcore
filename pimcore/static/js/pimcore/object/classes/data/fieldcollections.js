@@ -77,6 +77,11 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 fieldLabel: t("lazy_loading"),
                 name: "lazyLoading",
                 checked: this.datax.lazyLoading
+            },{
+                xtype: "spinnerfield",
+                fieldLabel: t("maximum_items"),
+                name: "maxItems",
+                value: this.datax.maxItems
             }
         ]);
 
