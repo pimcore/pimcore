@@ -92,22 +92,24 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ?", $this->model->getObject()->getId());
         foreach ($data as $row) {
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $key => $fd) {
-                if (method_exists($fd, "load")) {
-                    // datafield has it's own loader
-                    $value = $fd->load($this->model, array("language" => $row["language"]));
-                    if($value === 0 || !empty($value)) {
-                        $items[$row["language"]][$key] = $value;
-                    }
-                } else {
-                    if (is_array($fd->getColumnType())) {
-                        $multidata = array();
-                        foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                            $multidata[$key . "__" . $fkey] = $row[$key . "__" . $fkey];
+                if($fd) {
+                    if (method_exists($fd, "load")) {
+                        // datafield has it's own loader
+                        $value = $fd->load($this->model, array("language" => $row["language"]));
+                        if($value === 0 || !empty($value)) {
+                            $items[$row["language"]][$key] = $value;
                         }
-                        $items[$row["language"]][$key] = $fd->getDataFromResource($multidata);
-
                     } else {
-                        $items[$row["language"]][$key] = $fd->getDataFromResource($row[$key]);
+                        if (is_array($fd->getColumnType())) {
+                            $multidata = array();
+                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
+                                $multidata[$key . "__" . $fkey] = $row[$key . "__" . $fkey];
+                            }
+                            $items[$row["language"]][$key] = $fd->getDataFromResource($multidata);
+
+                        } else {
+                            $items[$row["language"]][$key] = $fd->getDataFromResource($row[$key]);
+                        }
                     }
                 }
             }
