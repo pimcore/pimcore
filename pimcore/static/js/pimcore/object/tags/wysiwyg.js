@@ -309,6 +309,10 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         if(!this.isRendered()) {
             return false;
         }
+
+        if(this.dirty) {
+            return this.dirty;
+        }
         
         if(this.ckeditor) {
             return this.ckeditor.checkDirty();
@@ -330,6 +334,9 @@ CKEDITOR.plugins.add(ckeditor_close_objectplugin_button,{
                     try {
                         this.data = this.ckeditor.getData();
                         this.ckeditor.destroy();
+                        this.ckeditor = null;
+                        this.dirty = true;
+
                         this.getPreview();
                     } catch (e) {
                         console.log(e);
