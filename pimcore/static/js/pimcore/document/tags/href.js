@@ -46,6 +46,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         this.setupWrapper();
 
         options.enableKeyEvents = true;
+        options.emptyText = t("drop_element_here");
         options.name = id + "_editable";
         this.element = new Ext.form.TextField(options);
 
