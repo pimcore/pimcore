@@ -121,7 +121,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         if(this.datax.id) {
             menu.add(new Ext.menu.Item({
-                text: t('edit'),
+                text: t('select_specific_area_of_image'),
                 iconCls: "pimcore_icon_edit",
                 handler: function (item) {
                     item.parentMenu.destroy();
