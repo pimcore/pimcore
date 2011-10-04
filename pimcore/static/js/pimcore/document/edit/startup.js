@@ -136,7 +136,7 @@ Ext.onReady(function () {
                 }
 
 
-                if(!tmpEl.hasClass("pimcore_tag_block") && !tmpEl.hasClass("pimcore_tag_areablock")) {
+                if(tmpEl.hasClass("pimcore_tag_snippet") || tmpEl.hasClass("pimcore_tag_renderlet") || tmpEl.hasClass("pimcore_tag_inc") ) {
                     tmpEl.on("mouseenter", function (e) {
                         pimcore.edithelpers.frameElement(this, Ext.getBody());
                     });
@@ -175,11 +175,6 @@ Ext.onReady(function () {
                 }
             }
         }
-
-
-
-
-        
 
     }
 });
