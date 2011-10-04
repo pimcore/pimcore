@@ -40,6 +40,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/js/lib/ext-plugins/ux/Portal.js",
             "/pimcore/static/js/lib/ext-plugins/ux/PortalColumn.js",
             "/pimcore/static/js/lib/ext-plugins/ux/Portlet.js",
+            "/pimcore/static/js/lib/ext-plugins/GridRowOrder/roworder.js",
             "/pimcore/static/js/lib/ckeditor/ckeditor.js",
             //"/pimcore/static/js/lib/ckeditor-plugins/pimcorelink/plugin.js",
             "/pimcore/static/js/pimcore/libfixes.js"
@@ -53,6 +54,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/js/pimcore/document/tags/block.js",
             "/pimcore/static/js/pimcore/document/tags/date.js",
             "/pimcore/static/js/pimcore/document/tags/href.js",
+            "/pimcore/static/js/pimcore/document/tags/multihref.js",
             "/pimcore/static/js/pimcore/document/tags/checkbox.js",
             "/pimcore/static/js/pimcore/document/tags/image.js",
             "/pimcore/static/js/pimcore/document/tags/input.js",
