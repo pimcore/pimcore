@@ -913,7 +913,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     }
 
     /**
-     * @return array
+     * @return Property[]
      */
     public function getProperties() {
         if ($this->properties === null) {

@@ -1146,7 +1146,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     }   
 
     /**
-     * @return array
+     * @return Property[]
      */
     public function getO_properties() {
         if ($this->o_properties === null) {

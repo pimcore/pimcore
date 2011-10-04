@@ -928,7 +928,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     /**
      * Get a list of properties (including the inherited)
      *
-     * @return array
+     * @return Property[]
      */
     public function getProperties() {
         if ($this->properties === null) {
