@@ -185,9 +185,9 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         $this->condition = $condition;
 
         // statement variables
-        if(is_array($conditionVariables) && count($conditionVariables)) {
+        if(is_array($conditionVariables)) {
             $this->setConditionVariables($conditionVariables);
-        } else if ($conditionVariables) {
+        } else if ($conditionVariables !== null) {
             $this->setConditionVariables(array($conditionVariables));
         }
     }
