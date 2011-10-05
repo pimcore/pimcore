@@ -17,6 +17,8 @@ class Pimcore {
 
     public static $adminMode;
 
+    private static $inShutdown = false;
+
     public static function run() {
 
         self::setSystemRequirements();
@@ -666,14 +668,57 @@ class Pimcore {
     }
 
     /**
+     * this initiates the pimcore output-buffer, which is used to allow the registered shutdown-function
+     * (created with register_shutdown_function) to run in the background without blocking the browser (loading indicator).
+     * This is useful because the cache is written in the shutdown function and it takes sometimes a while to write the
+     * max. 50 items into the cache (~ 1-10 secs depending on the backend and the data). Although all the content is
+     * already arrived at the browser, he blocks the javascript execution (eg. jQuery's $(document).ready() ), because
+     * the request is not finished or wasn't closed (sure the script is still running), what is really not necessary
+     * This method is only called in Pimcore_Controller_Action_Frontend::init() to enable it only for frontend/website HTTP requests
+     * - more infos see also self::outputBufferEnd()
+     * @static
+     * @return void
+     */
+    public static function outputBufferStart () {
+        ob_start("Pimcore::outputBufferEnd");
+    }
+
+    /**
+     * if this method is called in self::shutdown() it forces the browser to close the connection an allows the
+     * shutdown-function to run in the background
+     * @static
+     * @return string
+     */
+    public static function outputBufferEnd ($data) {
+
+        // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
+        if(self::$inShutdown && !headers_sent()) {
+            ignore_user_abort(true);
+            header("Connection: close\r\n");
+            header("Content-Encoding: none\r\n");
+            header("Content-Length: " . strlen($data));
+        }
+
+        // return the data unchanged
+        return $data;
+    }
+
+    /**
      * this method is called with register_shutdown_function() and writes all data queued into the cache
      * @static
      * @return void
      */
     public static function shutdown () {
-        // first flush the output buffer, then start to do something
+
+        // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
+        self::$inShutdown = true;
+
+        // flush all custom output buffers
+        while(@ob_end_flush());
+
+        // flush everything
         flush();
-        
+
         // write collected items to cache backend       
         Pimcore_Model_Cache::write();
     }
