@@ -22,7 +22,15 @@ class Pimcore {
     public static function run() {
 
         self::setSystemRequirements();
-        
+
+        // detect frontend (website)
+        $frontend = Pimcore_Tool::isFrontend();
+
+        // enable the output-buffer, why? see in self::outputBufferStart()
+        if($frontend) {
+            self::outputBufferStart();
+        }
+
         self::initAutoloader();
         self::initConfiguration();
         self::setupFramework();
@@ -34,9 +42,6 @@ class Pimcore {
 
         // init front controller
         $front = Zend_Controller_Front::getInstance();
-
-        // detect frontend (website)
-        $frontend = Pimcore_Tool::isFrontend();
 
 
         $conf = Pimcore_Config::getSystemConfig();
@@ -680,7 +685,11 @@ class Pimcore {
      * @return void
      */
     public static function outputBufferStart () {
-        ob_start("Pimcore::outputBufferEnd");
+
+        // only for HTTP(S)
+        if(php_sapi_name() != "cli") {
+            ob_start("Pimcore::outputBufferEnd");
+        }
     }
 
     /**

@@ -23,15 +23,10 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
         parent::init();
 
-
         // log exceptions if handled by error_handler
         $this->checkForErrors();
 
-
-        // enable the output-buffer, why? see in self::outputBufferStart()
-        Pimcore::outputBufferStart();
-
-        // general definitions
+       // general definitions
         Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
         Object_Abstract::setHideUnpublished(true);

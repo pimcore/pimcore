@@ -41,7 +41,7 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
     }
 
     public function dispatchLoopShutdown() {
-        
+
         if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
