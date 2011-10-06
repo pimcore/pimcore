@@ -939,15 +939,19 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     }
 
     /**
-     * Returns a specific property by the passed name
-     *
+     * Get specific property data or the property object itself ($asContainer=true) by it's name, if the property doesn't exists return null
      * @param string $name
+     * @param bool $asContainer
      * @return mixed
      */
-    public function getProperty($name) {
+    public function getProperty($name, $asContainer = false) {
         $properties = $this->getProperties();
         if ($this->hasProperty($name)) {
-            return $properties[$name]->getData();
+            if($asContainer) {
+                return $properties[$name];
+            } else {
+                return $properties[$name]->getData();
+            }
         }
         return null;
     }
