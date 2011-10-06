@@ -31,11 +31,22 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     getLayoutEdit: function () {
 
         var panelConf = {
+            xtype: "panel",
+            border: false,
+            cls: "object_field",
+            autoHeight: true,
+            forceLayout: true,
+            monitorResize: true,
+            layout: "fit",
+            hideMode: "offsets"
+        };
+
+        var tabsConf = {
+            xtype: "tabpanel",
             autoScroll: true,
             monitorResize: true,
-            cls: "object_field",
             activeTab: 0,
-            height: 200,
+            autoHeight: true,
             items: [],
             deferredRender: true,
             forceLayout: true,
@@ -43,14 +54,14 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             enableTabScroll:true
         };
 
-
         if(!this.fieldConfig.width) {
-            panelConf.listeners = {
+            //this.fieldConfig.width = 600;
+            /*panelConf.listeners = {
                 afterrender: function () {
-                    this.component.ownerCt.doLayout();
-                    this.component.setWidth(this.component.ownerCt.getWidth()-45);
+                    this.component.doLayout();
+                    //this.component.setWidth(this.component.ownerCt.getWidth()-45);
                 }.bind(this)
-            };
+            };*/
         }
 
         if(this.fieldConfig.width) {
@@ -60,6 +71,21 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         if(this.fieldConfig.height) {
             panelConf.height = this.fieldConfig.height;
             panelConf.autoHeight = false;
+        } else {
+            panelConf.listeners = {
+                afterrender: function () {
+                    window.setTimeout(function () {
+                        var firstTab = this.tabPanel.items.first();
+                        var height = firstTab.items.first().getEl().getHeight();
+
+                        this.tabPanel.items.first().setHeight(height); // add padding
+                        this.tabPanel.items.first().doLayout();
+                        this.tabPanel.getEl().parent().setHeight(height+20);
+
+                        this.component.doLayout();
+                    }.bind(this), 2000);
+                }.bind(this)
+            };
         }
 
         if(this.fieldConfig.layout) {
@@ -83,21 +109,23 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             this.currentLanguage = pimcore.settings.websiteLanguages[i];
             this.languageElements[this.currentLanguage] = [];
 
-            panelConf.items.push({
+            tabsConf.items.push(new Ext.Panel({
                 xtype: "panel",
                 layout: "pimcoreform",
-                bodyStyle: "padding: 10px;",
+                border: false,
                 autoScroll: true,
                 deferredRender: false,
                 hideMode: "offsets",
                 title: pimcore.available_languages[pimcore.settings.websiteLanguages[i]],
                 items: this.getRecursiveLayout(this.fieldConfig).items
-            });
+            }));
 
         }
 
-        this.component = new Ext.TabPanel(panelConf);
+        this.tabPanel = new Ext.TabPanel(tabsConf);
+        panelConf.items = [this.tabPanel];
 
+        this.component = new Ext.Panel(panelConf);
         return this.component;
     },
 
