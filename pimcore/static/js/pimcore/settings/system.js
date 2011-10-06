@@ -207,6 +207,7 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t("view_suffix"),
                                 xtype: "combo",
                                 width: 250,
+                                editable: false,
                                 name: "general.viewSuffix",
                                 value: this.getValue("general.viewSuffix"),
                                 store: [
@@ -223,12 +224,37 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("general.language"),
                                 mode: 'local',
                                 listWidth: 100,
+                                editable: false,
                                 store: pimcore.globalmanager.get("pimcorelanguages"),
                                 displayField: 'display',
                                 valueField: 'language',
                                 forceSelection: true,
                                 triggerAction: 'all',
                                 hiddenName: 'general.language'
+                            },{
+                                xtype: 'superboxselect',
+                                allowBlank:false,
+                                queryDelay: 0,
+                                triggerAction: 'all',
+                                resizable: true,
+                                mode: 'local',
+                                anchor:'100%',
+                                minChars: 1,
+                                fieldLabel: t("valid_languages_frontend") + '<span style="color:red;">*</span>',
+                                emptyText: t("valid_languages_frontend_empty_text"),
+                                name: 'general.validLanguages',
+                                value: this.getValue("general.validLanguages"),
+                                store: this.languagesStore,
+                                displayField: 'display',
+                                valueField: 'language',
+                                forceFormValue: true
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: t('valid_languages_frontend_description'),
+                                cls: "pimcore_extra_label_bottom"
                             },
                             {
                                 fieldLabel: t('admin_theme'),
@@ -531,24 +557,6 @@ pimcore.settings.system = Class.create({
                         defaultType: 'textfield',
                         defaults: {width: 150},
                         items :[
-                            {
-                                xtype: 'superboxselect',
-                                allowBlank:false,
-                                queryDelay: 0,
-                                triggerAction: 'all',
-                                resizable: true,
-                                mode: 'local',
-                                anchor:'100%',
-                                minChars: 1,
-                                fieldLabel: t("valid_languages_frontend"),
-                                emptyText: t("valid_languages_frontend_empty_text"),
-                                name: 'general.validLanguages',
-                                value: this.getValue("general.validLanguages"),
-                                store: this.languagesStore,
-                                displayField: 'display',
-                                valueField: 'language',
-                                forceFormValue: true
-                            },
                             {
                                 fieldLabel: t("domain"),
                                 name: "general.domain",
@@ -1008,6 +1016,7 @@ pimcore.settings.system = Class.create({
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
+                                editable: false,
                                 style: "margin-bottom: 15px;"
                             },
                             {
@@ -1129,6 +1138,7 @@ pimcore.settings.system = Class.create({
                                 ],
                                 mode: "local",
                                 triggerAction: "all",
+                                editable: false,
                                 listeners: {
                                     afterrender: function (el) {
                                         if(el.getValue() == "Zend_Http_Client_Adapter_Proxy") {
@@ -1199,13 +1209,21 @@ pimcore.settings.system = Class.create({
     },
 
     save: function () {
-        var values = Ext.encode(this.layout.getForm().getFieldValues());
+        var values = this.layout.getForm().getFieldValues();
 
+        // check for mandatory fields
+        if(empty(values["general.validLanguages"])) {
+            Ext.MessageBox.alert(t("error"), t("mandatory_field_empty"));
+            return;
+        }
+
+
+        
         Ext.Ajax.request({
             url: "/admin/settings/set-system",
             method: "post",
             params: {
-                data: values
+                data: Ext.encode(values)
             },
             success: function (response) {
                 try {
