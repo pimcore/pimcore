@@ -69,7 +69,7 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
                                 $path = PIMCORE_DOCUMENT_ROOT . $source;
                             }
 
-                            if (is_file("file://".$path)) {
+                            if (!empty($path) && is_file("file://".$path)) {
                                 $content = file_get_contents($path);
                                 $content = $this->correctReferences($source,$content);
                                 $stylesheetContent .= $content;

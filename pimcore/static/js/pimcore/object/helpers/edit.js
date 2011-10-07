@@ -65,11 +65,15 @@ pimcore.object.helpers.edit = {
                 hideMode: "offsets",
                 listeners: {
                     afterrender: function (panel) {
-                        //console.log(panel.ownerCt.getWidth());
-                        //panel.setWidth(panel.ownerCt.getWidth()-45);
-                        panel..getEl().applyStyles("position:relative;");
-                        //panel.doLayout();
-                        panel.ownerCt.doLayout();
+                        window.setTimeout(function () {
+                            try {
+                                panel.setWidth(panel.ownerCt.body.getWidth()-50);
+                                panel.getEl().applyStyles("position:relative;");
+                                panel.ownerCt.doLayout();
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }, 2000);
                     }
                 }
             },
