@@ -63,7 +63,15 @@ pimcore.object.helpers.edit = {
                 deferredRender: true,
                 forceLayout: true,
                 hideMode: "offsets",
-                listeners: panelListenerConfig
+                listeners: {
+                    afterrender: function (panel) {
+                        //console.log(panel.ownerCt.getWidth());
+                        //panel.setWidth(panel.ownerCt.getWidth()-45);
+                        panel..getEl().applyStyles("position:relative;");
+                        //panel.doLayout();
+                        panel.ownerCt.doLayout();
+                    }
+                }
             },
             button: {
                 xtype: "button"
