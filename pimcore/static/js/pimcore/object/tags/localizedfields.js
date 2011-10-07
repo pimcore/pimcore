@@ -31,22 +31,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     getLayoutEdit: function () {
 
         var panelConf = {
-            xtype: "panel",
-            border: false,
-            cls: "object_field",
-            autoHeight: true,
-            forceLayout: true,
-            monitorResize: true,
-            layout: "fit",
-            hideMode: "offsets"
-        };
-
-        var tabsConf = {
-            xtype: "tabpanel",
             autoScroll: true,
             monitorResize: true,
+            cls: "object_field",
             activeTab: 0,
-            autoHeight: true,
+            height: 10,
             items: [],
             deferredRender: true,
             forceLayout: true,
@@ -54,46 +43,59 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             enableTabScroll:true
         };
 
+        var wrapperConfig = {
+            border: false,
+            layout: "fit"
+        };
+
+
         if(!this.fieldConfig.width) {
-            //this.fieldConfig.width = 600;
             /*panelConf.listeners = {
                 afterrender: function () {
-                    this.component.doLayout();
-                    //this.component.setWidth(this.component.ownerCt.getWidth()-45);
+                    this.component.ownerCt.doLayout();
+                    this.component.setWidth(this.component.ownerCt.getWidth()-45);
                 }.bind(this)
             };*/
         }
 
         if(this.fieldConfig.width) {
-            panelConf.width = this.fieldConfig.width;
+            wrapperConfig.width = this.fieldConfig.width;
         }
 
         if(this.fieldConfig.height) {
             panelConf.height = this.fieldConfig.height;
             panelConf.autoHeight = false;
-        } else {
-            panelConf.listeners = {
-                afterrender: function () {
-                    window.setTimeout(function () {
-                        var firstTab = this.tabPanel.items.first();
-                        var height = firstTab.items.first().getEl().getHeight();
+        }
 
-                        this.tabPanel.items.first().setHeight(height); // add padding
-                        this.tabPanel.items.first().doLayout();
-                        this.tabPanel.getEl().parent().setHeight(height+20);
-
+        // this is because the tabpanel has a strange behavior with automatic height, this corrects the problem
+        panelConf.listeners = {
+            afterrender: function () {
+                this.tabPanelAdjustIntervalCounter = 0;
+                this.tabPanelAdjustInterval = window.setInterval(function () {
+                    if(!this.fieldConfig.height && !this.fieldConfig.region) {
+                        var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
+                        var panelBody = Ext.get(panelBodies[0]);
+                        panelBody.applyStyles("height: auto;");
+                        var height = panelBody.getHeight();
+                        this.component.setHeight(height+50);
+                        this.tabPanel.getEl().applyStyles("position:relative;");
                         this.component.doLayout();
-                    }.bind(this), 2000);
-                }.bind(this)
-            };
-        }
+                    }
 
-        if(this.fieldConfig.layout) {
-            panelConf.layout = this.fieldConfig.layout;
-        }
+                    this.tabPanelAdjustIntervalCounter++;
+                    if(this.tabPanelAdjustIntervalCounter > 20) {
+                        clearInterval(this.tabPanelAdjustInterval);
+                    }
+                }.bind(this), 100);
+            }.bind(this)
+        };
+
+        /*if(this.fieldConfig.layout) {
+            wrapperConfig.layout = this.fieldConfig.layout;
+        }*/
 
         if(this.fieldConfig.region) {
-            panelConf.region = this.fieldConfig.region;
+            wrapperConfig.region = this.fieldConfig.region;
         }
 
         if(this.fieldConfig.title) {
@@ -109,23 +111,26 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             this.currentLanguage = pimcore.settings.websiteLanguages[i];
             this.languageElements[this.currentLanguage] = [];
 
-            tabsConf.items.push(new Ext.Panel({
+            panelConf.items.push({
                 xtype: "panel",
                 layout: "pimcoreform",
-                border: false,
+                border:false,
                 autoScroll: true,
+                padding: "10px",
                 deferredRender: false,
                 hideMode: "offsets",
                 title: pimcore.available_languages[pimcore.settings.websiteLanguages[i]],
                 items: this.getRecursiveLayout(this.fieldConfig).items
-            }));
+            });
 
         }
 
-        this.tabPanel = new Ext.TabPanel(tabsConf);
-        panelConf.items = [this.tabPanel];
+        this.tabPanel = new Ext.TabPanel(panelConf);
 
-        this.component = new Ext.Panel(panelConf);
+
+        wrapperConfig.items = [this.tabPanel];
+        this.component = new Ext.Panel(wrapperConfig);
+
         return this.component;
     },
 
