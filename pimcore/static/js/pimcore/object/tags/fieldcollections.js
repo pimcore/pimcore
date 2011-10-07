@@ -180,7 +180,14 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     addBlock: function (blockElement, type) {
 
         if(this.fieldConfig.maxItems) {
-            if(this.component.items.items.length >= this.fieldConfig.maxItems) {
+            var itemAmount = 0;
+            for(var s=0; s<this.component.items.items.length; s++) {
+                if(typeof this.component.items.items[s].key != "undefined") {
+                    itemAmount++;
+                }
+            }
+
+            if(itemAmount >= this.fieldConfig.maxItems) {
                 Ext.MessageBox.alert(t("error"), t("limit_reached"));
                 return;
             }
