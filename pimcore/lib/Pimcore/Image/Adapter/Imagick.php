@@ -96,6 +96,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     public function crop($x, $y, $width, $height) {
         $this->resource->cropImage($width, $height, $x, $y);
+        $this->resource->setImagePage($width, $height, 0, 0);
 
         $this->setWidth($width);
         $this->setHeight($height);
