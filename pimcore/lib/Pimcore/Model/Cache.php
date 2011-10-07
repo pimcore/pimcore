@@ -27,7 +27,7 @@ class Pimcore_Model_Cache {
     public static $saveStack = array();
     public static $logger;
     public static $clearStack = array();
-    public static $maxWriteToCacheItems = 50;
+    public static $maxWriteToCacheItems = 150;
     public static $cachePrefix = "pimcore_";
     
     /**
