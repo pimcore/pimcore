@@ -672,9 +672,14 @@ pimcore.object.classes.klass = Class.create({
                 data = node.attributes.object.getData();
 
                 data.name = trim(data.name);
-                var regresult = data.name.match(/[a-zA-Z0-9_]+/);
 
-                if (data.name.length > 1 && regresult == data.name && in_arrayi(data.name,this.usedFieldNames) == false && in_array(data.name.toLowerCase(), ["id","key","path","type","index","classname","creationdate","userowner","value","class","list","fullpath","childs","values","cachetag","cachetags","parent","published","valuefromparent","userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data","versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource","parentClass","definition","locked","language","omitmandatorycheck"]) == false) {
+                // field specific validation
+                var fieldValidation = true;
+                if(typeof node.attributes.object.isValid == "function") {
+                    fieldValidation = node.attributes.object.isValid();
+                }
+
+                if (fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false) {
                     if(data.datatype == "data") {
                         this.usedFieldNames.push(data.name);
                     }

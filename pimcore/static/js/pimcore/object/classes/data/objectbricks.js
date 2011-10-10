@@ -46,6 +46,22 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
         this.specificPanel.removeAll();
 
         return this.layout;
+    },
+
+    isValid: function ($super) {
+
+        if(!$super()) {
+            return false;
+        }
+
+        // underscore "_" ist not allowed!
+        // reason: the backend creates a class with the name of this field, if it contains an _ the autoloader isn't able to load this file
+        var data = this.getData();
+        if(data.name.match(/[_]+/)) {
+            return false;
+        }
+
+        return true;
     }
     
 });
