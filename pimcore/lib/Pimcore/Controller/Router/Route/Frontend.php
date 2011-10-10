@@ -223,12 +223,33 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                             }
                         }
 
-                        $params["controller"] = $route->getController();
-                        $params["action"] = $route->getAction();
+                        $controller = $route->getController();
+                        $action = $route->getAction();
                         $module = trim($route->getModule());
+
+                        // check for dynamic controller / action / module
+                        $dynamicRouteReplace = function ($item, $params) {
+                            if(strpos($item, "%") !== false) {
+                                foreach ($params as $key => $value) {
+                                    $dynKey = "%" . $key;
+                                    if(strpos($item, $dynKey) !== false) {
+                                        return str_replace($dynKey, $value, $item);
+                                    }
+                                }
+                            }
+                            return $item;
+                        };
+
+                        $controller = $dynamicRouteReplace($controller, $params);
+                        $action = $dynamicRouteReplace($action, $params);
+                        $module = $dynamicRouteReplace($module, $params);
+
+                        $params["controller"] = $controller;
+                        $params["action"] = $action;
                         if(!empty($module)){
                             $params["module"] = $module;
                         }
+
 
                         // try to get nearest document to the route
                         $params["document"] = $this->getNearestDocumentByPath($path);
