@@ -16,6 +16,12 @@
 class Pimcore_View extends Zend_View {
 
     /**
+     * @var Zend_Controller_Request_Abstract
+     */
+    protected $request;
+
+
+    /**
      * @param $type
      * @param $name
      * @param array $options
@@ -192,27 +198,31 @@ class Pimcore_View extends Zend_View {
 
     /**
      * @param $key
+     * @param $default
      * @return mixed
      */
-    public function getParam($key) {
-        if(is_array($this->params)) {
-            return $this->params[$key];
+    public function getParam($key, $default = null) {
+        $value = $this->getRequest()->getParam($key);
+        if ((null === $value || '' === $value) && (null !== $default)) {
+            $value = $default;
         }
-    }
 
-    /**
-     * @return array
-     */
-    public function getAllParams () {
-        return $this->params;
+        return $value;
     }
 
     /**
      * @param $key
      * @return mixed
      */
-    public function _getParam($key) {
-        return $this->getParam($key);
+    public function _getParam($key, $default = null) {
+        return $this->getParam($key, $default);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllParams () {
+        return $this->getRequest()->getParams();
     }
 
     /**
@@ -227,6 +237,14 @@ class Pimcore_View extends Zend_View {
      */
     public function getRequest() {
         return $this->request;
+    }
+
+    /**
+     * @param Zend_Controller_Request_Http $request
+     * @return void
+     */
+    public function setRequest(Zend_Controller_Request_Http $request) {
+        $this->request = $request;
     }
 
     /**

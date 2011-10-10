@@ -32,8 +32,7 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         }
 
         // add some parameters
-        $this->view->params = $this->_getAllParams();
-        $this->view->request = $this->getRequest();
+        $this->view->setRequest($this->getRequest());
     }
 
     protected function removeViewRenderer() {
