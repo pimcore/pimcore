@@ -68,7 +68,7 @@ pimcore.object.helpers.edit = {
                         window.setTimeout(function () {
                             try {
                                 panel.setWidth(panel.ownerCt.body.getWidth()-50);
-                                panel.getEl().applyStyles("position:relative;");
+                                //panel.getEl().applyStyles("position:relative;");
                                 panel.ownerCt.doLayout();
                             } catch (e) {
                                 console.log(e);

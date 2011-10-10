@@ -79,7 +79,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                         var height = panelBody.getHeight();
                         this.component.setHeight(height+100); // 100 is just a fixed value which seems to be ok (caused by title bar, tabs itself, ... )
 
-                        this.tabPanel.getEl().applyStyles("position:relative;");
+                        //this.tabPanel.getEl().applyStyles("position:relative;");
                         this.component.doLayout();
                     }
 
