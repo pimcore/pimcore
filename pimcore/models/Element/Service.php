@@ -146,26 +146,6 @@ class Element_Service
     }
 
     /**
-     * determines the type of an element (object,asset,document)
-     *
-     * @static
-     * @param  Element_Interface $element
-     * @return string
-     */
-    public static function getType($element)
-    {
-        if ($element instanceof Object_Abstract) {
-            return "object";
-        }
-        else if ($element instanceof Asset) {
-            return "asset";
-        }
-        else if ($element instanceof Document) {
-            return "document";
-        }
-    }
-
-    /**
      * @static
      * @param  string $type
      * @param  string $path
@@ -245,6 +225,18 @@ class Element_Service
             $type = "asset";
         }
         return $type;
+    }
+
+    /**
+     * determines the type of an element (object,asset,document)
+     *
+     * @static
+     * @param  Element_Interface $element
+     * @return string
+     */
+    public static function getType($element)
+    {
+        return self::getElementType($element);
     }
 
     /**

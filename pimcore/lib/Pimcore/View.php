@@ -68,6 +68,11 @@ class Pimcore_View extends Zend_View {
                 $tag = $document->getElement($name);
                 if ($tag instanceof Document_Tag && $tag->getType() == $type) {
 
+                    // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
+                    if(method_exists($tag, "load")) {
+                        $tag->load();
+                    }
+
                     // set view & controller, editmode
                     $tag->setController($this->controller);
                     $tag->setView($this);

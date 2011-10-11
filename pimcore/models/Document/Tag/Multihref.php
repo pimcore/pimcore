@@ -218,14 +218,12 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
     /**
      * @return void
      */
-    public function __wakeUp() {
+    public function load () {
         if(isset($this->__sleepData)) {
             $this->setDataFromEditmode($this->__sleepData);
             unset($this->__sleepData);
         }
     }
-
-
 
     /**
      * Methods for Iterator

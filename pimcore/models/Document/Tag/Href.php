@@ -323,17 +323,9 @@ class Document_Tag_Href extends Document_Tag {
         return $finalVars;
     }
 
-    /**
-     * @return void
-     */
-    public function __wakeUp() {
-        $this->load();
-    }
-
 
     /**
      * this method is called by Document_Service::loadAllDocumentFields() to load all lazy loading fields
-     * 
      * @return void
      */
     public function load () {

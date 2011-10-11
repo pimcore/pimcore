@@ -54,9 +54,6 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return mixed
      */
     public function getDataEditmode() {
-
-        $this->load();
-
         if ($this->snippet instanceof Document_Snippet) {
             return array(
                 "id" => $this->id,
@@ -71,9 +68,6 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return string
      */
     public function frontend() {
-
-        $this->load();
-
         if ($this->getView() instanceof Zend_View) {
             try {
                 if ($this->snippet instanceof Document_Snippet) {
@@ -122,9 +116,6 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return boolean
      */
     public function isEmpty() {
-
-        $this->load();
-
         if($this->snippet instanceof Document_Snippet) {
             return false;
         }
@@ -136,9 +127,6 @@ class Document_Tag_Snippet extends Document_Tag {
      * @return array
      */
     public function resolveDependencies () {
-
-        $this->load();
-
         $dependencies = array();
         
         if ($this->snippet instanceof Document_Snippet) {
@@ -196,14 +184,6 @@ class Document_Tag_Snippet extends Document_Tag {
         }
 
         return $finalVars;
-    }
-
-
-    /**
-     * @return void
-     */
-    public function __wakeUp() {
-        $this->load();
     }
 
     /**
