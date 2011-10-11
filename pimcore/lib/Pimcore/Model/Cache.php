@@ -250,19 +250,21 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function addToSaveStack ($config) {
+        $priority = $config[4];
+        $i=0;
 
-        // add the item to the save stack
-        array_unshift(self::$saveStack, $config);
-
-        // sort by priority
-        usort(self::$saveStack, function ($a, $b) {
-            // the priority has the index 4
-            if ($a[4] == $b[4]) {
-                return 0;
+        //saveStack is sorted - just find the correct position for the new item
+        foreach(self::$saveStack as $entry) {
+            if($entry[4] <= $priority) {
+                //we got the position!
+                break;
+            } else {
+                $i++;
             }
-            return ($a[4] > $b[4]) ? -1 : 1;
-        });
-        
+        }
+        //add new item at the correct position
+        array_splice(self::$saveStack, $i, 0, array($config));
+
         // remove items which are too much, and cannot be added to the cache anymore
         array_splice(self::$saveStack,self::$maxWriteToCacheItems);
     }
