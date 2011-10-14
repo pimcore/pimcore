@@ -260,15 +260,22 @@ class Pimcore_Tool {
      * @param  $subject
      * @return Zend_Mail
      */
-    public static function getMail($recipients,$subject) {
+    public static function getMail($recipients = null, $subject = null) {
 
         $values = Pimcore_Config::getSystemConfig();
         $valueArray = $values->toArray();
         $emailSettings = $valueArray["email"];
 
         $mail = new Zend_Mail("UTF-8");
-        $mail->setFrom($emailSettings['sender']['email'],$emailSettings['sender']['name']);
-        $mail->setReplyTo($emailSettings['return']['email'],$emailSettings['return']['name']);
+
+        if(!empty($emailSettings['sender']['email'])) {
+            $mail->setDefaultFrom($emailSettings['sender']['email'],$emailSettings['sender']['name']);
+        }
+
+        if(!empty($emailSettings['return']['email'])) {
+            $mail->setDefaultReplyTo($emailSettings['return']['email'],$emailSettings['return']['name']);
+        }
+
         if($emailSettings['method']=="smtp"){
 
             $config = array();
@@ -292,12 +299,21 @@ class Pimcore_Tool {
             //logger::log($config);
             $mail->setDefaultTransport($transport);
         }
-        if(is_array($recipients)){
-            foreach($recipients as $recipient){
-                $mail->addTo($recipient);
+
+        if($recipients) {
+            if(is_string($recipients)) {
+                $mail->addTo($recipients);
+            } else if(is_array($recipients)){
+                foreach($recipients as $recipient){
+                    $mail->addTo($recipient);
+                }
             }
         }
-        $mail->setSubject($subject);
+
+        if($subject) {
+            $mail->setSubject($subject);
+        }
+
         return $mail;
     }
 
