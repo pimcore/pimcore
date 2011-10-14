@@ -43,7 +43,7 @@ class Document_Service extends Element_Service {
       * @param array $params
       * @return
       */
-     public static function render (Document $document = null, $params = array()) {
+     public static function render (Document $document, $params = array()) {
 
         $view = new Pimcore_View();
         $params["document"] = $document;
