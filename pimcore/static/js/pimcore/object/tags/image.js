@@ -34,7 +34,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             }
 
             if (value && value.id) {
-                return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id + '/width/88/aspectratio/true" />';
+                return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id + '/width/88/height/88/frame/true" />';
             }
         }.bind(this, field.key)};
     },    
@@ -185,9 +185,11 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
     
     updateImage: function () {
-        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/aspectratio/true";
+        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/height/" + (this.fieldConfig.height - 20) + "/contain/true";
         this.getBody().setStyle({
-            backgroundImage: "url(" + path + ")"
+            backgroundImage: "url(" + path + ")",
+            BackgroundPosition: "center center",
+
         });
         this.getBody().repaint();
     },

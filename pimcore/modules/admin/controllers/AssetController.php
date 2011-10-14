@@ -87,13 +87,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         if ($asset instanceof Asset_Image) {
             $imageInfo = array();
 
-            $imageSize = @getimagesize($asset->getFileSystemPath());
-            if(is_array($imageSize)) {
-                if($imageSize[0] && $imageSize[1]) {
-                    $imageInfo["dimensions"] = array();
-                    $imageInfo["dimensions"]["width"] = $imageSize[0];
-                    $imageInfo["dimensions"]["height"] = $imageSize[1];
-                }
+            if($asset->getWidth() && $asset->getHeight()) {
+                $imageInfo["dimensions"] = array();
+                $imageInfo["dimensions"]["width"] = $asset->getWidth();
+                $imageInfo["dimensions"]["height"] = $asset->getHeight();
             }
 
             if(function_exists("exif_read_data")) {
