@@ -86,7 +86,9 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         var iframe = document.createElement("iframe");
         iframe.setAttribute("frameborder", "0");
         iframe.setAttribute("id", this.previewIframeId);
-        iframe.onload = function () {
+
+        // unfortunately iframe.onload doesn't work in IE8, so that we have to use setTimeout()
+        window.setTimeout(function () {
             var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
             var iframeContent = this.data;
             iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
@@ -96,10 +98,9 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             if(this.disableEditing == false) {
                 Ext.get(document.body).on("click", this.initCkEditor.bind(this));
             }
+        }.bind(this), 500);
 
-        }.bind(this);
-
-        Ext.get(this.editableDivId).dom.innerHTML = "";
+        Ext.get(this.editableDivId).update("");
         Ext.get(this.editableDivId).dom.appendChild(iframe);
 
 
