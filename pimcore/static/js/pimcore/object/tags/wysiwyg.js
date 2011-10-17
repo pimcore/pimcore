@@ -86,19 +86,13 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         var iframe = document.createElement("iframe");
         iframe.setAttribute("frameborder", "0");
         iframe.setAttribute("id", this.previewIframeId);
+        iframe.src = "about:blank";
 
-        // unfortunately iframe.onload doesn't work in IE8, so that we have to use setTimeout()
-        window.setTimeout(function () {
-            var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
-            var iframeContent = this.data;
-            iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
-            document.body.innerHTML = iframeContent;
-            document.body.setAttribute("style", "height: 80%; cursor: pointer;");
 
-            if(this.disableEditing == false) {
-                Ext.get(document.body).on("click", this.initCkEditor.bind(this));
-            }
-        }.bind(this), 500);
+        iframe.onload = this.initializePreview.bind(this);
+
+        // HACK: unfortunately iframe.onload doesn't work in IE8, so that we have to use setTimeout()
+        window.setTimeout(this.initializePreview.bind(this), 2000);
 
         Ext.get(this.editableDivId).update("");
         Ext.get(this.editableDivId).dom.appendChild(iframe);
@@ -114,6 +108,19 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             Ext.get(this.previewIframeId).setStyle({
                 width: this.fieldConfig.width + "px"
             });
+        }
+    },
+
+    initializePreview: function () {
+        var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
+        var iframeContent = this.data;
+        iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
+
+        document.body.innerHTML = iframeContent;
+        document.body.setAttribute("style", "height: 80%; cursor: pointer;");
+
+        if(this.disableEditing == false) {
+            Ext.get(document.body).on("click", this.initCkEditor.bind(this));
         }
     },
 
