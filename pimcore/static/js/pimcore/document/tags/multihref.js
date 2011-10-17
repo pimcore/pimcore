@@ -39,8 +39,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         });
 
 
-
-        this.element = new Ext.grid.GridPanel({
+        var elementConfig = {
             plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
             bodyStyle: "color:#000",
@@ -107,11 +106,24 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         handler: this.openSearchEditor.bind(this)
                     }
                 ]
-            },
-            autoHeight: true,
-            width: this.options.width,
-            height: this.options.height
-        });
+            }
+        };
+
+        // height specifics
+        if(typeof this.options.height != "undefined") {
+            elementConfig.height = this.options.height;
+        } else {
+            elementConfig.autoHeight = true;
+        }
+
+        // width specifics
+        if(typeof this.options.width != "undefined") {
+            elementConfig.width = this.options.width;
+        }
+
+
+
+        this.element = new Ext.grid.GridPanel(elementConfig);
 
         this.element.on("rowcontextmenu", this.onRowContextmenu);
         this.element.reference = this;
