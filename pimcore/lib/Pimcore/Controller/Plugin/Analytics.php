@@ -45,20 +45,25 @@ class Pimcore_Controller_Plugin_Analytics extends Zend_Controller_Plugin_Abstrac
             include_once("simple_html_dom.php");
             $body = $this->getResponse()->getBody();
 
-            $html = str_get_html($body);
-            if($html) {
-                if($head = $html->find("head",0)) {
-                    $head->innertext = $head->innertext . Pimcore_Google_Analytics::getCode();
 
+            // search for the end <head> tag, and insert the google analytics code before
+            // this method is much faster than using simple_html_dom and uses less memory
+            $headEndPosition = strpos($body, "</head>");
+            if($headEndPosition !== false) {
+                $body = substr_replace($body, Pimcore_Google_Analytics::getCode()."</head>", $headEndPosition, 7);
+            }
 
+            // website optimizer
+            if($this->document) {
+                $top = Pimcore_Google_Analytics::getOptimizerTop($this->document);
+                $bottom = Pimcore_Google_Analytics::getOptimizerBottom($this->document);
+                $conversion = Pimcore_Google_Analytics::getOptimizerConversion($this->document);
 
-                    // website optimizer
-                    if($this->document) {
+                if($top || $bottom || $conversion) {
+                    $html = str_get_html($body);
+
+                    if($html) {
                         $body = $html->find("body",0);
-
-                        $top = Pimcore_Google_Analytics::getOptimizerTop($this->document);
-                        $bottom = Pimcore_Google_Analytics::getOptimizerBottom($this->document);
-                        $conversion = Pimcore_Google_Analytics::getOptimizerConversion($this->document);
 
                         if($top && $bottom) {
                             $body->innertext = $top . $body->innertext . $bottom;
@@ -69,13 +74,17 @@ class Pimcore_Controller_Plugin_Analytics extends Zend_Controller_Plugin_Abstrac
                         else if($bottom) {
                             $body->innertext = $body->innertext . $bottom;
                         }
+
+                        $body = $html->save();
                     }
-
-                    $html = $html->save();
-
-                    $this->getResponse()->setBody($html);
                 }
             }
+
+
+
+            $this->getResponse()->setBody($body);
+
+
         }
     }
 }
