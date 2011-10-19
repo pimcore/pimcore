@@ -626,6 +626,15 @@ pimcore.settings.thumbnail.items = {
                 width: 50,
                 value: data.alpha
             },{
+                xtype: "combo",
+                name: "item." + myId  + ".composite",
+                fieldLabel: t("composite"),
+                value: data.composite,
+                triggerAction: 'all',
+                editable: false,
+                store: ["COMPOSITE_DEFAULT", "COMPOSITE_HARDLIGHT", "COMPOSITE_EXCLUSION"],
+                width: 200
+            },{
                 xtype: "hidden",
                 name: "item." + myId  + ".type",
                 value: "addOverlay"

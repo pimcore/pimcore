@@ -226,17 +226,22 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param int $alpha
      * @return Pimcore_Image_Adapter_Imagick
      */
-    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100) {
+    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = null, $composite = "COMPOSITE_DEFAULT") {
                 
         $image = ltrim($image,"/");
         $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+
+        // 100 alpha is default
+        if(empty($alpha)) {
+            $alpha = 100;
+        }
         $alpha = round($alpha / 100, 1);
 
         if(is_file($image)) {
             $newImage = new Imagick();
             $newImage->readimage($image);
             $newImage->setimageopacity($alpha);
-            $this->resource->compositeImage($newImage, Imagick::COMPOSITE_DEFAULT, $x ,$y);
+            $this->resource->compositeImage($newImage, constant("Imagick::" . $composite), $x ,$y);
         }
 
         $this->reinitializeImage();

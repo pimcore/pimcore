@@ -267,7 +267,7 @@ abstract class Pimcore_Image_Adapter {
      * @param int $alpha
      * @return Pimcore_Image_Adapter
      */
-    public function  addOverlay ($image, $x, $y, $alpha = 100) {
+    public function  addOverlay ($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT") {
 
         return $this;
     }
