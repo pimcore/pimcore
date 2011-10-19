@@ -156,7 +156,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         else if (is_array($orderKey) && !empty($orderKey)) {
             $this->orderKey = array();
             foreach ($orderKey as $o) {
-                if ($this->isValidOrderKey($orderKey)) {
+                if ($this->isValidOrderKey($o)) {
                     $this->orderKey[] = $o;
                 }
             }
