@@ -1235,6 +1235,13 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 $tmpDocument["iconCls"] = "pimcore_icon_folder";
             }
 
+        } else if ($childDocument->getType() == "link") {
+
+            $tmpDocument["_is_leaf"] = $childDocument->hasNoChilds();
+
+            if ($childDocument->hasNoChilds()) {
+                $tmpDocument["iconCls"] = "pimcore_icon_link";
+            }
         }
         else {
             $tmpDocument["leaf"] = true;
