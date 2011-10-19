@@ -266,10 +266,10 @@ class Element_Service
             if ($element) {
                 try {
                     self::performSanityCheck($element,$runDirtyCheck);
-                    $sanityCheck->delete();
                 } catch (Exception $e) {
                     Logger::error("Element_Service: sanity check for element with id [ " . $element->getId() . " ] and type [ " . self::getType($element) . " ] failed");
                 }
+                $sanityCheck->delete();
             } else {
                 $sanityCheck->delete();
             }
