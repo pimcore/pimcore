@@ -35,7 +35,7 @@ class Webservice_Tool {
 
                 $file = str_replace($modelsDir,"",$file);
                 $file = str_replace(".php","",$file);
-                $class = str_replace("/","_",$file);
+                $class = str_replace(DIRECTORY_SEPARATOR,"_",$file);
                 
                 if(class_exists($class)) {
                     $match = false;
