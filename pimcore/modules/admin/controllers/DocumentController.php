@@ -920,14 +920,16 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $id = array_shift($idStore["rewrite-stack"]);
         $document = Document::getById($id);
 
-        // rewriting elements
-        $elements = $document->getElements();
-        foreach ($elements as &$element) {
-            if(method_exists($element, "rewriteIds")) {
-                $element->rewriteIds($idStore["idMapping"]);
+        // rewriting elements only for snippets and pages
+        if($document instanceof Document_PageSnippet) {
+            $elements = $document->getElements();
+            foreach ($elements as &$element) {
+                if(method_exists($element, "rewriteIds")) {
+                    $element->rewriteIds($idStore["idMapping"]);
+                }
             }
+            $document->setElements($elements);
         }
-        $document->setElements($elements);
 
         // rewriting properties
         $properties = $document->getProperties();
