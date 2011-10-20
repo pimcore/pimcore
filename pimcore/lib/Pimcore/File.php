@@ -75,7 +75,7 @@ class Pimcore_File {
 
         foreach ($include_paths as $path) {
             $include = $path.DIRECTORY_SEPARATOR.$filename;
-            if (is_file($include) && is_readable($include)) {
+            if (@is_file($include) && @is_readable($include)) {
                 $isIncludeAble = true;
                 break;
             }
