@@ -240,7 +240,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if(is_file($image)) {
             $newImage = new Imagick();
             $newImage->readimage($image);
-            $newImage->setimageopacity($alpha);
+            $newImage->evaluateImage(Imagick::EVALUATE_MULTIPLY, $alpha, Imagick::CHANNEL_ALPHA); 
             $this->resource->compositeImage($newImage, constant("Imagick::" . $composite), $x ,$y);
         }
 
