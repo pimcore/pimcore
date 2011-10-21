@@ -93,7 +93,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $imageInfo["dimensions"]["height"] = $asset->getHeight();
             }
 
-            if(function_exists("exif_read_data")) {
+            if(function_exists("exif_read_data") && is_file($asset->getFileSystemPath())) {
                 $supportedTypes = array(IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM);
 
                 if(in_array(exif_imagetype($asset->getFileSystemPath()),$supportedTypes)) {
