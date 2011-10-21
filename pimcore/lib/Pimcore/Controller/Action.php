@@ -30,6 +30,9 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         catch (Exception $e) {
             $this->initCustomView();
         }
+
+        // add some parameters
+        $this->view->setRequest($this->getRequest());
     }
 
     protected function removeViewRenderer() {
@@ -106,9 +109,6 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         Zend_Controller_Action_HelperBroker::addHelper($viewHelper);
 
         $this->view = $view;
-
-        // add some parameters
-        $this->view->setRequest($this->getRequest());
 
         Zend_Registry::set("pimcore_custom_view", true);
     }
