@@ -728,6 +728,9 @@ class Pimcore {
         // flush everything
         flush();
 
+        // clear tags scheduled for the shutdown
+        Pimcore_Model_Cache::clearTagsOnShutdown();
+
         // write collected items to cache backend       
         Pimcore_Model_Cache::write();
     }

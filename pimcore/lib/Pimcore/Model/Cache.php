@@ -17,17 +17,54 @@ class Pimcore_Model_Cache {
 
     /**
      * Instance of the used cache-implementation
-     *
      * @var Zend_Cache_Core|Zend_Cache_Frontend
      */
     public static $instance;
-    public static $writeInstance;
+
+    /**
+     * @var bool
+     */
     public static $enabled = true;
+
+    /**
+     * @var null
+     */
     public static $defaultLifetime = null;
+
+    /**
+     * Contains the items which should be written to the cache on shutdown. They are ordered respecting the priority
+     * @var array
+     */
     public static $saveStack = array();
+
+    /**
+     * Contains the Logger, this is necessary because otherwise logging doesn't work in shutdown (missing reference)
+     * @var Logger
+     */
     public static $logger;
-    public static $clearStack = array();
-    public static $maxWriteToCacheItems = 150;
+
+    /**
+     * Contains the tags which were already cleared
+     * @var array
+     */
+    public static $clearedTagsStack = array();
+
+    /**
+     * Items having tags which are in this array are cleared on shutdown Pimcore::shutdown(); This is especially for the output-cache
+     * @var array
+     */
+    protected static $_clearTagsOnShutdown = array();
+
+    /**
+     * How many items should stored to the cache within one process
+     * @var int
+     */
+    public static $maxWriteToCacheItems = 50;
+
+    /**
+     * prefix which will be added to every item-key
+     * @var string
+     */
     public static $cachePrefix = "pimcore_";
     
     /**
@@ -181,7 +218,7 @@ class Pimcore_Model_Cache {
         }
 
         // don't put anything into the cache, when cache is cleared
-        if(in_array("__CLEAR_ALL__",self::$clearStack)) {
+        if(in_array("__CLEAR_ALL__",self::$clearedTagsStack)) {
             return;
         }
 
@@ -222,7 +259,7 @@ class Pimcore_Model_Cache {
             // check for cleared tags, only item which are not cleared within the same session are stored to the cache
             if(is_array($tags)){
                 foreach ($tags as $t) {
-                    if(in_array($t,self::$clearStack)) {
+                    if(in_array($t,self::$clearedTagsStack)) {
                         Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
                         return;
                     }
@@ -303,7 +340,7 @@ class Pimcore_Model_Cache {
 
         // reset
         self::$saveStack = array();
-        self::$clearStack = array();
+        self::$clearedTagsStack = array();
     }
     
     /**
@@ -317,7 +354,7 @@ class Pimcore_Model_Cache {
         }
         
         // add tag to clear stack
-        self::$clearStack[] = "__CLEAR_ALL__";
+        self::$clearedTagsStack[] = "__CLEAR_ALL__";
     }
 
     /**
@@ -327,28 +364,28 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function clearTag($tag) {
-        Logger::info("clear cache tag: " . $tag);
-        
-        if($cache = self::getInstance()) {
-            $cache->clean(
-            Zend_Cache::CLEANING_MODE_MATCHING_TAG,
-                array($tag)
-            );
-        }
-        
-        // add tag to clear stack
-        self::$clearStack[] = $tag;
+        self::clearTags(array($tag));
     }
     
     /**
-     * Removes entries from the cache mathing the given tags
+     * Removes entries from the cache matching the given tags
      *
      * @param string $tag
      * @return void
      */
     public static function clearTags($tags = array()) {
         Logger::info("clear cache tags: " . implode(",",$tags));
-        
+
+        // check for the tag output, because items with this tags are only cleared after the process is finished
+        // the reason is that eg. long running importers will clean the output-cache on every save/update, that's not necessary,
+        // only cleaning the output-cache on shutdown should be enough 
+        $outputTagPosition = array_search("output", $tags);
+        if($outputTagPosition !== false) {
+            array_splice($tags, $outputTagPosition, 1);
+            self::$_clearTagsOnShutdown[] = "output";
+        }
+
+        // clean tags, except output
         if($cache = self::getInstance()) {
             $cache->clean(
                 Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
@@ -358,7 +395,24 @@ class Pimcore_Model_Cache {
         
         // add tag to clear stack
         foreach ($tags as $tag) {
-            self::$clearStack[] = $tag;
+            self::$clearedTagsStack[] = $tag;
+        }
+    }
+
+
+    /**
+     * @static
+     * @return void
+     */
+    public static function clearTagsOnShutdown() {
+        if(!empty(self::$_clearTagsOnShutdown)) {
+            $tags = array_unique(self::$_clearTagsOnShutdown);
+            if($cache = self::getInstance()) {
+                $cache->clean(
+                    Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
+                    $tags
+                );
+            }
         }
     }
 
