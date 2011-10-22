@@ -111,6 +111,15 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
     public function dispatchLoopShutdown() {
         if ($this->enabled && $this->getResponse()->getHttpResponseCode() == 200) {
             try {
+
+                if($this->lifetime) {
+                    // add cache control for proxies and http-caches like varnish, ...
+                    $this->getResponse()->setHeader("Cache-Control", "public, max-age=" . $this->lifetime, true);
+
+                    // add expire header
+                    $this->getResponse()->setHeader("Expires", Zend_Date::now()->add($this->lifetime)->get(Zend_Date::RFC_1123));
+                }
+
                 $cacheItem = array(
                     "headers" => $this->getResponse()->getHeaders(),
                     "rawHeaders" => $this->getResponse()->getRawHeaders(),
