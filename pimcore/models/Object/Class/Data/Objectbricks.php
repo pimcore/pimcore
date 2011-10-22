@@ -33,7 +33,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     public $phpdocType = "Object_Objectbrick";
 
     /**
-     * @var string
+     * @var array
      */
     public $allowedTypes = array();
 
@@ -282,6 +282,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
     public function getAllowedTypes()
     {
+
         return $this->allowedTypes;
     }
 
@@ -297,7 +298,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     Object_Objectbrick_Definition::getByKey($allowedTypes[$i]);
                 } catch (Exception $e) {
 
-                    Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
+                    Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of object brick");
                     unset($allowedTypes[$i]);
                 }
             }

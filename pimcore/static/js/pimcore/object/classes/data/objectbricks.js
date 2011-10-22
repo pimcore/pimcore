@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.objectbricks");
 pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.data.data, {
 
     type: "objectbricks",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "objectbricks";

@@ -352,21 +352,11 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
         foreach ($this->getFieldDefinitions() as $fd) {
 
-            $key = $fd->getName();
+            /**
+             * @var $fd Object_Class_Data
+             */
+            $code .= $fd->getGetterCodeLocalizedfields($class);
 
-            $code .= '/**' . "\n";
-            $code .= '* @return ' . $fd->getPhpdocType() . "\n";
-            $code .= '*/' . "\n";
-            $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
-
-            $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
-
-            // adds a hook preGetValue which can be defined in an extended class
-            $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-            $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
-
-            $code .= "\t return " . '$data' . ";\n";
-            $code .= "}\n\n";
         }
 
         return $code;
@@ -380,17 +370,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
         foreach ($this->getFieldDefinitions() as $fd) {
 
-            $key = $fd->getName();
-
-            $code .= '/**' . "\n";
-            $code .= '* @param ' . $fd->getPhpdocType() . ' $' . $key . "\n";
-            $code .= "* @return void\n";
-            $code .= '*/' . "\n";
-            $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ', $language = null) {' . "\n";
-
-            $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language)' . ";\n";
-
-            $code .= "}\n\n";
+            /**
+             * @var $fd Object_Class_Data
+             */
+            $code .= $fd->getSetterCodeLocalizedfields($class);
         }
 
         return $code;

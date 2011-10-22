@@ -555,9 +555,12 @@ abstract class Object_Class_Data {
         } else return "";
     }
 
+    /**
+     * Creates getter code which is used for generation of php file for object classes using this data type
+     * @param $class
+     * @return string
+     */
     public function getGetterCode ($class) {
-        // getter
-
         $key = $this->getName();
         $code = "";
 
@@ -587,12 +590,15 @@ abstract class Object_Class_Data {
         return $code;
     }
 
+    /**
+     * Creates setter code which is used for generation of php file for object classes using this data type
+     * @param $class
+     * @return string
+     */
     public function getSetterCode ($class) {
-
         $key = $this->getName();
         $code = "";
 
-        // setter
         $code .= '/**' . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= "* @return void\n";
@@ -610,5 +616,130 @@ abstract class Object_Class_Data {
         return $code;
     }
 
+
+    /**
+     * Creates getter code which is used for generation of php file for object brick classes using this data type
+     * @param $brickClass
+     * @return string
+     */
+    public function getGetterCodeObjectbrick ($brickClass) {
+        $key = $this->getName();
+        $code = '/**' . "\n";
+        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= "public function get" . ucfirst($key) . " () {\n";
+
+        $code .= "\t" . 'if(!$this->' . $key . ' && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
+        $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        $code .= "\t return " . '$this->' . $key . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+
+    }
+
+    /**
+     * Creates setter code which is used for generation of php file for object brick classes using this data type
+     * @param $brickClass
+     * @return string
+     */
+    public function getSetterCodeObjectbrick ($brickClass) {
+        $key = $this->getName();
+
+        $code = '/**' . "\n";
+        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= "* @return void\n";
+        $code .= '*/' . "\n";
+        $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
+        $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
+        $code .= "}\n\n";
+        
+        return $code;
+    }
+
+
+    /**
+     * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
+     * @param $fieldcollectionDefinition
+     * @return string
+     */
+    public function getGetterCodeFieldcollection ($fieldcollectionDefinition) {
+        $key = $this->getName();
+        $code = '/**' . "\n";
+        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= "public function get" . ucfirst($key) . " () {\n";
+        $code .= "\t return " . '$this->' . $key . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * Creates setter code which is used for generation of php file for fieldcollection classes using this data type
+     * @param $fieldcollectionDefinition
+     * @return string
+     */
+    public function getSetterCodeFieldcollection ($fieldcollectionDefinition) {
+        $key = $this->getName();
+
+        $code = '/**' . "\n";
+        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= "* @return void\n";
+        $code .= '*/' . "\n";
+        $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
+        $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
+        $code .= "}\n\n";
+        
+        return $code;
+    }
+
+
+    /**
+     * Creates getter code which is used for generation of php file for localized fields in classes using this data type
+     * @param $class
+     * @return string
+     */
+    public function getGetterCodeLocalizedfields ($class) {
+        $key = $this->getName();
+        $code = '/**' . "\n";
+        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
+
+        $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
+
+        // adds a hook preGetValue which can be defined in an extended class
+        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
+        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+
+        $code .= "\t return " . '$data' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * Creates setter code which is used for generation of php file for localized fields in classes using this data type
+     * @param $class
+     * @return string
+     */
+    public function getSetterCodeLocalizedfields ($class) {
+        $key = $this->getName();
+
+        $code = '/**' . "\n";
+        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= "* @return void\n";
+        $code .= '*/' . "\n";
+        $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ', $language = null) {' . "\n";
+
+        $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language)' . ";\n";
+
+        $code .= "}\n\n";
+
+        return $code;
+    }
 
 }

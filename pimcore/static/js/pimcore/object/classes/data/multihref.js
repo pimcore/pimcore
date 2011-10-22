@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.multihref");
 pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data.data, {
 
     type: "multihref",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "multihref";

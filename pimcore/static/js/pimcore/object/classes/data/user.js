@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.user");
 pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data, {
 
     type: "user",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true, 
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
+    },        
 
     initialize: function (treeNode, initData) {
         this.type = "user";

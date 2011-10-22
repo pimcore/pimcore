@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.structuredTable");
 pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classes.data.data, {
 
     type: "structuredTable",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "structuredTable";

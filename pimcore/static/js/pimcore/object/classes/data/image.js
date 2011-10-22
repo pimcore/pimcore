@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.image");
 pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.data, {
 
     type: "image",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "image";

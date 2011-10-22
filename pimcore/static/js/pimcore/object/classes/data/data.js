@@ -15,6 +15,17 @@
 pimcore.registerNS("pimcore.object.classes.data.data");
 pimcore.object.classes.data.data = Class.create({
 
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: false,
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
+    },
+
+
     initData: function (d) {
         this.datax = {
             name: "",

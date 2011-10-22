@@ -129,30 +129,14 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         $cd .= "\n\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            $relationTypes = array();
             foreach ($this->getFieldDefinitions() as $key => $def) {
 
-                $cd .= '/**' . "\n";
-                $cd .= '* @return ' . $def->getPhpdocType() . "\n";
-                $cd .= '*/' . "\n";
-                $cd .= "public function get" . ucfirst($key) . " () {\n";
-
-                $cd .= "\t" . 'if(!$this->' . $key . ' && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
-                $cd .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
-                $cd .= "\t" . '}' . "\n";
-
-                $cd .= "\t return " . '$this->' . $key . ";\n";
-                $cd .= "}\n\n";
-
-                $cd .= '/**' . "\n";
-                $cd .= '* @param ' . $def->getPhpdocType() . ' $' . $key . "\n";
-                $cd .= "* @return void\n";
-                $cd .= '*/' . "\n";
-                $cd .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
-                $cd .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
-                $cd .= "}\n\n";
-
-            } 
+                /**
+                 * @var $def Object_Class_Data
+                */
+                $cd .= $def->getGetterCodeObjectbrick($this);
+                $cd .= $def->getSetterCodeObjectbrick($this);
+            }
         }
 
         $cd .= "}\n"; 
@@ -238,7 +222,6 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
                         $allowedTypes = $fieldDef->getAllowedTypes();
                         $idx = array_search($this->getKey(), $allowedTypes);
                         if($idx !== false) {
-                            echo "remove";
                             array_splice($allowedTypes, $idx, 1);
                         }
                         $fieldDef->setAllowedTypes($allowedTypes);

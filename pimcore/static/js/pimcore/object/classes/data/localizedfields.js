@@ -17,6 +17,15 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
 
     type: "localizedfields",
     allowIndex: false,
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "localizedfields";

@@ -15,6 +15,7 @@
 pimcore.registerNS("pimcore.object.classes.klass");
 pimcore.object.classes.klass = Class.create({
 
+    allowedInType: 'object',
     disallowedDataTypes: [],
     uploadUrl: '/admin/class/import-class',
     exportUrl: "/admin/class/export-class",
@@ -266,6 +267,19 @@ pimcore.object.classes.klass = Class.create({
 
         var menu = new Ext.menu.Menu();
 
+
+        //get all allowed data types for localized fields
+        var lftypes = ["panel","tabpanel","accordion","fieldset","text","region","button"];
+        //["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg","textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect", "countrymultiselect","languagemultiselect","objects","multihref","href","hotspotimage","geopoint","geobounds","geopolygon","structuredTable"]
+
+        var dataComps = Object.keys(pimcore.object.classes.data);
+
+        for (var i = 0; i < dataComps.length; i++) {
+            if(pimcore.object.classes.data[dataComps[i]].prototype.allowIn['localizedfield'] == true) {
+                lftypes.push(dataComps[i]);
+            }
+        }
+
         // specify which childs a layout can have
         // the child-type "data" is a placehoder for all data components
         var allowedTypes = {
@@ -277,7 +291,7 @@ pimcore.object.classes.klass = Class.create({
             button: [],
             text: [],
             root: ["panel","region","tabpanel","accordion","text"],
-            localizedfields: ["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg","textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect", "countrymultiselect","languagemultiselect","objects","multihref","href","hotspotimage","geopoint","geobounds","geopolygon","structuredTable"]
+            localizedfields: lftypes
         };
 
         var parentType = "root";
@@ -319,9 +333,12 @@ pimcore.object.classes.klass = Class.create({
             for (var i = 0; i < dataComps.length; i++) {
 
                 // check for disallowed types
-                if (in_array(dataComps[i], this.attributes.reference.disallowedDataTypes)) {
+                if(pimcore.object.classes.data[dataComps[i]].prototype.allowIn[this.attributes.reference.allowedInType] == false) {
                     continue;
                 }
+//                if (in_array(dataComps[i], this.attributes.reference.disallowedDataTypes)) {
+//                    continue;
+//                }
 
                 if (dataComps[i] != "data") { // class data is an abstract class => disallow
                     if (in_array("data", allowedTypes[parentType]) || in_array(dataComps[i], allowedTypes[parentType])) {
@@ -454,7 +471,6 @@ pimcore.object.classes.klass = Class.create({
                         this.allowVariants.setValue(false);
                         this.allowVariants.setDisabled(true);
                     }
-                    console.log("blaaa");
                 }.bind(this)
             }
         });

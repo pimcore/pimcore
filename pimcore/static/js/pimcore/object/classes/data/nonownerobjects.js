@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.nonownerobjects");
 pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classes.data.data, {
 
     type: "nonownerobjects",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
+    },        
 
     initialize: function (treeNode, initData) {
         this.type = "nonownerobjects";

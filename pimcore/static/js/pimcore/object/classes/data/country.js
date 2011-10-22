@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.country");
 pimcore.object.classes.data.country = Class.create(pimcore.object.classes.data.data, {
 
     type: "country",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "country";

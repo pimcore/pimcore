@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.objectsMetadata");
 pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classes.data.objects, {
 
     type: "objectsMetadata",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "objectsMetadata";

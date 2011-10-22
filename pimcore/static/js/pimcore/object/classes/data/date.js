@@ -16,6 +16,15 @@ pimcore.registerNS("pimcore.object.classes.data.date");
 pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data, {
 
     type: "date",
+    /**
+     * define where this datatype is allowed
+     */
+    allowIn: {
+        object: true,
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true
+    },
 
     initialize: function (treeNode, initData) {
         this.type = "date";
