@@ -52,14 +52,9 @@ class Pimcore_Tool_Less {
                 continue;
             }
 
-            $compiledContent = "";
-
             if (is_file("file://".$path)) {
 
-                $compiledContent = self::compile($path);
-
-                // correct references inside the css
-                $compiledContent = self::correctReferences($source, $compiledContent);
+                $compiledContent = self::compile($path, $source);
 
                 $stylesheetContents[$media] .= $compiledContent . "\n";
                 $style->outertext = "";
@@ -88,9 +83,16 @@ class Pimcore_Tool_Less {
         return $body;
     }
 
-    public static function compile ($path) {
+    public static function compile ($path, $source = null) {
 
         $conf = Pimcore_Config::getSystemConfig();
+        $compiledContent = "";
+
+        // check if the file is already compiled in the cache
+        $cacheKey = "less_file_" . md5_file($path);
+        if($contents = Pimcore_Model_Cache::load($cacheKey)) {
+            return $contents;
+        }
 
         // use the original less compiler if configured
         if($conf->outputfilters->lesscpath) {
@@ -99,7 +101,9 @@ class Pimcore_Tool_Less {
             $compiledContent = implode($output);
 
             // add a comment to the css so that we know it's compiled by lessc
-            $compiledContent = "\n\n/**** compiled with lessc (node.js) ****/\n\n" . $compiledContent;
+            if(!empty($compiledContent)) {
+                $compiledContent = "\n\n/**** compiled with lessc (node.js) ****/\n\n" . $compiledContent;
+            }
         }
 
         // use php implementation of lessc if it doesn't work
@@ -111,6 +115,14 @@ class Pimcore_Tool_Less {
             // add a comment to the css so that we know it's compiled by lessphp
             $compiledContent = "\n\n/**** compiled with lessphp ****/\n\n" . $compiledContent;
         }
+
+        if($source) {
+            // correct references inside the css
+            $compiledContent = self::correctReferences($source, $compiledContent);
+        }
+
+        // put the compiled contents into the cache
+        Pimcore_Model_Cache::save($compiledContent, $cacheKey, array("less"));
 
         return $compiledContent;
     }
