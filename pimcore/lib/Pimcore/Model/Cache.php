@@ -66,6 +66,12 @@ class Pimcore_Model_Cache {
      * @var string
      */
     public static $cachePrefix = "pimcore_";
+
+    /**
+     * items having one of the tags in this store are not cleared when calling self::clearTags() or self::clearTag()
+     * @var array
+     */
+    public static $ignoredTagsOnClear = array();
     
     /**
      * Returns a instance of the cache, if the instance isn't available it creates a new one
@@ -133,17 +139,30 @@ class Pimcore_Model_Cache {
         return self::$instance;
     }
 
+    /**
+     * @static
+     * @param $config
+     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     */
     public static function initializeCache ($config) {
         $cache = Zend_Cache::factory($config["frontendType"], $config["backendType"], $config["frontendConfig"], $config["backendConfig"], $config["customFrontendNaming"], $config["customBackendNaming"], true);
         return $cache;
     }
 
+    /**
+     * @static
+     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     */
     public static function getDefaultCache () {
         $config = self::getDefaultConfig();
         $cache = self::initializeCache($config);
         return $cache;
     }
 
+    /**
+     * @static
+     * @return array
+     */
     public static function getDefaultConfig () {
         $config["frontendType"] = "Core";
         $config["frontendConfig"] = array(
@@ -164,7 +183,6 @@ class Pimcore_Model_Cache {
     
     /**
      * Returns the content of the requested cache entry
-     *
      * @param string $key
      * @return mixed
      */
@@ -197,7 +215,6 @@ class Pimcore_Model_Cache {
 
     /**
      * Puts content into the cache
-     *
      * @param mixed $data
      * @param string $key
      * @return void
@@ -376,13 +393,24 @@ class Pimcore_Model_Cache {
     public static function clearTags($tags = array()) {
         Logger::info("clear cache tags: " . implode(",",$tags));
 
+        // ensure that every tag is unique
+        $tags = array_unique($tags);
+
+        // check for ignored tags
+        foreach (self::$ignoredTagsOnClear as $t) {
+            $tagPosition = array_search($t, $tags);
+            if($tagPosition !== false) {
+                array_splice($tags, $tagPosition, 1);
+            }
+        }
+
         // check for the tag output, because items with this tags are only cleared after the process is finished
         // the reason is that eg. long running importers will clean the output-cache on every save/update, that's not necessary,
         // only cleaning the output-cache on shutdown should be enough 
         $outputTagPosition = array_search("output", $tags);
         if($outputTagPosition !== false) {
             array_splice($tags, $outputTagPosition, 1);
-            self::$_clearTagsOnShutdown[] = "output";
+             self::addClearTagOnShutdown("output");
         }
 
         // clean tags, except output
@@ -399,8 +427,19 @@ class Pimcore_Model_Cache {
         }
     }
 
+    /**
+     * Adds a tag to the shutdown queue, see clearTagsOnShutdown
+     * @static
+     * @param $tag
+     * @return void
+     */
+    public static function addClearTagOnShutdown($tag) {
+        self::$_clearTagsOnShutdown[] = $tag;
+    }
+
 
     /**
+     * Clears all tags stored in self::$_clearTagsOnShutdown, this function is executed in Pimcore::shutdown()
      * @static
      * @return void
      */
@@ -417,18 +456,40 @@ class Pimcore_Model_Cache {
     }
 
     /**
-     *
-     * disable Cache
-     *
+     * @static
+     * @param $tag
+     * @return void
+     */
+    public static function addIgnoredTagOnClear($tag) {
+        if(!in_array($tag, self::$ignoredTagsOnClear)) {
+            self::$ignoredTagsOnClear[] = $tag;
+        }
+    }
+
+    /**
+     * @static
+     * @param $tag
+     * @return void
+     */
+    public static function removeIgnoredTagOnClear($tag) {
+        $tagPosition = array_search($tag, self::$ignoredTagsOnClear);
+        if($tagPosition !== false) {
+            array_splice(self::$ignoredTagsOnClear, $tagPosition, 1);
+        }
+    }
+
+    /**
+     * Disables the complete pimcore cache
+     * @static
+     * @return void
      */
     public static function disable() {
         self::$enabled = false;
     }
 
     /**
-     *
-     * enable Cache
-     *
+     * @static
+     * @return void
      */
     public static function enable() {
         self::$enabled = true;

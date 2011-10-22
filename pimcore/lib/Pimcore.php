@@ -537,6 +537,13 @@ class Pimcore {
             if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", $debug);
             if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
 
+            // check for output-cache settings
+            // if a lifetime for the output cache is specified then the cache tag "output" will be ignored on clear
+            $cacheLifetime = (int) $conf->cache->lifetime;
+            if (!empty($cacheLifetime)) {
+                Pimcore_Model_Cache::addIgnoredTagOnClear("output");
+            }
+
             return true;
         }
         catch (Exception $e) {

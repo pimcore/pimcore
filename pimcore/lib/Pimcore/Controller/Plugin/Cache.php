@@ -88,6 +88,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
 
         if ($cacheItem = Pimcore_Model_Cache::load($this->cacheKey, true)) {
             header("X-Pimcore-Cache-Tag: " . $this->cacheKey, true, 200);
+            header("X-Pimcore-Cache-Date: " . $cacheItem["date"]);
             
             foreach ($cacheItem["rawHeaders"] as $header) {
                 header($header);
@@ -113,7 +114,8 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
                 $cacheItem = array(
                     "headers" => $this->getResponse()->getHeaders(),
                     "rawHeaders" => $this->getResponse()->getRawHeaders(),
-                    "content" => $this->getResponse()->getBody()
+                    "content" => $this->getResponse()->getBody(),
+                    "date" => Zend_Date::now()->getIso()
                 );
                 
                 Pimcore_Model_Cache::save($cacheItem, $this->cacheKey, array("output"), $this->lifetime, 1000);

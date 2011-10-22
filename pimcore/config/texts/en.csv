@@ -281,7 +281,7 @@
 "google_webmastertools","Google Webmastertools"
 "verification_filename","Verificationfilename"
 "analytics_notice","Please read the documentation about the Google Analytics integration first, for the advanced mode you have to modify the Google Analytics settings."
-"cache_lifetime_description","Optional output-cache lifetime (in seconds) after the cache expires, if not defined the cache will be cleaned on every action inside the CMS"
+"outputcache_lifetime_description","Optional output-cache lifetime (in seconds) after the cache expires, if not defined the cache will be cleaned on every action inside the CMS, otherwise not (for high traffic sites)"
 "cache_exclude_patterns_description","Regular Expressions like /^\/dir\/toexplude/"
 "google_account_description","The Google-Account is used for example for the YouTube and Analytics integration"
 "analytics_trackid","Track-ID (eg. UA-XXXXX-X)"

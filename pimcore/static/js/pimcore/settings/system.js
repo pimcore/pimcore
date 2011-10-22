@@ -914,7 +914,7 @@ pimcore.settings.system = Class.create({
                             {
                                 xtype: "displayfield",
                                 width: 600,
-                                value: t("cache_lifetime_description"),
+                                value: t("outputcache_lifetime_description"),
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {

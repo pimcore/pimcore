@@ -387,6 +387,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function clearOutputCacheAction() {
         if ($this->getUser()->isAllowed("clear_cache")) {
 
+            // remove "output" out of the ignored tags, if a cache lifetime is specified
+            Pimcore_Model_Cache::removeIgnoredTagOnClear("output");
+
             // empty document cache
             Pimcore_Model_Cache::clearTag("output");
 
