@@ -67,9 +67,13 @@ pimcore.object.helpers.edit = {
                     afterrender: function (panel) {
                         window.setTimeout(function () {
                             try {
-                                panel.setWidth(panel.ownerCt.body.getWidth()-50);
-                                //panel.getEl().applyStyles("position:relative;");
-                                panel.ownerCt.doLayout();
+                                var parentEl = panel.body.findParent(".x-tab-panel");
+                                if(parentEl) {
+                                    panel.setWidth(Ext.get(parentEl).getWidth()-50);
+                                    //panel.getEl().applyStyles("position:relative;");
+                                    panel.ownerCt.doLayout();
+                                }
+
                             } catch (e) {
                                 console.log(e);
                             }
