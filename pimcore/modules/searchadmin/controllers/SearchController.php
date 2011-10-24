@@ -28,7 +28,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $query = "";
         }
 
-        $query = str_replace("*", "%", $query);
+        $query = str_replace("%", "*", $query);
 
         $types = explode(",", $this->_getParam("type"));
         $subtypes = explode(",", $this->_getParam("subtype"));
