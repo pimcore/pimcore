@@ -72,7 +72,7 @@ class Object_Data_ObjectMetadata_Resource extends Pimcore_Model_Resource_Abstrac
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `o_id` int(11) NOT NULL default '0',
 		  `dest_id` int(11) NOT NULL default '0',
-		  `fieldname` varchar(255) NOT NULL,
+		  `fieldname` varchar(71) NOT NULL,
 		  `column` varchar(255) NOT NULL,
 		  `data` text,
 		  PRIMARY KEY (`o_id`,`dest_id`, `fieldname`,`column`),
