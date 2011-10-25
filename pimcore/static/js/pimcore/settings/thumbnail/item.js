@@ -54,7 +54,7 @@ pimcore.settings.thumbnail.item = Class.create({
                 addMenu.push({
                     iconCls: "pimcore_icon_add",
                     handler: this.addItem.bind(this, itemTypes[i]),
-                    text: t(itemTypes[i].split("item")[1].toLowerCase())
+                    text: pimcore.settings.thumbnail.items[itemTypes[i]](null, null,true)
                 });
             }
         }
@@ -178,7 +178,12 @@ pimcore.settings.thumbnail.items = {
         }];
     },
 
-    itemResize: function (panel, data) {
+    itemResize: function (panel, data, getName) {
+
+        var niceName = t("resize");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -190,7 +195,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("resize"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'compositefield',
                 items: [{
@@ -217,7 +222,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemScaleByHeight: function (panel, data) {
+    itemScaleByHeight: function (panel, data, getName) {
+
+        var niceName = t("scalebyheight");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -229,7 +239,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("scalebyheight"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'spinnerfield',
                 name: "item." + myId  + ".height",
@@ -246,7 +256,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemScaleByWidth: function (panel, data) {
+    itemScaleByWidth: function (panel, data, getName) {
+
+        var niceName = t("scalebywidth");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -258,7 +273,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("scalebywidth"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'spinnerfield',
                 name: "item." + myId  + ".width",
@@ -275,7 +290,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemContain: function (panel, data) {
+    itemContain: function (panel, data, getName) {
+
+        var niceName = t("contain");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -287,7 +307,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("contain"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'compositefield',
                 items: [{
@@ -315,7 +335,12 @@ pimcore.settings.thumbnail.items = {
     },
 
 
-    itemCrop: function (panel, data) {
+    itemCrop: function (panel, data, getName) {
+
+        var niceName = t("crop");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -327,7 +352,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("crop"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'compositefield',
                 items: [{
@@ -370,7 +395,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemCover: function (panel, data) {
+    itemCover: function (panel, data, getName) {
+
+        var niceName = t("cover");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -382,7 +412,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("cover"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'compositefield',
                 items: [{
@@ -418,7 +448,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemFrame: function (panel, data) {
+    itemFrame: function (panel, data, getName) {
+
+        var niceName = t("frame");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -430,7 +465,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("frame"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'compositefield',
                 items: [{
@@ -457,7 +492,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemRotate: function (panel, data) {
+    itemRotate: function (panel, data, getName) {
+
+        var niceName = t("rotate");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -469,7 +509,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("rotate"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'spinnerfield',
                 name: "item." + myId  + ".angle",
@@ -486,7 +526,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemSetBackgroundColor: function (panel, data) {
+    itemSetBackgroundColor: function (panel, data, getName) {
+
+        var niceName = t("setbackgroundcolor");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -498,7 +543,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("setbackgroundcolor"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
                 name: "item." + myId  + ".color",
@@ -516,7 +561,12 @@ pimcore.settings.thumbnail.items = {
     },
 
 
-    itemRoundCorners: function (panel, data) {
+    itemRoundCorners: function (panel, data, getName) {
+
+        var niceName = t("roundcorners") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -528,7 +578,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("roundcorners") + " (Imagick)", myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'compositefield',
                 items: [{
@@ -555,7 +605,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemSetBackgroundImage: function (panel, data) {
+    itemSetBackgroundImage: function (panel, data, getName) {
+
+        var niceName = t("setbackgroundimage") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -567,7 +622,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("setbackgroundimage") + " (Imagick)", myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
@@ -584,7 +639,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemAddOverlay: function (panel, data) {
+    itemAddOverlay: function (panel, data, getName) {
+
+        var niceName = t("addoverlay") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -596,7 +656,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("addoverlay") + " (Imagick)", myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
@@ -644,7 +704,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemApplyMask: function (panel, data) {
+    itemApplyMask: function (panel, data, getName) {
+
+        var niceName = t("applymask") + " (Imagick)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -656,7 +721,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("applymask") + " (Imagick)", myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             items: [{
                 xtype: 'textfield',
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
@@ -673,7 +738,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemGrayscale: function (panel, data) {
+    itemGrayscale: function (panel, data, getName) {
+
+        var niceName = t("grayscale");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -685,7 +755,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("grayscale"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             html: t("nothing_to_configure"),
             items: [{
                 xtype: "hidden",
@@ -697,7 +767,12 @@ pimcore.settings.thumbnail.items = {
         return item;
     },
 
-    itemSepia: function (panel, data) {
+    itemSepia: function (panel, data, getName) {
+
+        var niceName = t("sepia");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
 
         if(typeof data == "undefined") {
             data = {};
@@ -709,7 +784,7 @@ pimcore.settings.thumbnail.items = {
             id: myId,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(t("sepia"), myId, panel),
+            tbar: this.getTopBar(niceName, myId, panel),
             html: t("nothing_to_configure"),
             items: [{
                 xtype: "hidden",
