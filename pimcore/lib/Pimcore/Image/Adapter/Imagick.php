@@ -34,6 +34,19 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             if(!$this->resource->readImage($imagePath)) {
                 return false;
             }
+
+            // DIRTY HACK
+            // this is the check for vector formats because they need to have a resolution set
+            $type = $this->resource->getimageformat();
+            $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","PSB","SVG","SVGZ");
+
+            if(in_array($type,$vectorTypes)) {
+                // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
+                $this->resource->destroy();
+                $this->resource->setResolution(1000,1000); // high res.
+                $this->resource->readImage($imagePath);
+            }
+
         } catch (Exception $e) {
             return false;
         }
