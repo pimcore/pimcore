@@ -79,7 +79,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                     $page->save();
                     $this->_helper->json(array("success" => true));
                 } catch (Exception $e) {
-                    logger::err($e);
+                    Logger::err($e);
                     $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
                 }
 
@@ -93,7 +93,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                     $page->saveVersion();
                         $this->_helper->json(array("success" => true));
                     } catch (Exception $e) {
-                        logger::err($e);
+                        Logger::err($e);
                         $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
                     }
 

@@ -208,7 +208,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         $diff = array_diff($objectRelationIds, $resourceRelationIds);
         if (count($diff) > 0) {
             $sane = false;
-            logger::notice("Detected insane relation(s), removing reference to non existent elements with ids [".implode(',',$diff)."]");
+            Logger::notice("Detected insane relation(s), removing reference to non existent elements with ids [".implode(',',$diff)."]");
         }
 
         return $sane;

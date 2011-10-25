@@ -97,7 +97,7 @@ class Document_Tag_Link extends Document_Tag {
                 $doc = Document::getById($this->data["internalId"]);
                 if (!$doc) {
                     $sane = false;
-                    logger::notice("Detected insane relation, removing reference to non existent document with id [".$this->getDocumentId()."]");
+                    Logger::notice("Detected insane relation, removing reference to non existent document with id [".$this->getDocumentId()."]");
                     $new = Document_Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
@@ -106,7 +106,7 @@ class Document_Tag_Link extends Document_Tag {
                 $asset = Asset::getById($this->data["internalId"]);
                 if (!$asset) {
                     $sane = false;
-                    logger::notice("Detected insane relation, removing reference to non existent asset with id [".$this->getDocumentId()."]");
+                    Logger::notice("Detected insane relation, removing reference to non existent asset with id [".$this->getDocumentId()."]");
                     $new = Document_Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }

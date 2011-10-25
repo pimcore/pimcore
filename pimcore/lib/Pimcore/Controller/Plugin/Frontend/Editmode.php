@@ -139,8 +139,8 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             
         }
         catch (Exception $e) {
-            logger::alert("there is a problem with the plugin configuration");
-            logger::alert($e);
+            Logger::alert("there is a problem with the plugin configuration");
+            Logger::alert($e);
         }
 
         $editmodeHeadHtml = "\n\n\n<!-- pimcore editmode -->\n";

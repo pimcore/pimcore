@@ -70,8 +70,8 @@ class Webservice_SoapController extends Pimcore_Controller_Action_Webservice {
 
             }
             catch (Exception $e) {
-                logger::log("Soap request failed");
-                logger::log($e);
+                Logger::log("Soap request failed");
+                Logger::log($e);
                 throw $e;
             }
         }

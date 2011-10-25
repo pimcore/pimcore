@@ -116,7 +116,7 @@ class Document_Tag_Video extends Document_Tag
             $el = Asset::getById($this->id);
             if (!$el instanceof Asset) {
                 $sane = false;
-                logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+                Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
                 $this->id = null;
                 $this->type = null;
             }

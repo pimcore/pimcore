@@ -144,7 +144,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
                 if (intval($data->getInternal()) > 0) {
                     if ($data->getInternalType() == "document") {
                         $doc = Document::getById($data->getInternal());
-                        logger::log($doc);
+                        Logger::log($doc);
                         if (!$doc instanceof Document) {
                             throw new Exception("invalid internal link, referenced document with id [" . $data->getInternal() . "] does not exist");
                         }
@@ -280,7 +280,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
                 return $keys;
             } else return null;
         } else {
-            logger::notice("Link sanity check failed before webservice export");
+            Logger::notice("Link sanity check failed before webservice export");
             return null;
         }
     }
@@ -342,7 +342,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
         try {
             $this->checkValidity($data,true);
         } catch (Exception $e) {
-            logger::notice("Detected insane relation, removing reference to non existent element with id [".$data->internal."]");
+            Logger::notice("Detected insane relation, removing reference to non existent element with id [".$data->internal."]");
             $object->$key = null;
             $sane = false;
         }

@@ -85,8 +85,8 @@
                 $this->backendQueryParams[] = $userModification;
             }
 
-        logger::debug($this->backendQuery);
-        logger::debug( $this->backendQueryParams);
+        Logger::debug($this->backendQuery);
+        Logger::debug( $this->backendQueryParams);
 
     }
 

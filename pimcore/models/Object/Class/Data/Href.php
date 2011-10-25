@@ -325,7 +325,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         } else if(empty($data)){
             $allow = true;
         } else {
-            logger::error("invalid data in href");
+            Logger::error("invalid data in href");
             $allow = false;
         }
 

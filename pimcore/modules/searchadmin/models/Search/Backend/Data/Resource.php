@@ -57,7 +57,7 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
                 $this->update();
             }
         } catch (Exception $e) {
-            logger::error($e);
+            Logger::error($e);
         }
 
     }

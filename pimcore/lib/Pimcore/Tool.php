@@ -295,8 +295,8 @@ class Pimcore_Tool {
             }
 
             $transport = new Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
-            //logger::log($transport);
-            //logger::log($config);
+            //Logger::log($transport);
+            //Logger::log($config);
             $mail->setDefaultTransport($transport);
         }
 

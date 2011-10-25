@@ -548,7 +548,7 @@ class Pimcore {
         }
         catch (Exception $e) {
             $m = "Couldn't load system configuration";
-            logger::err($m);
+            Logger::err($m);
             
             //@TODO check here for /install otherwise exit here
         }

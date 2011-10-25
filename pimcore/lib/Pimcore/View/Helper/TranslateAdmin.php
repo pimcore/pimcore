@@ -60,7 +60,7 @@ class Pimcore_View_Helper_TranslateAdmin_Controller {
                     try {
                         $t->save();
                     } catch (Exception $e) {
-                        logger::debug(get_class($this), ": could not save new translation for key [ $key ]");
+                        Logger::debug(get_class($this), ": could not save new translation for key [ $key ]");
                     }
 
                 }

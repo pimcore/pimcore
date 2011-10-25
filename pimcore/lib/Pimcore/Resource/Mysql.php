@@ -164,13 +164,13 @@ class Pimcore_Resource_Mysql {
                 $r = self::get()->callResourceMethod($method, $args);
                 return $r;
             } catch (Exception $e) {
-                logger::debug($e);
+                Logger::debug($e);
                 throw $e;
             }
         }
 
         // no handling just log the exception and then throw it
-        logger::debug($exception);
+        Logger::debug($exception);
         throw $exception;
     }
 }

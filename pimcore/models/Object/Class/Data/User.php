@@ -87,7 +87,7 @@ class Object_Class_Data_User extends Object_Class_Data_Select {
         try{
             $this->checkValidity($object->$key,true);
         } catch (Exception $e){
-            logger::notice("Detected insane relation, removing reference to non existent user with username [".$object->$key."]");
+            Logger::notice("Detected insane relation, removing reference to non existent user with username [".$object->$key."]");
             $object->$key = null;
             $sane = false;
         }

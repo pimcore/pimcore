@@ -112,13 +112,13 @@ class Pimcore_Tool_Authentication {
                 }
             }
             catch (Exception $e) {
-                logger::error("Problem while starting session");
-                logger::error($e);
+                Logger::error("Problem while starting session");
+                Logger::error($e);
             }
 
         }
         catch (Exception $e) {
-            logger::emergency("there is a problem with admin session");
+            Logger::emergency("there is a problem with admin session");
             die();
         }
     }

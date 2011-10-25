@@ -60,7 +60,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
                         $properties[$propertyName] = $property;
                     }
                     catch (Exception $e) {
-                        logger::warning("Can't add " . $propertyName . " to document " . $document->getFullPath());
+                        Logger::warning("Can't add " . $propertyName . " to document " . $document->getFullPath());
                     }
 
                 }

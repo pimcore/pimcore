@@ -24,7 +24,7 @@ class Webservice_Service
         try {
             $user = Zend_Registry::get("pimcore_user");
             if (!$user instanceof User) {
-                logger::critical("Webservice instantiated, but no user present");
+                Logger::critical("Webservice instantiated, but no user present");
             }
             return $user;
         } catch (Exception $e) {

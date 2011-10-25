@@ -288,7 +288,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                                 } else {
                                     $successorList->setCondition("path like '" . $asset->getFullPath() . "/%'");
                                 }
-                                logger::debug($successorList->getCondition());
+                                Logger::debug($successorList->getCondition());
                                 $successors = $successorList->load();
                                 foreach ($successors as $successor) {
 
@@ -555,7 +555,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $hasDependency = $asset->getDependencies()->isRequired();
         }
         catch (Exception $e) {
-            logger::err("failed to access asset with id: " . $this->_getParam("id"));
+            Logger::err("failed to access asset with id: " . $this->_getParam("id"));
         }
 
         $deleteJobs = array();
@@ -875,7 +875,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                                 $properties[$propertyName] = $property;
                             }
                             catch (Exception $e) {
-                                logger::err("Can't add " . $propertyName . " to asset " . $asset->getFullPath());
+                                Logger::err("Can't add " . $propertyName . " to asset " . $asset->getFullPath());
                             }
                         }
 

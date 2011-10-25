@@ -295,7 +295,7 @@ class Document_Tag_Href extends Document_Tag {
             $el = Element_Service::getElementById($this->type, $this->id);
             if(!$el instanceof Element_Interface){
                 $sane = false;
-                logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
+                Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
                 $this->id = null;
                 $this->type = null;
                 $this->subtype=null;

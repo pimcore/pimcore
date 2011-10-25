@@ -278,8 +278,8 @@ class Object_Class_Data_Table extends Object_Class_Data {
     public function getFromCsvImport($importValue) {
 
        $value = unserialize(base64_decode($importValue));
-        logger::log("table data");
-        logger::log($value);
+        Logger::log("table data");
+        Logger::log($value);
         if (is_array($value)) {
             return $value;
         } else return null;

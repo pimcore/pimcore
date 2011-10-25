@@ -647,7 +647,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $list->load();
 
         $objects = array();
-        logger::debug("objects in list:" . count($list->getObjects()));
+        Logger::debug("objects in list:" . count($list->getObjects()));
         foreach ($list->getObjects() as $object) {
 
             if ($object instanceof Object_Concrete) {
@@ -811,13 +811,13 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                 }
             }
             else {
-                logger::debug("ObjectController::batchAction => There is no object left to update.");
+                Logger::debug("ObjectController::batchAction => There is no object left to update.");
                 $this->_helper->json(array("success" => false, "message" => "ObjectController::batchAction => There is no object left to update."));
             }
 
         }
         catch (Exception $e) {
-            logger::err($e);
+            Logger::err($e);
             $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
         }
 

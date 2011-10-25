@@ -171,7 +171,7 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
                         }
 
                     } else {
-                        logger::debug("Excluding untouchable query value for object - objectbrick [ " . $object->getId() . " ]  key [ $key ] because it has not been loaded");
+                        Logger::debug("Excluding untouchable query value for object - objectbrick [ " . $object->getId() . " ]  key [ $key ] because it has not been loaded");
                     }
                 }
             }

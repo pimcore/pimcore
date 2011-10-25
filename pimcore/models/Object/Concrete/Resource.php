@@ -324,7 +324,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
                         }
 
                     } else {
-                        logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                        Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                     }
                 }
             }

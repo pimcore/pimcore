@@ -476,7 +476,7 @@ class Element_Service
                 GROUP by cid
                 ORDER BY cpath DESC ) temp WHERE list = 0";
 
-        //logger::log($condition);
+        //Logger::log($condition);
         $db = Pimcore_Resource::get();
         $data = $db->fetchAll($condition);
         $forbidden = array();

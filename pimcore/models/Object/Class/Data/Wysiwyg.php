@@ -208,7 +208,7 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
         $object->$key = $cleanedText;
         if($originalText!=$cleanedText){
             $sane=false;
-            logger::notice("Detected insane relation, removed invalid links in html");
+            Logger::notice("Detected insane relation, removed invalid links in html");
         }
         return $sane;
     }

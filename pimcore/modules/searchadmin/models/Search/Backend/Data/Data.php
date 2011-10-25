@@ -344,7 +344,7 @@ class SearchPhp_Backend_Data extends Pimcore_Model_Abstract {
                     $this->published = true;
                 }
             } else {
-                logger::crit("SearchPhp_Backend_Data received an unknown element!");
+                Logger::crit("SearchPhp_Backend_Data received an unknown element!");
             }
 
     }

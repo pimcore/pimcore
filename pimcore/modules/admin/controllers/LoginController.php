@@ -196,7 +196,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
         if ($matches > 4) {
             $m = "Security Alert: Too much logins, please wait 5 minutes and try again.";
-            logger::crit($m);
+            Logger::crit($m);
             die($m);
         }
     }

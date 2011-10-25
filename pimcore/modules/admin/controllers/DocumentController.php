@@ -95,7 +95,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 $permission->setUserId($user->getId());
                 $permission->setUsername($user->getUsername());
                 $permissions[] = $permission;
-                logger::debug($permission->getUser()->getUsername());
+                Logger::debug($permission->getUser()->getUsername());
             }
         }
 
@@ -192,7 +192,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                 } else {
                                     $successorList->setCondition("path like '" . $document->getFullPath() . "/%'");
                                 }
-                                logger::debug($successorList->getCondition());
+                                Logger::debug($successorList->getCondition());
                                 $successors = $successorList->load();
                                 foreach ($successors as $successor) {
 
@@ -476,7 +476,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             $hasDependency = $document->getDependencies()->isRequired();
         }
         catch (Exception $e) {
-            logger::err("failed to access document with id: " . $this->_getParam("id"));
+            Logger::err("failed to access document with id: " . $this->_getParam("id"));
         }
 
         $deleteJobs = array();

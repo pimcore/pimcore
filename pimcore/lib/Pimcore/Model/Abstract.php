@@ -209,7 +209,7 @@ abstract class Pimcore_Model_Abstract {
                 return $r;
             }
             catch (Exception $e) {
-                logger::emergency($e);
+                Logger::emergency($e);
                 throw $e;
             }
         }

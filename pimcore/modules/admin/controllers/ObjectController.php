@@ -929,7 +929,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $hasDependency = $object->getDependencies()->isRequired();
         }
         catch (Exception $e) {
-            logger::err("failed to access object with id: " . $this->_getParam("id"));
+            Logger::err("failed to access object with id: " . $this->_getParam("id"));
         }
 
         $deleteJobs = array();
@@ -1241,7 +1241,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                         $properties[$propertyName] = $property;
                     }
                     catch (Exception $e) {
-                        logger::err("Can't add " . $propertyName . " to object " . $object->getFullPath());
+                        Logger::err("Can't add " . $propertyName . " to object " . $object->getFullPath());
                     }
                 }
             }
@@ -1606,7 +1606,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                     $success = true;
                 } catch (Exception $e) {
-                    logger::err($e);
+                    Logger::err($e);
                     $success = true;
                 }
             }

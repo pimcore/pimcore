@@ -131,7 +131,7 @@ class Reports_WebsiteoptimizerController extends Pimcore_Controller_Action_Admin
                         $variantDoc->save();
                     }
                     else {
-                        logger::warn("Added a invalid URL to A/B test.");
+                        Logger::warn("Added a invalid URL to A/B test.");
                         exit;
                     }
                 }
@@ -153,7 +153,7 @@ class Reports_WebsiteoptimizerController extends Pimcore_Controller_Action_Admin
                     ","https://www.google.com/analytics/feeds/websiteoptimizer/experiments/" . $data["experimentId"] . "/abpagevariations");
                     }
                     catch (Exception $e) {
-                        logger::err($e);
+                        Logger::err($e);
                     }
                 }
             }

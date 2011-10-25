@@ -34,7 +34,7 @@ class Search_Backend_Data_List_Resource extends Pimcore_Model_List_Resource_Abst
              } else  if($entryData['maintype']=='object'){
                 $element = Object_Abstract::getById($entryData['id']);
              } else {
-                logger::err("unknown maintype ");
+                Logger::err("unknown maintype ");
              }
             if($element){
                 $entry = new Search_Backend_Data();
