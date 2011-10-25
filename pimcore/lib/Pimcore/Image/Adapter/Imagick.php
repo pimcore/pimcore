@@ -22,6 +22,12 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     protected $resource;
 
 
+    /**
+     * @var string
+     */
+    protected $imagePath;
+
+
     public function load ($imagePath) {
 
         if($this->resource) {
@@ -35,17 +41,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 return false;
             }
 
-            // DIRTY HACK
-            // this is the check for vector formats because they need to have a resolution set
-            $type = $this->resource->getimageformat();
-            $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","PSB","SVG","SVGZ");
-
-            if(in_array($type,$vectorTypes)) {
-                // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
-                $this->resource->destroy();
-                $this->resource->setResolution(1000,1000); // high res.
-                $this->resource->readImage($imagePath);
-            }
+            $this->imagePath = $imagePath;
 
         } catch (Exception $e) {
             return false;
@@ -62,7 +58,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @param  $path
      * @return void
      */
-    public function save ($path, $format, $quality = null) {
+    public function save ($path, $format = null, $quality = null) {
+
+        if(!$format) {
+            $format = "png";
+        }
 
         $this->resource->stripimage();
         $this->resource->setImageFormat($format);
@@ -90,7 +90,23 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function resize ($width, $height) {
-        $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 1, false);
+
+        // this is the check for vector formats because they need to have a resolution set
+        // this does only work if "resize" is the first step in the image-pipeline
+        $type = $this->resource->getimageformat();
+        $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","PSB","SVG","SVGZ");
+
+        if(in_array($type,$vectorTypes)) {
+            // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
+            $res = $this->resource->getImageResolution();
+            $x_ratio = $res['x'] / $this->resource->getImageWidth();
+            $y_ratio = $res['y'] / $this->resource->getImageHeight();
+            $this->resource->removeImage();
+            $this->resource->setResolution($width * $x_ratio, $height * $y_ratio);
+            $this->resource->readImage($this->imagePath);
+        } else {
+            $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 1, false);
+        }
 
         $this->setWidth($width);
         $this->setHeight($height);

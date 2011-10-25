@@ -50,7 +50,11 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      * @param  $path
      * @return void
      */
-    public function save ($path, $format, $quality = null) {
+    public function save ($path, $format = null, $quality = null) {
+
+        if(!$format) {
+            $format = "png";
+        }
 
         if($format == "jpg") {
             $format = "jpeg";

@@ -331,7 +331,7 @@ abstract class Pimcore_Image_Adapter {
      * @param  $path
      * @return Pimcore_Image_Adapter
      */
-    public abstract function save ($path, $format, $quality = null);
+    public abstract function save ($path, $format = null, $quality = null);
 
 
     /**
@@ -345,10 +345,10 @@ abstract class Pimcore_Image_Adapter {
      */
     protected function reinitializeImage() {
 
-        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file.png";
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file";
         $this->tmpFiles[] = $tmpFile;
 
-        $this->save($tmpFile, "PNG");
+        $this->save($tmpFile);
         $this->destroy();
         $this->load($tmpFile);
     }
