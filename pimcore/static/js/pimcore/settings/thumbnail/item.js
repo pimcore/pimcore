@@ -80,9 +80,9 @@ pimcore.settings.thumbnail.item = Class.create({
             id: "pimcore_thumbnail_panel_" + this.data.name,
             items: [{
                 xtype: "panel",
-                bodyStyle: "padding: 10px;",
-                style: "margin:0 0 20px 0",
-                html: '<span style="color: red; font-weight: bold;">' + t("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") + '</span>'
+                autoHeight: true,
+                border: false,
+                autoLoad: "/admin/settings/thumbnail-adapter-check"
             },{
                 xtype: "textfield",
                 name: "name",

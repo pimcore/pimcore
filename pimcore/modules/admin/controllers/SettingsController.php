@@ -1193,6 +1193,17 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         ));
     }
 
+    public function thumbnailAdapterCheckAction () {
+        $instance = Pimcore_Image::getInstance();
+        if($instance instanceof Pimcore_Image_Adapter_GD) {
+            echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
+                 $this->view->translate("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") .
+                 '</span>';
+        }
+
+        exit;
+    }
+
 
     public function thumbnailTreeAction () {
 
