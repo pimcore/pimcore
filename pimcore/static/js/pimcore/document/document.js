@@ -18,7 +18,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     getData: function () {        
         Ext.Ajax.request({
-            url: "/admin/" + this.type + "/get-data-by-id/",
+            url: "/admin/" + this.getType() + "/get-data-by-id/",
             params: {id: this.id},
             success: this.getDataComplete.bind(this)
         });
@@ -29,7 +29,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             this.data = Ext.decode(response.responseText);
 
             if (typeof this.data.editlock == "object") {
-                pimcore.helpers.lockManager(this.id, "document", this.type, this.data);
+                pimcore.helpers.lockManager(this.id, "document", this.getType(), this.data);
                 throw "document is locked";
             }
 
@@ -125,7 +125,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }
 
             Ext.Ajax.request({
-                url: '/admin/' + this.type + '/save/task/' + task,
+                url: '/admin/' + this.getType() + '/save/task/' + task,
                 method: "post",
                 params: saveData,
                 success: function (response) {
@@ -220,5 +220,21 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         ;
 
         this.save("unpublish");
+    },
+
+    reload: function () {
+        window.setTimeout(function (id, type) {
+            pimcore.helpers.openDocument(id, type);
+        }.bind(window, this.id, this.getType()), 500);
+
+        pimcore.helpers.closeDocument(this.id);
+    },
+
+    setType: function (type) {
+        this.type = type;
+    },
+
+    getType: function () {
+        return this.type;
     }
 });

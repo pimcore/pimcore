@@ -15,9 +15,9 @@
 pimcore.registerNS("pimcore.document.folder");
 pimcore.document.folder = Class.create(pimcore.document.document, {
 
-    type: "folder",
-
     initialize: function(id) {
+
+        this.setType("folder");
 
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "folder");
 
@@ -134,6 +134,15 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             if (this.isAllowed("publish")) {
                 buttons.push(this.toolbarButtons.publish);
             }
+
+            this.toolbarButtons.reload = new Ext.Button({
+                text: t('reload'),
+                iconCls: "pimcore_icon_reload_medium",
+                scale: "medium",
+                handler: this.reload.bind(this)
+            });
+            buttons.push("-");
+            buttons.push(this.toolbarButtons.reload);
 
             /*if(this.isAllowed("delete")) {
              buttons.push(this.toolbarButtons.remove);

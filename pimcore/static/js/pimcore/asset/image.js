@@ -15,8 +15,6 @@
 pimcore.registerNS("pimcore.asset.image");
 pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
-    type: "image",
-
     initialize: function(id) {
 
         this.setType("image");

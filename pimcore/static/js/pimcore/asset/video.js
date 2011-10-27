@@ -15,8 +15,6 @@
 pimcore.registerNS("pimcore.asset.video");
 pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
-    type: "video",
-
     initialize: function(id) {
 
         this.setType("video");

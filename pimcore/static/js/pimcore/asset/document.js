@@ -15,8 +15,6 @@
 pimcore.registerNS("pimcore.asset.document");
 pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
-    type: "document",
-
     initialize: function(id) {
 
         this.setType("document");

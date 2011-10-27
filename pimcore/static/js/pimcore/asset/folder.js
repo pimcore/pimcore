@@ -15,8 +15,6 @@
 pimcore.registerNS("pimcore.asset.folder");
 pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
-    type: "document",
-
     initialize: function(id) {
 
         this.setType("folder");
@@ -145,13 +143,20 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 handler: this.downloadZip.bind(this)
             });
 
+            this.toolbarButtons.reload = new Ext.Button({
+                text: t('reload'),
+                iconCls: "pimcore_icon_reload_medium",
+                scale: "medium",
+                handler: this.reload.bind(this)
+            });
+
             this.toolbar = new Ext.Toolbar({
                 id: "asset_toolbar_" + this.id,
                 region: "north",
                 border: false,
                 height: 26,
                 cls: "document_toolbar",
-                items: [this.toolbarButtons.publish, "-", this.toolbarButtons.download, "-",{
+                items: [this.toolbarButtons.publish, "-", this.toolbarButtons.reload, "-", this.toolbarButtons.download, "-",{
                     text: this.data.id,
                     disabled: true
                 }]

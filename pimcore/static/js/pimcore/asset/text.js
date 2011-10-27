@@ -15,8 +15,6 @@
 pimcore.registerNS("pimcore.asset.text");
 pimcore.asset.text = Class.create(pimcore.asset.asset, {
 
-    type: "text",
-
     initialize: function(id) {
 
         this.setType("text");

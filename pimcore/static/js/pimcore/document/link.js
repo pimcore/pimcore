@@ -15,9 +15,9 @@
 pimcore.registerNS("pimcore.document.link");
 pimcore.document.link = Class.create(pimcore.document.document, {
 
-    type: "link",
-
     initialize: function(id) {
+
+        this.setType("link");
 
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "link");
 
@@ -145,6 +145,16 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             if (this.isAllowed("unpublish")) {
                 buttons.push(this.toolbarButtons.unpublish);
             }
+
+            this.toolbarButtons.reload = new Ext.Button({
+                text: t('reload'),
+                iconCls: "pimcore_icon_reload_medium",
+                scale: "medium",
+                handler: this.reload.bind(this)
+            });
+            buttons.push("-");
+            buttons.push(this.toolbarButtons.reload);
+
             /*if(this.isAllowed("delete")) {
              buttons.push(this.toolbarButtons.remove);
              }*/

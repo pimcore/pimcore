@@ -161,6 +161,16 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
              buttons.push(this.toolbarButtons.remove);
              }*/
 
+
+            this.toolbarButtons.reload = new Ext.Button({
+                text: t('reload'),
+                iconCls: "pimcore_icon_reload_medium",
+                scale: "medium",
+                handler: this.reload.bind(this)
+            });
+            buttons.push("-");
+            buttons.push(this.toolbarButtons.reload);
+
             buttons.push("-");
             buttons.push({
                 text: this.data.general.o_id,
@@ -277,6 +287,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     isAllowed : function (key) {
         return this.data.userPermissions[key];
+    },
+
+    reload: function () {
+        window.setTimeout(function (id) {
+            pimcore.helpers.openObject(id, "folder");
+        }.bind(window, this.id), 500);
+
+        pimcore.helpers.closeObject(this.id);
     }
 
 });

@@ -15,9 +15,9 @@
 pimcore.registerNS("pimcore.document.snippet");
 pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
 
-    type: "snippet",
-
     initialize: function(id) {
+
+        this.setType("snippet");
 
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, "snippet");
 

@@ -176,7 +176,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                         text: pimcore.available_languages[pimcore.settings.websiteLanguages[p]],
                         handler: function (lang) {
                             Ext.Ajax.request({
-                                url: '/admin/' + this.type + '/translate/language/' + lang,
+                                url: '/admin/' + this.getType() + '/translate/language/' + lang,
                                 method: "post",
                                 params: this.getSaveData(),
                                 success: function () {
@@ -305,7 +305,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         }
 
         Ext.Ajax.request({
-            url: '/admin/' + this.type + '/save-to-session/',
+            url: '/admin/' + this.getType() + '/save-to-session/',
             method: "post",
             params: this.getSaveData(),
             success: onComplete
@@ -314,7 +314,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
     removeFromSession: function () {
         Ext.Ajax.request({
-            url: '/admin/' + this.type + '/remove-from-session/',
+            url: '/admin/' + this.getType() + '/remove-from-session/',
             params: {id: this.data.id}
         });
     },

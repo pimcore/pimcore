@@ -20,33 +20,11 @@ pimcore.object.abstract = Class.create(pimcore.element.abstract, {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
-
-        this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
-
-        this.loadingPanel = new Ext.Panel({
-            title: t("loading"),
-            closable:false,
-            html: "",
-            iconCls: "pimcore_icon_loading"
-        });
-
-        this.tabPanel.add(this.loadingPanel);
     },
 
 
     removeLoadingPanel: function () {
-
         pimcore.helpers.removeTreeNodeLoadingIndicator("object", this.id);
-
-        // DEPRECIATED loadingpanel not active
-        return;
-
-        if (this.loadingPanel) {
-            this.tabPanel.remove(this.loadingPanel);
-        }
-        this.loadingPanel = null;
     },
 
 
@@ -54,11 +32,5 @@ pimcore.object.abstract = Class.create(pimcore.element.abstract, {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        if (this.loadingPanel) {
-            // loadingpanel is active close the whole document
-            pimcore.helpers.closeObject(this.id);
-        }
     }
-
 });
