@@ -24,6 +24,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         this.addLoadingPanel();
         this.id = intval(id);
 
+        this.metadata = new pimcore.asset.metadata(this);
         this.properties = new pimcore.element.properties(this, "asset");
         this.versions = new pimcore.asset.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "asset");
@@ -42,6 +43,9 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         if (this.isAllowed("save") || this.isAllowed("publish")) {
             items.push(this.getEditPanel());
         }
+        /*if (this.isAllowed("save") || this.isAllowed("publish")) {
+            items.push(this.metadata.getLayout());
+        }*/
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
         }

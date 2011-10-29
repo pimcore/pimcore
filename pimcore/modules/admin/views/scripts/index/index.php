@@ -228,6 +228,7 @@
             
             // assets
             "pimcore/asset/asset.js",
+            "pimcore/asset/metadata.js",
             "pimcore/asset/unknown.js",
             "pimcore/asset/image.js",
             "pimcore/asset/document.js",
