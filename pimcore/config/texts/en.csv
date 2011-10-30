@@ -1,3 +1,4 @@
+"do_you_really_want_to_close_pimcore","Do you really want to close pimcore?"
 "valid_languages_frontend_description","This setting is used in documents to specify the content language (in properties tab) and for objects in localized-fields, ... simply everywhere the editor can choose or use a language for the content."
 "limit_reached","Limit reached"
 "maximum_items","max. items"
