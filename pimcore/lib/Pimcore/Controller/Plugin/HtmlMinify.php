@@ -13,8 +13,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-require_once 'Zend/Controller/Plugin/Abstract.php';
-
 class Pimcore_Controller_Plugin_HtmlMinify extends Zend_Controller_Plugin_Abstract {
 
     protected $enabled = true;

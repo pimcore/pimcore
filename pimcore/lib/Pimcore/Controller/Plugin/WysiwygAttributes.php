@@ -13,8 +13,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-require_once 'Zend/Controller/Plugin/Abstract.php';
-
 class Pimcore_Controller_Plugin_WysiwygAttributes extends Zend_Controller_Plugin_Abstract {
 
 

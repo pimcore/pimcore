@@ -13,8 +13,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-require_once 'Zend/Controller/Plugin/Abstract.php';
-
 class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstract {
     protected $controller;
 

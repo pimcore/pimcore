@@ -13,7 +13,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-require_once 'Zend/Controller/Plugin/Abstract.php';
 require_once 'simple_html_dom.php';
 require_once 'lessc.inc.php';
 
