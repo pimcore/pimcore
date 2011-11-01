@@ -24,4 +24,4 @@ Issue-Tracker:
 http://www.pimcore.org/issues/
 
 Community:
-http://www.pimcore.org/forum/
+http://www.pimcore.org/board/
