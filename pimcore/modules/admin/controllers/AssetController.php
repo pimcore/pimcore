@@ -408,6 +408,17 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => $success, "msg" => "Success"));
     }
 
+    public function addAssetCompatibilityAction() {
+        // this is a special action for the compatibility mode upload (without flash)
+        $success = $this->addAsset();
+
+        // here we have to use this method and not the JSON action helper ($this->_helper->json()) because this will add
+        // Content-Type: application/json which fires a download window in most browsers, because this is a normal POST
+        // request and not XHR where the content-type doesn't matter
+        $this->disableViewAutoRender();
+        echo Zend_Json::encode(array("success" => $success, "msg" => "Success"));
+    }
+
     protected function addAsset () {
         $success = false;
 

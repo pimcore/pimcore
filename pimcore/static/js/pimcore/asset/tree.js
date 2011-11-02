@@ -521,7 +521,7 @@ pimcore.asset.tree = Class.create({
                 listeners: {
                     fileselected: function () {
                         this.uploadForm.getForm().submit({
-                            url: '/admin/asset/add-asset/?parentId=' + this.attributes.id,
+                            url: '/admin/asset/add-asset-compatibility/?parentId=' + this.attributes.id,
                             waitMsg: t("please_wait"),
                             success: function(fp, o){
                                 this.uploadWindowCompatible.hide();
