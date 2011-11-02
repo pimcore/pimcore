@@ -402,7 +402,17 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         // set path
         if ($this->getId() != 1) { // not for the root node
             $parent = Asset::getById($this->getParentId());
-            $this->setPath(str_replace("//", "/", $parent->getFullPath() . "/"));
+            if($parent) {
+                $this->setPath(str_replace("//", "/", $parent->getFullPath() . "/"));
+            } else {
+                // parent document doesn't exist anymore, so delete this document
+                //$this->delete();
+
+                // parent document doesn't exist anymore, set the parent to to root
+                $this->setParentId(1);
+                $this->setPath("/");
+            }
+
         }
 
         $duplicate = Asset::getByPath($this->getFullPath());

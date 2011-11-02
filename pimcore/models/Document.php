@@ -360,7 +360,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 $this->setPath(str_replace("//", "/", $parent->getFullPath() . "/"));
             } else {
                 // parent document doesn't exist anymore, so delete this document
-                $this->delete();
+                //$this->delete();
+
+                // parent document doesn't exist anymore, set the parent to to root
+                $this->setParentId(1);
+                $this->setPath("/");
             }
         }
 
