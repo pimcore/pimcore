@@ -29,9 +29,11 @@ var xhrActive = 0; // number of active xhr requests
 Ext.onReady(function() {
 
     // confirmation to close pimcore
-    window.onbeforeunload = function() {
-        return t("do_you_really_want_to_close_pimcore");
-    };
+    if(!pimcore.settings.devmode) {
+        window.onbeforeunload = function() {
+            return t("do_you_really_want_to_close_pimcore");
+        };
+    }
 
     // define some globals
     Ext.QuickTips.init();
