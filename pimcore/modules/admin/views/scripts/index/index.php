@@ -451,6 +451,14 @@
 
     <?php // load plugin scripts ?>
     <?php
+
+        // only add the timestamp if the devmode is not activated, otherwise it is very hard to develop and debug plugins,
+        // because the filename changes on every reload and therefore breakpoints, ... are resetted on every reload
+        $pluginDcValue = time();
+        if(PIMCORE_DEVMODE) {
+            $pluginDcValue = 1;
+        }
+
         try {
             $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
             if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
@@ -462,7 +470,7 @@
                                 $jsPath=trim($jsPath);
                                 if (!empty($jsPath)) {
                                     ?>
-                                    <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo time() ?>"></script>
+                                    <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo $pluginDcValue; ?>"></script>
                                     <?php
         
                                 }
@@ -474,7 +482,7 @@
                                 $cssPath = trim($cssPath);
                                 if (!empty($cssPath)) {
                                     ?>
-                                    <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo time() ?>"/>
+                                    <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo $pluginDcValue; ?>"/>
                                     <?php
         
                                 }
