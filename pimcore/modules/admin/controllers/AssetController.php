@@ -423,6 +423,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $success = false;
 
         $filename = Pimcore_File::getValidFilename($_FILES["Filedata"]["name"]);
+        if(empty($filename)) {
+            throw new Exception("The filename of the asset is empty");
+        }
 
         $parentAsset = Asset::getById(intval($this->_getParam("parentId")));
         $parentAsset->getPermissionsForUser($this->getUser());
