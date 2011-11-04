@@ -1105,6 +1105,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $asset = Asset::getById($this->_getParam("id"));
         $asset->setData(Pimcore_Tool::getHttpData($this->_getParam("image")));
+        $asset->setUserModification($this->getUser()->getId());
         $asset->save();
 
         $this->view->asset = $asset;
