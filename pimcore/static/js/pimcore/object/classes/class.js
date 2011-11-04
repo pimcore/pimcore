@@ -754,16 +754,34 @@ pimcore.object.classes.klass = Class.create({
                     values: n,
                     id: this.data.id
                 },
-                success: this.saveOnComplete.bind(this)
+                success: this.saveOnComplete.bind(this),
+                failure: this.saveOnError.bind(this)
             });
         }
     },
 
-    saveOnComplete: function () {
-        this.parentPanel.tree.getRootNode().reload();
-        pimcore.globalmanager.get("object_types_store").reload();
+    saveOnComplete: function (response) {
 
+        try {
+            var res = Ext.decode(response.responseText);
+            if(res.success) {
+                this.parentPanel.tree.getRootNode().reload();
+                pimcore.globalmanager.get("object_types_store").reload();
 
-        pimcore.helpers.showNotification(t("success"), t("class_saved_successfully"), "success");
+                // set the current modification date, to detect modifcations on the class which are not made here
+                this.data.modificationDate = res.class.modificationDate;
+
+                pimcore.helpers.showNotification(t("success"), t("class_saved_successfully"), "success");
+            } else {
+                throw "save was not successful, see debug.log";
+            }
+        } catch (e) {
+            this.saveOnError();
+        }
+
+    },
+
+    saveOnError: function () {
+        pimcore.helpers.showNotification(t("error"), t("class_save_error"), "error");
     }
 });

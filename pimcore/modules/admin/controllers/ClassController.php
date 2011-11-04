@@ -151,10 +151,16 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
     public function saveAction() {
+
         $class = Object_Class::getById(intval($this->_getParam("id")));
 
         $configuration = Zend_Json::decode($this->_getParam("configuration"));
         $values = Zend_Json::decode($this->_getParam("values"));
+
+        // check if the class was changed during editing in the frontend
+        if($class->getModificationDate() != $values["modificationDate"]) {
+            throw new Exception("The class was modified during editing, please reload the class and make your changes again");
+        }
 
         if ($values["name"] != $class->getName()) {
             $values["name"] = $this->correctClassname($values["name"]);
@@ -195,7 +201,11 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         }
 
         $class->save();
-        $this->removeViewRenderer();
+
+        // set the fielddefinitions to null because we don't need them in the response
+        $class->setFieldDefinitions(null);
+
+        $this->_helper->json(array("success" => true, "class" => $class));
     }
 
 
