@@ -461,6 +461,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             
             file_put_contents($file, $log);
             chmod($file, 0766);
+            $this->_sqlChangeLog = array();
         }
     }
 }
