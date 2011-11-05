@@ -458,8 +458,13 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             if(defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
                 $file = PIMCORE_DB_CHANGELOG_DIRECTORY."/".$filename;
             }
-            
-            file_put_contents($file, $log);
+
+            $logContent = '';
+
+            if(file_exists($filename) && is_readable($filename))
+                $logContent = file_get_contents($filename)."\n\n\n";
+
+            file_put_contents($logContent.$file, $log);
             chmod($file, 0766);
             $this->_sqlChangeLog = array();
         }
