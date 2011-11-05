@@ -909,7 +909,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $object->getPermissionsForUser($this->getUser());
 
             if ($object->isAllowed("delete")) {
-                Element_Recyclebin_Item::create($object, $this->getUser());
                 $object->delete();
 
                 $this->_helper->json(array("success" => true));
@@ -936,6 +935,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         // check for childs
         if($object instanceof Object_Abstract) {
+
+            $deleteJobs[] = array(array(
+                "url" => "/admin/recyclebin/add",
+                "params" => array(
+                    "type" => "object",
+                    "id" => $object->getId()
+                )
+            ));
+
             $hasChilds = $object->hasChilds();
             if (!$hasDependency) {
                 $hasDependency = $hasChilds;

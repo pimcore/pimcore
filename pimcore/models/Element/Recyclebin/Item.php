@@ -77,16 +77,10 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function save ($user=null) {
         
-        if($this->getElement() instanceof Document) {
-            $this->setType("document");
+        if($this->getElement() instanceof Element_Interface) {
+            $this->setType(Element_Service::getElementType($this->getElement()));
         }
-        else if($this->getElement() instanceof Asset) {
-            $this->setType("asset");
-        }
-        else if($this->getElement() instanceof Object_Abstract) {
-            $this->setType("object");
-        }
-        
+
         $this->setSubtype($this->getElement()->getType());
         $this->setPath($this->getElement()->getFullPath());
         $this->setDate(time());

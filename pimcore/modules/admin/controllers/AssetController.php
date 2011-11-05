@@ -550,7 +550,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $asset->getPermissionsForUser($this->getUser());
 
             if ($asset->isAllowed("delete")) {
-                Element_Recyclebin_Item::create($asset, $this->getUser());
                 $asset->delete();
 
                 $this->_helper->json(array("success" => true));
@@ -576,6 +575,16 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         // check for childs
         if($asset instanceof Asset) {
+
+            $deleteJobs[] = array(array(
+                "url" => "/admin/recyclebin/add",
+                "params" => array(
+                    "type" => "asset",
+                    "id" => $asset->getId()
+                )
+            ));
+
+
             $hasChilds = $asset->hasChilds();
             if (!$hasDependency) {
                 $hasDependency = $hasChilds;

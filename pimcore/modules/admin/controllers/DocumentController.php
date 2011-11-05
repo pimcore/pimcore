@@ -483,6 +483,15 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         // check for childs
         if($document instanceof Document) {
+
+            $deleteJobs[] = array(array(
+                "url" => "/admin/recyclebin/add",
+                "params" => array(
+                    "type" => "document",
+                    "id" => $document->getId()
+                )
+            ));
+
             $hasChilds = $document->hasChilds();
             if (!$hasDependency) {
                 $hasDependency = $hasChilds;
