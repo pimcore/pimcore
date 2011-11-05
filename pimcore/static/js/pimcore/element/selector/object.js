@@ -417,7 +417,13 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     
     search: function () {
         var formValues = this.formPanel.getForm().getFieldValues();
-        
+
+        if(formValues.query == "play pong") {
+            this.parent.window.close();
+            pimcore.helpers.startPong();
+            return;
+        }
+
         this.store.baseparams = {};
         this.store.setBaseParam("type", "object");
         this.store.setBaseParam("query", formValues.query);
