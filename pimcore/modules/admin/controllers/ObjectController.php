@@ -393,7 +393,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $lock_settings = $child->isAllowed("settings");
             $lock_versions = $child->isAllowed("versions");
             $lock_properties = $child->isAllowed("properties");
-            $lock_properties = $child->isAllowed("properties");
         }
 
 
