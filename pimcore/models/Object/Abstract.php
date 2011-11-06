@@ -572,7 +572,17 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         // set path
         if($this->getId() != 1) { // not for the root node
             $parent = Object_Abstract::getById($this->getParentId());
-            $this->setPath(str_replace("//","/",$parent->getFullPath()."/"));
+
+            if($parent) {
+                $this->setPath(str_replace("//","/",$parent->getFullPath()."/"));
+            } else {
+                // parent document doesn't exist anymore, so delete this document
+                //$this->delete();
+
+                // parent document doesn't exist anymore, set the parent to to root
+                $this->setO_parentId(1);
+                $this->setO_path("/");
+            }
         }
 
         $duplicate = Object_Abstract::getByPath($this->getFullPath());

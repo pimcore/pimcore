@@ -244,3 +244,11 @@
     right:5px;
     top:5px;
 }
+
+/*
+    this fixes problem when the default background of the browser is not white
+    http://www.pimcore.org/issues/browse/PIMCORE-1208
+*/
+.x-form-field {
+    color: #000000;
+}

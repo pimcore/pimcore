@@ -52,6 +52,7 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     public function save ($path, $format = null, $quality = null) {
 
+        $format = strtolower($format);
         if(!$format) {
             $format = "png";
         }
@@ -61,6 +62,15 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         }
 
         $functionName = 'image' . $format;
+        if(!function_exists($functionName)) {
+            $functionName = "imagepng";
+        }
+
+        // always create a PNG24
+        if($format == "png") {
+            imagesavealpha($this->resource, true);
+        }
+
         switch ($format) {
             case 'jpeg':
                 $functionName($this->resource, $path, $quality);
@@ -86,7 +96,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
      */
     protected function createImage ($width, $height) {
         $newImg = imagecreatetruecolor($width, $height);
-        
+
+        imagesavealpha($newImg, true);
         imagealphablending($newImg, false);
         $trans_colour = imagecolorallocatealpha($newImg, 255, 0, 0, 127);
         imagefill($newImg, 0, 0, $trans_colour);
@@ -174,8 +185,15 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
     public function setBackgroundColor ($color) {
 
         list($r,$g,$b) = $this->colorhex2colorarray($color);
-        $color = imagecolorallocate($this->resource, $r, $g, $b);
-        imagefill($this->resource, 0, 0, $color);
+
+        // just imagefill() on the existing image doesn't work, so we have to create a new image, fill it and then merge
+        // the source image with the background-image together
+        $newImg = imagecreatetruecolor($this->getWidth(), $this->getHeight());
+        $color = imagecolorallocate($newImg, $r, $g, $b);
+        imagefill($newImg, 0, 0, $color);
+
+        imagecopy($newImg, $this->resource,0, 0, 0, 0, $this->getWidth(), $this->getHeight());
+        $this->resource = $newImg;
 
         $this->reinitializeImage();
 

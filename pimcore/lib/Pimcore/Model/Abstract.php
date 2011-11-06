@@ -49,7 +49,7 @@ abstract class Pimcore_Model_Abstract {
      * @param string $key
      * @return void
      */
-    protected function initResource($key = null) {
+    public function initResource($key = null) {
 
         $myClass = get_class($this);
         $resource = null;

@@ -28,6 +28,8 @@ class Document_Hardlink_Wrapper {
             if($sourceDoc = $doc->getSourceDocument()) {
                 $destDoc = self::upperCastDocument($sourceDoc);
                 $destDoc->setKey($doc->getKey());
+                $destDoc->setPath($doc->getPath());
+                $destDoc->initResource(get_class($sourceDoc));
                 return $destDoc;
             }
         } else {

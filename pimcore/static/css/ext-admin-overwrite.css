@@ -20,3 +20,12 @@
 .x-tbar-loading {
 background-image:url("/pimcore/static/img/icon/arrow_refresh.png") !important;
 }
+
+/*
+    this fixes problem when the default background of the browser is not white
+    http://www.pimcore.org/issues/browse/PIMCORE-1208
+*/
+.x-form-field {
+    color: #000000;
+}
+

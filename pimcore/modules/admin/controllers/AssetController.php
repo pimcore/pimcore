@@ -408,10 +408,24 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => $success, "msg" => "Success"));
     }
 
+    public function addAssetCompatibilityAction() {
+        // this is a special action for the compatibility mode upload (without flash)
+        $success = $this->addAsset();
+
+        // here we have to use this method and not the JSON action helper ($this->_helper->json()) because this will add
+        // Content-Type: application/json which fires a download window in most browsers, because this is a normal POST
+        // request and not XHR where the content-type doesn't matter
+        $this->disableViewAutoRender();
+        echo Zend_Json::encode(array("success" => $success, "msg" => "Success"));
+    }
+
     protected function addAsset () {
         $success = false;
 
         $filename = Pimcore_File::getValidFilename($_FILES["Filedata"]["name"]);
+        if(empty($filename)) {
+            throw new Exception("The filename of the asset is empty");
+        }
 
         $parentAsset = Asset::getById(intval($this->_getParam("parentId")));
         $parentAsset->getPermissionsForUser($this->getUser());
@@ -536,7 +550,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $asset->getPermissionsForUser($this->getUser());
 
             if ($asset->isAllowed("delete")) {
-                Element_Recyclebin_Item::create($asset, $this->getUser());
                 $asset->delete();
 
                 $this->_helper->json(array("success" => true));
@@ -562,6 +575,16 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         // check for childs
         if($asset instanceof Asset) {
+
+            $deleteJobs[] = array(array(
+                "url" => "/admin/recyclebin/add",
+                "params" => array(
+                    "type" => "asset",
+                    "id" => $asset->getId()
+                )
+            ));
+
+
             $hasChilds = $asset->hasChilds();
             if (!$hasDependency) {
                 $hasDependency = $hasChilds;
@@ -1091,6 +1114,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $asset = Asset::getById($this->_getParam("id"));
         $asset->setData(Pimcore_Tool::getHttpData($this->_getParam("image")));
+        $asset->setUserModification($this->getUser()->getId());
         $asset->save();
 
         $this->view->asset = $asset;

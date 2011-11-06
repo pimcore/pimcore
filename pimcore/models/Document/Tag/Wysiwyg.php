@@ -132,7 +132,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
             return $this->text;
         }
 
-        $s = $html->find("[pimcore_id]");
+        $s = $html->find("a[pimcore_id],img[pimcore_id]");
 
         if($s) {
             foreach ($s as $el) {

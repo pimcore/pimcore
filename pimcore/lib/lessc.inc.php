@@ -821,7 +821,7 @@ class lessc {
 	 *
 	 * Blocks are made up of props and children.
 	 *
-	 * Props are property instructions, array tuples which desicibe an action
+	 * Props are property instructions, array tuples which describe an action
 	 * to be taken, eg. write a property, set a variable, mixin a block.
 	 *
 	 * The children of a block are just all the blocks that are defined within.
@@ -833,7 +833,7 @@ class lessc {
 	 *
 	 */
 	function compileBlock($block, $parent_tags = null) {
-		$isRoot = $this->env == null;
+		$isRoot = $parent_tags == null && $block->tags == null;
 
 		$indent = str_repeat($this->indentChar, $this->indentLevel);
 
@@ -973,7 +973,7 @@ class lessc {
 
 			$mixin = $this->findBlock($block, $path);
 			if (is_null($mixin)) {
-				echo "failed to find block: ".implode(" > ", $path)."\n";
+				// echo "failed to find block: ".implode(" > ", $path)."\n";
 				break; // throw error here??
 			}
 
@@ -1675,8 +1675,9 @@ class lessc {
 		return $less;
 	}
 
-	protected function parseTree($str = null) {
-		$this->prepareParser($str ? $str : $this->buffer);
+	// parse code and return intermediate tree
+	public function parseTree($str = null) {
+		$this->prepareParser(is_null($str) ? $this->buffer : $str);
 		while (false !== $this->parseChunk());
 
 		if ($this->count != strlen($this->buffer))
@@ -1689,16 +1690,38 @@ class lessc {
 		$this->env = null;
 		return $root;
 	}
+
+	// inject array of unparsed strings into environment as variables
+	protected function injectVariables($args) {
+		$this->pushEnv();
+		$parser = new lessc();
+		foreach ($args as $name => $str_value) {
+			if ($name{0} != '@') $name = '@'.$name;
+			$parser->count = 0;
+			$parser->buffer = (string)$str_value;
+			if (!$parser->propertyValue($value)) {
+				throw new Exception("failed to parse passed in variable $name: $str_value");
+			}
+
+			$this->set($name, $value);
+		}
+	}
 	
 	// parse and compile buffer
-	function parse($str = null) {
+	function parse($str = null, $initial_variables = null) {
+		$locale = setlocale(LC_NUMERIC, 0);
+		setlocale(LC_NUMERIC, "C");
 		$root = $this->parseTree($str);
-		return $this->compileBlock($root);
+
+		if ($initial_variables) $this->injectVariables($initial_variables);
+		$out = $this->compileBlock($root);
+		setlocale(LC_NUMERIC, $locale);
+		return $out;
 	}
 
 	function throwParseError($msg = 'parse error') {
 		$line = $this->line + substr_count(substr($this->buffer, 0, $this->count), "\n");
-		if ($this->fileName) {
+		if (isset($this->fileName)) {
 			$loc = $this->fileName.' on line '.$line;
 		} else {
 			$loc = "line: ".$line;
@@ -1767,7 +1790,9 @@ class lessc {
 					$count += strlen($m[0]) - 1;
 				break;
 			case '//':
-				$skip = strpos($text, "\n", $count) - $count;
+				$skip = strpos($text, "\n", $count);
+				if ($skip === false) $skip = strlen($text) - $count;
+				else $skip -= $count;
 				break;
 			case '/*': 
 				if (preg_match('/\/\*.*?\*\//s', $text, $m, 0, $count)) {

@@ -35,7 +35,7 @@ class Pimcore_Tool_Text
             return $text;
         }
 
-        $s = $html->find("[pimcore_id]");
+        $s = $html->find("a[pimcore_id],img[pimcore_id]");
 
         foreach ($s as $el) {
 
@@ -139,7 +139,7 @@ class Pimcore_Tool_Text
                 return $text;
             }
 
-            $s = $html->find("[pimcore_id]");
+            $s = $html->find("a[pimcore_id],img[pimcore_id]");
 
             foreach ($s as $el) {
 
@@ -191,12 +191,9 @@ class Pimcore_Tool_Text
                 return $text;
             }
 
-            $s = $html->find("[pimcore_id]");
+            $s = $html->find("a[pimcore_id],img[pimcore_id]");
 
             foreach ($s as $el) {
-
-
-
                 // image
                 if ($el->src) {
                     $type = "asset";
@@ -259,7 +256,7 @@ class Pimcore_Tool_Text
                 return $text;
             }
 
-            $s = $html->find("[pimcore_id]");
+            $s = $html->find("a[pimcore_id],img[pimcore_id]");
 
             foreach ($s as $el) {
 
@@ -317,7 +314,7 @@ class Pimcore_Tool_Text
                 return $text;
             }
 
-            $s = $html->find("[pimcore_id]");
+            $s = $html->find("a[pimcore_id],img[pimcore_id]");
 
             foreach ($s as $el) {
 

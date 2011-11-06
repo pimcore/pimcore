@@ -228,6 +228,7 @@
 "data_mapping","Data Mapping"
 "unsupported_filetype","Unsupported Filetype"
 "class_saved_successfully","Class saved successfully"
+"class_save_error","Class cannot be saved"
 "permissions_reports_marketing","Reports &amp; Marketing"
 "show_root_node","Show root-node"
 "root_folder","Root-Folder"

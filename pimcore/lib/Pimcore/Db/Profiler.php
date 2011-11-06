@@ -14,10 +14,6 @@
  */
 
 
-/** Zend_Db_Profiler */
-require_once 'Zend/Db/Profiler.php';
-
-
 /**
  * Writes DB events as log messages to the Firebug Console via FirePHP.
  *

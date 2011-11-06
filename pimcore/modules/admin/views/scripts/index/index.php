@@ -397,6 +397,7 @@
             mail: <?php echo $this->mail_settings_incomplete ?>,
             welcomescreen: <?php echo $this->config->general->welcomescreen ? "true" : "false"; ?>,
             debug: <?php echo Pimcore::inDebugMode() ? "true" : "false"; ?>,
+            devmode: <?php echo PIMCORE_DEVMODE ? "true" : "false"; ?>,
             google_analytics_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::isConfigured()) ?>,
             google_analytics_advanced: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::getSiteConfig()->advanced); ?>,
             google_webmastertools_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Webmastertools::isConfigured()) ?>,
@@ -450,6 +451,14 @@
 
     <?php // load plugin scripts ?>
     <?php
+
+        // only add the timestamp if the devmode is not activated, otherwise it is very hard to develop and debug plugins,
+        // because the filename changes on every reload and therefore breakpoints, ... are resetted on every reload
+        $pluginDcValue = time();
+        if(PIMCORE_DEVMODE) {
+            $pluginDcValue = 1;
+        }
+
         try {
             $pluginBroker = Zend_Registry::get("Pimcore_API_Plugin_Broker");
             if ($pluginBroker instanceof Pimcore_API_Plugin_Broker) {
@@ -461,7 +470,7 @@
                                 $jsPath=trim($jsPath);
                                 if (!empty($jsPath)) {
                                     ?>
-                                    <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo time() ?>"></script>
+                                    <script type="text/javascript" src="<?php echo $jsPath ?>?_dc=<?php echo $pluginDcValue; ?>"></script>
                                     <?php
         
                                 }
@@ -473,7 +482,7 @@
                                 $cssPath = trim($cssPath);
                                 if (!empty($cssPath)) {
                                     ?>
-                                    <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo time() ?>"/>
+                                    <link rel="stylesheet" type="text/css" href="<?php echo $cssPath ?>?_dc=<?php echo $pluginDcValue; ?>"/>
                                     <?php
         
                                 }

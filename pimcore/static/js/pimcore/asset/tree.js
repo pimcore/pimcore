@@ -521,7 +521,7 @@ pimcore.asset.tree = Class.create({
                 listeners: {
                     fileselected: function () {
                         this.uploadForm.getForm().submit({
-                            url: '/admin/asset/add-asset/?parentId=' + this.attributes.id,
+                            url: '/admin/asset/add-asset-compatibility/?parentId=' + this.attributes.id,
                             waitMsg: t("please_wait"),
                             success: function(fp, o){
                                 this.uploadWindowCompatible.hide();
@@ -689,7 +689,6 @@ pimcore.asset.tree = Class.create({
                     increment:5
                 });
                 win.show();
-                
 
                 for (var i=0; i<files.length; i++) {
                     file = files[i];
@@ -714,7 +713,7 @@ pimcore.asset.tree = Class.create({
                             var xhr = new XMLHttpRequest();
 
                             builder += 'Content-Disposition: form-data; name="Filedata"';
-                            if (file.fileName) {
+                            if (file.name) {
                               builder += '; filename="' + file.name + '"';
                             }
                             builder += crlf;
