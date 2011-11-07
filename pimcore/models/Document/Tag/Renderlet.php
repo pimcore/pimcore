@@ -170,6 +170,8 @@ class Document_Tag_Renderlet extends Document_Tag {
      */
     public function resolveDependencies() {
 
+        $this->load();
+
         $dependencies = array();
 
         if ($this->o instanceof Document) {
@@ -209,6 +211,8 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @return void
      */
     public function getObjectType($object = null) {
+
+        $this->load();
 
         if (!$object) {
             $object = $this->o;
