@@ -34,24 +34,24 @@ class Document_Hardlink_Wrapper_Page extends Document_Page implements Document_H
 
         if($this->properties == null) {
 
-            $directProperties = $this->getResource()->getProperties(false,true);
-            $inheritedProperties = $this->getResource()->getProperties(true);
-            $hardLinkSourceProperties = array();
-
-            $hardLinkSourcePropertiesTmp = array();
             if($this->getHardLinkSource()->getPropertiesFromSource()) {
-                $hardLinkSourceProperties = $this->getHardLinkSource()->getProperties();
+                $sourceProperties = $this->getResource()->getProperties();
+            } else {
+                $sourceProperties = array();
+            }
 
-                foreach ($hardLinkSourceProperties as $key => $prop) {
-                    $prop = clone $prop;
-                    if($prop->getInheritable()) {
-                        $prop->setInherited(true);
-                        $hardLinkSourcePropertiesTmp[$key] = $prop;
-                    }
+            $hardLinkProperties = array();
+            $hardLinkSourceProperties = $this->getHardLinkSource()->getProperties();
+            foreach ($hardLinkSourceProperties as $key => $prop) {
+                $prop = clone $prop;
+                if($prop->getInheritable()) {
+                    $prop->setInherited(true);
+                    $hardLinkProperties[$key] = $prop;
                 }
             }
 
-            $properties = array_merge($inheritedProperties, $hardLinkSourcePropertiesTmp, $directProperties);
+
+            $properties = array_merge($sourceProperties, $hardLinkProperties);
             $this->setProperties($properties);
         }
 
