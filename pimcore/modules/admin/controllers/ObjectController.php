@@ -393,6 +393,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $lock_settings = $child->isAllowed("settings");
             $lock_versions = $child->isAllowed("versions");
             $lock_properties = $child->isAllowed("properties");
+            $lock_properties = $child->isAllowed("properties");
         }
 
 
@@ -1573,6 +1574,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     public function copyAction()
     {
         $success = false;
+        $message = "";
         $sourceId = intval($this->_getParam("sourceId"));
         $source = Object_Abstract::getById($sourceId);
         $session = new Zend_Session_Namespace("pimcore_copy");
@@ -1614,7 +1616,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $success = true;
                 } catch (Exception $e) {
                     Logger::err($e);
-                    $success = true;
+                    $success = false;
+                    $message = $e->getMessage() . " in object " . $source->getFullPath() . " [id: " . $source->getId() . "]";
                 }
             }
             else {
@@ -1626,7 +1629,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $this->_helper->json(array("error" => false, "message" => "missing_permission"));
         }
 
-        $this->_helper->json(array("success" => $success));
+        $this->_helper->json(array("success" => $success, "message" => $message));
     }
 
 
