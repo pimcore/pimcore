@@ -150,8 +150,8 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             $adminSession->frozenuser = null;
         }
 
-        setcookie("pimcore_admin_sid", "", time() - 3600);
-        unset($_COOKIE['pimcore_admin_sid']);
+        Zend_Session::destroy();
+        Zend_Session::regenerateId();
 
         $this->_redirect("/admin/login/");
     }
