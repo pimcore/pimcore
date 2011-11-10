@@ -125,7 +125,11 @@ class Object_Class_Data_Multiselect extends Object_Class_Data {
      * @return string
      */
     public function getDataFromResource($data) {
-        return explode(",",$data);
+        if($data) {
+            return explode(",",$data);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -161,7 +165,11 @@ class Object_Class_Data_Multiselect extends Object_Class_Data {
      * @return string
      */
     public function getDataFromEditmode($data, $object = null) {
-        return explode(",",$data);
+        if($data) {
+            return explode(",",$data);
+        } else {
+            return null;
+        }
     }
 
     /**
