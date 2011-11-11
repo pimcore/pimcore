@@ -63,6 +63,7 @@ pimcore.object.helpers.edit = {
                 deferredRender: true,
                 forceLayout: true,
                 hideMode: "offsets",
+                enableTabScroll: true,
                 listeners: {
                     afterrender: function (panel) {
                         window.setTimeout(function () {
