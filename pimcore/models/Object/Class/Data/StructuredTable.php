@@ -497,5 +497,29 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
         return $code;
     }
 
+    
+    /**
+     * Creates getter code which is used for generation of php file for object brick classes using this data type
+     * @param $brickClass
+     * @return string
+     */
+    public function getGetterCodeObjectbrick ($brickClass) {
+        $key = $this->getName();
+        $code = '/**' . "\n";
+        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= "public function get" . ucfirst($key) . " () {\n";
+
+        $code .= "\t" . 'if((!$this->' . $key . '|| $this->' . $key . '->isEmpty()) && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
+        $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        $code .= "\t return " . '$this->' . $key . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+
+    }
+
 
 }
