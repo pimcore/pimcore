@@ -37,15 +37,28 @@ class Pimcore_Cache_Backend_MemcachedSliced extends Zend_Cache_Backend_Memcached
 
     private function saveTags($id, $tags) {
 
-        foreach ($tags as $tag) {
+        while ($tag = array_shift($tags)) {
             try {
                 $this->getDb()->insert("cache_tags", array(
-                      "id" => $id,
-                      "tag" => $tag
-                 ));
+                    "id" => $id,
+                    "tag" => $tag
+                ));
             }
             catch (Exception $e) {
-                // already exists
+                if(strpos(strtolower($e->getMessage()), "is full") !== false) {
+
+                    Logger::warning($e);
+
+                    // it seems that the MEMORY table is on the limit an full
+                    // change the storage engine of the cache tags table to InnoDB
+                    $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+
+                    // try it again
+                    $tags[] = $tag;
+                } else {
+                    // it seems that the item does already exist
+                    continue;
+                }
             }
         }
     }
