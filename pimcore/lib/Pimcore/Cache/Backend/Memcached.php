@@ -92,8 +92,11 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
             }
             catch (Exception $e) {
                 if(strpos(strtolower($e->getMessage()), "is full") !== false) {
+
+                    Logger::warning($e);
+
                     // it seems that the MEMORY table is on the limit an full
-                    // change the storage engine of the cache tags table to MyISAM
+                    // change the storage engine of the cache tags table to InnoDB
                     $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
 
                     // try it again
