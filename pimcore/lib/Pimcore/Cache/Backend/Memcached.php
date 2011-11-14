@@ -19,24 +19,24 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
     /**
      * @var Zend_Db_Adapter_Abstract
      */
-    private $db;
+    protected $db;
 
     /**
      * @var bool
      */
-    private $checkedCacheConsistency = false;
+    protected $checkedCacheConsistency = false;
 
     /**
      * @return void
      */
-    private function checkCacheConsistency() {
+    protected function checkCacheConsistency() {
         // if the cache_tags table is empty, flush the cache
         // reason: the cache tags are stored in a MEMORY table, that means that a restart of the mysql server causes the loss
         // of all data in this table but the cache still exists, so there is an inconsistency because then it's possible that
         // there are outdated or just wrong items in the cache
         if(!$this->checkedCacheConsistency) {
             $this->checkedCacheConsistency = true;
-            
+
             $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
             if(!$res) {
                 $this->clean(Zend_Cache::CLEANING_MODE_ALL);
@@ -61,7 +61,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
     /**
      * @return Zend_Db_Adapter_Abstract
      */
-    private function getDb () {
+    protected function getDb () {
         if(!$this->db) {
             $this->db = Pimcore_Resource::get();
         }
@@ -72,7 +72,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @param string $tag
      * @return void
      */
-    private function removeTag($tag) {
+    protected function removeTag($tag) {
         $this->getDb()->delete("cache_tags", "tag = '".$tag."'");
     }
 
@@ -81,7 +81,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @param array $tags
      * @return void
      */
-    private function saveTags($id, $tags) {
+    protected function saveTags($id, $tags) {
 
         while ($tag = array_shift($tags)) {
             try {
@@ -112,7 +112,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
     /**
      * @return void
      */
-    private function clearTags () {
+    protected function clearTags () {
         $this->getDb()->delete("cache_tags");
     }
 
@@ -120,7 +120,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @param string $tag
      * @return array
      */
-    private function getItemsByTag($tag) {
+    protected function getItemsByTag($tag) {
 
         $this->checkCacheConsistency();
 
@@ -171,6 +171,26 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
         if (count($tags) > 0) {
             $this->saveTags($id, $tags);
         }
+        return $result;
+    }
+
+    /**
+     * @param  string $id
+     * @return bool true if OK
+     */
+    public function remove($id) {
+
+        $this->checkCacheConsistency();
+
+        $this->getDb()->delete("cache_tags", "id = '".$id."'");
+
+        $result = parent::remove($id);
+
+        // security check if the deletion fails
+        if(!$result && $this->_memcache->get($id) !== false) {
+            $this->_memcache->flush();
+        }
+
         return $result;
     }
 
@@ -254,26 +274,6 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
             $items[] = $item["tag"];
         }
         return $items;
-    }
-
-    /**
-     * @param  string $id
-     * @return bool true if OK
-     */
-    public function remove($id) {
-
-        $this->checkCacheConsistency();
-
-        $this->getDb()->delete("cache_tags", "id = '".$id."'");
-
-        $result = parent::remove($id);
-
-        // security check if the deletion fails 
-        if(!$result && $this->_memcache->get($id) !== false) {
-            $this->_memcache->flush();
-        }
-
-        return $result;
     }
 
     /**

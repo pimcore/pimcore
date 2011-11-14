@@ -14,70 +14,51 @@
  */
 
 
-class Pimcore_Cache_Backend_MemcachedSliced extends Zend_Cache_Backend_Memcached {
-
-    private $db;
-    private $sliceInfoIdentifier = "~slice-info~";
-
+class Pimcore_Cache_Backend_MemcachedSliced extends Pimcore_Cache_Backend_Memcached {
 
     /**
-     * @return Zend_Db_Adapter_Abstract
+     * @var string
      */
-    private function getDb() {
-        if (!$this->db) {
-            $this->db = Pimcore_Resource::get();
-        }
-        return $this->db;
-    }
+    private $sliceInfoIdentifier = "~slice-info~";
 
+    /**
+     * @var bool
+     */
+    protected $checkedCacheConsistency = false;
 
-    private function removeTag($tag) {
-        $this->getDb()->delete("cache_tags", "tag = '" . $tag . "'");
-    }
+    /**
+     * @return void
+     */
+    protected function checkCacheConsistency() {
+        // if the cache_tags table is empty, flush the cache
+        // reason: the cache tags are stored in a MEMORY table, that means that a restart of the mysql server causes the loss
+        // of all data in this table but the cache still exists, so there is an inconsistency because then it's possible that
+        // there are outdated or just wrong items in the cache
+        if(!$this->checkedCacheConsistency) {
+            $this->checkedCacheConsistency = true;
 
-    private function saveTags($id, $tags) {
-
-        while ($tag = array_shift($tags)) {
-            try {
-                $this->getDb()->insert("cache_tags", array(
-                    "id" => $id,
-                    "tag" => $tag
-                ));
-            }
-            catch (Exception $e) {
-                if(strpos(strtolower($e->getMessage()), "is full") !== false) {
-
-                    Logger::warning($e);
-
-                    // it seems that the MEMORY table is on the limit an full
-                    // change the storage engine of the cache tags table to InnoDB
-                    $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
-
-                    // try it again
-                    $tags[] = $tag;
-                } else {
-                    // it seems that the item does already exist
-                    continue;
-                }
+            $res = $this->getDb()->fetchOne("SELECT id FROM cache_tags LIMIT 1");
+            if(!$res) {
+                $this->clean(Zend_Cache::CLEANING_MODE_ALL);
             }
         }
     }
 
-    private function clearTags() {
-        $this->getDb()->delete("cache_tags");
-    }
-
-    private function getItemsByTag($tag) {
-        $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE tag = '" . $tag . "'");
-        $items = array();
-
-        foreach ($itemIds as $item) {
-            $items[] = $item["id"];
+    /**
+     * @param $id
+     * @param bool $doNotTestCacheValidity
+     * @return void
+     */
+    public function load($id, $doNotTestCacheValidity = false) {
+        $data = parent::load($id, $doNotTestCacheValidity);
+        $slicesAmount = $this->getSlicesAmount($data);
+        if ($slicesAmount > 0) {
+            $data = $this->loadSliced($id, $slicesAmount);
         }
 
-
-        return $items;
+        return $data;
     }
+
 
     /**
      * Save some string datas into a cache record
@@ -92,6 +73,8 @@ class Pimcore_Cache_Backend_MemcachedSliced extends Zend_Cache_Backend_Memcached
      * @return boolean True if no problem
      */
     public function save($data, $id, $tags = array(), $specificLifetime = false) {
+
+        $this->checkCacheConsistency();
 
         //hack to slice data if > 1M
         if (strlen($data) > 1024 * (1024 - 1)) {
@@ -108,77 +91,12 @@ class Pimcore_Cache_Backend_MemcachedSliced extends Zend_Cache_Backend_Memcached
     }
 
     /**
-     * Clean some cache records
-     *
-     * Available modes are :
-     * 'all' (default)  => remove all cache entries ($tags is not used)
-     * 'old'            => remove too old cache entries ($tags is not used)
-     * 'matchingTag'    => remove cache entries matching all given tags
-     *                     ($tags can be an array of strings or a single string)
-     * 'notMatchingTag' => remove cache entries not matching one of the given tags
-     *                     ($tags can be an array of strings or a single string)
-     *
-     * @param  string $mode Clean mode
-     * @param  array  $tags Array of tags
-     * @return boolean True if no problem
-     */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array()) {
-        if ($mode == Zend_Cache::CLEANING_MODE_ALL) {
-            $this->clearTags();
-            return $this->_memcache->flush();
-        }
-        if ($mode == Zend_Cache::CLEANING_MODE_OLD) {
-            Logger::warning("Zend_Cache_Backend_Memcached::clean() : CLEANING_MODE_OLD is unsupported by the Memcached backend");
-        }
-        if ($mode == Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
-            foreach ($tags as $tag) {
-                $items = $this->getItemsByTag($tag);
-                foreach ($items as $item) {
-                    // We call delete directly here because the ID in the cache is already specific for this site
-                    $this->remove($item);
-                }
-            }
-        }
-        if ($mode == Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG) {
-
-            $condParts = array("1=1");
-            foreach ($tags as $tag) {
-                $condParts[] = "tag != '" . $tag . "'";
-            }
-
-            $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE " . implode(" AND ", $condParts));
-
-            $items = array();
-            foreach ($itemIds as $item) {
-                $items[] = $item["id"];
-            }
-
-            foreach ($items as $item) {
-                $this->remove($item);
-            }
-        }
-    }
-
-
-    /**
-     * @param  string $id
-     * @return array tags for given id
-     */
-    protected function getTagsById($id) {
-        $itemIds = $this->getDb()->fetchAll("SELECT tag FROM cache_tags WHERE id = '" . $id . "'");
-        $items = array();
-
-        foreach ($itemIds as $item) {
-            $items[] = $item["tag"];
-        }
-        return $items;
-    }
-
-    /**
      * @param  string $id
      * @return bool true if OK
      */
     public function remove($id) {
+
+        $this->checkCacheConsistency();
 
         $this->getDb()->delete("cache_tags", "id = '" . $id . "'");
 
@@ -204,16 +122,6 @@ class Pimcore_Cache_Backend_MemcachedSliced extends Zend_Cache_Backend_Memcached
         $capabilities["tags"] = true;
 
         return $capabilities;
-    }
-
-    public function load($id, $doNotTestCacheValidity = false) {
-        $data = parent::load($id, $doNotTestCacheValidity);
-        $slicesAmount = $this->getSlicesAmount($data);
-        if ($slicesAmount > 0) {
-            $data = $this->loadSliced($id, $slicesAmount);
-        }
-
-        return $data;
     }
 
     private function getSlicesAmount($data) {
