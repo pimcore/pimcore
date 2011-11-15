@@ -65,19 +65,28 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         var panelConf = {
             autoHeight: true,
-            cls: "object_field"
+            border: false,
+            activeTab: 0
         };
+        this.tabpanel = new Ext.TabPanel(panelConf);
+
+        var panelConf = {
+            autoHeight: true,
+            cls: "object_field",
+            items: [this.tabpanel]
+        };
+
         if(this.fieldConfig.title) {
             panelConf.title = this.fieldConfig.title;
         }
-        
         this.component = new Ext.Panel(panelConf);
+
         return this.component;
     },
     
     initData: function () {
         
-        this.component.add(this.getControls());
+        this.component.insert(0, this.getControls());
         if(this.data.length > 0) {
             for (var i=0; i<this.data.length; i++) {
                 if(this.data[i] != null) {
@@ -87,7 +96,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         }
         
-        this.component.doLayout();
+        this.tabpanel.doLayout();
     },
     
     getControls: function (blockElement) {
@@ -169,10 +178,11 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         var key = blockElement.key;
         this.currentElements[key].action = "deleted";
         
-        this.component.remove(blockElement);
+        this.tabpanel.remove(blockElement);
         this.addedTypes[blockElement.fieldtype] = false;
         this.component.remove(this.component.get(0));
         this.component.insert(0, this.getControls());
+        this.tabpanel.doLayout();
         this.component.doLayout();
 
         this.dirty = true;
@@ -198,11 +208,12 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         }
 
         var blockElement = new Ext.Panel({
-            bodyStyle: "padding:10px;",
+            //bodyStyle: "padding:10px;",
             style: "margin: 0 0 10px 0;",
             layout: "pimcoreform",
             autoHeight: true,
             border: false,
+            title: type,
             items: this.getRecursiveLayout(this.layoutDefinitions[type]).items
         });
 
@@ -218,10 +229,12 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         blockElement.key = type; 
         blockElement.fieldtype = type;
-        this.component.add(blockElement);
+        this.tabpanel.add(blockElement);
+        console.log(this.getControls());
         this.component.insert(0, this.getControls());
 
 
+        this.tabpanel.doLayout();
         this.component.doLayout();
 
         this.currentElements[type] = null;
@@ -233,6 +246,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
         if(!ignoreChange) {
             this.dirty = true;
+            this.tabpanel.activate(blockElement);
         }
 
         this.dataFields = [];
