@@ -268,7 +268,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
         if (data.node.attributes.elementType == "asset" && data.node.attributes.type != "folder") {
             return true;
-        } else if (data.node.attributes.elementType == "document" && data.node.attributes.type=="page"){
+        } else if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
             return true;
         }
         return false;

@@ -318,8 +318,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
         }
 
-
-        if (data.node.attributes.type == "page" || data.node.attributes.type == "link") {
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
             this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="' + id + '">' + wrappedText + '</a>');
             return true;
         }
@@ -338,7 +337,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
-         if (data.node.attributes.elementType=="document" && (data.node.attributes.type == "page" || data.node.attributes.type == "link") ){
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
             return true;
         } else if (data.node.attributes.elementType=="asset" && data.node.attributes.type != "folder"){
             return true;

@@ -55,7 +55,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         };
         
         // check for restrictions
-        var possibleRestrictions = ["page","snippet","folder"];
+        var possibleRestrictions = ["page","snippet","folder","link","hardlink"];
         var filterStore = [];
         var selectedStore = [];
         for (var i=0; i<possibleRestrictions.length; i++) {

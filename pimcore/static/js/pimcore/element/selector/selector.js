@@ -37,7 +37,7 @@ pimcore.element.selector.selector = Class.create({
         var restrictionDefaults = {
             type: ["document","asset","object"],
             subtype: {
-                document: ["page", "snippet","folder"],
+                document: ["page", "snippet","folder","link","hardlink"],
                 asset: ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"],
                 object: ["object", "folder", "variant"]
             },
