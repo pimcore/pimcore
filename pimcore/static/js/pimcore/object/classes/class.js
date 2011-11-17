@@ -769,7 +769,7 @@ pimcore.object.classes.klass = Class.create({
                 pimcore.globalmanager.get("object_types_store").reload();
 
                 // set the current modification date, to detect modifcations on the class which are not made here
-                this.data.modificationDate = res.class.modificationDate;
+                this.data.modificationDate = res['class'].modificationDate;
 
                 pimcore.helpers.showNotification(t("success"), t("class_saved_successfully"), "success");
             } else {
