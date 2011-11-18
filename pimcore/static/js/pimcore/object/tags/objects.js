@@ -487,7 +487,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 allowedClasses.push(this.fieldConfig.classes[i].classes);
             }
         }
-console.log(this.fieldConfig.classes);
+//console.log(this.fieldConfig.classes);
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
             type: ["object"],
             subtype: {

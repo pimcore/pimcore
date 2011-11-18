@@ -230,7 +230,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         blockElement.key = type; 
         blockElement.fieldtype = type;
         this.tabpanel.add(blockElement);
-        console.log(this.getControls());
+//        console.log(this.getControls());
         this.component.insert(0, this.getControls());
 
 
