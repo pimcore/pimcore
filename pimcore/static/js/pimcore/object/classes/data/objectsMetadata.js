@@ -92,9 +92,9 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             forceSelection:true,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
-                    console.log("change");
+//                    console.log("change");
                     this.datax.allowedClassId = classNamevalue;
-                    console.log(this.datax.allowedClassId);
+//                    console.log(this.datax.allowedClassId);
 
                     if (this.datax.allowedClassId != null) {
                         this.fieldStore.load({params:{id:this.datax.allowedClassId}});
