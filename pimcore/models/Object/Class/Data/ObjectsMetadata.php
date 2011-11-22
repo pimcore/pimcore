@@ -511,6 +511,9 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
     }
 
     public function setColumns($columns) {
+        if(isset($columns['key'])) {
+            $columns = array($columns);
+        }
         usort($columns, array($this, 'sort'));
 
         $this->columns = array();
