@@ -129,6 +129,9 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return void
      */
     public function setCols($cols) {
+        if(isset($cols['key'])) {
+            $cols = array($cols);
+        }
         usort($cols, array($this, 'sort'));
 
         $this->cols = array();;
@@ -150,7 +153,12 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return void
      */
     public function setRows($rows) {
+        if(isset($rows['key'])) {
+            $rows = array($rows);
+        }
+
         usort($rows, array($this, 'sort'));
+
 
         $this->rows = array();;
         foreach($rows as $r) {
