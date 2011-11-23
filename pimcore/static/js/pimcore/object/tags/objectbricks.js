@@ -163,7 +163,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             items: items
         });
 
-        return toolbar;
+        return toolbar; 
     },
     
     addBlock: function (blockElement, type) {
@@ -174,19 +174,21 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     },
     
     removeBlock: function (blockElement) {
-        
-        var key = blockElement.key;
-        this.currentElements[key].action = "deleted";
-        
-        this.tabpanel.remove(blockElement);
-        this.addedTypes[blockElement.fieldtype] = false;
-        this.component.remove(this.component.get(0));
-        this.component.insert(0, this.getControls());
-        this.tabpanel.doLayout();
-        this.component.doLayout();
 
-        this.dirty = true;
-        
+        Ext.MessageBox.confirm(t('delete_objectbrick'), t('delete_objectbrick_text'), function(blockElement, answer) {
+            if(answer == "yes") {
+                var key = blockElement.key;
+                this.currentElements[key].action = "deleted";
+
+                this.component.remove(blockElement);
+                this.addedTypes[blockElement.fieldtype] = false;
+                this.component.remove(this.component.get(0));
+                this.component.insert(0, this.getControls());
+                this.component.doLayout();
+
+                this.dirty = true;
+            }
+        }.bind(this, blockElement), this);
     },
     
 

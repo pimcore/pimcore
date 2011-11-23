@@ -292,29 +292,43 @@ pimcore.object.tree = Class.create({
 
 
             //paste
+            var pasteMenu = [];
 
-            var pasteMenu = [
-                {
+            if(this.attributes.reference.cacheObjectId && this.attributes.permissions.create) {
+                pasteMenu.push({
                     text: t("paste_recursive_as_childs"),
                     iconCls: "pimcore_icon_paste",
                     handler: this.attributes.reference.pasteInfo.bind(this, "recursive")
-                },
-                {
+                });
+                pasteMenu.push({
                     text: t("paste_as_child"),
                     iconCls: "pimcore_icon_paste",
                     handler: this.attributes.reference.pasteInfo.bind(this, "child")
-                }
-            ];
+                });
 
-            if (this.attributes.type != "folder") {
+
+                if (this.attributes.type != "folder") {
+                    pasteMenu.push({
+                        text: t("paste_contents"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.attributes.reference.pasteInfo.bind(this, "replace")
+                    });
+                }
+            }
+
+            if(this.attributes.reference.cutObject && this.attributes.permissions.create) {
                 pasteMenu.push({
-                    text: t("paste_contents"),
+                    text: t("paste_cut_element"),
                     iconCls: "pimcore_icon_paste",
-                    handler: this.attributes.reference.pasteInfo.bind(this, "replace")
+                    handler: function() {
+                        this.attributes.reference.pasteCutObject(this.attributes.reference.cutObject, this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                        this.attributes.reference.cutParentNode = null;
+                        this.attributes.reference.cutObject = null;
+                    }.bind(this)
                 });
             }
 
-            if (this.attributes.reference.cacheObjectId && this.attributes.permissions.create) {
+            if (pasteMenu.length > 0) {
                 menu.add(new Ext.menu.Item({
                     text: t('paste'),
                     iconCls: "pimcore_icon_paste",
@@ -329,6 +343,15 @@ pimcore.object.tree = Class.create({
                 text: t('copy'),
                 iconCls: "pimcore_icon_copy",
                 handler: this.attributes.reference.copy.bind(this)
+            }));
+        }
+
+        //cut
+        if (this.id != 1 && !this.attributes.locked) {
+            menu.add(new Ext.menu.Item({
+                text: t('cut'),
+                iconCls: "pimcore_icon_cut",
+                handler: this.attributes.reference.cut.bind(this)
             }));
         }
 
@@ -429,6 +452,40 @@ pimcore.object.tree = Class.create({
 
     copy: function () {
         this.attributes.reference.cacheObjectId = this.id;
+    },
+
+    cut: function () {
+        this.attributes.reference.cutObject = this;
+        this.attributes.reference.cutParentNode = this.parentNode;
+    },
+
+    pasteCutObject: function(object, oldParent, newParent, tree) {
+        object.attributes.reference.updateObject(object.id, {
+            parentId: newParent.id
+        }, function (newParent, oldParent, tree, response) {
+            try {
+                var rdata = Ext.decode(response.responseText);
+                if (rdata && rdata.success) {
+                    // set new pathes
+                    var newBasePath = newParent.attributes.path;
+                    if (newBasePath == "/") {
+                        newBasePath = "";
+                    }
+                    this.attributes.basePath = newBasePath;
+                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.text;
+                }
+                else {
+                    tree.loadMask.hide();
+                    pimcore.helpers.showNotification(t("error"), t("error_moving_object"), "error", t(rdata.message));
+                }
+            } catch(e) {
+                tree.loadMask.hide();
+                pimcore.helpers.showNotification(t("error"), t("error_moving_object"), "error");
+            }
+            oldParent.reload();
+            newParent.reload();
+            tree.loadMask.hide();
+        }.bind(object, newParent, oldParent, tree));
     },
 
     pasteInfo: function (type) {
