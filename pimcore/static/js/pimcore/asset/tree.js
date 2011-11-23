@@ -286,6 +286,16 @@ pimcore.asset.tree = Class.create({
             }));
         }
 
+        //cut
+        if (this.id != 1 && !this.attributes.locked) {
+            menu.add(new Ext.menu.Item({
+                text: t('cut'),
+                iconCls: "pimcore_icon_cut",
+                handler: this.attributes.reference.cut.bind(this)
+            }));
+        }
+
+
         //paste
         if (this.attributes.reference.cacheDocumentId && (this.attributes.permissions.create || this.attributes.permissions.publish)) {
             var pasteMenu = [];
@@ -304,6 +314,18 @@ pimcore.asset.tree = Class.create({
                     handler: this.attributes.reference.pasteInfo.bind(this, "replace")
                 }));
             }
+        }
+
+        if (this.attributes.type == "folder" && this.attributes.reference.cutAsset && (this.attributes.permissions.create || this.attributes.permissions.publish)) {
+            menu.add(new Ext.menu.Item({
+                text: t('paste_cut_element'),
+                iconCls: "pimcore_icon_paste",
+                handler: function() {
+                    this.attributes.reference.pasteCutAsset(this.attributes.reference.cutAsset, this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                    this.attributes.reference.cutParentNode = null;
+                    this.attributes.reference.cutAsset = null;
+                }.bind(this)
+            }));
         }
 
         if (this.attributes.permissions.remove && this.attributes.id != 1 && !this.attributes.locked) {
@@ -368,6 +390,41 @@ pimcore.asset.tree = Class.create({
 
     copy: function () {
         this.attributes.reference.cacheDocumentId = this.id;
+    },
+
+    cut: function () {
+        this.attributes.reference.cutAsset = this;
+        this.attributes.reference.cutParentNode = this.parentNode;
+    },
+
+    pasteCutAsset: function(asset, oldParent, newParent, tree) {
+        asset.attributes.reference.updateAsset(asset.id, {
+            parentId: newParent.id
+        }, function (newParent, oldParent, tree, response) {
+            try{
+                var rdata = Ext.decode(response.responseText);
+                if (rdata && rdata.success) {
+                    // set new pathes
+                    var newBasePath = newParent.attributes.path;
+                    if (newBasePath == "/") {
+                        newBasePath = "";
+                    }
+                    this.attributes.basePath = newBasePath;
+                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.text;
+                }
+                else {
+                    tree.loadMask.hide();
+                    pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error",t(rdata.message));
+                }
+            } catch(e){
+                 tree.loadMask.hide();
+                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
+            }
+            tree.loadMask.hide();
+             oldParent.reload();
+             newParent.reload();
+        }.bind(asset, newParent, oldParent, tree));
+
     },
 
     pasteInfo: function (type) {

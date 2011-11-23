@@ -342,6 +342,10 @@
 	background: url(/pimcore/static/img/icon/page_white_copy.png) no-repeat !important;
 }
 
+.pimcore_icon_cut {
+	background: url(/pimcore/static/img/icon/cut.png) no-repeat !important;
+}
+
 .pimcore_icon_paste {
 	background: url(/pimcore/static/img/icon/page_white_paste.png) no-repeat !important;
 }

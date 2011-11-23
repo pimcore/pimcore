@@ -300,6 +300,17 @@ pimcore.document.tree = Class.create({
 
 
         //paste
+        if (this.attributes.reference.cutDocument && this.attributes.permissions.create) {
+            pasteMenu.push({
+                text: t("paste_cut_element"),
+                iconCls: "pimcore_icon_paste",
+                handler: function() {
+                    this.attributes.reference.pasteCutDocument(this.attributes.reference.cutDocument, this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                    this.attributes.reference.cutParentNode = null;
+                    this.attributes.reference.cutDocument = null;
+                }.bind(this)
+            });
+        }
         if (this.attributes.reference.cacheDocumentId && this.attributes.permissions.create) {
 
             if (this.attributes.type != "folder") {
@@ -309,7 +320,9 @@ pimcore.document.tree = Class.create({
                     handler: this.attributes.reference.pasteInfo.bind(this, "replace")
                 });
             }
+        }
 
+        if(pasteMenu.length > 0) {
             menu.add(new Ext.menu.Item({
                 text: t('paste'),
                 iconCls: "pimcore_icon_paste",
@@ -318,12 +331,19 @@ pimcore.document.tree = Class.create({
             }));
         }
 
-
         if (this.id != 1) {
             menu.add(new Ext.menu.Item({
                 text: t('copy'),
                 iconCls: "pimcore_icon_copy",
                 handler: this.attributes.reference.copy.bind(this)
+            }));
+        }
+
+        if (this.id != 1 && !this.attributes.locked) {
+            menu.add(new Ext.menu.Item({
+                text: t('cut'),
+                iconCls: "pimcore_icon_cut",
+                handler: this.attributes.reference.cut.bind(this)
             }));
         }
 
@@ -483,7 +503,41 @@ pimcore.document.tree = Class.create({
         this.attributes.reference.cacheDocumentId = this.id;
     },
 
+    cut: function () {
+        this.attributes.reference.cutDocument = this;
+        this.attributes.reference.cutParentNode = this.parentNode;
+    },
 
+    pasteCutDocument: function(document, oldParent, newParent, tree) {
+        document.attributes.reference.updateDocument(document.id, {
+            parentId: newParent.id
+        }, function (newParent, oldParent, tree, response) {
+            try {
+                var rdata = Ext.decode(response.responseText);
+                if (rdata && rdata.success) {
+                    // set new pathes
+                    var newBasePath = newParent.attributes.path;
+                    if (newBasePath == "/") {
+                        newBasePath = "";
+                    }
+                    this.attributes.basePath = newBasePath;
+                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.text;
+                }
+                else {
+                    tree.loadMask.hide();
+                    pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error", t(rdata.message));
+
+                }
+            } catch(e) {
+                pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error");
+            }
+            oldParent.reload();
+            newParent.reload();
+            tree.loadMask.hide();
+
+        }.bind(document, newParent, oldParent, tree));
+
+    },
 
     pasteInfo: function (type) {
         //this.attributes.reference.tree.loadMask.show();
