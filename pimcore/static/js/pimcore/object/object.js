@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.object");
 pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     initialize: function(id) {
-
         pimcore.plugin.broker.fireEvent("preOpenObject", this, "object");
 
         this.addLoadingPanel();
@@ -46,6 +45,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     getDataComplete: function (response) {
 
+
         try {
             this.data = Ext.decode(response.responseText);
 
@@ -64,7 +64,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
             
             this.startChangeDetector();
-            this.startInheritanceDetector();
+            this.setupInheritanceDetector();
         }
         catch (e) {
             console.log(e);
@@ -73,8 +73,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     inheritedFields: {},
-    startInheritanceDetector: function () {
+    setupInheritanceDetector: function() {
+        this.tab.on("deactivate", this.stopInheritanceDetector.bind(this));
+        this.tab.on("activate", this.startInheritanceDetector.bind(this));
+        this.tab.on("destroy", this.stopInheritanceDetector.bind(this));
+        this.startInheritanceDetector();
+    },
 
+    startInheritanceDetector: function () {
         var dataKeys = Object.keys(this.data.metaData);
         for (var i = 0; i < dataKeys.length; i++) {
             if(this.data.metaData[dataKeys[i]].inherited == true) {
@@ -82,10 +88,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
         }
 
-        this.tab.on("deactivate", this.stopInheritanceDetector.bind(this));
-        this.tab.on("activate", this.startInheritanceDetector.bind(this));
-        this.tab.on("destroy", this.stopInheritanceDetector.bind(this));
-        
         if(!this.inheritanceDetectorInterval) {
             this.inheritanceDetectorInterval = window.setInterval(this.checkForInheritance.bind(this),1000);
         }
@@ -97,7 +99,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     checkForInheritance: function () {
-//        console.log("check");
         if (!this.edit.layout.rendered) {
             throw "edit not available";
         }

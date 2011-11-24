@@ -151,7 +151,6 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
     public function saveAction() {
-
         $class = Object_Class::getById(intval($this->_getParam("id")));
 
         $configuration = Zend_Json::decode($this->_getParam("configuration"));

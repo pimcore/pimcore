@@ -79,7 +79,8 @@ pimcore.helpers.openObject = function (id, type) {
         pimcore.globalmanager.add("object_" + id, new pimcore.object[type](id));
     }
     else {
-        pimcore.globalmanager.get("object_" + id).activate();
+        var tab = pimcore.globalmanager.get("object_" + id);
+        tab.activate();
     }
 };
 
