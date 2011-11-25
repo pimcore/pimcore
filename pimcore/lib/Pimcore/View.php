@@ -163,12 +163,9 @@ class Pimcore_View extends Zend_View {
         if ($include instanceof Document_PageSnippet && $include->isPublished()) {
             if ($include->getAction() && $include->getController()) {
                 $content = $this->action($include->getAction(), $include->getController(), null, $params);
-            }
-
-            if ($include->getTemplate()) {
+            } else if ($include->getTemplate()) {
                 $content = $this->action("default", "default", null, $params);
             }
-
 
             // in editmode add events at hover an click to be able to edit the included document
             if($this->editmode) {
