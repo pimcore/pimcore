@@ -537,6 +537,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), null);
+        
+        Pimcore_API_Plugin_Broker::getInstance()->postDeleteObject($this);
     }
 
 
@@ -559,6 +561,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             $this->update();
         }
         else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
             $this->getResource()->create();
             Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
             $this->update();
