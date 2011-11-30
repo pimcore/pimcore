@@ -392,6 +392,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->update();
         }
         else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
             $this->getResource()->create();
             Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
             $this->update();
@@ -426,6 +427,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     protected function update() {
+
+        Pimcore_API_Plugin_Broker::getInstance()->preUpdateAsset($this);
 
 
         if (!$this->getFilename() && $this->getId() != 1) {
@@ -733,6 +736,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), null);
+
+        Pimcore_API_Plugin_Broker::getInstance()->postDeleteAsset($this);
     }
 
     public function clearDependedCache() {

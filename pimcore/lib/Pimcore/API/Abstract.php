@@ -28,6 +28,17 @@ class Pimcore_API_Abstract
 
     /**
      *
+     * Hook called before an asset was added
+     *
+     * @param Asset $asset
+     */
+    public function preAddAsset(Asset $asset)
+    {
+
+    }
+
+    /**
+     *
      * Hook called after an asset was added
      *
      * @param Asset $asset
@@ -48,6 +59,26 @@ class Pimcore_API_Abstract
     }
 
     /**
+     * Hook called after an asset is deleted
+     *
+     * @param Asset $asset
+     */
+    public function postDeleteAsset(Asset $asset)
+    {
+
+    }
+
+    /**
+     * Hook called before an asset is updated
+     *
+     * @param Asset $asset
+     */
+    public function preUpdateAsset(Asset $asset)
+    {
+
+    }
+
+    /**
      * Hook called after an asset is updated
      *
      * @param Asset $asset
@@ -57,6 +88,17 @@ class Pimcore_API_Abstract
 
     }
 
+
+    /**
+     *
+     * Hook called before a document was added
+     *
+     * @param Document $document
+     */
+    public function preAddDocument(Document $document)
+    {
+
+    }
 
     /**
      *
@@ -75,6 +117,16 @@ class Pimcore_API_Abstract
      * @param Document $document
      */
     public function preDeleteDocument(Document $document)
+    {
+
+    }
+
+    /**
+     * Hook called after a document is deleted
+     *
+     * @param Document $document
+     */
+    public function postDeleteDocument(Document $document)
     {
 
     }
@@ -101,6 +153,16 @@ class Pimcore_API_Abstract
 
 
     /**
+     * Hook before an object was is added
+     *
+     * @param Object_Abstract $object
+     */
+    public function preAddObject(Object_Abstract $object)
+    {
+
+    }
+
+    /**
      * Hook after an object was is added
      *
      * @param Object_Abstract $object
@@ -116,6 +178,16 @@ class Pimcore_API_Abstract
      * @param Object_Abstract $object
      */
     public function preDeleteObject(Object_Abstract $object)
+    {
+
+    }
+
+    /**
+     * Hook called after an object is deleted
+     *
+     * @param Object_Abstract $object
+     */
+    public function postDeleteObject(Object_Abstract $object)
     {
 
     }

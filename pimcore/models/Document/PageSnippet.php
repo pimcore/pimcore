@@ -90,7 +90,12 @@ abstract class Document_PageSnippet extends Document {
      *
      * @return void
      */
-    public function saveVersion($setModificationDate = true) {
+    public function saveVersion($setModificationDate = true, $callPluginHook = true) {
+
+        // hook should be also called if "save only new version" is selected
+        if($callPluginHook) {
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
+        }
 
         // set date
         if ($setModificationDate) {
@@ -108,6 +113,11 @@ abstract class Document_PageSnippet extends Document {
         $version->setUserId($this->getUserModification());
         $version->setData($this);
         $version->save();
+
+        // hook should be also called if "save only new version" is selected
+        if($callPluginHook) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
+        }
     }
 
     /**

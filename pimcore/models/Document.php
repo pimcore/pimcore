@@ -346,6 +346,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             $this->update();
         }
         else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
             $this->getResource()->create();
             Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
             $this->update();
@@ -651,6 +652,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), null);
+
+        Pimcore_API_Plugin_Broker::getInstance()->postDeleteDocument($this);
     }
 
     /**
