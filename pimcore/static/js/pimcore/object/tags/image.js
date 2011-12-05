@@ -173,7 +173,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             
             this.data = item.id;
 
-            this.updateImage();
+            this.updateImage(); 
             return true;
         }
     },
@@ -188,7 +188,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/height/" + (this.fieldConfig.height - 20) + "/contain/true";
         this.getBody().setStyle({
             backgroundImage: "url(" + path + ")",
-            BackgroundPosition: "center center",
+            BackgroundPosition: "center center"
 
         });
         this.getBody().repaint();
