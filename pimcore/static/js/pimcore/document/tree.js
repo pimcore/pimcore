@@ -205,15 +205,18 @@ pimcore.document.tree = Class.create({
         var pasteMenu = [];
 
         var menu = new Ext.menu.Menu();
-        if ((this.attributes.type == "page" || this.attributes.type == "folder" || this.attributes.type == "link" || this.attributes.type == "hardlink") && this.attributes.permissions.create) {
+        //ckogler added "email"
+        if ((this.attributes.type == "page" || this.attributes.type == "email" || this.attributes.type == "folder" || this.attributes.type == "link" || this.attributes.type == "hardlink") && this.attributes.permissions.create) {
 
             var document_types = pimcore.globalmanager.get("document_types_store");
 
             var documentMenu = {
                 page: [],
                 snippet: [],
+                email : [], //ckogler
                 ref: this
             };
+
             document_types.each(function(record) {
                 if (record.get("type") == "page") {
                     this.page.push({
@@ -227,6 +230,12 @@ pimcore.document.tree = Class.create({
                         text: ts(record.get("name")),
                         iconCls: "pimcore_icon_snippet_add",
                         handler: this.ref.attributes.reference.addDocument.bind(this.ref, "snippet", record.get("id"))
+                    });
+                }else if (record.get("type") == "email") { //ckogler
+                    this.email.push({
+                        text: ts(record.get("name")),
+                        iconCls: "pimcore_icon_email_add",
+                        handler: this.ref.attributes.reference.addDocument.bind(this.ref, "email", record.get("id"))
                     });
                 }
             }, documentMenu);
@@ -246,6 +255,12 @@ pimcore.document.tree = Class.create({
                 handler: this.attributes.reference.addDocument.bind(this, "snippet")
             });
 
+            // empty email  //ckogler
+            documentMenu.email.push({
+                text: "&gt; " + t("empty_email"),
+                iconCls: "pimcore_icon_email_add",
+                handler: this.attributes.reference.addDocument.bind(this, "email")
+            });
 
             menu.add(new Ext.menu.Item({
                 text: t('add_page'),
@@ -254,6 +269,7 @@ pimcore.document.tree = Class.create({
                 menu: documentMenu.page,
                 hideOnClick: false
             }));
+
             menu.add(new Ext.menu.Item({
                 text: t('add_snippet'),
                 iconCls: "pimcore_icon_snippet_add",
@@ -261,6 +277,15 @@ pimcore.document.tree = Class.create({
                 menu: documentMenu.snippet,
                 hideOnClick: false
             }));
+
+            //ckogler
+            menu.add(new Ext.menu.Item({
+                text: t('add_email'),
+                iconCls: "pimcore_icon_email_add",
+                menu: documentMenu.email,
+                hideOnClick: false
+            }));
+
             menu.add(new Ext.menu.Item({
                 text: t('add_link'),
                 iconCls: "pimcore_icon_link_add",
@@ -610,7 +635,6 @@ pimcore.document.tree = Class.create({
                 throw "There are no pasting jobs";
             }
         } catch (e) {
-            console.log(e);
             Ext.MessageBox.alert(t('error'), e);
             this.attributes.reference.pasteComplete(this);
         }
@@ -776,8 +800,7 @@ pimcore.document.tree = Class.create({
             if (response && response.success) {
                 this.leaf = false;
                 this.expand();
-
-                if (response.type == "page" || response.type == "snippet") {
+                if (response.type == "page" || response.type == "snippet" || response.type == "email") {   //ckogler
                     pimcore.helpers.openDocument(response.id, response.type);
                 }
             }

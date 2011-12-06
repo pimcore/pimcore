@@ -43,12 +43,26 @@ class Document_Service extends Element_Service {
       * @param array $params
       * @return
       */
-     public static function render (Document $document, $params = array()) {
+     public static function render (Document $document, $params = array(),$useLayout = false) { //ckogler  added $useLayout
 
         $view = new Pimcore_View();
         $params["document"] = $document;
-
         $content = $view->action($document->getAction(), $document->getController(), null, $params);
+
+        if($useLayout){ //has to be called after $view->action so we can determine if a layout is enabled in the action
+           $layout = Zend_Layout::getMvcInstance();
+           if($layout instanceof Zend_Layout){
+               $layout->content = $content;
+               if(is_array($params)){
+                   foreach($params as $key => $value){
+                        if(!$layout->getView()->$key){ //otherwise we could overwrite e.g. controller, content...
+                            $layout->getView()->$key = $value;
+                        }
+                   }
+               }
+               $content = $layout->render();
+           }
+        }
         return $content;
     }
 

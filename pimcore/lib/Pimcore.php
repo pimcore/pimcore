@@ -522,6 +522,7 @@ class Pimcore {
         $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');
+        $autoloader->registerNamespace('EmailLog'); //ckogler
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }

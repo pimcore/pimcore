@@ -221,6 +221,17 @@ class Pimcore_Tool {
         return $_SERVER["HTTP_HOST"];
     }
 
+
+
+    public static function getHostUrl() {
+        $protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
+        $protocol = substr($protocol,0,strpos($protocol,"/"));
+        $protocol .= ($_SERVER["HTTPS"] == "on") ? "s" : "";
+        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
+        return $protocol."://".self::getHostname().$port;
+    }
+
+
     /**
      * @static
      * @return array|bool
@@ -266,39 +277,7 @@ class Pimcore_Tool {
         $valueArray = $values->toArray();
         $emailSettings = $valueArray["email"];
 
-        $mail = new Zend_Mail("UTF-8");
-
-        if(!empty($emailSettings['sender']['email'])) {
-            $mail->setDefaultFrom($emailSettings['sender']['email'],$emailSettings['sender']['name']);
-        }
-
-        if(!empty($emailSettings['return']['email'])) {
-            $mail->setDefaultReplyTo($emailSettings['return']['email'],$emailSettings['return']['name']);
-        }
-
-        if($emailSettings['method']=="smtp"){
-
-            $config = array();
-            if(!empty($emailSettings['smtp']['name'])){
-                $config['name'] =  $emailSettings['smtp']['name'];
-            }
-            if(!empty($emailSettings['smtp']['ssl'])){
-                $config['ssl'] =  $emailSettings['smtp']['ssl'];
-            }
-            if(!empty($emailSettings['smtp']['port'])){
-                $config['port'] =  $emailSettings['smtp']['port'];
-            }
-            if(!empty($emailSettings['smtp']['auth']['method'])){
-                $config['auth'] =  $emailSettings['smtp']['auth']['method'];
-                $config['username'] = $emailSettings['smtp']['auth']['username'];
-                $config['password'] = $emailSettings['smtp']['auth']['password'];
-            }
-
-            $transport = new Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
-            //Logger::log($transport);
-            //Logger::log($config);
-            $mail->setDefaultTransport($transport);
-        }
+        $mail = new Pimcore_Mail();
 
         if($recipients) {
             if(is_string($recipients)) {

@@ -55,7 +55,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         };
         
         // check for restrictions
-        var possibleRestrictions = ["page","snippet","folder","link","hardlink"];
+        var possibleRestrictions = ["page","snippet","folder","link","hardlink","email"]; //ckogler
         var filterStore = [];
         var selectedStore = [];
         for (var i=0; i<possibleRestrictions.length; i++) {

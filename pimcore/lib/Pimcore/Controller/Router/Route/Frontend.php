@@ -135,7 +135,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 }
 
                 if ($document instanceof Document) {
-                    if ($document->getType() == "page" || $document->getType() == "snippet") {
+                    if (Document_DocType::isValidDocType($document->getType())) { //ckogler
 
                         if (!empty($params["pimcore_version"]) || !empty($params["pimcore_preview"]) || !empty($params["pimcore_admin"]) || !empty($params["pimcore_editmode"]) || $document->isPublished()) {
                             $params["document"] = $document;
@@ -146,7 +146,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                             if ($action = $document->getAction()) {
                                 $params["action"] = $action;
                             }
-
                             // check for a trailing slash in path, if exists, redirect to this page without the slash
                             // the only reason for this is: SEO, Analytics, ... there is no system specific reason, pimcore would work also with a trailing slash without problems
                             // use $originalPath because of the sites
