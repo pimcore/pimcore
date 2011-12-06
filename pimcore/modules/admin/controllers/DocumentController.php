@@ -369,7 +369,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     $createValues["template"] = $docType->getTemplate();
                     $createValues["controller"] = $docType->getController();
                     $createValues["action"] = $docType->getAction();
-                } else if($this->_getParam("type") == "page" || $this->_getParam("type") == "snippet") {
+                } else if($this->_getParam("type") == "page" || $this->_getParam("type") == "snippet" || $this->_getParam("type") == "email") { //added ckogler
                     $createValues["controller"] = Pimcore_Config::getSystemConfig()->documents->default_controller;
                     $createValues["action"] = Pimcore_Config::getSystemConfig()->documents->default_action;
                 }
@@ -381,6 +381,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         break;
                     case "snippet":
                         $document = Document_Snippet::create($this->_getParam("parentId"), $createValues);
+                        $success = true;
+                        break;
+                    case "email": //ckogler
+                        $document = Document_Email::create($this->_getParam("parentId"), $createValues);
                         $success = true;
                         break;
                     case "link":
@@ -720,7 +724,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $list = new Document_DocType_List();
         if ($this->_getParam("type")) {
             $type = $this->_getParam("type");
-            if ($type == "page" || $type == "snippet") {
+            if (in_array($type ,Document_DocType::getValidDocTypes())) {
                 $list->setCondition("type = ?", $type);
             }
         }

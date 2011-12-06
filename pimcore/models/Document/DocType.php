@@ -24,6 +24,14 @@ class Document_DocType extends Pimcore_Model_Abstract {
      */
     public $id;
 
+
+    /**
+     * Available document-types
+     *
+     * @var array
+     */
+    protected static $validDocTypes = array("page","snippet","email"); //ckogler
+
     /**
      * Name of the document-type
      *
@@ -53,7 +61,7 @@ class Document_DocType extends Pimcore_Model_Abstract {
     public $template;
 
     /**
-     * Type, must be one of the following: page,snippet
+     * Type, must be one of the following: page,snippet,email
      *
      * @var string
      */
@@ -78,6 +86,25 @@ class Document_DocType extends Pimcore_Model_Abstract {
         $docType->getResource()->getById();
 
         return $docType;
+    }
+
+    /*
+     * Static helper to retrieve valid document-types
+     */
+    public static function getValidDocTypes(){ //ckogler
+        return self::$validDocTypes;
+    }
+
+    /**
+     * Static helper to check if it is a valid document-type
+     *
+     * @static
+     * @param string $docType
+     * @return bool
+     */
+
+    public static function isValidDocType($docType){
+        return in_array($docType,self::getValidDocTypes());
     }
 
     /**

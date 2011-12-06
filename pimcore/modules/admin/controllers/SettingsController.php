@@ -160,6 +160,32 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 }
             }
 
+            //debug email addresses - add as array ckogler
+            if (!empty($valueArray['email']['debug']['emailaddresses'])) {
+                $emailAddresses = explode(",", $valueArray['email']['debug']['emailaddresses']);
+                if (is_array($emailAddresses)) {
+                    foreach ($emailAddresses as $emailAddress) {
+                        $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => $emailAddress);
+                    }
+                }
+            }else{
+                $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => '');
+            }
+
+
+            //debug email domains - add as array ckogler
+            if (!empty($valueArray['email']['debug']['emaildomains'])) {
+                $emailDomains = explode(",", $valueArray['email']['debug']['emaildomains']);
+                if (is_array($emailDomains)) {
+                    foreach ($emailDomains as $emailDomain) {
+                        $valueArray['email']['debug']['emaildebugdomainsArray'][] = array("value" => $emailDomain);
+                    }
+                }
+            }else{
+                $valueArray['email']['debug']['emaildebugdomainsArray'][] = array("value" => '');
+            }
+
+
             //cache exclude patterns - add as array
             if (!empty($valueArray['cache']['excludePatterns'])) {
                 $patterns = explode(",", $valueArray['cache']['excludePatterns']);
@@ -325,7 +351,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                             "username" => $values["email.smtp.auth.username"],
                             "password" => $smtpPassword
                         )
-                    )
+                    ),
+                    "debug" => array( //ckogler
+                        "emailaddresses" => $values["email.debug.emailAddresses"],
+                        "emaildomains" => $values["email.debug.emailDomains"],
+                    ),
                 ),
                 "webservice" => array(
                     "enabled" => $values["webservice.enabled"]
@@ -337,7 +367,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "proxy_user" => $values["httpclient.proxy_user"],
                     "proxy_pass" => $values["httpclient.proxy_pass"],
                 )
-            );
+            ); 
 
             $config = new Zend_Config($settings, true);
             $writer = new Zend_Config_Writer_Xml(array(
@@ -354,7 +384,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 Logger::err("attempt to change system settings, but no user in session.");
             }
         }
-
         $this->_helper->json(false);
     }
 
