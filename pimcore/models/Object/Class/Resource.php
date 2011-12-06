@@ -17,7 +17,11 @@
 
 class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
-    
+    /**
+     * @var Object_Class
+     */
+    protected $model;
+
     protected $_sqlChangeLog = array();
     
     /**
@@ -267,7 +271,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             }
         }
     }
-    
+
     private function getDefaultValueAndNullableForField ($field) {
         
         $nullable = "NULL";
@@ -461,8 +465,9 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
             $logContent = '';
 
-            if(file_exists($filename) && is_readable($filename))
+            if(file_exists($filename) && is_readable($filename)) {
                 $logContent = file_get_contents($filename)."\n\n\n";
+            }
 
             file_put_contents($logContent.$file, $log);
             chmod($file, 0766);
