@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -13,7 +13,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Mail extends Zend_Mail {
+class Pimcore_Mail extends Zend_Mail
+{
 
     /**
      * Contains the debug email receiver
@@ -38,24 +39,29 @@ class Pimcore_Mail extends Zend_Mail {
     protected static $debugEmailAddresses;
 
 
+    /**
+     * @var Pimcore_Placeholder
+     */
     protected $placeholderObject;
+
     protected $temporaryStorage = array();
     protected $loggingEnable = true;
 
     protected $document; //contains the email document
-    protected $params = array();   //contains the dynamic Params for the Placeholders
+    protected $params = array(); //contains the dynamic Params for the Placeholders
 
-    public function __construct(Array $options = array()){
+    public function __construct(Array $options = array())
+    {
         parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
 
-        if($options["document"]){
+        if ($options["document"]) {
             $this->setDocument($options["document"]);
         }
-        if($options['params']){
+        if ($options['params']) {
             $this->setParams($options['params']);
         }
-        if($options['subject']){
-           $this->setSubject($options['subject']);
+        if ($options['subject']) {
+            $this->setSubject($options['subject']);
         }
 
         $this->init();
@@ -66,89 +72,90 @@ class Pimcore_Mail extends Zend_Mail {
      * Initializes the mailer with the settings form Settings -> System -> Email Settings
      * @return void
      */
-    protected function init(){
-       $systemConfig    = Pimcore_Config::getSystemConfig()->toArray();
-       $emailSettings   =& $systemConfig['email'];
+    protected function init()
+    {
+        $systemConfig = Pimcore_Config::getSystemConfig()->toArray();
+        $emailSettings =& $systemConfig['email'];
 
-       if($emailSettings['sender']['email']) {
-           $this->setDefaultFrom($emailSettings['sender']['email'],$emailSettings['sender']['name']);
-       }
+        if ($emailSettings['sender']['email']) {
+            $this->setDefaultFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
+        }
 
-       if($emailSettings['return']['email']) {
-           $this->setDefaultReplyTo($emailSettings['return']['email'],$emailSettings['return']['name']);
-       }
+        if ($emailSettings['return']['email']) {
+            $this->setDefaultReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
+        }
 
-       if($emailSettings['method']=="smtp"){
+        if ($emailSettings['method'] == "smtp") {
 
-           $config = array();
-           if($emailSettings['smtp']['name']){
-               $config['name'] =  $emailSettings['smtp']['name'];
-           }
-           if($emailSettings['smtp']['ssl']){
-               $config['ssl'] =  $emailSettings['smtp']['ssl'];
-           }
-           if($emailSettings['smtp']['port']){
-               $config['port'] =  $emailSettings['smtp']['port'];
-           }
-           if($emailSettings['smtp']['auth']['method']){
-               $config['auth'] =  $emailSettings['smtp']['auth']['method'];
-               $config['username'] = $emailSettings['smtp']['auth']['username'];
-               $config['password'] = $emailSettings['smtp']['auth']['password'];
-           }
+            $config = array();
+            if ($emailSettings['smtp']['name']) {
+                $config['name'] = $emailSettings['smtp']['name'];
+            }
+            if ($emailSettings['smtp']['ssl']) {
+                $config['ssl'] = $emailSettings['smtp']['ssl'];
+            }
+            if ($emailSettings['smtp']['port']) {
+                $config['port'] = $emailSettings['smtp']['port'];
+            }
+            if ($emailSettings['smtp']['auth']['method']) {
+                $config['auth'] = $emailSettings['smtp']['auth']['method'];
+                $config['username'] = $emailSettings['smtp']['auth']['username'];
+                $config['password'] = $emailSettings['smtp']['auth']['password'];
+            }
 
-           $transport = new Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
-           $this->setDefaultTransport($transport);
-       }
+            $transport = new Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
+            $this->setDefaultTransport($transport);
+        }
 
-       //setting email debug domains
-       if(is_null(self::$debugDomains)){
+        //setting email debug domains
+        if (is_null(self::$debugDomains)) {
             $debugDomains = array();
-            if($emailSettings['debug']['emaildomains']){
-                foreach(explode(',',$emailSettings['debug']['emaildomains']) as $emailDomain){
+            if ($emailSettings['debug']['emaildomains']) {
+                foreach (explode(',', $emailSettings['debug']['emaildomains']) as $emailDomain) {
                     $debugDomains[] = $emailDomain;
                 }
             }
             self::$debugDomains = $debugDomains;
-       }
+        }
 
 
-       //setting debug email addresses
-        if(is_null(self::$debugEmailAddresses)){
+        //setting debug email addresses
+        if (is_null(self::$debugEmailAddresses)) {
             $debugEmailAddresses = array();
-            if($emailSettings['debug']['emailaddresses']){
-                foreach(explode(',',$emailSettings['debug']['emailaddresses']) as $emailAddress){
+            if ($emailSettings['debug']['emailaddresses']) {
+                foreach (explode(',', $emailSettings['debug']['emailaddresses']) as $emailAddress) {
                     $debugEmailAddresses[] = $emailAddress;
                 }
             }
             self::$debugEmailAddresses = $debugEmailAddresses;
         }
 
-       $this->placeholderObject = new Pimcore_Placeholder();
+        $this->placeholderObject = new Pimcore_Placeholder();
     }
-
-
-
-
 
 
     /*** start - overwriting Zend_Mail methods - necessary for Logging ***/
 
-    public function addTo($email,$name = ''){
-        $this->addToTemporaryStorage('To',$email,$name);
-        return parent::addTo($email,$name);
+    public function addTo($email, $name = '')
+    {
+        $this->addToTemporaryStorage('To', $email, $name);
+        return parent::addTo($email, $name);
     }
 
-    public function addCc($email,$name = ''){
-        $this->addToTemporaryStorage('Cc',$email,$name);
-        return parent::addCc($email,$name);
+    public function addCc($email, $name = '')
+    {
+        $this->addToTemporaryStorage('Cc', $email, $name);
+        return parent::addCc($email, $name);
     }
 
-    public function addBcc($email,$name = ''){
-        $this->addToTemporaryStorage('Bcc',$email,$name);
-        return parent::addCc($email,$name);
+    public function addBcc($email, $name = '')
+    {
+        $this->addToTemporaryStorage('Bcc', $email, $name);
+        return parent::addCc($email, $name);
     }
 
-    public function clearRecipients(){
+    public function clearRecipients()
+    {
         unset($this->temporaryStorage['To']);
         unset($this->temporaryStorage['Cc']);
         unset($this->temporaryStorage['Bcc']);
@@ -156,7 +163,8 @@ class Pimcore_Mail extends Zend_Mail {
     }
 
 
-    protected function addToTemporaryStorage($key,$email,$name){
+    protected function addToTemporaryStorage($key, $email, $name)
+    {
         if (!is_array($email)) {
             $email = array($name => $email);
         }
@@ -165,92 +173,102 @@ class Pimcore_Mail extends Zend_Mail {
         }
     }
 
-    public function getTemporaryStorage(){
+    public function getTemporaryStorage()
+    {
         return $this->temporaryStorage;
     }
 
     /*** end - overwriting Zend_Mail methods ***/
 
 
-
-    public function disableLogging(){
+    public function disableLogging()
+    {
         $this->loggingEnable = false;
     }
 
-    public function enableLogging(){
+    public function enableLogging()
+    {
         $this->loggingEnable = true;
     }
 
-    public function setParams(Array $params){
-        foreach($params as $key => $value){
-            $this->setParam($key,$value);
+    public function setParams(Array $params)
+    {
+        foreach ($params as $key => $value) {
+            $this->setParam($key, $value);
         }
     }
 
-    public function setParam($key,$value){
-        if(is_string($key) || is_integer($key)){
+    public function setParam($key, $value)
+    {
+        if (is_string($key) || is_integer($key)) {
             $this->params[$key] = $value;
-        }else{
+        } else {
             Logger::warn('$key has to be a string - Param ignored!');
         }
     }
 
-    public function getParams(){
+    public function getParams()
+    {
         return $this->params;
     }
 
-    public function getParam($key){
+    public function getParam($key)
+    {
         return $this->params[$key];
     }
 
-    public function unsetParams(Array $params){
-        foreach($params as $param){
+    public function unsetParams(Array $params)
+    {
+        foreach ($params as $param) {
             $this->unsetParam($param);
         }
     }
 
-    public function unsetParam($key){
-        if(is_string($key) || is_integer($key)){
+    public function unsetParam($key)
+    {
+        if (is_string($key) || is_integer($key)) {
             unset($this->params[$key]);
-        }else{
+        } else {
             Logger::warn('$key has to be a string - unsetParam ignored!');
         }
     }
 
 
-    public function setDocumentSettings(){
+    public function setDocumentSettings()
+    {
         $document = $this->getDocument();
 
         $to = $document->getToAsArray();
-        if(!empty($to)){
+        if (!empty($to)) {
             $this->addTo($to);
         }
 
         $cc = $document->getCcAsArray();
-        if(!empty($cc)){
+        if (!empty($cc)) {
             $this->addCc($cc);
         }
 
         $bcc = $document->getBccAsArray();
-        if(!empty($bcc)){
+        if (!empty($bcc)) {
             $this->addBcc($bcc);
         }
 
         list($from) = $document->getFromAsArray();
-        if($from){
+        if ($from) {
             $this->clearFrom();
             $this->setFrom($from);
         }
     }
 
-    public function send($transport = null){
-        if($this->getDocument()){
+    public function send($transport = null)
+    {
+        if ($this->getDocument()) {
             $this->setDocumentSettings();
         }
         $this->setSubject($this->getSubjectRendered());
         $this->setBodyHtml($this->getBodyHtmlRendered());
         $this->checkDebugMode();
-        if($this->loggingEnable){
+        if ($this->loggingEnable) {
             $this->log(); //Logging to db and file System
         }
         parent::send($transport);
@@ -262,69 +280,76 @@ class Pimcore_Mail extends Zend_Mail {
      * and all further instances into debug mode
      * @return void
      */
-    protected function checkDebugMode(){
-        if(!self::$debugEmailReceiver){
+    protected function checkDebugMode()
+    {
+        if (!self::$debugEmailReceiver) {
             $receiver = '';
-            $debugEmailAddresses    = self::$debugEmailAddresses;
-            $debugDomains           = self::$debugDomains;
+            $debugEmailAddresses = self::$debugEmailAddresses;
+            $debugDomains = self::$debugDomains;
 
-            if(is_array(self::$debugEmailAddresses)){
-                array_walk($debugEmailAddresses,function(&$email){$email = 'debug-'.$email;});
+            if (is_array(self::$debugEmailAddresses)) {
+                array_walk($debugEmailAddresses, function(&$email) {
+                    $email = 'debug-' . $email;
+                });
             }
 
-            foreach($this->temporaryStorage['To'] as $recipient){
-                if(in_array($receiver,$debugEmailAddresses)){
-                    $receiver = str_replace('debug-','',$debugEmailAddresses);
+            foreach ($this->temporaryStorage['To'] as $recipient) {
+                if (in_array($receiver, $debugEmailAddresses)) {
+                    $receiver = str_replace('debug-', '', $debugEmailAddresses);
                     break;
-                }elseif(is_array($debugDomains)){
-                    foreach($debugDomains as $debugDomain){
+                } elseif (is_array($debugDomains)) {
+                    foreach ($debugDomains as $debugDomain) {
                         $pattern = "/^debug-.*@{$debugDomain}$/i";
-                        if(preg_match($pattern,$recipient['email'])){
+                        if (preg_match($pattern, $recipient['email'])) {
                             $receiver = $recipient['email'];
                             break;
                         }
                     }
                 }
             }
-            self::$debugEmailReceiver = str_replace('debug-','',$receiver);
+            self::$debugEmailReceiver = str_replace('debug-', '', $receiver);
         }
 
 
         // if debug mode is enabled and no debug email address is given -> all email will be sent to the first debug email address in "Settings" -> "System"
-        if(Pimcore::inDebugMode() && self::$debugEmailReceiver == ''){
+        if (Pimcore::inDebugMode() && self::$debugEmailReceiver == '') {
             $validator = new Zend_Validate_EmailAddress();
 
-            if(!$validator->isValid(self::$debugEmailAddresses[0])){
+            if (!$validator->isValid(self::$debugEmailAddresses[0])) {
                 throw new Exception('No valid debug email address given in "Settings" -> "Stystem" -> "Email Settings"');
-            }else{
+            } else {
                 self::$debugEmailReceiver = self::$debugEmailAddresses[0];
             }
 
         }
 
-        if(self::$debugEmailReceiver){
+        if (self::$debugEmailReceiver) {
             $this->clearRecipients();
             $this->addTo(self::$debugEmailReceiver);
         }
     }
 
 
-    public function getSubjectRendered(){
+    public function getSubjectRendered()
+    {
         $subject = $this->getSubject();
         $this->clearSubject();
 
-        if(!$subject && $this->getDocument()){
+        if (!$subject && $this->getDocument()) {
             $subject = $this->getDocument()->getSubject();
         }
-        return $this->placeholderObject->replacePlaceholders($subject,$this->getParams(),$this->getDocument());
+        return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument());
     }
 
-    public function getBodyHtmlRendered(){
+    public function getBodyHtmlRendered()
+    {
         $html = $this->getBodyHtml(true);
-        if($html){
-            $content =  $this->placeholderObject->replacePlaceholders($html,$this->getParams(),$this->getDocument());
-        }elseif($this->getDocument() instanceof Document){
-            $content =  $this->placeholderObject->replacePlaceholders($this->getDocument(),$this->getParams(),$this->getDocument());
+        if ($html) {
+            $content = $this->placeholderObject->replacePlaceholders($html, $this->getParams(), $this->getDocument());
+        } elseif ($this->getDocument() instanceof Document) {
+            $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument());
+        } else {
+            $content = null;
         }
 
         $content = self::getAbsolutePaths($content);
@@ -332,15 +357,15 @@ class Pimcore_Mail extends Zend_Mail {
 
     }
 
-    public static function getAbsolutePaths($content){
-          $domain = Pimcore_Tool::getHostUrl();
-          foreach(array('src','href') as $key){
-            $content = str_replace($key.'="/',$key.'="'.$domain.'/',$content);
-            $content = str_replace("$key='/","$key='".$domain.'/',$content);
-          }
-          return $content;
+    public static function getAbsolutePaths($content)
+    {
+        $domain = Pimcore_Tool::getHostUrl();
+        foreach (array('src', 'href') as $key) {
+            $content = str_replace($key . '="/', $key . '="' . $domain . '/', $content);
+            $content = str_replace("$key='/", "$key='" . $domain . '/', $content);
+        }
+        return $content;
     }
-
 
 
     /**
@@ -350,14 +375,15 @@ class Pimcore_Mail extends Zend_Mail {
      * @return void
      */
 
-    public function setDocument($document){
-        if($document instanceof Document){   //document passed
+    public function setDocument($document)
+    {
+        if ($document instanceof Document) { //document passed
             $this->document = $document;
-        }elseif((int)$document > 0){ //id of document passed
+        } elseif ((int)$document > 0) { //id of document passed
             $this->setDocument(Document::getById($document));
-        }elseif(is_string($document) && $document != ""){ //path of document passed
+        } elseif (is_string($document) && $document != "") { //path of document passed
             $this->setDocument(Document::getByPath($document));
-        }else{
+        } else {
             throw new Exception('$document is not an instance of Document');
         }
     }
@@ -365,55 +391,57 @@ class Pimcore_Mail extends Zend_Mail {
     /**
      * @return Document_Email | null
      */
-    public function getDocument(){
+    public function getDocument()
+    {
         return $this->document;
     }
 
 
-    protected function log(){
-            $emailLog = new EmailLog();
-            $document = $this->getDocument();
+    protected function log()
+    {
+        $emailLog = new EmailLog();
+        $document = $this->getDocument();
 
-            if($document instanceof Document){
-                $emailLog->setDocumentId($document->getId());
-            }
-            $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
-            $emailLog->setParams($this->getParams());
-            $emailLog->setFrom($this->getFrom());
-            $emailLog->setBodyHtml($this->getBodyHtml(true));
-            $emailLog->setBodyText($this->getBodyText(true));
-            $emailLog->setSubject($this->getSubject());
-            $emailLog->setSentDate(time());
+        if ($document instanceof Document) {
+            $emailLog->setDocumentId($document->getId());
+        }
+        $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
+        $emailLog->setParams($this->getParams());
+        $emailLog->setFrom($this->getFrom());
+        $emailLog->setBodyHtml($this->getBodyHtml(true));
+        $emailLog->setBodyText($this->getBodyText(true));
+        $emailLog->setSubject($this->getSubject());
+        $emailLog->setSentDate(time());
 
-            $html = $this->getBodyHtml();
-            if($html instanceof Zend_Mime_Part){
-                $emailLog->setBodyHtml($html->getRawContent());
-            }
+        $html = $this->getBodyHtml();
+        if ($html instanceof Zend_Mime_Part) {
+            $emailLog->setBodyHtml($html->getRawContent());
+        }
 
-            $text = $this->getBodyText();
-            if($text instanceof Zend_Mime_Part){
-                $emailLog->setBodyText($text->getRawContent());
-            }
+        $text = $this->getBodyText();
+        if ($text instanceof Zend_Mime_Part) {
+            $emailLog->setBodyText($text->getRawContent());
+        }
 
 
-            //adding receivers
-            if(is_array($this->getTemporaryStorage())){
-                foreach($this->getTemporaryStorage() as $key => $data){
-                    $logString = '';
-                    if(is_array($data)){
-                        foreach($data as $receiver){
-                            $logString .= $receiver['email'];
-                            if($receiver['name']){
-                                $logString .= ' ('.$receiver['name'].')';
-                            }
-                            $logString .= ';';
+        //adding receivers
+        if (is_array($this->getTemporaryStorage())) {
+            foreach ($this->getTemporaryStorage() as $key => $data) {
+                $logString = '';
+                if (is_array($data)) {
+                    foreach ($data as $receiver) {
+                        $logString .= $receiver['email'];
+                        if ($receiver['name']) {
+                            $logString .= ' (' . $receiver['name'] . ')';
                         }
-                    }
-                    if(method_exists($emailLog,'set'.$key)){
-                        $emailLog->{"set$key"}($logString);
+                        $logString .= ';';
                     }
                 }
+                if (method_exists($emailLog, 'set' . $key)) {
+                    $emailLog->{"set$key"}($logString);
+                }
             }
-            $emailLog->save();
         }
+        $emailLog->save();
+    }
 }

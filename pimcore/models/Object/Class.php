@@ -435,7 +435,7 @@ class Object_Class extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @return array
+     * @return Object_Class_Data[]
      */
     public function getFieldDefinitions() {
         return $this->fieldDefinitions;
