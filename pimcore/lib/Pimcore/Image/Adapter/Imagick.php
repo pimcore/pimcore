@@ -77,7 +77,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
-     * @return void
+     * @return  void
      */
     protected function destroy() {
         $this->resource->destroy();
