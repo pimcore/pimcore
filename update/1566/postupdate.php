@@ -4,7 +4,18 @@
 $db = Pimcore_Resource::get();
 
 
-$script = "CREATE TABLE `documents_email` (`id` int(11) unsigned NOT NULL default '0',`controller` varchar(255) default NULL,`action` varchar(255) default NULL,`template` varchar(255) default NULL,`to` varchar(255) default NULL,`from` varchar(255) default NULL,`cc` varchar(255) default NULL,`bcc` varchar(255) default NULL,`subject` varchar(255) default NULL,PRIMARY KEY  (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+$script = "CREATE TABLE `documents_email` (
+  `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `controller` varchar(255) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `template` varchar(255) DEFAULT NULL,
+  `to` varchar(255) DEFAULT NULL,
+  `from` varchar(255) DEFAULT NULL,
+  `cc` varchar(255) DEFAULT NULL,
+  `bcc` varchar(255) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;";
 
 try {
     $db->query($script);
@@ -15,7 +26,19 @@ try {
 }
 
 
-$script = "CREATE TABLE `email_log` (`id` int(10) unsigned NOT NULL auto_increment COMMENT '  ',`documentId` int(11) default NULL,`requestUri` varchar(255) collate utf8_unicode_ci default NULL,`params` text collate utf8_unicode_ci,`from` varchar(255) collate utf8_unicode_ci default NULL,`to` varchar(255) collate utf8_unicode_ci default NULL,`cc` varchar(255) collate utf8_unicode_ci default NULL,`bcc` varchar(255) collate utf8_unicode_ci default NULL,`sentDate` bigint(20) default NULL,`subject` varchar(255) collate utf8_unicode_ci default NULL,PRIMARY KEY  (`id`)) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
+$script = "CREATE TABLE `email_log` (
+  `id` int(10) unsigned NOT NULL,
+  `documentId` int(11) DEFAULT NULL,
+  `requestUri` varchar(255) DEFAULT NULL,
+  `params` text,
+  `from` varchar(255) DEFAULT NULL,
+  `to` varchar(255) DEFAULT NULL,
+  `cc` varchar(255) DEFAULT NULL,
+  `bcc` varchar(255) DEFAULT NULL,
+  `sentDate` bigint(20) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;";
 
 try {
     $db->query($script);
