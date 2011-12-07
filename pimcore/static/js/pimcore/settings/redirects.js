@@ -82,6 +82,7 @@ pimcore.settings.redirects = Class.create({
             proxy: proxy,
             reader: reader,
             writer: writer,
+            remoteSort: true,
             baseParams: {
                 limit: itemsPerPage,
                 filter: ""

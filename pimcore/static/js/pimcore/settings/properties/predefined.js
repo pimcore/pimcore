@@ -84,6 +84,7 @@ pimcore.settings.properties.predefined = Class.create({
             proxy: proxy,
             reader: reader,
             writer: writer,
+            remoteSort: true,
             baseParams: {
                 limit: itemsPerPage,
                 filter: ""
@@ -157,21 +158,21 @@ pimcore.settings.properties.predefined = Class.create({
                 return nl2br(value);
             }
             },
-            {header: t("key"), width: 50, sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({})},
-            {header: t("type"), width: 50, sortable: false, dataIndex: 'type', editor: new Ext.form.ComboBox({
+            {header: t("key"), width: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
+            {header: t("type"), width: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
                 store: ["text","document","asset","object","bool","select"]
 
             })},
-            {header: t("value"), width: 50, sortable: false, dataIndex: 'data', editor: new Ext.form.TextField({})},
+            {header: t("value"), width: 50, sortable: true, dataIndex: 'data', editor: new Ext.form.TextField({})},
             {header: t("configuration"), width: 50, sortable: false, dataIndex: 'config', editor: new Ext.form.TextField({})},
-            {header: t("content_type"), width: 50, sortable: false, dataIndex: 'ctype', editor: new Ext.form.ComboBox({
+            {header: t("content_type"), width: 50, sortable: true, dataIndex: 'ctype', editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
                 store: ["document","asset","object"]
             })},
-            {header: t("inheritable"), width: 50, sortable: false, dataIndex: 'inheritable', editor: new Ext.form.Checkbox({})},
+            {header: t("inheritable"), width: 50, sortable: true, dataIndex: 'inheritable', editor: new Ext.form.Checkbox({})},
             {
                 xtype: 'actioncolumn',
                 width: 10,

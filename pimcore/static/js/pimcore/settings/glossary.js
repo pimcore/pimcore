@@ -98,6 +98,7 @@ pimcore.settings.glossary = Class.create({
             proxy: proxy,
             reader: reader,
             writer: writer,
+            remoteSort: true,
             baseParams: {
                 limit: itemsPerPage,
                 filter: ""
