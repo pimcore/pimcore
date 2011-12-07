@@ -432,15 +432,12 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
 
         if (!$this->getFilename() && $this->getId() != 1) {
-            $this->delete();
-            throw new Exception("Asset requires filename, asset with id " . $this->getId() . " deleted");
+            $this->setFilename("---no-valid-filename---" . $this->getId());
+            throw new Exception("Asset requires filename, generated filename automatically");
         }
 
         // set date
         $this->setModificationDate(time());
-
-        // save data
-        $conf = Pimcore_Config::getSystemConfig();
 
         // create foldertree
         $destinationPath = $this->getFileSystemPath();
