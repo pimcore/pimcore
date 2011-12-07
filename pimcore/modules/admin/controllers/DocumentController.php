@@ -704,8 +704,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         else {
             // get list of types
             $list = new Document_DocType_List();
-            $list->setOrderKey(array("priority", "name"));
-            $list->setOrder(array("desc", "ASC"));
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
+
             $list->load();
 
             $docTypes = array();

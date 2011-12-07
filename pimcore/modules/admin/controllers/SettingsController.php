@@ -68,8 +68,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list = new Property_Predefined_List();
             $list->setLimit($this->_getParam("limit"));
             $list->setOffset($this->_getParam("start"));
-            $list->setOrderKey("name");
-            $list->setOrder("ASC");
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
 
             if($this->_getParam("filter")) {
                 $list->setCondition("`name` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
@@ -518,8 +521,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
             $list->setLimit($this->_getParam("limit"));
             $list->setOffset($this->_getParam("start"));
-            $list->setOrderKey("name");
-            $list->setOrder("ASC");
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
 
             if($this->_getParam("filter")) {
                 $list->setCondition("`name` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `pattern` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `reverse` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `controller` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `action` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
@@ -955,8 +961,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list = new Redirect_List();
             $list->setLimit($this->_getParam("limit"));
             $list->setOffset($this->_getParam("start"));
-            $list->setOrderKey("source");
-            $list->setOrder("ASC");
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
 
             if($this->_getParam("filter")) {
                 $list->setCondition("`source` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `target` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
@@ -1070,8 +1079,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list = new Glossary_List();
             $list->setLimit($this->_getParam("limit"));
             $list->setOffset($this->_getParam("start"));
-            $list->setOrderKey("text");
-            $list->setOrder("ASC");
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
 
             if($this->_getParam("filter")) {
                 $list->setCondition("`text` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));

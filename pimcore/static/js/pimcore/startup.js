@@ -112,7 +112,7 @@ Ext.onReady(function() {
         proxy: proxy,
         reader: reader,
         writer: writer,
-        remoteSort: false,
+        remoteSort: true,
         listeners: {
             write : function(store, action, result, response, rs) {
             },
