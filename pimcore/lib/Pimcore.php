@@ -592,7 +592,7 @@ class Pimcore {
 
         // set dummy timezone if no tz is specified / required for example by the logger, ...
         $defaultTimezone = @date_default_timezone_get();
-        if($defaultTimezone) {
+        if(!$defaultTimezone) {
             date_default_timezone_set("Europe/Berlin");
         }
 
