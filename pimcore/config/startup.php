@@ -40,7 +40,9 @@ if (!defined("PIMCORE_BACKUP_DIRECTORY"))  define("PIMCORE_BACKUP_DIRECTORY", PI
 if (!defined("PIMCORE_RECYCLEBIN_DIRECTORY"))  define("PIMCORE_RECYCLEBIN_DIRECTORY", PIMCORE_WEBSITE_PATH . "/var/recyclebin");
 if (!defined("PIMCORE_SYSTEM_TEMP_DIRECTORY"))  define("PIMCORE_SYSTEM_TEMP_DIRECTORY", PIMCORE_WEBSITE_PATH . "/var/system");
 
-// setup include pathes
+// setup include paths
+// include paths defined in php.ini are ignored because they're causing problems with open_basedir, see PIMCORE-1233
+// it also improves the performance when reducing the amount of include paths, you can of course add additional paths anywhere in your code (/website)
 $includePaths = array(
     PIMCORE_PATH . "/lib",
     PIMCORE_PATH . "/models",
@@ -49,7 +51,6 @@ $includePaths = array(
     PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY,
     PIMCORE_PATH . "/lib/_deprecated",  // depricated libraries and classes
-    get_include_path()
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
