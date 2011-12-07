@@ -28,7 +28,9 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
         foreach ($documentsData as $documentData) {
             if($documentData["type"]) {
-                $documents[] = Document::getById($documentData["id"]);
+                if($doc = Document::getById($documentData["id"])) {
+                    $documents[] = $doc;
+                }
             }
         }
 
