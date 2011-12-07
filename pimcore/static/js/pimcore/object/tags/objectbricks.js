@@ -201,7 +201,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         if(!this.layoutDefinitions[type]) {
             return;
         }
-        
+
         this.dataFields = [];
         this.currentData = {};
         this.currentMetaData = {};
