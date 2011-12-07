@@ -28,8 +28,9 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         $objectsData = $this->db->fetchAll("SELECT o_id,o_type FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($objectsData as $objectData) {
-            // return all documents as Type Document => fot trees an so on there isn't the whole data required
-            $objects[] = Object_Abstract::getById($objectData["o_id"]);
+            if($object = Object_Abstract::getById($objectData["o_id"])) {
+                $objects[] = $object;
+            }
         }
 
         $this->model->setObjects($objects);
