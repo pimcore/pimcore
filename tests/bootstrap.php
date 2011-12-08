@@ -24,6 +24,7 @@ $r = substr($r, 0, -5);
 //add pimcore lib
 $r = $r . "pimcore/lib";
 
+$includePathBak = get_include_path();
 $includePaths = array(get_include_path());
 $tempPaths[] = $r;
 set_include_path(implode(PATH_SEPARATOR, $tempPaths));
@@ -97,6 +98,8 @@ if (!$skipInstall) {
 
 // startup the phpunit_pimcore
 include_once($documentRoot . "/pimcore/config/startup.php");
+set_include_path(get_include_path() . PATH_SEPARATOR . $includePathBak);
+
 define('TESTS_PATH', realpath(dirname(__FILE__)));
 
 @ini_set("display_errors", "On");
