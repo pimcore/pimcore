@@ -214,7 +214,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             buttons.push({
                 text: this.data.path + this.data.filename,
-                iconCls: "pimcore_icon_cursor_medium",
+                iconCls: "pimcore_icon_download_medium",
                 scale: "medium",
                 handler: function () {
                     location.href = "/admin/asset/download/id/" + this.data.id;
