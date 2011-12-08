@@ -163,7 +163,7 @@ CREATE TABLE `documents_email` (
 
 DROP TABLE IF EXISTS `email_log`;
 CREATE TABLE `email_log` (
-  `id` int(10) unsigned NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `documentId` int(11) DEFAULT NULL,
   `requestUri` varchar(255) DEFAULT NULL,
   `params` text,
