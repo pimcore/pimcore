@@ -90,11 +90,13 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         $viewHelper = Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
 
         $view = new Pimcore_View();
+        $view->setScriptPath(null);
 
         // script pathes
-        foreach ($viewHelper->view->getScriptPaths() as $path) {
+        foreach (array_reverse($viewHelper->view->getScriptPaths()) as $path) {
+            $path = str_replace("\\","/",$path);
             $view->addScriptPath($path);
-            $view->addScriptPath(str_replace(DIRECTORY_SEPARATOR . "scripts", DIRECTORY_SEPARATOR . "layouts", $path));
+            $view->addScriptPath(str_replace("/scripts", "/layouts", $path));
         }
 
         // view helper
