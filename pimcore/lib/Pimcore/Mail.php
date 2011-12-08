@@ -19,7 +19,7 @@ class Pimcore_Mail extends Zend_Mail
     /**
      * Contains the debug email receiver
      *
-     * @var string
+     * @var string | array
      * @static
      */
     protected static $debugEmailReceiver = '';
