@@ -318,14 +318,38 @@ class Pimcore_Mail extends Zend_Mail
             if (!$validator->isValid(self::$debugEmailAddresses[0])) {
                 throw new Exception('No valid debug email address given in "Settings" -> "Stystem" -> "Email Settings"');
             } else {
-                self::$debugEmailReceiver = self::$debugEmailAddresses[0];
+                $addresses = array();
+                foreach(self::$debugEmailAddresses as $addr) {
+                    if ($validator->isValid($addr)) {
+                        $addresses[] = $addr;
+                    }
+                }
+//                self::$debugEmailReceiver = self::$debugEmailAddresses[0];
+                self::$debugEmailReceiver = $addresses;
             }
 
         }
 
         if (self::$debugEmailReceiver) {
+
+            $subject = $this->getSubject();
+            $toAddrContainer = $this->getTemporaryStorage();
+            $toAddrContainer = $toAddrContainer['To'];
+            $toAddr = array();
+            foreach($toAddrContainer as $addr) {
+                $toAddr[] = $addr['email'];
+            }
+            $subject .= " (DEBUG: " . implode(",", $toAddr) . ")";
+            $this->_subject = $subject;
+
             $this->clearRecipients();
-            $this->addTo(self::$debugEmailReceiver);
+            if(is_array(self::$debugEmailReceiver)) {
+                foreach(self::$debugEmailReceiver as $addr) {
+                    $this->addTo($addr);
+                }
+            } else {
+                $this->addTo(self::$debugEmailReceiver);
+            }
         }
     }
 
