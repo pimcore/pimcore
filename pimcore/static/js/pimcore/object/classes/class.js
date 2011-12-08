@@ -76,7 +76,7 @@ pimcore.object.classes.klass = Class.create({
             text: t("export"),
             iconCls: "pimcore_icon_class_export",
             handler: function() {
-                location.href = this.getExportUrl();
+                pimcore.helpers.download(this.getExportUrl());
             }.bind(this)
         });
 

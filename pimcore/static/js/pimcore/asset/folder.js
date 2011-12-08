@@ -167,7 +167,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
     },
     
     downloadZip: function () {
-        location.href = '/admin/asset/download-as-zip/?id='+ this.id;
+        pimcore.helpers.download('/admin/asset/download-as-zip/?id='+ this.id);
     }
 });
 
