@@ -109,8 +109,7 @@ pimcore.element.exporter = Class.create({
 
     startDownload: function() {
          this.window.hide();
-         window.location.href = "/admin/export/get-export-file";
-
+         pimcore.helpers.download("/admin/export/get-export-file");
     }
 
 

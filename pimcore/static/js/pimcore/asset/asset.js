@@ -217,7 +217,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 iconCls: "pimcore_icon_download_medium",
                 scale: "medium",
                 handler: function () {
-                    location.href = "/admin/asset/download/id/" + this.data.id;
+                    pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
                 }.bind(this)
             });
 

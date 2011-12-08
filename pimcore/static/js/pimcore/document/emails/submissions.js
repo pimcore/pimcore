@@ -124,7 +124,7 @@ pimcore.plugin.formbuilder.tabs.submissions = Class.create({
     },
 
     downloadCsv: function () {
-        window.location.href = "/plugin/Formbuilder/index/download-csv?formId=" + this.form.document.id;
+        pimcore.helpers.download("/plugin/Formbuilder/index/download-csv?formId=" + this.form.document.id);
     }
 
 });

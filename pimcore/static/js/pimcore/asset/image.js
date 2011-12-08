@@ -184,7 +184,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     iconCls: "pimcore_icon_download",
                     handler: function () {
                         var config = this.downloadBox.getForm().getFieldValues();
-                        location.href = "/admin/asset/get-image-thumbnail/id/" + this.id + "/download/true?config=" + Ext.encode(config);
+                        pimcore.helpers.download("/admin/asset/get-image-thumbnail/id/" + this.id + "/download/true?config=" + Ext.encode(config));
                     }.bind(this)
                 }]
             });

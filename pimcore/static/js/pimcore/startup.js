@@ -31,7 +31,9 @@ Ext.onReady(function() {
     // confirmation to close pimcore
     if(!pimcore.settings.devmode) {
         window.onbeforeunload = function() {
-            return t("do_you_really_want_to_close_pimcore");
+            if(pimcore.settings.showCloseConfirmation) {
+                return t("do_you_really_want_to_close_pimcore");
+            }
         };
     }
 
@@ -82,6 +84,7 @@ Ext.onReady(function() {
         // redirect to login-page if session is expired
         if(typeof response.getResponseHeader == "function") {
             if(response.getResponseHeader("X-Pimcore-Auth") == "required") {
+                pimcore.settings.showCloseConfirmation = false;
                 window.location.href = "/admin/login/?session_expired=true";
             }
         }
@@ -429,6 +432,7 @@ window.setInterval(function () {
                 }
             } catch (e) {
                 data = false;
+                pimcore.settings.showCloseConfirmation = false;
                 window.location.href = "/admin/login/?session_expired=true";
             }
 
@@ -446,6 +450,7 @@ window.setInterval(function () {
         },
         failure: function (response) {
             if(response.status != 503) {
+                pimcore.settings.showCloseConfirmation = false;
                 window.location.href = "/admin/login/?session_expired=true&server_error=true";
             }
         }

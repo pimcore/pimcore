@@ -360,7 +360,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             condition: condition,
             objecttype: this.objecttype
         });
-        location.href = path;
+        pimcore.helpers.download(path);
     },
 
 
