@@ -61,7 +61,8 @@ class Pimcore_Placeholder{
 
                 if($matches[3][$key]){
                     try{
-                        $placeholderConfig = new Zend_Config_Json($matches[3][$key]);
+                        $configJsonString = str_replace("&quot;", '"', $matches[3][$key]);
+                        $placeholderConfig = new Zend_Config_Json($configJsonString);
                     }catch(Exception $e){
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for '.$placeholderClass.' ignored.');
                     }
