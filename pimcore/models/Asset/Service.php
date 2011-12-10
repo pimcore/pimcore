@@ -131,6 +131,7 @@ class Asset_Service extends Element_Service {
 
         if (!$source instanceof Asset_Folder) {
             $target->setData($source->getData());
+            $target->setCustomSettings($source->getCustomSettings());
         }
         $target->setPermissions($source->getPermissions());
         $target->setProperties($source->getProperties());
