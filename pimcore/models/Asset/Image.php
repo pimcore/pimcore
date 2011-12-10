@@ -21,6 +21,28 @@ class Asset_Image extends Asset {
      * @return void
      */
     public function update() {
+
+        try {
+            // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
+            // because the file is written in parent::update();
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid();
+            file_put_contents($tmpFile, $this->getData());
+            $dimensions = $this->getDimensions($tmpFile);
+            unlink($tmpFile);
+
+            if($dimensions && $dimensions["width"]) {
+                $this->setCustomSetting("imageWidth", $dimensions["width"]);
+                $this->setCustomSetting("imageHeight", $dimensions["height"]);
+            }
+        } catch (Exception $e) {
+            Logger::error("Problem getting the dimensions of the image with ID " . $this->getId());
+        }
+
+        // this is to be downward compatible so that the controller can check if the dimensions are already calculated
+        // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
+        // calculate the dimensions on every request an also will create a version, ...
+        $this->setCustomSetting("imageDimensionsCalculated", true);
+
         parent::update();
 
         $this->clearThumbnails();
@@ -147,11 +169,15 @@ class Asset_Image extends Asset {
     /**
      * @return array
      */
-    public function getDimensions() {
+    public function getDimensions($path = null) {
+
+        if(!$path) {
+            $path = $this->getFileSystemPath();
+        }
 
         $image = self::getImageTransformInstance();
 
-        $status = $image->load($this->getFileSystemPath());
+        $status = $image->load($path);
         if($status === false) {
             return;
         }

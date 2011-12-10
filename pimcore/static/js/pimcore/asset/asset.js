@@ -333,8 +333,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     upload: function () {
 
-        var extensionP = this.data.filename.split("\.");
-        var extension = "*." + extensionP[extensionP.length - 1];
+        var extension = "*." + pimcore.helpers.getFileExtension(this.data.filename);
 
         if (!this.uploadWindow) {
             this.uploadWindow = new Ext.Window({
