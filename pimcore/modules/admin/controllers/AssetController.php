@@ -629,7 +629,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         ));
     }
 
-
+    /**
+     * @param Asset $asset
+     * @return array|string
+     */
     protected function getTreeNodeConfig($asset) {
         $tmpAsset = array(
             "id" => $asset->getId(),
@@ -671,6 +674,17 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     "text" => '<img src="/admin/asset/get-image-thumbnail/id/' . $asset->getId() . '/width/130/aspectratio/true" width="130" />',
                     "width" => 140
                 );
+
+                // this is for backward-compatibilty, to calculate the dimensions if they are not there
+                if(!$asset->getCustomSetting("imageDimensionsCalculated")) {
+                    $asset->save();
+                }
+
+                if($asset->getCustomSetting("imageWidth") && $asset->getCustomSetting("imageHeight")) {
+                    $tmpAsset["imageWidth"] = $asset->getCustomSetting("imageWidth");
+                    $tmpAsset["imageHeight"] = $asset->getCustomSetting("imageHeight");
+                }
+
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of image, seems to be broken.");
             }

@@ -402,6 +402,11 @@ pimcore.helpers.download = function (url) {
     location.href = url;
 }
 
+pimcore.helpers.getFileExtension = function (filename) {
+    var extensionP = filename.split("\.");
+    return extensionP[extensionP.length - 1];
+}
+
 
 pimcore.helpers.startPong = function () {
 
