@@ -68,7 +68,10 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
                 "id" => $classItem->getId(),
                 "text" => $classItem->getName(),
                 "icon" => $classItem->getIcon(),
-                "propertyVisibility" => $classItem->getPropertyVisibility()
+                "propertyVisibility" => $classItem->getPropertyVisibility(),
+                "qtipCfg" => array(
+                    "title" => "ID: " . $classItem->getId()
+                )
             );
         }
 
