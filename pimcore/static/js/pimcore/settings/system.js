@@ -334,11 +334,20 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: "DEBUG",
                                 xtype: "checkbox",
                                 name: "general.debug",
-                                checked: this.getValue("general.debug")
+                                checked: this.getValue("general.debug"),
+                                listeners: {
+                                    check: function (el, checked) {
+                                        // set the current client ip to the debug ip field
+                                        if(checked) {
+                                            Ext.getCmp("system.settings.general.debug_ip").setValue(this.data.config.client_ip);
+                                        }
+                                    }.bind(this)
+                                }
                             },
                             {
                                 fieldLabel: t("only_for_ip"),
                                 xtype: "textfield",
+                                id: "system.settings.general.debug_ip",
                                 name: "general.debug_ip",
                                 value: this.getValue("general.debug_ip")
                             },

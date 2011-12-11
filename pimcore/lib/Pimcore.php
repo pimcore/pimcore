@@ -570,7 +570,7 @@ class Pimcore {
         // enable debug mode only for one IP
         if($conf->general->debug_ip && $conf->general->debug) {
             $debug = false;
-            if($_SERVER["REMOTE_ADDR"] == trim($conf->general->debug_ip) || $_SERVER["HTTP_X_FORWARDED_FOR"] == trim($conf->general->debug_ip)) {
+            if(Pimcore_Tool::getClientIp() == trim($conf->general->debug_ip)) {
                 $debug = true;
             }
         }
