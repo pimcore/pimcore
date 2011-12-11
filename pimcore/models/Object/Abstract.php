@@ -291,13 +291,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public static function getByPath($path) {
 
-        // remove trailing slash
-        if($path != "/") {
-            $path = rtrim($path,"/ ");
-        }
-
-        // correct wrong path (root-node problem)
-        $path = str_replace("//","/",$path);
+        $path = Element_Service::correctPath($path);
 
         try {
             $object = new self();
@@ -588,9 +582,11 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             }
         }
 
-        $duplicate = Object_Abstract::getByPath($this->getFullPath());
-        if($duplicate instanceof Object_Abstract and $duplicate->getId() != $this->getId()){
-            throw new Exception("Duplicate full path [ ".$this->getFullPath()." ] - cannot create object");
+        if(Object_Service::pathExists($this->getFullPath())) {
+            $duplicate = Object_Abstract::getByPath($this->getFullPath());
+            if($duplicate instanceof Object_Abstract and $duplicate->getId() != $this->getId()){
+                throw new Exception("Duplicate full path [ ".$this->getFullPath()." ] - cannot create object");
+            }
         }
     }
     

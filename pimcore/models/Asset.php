@@ -201,13 +201,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
     public static function getByPath($path) {
 
-        // remove trailing slash
-        if($path != "/") {
-            $path = rtrim($path,"/ ");
-        }
-
-        // correct wrong path (root-node problem)
-        $path = str_replace("//", "/", $path);
+        $path = Element_Service::correctPath($path);
 
         try {
             $asset = new Asset();
@@ -416,9 +410,11 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         }
 
-        $duplicate = Asset::getByPath($this->getFullPath());
-        if ($duplicate instanceof Asset  and $duplicate->getId() != $this->getId()) {
-            throw new Exception("Duplicate full path [ " . $this->getFullPath() . " ] - cannot create asset");
+        if(Asset_Service::pathExists($this->getFullPath())) {
+            $duplicate = Asset::getByPath($this->getFullPath());
+            if ($duplicate instanceof Asset  and $duplicate->getId() != $this->getId()) {
+                throw new Exception("Duplicate full path [ " . $this->getFullPath() . " ] - cannot create asset");
+            }
         }
 
     }

@@ -174,9 +174,7 @@ class Element_Service
      */
     public static function getSaveCopyName($type, $sourceKey, $target)
     {
-        $equalElement = self::getElementByPath($type, $target->getFullPath() . "/" . $sourceKey);
-        if ($equalElement) {
-
+        if (self::pathExists($type, $target->getFullPath() . "/" . $sourceKey)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if($type == "asset" && $fileExtension = Pimcore_File::getFileExtension($sourceKey)) {
                 $sourceKey = str_replace("." . $fileExtension, "_copy." . $fileExtension, $sourceKey);
@@ -187,6 +185,22 @@ class Element_Service
             return self::getSaveCopyName($type, $sourceKey, $target);
         }
         return $sourceKey;
+    }
+
+    /**
+     * @static
+     * @param $type
+     * @param $path
+     * @return bool
+     */
+    public static function pathExists ($type, $path) {
+        if($type == "asset") {
+            return Asset_Service::pathExists($path);
+        } else if ($type == "document") {
+            return Document_Service::pathExists($path);
+        } else if ($type == "object") {
+            return Object_Service::pathExists($path);
+        }
     }
 
 
@@ -532,5 +546,22 @@ class Element_Service
             }
         }
         return $data;
+    }
+
+    /**
+     * @static
+     * @param string $path
+     * @return string
+     */
+    public static function correctPath ($path) {
+        // remove trailing slash
+        if($path != "/") {
+            $path = rtrim($path,"/ ");
+        }
+
+        // correct wrong path (root-node problem)
+        $path = str_replace("//", "/", $path);
+
+        return $path;
     }
 }

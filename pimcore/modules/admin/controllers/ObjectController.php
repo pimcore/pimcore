@@ -788,9 +788,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $message = "";
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getFullPath() . "/" . $this->_getParam("key");
-            $equalObject = Object_Abstract::getByPath($intendedPath);
 
-            if ($equalObject == null) {
+            if (!Object_Service::pathExists($intendedPath)) {
 
                 $object = new $className();
                 if($object instanceof Object_Concrete) {
@@ -851,17 +850,15 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         if ($parent->isAllowed("create")) {
 
-            $equalObject = Object_Abstract::getByPath($parent->getFullPath() . "/" . $this->_getParam("key"));
-
-            if (!$equalObject) {
+            if (!Object_Service::pathExists($parent->getFullPath() . "/" . $this->_getParam("key"))) {
                 $folder = Object_Folder::create(array(
-                                                     "o_parentId" => $this->_getParam("parentId"),
-                                                     "o_creationDate" => time(),
-                                                     "o_userOwner" => $this->user->getId(),
-                                                     "o_userModification" => $this->user->getId(),
-                                                     "o_key" => $this->_getParam("key"),
-                                                     "o_published" => true
-                                                ));
+                     "o_parentId" => $this->_getParam("parentId"),
+                     "o_creationDate" => time(),
+                     "o_userOwner" => $this->user->getId(),
+                     "o_userModification" => $this->user->getId(),
+                     "o_key" => $this->_getParam("key"),
+                     "o_published" => true
+                ));
 
                 $folder->setCreationDate(time());
                 $folder->setUserOwner($this->getUser()->getId());

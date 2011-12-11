@@ -151,4 +151,28 @@ class Asset_Service extends Element_Service {
 
         return $data;
     }
+
+    /**
+     * @static
+     * @param $path
+     * @return bool
+     */
+    public static function pathExists ($path) {
+
+        $path = Element_Service::correctPath($path);
+
+        try {
+            $asset = new Asset();
+
+            if (Pimcore_Tool::isValidPath($path)) {
+                $asset->getResource()->getByPath($path);
+                return true;
+            }
+        }
+        catch (Exception $e) {
+
+        }
+
+        return false;
+    }
 }

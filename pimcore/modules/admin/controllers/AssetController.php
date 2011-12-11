@@ -459,8 +459,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $targetPath = "";
         }
 
-        while ($found == false) {
-            if (Asset::getByPath($targetPath . "/" . $filename)) {
+        while (true) {
+            if (Asset_Service::pathExists($targetPath . "/" . $filename)) {
                 $filename = str_replace("." . Pimcore_File::getFileExtension($originalFilename), "_" . $count . "." . Pimcore_File::getFileExtension($originalFilename), $originalFilename);
                 $count++;
             }

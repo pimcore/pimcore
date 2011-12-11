@@ -223,7 +223,11 @@ class Document_Service extends Element_Service {
         return $data;
     }
 
-
+    /**
+     * @static
+     * @param $doc
+     * @return mixed
+     */
     public static function loadAllDocumentFields ( $doc ) {
 
         if($doc instanceof Document_PageSnippet) {
@@ -235,6 +239,30 @@ class Document_Service extends Element_Service {
         }
 
         return $doc;
+    }
+
+    /**
+     * @static
+     * @param $path
+     * @return bool
+     */
+    public static function pathExists($path) {
+
+        $path = Element_Service::correctPath($path);
+
+        try {
+            $document = new Document();
+            // validate path
+            if (Pimcore_Tool::isValidPath($path)) {
+                $document->getResource()->getByPath($path);
+                return true;
+            }
+        }
+        catch (Exception $e) {
+
+        }
+
+        return false;
     }
 
 }

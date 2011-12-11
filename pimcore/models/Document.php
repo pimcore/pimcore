@@ -186,13 +186,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public static function getByPath($path) {
 
-        // remove trailing slash
-        if($path != "/") {
-            $path = rtrim($path,"/ ");
-        }
-
-        // correct wrong path (root-node problem)
-        $path = str_replace("//", "/", $path);
+        $path = Element_Service::correctPath($path);
 
         try {
             $document = new Document();
@@ -369,9 +363,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             }
         }
 
-        $duplicate = Document::getByPath($this->getFullPath());
-        if ($duplicate instanceof Document  and $duplicate->getId() != $this->getId()) {
-            throw new Exception("Duplicate full path [ " . $this->getFullPath() . " ] - cannot create document");
+        if(Document_Service::pathExists($this->getFullPath())) {
+            $duplicate = Document::getByPath($this->getFullPath());
+            if ($duplicate instanceof Document  and $duplicate->getId() != $this->getId()) {
+                throw new Exception("Duplicate full path [ " . $this->getFullPath() . " ] - cannot create document");
+            }
         }
 
     }
