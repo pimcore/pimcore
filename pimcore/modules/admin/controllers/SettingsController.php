@@ -219,7 +219,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "adminUsers" => $adminUsers,
                 "config" => array(
                     "timezones" => $timezones,
-                    "languages" => $languageOptions
+                    "languages" => $languageOptions,
+                    "client_ip" => Pimcore_Tool::getClientIp()
                 )
             );
 
