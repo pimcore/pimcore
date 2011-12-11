@@ -121,9 +121,14 @@ class Pimcore_ExtensionManager {
                 foreach ($pluginDirs as $d) {
                     if ($d != "." and $d != ".." and is_dir(PIMCORE_PLUGINS_PATH . "//" . $d)) {
                         if (file_exists(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml")) {
-                            $pluginConf = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml");
-                            if ($pluginConf != null) {
-                                $pluginConfigs[] = $pluginConf->toArray();
+                            try {
+                                $pluginConf = new Zend_Config_Xml(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml");
+                                if ($pluginConf != null) {
+                                    $pluginConfigs[] = $pluginConf->toArray();
+                                }
+                            } catch (Exception $e) {
+                                Logger::error("Unable to initialize plugin with ID: " . $d);
+                                Logger::error($e);
                             }
                         }
                     }
@@ -184,7 +189,12 @@ class Pimcore_ExtensionManager {
         $configs = array();
         
         foreach (self::getBrickDirectories() as $areaName => $path) {
-            $configs[$areaName] = new Zend_Config_Xml($path . "/area.xml");
+            try {
+                $configs[$areaName] = new Zend_Config_Xml($path . "/area.xml");
+            } catch (Exception $e) {
+                Logger::error("Unable to initalize brick with id: " . $areaName);
+                Logger::error($e);
+            }
         }
 
         return $configs;
