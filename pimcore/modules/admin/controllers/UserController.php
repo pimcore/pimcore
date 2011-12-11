@@ -229,7 +229,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $tmpUser = array(
             "id" => $user->getId(),
             "text" => $user->getUsername(),
-            "elementType" => "user"
+            "elementType" => "user",
+            "qtipCfg" => array(
+                "title" => "ID: " . $user->getId()
+            )
         );
 
         // set type specific settings
