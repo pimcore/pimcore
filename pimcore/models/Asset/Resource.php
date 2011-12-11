@@ -481,4 +481,22 @@ class Asset_Resource extends Element_Resource {
         
         return false;
     }
+
+    /**
+     * Get latest available version
+     *
+     * @return array
+     */
+    public function getLatestVersion() {
+
+        if($this->model->getType() != "folder") {
+            $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
+
+            if($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) {
+                $version = Version::getById($versionData["id"]);
+                return $version;
+            }
+        }
+        return;
+    }
 }  

@@ -351,9 +351,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $parentDocument->getPermissionsForUser($this->getUser());
         if ($parentDocument->isAllowed("create")) {
             $intendedPath = $parentDocument->getFullPath() . "/" . $this->_getParam("key");
-            $equalDocument = Document::getByPath($intendedPath);
 
-            if ($equalDocument == null) {
+            if (!Document_Service::pathExists($intendedPath)) {
 
                 $createValues = array(
                     "userOwner" => $this->getUser()->getId(),
