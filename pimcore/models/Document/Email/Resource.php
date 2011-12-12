@@ -18,7 +18,7 @@
 class Document_Email_Resource extends Document_PageSnippet_Resource {
 
     /**
-     * Contains the valid database colums
+     * Contains the valid database columns
      *
      * @var array
      */
