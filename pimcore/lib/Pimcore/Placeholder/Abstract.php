@@ -1,112 +1,246 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: kisi
- * Date: 19.11.11
- * Time: 14:27
- * To change this template use File | Settings | File Templates.
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
  */
- 
-abstract class Pimcore_Placeholder_Abstract {
 
-    protected $placeholderString    = null;
-    protected $placeholderKey       = null;
-    protected $placeholderConfig    = null;
-    protected $document             = null;
-    protected $params               = array();
-    protected $contentString        = null;
-    protected $locale               = null;
+abstract class Pimcore_Placeholder_Abstract
+{
+    /**
+     * The placeholder string e.g "%Object(object_id,{"method" : "getName"})"
+     *
+     * @var string
+     */
+    protected $placeholderString = null;
 
+    /**
+     * The placeholder key passed to determine the dynamic parameter
+     *
+     * @var string
+     */
+    protected $placeholderKey = null;
 
-    public function setPlaceholderString($string){
+    /**
+     * The config object passed from the placeholder
+     * If no config object was passed a empty Zend_Config_Json is passed
+     *
+     * @var Zend_Config_Json
+     */
+    protected $placeholderConfig = null;
+
+    /**
+     * The passed Document Object
+     *
+     * @var Document | null
+     */
+    protected $document = null;
+
+    /**
+     * All dynamic parameters which are passed to the Placeholder
+     *
+     * @var array
+     */
+    protected $params = array();
+
+    /**
+     * The Content as string
+     *
+     * @var string
+     */
+    protected $contentString = null;
+
+    /**
+     * @var Zend_Locale
+     */
+    protected $locale = null;
+
+    /*
+     * Sets the Placeholder string e.g "%Object(object_id,{"method" : "getName"})"
+     * @var string $string
+     */
+    public function setPlaceholderString($string)
+    {
         $this->placeholderString = $string;
     }
 
-    public function getPlaceholderString(){
+    /*
+     * Returns the Placeholder string
+     */
+    public function getPlaceholderString()
+    {
         return $this->placeholderString;
     }
 
-    public function setPlaceholderKey($key){
+    /**
+     * Sets the Placeholder key (first parameter of the placeholder)
+     *
+     * @param string $key
+     */
+    public function setPlaceholderKey($key)
+    {
         $this->placeholderKey = $key;
     }
 
-    public function getPlaceholderKey(){
+    /**
+     * Returns the Placehodler key
+     *
+     * @return string
+     */
+    public function getPlaceholderKey()
+    {
         return $this->placeholderKey;
     }
 
-    public function setPlaceholderConfig(Zend_Config_Json $config){
+    /**
+     * Sets the Placeholder config object (passed as second parameter)
+     *
+     * @param Zend_Config_Json $config
+     */
+    public function setPlaceholderConfig(Zend_Config_Json $config)
+    {
         $this->placeholderConfig = $config;
     }
 
-    public function getPlaceholderConfig(){
+    /**
+     * Returns the Placeholder config object
+     *
+     * @return Zend_Config_Json
+     */
+    public function getPlaceholderConfig()
+    {
         return $this->placeholderConfig;
     }
 
-    public function setParams($params){
-        if(is_array($params)){
+    /**
+     * Sets parameters to the Placeholder object
+     *
+     * @param array $params
+     */
+    public function setParams($params)
+    {
+        if (is_array($params)) {
             $this->params = $params;
         }
     }
 
-    public function getParams(){
+    /**
+     * Returns the Parameters ob the Placeholder object
+     *
+     * @return array
+     */
+    public function getParams()
+    {
         return $this->params;
     }
 
-    public function getParam($key){
+    /**
+     * Returns a specific parameter
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getParam($key)
+    {
         return $this->params[$key];
     }
 
-    public function setContentString($contentString){
-        if(is_string($contentString)){
+    /**
+     * Sets the full content string
+     *
+     * @param string $contentString
+     */
+    public function setContentString($contentString)
+    {
+        if (is_string($contentString)) {
             $this->contentString = $contentString;
         }
     }
 
-    public function getContentString(){
+    /**
+     * returns the full content string
+     *
+     * @return null|string
+     */
+    public function getContentString()
+    {
         return $this->contentString;
     }
 
-
-    public function getValue(){
+    /**
+     * Returns the the value of the current Placeholder parameter
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
         return $this->getParam($this->getPlaceholderKey());
     }
 
-    public function setDocument($document){
-        if($document instanceof Document){
+    /**
+     * Sets a document
+     *
+     * @param Document | null $document
+     */
+    public function setDocument($document)
+    {
+        if ($document instanceof Document) {
             $this->document = $document;
         }
     }
 
-    public function getDocument(){
+    /**
+     * Returns the Document
+     *
+     * @return Document|null
+     */
+    public function getDocument()
+    {
         return $this->document;
     }
 
-    public function getLocale(){
-        if(is_null($this->locale)){
+    /**
+     * Returns the current locale
+     *
+     * @return Zend_Locale
+     */
+    public function getLocale()
+    {
+        if (is_null($this->locale)) {
             $this->setLocale();
         }
         return $this->locale;
     }
 
     /**
-     * Trying to set the locale from different sources
+     * Try to set the locale from different sources
+     *
      * @param $locale
      * @return void
      */
-    public function setLocale($locale = null){
-        if($locale instanceof Zend_Locale){
+    public function setLocale($locale = null)
+    {
+        if ($locale instanceof Zend_Locale) {
             $this->locale = $locale;
-        }elseif(is_string($locale)){
+        } elseif (is_string($locale)) {
             $this->locale = new Zend_Locale($locale);
-        }elseif($this->getParam('locale') || $this->getParam('language')){
+        } elseif ($this->getParam('locale') || $this->getParam('language')) {
             $this->setLocale(($this->getParam('locale')) ? $this->getParam('locale') : $this->getParam('language'));
-        }else{
+        } else {
             $document = $this->getDocument();
-            if($document instanceof Document){
-              $this->setLocale($document->getProperty("language"));
+            if ($document instanceof Document) {
+                $this->setLocale($document->getProperty("language"));
             }
 
-            if(is_null($this->locale)){ //last chance -> get it from registry or use the first Language defined in the system settings
+            if (is_null($this->locale)) { //last chance -> get it from registry or use the first Language defined in the system settings
                 try {
                     $this->locale = Zend_Registry::get("Zend_Locale");
                 } catch (Exception $e) {
@@ -117,17 +251,29 @@ abstract class Pimcore_Placeholder_Abstract {
         }
     }
 
-    public function getLanguage(){
+    /**
+     * Returns the current language
+     *
+     * @return string
+     */
+    public function getLanguage()
+    {
         return $this->getLocale()->getLanguage();
     }
 
-    public function getEmptyValue(){
+    /**
+     * Will be used as replacement if the passed parameter is empty
+     *
+     * @return string
+     */
+    public function getEmptyValue()
+    {
         return '';
     }
 
 
     /**
-     * Has to return an appropriate value for the test replacement
+     * Has to return an appropriate value for a test replacement
      *
      * @abstract
      * @return string
@@ -135,7 +281,7 @@ abstract class Pimcore_Placeholder_Abstract {
     abstract function getTestValue();
 
     /**
-     * Has to replace the placeholder with the corresponding value
+     * Has to return the placeholder with the corresponding value
      *
      * @abstract
      * @return string
