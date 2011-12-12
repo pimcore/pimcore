@@ -97,6 +97,10 @@ pimcore.document.pages.settings = Class.create({
                                 }
                             },
                             {
+                                fieldLabel: t('module_optional'),
+                                name: 'module',
+                                value: this.page.data.module
+                            },{
                                 fieldLabel: t('controller'),
                                 name: 'controller',
                                 value: this.page.data.controller

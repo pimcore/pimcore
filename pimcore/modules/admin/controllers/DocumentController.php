@@ -368,7 +368,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     $createValues["template"] = $docType->getTemplate();
                     $createValues["controller"] = $docType->getController();
                     $createValues["action"] = $docType->getAction();
-                } else if($this->_getParam("type") == "page" || $this->_getParam("type") == "snippet" || $this->_getParam("type") == "email") { //added ckogler
+                    $createValues["module"] = $docType->getModule();
+                } else if($this->_getParam("type") == "page" || $this->_getParam("type") == "snippet" || $this->_getParam("type") == "email") {
                     $createValues["controller"] = Pimcore_Config::getSystemConfig()->documents->default_controller;
                     $createValues["action"] = Pimcore_Config::getSystemConfig()->documents->default_action;
                 }
@@ -727,7 +728,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $list = new Document_DocType_List();
         if ($this->_getParam("type")) {
             $type = $this->_getParam("type");
-            if (in_array($type ,Document_DocType::getValidDocTypes())) {
+            if (Document_Service::isValidType($type)) {
                 $list->setCondition("type = ?", $type);
             }
         }
