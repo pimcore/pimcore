@@ -106,6 +106,11 @@ pimcore.document.emails.settings = Class.create({
                                 }
                             },
                             {
+                                fieldLabel: t('module_optional'),
+                                name: 'module',
+                                value: this.email.data.module
+                            },
+                            {
                                 fieldLabel: t('controller'),
                                 name: 'controller',
                                 value: this.email.data.controller

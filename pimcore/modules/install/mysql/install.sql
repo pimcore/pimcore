@@ -108,6 +108,7 @@ DROP TABLE IF EXISTS `documents_doctypes`;
 CREATE TABLE `documents_doctypes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
+  `module` varchar(255) DEFAULT NULL,
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
@@ -150,6 +151,7 @@ CREATE TABLE `documents_hardlink` (
 DROP TABLE IF EXISTS `documents_email`;
 CREATE TABLE `documents_email` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `module` varchar(255) DEFAULT NULL,
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
@@ -179,6 +181,7 @@ CREATE TABLE `email_log` (
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `module` varchar(255) DEFAULT NULL,
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
@@ -215,6 +218,7 @@ CREATE TABLE `documents_permissions` (
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `module` varchar(255) DEFAULT NULL,
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,

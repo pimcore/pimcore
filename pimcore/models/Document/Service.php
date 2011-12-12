@@ -62,7 +62,7 @@ class Document_Service extends Element_Service {
         $content = $view->action($document->getAction(), $document->getController(), null, $params);
 
         //has to be called after $view->action so we can determine if a layout is enabled in $view->action()
-        if ($useLayout) {
+        if ($useLayout) { 
             $layout = Zend_Layout::getMvcInstance();
 
             if ($layout instanceof Zend_Layout) {
@@ -271,6 +271,14 @@ class Document_Service extends Element_Service {
         }
 
         return false;
+    }
+
+    /**
+     * @param $type
+     * @return bool
+     */
+    public static function isValidType ($type) {
+        return in_array($type, Document::getTypes());
     }
 
 }

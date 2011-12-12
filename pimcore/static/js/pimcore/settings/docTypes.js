@@ -61,6 +61,7 @@ pimcore.settings.document.doctypes = Class.create({
 
         var typesColumns = [
             {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
+            {header: t("module_optional"), width: 50, sortable: true, dataIndex: 'module', editor: new Ext.form.TextField({})},
             {header: t("controller"), width: 50, sortable: true, dataIndex: 'controller', editor: new Ext.form.TextField({})},
             {header: t("action"), width: 50, sortable: true, dataIndex: 'action', editor: new Ext.form.TextField({})},
             {header: t("template"), width: 50, sortable: true, dataIndex: 'template', editor: new Ext.form.TextField({})},

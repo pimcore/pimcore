@@ -20,6 +20,11 @@ abstract class Document_PageSnippet extends Document {
     /**
      * @var string
      */
+    public $module;
+
+    /**
+     * @var string
+     */
     public $controller = "default";
 
     /**
@@ -218,6 +223,22 @@ abstract class Document_PageSnippet extends Document {
      */
     public function setTemplate($template) {
         $this->template = $template;
+    }
+
+    /**
+     * @param string $module
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModule()
+    {
+        return $this->module;
     }
 
     /**

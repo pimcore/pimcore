@@ -102,6 +102,7 @@ Ext.onReady(function() {
     }, [
         {name: 'id'},
         {name: 'name', allowBlank: false},
+        {name: 'module', allowBlank: true},
         {name: 'controller', allowBlank: true},
         {name: 'action', allowBlank: true},
         {name: 'template', allowBlank: true},
