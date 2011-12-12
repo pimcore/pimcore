@@ -10,7 +10,7 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    Glossary
+ * @package    EmailLog
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
@@ -18,12 +18,11 @@
 class EmailLog_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
     /**
-     * Loads a list of static routes for the specicifies parameters, returns an array of Staticroute elements
+     * Loads a list of Email_Log for the specified parameters, returns an array of Email_Log elements
      *
      * @return array
      */
     public function load() {
-
         $emailLogs = $this->db->fetchAll("SELECT id FROM email_log" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $emailLogsArray = array();
@@ -31,14 +30,25 @@ class EmailLog_List_Resource extends Pimcore_Model_List_Resource_Abstract {
             $emailLogsArray[] = EmailLog::getById($log["id"]);
         }
         $this->model->setEmailLogs($emailLogsArray);
+
         return $emailLogsArray;
     }
 
+    /**
+     * Returns the db entries from email_log by the specified parameters
+     *
+     * @return array
+     */
     public function getDataArray() {
         $emailLogData = $this->db->fetchAll("SELECT * FROM email_log " . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $emailLogData;
     }
 
+    /**
+     * Returns the total amount of Email_Log entries
+     *
+     * @return integer
+     */
     public function getTotalCount() {
 
         try {
@@ -46,7 +56,6 @@ class EmailLog_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         } catch (Exception $e) {
 
         }
-
         return $amount["amount"];
     }
 }

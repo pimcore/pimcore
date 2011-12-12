@@ -10,16 +10,21 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    Property
+ * @package    EmailLog
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
 
+    /**
+     * Name of the db table
+     * @var string
+     */
     protected static $dbTable = 'email_log';
+
      /**
-     * Contains the valid database colums
+     * Contains the valid database columns
      *
      * @var array
      */
@@ -33,7 +38,6 @@ class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
     public function init() {
         $this->validColumns = $this->getValidTableColumns(self::$dbTable);
     }
-
 
      /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
@@ -52,7 +56,7 @@ class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
      /**
-     * Save object to database
+     * Save document to database
      *
      * @return void
      */
@@ -60,6 +64,7 @@ class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
         $data = array();
 
         $emailLog = get_object_vars($this->model);
+
         foreach ($emailLog as $key => $value) {
             if (in_array($key, $this->validColumns)) {
 
@@ -75,6 +80,7 @@ class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }else if(is_array($value)){
+                    //converts a array to a json string (for passed parameter)
                     $value = Zend_Json::encode($value);
                 }
 
@@ -100,7 +106,9 @@ class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
         $this->db->delete(self::$dbTable, $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
-    //just an alias
+    /**
+     * just an alias for $this->save();
+     */
     public function update(){
         $this->save();
     }
@@ -123,8 +131,5 @@ class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
         catch (Exception $e) {
             throw $e;
         }
-
     }
-
-
 }
