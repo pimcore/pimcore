@@ -92,7 +92,7 @@ class Logger {
     }
     
     public static function emerg ($m, $l = null) {
-        self::emergency($m);
+        self::log($m,Zend_Log::EMERG);
     }
     
     public static function critical ($m, $l = null) {
@@ -100,7 +100,7 @@ class Logger {
     }
     
     public static function crit ($m, $l = null) {
-        self::critical($m);
+        self::log($m,Zend_Log::CRIT);
     }
     
     public static function error ($m, $l = null) {
@@ -108,7 +108,7 @@ class Logger {
     }
     
     public static function err ($m, $l = null) {
-        self::error($m);
+        self::log($m,Zend_Log::ERR);
     }
     
     public static function alert ($m, $l = null) {
@@ -120,7 +120,7 @@ class Logger {
     }
     
     public static function warn ($m, $l = null) {
-        self::warning($m);
+        self::log($m,Zend_Log::WARN);
     }
     
     public static function notice ($m, $l = null) {
