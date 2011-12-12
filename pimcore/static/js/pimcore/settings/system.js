@@ -87,21 +87,6 @@ pimcore.settings.system = Class.create({
                     });
                 }
 
-                //email - debug email domains ckogler
-                 try {
-                    this.emailDebugDomainsStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        data: this.data.values.email.debug,
-                        root: 'emaildebugdomainsArray',
-                        fields: ['value']
-                    });
-                } catch(e) {
-                    this.emailDebugDomainsStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        fields: ['value']
-                    });
-                }
-
                 //cdn host names
                 try {
                     this.cdnHostsStore = new Ext.data.JsonStore({
@@ -613,40 +598,7 @@ pimcore.settings.system = Class.create({
                                     }
                             }
 
-                            },
-                            {
-                                xtype: 'superboxselect',
-                                allowBlank:true,
-                                queryDelay: 100,
-                                triggerAction: 'all',
-                                resizable: true,
-                                mode: 'local',
-                                anchor:'100%',
-                                minChars: 2,
-                                fieldLabel: t("email_debug_domains"), //ckogler
-                                name: 'email.debug.emailDomains',
-                                value: this.getValue("email.debug.emaildomains"),
-                                emptyText: t("email_debug_domains_empty_text"),
-                                store: this.emailDebugDomainsStore,
-                                fields: ['value'],
-                                displayField: 'value',
-                                valueField: 'value',
-                                allowAddNewData: true,
-                                ctCls: 'superselect-no-drop-down',
-                                listeners: {
-                                    newitem: function(bs, v, f) {
-                                        v = v + '';
-                                        var newObj = {
-                                            value: v
-                                        };
-                                        bs.addNewItem(newObj);
-                                    }
-                                }
-
                             }
-
-
-
                         ]
                     },
                     {
