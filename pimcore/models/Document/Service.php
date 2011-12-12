@@ -46,10 +46,18 @@ class Document_Service extends Element_Service {
      */
     public static function render(Document $document, $params = array(), $useLayout = false)
     {
-
         $layoutEnabledInCurrentAction = (Zend_Layout::getMvcInstance() instanceof Zend_Layout) ? true : false;
 
-        $view = new Pimcore_View();
+        $viewHelper = Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
+        if($viewHelper) {
+            if($viewHelper->view === null) {
+                $viewHelper->initView(PIMCORE_WEBSITE_PATH . "/views");
+            }
+            $view = $viewHelper->view;
+        } else {
+            $view = new Pimcore_View();
+        }
+
         $params["document"] = $document;
         $content = $view->action($document->getAction(), $document->getController(), null, $params);
 

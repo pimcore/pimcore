@@ -252,8 +252,7 @@ CSS;
                         if ($fileInfo['fileExtension'] == 'css') {
                             $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                         } else {
-                            $less = new lessc();
-                            $fileContent = $less->parse(file_get_contents($fileInfo['filePathNormalized']));
+                            $fileContent = Pimcore_Tool_Less::compile($fileInfo['filePathNormalized']);
                         }
                         if ($fileContent) {
                             $fileContent = self::normalizeCssContent($fileContent, $fileInfo);

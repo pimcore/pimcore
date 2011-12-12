@@ -81,19 +81,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
 
-        // disable build-in error handler
-        $front->setParam('noErrorHandler', true);
-
-        // for admin an other modules directly in the core
-        $front->addModuleDirectory(PIMCORE_PATH . "/modules");
-        // for plugins
-        if (is_dir(PIMCORE_PLUGINS_PATH) && is_readable(PIMCORE_PLUGINS_PATH)) {
-            $front->addModuleDirectory(PIMCORE_PLUGINS_PATH);
-        }
-
-        // for frontend (default: website)
-        $front->addControllerDirectory(PIMCORE_WEBSITE_PATH . "/controllers", PIMCORE_FRONTEND_MODULE);
-        $front->setDefaultModule(PIMCORE_FRONTEND_MODULE);
+        self::initControllerFront($front);
 
         // set router
         $router = $front->getRouter();
@@ -240,6 +228,31 @@ class Pimcore {
         }
     }
 
+    /**
+     * @static
+     * @param Zend_Controller_Front $front
+     */
+    public static function initControllerFront (Zend_Controller_Front $front) {
+
+        // disable build-in error handler
+        $front->setParam('noErrorHandler', true);
+
+        // for admin an other modules directly in the core
+        $front->addModuleDirectory(PIMCORE_PATH . "/modules");
+        // for plugins
+        if (is_dir(PIMCORE_PLUGINS_PATH) && is_readable(PIMCORE_PLUGINS_PATH)) {
+            $front->addModuleDirectory(PIMCORE_PLUGINS_PATH);
+        }
+
+        // for frontend (default: website)
+        $front->addControllerDirectory(PIMCORE_WEBSITE_PATH . "/controllers", PIMCORE_FRONTEND_MODULE);
+        $front->setDefaultModule(PIMCORE_FRONTEND_MODULE);
+    }
+
+    /**
+     * @static
+     *
+     */
     public static function initLogger() {
 
         // try to load configuration
@@ -334,6 +347,10 @@ class Pimcore {
         }
     }
 
+    /**
+     * @static
+     *
+     */
     public static function setSystemRequirements() {
         // try to set system-internal variables
 
@@ -484,6 +501,10 @@ class Pimcore {
 
     }
 
+    /**
+     * @static
+     *
+     */
     public static function initAutoloader() {
 
         $autoloader = Zend_Loader_Autoloader::getInstance();
@@ -527,6 +548,10 @@ class Pimcore {
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }
 
+    /**
+     * @static
+     * @return bool
+     */
     public static function initConfiguration() {
                
         // init configuration
@@ -558,6 +583,10 @@ class Pimcore {
         if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", false);
     }
 
+    /**
+     * @static
+     * @return bool
+     */
     public static function inDebugMode () {
 
         if(defined("PIMCORE_DEBUG")) {
@@ -578,6 +607,10 @@ class Pimcore {
         return $debug;
     }
 
+    /**
+     * @static
+     *
+     */
     public static function setupFramework () {
 
         // try to set tmp directoy into superglobals, ZF and other frameworks (PEAR) sometimes relies on that
@@ -655,8 +688,7 @@ class Pimcore {
             "pimcore_config_website",
             "pimcore_editmode",
             "pimcore_error_document",
-            "pimcore_site",
-            "pimcore_custom_view"
+            "pimcore_site"
         );
 
         if(is_array($keepItems) && count($keepItems) > 0) {
