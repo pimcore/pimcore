@@ -222,13 +222,34 @@ class Pimcore_Tool {
     }
 
 
-
-    public static function getHostUrl() {
+    /**
+     * Returns the host URL
+     *
+     * @static
+     * @return string
+     */
+    public static function getHostUrl()
+    {
         $protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
-        $protocol = substr($protocol,0,strpos($protocol,"/"));
+        $protocol = substr($protocol, 0, strpos($protocol, "/"));
         $protocol .= ($_SERVER["HTTPS"] == "on") ? "s" : "";
-        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
-        return $protocol."://".self::getHostname().$port;
+        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
+
+        $hostname = self::getHostname();
+
+        //get it from System settings
+        if (!$hostname) {
+            $systemConfig = Pimcore_Config::getSystemConfig()->toArray();
+            $hostname = $systemConfig['general']['domain'];
+            if (!$hostname) {
+                Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
+            } else {
+                $protocol   = 'http';
+                $port       = '';
+            }
+        }
+
+        return $protocol . "://" . $hostname . $port;
     }
 
 

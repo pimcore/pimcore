@@ -99,6 +99,10 @@ class Pimcore_Helper_Mail
     text-align:center;
     font-weight:bold;
 }
+.pimcore_label_column{
+    width:80px;
+}
+
 </style>
 CSS;
         return $style;
@@ -237,15 +241,14 @@ CSS;
             throw new Exception('$document has to be an instance of Document');
         }
 
+
         //matches all <link> Tags
         preg_match_all("@<link.*?href\s*=\s*[\"']([^http].*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
-
         if (!empty($matches[0])) {
             foreach ($matches[0] as $key => $value) {
                 $fullMatch = $matches[0][$key];
                 $path = $matches[1][$key];
                 $fileInfo = self::getNormalizedFileInfo($path, $document);
-
                 if (in_array($fileInfo['fileExtension'], array('css', 'less'))) {
                     if (is_readable($fileInfo['filePathNormalized'])) {
 
@@ -253,6 +256,7 @@ CSS;
                             $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                         } else {
                             $fileContent = Pimcore_Tool_Less::compile($fileInfo['filePathNormalized']);
+                            $fileContent = str_replace('/**** compiled with lessphp ****/','',$fileContent);
                         }
                         if ($fileContent) {
                             $fileContent = self::normalizeCssContent($fileContent, $fileInfo);
@@ -318,15 +322,14 @@ CSS;
 
         $fileInfo = array();
         $hostUrl = Pimcore_Tool::getHostUrl();
-
         if ($path[0] != '/') {
             $fileInfo['fileUrl'] = $hostUrl . $document . "/$path"; //relative eg. ../file.css
         } else {
             $fileInfo['fileUrl'] = $hostUrl . $path;
         }
 
-        $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
 
+        $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
         $netUrl = new Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
         $fileInfo['filePathNormalized'] = PIMCORE_DOCUMENT_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
