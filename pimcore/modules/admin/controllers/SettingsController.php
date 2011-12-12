@@ -175,20 +175,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => '');
             }
 
-
-            //debug email domains - add as array ckogler
-            if (!empty($valueArray['email']['debug']['emaildomains'])) {
-                $emailDomains = explode(",", $valueArray['email']['debug']['emaildomains']);
-                if (is_array($emailDomains)) {
-                    foreach ($emailDomains as $emailDomain) {
-                        $valueArray['email']['debug']['emaildebugdomainsArray'][] = array("value" => $emailDomain);
-                    }
-                }
-            }else{
-                $valueArray['email']['debug']['emaildebugdomainsArray'][] = array("value" => '');
-            }
-
-
             //cache exclude patterns - add as array
             if (!empty($valueArray['cache']['excludePatterns'])) {
                 $patterns = explode(",", $valueArray['cache']['excludePatterns']);
@@ -358,7 +344,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     ),
                     "debug" => array( //ckogler
                         "emailaddresses" => $values["email.debug.emailAddresses"],
-                        "emaildomains" => $values["email.debug.emailDomains"],
                     ),
                 ),
                 "webservice" => array(
