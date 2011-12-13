@@ -58,11 +58,17 @@ class Document_Service extends Element_Service {
             $view = new Pimcore_View();
         }
 
+        $documentBackup = null;
+        if($view->document) {
+            $documentBackup = $view->document;
+        }
+        $view->document = $document;
+
         $params["document"] = $document;
         $content = $view->action($document->getAction(), $document->getController(), null, $params);
 
         //has to be called after $view->action so we can determine if a layout is enabled in $view->action()
-        if ($useLayout) { 
+        if ($useLayout) {
             $layout = Zend_Layout::getMvcInstance();
 
             if ($layout instanceof Zend_Layout) {
@@ -84,6 +90,10 @@ class Document_Service extends Element_Service {
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
             }
+        }
+
+        if($documentBackup) {
+            $view->document = $documentBackup;
         }
 
         return $content;
