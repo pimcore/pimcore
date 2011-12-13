@@ -200,6 +200,10 @@ class Pimcore_Model_Cache {
 
             // unserialize data, use custom serializer
             $data = Pimcore_Tool_Serialize::unserialize($data);
+
+            if(is_object($data)) {
+                $data->____pimcore_cache_item__ = $key;
+            }
     
             if ($data) {
                 Logger::debug("Successfully get data for key " . $key . " from cache");
@@ -281,6 +285,10 @@ class Pimcore_Model_Cache {
                         return;
                     }
                 }
+            }
+
+            if(is_object($data) && isset($data->____pimcore_cache_item__)) {
+                unset($data->____pimcore_cache_item__);
             }
 
             // serialize data, use custom serializer
