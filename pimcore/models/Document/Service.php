@@ -283,4 +283,12 @@ class Document_Service extends Element_Service {
         return false;
     }
 
+    /**
+     * @param $type
+     * @return bool
+     */
+    public static function isValidType ($type) {
+        return in_array($type, Document::getTypes());
+    }
+
 }
