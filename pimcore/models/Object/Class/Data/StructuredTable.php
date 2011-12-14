@@ -40,6 +40,11 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
     public $labelWidth;
 
     /**
+     * @var string
+     */
+    public $labelFirstCell;
+
+    /**
      * @var object
      */
     public $cols;
@@ -115,6 +120,20 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      */
     public function setLabelWidth($labelWidth) {
         $this->labelWidth = $labelWidth;
+    }
+
+    /**
+     * @param string $labelFirstCell
+     */
+    public function setLabelFirstCell($labelFirstCell) {
+        $this->labelFirstCell = $labelFirstCell;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabelFirstCell() {
+        return $this->labelFirstCell;
     }
 
     /**
@@ -528,6 +547,5 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
         return $code;
 
     }
-
 
 }

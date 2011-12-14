@@ -109,7 +109,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         }
 
         var columns = [
-            {header: "", width: this.fieldConfig.labelWidth, sortable: false, dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
+            {header: this.fieldConfig.labelFirstCell, width: this.fieldConfig.labelWidth, sortable: false, dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
                     metaData.css = 'x-grid3-hd-row';
                     return ts(value);
                }
