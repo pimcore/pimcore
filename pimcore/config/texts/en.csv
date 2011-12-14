@@ -50,6 +50,7 @@
 "positioning","Positioning"
 "angle","Angle"
 "label_width","Label Width"
+"label_first_cell","Label First Cell"
 "cleanup","Cleanup"
 "this_element_cannot_be_edited","This element cannot be edited"
 "cache_disable_cookies","Disable Cookies (comma separated)"
