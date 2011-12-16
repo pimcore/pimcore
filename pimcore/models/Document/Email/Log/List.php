@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class EmailLog_List extends Pimcore_Model_List_Abstract
+class Document_Email_Log_List extends Pimcore_Model_List_Abstract
 {
 
     /**

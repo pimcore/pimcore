@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
+class Document_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
 
     /**
      * Name of the db table
@@ -81,7 +81,8 @@ class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
                     $value = (int) $value;
                 }else if(is_array($value)){
                     //converts a array to a json string (for passed parameter)
-                    $value = Zend_Json::encode($value);
+                    $value = self::createJsonLoggingObject($value);
+
                 }
 
                 $data[$key] = $value;
@@ -132,4 +133,46 @@ class EmailLog_Resource extends Pimcore_Model_Resource_Abstract {
             throw $e;
         }
     }
+
+    protected function createJsonLoggingObject($data){
+        if(!is_array($data)){
+            return Zend_Json::encode(new StdClass());
+        }else{
+
+            $x = array();
+           foreach($data as $key => $value){
+              $x[] = self::test($key,$value);
+            }
+
+         #  echo Zend_Json::encode($x); exit;
+           # return Zend_Json::encode($data);
+        }
+    }
+
+
+    protected function test($key,$value){
+        $class = new StdClass();
+        $class->property = $key;
+        $class->children = array();
+        $class->iconCls = 'task-folder';
+
+        if(is_string($value) || is_int($value)){
+           $class->data = array('type' => 'simple',
+                                 'value' => $value);
+            $class->data = 'eins';
+        }elseif(is_object($value)){
+            $class->data = array('type' => 'object',
+                                 'objectId' => $value->getId(),
+                                 'objectClass' => get_class($value));
+            $class->data = 'zwei';
+        }elseif(is_array($value)){
+            foreach($value as $entryKey => $entryValue){
+                $class->children[] = self::test($entryKey,$entryValue);
+            }
+            $class->data = 'drei';
+
+        }
+        return $class;
+    }
+
 }

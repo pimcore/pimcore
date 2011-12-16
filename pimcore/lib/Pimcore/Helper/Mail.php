@@ -137,7 +137,7 @@ CSS;
      */
     public static function logEmail(Pimcore_Mail $mail)
     {
-        $emailLog = new EmailLog();
+        $emailLog = new Document_Email_Log();
         $document = $mail->getDocument();
 
         if ($document instanceof Document) {
