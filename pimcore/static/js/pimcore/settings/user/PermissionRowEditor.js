@@ -44,6 +44,7 @@ pimcore.settings.user.PermissionRowEditor = Ext.extend(Ext.Panel, {
     },
 
     initComponent: function() {
+
         Ext.ux.grid.RowEditor.superclass.initComponent.call(this);
         this.addEvents(
             /**
