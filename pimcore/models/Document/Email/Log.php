@@ -10,12 +10,12 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    EmailLog
+ * @package    Document
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class EmailLog extends Pimcore_Model_Abstract
+class Document_Email_Log extends Pimcore_Model_Abstract
 {
 
     /**
@@ -207,7 +207,7 @@ class EmailLog extends Pimcore_Model_Abstract
             return null;
         }
 
-        $emailLog = new EmailLog();
+        $emailLog = new Document_Email_Log();
         $emailLog->getResource()->getById($id);
         $emailLog->setEmailLogExistsHtml();
         $emailLog->setEmailLogExistsText();

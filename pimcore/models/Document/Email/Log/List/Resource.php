@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class EmailLog_List_Resource extends Pimcore_Model_List_Resource_Abstract {
+class Document_Email_Log_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
     /**
      * Loads a list of Email_Log for the specified parameters, returns an array of Email_Log elements
@@ -27,7 +27,7 @@ class EmailLog_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
         $emailLogsArray = array();
         foreach ($emailLogs as $log) {
-            $emailLogsArray[] = EmailLog::getById($log["id"]);
+            $emailLogsArray[] = Document_Email_Log::getById($log["id"]);
         }
         $this->model->setEmailLogs($emailLogsArray);
 

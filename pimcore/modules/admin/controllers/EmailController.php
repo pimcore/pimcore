@@ -112,7 +112,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document {
     }
 
      public function emailLogsAction(){ //ckogler
-        $list = new EmailLog_List();
+        $list = new Document_Email_Log_List();
         if($this->_getParam('documentId')){
             $list->setCondition('documentId = '. (int) $this->_getParam('documentId'));
         }
@@ -140,17 +140,51 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document {
         ));
     }
 
-    public function showEmailLogAction(){ //ckogler
-        $this->disableViewAutoRender();
+    public function showEmailLogAction(){
         $type = $this->_getParam('type');
-        $emailLog = EmailLog::getById($this->_getParam('id'));
+        $emailLog = Document_Email_Log::getById($this->_getParam('id'));
+
         if($this->_getParam('type') == 'text'){
+            $this->disableViewAutoRender();
             echo '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>'.$emailLog->getTextLog().'</pre></body></html>';
         }elseif($this->_getParam('type') == 'html'){
+            $this->disableViewAutoRender();
             echo $emailLog->getHtmlLog();
         }elseif($this->_getParam('type') == 'params'){
-            $params = $emailLog->getParams();
-            echo '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>'.Zend_Json::prettyPrint($params).'</pre></body></html>';
+
+            #$params = $emailLog->getParams();
+            #echo '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>'.Zend_Json::prettyPrint($params).'</pre></body></html>';
+        }elseif($this->_getParam('type') == 'json'){
+            if($this->_getParam('getData')){
+         /*       $jsonData = Zend_Json::decode($emailLog->getParams());
+
+                $preparedData = array();
+
+                if(is_array($jsonData)){
+                    foreach($jsonData as $key => $value){
+                        $class = new StdClass();
+                        $class->property = $key;
+                        $class->data = $value;
+                        $class->iconCls = 'task-folder';
+                        $class->expanded = false;
+                        $class->children = array();
+                        $preparedData[] = $class;
+                    }
+                }
+                #p_r($jsonData);
+*/
+$preparedData = <<<'xx'
+[{"property":"object_id","children":[],"iconCls":"task-folder","data":"eins"},{"property":"products","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"},{"property":"singleProdct","children":[],"iconCls":"task-folder","data":"zwei"},{"property":"localized","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"},{"property":"fash","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":1,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":2,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":3,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":4,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":5,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":6,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":7,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":8,"children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"},{"property":"asset","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":"hallo","children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"},{"property":"testarray","children":[{"property":"essen","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"eins"},{"property":1,"children":[],"iconCls":"task-folder","data":"eins"}],"iconCls":"task-folder","data":"drei"},{"property":"getraenke","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"eins"},{"property":1,"children":[],"iconCls":"task-folder","data":"eins"},{"property":2,"children":[],"iconCls":"task-folder","data":"eins"}],"iconCls":"task-folder","data":"drei"}],"iconCls":"task-folder","data":"drei"},{"property":"documents","children":[{"property":"one","children":[],"iconCls":"task-folder","data":"zwei"},{"property":"two","children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"}]
+xx;
+
+
+
+
+                $this->_helper->json(Zend_Json::decode($preparedData));
+
+
+            }
+
         }
         else{
             die('No Type specified');
@@ -159,24 +193,14 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document {
 
     public function deleteEmailLogAction(){
         $success = false;
-        $emailLog = EmailLog::getById($this->_getParam('id'));
-        if($emailLog instanceof EmailLog){
+        $emailLog = Document_Email_Log::getById($this->_getParam('id'));
+        if($emailLog instanceof Document_Email_Log){
             $emailLog->delete();
             $success = true;
         }
         $this->_helper->json(array(
             "success" => $success,
         ));
-    }
-
-    public function previewAction(){
-        $document = Document_Email::getById($this->_getParam('documentId'));
-        if($document instanceof Document_Email){
-            $placeholder = new Pimcore_Placeholder();
-            $placeholder->detectPlaceholders(Document_Service::render($document,array('testvalues' => true),$document));
-        }else{
-            die("Couldn't find document");
-        }
     }
 
 }
