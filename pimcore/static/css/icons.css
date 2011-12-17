@@ -195,6 +195,10 @@
 	background: url(/pimcore/static/img/icon/plugin.png) no-repeat !important;
 }
 
+.pimcore_icon_menu_plugins {
+	background: url(/pimcore/static/img/icon/plugin.png) no-repeat !important;
+}
+
 .pimcore_icon_menu_settings {
 	background: url(/pimcore/static/img/icon/wrench.png) no-repeat !important;
 }

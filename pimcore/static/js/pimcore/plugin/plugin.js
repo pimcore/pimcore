@@ -24,6 +24,13 @@ pimcore.plugin.admin = Class.create({
     uninstall: function() {
     },
 
+    /**
+     * Called on admin toolbar initialization.
+     * Must return instance of Ext.menu.Item or Object with item definition.
+     */
+    getMenu: function() {
+    },
+
 
     /* events */
 
