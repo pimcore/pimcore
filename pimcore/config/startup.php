@@ -16,7 +16,7 @@
 error_reporting(E_ALL ^ E_NOTICE);
 
 // configure some constants needed by pimcore
-$pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..'); 
+$pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..');
 
 if (!defined("PIMCORE_DOCUMENT_ROOT"))  define("PIMCORE_DOCUMENT_ROOT", $pimcoreDocumentRoot);
 if (!defined("PIMCORE_FRONTEND_MODULE"))  define("PIMCORE_FRONTEND_MODULE", "website"); // frontend module, this is the module containing your website, please be sure that the module folder is in PIMCORE_DOCUMENT_ROOT and is named identically with this name
@@ -65,11 +65,7 @@ require_once "Zend/Loader/Autoloader.php";
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->registerNamespace('Pimcore');
 
-$autoloader->suppressNotFoundWarnings(true);
-
-
 // do some general stuff
 
 // on pimcore shutdown
 register_shutdown_function("Pimcore::shutdown");
-
