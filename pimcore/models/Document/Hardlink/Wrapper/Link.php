@@ -44,10 +44,8 @@ class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_H
             $hardLinkSourceProperties = $this->getHardLinkSource()->getProperties();
             foreach ($hardLinkSourceProperties as $key => $prop) {
                 $prop = clone $prop;
-                if($prop->getInheritable()) {
-                    $prop->setInherited(true);
-                    $hardLinkProperties[$key] = $prop;
-                }
+                $prop->setInherited(true);
+                $hardLinkProperties[$key] = $prop;
             }
 
 

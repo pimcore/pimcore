@@ -68,8 +68,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list = new Property_Predefined_List();
             $list->setLimit($this->_getParam("limit"));
             $list->setOffset($this->_getParam("start"));
-            $list->setOrderKey("name");
-            $list->setOrder("ASC");
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
 
             if($this->_getParam("filter")) {
                 $list->setCondition("`name` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
@@ -160,6 +163,18 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 }
             }
 
+            //debug email addresses - add as array ckogler
+            if (!empty($valueArray['email']['debug']['emailaddresses'])) {
+                $emailAddresses = explode(",", $valueArray['email']['debug']['emailaddresses']);
+                if (is_array($emailAddresses)) {
+                    foreach ($emailAddresses as $emailAddress) {
+                        $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => $emailAddress);
+                    }
+                }
+            }else{
+                $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => '');
+            }
+
             //cache exclude patterns - add as array
             if (!empty($valueArray['cache']['excludePatterns'])) {
                 $patterns = explode(",", $valueArray['cache']['excludePatterns']);
@@ -190,7 +205,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "adminUsers" => $adminUsers,
                 "config" => array(
                     "timezones" => $timezones,
-                    "languages" => $languageOptions
+                    "languages" => $languageOptions,
+                    "client_ip" => Pimcore_Tool::getClientIp()
                 )
             );
 
@@ -325,7 +341,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                             "username" => $values["email.smtp.auth.username"],
                             "password" => $smtpPassword
                         )
-                    )
+                    ),
+                    "debug" => array( //ckogler
+                        "emailaddresses" => $values["email.debug.emailAddresses"],
+                    ),
                 ),
                 "webservice" => array(
                     "enabled" => $values["webservice.enabled"]
@@ -337,7 +356,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "proxy_user" => $values["httpclient.proxy_user"],
                     "proxy_pass" => $values["httpclient.proxy_pass"],
                 )
-            );
+            ); 
 
             $config = new Zend_Config($settings, true);
             $writer = new Zend_Config_Writer_Xml(array(
@@ -354,7 +373,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 Logger::err("attempt to change system settings, but no user in session.");
             }
         }
-
         $this->_helper->json(false);
     }
 
@@ -489,8 +507,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
             $list->setLimit($this->_getParam("limit"));
             $list->setOffset($this->_getParam("start"));
-            $list->setOrderKey("name");
-            $list->setOrder("ASC");
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
 
             if($this->_getParam("filter")) {
                 $list->setCondition("`name` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `pattern` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `reverse` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `controller` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `action` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
@@ -926,8 +947,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list = new Redirect_List();
             $list->setLimit($this->_getParam("limit"));
             $list->setOffset($this->_getParam("start"));
-            $list->setOrderKey("source");
-            $list->setOrder("ASC");
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
 
             if($this->_getParam("filter")) {
                 $list->setCondition("`source` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `target` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
@@ -1041,8 +1065,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list = new Glossary_List();
             $list->setLimit($this->_getParam("limit"));
             $list->setOffset($this->_getParam("start"));
-            $list->setOrderKey("text");
-            $list->setOrder("ASC");
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
 
             if($this->_getParam("filter")) {
                 $list->setCondition("`text` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));

@@ -85,6 +85,7 @@ pimcore.settings.staticroutes = Class.create({
             proxy: proxy,
             reader: reader,
             writer: writer,
+            remoteSort: true,
             baseParams: {
                 limit: itemsPerPage,
                 filter: ""
@@ -154,7 +155,7 @@ pimcore.settings.staticroutes = Class.create({
             {header: t("name"), width: 50, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
             {header: t("pattern"), width: 100, sortable: true, dataIndex: 'pattern', editor: new Ext.form.TextField({})},
             {header: t("reverse"), width: 100, sortable: true, dataIndex: 'reverse', editor: new Ext.form.TextField({})},
-            {header: t("module"), hidden: true, width: 50, sortable: false, dataIndex: 'module', editor: new Ext.form.TextField({})},
+            {header: t("module_optional"), width: 50, sortable: false, dataIndex: 'module', editor: new Ext.form.TextField({})},
             {header: t("controller"), width: 50, sortable: false, dataIndex: 'controller', editor: new Ext.form.TextField({})},
             {header: t("action"), width: 50, sortable: false, dataIndex: 'action', editor: new Ext.form.TextField({})},
             {header: t("variables"), width: 50, sortable: false, dataIndex: 'variables', editor: new Ext.form.TextField({})},

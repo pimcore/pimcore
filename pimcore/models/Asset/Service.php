@@ -131,6 +131,7 @@ class Asset_Service extends Element_Service {
 
         if (!$source instanceof Asset_Folder) {
             $target->setData($source->getData());
+            $target->setCustomSettings($source->getCustomSettings());
         }
         $target->setPermissions($source->getPermissions());
         $target->setProperties($source->getProperties());
@@ -149,5 +150,29 @@ class Asset_Service extends Element_Service {
         $data = Element_Service::gridElementData($asset);
 
         return $data;
+    }
+
+    /**
+     * @static
+     * @param $path
+     * @return bool
+     */
+    public static function pathExists ($path) {
+
+        $path = Element_Service::correctPath($path);
+
+        try {
+            $asset = new Asset();
+
+            if (Pimcore_Tool::isValidPath($path)) {
+                $asset->getResource()->getByPath($path);
+                return true;
+            }
+        }
+        catch (Exception $e) {
+
+        }
+
+        return false;
     }
 }

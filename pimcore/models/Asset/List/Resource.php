@@ -30,7 +30,9 @@ class Asset_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
         foreach ($assetsData as $assetData) {
             if($assetData["type"]) {
-                $assets[] = Asset::getById($assetData["id"]);
+                if($asset = Asset::getById($assetData["id"])) {
+                    $assets[] = $asset;
+                }
             }
         }
 

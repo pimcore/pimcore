@@ -61,13 +61,14 @@ pimcore.settings.document.doctypes = Class.create({
 
         var typesColumns = [
             {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
-            {header: t("controller"), width: 50, sortable: false, dataIndex: 'controller', editor: new Ext.form.TextField({})},
-            {header: t("action"), width: 50, sortable: false, dataIndex: 'action', editor: new Ext.form.TextField({})},
-            {header: t("template"), width: 50, sortable: false, dataIndex: 'template', editor: new Ext.form.TextField({})},
-            {header: t("type"), width: 50, sortable: false, dataIndex: 'type', editor: new Ext.form.ComboBox({
+            {header: t("module_optional"), width: 50, sortable: true, dataIndex: 'module', editor: new Ext.form.TextField({})},
+            {header: t("controller"), width: 50, sortable: true, dataIndex: 'controller', editor: new Ext.form.TextField({})},
+            {header: t("action"), width: 50, sortable: true, dataIndex: 'action', editor: new Ext.form.TextField({})},
+            {header: t("template"), width: 50, sortable: true, dataIndex: 'template', editor: new Ext.form.TextField({})},
+            {header: t("type"), width: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
-                store: ["page","snippet"]
+                store: ["page","snippet","email"]  //ckogler added "email"
             })},
             {header: t("priority"), width: 50, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
                 store: [1,2,3,4,5,6,7,8,9,10],

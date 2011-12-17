@@ -23,6 +23,9 @@
 .pimcore_icon_page {
 	background: url(/pimcore/static/img/icon/page.png) left center no-repeat !important;
 }
+.pimcore_icon_email {
+	background: url(/pimcore/static/img/icon/email.png) left center no-repeat !important;
+}
 
 .pimcore_icon_asset {
 	background: url(/pimcore/static/img/icon/asset.png) left center no-repeat !important;
@@ -61,6 +64,14 @@
 
 .pimcore_icon_snippet_add {
 	background: url(/pimcore/static/img/icon/snippet_add.png);
+}
+
+.pimcore_icon_email_transfer {
+	background: url(/pimcore/static/img/icon/email_transfer.png);
+}
+
+.pimcore_icon_email_add {
+	background: url(/pimcore/static/img/icon/email_add.png);
 }
 
 .pimcore_icon_link_add {
@@ -646,8 +657,12 @@
 	background: url(/pimcore/static/img/icon/upload-medium.png) left center no-repeat !important;
 }
 
-.pimcore_icon_download_medium {
+.pimcore_icon_download_zip_medium {
     background: url(/pimcore/static/img/icon/download-zip-medium.png) left center no-repeat !important;
+}
+
+.pimcore_icon_download_medium {
+    background: url(/pimcore/static/img/icon/download-medium.png) left center no-repeat !important;
 }
 
 

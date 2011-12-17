@@ -283,4 +283,23 @@ class Pimcore_View extends Zend_View {
 
         return parent::__call($method, $arguments);
     }
+
+    /**
+     * @static
+     * @return string
+     */
+    public static function getViewScriptSuffix () {
+        // default is php
+        $viewSuffix = "php";
+
+        // custom view suffixes are only available for the frontend module (website)
+        if(Zend_Controller_Front::getInstance()->getRequest()->getModuleName() == PIMCORE_FRONTEND_MODULE) {
+            $customViewSuffix = Pimcore_Config::getSystemConfig()->general->viewSuffix;
+            if(!empty($customViewSuffix)) {
+                $viewSuffix = $customViewSuffix;
+            }
+        }
+
+        return $viewSuffix;
+    }
 }

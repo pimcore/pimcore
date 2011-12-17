@@ -138,7 +138,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             
             this.toolbarButtons.download = new Ext.Button({
                 text: t("download_as_zip"),
-                iconCls: "pimcore_icon_download_medium",
+                iconCls: "pimcore_icon_download_zip_medium",
                 scale: "medium",
                 handler: this.downloadZip.bind(this)
             });
@@ -167,7 +167,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
     },
     
     downloadZip: function () {
-        location.href = '/admin/asset/download-as-zip/?id='+ this.id;
+        pimcore.helpers.download('/admin/asset/download-as-zip/?id='+ this.id);
     }
 });
 

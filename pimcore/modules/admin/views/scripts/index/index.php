@@ -213,17 +213,22 @@
             "pimcore/document/properties.js",
             "pimcore/document/document.js",
             "pimcore/document/page_snippet.js",
+            //"pimcore/document/page_email.js", //ckogler
             "pimcore/document/edit.js",
+            "pimcore/document/editemail.js", //ckogler
             "pimcore/document/versions.js",
             "pimcore/document/pages/settings.js",
             "pimcore/document/pages/preview.js",
             "pimcore/document/snippets/settings.js",
+            "pimcore/document/emails/settings.js", //ckogler
+            "pimcore/document/emails/logs.js", //ckogler
             "pimcore/document/link.js",
             "pimcore/document/hardlink.js",
             "pimcore/document/folder.js",
             "pimcore/document/permissions.js",
             "pimcore/document/tree.js",
             "pimcore/document/snippet.js",
+            "pimcore/document/email.js", //ckogler
             "pimcore/document/page.js",
             
             // assets
@@ -405,7 +410,8 @@
             language: '<?php echo $this->language; ?>',
             websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
             google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
-            liveconnectToken: "<?php echo $this->liveconnectToken; ?>"
+            liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
+            showCloseConfirmation: true
         };
     </script>
     

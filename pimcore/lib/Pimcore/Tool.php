@@ -221,6 +221,38 @@ class Pimcore_Tool {
         return $_SERVER["HTTP_HOST"];
     }
 
+
+    /**
+     * Returns the host URL
+     *
+     * @static
+     * @return string
+     */
+    public static function getHostUrl()
+    {
+        $protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
+        $protocol = substr($protocol, 0, strpos($protocol, "/"));
+        $protocol .= ($_SERVER["HTTPS"] == "on") ? "s" : "";
+        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
+
+        $hostname = self::getHostname();
+
+        //get it from System settings
+        if (!$hostname) {
+            $systemConfig = Pimcore_Config::getSystemConfig()->toArray();
+            $hostname = $systemConfig['general']['domain'];
+            if (!$hostname) {
+                Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
+            } else {
+                $protocol   = 'http';
+                $port       = '';
+            }
+        }
+
+        return $protocol . "://" . $hostname . $port;
+    }
+
+
     /**
      * @static
      * @return array|bool
@@ -266,39 +298,7 @@ class Pimcore_Tool {
         $valueArray = $values->toArray();
         $emailSettings = $valueArray["email"];
 
-        $mail = new Zend_Mail("UTF-8");
-
-        if(!empty($emailSettings['sender']['email'])) {
-            $mail->setDefaultFrom($emailSettings['sender']['email'],$emailSettings['sender']['name']);
-        }
-
-        if(!empty($emailSettings['return']['email'])) {
-            $mail->setDefaultReplyTo($emailSettings['return']['email'],$emailSettings['return']['name']);
-        }
-
-        if($emailSettings['method']=="smtp"){
-
-            $config = array();
-            if(!empty($emailSettings['smtp']['name'])){
-                $config['name'] =  $emailSettings['smtp']['name'];
-            }
-            if(!empty($emailSettings['smtp']['ssl'])){
-                $config['ssl'] =  $emailSettings['smtp']['ssl'];
-            }
-            if(!empty($emailSettings['smtp']['port'])){
-                $config['port'] =  $emailSettings['smtp']['port'];
-            }
-            if(!empty($emailSettings['smtp']['auth']['method'])){
-                $config['auth'] =  $emailSettings['smtp']['auth']['method'];
-                $config['username'] = $emailSettings['smtp']['auth']['username'];
-                $config['password'] = $emailSettings['smtp']['auth']['password'];
-            }
-
-            $transport = new Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
-            //Logger::log($transport);
-            //Logger::log($config);
-            $mail->setDefaultTransport($transport);
-        }
+        $mail = new Pimcore_Mail();
 
         if($recipients) {
             if(is_string($recipients)) {
@@ -440,5 +440,23 @@ class Pimcore_Tool {
                 $autoloader->registerNamespace($classParts[0]);
             }
         }
+    }
+
+    /**
+     * @static
+     * @param bool $checkProxy
+     * @return mixed
+     */
+    public static function getClientIp()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+
+        return $ip;
     }
 }

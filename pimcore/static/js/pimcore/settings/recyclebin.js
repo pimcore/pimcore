@@ -82,6 +82,7 @@ pimcore.settings.recyclebin = Class.create({
             proxy: proxy,
             reader: reader,
             writer: writer,
+            remoteSort: true,
             baseParams: {
                 limit: itemsPerPage,
                 filter: ""
@@ -154,10 +155,10 @@ pimcore.settings.recyclebin = Class.create({
             {header: t("type"), width: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {
                 return '<img src="/pimcore/static/img/icon/' + d + '.png" />';
             }},
-            {header: t("path"), id: "recyclebin_path_col", width: 200, sortable: false, dataIndex: 'path'},
-            {header: t("amount"), width: 60, sortable: false, dataIndex: 'amount'},
-            {header: t("deletedby"), width:80,sortable: false, dataIndex: 'deletedby'}, 
-            {header: t("date"), width: 140, sortable: false, dataIndex: 'date', renderer: function(d) {
+            {header: t("path"), id: "recyclebin_path_col", width: 200, sortable: true, dataIndex: 'path'},
+            {header: t("amount"), width: 60, sortable: true, dataIndex: 'amount'},
+            {header: t("deletedby"), width:80,sortable: true, dataIndex: 'deletedby'},
+            {header: t("date"), width: 140, sortable: true, dataIndex: 'date', renderer: function(d) {
                 var date = new Date(d * 1000);
                 return date.format("Y-m-d H:i:s");
             }},

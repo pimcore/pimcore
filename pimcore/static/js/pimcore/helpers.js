@@ -393,6 +393,20 @@ pimcore.helpers.showMaintenanceDisableButton = function () {
     toolbar.doLayout();
 }
 
+pimcore.helpers.download = function (url) {
+    pimcore.settings.showCloseConfirmation = false;
+    window.setTimeout(function () {
+        pimcore.settings.showCloseConfirmation = true;
+    },1000);
+
+    location.href = url;
+}
+
+pimcore.helpers.getFileExtension = function (filename) {
+    var extensionP = filename.split("\.");
+    return extensionP[extensionP.length - 1];
+}
+
 
 pimcore.helpers.startPong = function () {
 
@@ -432,3 +446,4 @@ pimcore.helpers.stopPong = function () {
     Ext.get("play_pong").remove();
     Ext.get("pimcore_body").slideIn();
 }
+

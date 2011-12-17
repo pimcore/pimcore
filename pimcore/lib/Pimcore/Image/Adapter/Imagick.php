@@ -56,7 +56,6 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
     /**
      * @param  $path
-     * @return void
      */
     public function save ($path, $format = null, $quality = null) {
 
@@ -78,7 +77,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
-     * @return void
+     * @return  void
      */
     protected function destroy() {
         $this->resource->destroy();
@@ -93,15 +92,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         // this is the check for vector formats because they need to have a resolution set
         // this does only work if "resize" is the first step in the image-pipeline
-        $type = $this->resource->getimageformat();
-        $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","PSB","SVG","SVGZ");
 
-        if(in_array($type,$vectorTypes)) {
+        if($this->isVectorGraphic()) {
             // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
             $res = $this->resource->getImageResolution();
             $x_ratio = $res['x'] / $this->resource->getImageWidth();
             $y_ratio = $res['y'] / $this->resource->getImageHeight();
             $this->resource->removeImage();
+
             $this->resource->setResolution($width * $x_ratio, $height * $y_ratio);
             $this->resource->readImage($this->imagePath);
         } else {
@@ -322,5 +320,21 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         $this->reinitializeImage();
 
         return $this;
+    }
+
+    public function isVectorGraphic () {
+
+        try {
+            $type = $this->resource->getimageformat();
+            $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","PSB","SVG","SVGZ");
+
+            if(in_array($type,$vectorTypes)) {
+                return true;
+            }
+        } catch (Exception $e) {
+            Logger::err($e);
+        }
+
+        return false;
     }
 }

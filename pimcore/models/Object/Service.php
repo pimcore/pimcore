@@ -449,7 +449,13 @@ class Object_Service extends Element_Service {
         Logger::log("ObjectController filter condition:" . $conditionFilters);
         return $conditionFilters;
     }
-    
+
+    /**
+     * @static
+     * @param $object
+     * @param $fieldname
+     * @return array
+     */
     public static function getOptionsForSelectField($object, $fieldname) {
         $class = null;
         $options = array();
@@ -476,5 +482,29 @@ class Object_Service extends Element_Service {
         }
 
         return $options;
+    }
+
+    /**
+     * @static
+     * @param $path
+     * @return bool
+     */
+    public static function pathExists ($path) {
+
+        $path = Element_Service::correctPath($path);
+
+        try {
+            $object = new Object_Abstract();
+
+            if (Pimcore_Tool::isValidPath($path)) {
+                $object->getResource()->getByPath($path);
+                return true;
+            }
+        }
+        catch (Exception $e) {
+
+        }
+
+        return false;
     }
 }

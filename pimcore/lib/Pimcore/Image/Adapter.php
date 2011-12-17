@@ -134,9 +134,9 @@ abstract class Pimcore_Image_Adapter {
 
         $x = $this->getWidth() / $width;
         $y = $this->getHeight() / $height;
-        if ($x <= 1 && $y <= 1) {
+        if ($x <= 1 && $y <= 1 && !$this->isVectorGraphic()) {
             return $this;
-        } elseif ($x > $y) {
+        } else if ($x > $y) {
             $this->scaleByWidth($width);
         } else {
             $this->scaleByHeight($height);
@@ -188,9 +188,16 @@ abstract class Pimcore_Image_Adapter {
         } else if ($orientation == "bottomcenter") {
             $cropX = ($this->getWidth() - $width)/2;
             $cropY = $this->getHeight() - $height;
+        } else {
+            $cropX = null;
+            $cropY = null;
         }
 
-        $this->crop($cropX, $cropY, $width, $height);
+        if($cropX !== null && $cropY !== null) {
+            $this->crop($cropX, $cropY, $width, $height);
+        } else {
+            Logger::error("Cropping not processed, because X or Y is not defined or null, proceeding with next step");
+        }
 
         return $this;
     }
@@ -358,5 +365,13 @@ abstract class Pimcore_Image_Adapter {
      */
     public function __destruct() {
         $this->removeTmpFiles();
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isVectorGraphic () {
+        return false;
     }
 }

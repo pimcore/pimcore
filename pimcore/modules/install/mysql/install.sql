@@ -86,7 +86,7 @@ DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `type` enum('page','link','snippet','folder','hardlink') DEFAULT NULL,
+  `type` enum('page','link','snippet','folder','hardlink','email') DEFAULT NULL,
   `key` varchar(255) DEFAULT '',
   `path` varchar(255) DEFAULT NULL,
   `index` int(11) unsigned DEFAULT '999999',
@@ -108,10 +108,11 @@ DROP TABLE IF EXISTS `documents_doctypes`;
 CREATE TABLE `documents_doctypes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
+  `module` varchar(255) DEFAULT NULL,
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
-  `type` enum('page','snippet') DEFAULT NULL,
+  `type` enum('page','snippet','email') DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`)
@@ -147,10 +148,40 @@ CREATE TABLE `documents_hardlink` (
   UNIQUE KEY `id` (`id`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `documents_email`;
+CREATE TABLE `documents_email` (
+  `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `module` varchar(255) DEFAULT NULL,
+  `controller` varchar(255) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `template` varchar(255) DEFAULT NULL,
+  `to` varchar(255) DEFAULT NULL,
+  `from` varchar(255) DEFAULT NULL,
+  `cc` varchar(255) DEFAULT NULL,
+  `bcc` varchar(255) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `email_log`;
+CREATE TABLE `email_log` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `documentId` int(11) DEFAULT NULL,
+  `requestUri` varchar(255) DEFAULT NULL,
+  `params` text,
+  `from` varchar(255) DEFAULT NULL,
+  `to` varchar(255) DEFAULT NULL,
+  `cc` varchar(255) DEFAULT NULL,
+  `bcc` varchar(255) DEFAULT NULL,
+  `sentDate` bigint(20) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `module` varchar(255) DEFAULT NULL,
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
@@ -187,6 +218,7 @@ CREATE TABLE `documents_permissions` (
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `module` varchar(255) DEFAULT NULL,
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,

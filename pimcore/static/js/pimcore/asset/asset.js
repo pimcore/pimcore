@@ -214,10 +214,10 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             buttons.push({
                 text: this.data.path + this.data.filename,
-                iconCls: "pimcore_icon_cursor_medium",
+                iconCls: "pimcore_icon_download_medium",
                 scale: "medium",
                 handler: function () {
-                    location.href = "/admin/asset/download/id/" + this.data.id;
+                    pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
                 }.bind(this)
             });
 
@@ -333,8 +333,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     upload: function () {
 
-        var extensionP = this.data.filename.split("\.");
-        var extension = "*." + extensionP[extensionP.length - 1];
+        var extension = "*." + pimcore.helpers.getFileExtension(this.data.filename);
 
         if (!this.uploadWindow) {
             this.uploadWindow = new Ext.Window({

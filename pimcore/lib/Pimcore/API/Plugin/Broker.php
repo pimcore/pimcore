@@ -180,9 +180,31 @@ class Pimcore_API_Plugin_Broker {
         return $this->_plugins;
     }
 
+
     /**
      *
-     * Calls postAddDocument functions of all registered plugins and system modules
+     * Calls preAddAsset functions of all registered plugins and system modules
+     *
+     * @param Asset $asset
+     */
+    public function preAddAsset(Asset $asset) {
+
+        foreach ($this->_systemModules as $module) {
+            $module->preAddAsset($asset);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preAddAsset($asset);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddAsset");
+            }
+        }
+
+    }
+
+    /**
+     *
+     * Calls postAddAsset functions of all registered plugins and system modules
      *
      * @param Asset $asset
      */
@@ -219,6 +241,43 @@ class Pimcore_API_Plugin_Broker {
         }
     }
 
+
+    /**
+     * Calls postDeleteAsset functions of all registered plugins and system modules
+     *
+     * @param Asset $asset
+     */
+    public function postDeleteAsset(Asset $asset) {
+        foreach ($this->_systemModules as $module) {
+            $module->postDeleteAsset($asset);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postDeleteAsset($asset);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteAsset");
+            }
+        }
+    }
+
+    /**
+     * Calls preUpdateAsset functions of all registered plugins and system modules
+     *
+     * @param Asset $asset
+     */
+    public function preUpdateAsset(Asset $asset) {
+        foreach ($this->_systemModules as $module) {
+            $module->preUpdateAsset($asset);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preUpdateAsset($asset);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preUpdateAsset");
+            }
+        }
+    }
+
     /**
      * Calls postUpdateAsset functions of all registered plugins and system modules
      *
@@ -237,6 +296,25 @@ class Pimcore_API_Plugin_Broker {
         }
     }
 
+
+    /**
+     *
+     * Calls preAddDocument functions of all registered plugins and system modules
+     *
+     * @param Document $document
+     */
+    public function preAddDocument(Document $document) {
+        foreach ($this->_systemModules as $module) {
+            $module->preAddDocument($document);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preAddDocument($document);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddDocument");
+            }
+        }
+    }
 
     /**
      *
@@ -276,6 +354,24 @@ class Pimcore_API_Plugin_Broker {
     }
 
     /**
+     * Calls postDeleteDocument functions of all registered plugins and system modules
+     *
+     * @param Document $document
+     */
+    public function postDeleteDocument(Document $document) {
+        foreach ($this->_systemModules as $module) {
+            $module->postDeleteDocument($document);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postDeleteDocument($document);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteDocument");
+            }
+        }
+    }
+
+    /**
      * Calls preUpdateDocument functions of all registered plugins and system modules
      *
      * @param Document $document
@@ -294,6 +390,8 @@ class Pimcore_API_Plugin_Broker {
     }
 
 
+
+
     /**
      * Calls postUpdateDocument functions of all registered plugins and system modules
      *
@@ -308,6 +406,25 @@ class Pimcore_API_Plugin_Broker {
                 $plugin->postUpdateDocument($document);
             } catch (Exception $e) {
                 Logger::error("Plugin " . get_class($plugin) . " threw Exception in postUpdateDocument");
+            }
+        }
+    }
+
+
+    /**
+     * Calls preAddObject functions of all registered plugins and system modules
+     *
+     * @param Object_Abstract $object
+     */
+    public function preAddObject(Object_Abstract $object) {
+        foreach ($this->_systemModules as $module) {
+            $module->preAddObject($object);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preAddObject($object);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddObject");
             }
         }
     }
@@ -345,6 +462,24 @@ class Pimcore_API_Plugin_Broker {
                 $plugin->preDeleteObject($object);
             } catch (Exception $e) {
                 Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDeleteObject");
+            }
+        }
+    }
+
+    /**
+     * Calls postDeleteObject functions of all registered plugins and system modules
+     *
+     * @param Object_Abstract $object
+     */
+    public function postDeleteObject(Object_Abstract $object) {
+        foreach ($this->_systemModules as $module) {
+            $module->postDeleteObject($object);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postDeleteObject($object);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteObject");
             }
         }
     }

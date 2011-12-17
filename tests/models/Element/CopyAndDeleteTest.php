@@ -243,12 +243,14 @@ class Element_CopyAndDeleteTest extends PHPUnit_Framework_TestCase {
             "data" => file_get_contents(TESTS_PATH . "/resources/assets/images/image1" . ".jpg"),
             "userOwner" => 1
         ));
+        $asset1->save();
 
-         $asset2 = Asset_Image::create(1, array(
+        $asset2 = Asset_Image::create(1, array(
             "filename" => uniqid() . rand(10, 99) . ".jpg",
             "data" => file_get_contents(TESTS_PATH . "/resources/assets/images/image2" . ".jpg"),
             "userOwner" => 1
         ));
+        $asset2->save();
 
 
         $this->assertFalse(Test_Tool::assetsAreEqual($asset1, $asset2, true));

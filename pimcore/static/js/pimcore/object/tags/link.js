@@ -16,6 +16,7 @@ pimcore.registerNS("pimcore.object.tags.link");
 pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     type: "link",
+    dirty: false,
 
     initialize: function (data, fieldConfig) {
 
@@ -281,9 +282,12 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     save: function () {
         var values = this.form.getForm().getFieldValues();
+        if(Ext.encode(values) != Ext.encode(this.data)) {
+            this.dirty = true; 
+        }
         this.data = values;
 
-        var textValue = "[not set]";
+        var textValue = "[not set]"; 
         if (this.data.text) {
             textValue = this.data.text;
         }
@@ -299,6 +303,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         this.window.close();
 
         this.data = this.defaultData;
+        this.dirty = true; 
 
         // set text
         this.displayField.setValue("[not set]");
@@ -306,5 +311,13 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
     cancel: function () {
         this.window.close();
+    },
+
+    isDirty: function() {
+        if(!this.isRendered()) {
+            return false;
+        }
+
+        return this.dirty;
     }
 });

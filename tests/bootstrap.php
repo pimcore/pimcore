@@ -14,6 +14,9 @@ $skipInstall = false;
  */
 $skipDownload = true;
 
+if(!defined("TESTS_PATH"))  {
+    define('TESTS_PATH', realpath(dirname(__FILE__)));
+}
 
 
 // Add pimcore lib of the original development unit to include path - since we have not started up any pimcore yet,
@@ -24,9 +27,13 @@ $r = substr($r, 0, -5);
 //add pimcore lib
 $r = $r . "pimcore/lib";
 
+$includePathBak = get_include_path();
 $includePaths = array(get_include_path());
 $tempPaths[] = $r;
+$tempPaths[] = TESTS_PATH . "/models";
+$tempPaths[] = TESTS_PATH . "/lib";
 set_include_path(implode(PATH_SEPARATOR, $tempPaths));
+
 
 
 //include parts of the Zend Framework - just what we need to read the test config
@@ -35,7 +42,7 @@ require_once 'Zend/Config/Xml.php';
 $xml = new Zend_Config_Xml(realpath(dirname(__FILE__)) . "/config/testconfig.xml");
 $testConfig = $xml->toArray();
 
-set_include_path(implode(PATH_SEPARATOR, $includePaths));
+//set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
 //the document root of the new pimcore instance (phpunit_pimcore) which is created to run the tests with
 $documentRoot = $testConfig["documentRoot"];
@@ -97,7 +104,7 @@ if (!$skipInstall) {
 
 // startup the phpunit_pimcore
 include_once($documentRoot . "/pimcore/config/startup.php");
-define('TESTS_PATH', realpath(dirname(__FILE__)));
+set_include_path(get_include_path() . PATH_SEPARATOR . $includePathBak);
 
 @ini_set("display_errors", "On");
 @ini_set("display_startup_errors", "On");

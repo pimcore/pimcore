@@ -32,6 +32,11 @@ class Document_DocType extends Pimcore_Model_Abstract {
     public $name;
 
     /**
+     * @var string
+     */
+    public $module;
+
+    /**
      * The specified controller
      *
      * @var string
@@ -53,7 +58,7 @@ class Document_DocType extends Pimcore_Model_Abstract {
     public $template;
 
     /**
-     * Type, must be one of the following: page,snippet
+     * Type, must be one of the following: page,snippet,email
      *
      * @var string
      */
@@ -196,5 +201,21 @@ class Document_DocType extends Pimcore_Model_Abstract {
      */
     public function getPriority() {
         return $this->priority;
+    }
+
+    /**
+     * @param string $module
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModule()
+    {
+        return $this->module;
     }
 }

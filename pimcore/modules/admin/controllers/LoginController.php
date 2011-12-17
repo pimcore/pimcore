@@ -187,7 +187,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         $matches = 0;
 
         foreach ($data as $login) {
-            if ($login[1] == $this->getRemoteHost()) {
+            if ($login[1] == Pimcore_Tool::getClientIp()) {
                 if ($login[0] > (time() - 300)) {
                     $matches++;
                 }
@@ -221,7 +221,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         $logfile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/loginerror.log";
         $data = $this->readLogFile();
 
-        $remoteHost = $this->getRemoteHost();
+        $remoteHost = Pimcore_Tool::getClientIp();
 
         $data[] = array(
             time(),
@@ -244,14 +244,5 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
         file_put_contents($logfile, implode("\n", $lines));
         chmod($logfile, 0766);
-    }
-
-    protected function getRemoteHost() {
-        $remoteHost = $_SERVER["REMOTE_ADDR"];
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $remoteHost = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-
-        return $remoteHost;
     }
 }

@@ -351,9 +351,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $parentDocument->getPermissionsForUser($this->getUser());
         if ($parentDocument->isAllowed("create")) {
             $intendedPath = $parentDocument->getFullPath() . "/" . $this->_getParam("key");
-            $equalDocument = Document::getByPath($intendedPath);
 
-            if ($equalDocument == null) {
+            if (!Document_Service::pathExists($intendedPath)) {
 
                 $createValues = array(
                     "userOwner" => $this->getUser()->getId(),
@@ -369,7 +368,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     $createValues["template"] = $docType->getTemplate();
                     $createValues["controller"] = $docType->getController();
                     $createValues["action"] = $docType->getAction();
-                } else if($this->_getParam("type") == "page" || $this->_getParam("type") == "snippet") {
+                    $createValues["module"] = $docType->getModule();
+                } else if($this->_getParam("type") == "page" || $this->_getParam("type") == "snippet" || $this->_getParam("type") == "email") {
                     $createValues["controller"] = Pimcore_Config::getSystemConfig()->documents->default_controller;
                     $createValues["action"] = Pimcore_Config::getSystemConfig()->documents->default_action;
                 }
@@ -381,6 +381,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         break;
                     case "snippet":
                         $document = Document_Snippet::create($this->_getParam("parentId"), $createValues);
+                        $success = true;
+                        break;
+                    case "email": //ckogler
+                        $document = Document_Email::create($this->_getParam("parentId"), $createValues);
                         $success = true;
                         break;
                     case "link":
@@ -700,8 +704,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         else {
             // get list of types
             $list = new Document_DocType_List();
-            $list->setOrderKey(array("priority", "name"));
-            $list->setOrder(array("desc", "ASC"));
+
+            if($this->_getParam("sort")) {
+                $list->setOrderKey($this->_getParam("sort"));
+                $list->setOrder($this->_getParam("dir"));
+            }
+
             $list->load();
 
             $docTypes = array();
@@ -720,7 +728,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $list = new Document_DocType_List();
         if ($this->_getParam("type")) {
             $type = $this->_getParam("type");
-            if ($type == "page" || $type == "snippet") {
+            if (Document_Service::isValidType($type)) {
                 $list->setCondition("type = ?", $type);
             }
         }

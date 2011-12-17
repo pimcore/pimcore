@@ -69,6 +69,11 @@ pimcore.document.snippets.settings = Class.create({
                                 }
                             },
                             {
+                                fieldLabel: t('module_optional'),
+                                name: 'module',
+                                value: this.snippet.data.module
+                            },
+                            {
                                 fieldLabel: t('controller'),
                                 name: 'controller',
                                 value: this.snippet.data.controller

@@ -265,6 +265,11 @@ class Object_Concrete extends Object_Abstract {
         $version->setData($this);
         $version->save();
 
+        // hook should be also called if "save only new version" is selected
+        if($callPluginHook) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
+        }
+
         return $version;
     }
 

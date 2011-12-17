@@ -78,7 +78,7 @@ abstract class Document_PageSnippet_Resource extends Document_Resource {
         
         if($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) {
             $version = Version::getById($versionData["id"]);
-            return $version;
+            return $version;  
         }
         return;
     }

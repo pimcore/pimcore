@@ -31,7 +31,9 @@ Ext.onReady(function() {
     // confirmation to close pimcore
     if(!pimcore.settings.devmode) {
         window.onbeforeunload = function() {
-            return t("do_you_really_want_to_close_pimcore");
+            if(pimcore.settings.showCloseConfirmation) {
+                return t("do_you_really_want_to_close_pimcore");
+            }
         };
     }
 
@@ -82,6 +84,7 @@ Ext.onReady(function() {
         // redirect to login-page if session is expired
         if(typeof response.getResponseHeader == "function") {
             if(response.getResponseHeader("X-Pimcore-Auth") == "required") {
+                pimcore.settings.showCloseConfirmation = false;
                 window.location.href = "/admin/login/?session_expired=true";
             }
         }
@@ -99,6 +102,7 @@ Ext.onReady(function() {
     }, [
         {name: 'id'},
         {name: 'name', allowBlank: false},
+        {name: 'module', allowBlank: true},
         {name: 'controller', allowBlank: true},
         {name: 'action', allowBlank: true},
         {name: 'template', allowBlank: true},
@@ -112,7 +116,7 @@ Ext.onReady(function() {
         proxy: proxy,
         reader: reader,
         writer: writer,
-        remoteSort: false,
+        remoteSort: true,
         listeners: {
             write : function(store, action, result, response, rs) {
             },
@@ -214,7 +218,7 @@ Ext.onReady(function() {
     }
     // check for maintenance
     if (!pimcore.settings.maintenance_active) {
-        statusbar.add('<div class="pimcore_statusbar_maintenance">' + t("maintenance_not_active") + "</div>");
+        statusbar.add('<div class="pimcore_statusbar_maintenance"><a href="http://www.pimcore.org/wiki/display/PIMCORE/Installation+and+Upgrade+Guide#InstallationandUpgradeGuide-SetuptheMaintenanceScript" target="_blank">' + t("maintenance_not_active") + "</a></div>");
         statusbar.add("-");
     }
 
@@ -429,6 +433,7 @@ window.setInterval(function () {
                 }
             } catch (e) {
                 data = false;
+                pimcore.settings.showCloseConfirmation = false;
                 window.location.href = "/admin/login/?session_expired=true";
             }
 
@@ -446,6 +451,7 @@ window.setInterval(function () {
         },
         failure: function (response) {
             if(response.status != 503) {
+                pimcore.settings.showCloseConfirmation = false;
                 window.location.href = "/admin/login/?session_expired=true&server_error=true";
             }
         }

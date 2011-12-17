@@ -199,7 +199,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
         }
 
         // add scripts in html header for pages in editmode
-        if ($this->controller->editmode && ($this->controller->document->getType() == "page" || $this->controller->document->getType() == "snippet")) {
+        if ($this->controller->editmode && Document_Service::isValidType($this->controller->document->getType()) ) { //ckogler
             include_once("simple_html_dom.php");
             $body = $this->getResponse()->getBody();
 

@@ -72,6 +72,21 @@ pimcore.settings.system = Class.create({
                     });
                 }
 
+                //email - debug email addresses ckogler
+                 try {
+                    this.emailDebugAddressesStore = new Ext.data.JsonStore({
+                        autoDestroy: true,
+                        data: this.data.values.email.debug,
+                        root: 'emaildebugaddressesArray',
+                        fields: ['value']
+                    });
+                } catch(e) {
+                    this.emailDebugAddressesStore = new Ext.data.JsonStore({
+                        autoDestroy: true,
+                        fields: ['value']
+                    });
+                }
+
                 //cdn host names
                 try {
                     this.cdnHostsStore = new Ext.data.JsonStore({
@@ -304,11 +319,20 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: "DEBUG",
                                 xtype: "checkbox",
                                 name: "general.debug",
-                                checked: this.getValue("general.debug")
+                                checked: this.getValue("general.debug"),
+                                listeners: {
+                                    check: function (el, checked) {
+                                        // set the current client ip to the debug ip field
+                                        if(checked) {
+                                            Ext.getCmp("system.settings.general.debug_ip").setValue(this.data.config.client_ip);
+                                        }
+                                    }.bind(this)
+                                }
                             },
                             {
                                 fieldLabel: t("only_for_ip"),
                                 xtype: "textfield",
+                                id: "system.settings.general.debug_ip",
                                 name: "general.debug_ip",
                                 value: this.getValue("general.debug_ip")
                             },
@@ -544,6 +568,36 @@ pimcore.settings.system = Class.create({
                                 inputType: "password",
                                 disabled: this.getValue("email.smtp.auth.method") == "",
                                 value: this.getValue("email.smtp.auth.password")
+                            },
+                            {
+                                xtype: 'superboxselect',
+                                allowBlank:true,
+                                queryDelay: 100,
+                                triggerAction: 'all',
+                                resizable: true,
+                                mode: 'local',
+                                anchor:'100%',
+                                minChars: 2,
+                                fieldLabel: t("email_debug_addresses"), //ckogler
+                                name: 'email.debug.emailAddresses',
+                                value: this.getValue("email.debug.emailaddresses"),
+                                emptyText: t("email_debug_addresses_empty_text"),
+                                store: this.emailDebugAddressesStore,
+                                fields: ['value'],
+                                displayField: 'value',
+                                valueField: 'value',
+                                allowAddNewData: true,
+                                ctCls: 'superselect-no-drop-down',
+                                listeners: {
+                                    newitem: function(bs, v, f) {
+                                        v = v + '';
+                                        var newObj = {
+                                            value: v
+                                        };
+                                        bs.addNewItem(newObj);
+                                    }
+                            }
+
                             }
                         ]
                     },

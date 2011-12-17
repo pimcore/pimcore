@@ -35,22 +35,70 @@ class Document_Service extends Element_Service {
     }
 
 
-     /**
-      * static function to render a document outside of a view
-      *
-      * @static
-      * @param Document $document
-      * @param array $params
-      * @return
-      */
-     public static function render (Document $document, $params = array()) {
+    /**
+     * static function to render a document outside of a view
+     *
+     * @static
+     * @param Document $document
+     * @param array $params
+     * @param bool $useLayout
+     * @return string
+     */
+    public static function render(Document $document, $params = array(), $useLayout = false)
+    {
+        $layoutEnabledInCurrentAction = (Zend_Layout::getMvcInstance() instanceof Zend_Layout) ? true : false;
 
-        $view = new Pimcore_View();
+        $viewHelper = Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
+        if($viewHelper) {
+            if($viewHelper->view === null) {
+                $viewHelper->initView(PIMCORE_WEBSITE_PATH . "/views");
+            }
+            $view = $viewHelper->view;
+        } else {
+            $view = new Pimcore_View();
+        }
+
+        $documentBackup = null;
+        if($view->document) {
+            $documentBackup = $view->document;
+        }
+        $view->document = $document;
+
         $params["document"] = $document;
-
         $content = $view->action($document->getAction(), $document->getController(), null, $params);
+
+        //has to be called after $view->action so we can determine if a layout is enabled in $view->action()
+        if ($useLayout) {
+            $layout = Zend_Layout::getMvcInstance();
+
+            if ($layout instanceof Zend_Layout) {
+                $layout->{$layout->getContentKey()} = $content;
+                if (is_array($params)) {
+                    foreach ($params as $key => $value) {
+                        if (!$layout->getView()->$key) { //otherwise we could overwrite e.g. controller, content...
+                            $layout->getView()->$key = $value;
+                        }
+                    }
+                }
+
+                $content = $layout->render();
+
+                //deactivate the layout if it was not activated in the called action
+                //otherwise we would activate the layout in the called action
+                if (!$layoutEnabledInCurrentAction) {
+                    $layout->disableLayout();
+                }
+                $layout->{$layout->getContentKey()} = null; //reset content
+            }
+        }
+
+        if($documentBackup) {
+            $view->document = $documentBackup;
+        }
+
         return $content;
     }
+
 
     /**
      * @param  Document $target
@@ -193,7 +241,11 @@ class Document_Service extends Element_Service {
         return $data;
     }
 
-
+    /**
+     * @static
+     * @param $doc
+     * @return mixed
+     */
     public static function loadAllDocumentFields ( $doc ) {
 
         if($doc instanceof Document_PageSnippet) {
@@ -205,6 +257,38 @@ class Document_Service extends Element_Service {
         }
 
         return $doc;
+    }
+
+    /**
+     * @static
+     * @param $path
+     * @return bool
+     */
+    public static function pathExists($path) {
+
+        $path = Element_Service::correctPath($path);
+
+        try {
+            $document = new Document();
+            // validate path
+            if (Pimcore_Tool::isValidPath($path)) {
+                $document->getResource()->getByPath($path);
+                return true;
+            }
+        }
+        catch (Exception $e) {
+
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $type
+     * @return bool
+     */
+    public static function isValidType ($type) {
+        return in_array($type, Document::getTypes());
     }
 
 }

@@ -75,13 +75,16 @@ class Pimcore_Tool_Text
                         }
                     }
 
-                    if ($config) {
-                        $el->src = $asset->getThumbnail($config);
-                    } else {
-                        $el->src = $asset->getThumbnail(array(
-                            "width" => $asset->getWidth(),
-                            "height" => $asset->getHeight()
-                        ));
+                    // only create a thumbnail if it is not disabled
+                    if(!$el->pimcore_disable_thumbnail) {
+                        if ($config) {
+                            $el->src = $asset->getThumbnail($config);
+                        } else {
+                            $el->src = $asset->getThumbnail(array(
+                                "width" => $asset->getWidth(),
+                                "height" => $asset->getHeight()
+                            ));
+                        }
                     }
                 }
                 else {

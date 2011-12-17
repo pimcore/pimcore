@@ -75,6 +75,12 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 name: "labelWidth",
                 value: this.datax.labelWidth
             },
+            {
+                xtype: "textfield",
+                fieldLabel: t("label_first_cell"),
+                name: "labelFirstCell",
+                value: this.datax.labelFirstCell
+            },
             this.getGrid("rows", this.datax.rows, false),
             this.getGrid("cols", this.datax.cols, true)
         ]);

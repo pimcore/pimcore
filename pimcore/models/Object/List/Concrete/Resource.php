@@ -37,16 +37,14 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         $objects = array();
 
         try {
-            $objectsData = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $objectsData = $this->db->fetchAll("SELECT DISTINCT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
 
-        $tmpIds = array();
         foreach ($objectsData as $objectData) {
-            if(!$tmpIds[$objectData["o_id"]]) {
+            if($object = Object_Abstract::getById($objectData["o_id"])) {
                 $objects[] = Object_Abstract::getById($objectData["o_id"]);
-                $tmpIds[$objectData["o_id"]] = $objectData["o_id"];
             }
         }
 
@@ -61,7 +59,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
      */
     public function loadIdList() {
         try {
-            $objectsData = $this->db->fetchCol("SELECT " . $this->getTableName() . ".o_id AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $objectsData = $this->db->fetchCol("SELECT DISTINCT " . $this->getTableName() . ".o_id AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -75,16 +73,8 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     public function getTotalCount() {
 
         try {
-            // do not use DISTINCT in query because this forces MySQL to create a temp-table, in this case it's better to do the job with PHP wich is faster
-            $amount = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
-
-            $tmpIds = array();
-            foreach ($amount as $a) {
-                $tmpIds[$a["o_id"]] = $a["o_id"];
-            }
-
-            return count($tmpIds);
-
+            $amount = $this->db->fetchOne("SELECT COUNT(DISTINCT oo_id) as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+            return $amount;
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -99,16 +89,8 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         }
 
         try {
-            // do not use DISTINCT in query because this forces MySQL to create a temp-table, in this case it's better to do the job with PHP wich is faster
-            $amount = $this->db->fetchAll("SELECT " . $this->getTableName() . ".o_id FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
-            $tmpIds = array();
-            foreach ($amount as $a) {
-                $tmpIds[$a["o_id"]] = $a["o_id"];
-            }
-
-            return count($tmpIds);
-
+            $amount = $this->db->fetchOne("SELECT COUNT(DISTINCT oo_id) as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            return $amount;
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
