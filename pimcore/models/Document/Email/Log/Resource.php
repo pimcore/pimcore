@@ -80,9 +80,9 @@ class Document_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }else if(is_array($value)){
-                    //converts a array to a json string (for passed parameter)
-                    $value = self::createJsonLoggingObject($value);
-
+                    //converts the dynamic params to a basic json string
+                    $preparedData = self::createJsonLoggingObject($value);
+                    $value = Zend_Json::encode($preparedData);
                 }
 
                 $data[$key] = $value;
@@ -138,39 +138,37 @@ class Document_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
         if(!is_array($data)){
             return Zend_Json::encode(new StdClass());
         }else{
-
-            $x = array();
+           $loggingData = array();
            foreach($data as $key => $value){
-              $x[] = self::test($key,$value);
+              $loggingData[] = self::prepareLoggingData($key,$value);
             }
-
-         #  echo Zend_Json::encode($x); exit;
-           # return Zend_Json::encode($data);
+           return $loggingData;
         }
     }
 
-
-    protected function test($key,$value){
+    /**
+     * Creates the basic logging for the treeGrid in the backend
+     * Data will be enhanced with live-data in the backend
+     *
+     * @param $key
+     * @param $value
+     * @return StdClass
+     */
+    protected function prepareLoggingData($key,$value){
         $class = new StdClass();
-        $class->property = $key;
-        $class->children = array();
-        $class->iconCls = 'task-folder';
+        $class->key = $key.' '; //dirty hack - key has to be a string otherwise the treeGrid won't work
 
-        if(is_string($value) || is_int($value)){
+        if(is_string($value) || is_int($value) || is_null($value)){
            $class->data = array('type' => 'simple',
                                  'value' => $value);
-            $class->data = 'eins';
         }elseif(is_object($value)){
             $class->data = array('type' => 'object',
                                  'objectId' => $value->getId(),
                                  'objectClass' => get_class($value));
-            $class->data = 'zwei';
         }elseif(is_array($value)){
             foreach($value as $entryKey => $entryValue){
-                $class->children[] = self::test($entryKey,$entryValue);
+                $class->children[] = self::prepareLoggingData($entryKey,$entryValue);
             }
-            $class->data = 'drei';
-
         }
         return $class;
     }
