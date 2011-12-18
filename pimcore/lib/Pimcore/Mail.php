@@ -57,6 +57,20 @@ class Pimcore_Mail extends Zend_Mail
      */
     protected $params = array();
 
+    /**
+     * html2text form mbayer is installed (http://www.mbayer.de/html2text/)
+     *
+     * @var bool
+     */
+    protected static $html2textInstalled = null;
+
+    /**
+     * Options passed to html2text
+     *
+     * @var string
+     */
+    protected $html2textOptions = "";
+
 
     /**
      * Creates a new Pimcore_Mail object (extends Zend_Mail)
@@ -75,6 +89,10 @@ class Pimcore_Mail extends Zend_Mail
         }
         if ($options['subject']) {
             $this->setSubject($options['subject']);
+        }
+
+        if(is_null(self::$html2textInstalled)){
+            self::determineHtml2TextIsInstalled();
         }
 
         $this->init();
@@ -131,6 +149,42 @@ class Pimcore_Mail extends Zend_Mail
         }
 
         $this->placeholderObject = new Pimcore_Placeholder();
+    }
+
+    /**
+     * Determines if mbayer html2text is installed (more information at http://www.mbayer.de/html2text/)
+     * and uses it to automatically create a text version of the html email
+     *
+     * @static
+     * @return void
+     */
+    protected static function determineHtml2TextIsInstalled(){
+        exec('html2text -version',$output,$check);
+        self::$html2textInstalled = (!empty($output)) ? true : false;
+    }
+
+    /**
+     * Sets options that are passed to html2text
+     *
+     * @param string $options
+     * @return Pimcore_Mail
+     */
+    public function setHtml2TextOptions($options = ''){
+        if(is_string($options)){
+            $this->html2textOptions = $options;
+        }else{
+            Logger::warn('Html2Text options ignored. You have to pass a string');
+        }
+        return $this;
+    }
+
+    /**
+     * Returns options for html2text
+     *
+     * @return string
+     */
+    public function getHtml2TextOptions(){
+        return $this->html2textOptions;
     }
 
 
@@ -395,6 +449,8 @@ class Pimcore_Mail extends Zend_Mail
 
         $this->setSubject($this->getSubjectRendered());
         $this->setBodyHtml($this->getBodyHtmlRendered());
+        $this->setBodyText($this->getBodyTextRendered());
+
         $this->checkDebugMode();
         $result = parent::send($transport);
 
@@ -437,7 +493,14 @@ class Pimcore_Mail extends Zend_Mail
                 $this->setBodyHtml($rawHtml);
             }
 
-            //@Todo textversion of email
+            $text = $this->getBodyText();
+
+            if($text instanceof Zend_Mime_Part){
+                $rawText = $text->getRawContent();
+                $debugInformation = Pimcore_Helper_Mail::getDebugInformation('text',$this);
+                $rawText .= $debugInformation;
+                $this->setBodyText($rawText);
+            }
 
             //setting debug subject
             $subject = $this->getSubject();
@@ -504,6 +567,39 @@ class Pimcore_Mail extends Zend_Mail
         if ($content) {
             $content = Pimcore_Helper_Mail::embedAndModifyCss($content, $this->getDocument());
             $content = Pimcore_Helper_Mail::setAbsolutePaths($content, $this->getDocument());
+        }
+
+        return $content;
+    }
+
+    /**
+     * Replaces the placeholders with the content and returns
+     * the rendered text if a text was set with "$mail->setBodyText()"
+     *
+     * If html2text is installed a text version on the html email will be automatically created
+     *
+     * @return string
+     */
+    public function getBodyTextRendered()
+    {
+        $text = $this->getBodyText();
+
+        //if the content was manually set with $obj->setBodyText(); this content will be used
+        if ($text instanceof Zend_Mime_Part) {
+            $rawText = $text->getRawContent();
+            $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument());
+        } else {
+            //creating text version from html email if html2text is installed
+            if (self::$html2textInstalled) {
+                $htmlContent = $this->getBodyHtmlRendered();
+
+                //using temporary file so we don't have problems with special characters
+                $tmpFileName = PIMCORE_TEMPORARY_DIRECTORY . "/" . uniqid('email_', true) . ".tmp";
+                if (file_put_contents($tmpFileName, $htmlContent)) {
+                    $content = shell_exec("html2text $tmpFileName " . $this->getHtml2TextOptions());
+                    @unlink($tmpFileName);
+                }
+            }
         }
 
         return $content;

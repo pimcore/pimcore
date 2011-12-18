@@ -151,12 +151,27 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document {
             $this->disableViewAutoRender();
             echo $emailLog->getHtmlLog();
         }elseif($this->_getParam('type') == 'params'){
+            $this->disableViewAutoRender();
+            try{
+                $params = Zend_Json::decode($emailLog->getParams());
+            }catch(Exception $e){
+                Logger::warning("Could not decode JSON param string");
+                $params = array();
+            }
 
-            #$params = $emailLog->getParams();
-            #echo '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>'.Zend_Json::prettyPrint($params).'</pre></body></html>';
-        }elseif($this->_getParam('type') == 'json'){
+            #p_r($params); exit;
+
+            foreach($params as &$entry){
+                $this->enhanceLoggingData($entry);
+            }
+            #p_r($params); exit;
+
+           # p_r($params); exit;
+            $this->_helper->json($params);
+        }
+        /*elseif($this->_getParam('type') == 'json'){
             if($this->_getParam('getData')){
-         /*       $jsonData = Zend_Json::decode($emailLog->getParams());
+               $jsonData = Zend_Json::decode($emailLog->getParams());
 
                 $preparedData = array();
 
@@ -172,23 +187,72 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document {
                     }
                 }
                 #p_r($jsonData);
-*/
+
 $preparedData = <<<'xx'
-[{"property":"object_id","children":[],"iconCls":"task-folder","data":"eins"},{"property":"products","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"},{"property":"singleProdct","children":[],"iconCls":"task-folder","data":"zwei"},{"property":"localized","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"},{"property":"fash","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":1,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":2,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":3,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":4,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":5,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":6,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":7,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":8,"children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"},{"property":"asset","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"zwei"},{"property":"hallo","children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"},{"property":"testarray","children":[{"property":"essen","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"eins"},{"property":1,"children":[],"iconCls":"task-folder","data":"eins"}],"iconCls":"task-folder","data":"drei"},{"property":"getraenke","children":[{"property":0,"children":[],"iconCls":"task-folder","data":"eins"},{"property":1,"children":[],"iconCls":"task-folder","data":"eins"},{"property":2,"children":[],"iconCls":"task-folder","data":"eins"}],"iconCls":"task-folder","data":"drei"}],"iconCls":"task-folder","data":"drei"},{"property":"documents","children":[{"property":"one","children":[],"iconCls":"task-folder","data":"zwei"},{"property":"two","children":[],"iconCls":"task-folder","data":"zwei"}],"iconCls":"task-folder","data":"drei"}]
+http://dev.sencha.com/deploy/ext-3.4.0/examples/treegrid/treegrid-data.json
 xx;
+                $child = new stdClass();
+                $child->property = 'suberObject';
+                $child->data = array('type' => 'object',
+                                     'className' => 'Object_Product',
+                                     'value' => 2034,
+                                     'iconCls' => 'task');
+                $child->leaf = true;
+
+                $class = new StdClass();
+                $class->property = 'hallo';
+                $class->data = array('type' => 'simple',
+                                     'value' => 'Der Wert');
+                $class->children = array($child);
 
 
+                $x = Zend_Json::encode(array($class));
 
 
-                $this->_helper->json(Zend_Json::decode($preparedData));
+                $this->_helper->json(Zend_Json::decode($x));
 
 
             }
 
-        }
+        }*/
         else{
             die('No Type specified');
         }
+    }
+
+    protected function enhanceLoggingData(&$data){
+        if($data['objectId']){
+            $class = $data['objectClass'];
+            $obj = $class::getById($data['objectId']);
+            if(is_null($obj)){
+                $data['objectPath'] = '';
+            }else{
+                $data['objectPath'] = $obj->getFullPath();
+            }
+            $tmp = explode('_',$data['objectClass']);
+            if(in_array($tmp[0],array('Object','Document','Asset'))){
+                $data['objectClassBase'] = $tmp[0];
+                $data['objectClassSubType'] = $tmp[1];
+            }
+
+        }
+        foreach($data as $key => &$value){
+            if(is_array($value)){
+                    $this->enhanceLoggingData($value);
+            }
+        }
+        if($data['children']){
+           $data['iconCls'] = 'task-folder';
+           $data['data'] = array('type' => 'simple', 'value' => 'Childs (' . count($data['children']). ')');
+        }else{
+            $data['iconCls'] = 'task';
+            $data['leaf'] = true;
+        }
+     #   var_dump(($data['children']));
+
+
+
+
     }
 
     public function deleteEmailLogAction(){
