@@ -460,7 +460,11 @@ pimcore.settings.user.panel = Class.create({
             this.addObjectsPermissionsPanel(this.objectPermissionsPanel);
         }
 
-        this.updatePermissionsTabs(this.currentUser.permissionInfo.assets.granted, this.currentUser.permissionInfo.documents.granted, this.currentUser.permissionInfo.objects.granted);
+        if(this.currentUser.admin) {
+            this.updatePermissionsTabs(false, false, false);
+        } else {
+            this.updatePermissionsTabs(this.currentUser.permissionInfo.assets.granted, this.currentUser.permissionInfo.documents.granted, this.currentUser.permissionInfo.objects.granted);
+        }
 
         pimcore.layout.refresh();
 
@@ -669,7 +673,12 @@ pimcore.settings.user.panel = Class.create({
         }
 
 
-        this.updatePermissionsTabs(this.currentUser.permissionInfo.assets.granted, this.currentUser.permissionInfo.documents.granted, this.currentUser.permissionInfo.objects.granted);
+        if(this.currentUser.admin) {
+            this.updatePermissionsTabs(false, false, false);
+        } else {
+            this.updatePermissionsTabs(this.currentUser.permissionInfo.assets.granted, this.currentUser.permissionInfo.documents.granted, this.currentUser.permissionInfo.objects.granted);
+        }
+
 
         pimcore.layout.refresh();
     },
@@ -1305,7 +1314,12 @@ pimcore.settings.user.panel = Class.create({
     saveCurrentUser: function () {
         var values = this.userPanel.getForm().getFieldValues();
         this.updateUser(this.currentUser.id, values);
-        this.updatePermissionsTabs(values.assets == "on", values.documents == "on", values.objects == "on");
+
+        if(values.admin == true) {
+            this.updatePermissionsTabs(false, false, false);
+        } else {
+            this.updatePermissionsTabs(values.assets == "on", values.documents == "on", values.objects == "on");
+        }
     },
 
     updateUser: function (userId, values) {
@@ -1341,7 +1355,12 @@ pimcore.settings.user.panel = Class.create({
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");
                 }
-                this.updatePermissionsTabs(values.assets,values.documents,values.objects);
+
+                if(values.admin == true) {
+                    this.updatePermissionsTabs(false, false, false);
+                } else {
+                    this.updatePermissionsTabs(values.assets,values.documents,values.objects);
+                }
             }.bind(this)
         });
     },
