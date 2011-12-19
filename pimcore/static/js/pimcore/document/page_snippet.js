@@ -319,7 +319,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         });
     },
 
-    reload: function () {
+    reloadEditmode: function () {
 
         this.saveToSession(function () {
             if (this.edit && this.edit.layout.rendered) {
