@@ -602,7 +602,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     $oldPath = $document->getPath() . $document->getKey();
                 }
 
-                $blockedVars = array("controller", "action");
+                $blockedVars = array("controller", "action", "module");
 
                 if(!$document->isAllowed("rename") && $this->_getParam("key")){
                     $blockedVars[]="key";
