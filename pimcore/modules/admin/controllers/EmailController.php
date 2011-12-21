@@ -158,63 +158,11 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document {
                 Logger::warning("Could not decode JSON param string");
                 $params = array();
             }
-
-            #p_r($params); exit;
-
             foreach($params as &$entry){
                 $this->enhanceLoggingData($entry);
             }
-            #p_r($params); exit;
-
-           # p_r($params); exit;
             $this->_helper->json($params);
         }
-        /*elseif($this->_getParam('type') == 'json'){
-            if($this->_getParam('getData')){
-               $jsonData = Zend_Json::decode($emailLog->getParams());
-
-                $preparedData = array();
-
-                if(is_array($jsonData)){
-                    foreach($jsonData as $key => $value){
-                        $class = new StdClass();
-                        $class->property = $key;
-                        $class->data = $value;
-                        $class->iconCls = 'task-folder';
-                        $class->expanded = false;
-                        $class->children = array();
-                        $preparedData[] = $class;
-                    }
-                }
-                #p_r($jsonData);
-
-$preparedData = <<<'xx'
-http://dev.sencha.com/deploy/ext-3.4.0/examples/treegrid/treegrid-data.json
-xx;
-                $child = new stdClass();
-                $child->property = 'suberObject';
-                $child->data = array('type' => 'object',
-                                     'className' => 'Object_Product',
-                                     'value' => 2034,
-                                     'iconCls' => 'task');
-                $child->leaf = true;
-
-                $class = new StdClass();
-                $class->property = 'hallo';
-                $class->data = array('type' => 'simple',
-                                     'value' => 'Der Wert');
-                $class->children = array($child);
-
-
-                $x = Zend_Json::encode(array($class));
-
-
-                $this->_helper->json(Zend_Json::decode($x));
-
-
-            }
-
-        }*/
         else{
             die('No Type specified');
         }
@@ -235,6 +183,9 @@ xx;
                 $data['objectClassSubType'] = $tmp[1];
             }
 
+           # switch($data['objectClassBase']){
+           #     case 'Object' : $data['iconCls'] = 'aaa'; break;
+           # }
         }
         foreach($data as $key => &$value){
             if(is_array($value)){
@@ -242,17 +193,21 @@ xx;
             }
         }
         if($data['children']){
+            foreach($data['children'] as $key =>  $entry){
+                if(is_string($key)){ //key must be integers
+                    unset($data['children'][$key]);
+                }
+            }
            $data['iconCls'] = 'task-folder';
-           $data['data'] = array('type' => 'simple', 'value' => 'Childs (' . count($data['children']). ')');
+           $data['data'] = array('type' => 'simple', 'value' => 'Children (' . count($data['children']). ')');
         }else{
-            $data['iconCls'] = 'task';
+            if(!$data['iconCls']){
+                $data['iconCls'] = 'task';
+            }
+
+
             $data['leaf'] = true;
         }
-     #   var_dump(($data['children']));
-
-
-
-
     }
 
     public function deleteEmailLogAction(){
