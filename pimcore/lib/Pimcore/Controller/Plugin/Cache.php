@@ -18,6 +18,16 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
     protected $cacheKey;
     protected $enabled = true;
     protected $lifetime = null;
+    protected $addExpireHeader = true;
+
+    public function disableExpireHeader() {
+        $this->addExpireHeader = false;
+    }
+
+    public function disable() {
+        $this->enabled = false;
+        return true;
+    }
 
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
 
@@ -101,16 +111,11 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         }
     }
 
-    public function disable() {
-        $this->enabled = false;
-        return true;
-    }
-
     public function dispatchLoopShutdown() {
         if ($this->enabled && $this->getResponse()->getHttpResponseCode() == 200) {
             try {
 
-                if($this->lifetime) {
+                if($this->lifetime && $this->addExpireHeader) {
                     // add cache control for proxies and http-caches like varnish, ...
                     $this->getResponse()->setHeader("Cache-Control", "public, max-age=" . $this->lifetime, true);
 
@@ -128,6 +133,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
                 Pimcore_Model_Cache::save($cacheItem, $this->cacheKey, array("output"), $this->lifetime, 1000);
             }
             catch (Exception $e) {
+                Logger::error($e);
                 return;
             }
         }
