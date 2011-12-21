@@ -110,7 +110,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                     $hardlinkParentDocument = $this->getNearestDocumentByPath($path);
                     if($hardlinkParentDocument instanceof Document_Hardlink) {
                         if($hardlinkParentDocument->getChildsFromSource() && $hardlinkParentDocument->getSourceDocument()) {
-                            $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlinkParentDocument->getFullpath()) . "@", $hardlinkParentDocument->getSourceDocument()->getFullpath(), $path);
+                            $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlinkParentDocument->getRealFullPath()) . "@", $hardlinkParentDocument->getSourceDocument()->getFullpath(), $path);
                             $hardLinkedDocument = Document::getByPath($hardlinkRealPath);
                             if($hardLinkedDocument instanceof Document) {
                                 $hardLinkedDocument = Document_Hardlink_Wrapper::wrap($hardLinkedDocument);
