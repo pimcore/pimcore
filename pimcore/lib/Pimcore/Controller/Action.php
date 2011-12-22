@@ -15,10 +15,19 @@
 
 class Pimcore_Controller_Action extends Zend_Controller_Action {
 
+    protected static $_customViewInitialized = false;
+
     public function init() {
         parent::init();
 
         $this->view->setRequest($this->getRequest());
+
+        // init view | only once if there are called other actions
+        // this is just for compatibilty reasons see $this->initCustomView();
+        if (!self::$_customViewInitialized) {
+            $this->initCustomView();
+            self::$_customViewInitialized = true;
+        }
 
         // set contenttype
         $this->getResponse()->setHeader("Content-Type", "text/html; charset=UTF-8", true);
@@ -72,5 +81,12 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         if ($this->_hasParam("_segment")) {
             $this->_helper->viewRenderer->setResponseSegment($this->_getParam("_segment"));
         }
+    }
+
+    /**
+     * @deprecated
+     */
+    protected function initCustomView() {
+        // just for compatibility
     }
 }
