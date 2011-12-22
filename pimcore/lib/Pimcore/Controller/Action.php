@@ -15,6 +15,12 @@
 
 class Pimcore_Controller_Action extends Zend_Controller_Action {
 
+    /**
+     * Indicator if the custom view is already initialized or not
+     * this isn't necessary any more because this functionality has moved to Pimcore_Controller_Action_Helper_ViewRenderer
+     * @deprecated
+     * @var bool
+     */
     protected static $_customViewInitialized = false;
 
     public function init() {
