@@ -66,7 +66,7 @@ class Document_Hardlink_Wrapper_Folder extends Document_Folder implements Docume
 
             if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
                 foreach($childs as &$c) {
-                    $c = Document_Hardlink_Wrapper::wrap($c);
+                    $c = Document_Hardlink_Service::wrap($c);
                     $c->setHardLinkSource($hardLink);
                     $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getFullpath()) . "@", $hardLink->getFullpath(), $c->getPath()));
                 }

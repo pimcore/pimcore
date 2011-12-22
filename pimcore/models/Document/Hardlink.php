@@ -177,7 +177,7 @@ class Document_Hardlink extends Document
             if($this->getChildsFromSource() && $this->getSourceDocument() && !Pimcore::inAdmin()) {
                 $sourceChilds = $this->getSourceDocument()->getChilds();
                 foreach($sourceChilds as &$c) {
-                    $c = Document_Hardlink_Wrapper::wrap($c);
+                    $c = Document_Hardlink_Service::wrap($c);
                     $c->setHardLinkSource($this);
                     $c->setPath(preg_replace("@^" . preg_quote($this->getSourceDocument()->getFullpath()) . "@", $this->getFullpath(), $c->getPath()));
                 }
