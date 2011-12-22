@@ -224,6 +224,8 @@
 "empty_page","Empty Page"
 "empty_snippet","Empty Snippet"
 "empty_email","Empty Email"
+"email_log_property","Property Key"
+"email_log_data","Data"
 "analytics_advanced_mode","Advanced Mode"
 "select_site","Select a site"
 "main_site","Main Site"
