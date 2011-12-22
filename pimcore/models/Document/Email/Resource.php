@@ -144,6 +144,13 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
             $this->deleteAllProperties();
 
             $this->db->delete("documents_page", $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->delete("documents_email", $this->db->quoteInto("id = ?", $this->model->getId()));
+            //deleting log files
+            $mailLogs = new Document_Email_Log_List();
+            $mailLogs->setCondition(" documentId= " . $this->model->getId());
+            foreach($mailLogs->load() as $logEntry){
+                $logEntry->delete();
+            }
             parent::delete();
         }
         catch (Exception $e) {

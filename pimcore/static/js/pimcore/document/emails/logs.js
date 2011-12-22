@@ -175,54 +175,30 @@ pimcore.document.emails.logs = Class.create({
                 icon: "/pimcore/static/img/icon/information.png",
                 handler: function(grid, rowIndex){
                     var rec = grid.getStore().getAt(rowIndex);
-                    /*var iframe = new Ext.Window({
-                        title: t("email_log_iframe_title_params"),
-                        width: iFrameSettings.width,
-                        height: iFrameSettings.height,
-                        layout: 'fit',
-                        items : [{
-                                xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id') + "&type=params"}
-                            }]
-                    });
-                    iframe.show();*/
 
                     this.tree = new Ext.ux.tree.TreeGrid({
                         width: 700,
-                        height: 330,
+                        height: 700,
                         renderTo: Ext.getBody(),
                         enableDD: true,
 
                         columns:[{
-                            header: 'Property Key',
+                            header: t('email_log_property'),
                             dataIndex: 'key',
                             width: 230
                         },{
-                            header: 'Data',
+                            header: t('email_log_data'),
                             width: 370,
                             dataIndex: 'data',
                             tpl: new Ext.XTemplate('{data:this.formatData}', {
                                 formatData: function (data){
-                                    //console.log(data);
                                     if(data.type == 'simple'){
                                         return data.value;
                                     }else{
-                                        //when the objectPath is set -> the object is still available
-                                        //otherwise it was deleted in the meantime
+                                        //when the objectPath is set -> the object is still available otherwise it was deleted in the meantime
                                         if(data.objectPath){
                                             var subtype = data.objectClassSubType.toLowerCase();
-                                            switch(data.objectClassBase){
-                                                case 'Object' :
-                                                    return '<span onclick="pimcore.helpers.openObject(' + data.objectId + ', \'' + subtype + '\');" class="input_drop_target" style="display: block;">' + data.objectPath + '</span>';
-                                                    break;
-                                                case 'Document' :
-                                                    return '<span onclick="pimcore.helpers.openDocument(' + data.objectId + ', \'' + subtype + '\');" class="input_drop_target" style="display: block;">' + data.objectPath + '</span>';
-                                                    break;
-                                                case 'Asset' :
-                                                    return '<span onclick="pimcore.helpers.openAsset(' + data.objectId + ', \'' + subtype + '\');" class="input_drop_target" style="display: block;">' + data.objectPath + '</span>';
-                                                    break;
-                                            }
-
+                                            return '<span onclick="pimcore.helpers.open' + data.objectClassBase + '(' + data.objectId + ', \'' + subtype + '\');" class="input_drop_target" style="display: block;">' + data.objectPath + '</span>';
                                         }else{
                                             return '"' + data.objectClass + '" with Id: ' + data.objectId + ' (deleted)';
                                         }
@@ -231,14 +207,13 @@ pimcore.document.emails.logs = Class.create({
                             })
                         }],
 
-
                         dataUrl: '/admin/email/show-email-log/?id=' + rec.get('id') + '&type=params'
                     });
 
                     this.window = new Ext.Window({
                          modal: true,
                          width: 620,
-                         height: 330,
+                         height: 700,
                          title: t('email_log_params'),
                          items: [this.tree],
                          layout: "fit"
@@ -316,7 +291,6 @@ pimcore.document.emails.logs = Class.create({
             },
             bbar: [this.pagingtoolbar]
         });
-       // this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
         return this.grid;
     },
