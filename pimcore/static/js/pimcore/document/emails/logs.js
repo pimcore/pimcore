@@ -223,6 +223,38 @@ pimcore.document.emails.logs = Class.create({
                 }.bind(this)
             }]
         },
+        {
+            xtype:'actioncolumn',
+            width:30,
+            items:[
+                {
+                    tooltip:t('email_log_resend'),
+                    icon:"/pimcore/static/img/icon/email_start.png",
+                    handler:function (grid, rowIndex) {
+                        var rec = grid.getStore().getAt(rowIndex);
+                        Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'), function(btn){
+                            if (btn == 'yes'){
+                                Ext.Ajax.request({
+                                    url: '/admin/email/resend-email/',
+                                    success: function(response){
+                                        var data = Ext.decode( response.responseText );
+                                        if(data.success){
+                                            Ext.Msg.alert(t('email_log_resend_window_title'),t('email_log_resend_window_success_message'));
+                                        }else{
+                                            Ext.Msg.alert(t('email_log_resend_window_title'),t('email_log_resend_window_error_message'));
+                                        }
+                                    },
+                                    failure: function () {
+                                        alert("Could not resend email");
+                                    },
+                                    params: { id : rec.get('id') }
+                                });
+                            }
+                        });
+                    }.bind(this)
+                }
+            ]
+        },
          {
             xtype: 'actioncolumn',
             width: 30,

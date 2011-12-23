@@ -71,6 +71,12 @@ class Pimcore_Mail extends Zend_Mail
      */
     protected $html2textOptions = "";
 
+    /**
+     * Prevent adding debug information
+     *
+     * @var bool
+     */
+    protected $preventDebugInformationAppending = false;
 
     /**
      * Creates a new Pimcore_Mail object (extends Zend_Mail)
@@ -480,33 +486,36 @@ class Pimcore_Mail extends Zend_Mail
                 throw new Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
             }
 
-            //adding the debug information to the html email
-            $html = $this->getBodyHtml();
-            if ($html instanceof Zend_Mime_Part) {
-                $rawHtml = $html->getRawContent();
+            if($this->preventDebugInformationAppending != true){
+                //adding the debug information to the html email
+                $html = $this->getBodyHtml();
+                if ($html instanceof Zend_Mime_Part) {
+                        $rawHtml = $html->getRawContent();
 
-                $debugInformation = Pimcore_Helper_Mail::getDebugInformation('html', $this);
-                $debugInformationStyling = Pimcore_Helper_Mail::getDebugInformationCssStyle();
+                        $debugInformation = Pimcore_Helper_Mail::getDebugInformation('html', $this);
+                        $debugInformationStyling = Pimcore_Helper_Mail::getDebugInformationCssStyle();
 
-                $rawHtml = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $rawHtml);
-                $rawHtml = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $rawHtml);
-                $this->setBodyHtml($rawHtml);
+                        $rawHtml = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $rawHtml);
+                        $rawHtml = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $rawHtml);
+
+
+                        $this->setBodyHtml($rawHtml);
+                }
+
+                $text = $this->getBodyText();
+
+                if($text instanceof Zend_Mime_Part){
+                        $rawText = $text->getRawContent();
+                        $debugInformation = Pimcore_Helper_Mail::getDebugInformation('text',$this);
+                        $rawText .= $debugInformation;
+                        $this->setBodyText($rawText);
+                }
+
+                //setting debug subject
+                $subject = $this->getSubject();
+                $this->clearSubject();
+                $this->setSubject('Debug email: ' . $subject);
             }
-
-            $text = $this->getBodyText();
-
-            if($text instanceof Zend_Mime_Part){
-                $rawText = $text->getRawContent();
-                $debugInformation = Pimcore_Helper_Mail::getDebugInformation('text',$this);
-                $rawText .= $debugInformation;
-                $this->setBodyText($rawText);
-            }
-
-            //setting debug subject
-            $subject = $this->getSubject();
-            $this->clearSubject();
-            $this->setSubject('Debug email: ' . $subject);
-
             $this->clearRecipients();
             $this->addTo(self::$debugEmailAddresses);
         }
@@ -633,5 +642,15 @@ class Pimcore_Mail extends Zend_Mail
     public function getDocument()
     {
         return $this->document;
+    }
+
+    /**
+     * Prevents appending of debug information (used for resending emails)
+     *
+     * @return Pimcore_Mail
+     */
+    public function preventDebugInformationAppending(){
+        $this->preventDebugInformationAppending = true;
+        return $this;
     }
 }
