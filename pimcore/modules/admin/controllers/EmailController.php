@@ -267,4 +267,46 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         ));
     }
 
+    /**
+     * Resends the email to the recipients
+     */
+    public function resendEmailAction(){
+        $success = false;
+        $emailLog = Document_Email_Log::getById($this->_getParam('id'));
+
+        if($emailLog instanceof Document_Email_Log){
+            $mail = new Pimcore_Mail();
+            $mail->preventDebugInformationAppending();
+
+            if($html = $emailLog->getHtmlLog()){
+                $mail->setBodyHtml($html);
+            }
+
+            if($text = $emailLog->getTextLog()){
+                $mail->setBodyText($text);
+            }
+
+            $mail->setFrom($emailLog->getFrom());
+
+            foreach($emailLog->getToAsArray() as $entry){
+                $mail->addTo($entry['email'],$entry['name']);
+            }
+
+            foreach($emailLog->getCcAsArray() as $entry){
+                $mail->addCc($entry['email'],$entry['name']);
+            }
+
+            foreach($emailLog->getBccAsArray() as $entry){
+                $mail->addBcc($entry['email']);
+            }
+            $mail->setSubject($emailLog->getSubject());
+            $mail->send();
+            $success = true;
+        }
+
+        $this->_helper->json(array(
+            "success" => $success,
+        ));
+    }
+
 }

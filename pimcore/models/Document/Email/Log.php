@@ -436,6 +436,15 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
+     * Returns the "to" recipients as array
+     *
+     * @return array
+     */
+    public function getToAsArray(){
+        return $this->buildArray($this->getTo());
+    }
+
+    /**
      * Sets the carbon copy recipients (multiple recipients should be separated by a ",")
      *
      * @param string $cc
@@ -456,6 +465,15 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     }
 
     /**
+     * Returns the carbon copy recipients as array
+     *
+     * @return array
+     */
+    public function getCcAsArray(){
+        return $this->buildArray($this->getCc());
+    }
+
+    /**
      * Sets the blind carbon copy recipients (multiple recipients should be separated by a ",")
      *
      * @param string $bcc
@@ -473,6 +491,15 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function getBcc()
     {
         return $this->bcc;
+    }
+
+    /**
+     * Returns the blind carbon copy recipients as array
+     *
+     * @return array
+     */
+    public function getBccAsArray(){
+        return $this->buildArray($this->getBcc());
     }
 
     /**
@@ -533,5 +560,22 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function getBodyText()
     {
         return $this->bodyText;
+    }
+
+    /**
+     * Helper to get the recipients as array
+     */
+    protected function buildArray($data){
+        $dataArray = array();
+        $tmp = explode(',',trim($data));
+
+        foreach($tmp as $entry){
+            $entry  = trim($entry);
+            $tmp2   = explode(' ',$entry);
+            $dataArray[] = array('email' => trim($tmp2[0]),
+                                 'name' => str_replace(array('(',')'),'',$tmp2[1])
+            );
+        }
+        return $dataArray;
     }
 }

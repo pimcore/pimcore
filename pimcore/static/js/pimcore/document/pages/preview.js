@@ -56,7 +56,9 @@ pimcore.document.pages.preview = Class.create({
     },
 
     iFrameLoaded: function () {
-        this.loadMask.hide();
+        if(this.loadMask){
+            this.loadMask.hide();
+        }
     },
 
     loadCurrentPreview: function () {
