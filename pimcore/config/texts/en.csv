@@ -846,7 +846,7 @@
 "email_smtp_auth_username","SMTP Username"
 "email_smtp_auth_password","SMTP Password"
 "email_smtp_ssl","SMTP Transport Security"
-"email_debug_addresses","Debug email addresses"
+"email_debug_addresses","Debug Email Addresses"
 "email_debug_addresses_empty_text","Enter a list of email addresses that are allowed to receive debug emails."
 "email_debug_domains","Debug email domains"
 "email_debug_domains_empty_text","Enter a list of domains (e.g. pimcore.org) that are allowed to receive debug emails. All email addresses form this domains are allowed to receive debug emails."

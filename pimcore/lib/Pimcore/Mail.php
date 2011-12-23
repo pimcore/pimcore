@@ -632,6 +632,7 @@ class Pimcore_Mail extends Zend_Mail
         } else {
             throw new Exception('$document is not an instance of Document_Email or at least Document');
         }
+        return $this;
     }
 
     /**
