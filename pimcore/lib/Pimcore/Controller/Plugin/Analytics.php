@@ -39,7 +39,7 @@ class Pimcore_Controller_Plugin_Analytics extends Zend_Controller_Plugin_Abstrac
             return;
         }
         
-        if ($this->enabled && Pimcore_Google_Analytics::isConfigured()) {
+        if ($this->enabled && $code = Pimcore_Google_Analytics::getCode()) {
             
             // analytics
             include_once("simple_html_dom.php");
@@ -50,7 +50,7 @@ class Pimcore_Controller_Plugin_Analytics extends Zend_Controller_Plugin_Abstrac
             // this method is much faster than using simple_html_dom and uses less memory
             $headEndPosition = strpos($body, "</head>");
             if($headEndPosition !== false) {
-                $body = substr_replace($body, Pimcore_Google_Analytics::getCode()."</head>", $headEndPosition, 7);
+                $body = substr_replace($body, $code."</head>", $headEndPosition, 7);
             }
 
             // website optimizer
