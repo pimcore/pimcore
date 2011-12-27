@@ -27,7 +27,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
         this.options = options;
 
         var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
-        this.elements = Ext.get(id).query("." + name);
+        this.elements = Ext.get(id).query("div." + name + "[key]");
 
         if (this.elements.length < 1) {
             this.createInitalControls();
