@@ -17,7 +17,7 @@
         </options>
     </backend>-->
     <!--<backend>
-        <type>Website_Cache_CustomMemcached</type>
+        <type>Pimcore_Cache_Backend_Memcached</type>
         <custom>true</custom>
         <options>
             <servers>
