@@ -946,6 +946,14 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 }
             }
             $document->setElements($elements);
+        } else if ($document instanceof Document_Hardlink) {
+            if($document->getSourceId() && array_key_exists((int) $document->getSourceId(), $idStore["idMapping"])) {
+                $document->setSourceId($idStore["idMapping"][(int) $document->getSourceId()]);
+            }
+        } else if ($document instanceof Document_Link) {
+            if($document->getLinktype() == "internal" && $document->getInternalType() == "document" && array_key_exists((int) $document->getInternal(), $idStore["idMapping"])) {
+                $document->setInternal($idStore["idMapping"][(int) $document->getInternal()]);
+            }
         }
 
         // rewriting properties
