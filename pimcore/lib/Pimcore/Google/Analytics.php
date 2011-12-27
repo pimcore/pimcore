@@ -18,7 +18,7 @@ class Pimcore_Google_Analytics {
     public static $stack = array();
     
     public static function isConfigured (Site $site = null) {
-        if(self::getSiteConfig($site)) {
+        if(self::getSiteConfig($site) && self::getSiteConfig($site)->profile) {
             return true;
         }
         return false;
@@ -50,7 +50,7 @@ class Pimcore_Google_Analytics {
         
         $siteKey = self::getSiteKey($site);
         
-        if(Pimcore_Config::getReportConfig()->analytics->sites->$siteKey->profile) {
+        if(Pimcore_Config::getReportConfig()->analytics->sites->$siteKey) {
             return Pimcore_Config::getReportConfig()->analytics->sites->$siteKey;
         }
         return false;

@@ -296,7 +296,7 @@
 "outputcache_lifetime_description","Optional output-cache lifetime (in seconds) after the cache expires, if not defined the cache will be cleaned on every action inside the CMS, otherwise not (for high traffic sites)"
 "cache_exclude_patterns_description","Regular Expressions like /^\/dir\/toexplude/"
 "google_account_description","The Google-Account is used for example for the YouTube and Analytics integration"
-"analytics_trackid","Track-ID (eg. UA-XXXXX-X)"
+"analytics_trackid_code","Track-ID (eg. UA-XXXXX-X)<br /><small>required for code integration</small>"
 "analytics_settings_profile_description","Before you can select a profile you have to define your Google Analytics credentials for the account in the system settings (Google-Credentials) or in the fields below."
 "analytics_settings_username_description","Here you can define a seperate Google-Account for Analytics, if you leave this blank the Google-Account from the system settings is used."
 "report_settings","Report Settings"

@@ -94,7 +94,7 @@ pimcore.report.analytics.settings = Class.create({
 
         var config = {
             xtype: "fieldset",
-            labelWidth: 250,
+            labelWidth: 300,
             title: name,
             items: [
                 {
@@ -134,7 +134,7 @@ pimcore.report.analytics.settings = Class.create({
                     value: this.parent.getValue("analytics.sites." + key + ".profile")
                 },{
                     xtype: "textfield",
-                    fieldLabel: t("analytics_trackid"),
+                    fieldLabel: t("analytics_trackid_code"),
                     name: "trackid_" + id,
                     id: "report_settings_analytics_trackid_" + id,
                     value: this.parent.getValue("analytics.sites." + key + ".trackid")
