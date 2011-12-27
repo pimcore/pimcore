@@ -237,7 +237,7 @@
     display:none;
 }
 
-.pimcore_area_entry .pimcore_area_edit_button {
+.pimcore_area_entry .pimcore_area_edit_button, .pimcore_tag_area .pimcore_area_edit_button {
     position:absolute;
     width:25px;
     height:25px;
