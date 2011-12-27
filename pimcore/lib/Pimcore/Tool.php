@@ -444,7 +444,6 @@ class Pimcore_Tool {
 
     /**
      * @static
-     * @param bool $checkProxy
      * @return mixed
      */
     public static function getClientIp()
