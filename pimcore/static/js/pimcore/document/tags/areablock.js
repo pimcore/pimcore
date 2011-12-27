@@ -23,8 +23,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.options = options;
 
         var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv, typebuttontext;
-
-        this.elements = Ext.get(id).query("." + name);
+        this.elements = Ext.get(id).query("div." + name + "[key]");
 
         // type mapping
         var typeNameMappings = {};
