@@ -26,7 +26,7 @@ class Document_Link extends Document
     public $internal;
 
     /**
-     * Contains the ID of the internal ID
+     * Contains the type of the internal ID
      *
      * @var string
      */
