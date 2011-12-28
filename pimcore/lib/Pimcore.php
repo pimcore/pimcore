@@ -210,8 +210,6 @@ class Pimcore {
             @ini_set("display_errors", "On");
             @ini_set("display_startup_errors", "On");
 
-            //$autoloader = Zend_Loader_Autoloader::getInstance();
-            //$autoloader->suppressNotFoundWarnings(false);
             $front->throwExceptions(true);
 
             try {
