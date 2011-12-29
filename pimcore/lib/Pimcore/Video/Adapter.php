@@ -89,6 +89,12 @@ abstract class Pimcore_Video_Adapter {
 
     /**
      * @abstract
+     * @param $timeOffset
+     */
+    public abstract function saveImage($file, $timeOffset = null);
+
+    /**
+     * @abstract
      */
     public abstract function getConversionStatus();
 

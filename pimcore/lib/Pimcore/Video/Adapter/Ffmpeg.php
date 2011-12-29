@@ -102,6 +102,19 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     /**
+     * @param null $timeOffset
+     */
+    public function saveImage($file, $timeOffset = null) {
+
+        if(!$timeOffset) {
+            $timeOffset = 5;
+        }
+
+        $cmd = self::getFfmpegCli() . " -i " .$this->file . " -vcodec png -vframes 1 -ss " . $timeOffset . " " . $file;
+        Pimcore_Tool_Console::exec($cmd);
+    }
+
+    /**
      *
      */
     public function destroy() {
