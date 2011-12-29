@@ -199,11 +199,16 @@ class Document_Tag_Video extends Document_Tag
         if ($options["thumbnail"]) {
             $thumbnail = $asset->getThumbnail($options["thumbnail"]);
             if ($thumbnail) {
+                $image = $asset->getImageThumbnail(array(
+                    "width" => $this->getWidth(),
+                    "height" => $this->getHeight()
+                ),5);
+
                 if ($thumbnail["status"] == "finished") {
-                    return $this->getFlowplayerCode((string) $thumbnail["formats"]["mp4"]);
+                    return $this->getFlowplayerCode((string) $thumbnail["formats"]["mp4"], $image);
                 } else if ($thumbnail["status"] == "inprogress") {
                     $progress = Asset_Video_Thumbnail_Processor::getProgress($thumbnail["processId"]);
-                    return $this->getProgressCode($progress);
+                    return $this->getProgressCode($progress, $image);
                 }
             }
         }
@@ -294,13 +299,13 @@ class Document_Tag_Video extends Document_Tag
         return $code;
     }
 
-    public function getFlowplayerCode($url = null)
+    public function getFlowplayerCode($url = null, $thumbnail = null)
     {
 
         $options = $this->getOptions();
         $code = "";
-        $scriptPath = "/pimcore/static/js/lib/flowplayer/flowplayer-3.2.0.min.js";
-        $swfPath = "/pimcore/static/js/lib/flowplayer/flowplayer-3.2.1.swf";
+        $scriptPath = "/pimcore/static/js/lib/flowplayer/flowplayer.min.js";
+        $swfPath = "/pimcore/static/js/lib/flowplayer/flowplayer.swf";
         $uid = "video_" . uniqid();
         $config = array();
 
@@ -335,9 +340,39 @@ class Document_Tag_Video extends Document_Tag
             $code .= '<script type="text/javascript" src="/pimcore/static/js/lib/array_merge.js"></script>';
             $code .= '<script type="text/javascript" src="/pimcore/static/js/lib/array_merge_recursive.js"></script>';
             Document_Tag_Video::$playerJsEmbedded = true;
+
+            $code .= '
+
+                <style type="text/css">
+                    a.pimcore_video_flowplayer {
+                        display:block;
+                        text-align:center;
+                    }
+                </style>
+            ';
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '"><div id="' . $uid . '"></div></div>';
+        $code .= '
+            <style type="text/css">
+                #' . $uid . ' .play {
+                    margin-top:' . (($this->getHeight()-83)/2) . 'px;
+                    border:0px;
+                    display:inline-block;
+                    width:83px;
+                    height:83px;
+                    background:url(/pimcore/static/js/lib/flowplayer/play_large.png);
+                }
+            </style>
+        ';
+
+        $code .= '<div id="pimcore_video_' . $this->getName() . '">
+            <a id="' . $uid . '"
+            	href="'.$url.'"
+            	class="pimcore_video_flowplayer"
+            	style="background-image:url(' . $thumbnail . '); width:' . $this->getWidth() . 'px; height:' . $this->getHeight() . 'px;">
+            	<span class="play"></span>
+            </a>
+        </div>';
 
         Zend_Json::encode($config);
 
@@ -348,8 +383,7 @@ class Document_Tag_Video extends Document_Tag
                 flowplayer("' . $uid . '", {
             		src: "' . $swfPath . '",
             		width: "' . $this->getWidth() . '",
-            		height: ' . $this->getHeight() . ',
-                    wmode: "transparent"
+            		height: "' . $this->getHeight() . '",
             	},player_config_' . $uid . ');
             </script>
         ';
@@ -357,17 +391,17 @@ class Document_Tag_Video extends Document_Tag
         return $code;
     }
 
-    public function getProgressCode($progress)
+    public function getProgressCode($progress, $thumbnail = null)
     {
         $uid = "video_" . uniqid();
         $code = '
         <div id="pimcore_video_' . $this->getName() . '">
             <style type="text/css">
-                .pimcore_tag_video_progress {
+                #' . $uid . ' {
                     position:relative;
-                    background:#555;
+                    background:url('. ( $thumbnail ? $thumbnail : "#555") . ');
                 }
-                .pimcore_tag_video_progress_status {
+                #' . $uid . ' .pimcore_tag_video_progress_status {
                     font-size:18px;
                     color:#555;
                     font-family:Arial,Verdana,sans-serif;

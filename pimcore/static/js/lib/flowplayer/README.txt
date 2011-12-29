@@ -1,8 +1,64 @@
 Version history:
 
-3.2.1-dev
+3.2.7
+-----
+
+- Loads the new controlbar plugin version 3.2.5. No other functional changes.
+
+3.2.6
+-----
+- linkUrl should now work better with popup blockers: http://code.google.com/p/flowplayer-core/issues/detail?id=31
+- new linkWindow value "_popup" opens the linked page in a popup browser window
+- added new onClipResized event
+- Added new onUnload event, can be only listened in Flash and not triggered to JS
+- API: Added new url property to plugin objects
+Fixes:
+- it was not possible to call play() in an onFinish listener
+- fix to preserve the infoObject for custom netStream and netConnection clients in cases where the infoObject is a
+  primitive object without properties
+- does not show the error dialog in the debugger player when showErrors: false
+- fixed to correctly handle xx.ca subdomains when validating the license key
+- a custom logo is now sized correctly according to the configured size
+- does not show the buffer animation any more when the player receives the onBufferEmpty message from the netStream.
+  The animation was unnecessarily shown in some situations.
+- fixed #155. added new urlEncoding property to Clip for url ncoding ut8 urls
+
+3.2.5
+-----
+- added new scaling option 'crop' that resizes to fill all available space, cropping on top/bottom or left/right
+- improvements to RSS file parsing
+- Now displays a hand cursor when a linkUrl is used in clips
+
+3.2.4
+-----
+- new flowplayer.js version, with Apple iDevice fixes
+
+3.2.3
+-----
+- a new 'type' clip property exposed to JS
+- changed the clip type property to better work as a read-write property. Now accepts 'video', 'audio',
+  'image' and 'api' as configuration values.
+- moved parallel rtmp connection mechanism from the RTMP plugin to Core so other plugins can use it (ie: securestreaming)
+Fixes:
+- fixed #112, wrong URL computation when using clip with relative URL on a page with a / after a # in its url
+- fixed #111, wrong behavior of pre/post roll images with duration 0
+- fixed multiple license keys logic
+Fixes:
+- correct verification of license keys in *.ca domains
+- fix to make playback to always reach end of video
+- fixed resuming of live streams
+
+3.2.2
+-----
+Fixes:
+- Now recognizes following kind of urls as audio clips: 'mp3:audiostreamname' (ulrs with mp3 prefix and no extension)
+- Now ignores the duration from metadata if we already got one. Fix required for pseudostreaming
+- Fix to reuse buffered data when replaying a clip
+
+3.2.1
 ---------
 - Support for RTMP redirects (tested with Wowza loadbalancing)
+- Fixed video size when no size info available in clip metadata
 
 Fixes:
 - Fix to correctly detect if the player SWF name contains a version number and if it does also use the version number

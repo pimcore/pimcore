@@ -67,4 +67,75 @@ class Asset_Video extends Asset {
 
         return null;
     }
+
+
+    /**
+     * @param  $config
+     * @return Asset_Image_Thumbnail|bool|Thumbnail
+     */
+    public function getImageThumbnailConfig ($config) {
+
+        if (is_string($config)) {
+            try {
+                $thumbnail = Asset_Image_Thumbnail_Config::getByName($config);
+            }
+            catch (Exception $e) {
+                Logger::error("requested thumbnail " . $config . " is not defined");
+                return false;
+            }
+        }
+        else if (is_array($config)) {
+            // check if it is a legacy config or a new one
+            if(array_key_exists("items", $config)) {
+                $thumbnail = Asset_Image_Thumbnail_Config::getByArrayConfig($config);
+            } else {
+                $thumbnail = Asset_Image_Thumbnail_Config::getByLegacyConfig($config);
+            }
+        }
+        else if ($config instanceof Asset_Image_Thumbnail_Config) {
+            $thumbnail = $config;
+        }
+
+        return $thumbnail;
+    }
+
+    /**
+     * @param $thumbnailName
+     */
+    public function getImageThumbnail($thumbnailName, $timeOffset = null) {
+
+        $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
+        $thumbnail->setName($thumbnail->getName()."-".$timeOffset);
+
+        if(!$timeOffset) {
+            $timeOffset = 5;
+        }
+
+        $converter = Pimcore_Video::getInstance();
+        $converter->load($this->getFileSystemPath());
+        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnail_" . $this->getId() . "__" .  $timeOffset . ".png";
+
+        if(!is_file($path)) {
+            $converter->saveImage($path, $timeOffset);
+        }
+
+        if($thumbnail) {
+            try {
+                $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail, $path);
+            } catch (Exception $e) {
+                Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath());
+                Logger::error($e);
+                return "/pimcore/static/img/image-not-supported.png";
+            }
+        }
+
+        // if no thumbnail config is given return the original image
+        if(empty($path)) {
+            $fsPath = $this->getFileSystemPath();
+            $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+            return $path;
+        }
+
+        return $path;
+    }
 }

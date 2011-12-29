@@ -688,6 +688,18 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of image, seems to be broken.");
             }
+        } else if ($asset->getType() == "video") {
+            try {
+                if(Pimcore_Video::isAvailable()) {
+                    $tmpAsset["qtipCfg"] = array(
+                        "title" => "ID: " . $asset->getId(),
+                        "text" => '<img src="/admin/asset/get-video-thumbnail/id/' . $asset->getId() . '/width/130/aspectratio/true" width="130" />',
+                        "width" => 140
+                    );
+                }
+            } catch (Exception $e) {
+                Logger::debug("Cannot get dimensions of video, seems to be broken.");
+            }
         }
         
         $tmpAsset["cls"] = "";
@@ -1081,6 +1093,22 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         
         readfile(PIMCORE_DOCUMENT_ROOT . $image->getThumbnail($thumbnail));
 
+        $this->removeViewRenderer();
+    }
+
+    public function getVideoThumbnailAction() {
+
+        $video = Asset::getById(intval($this->_getParam("id")));
+        $thumbnail = $video->getImageThumbnailConfig($this->_getAllParams());
+
+        $format = strtolower($thumbnail->getFormat());
+        if ($format == "source") {
+            $thumbnail->setFormat("PNG");
+            $format = "png";
+        }
+
+        $this->getResponse()->setHeader("Content-Type", "image/png", true);
+        readfile(PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, 5));
         $this->removeViewRenderer();
     }
 

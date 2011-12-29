@@ -37,12 +37,17 @@ class Asset_Image_Thumbnail_Processor {
 
     /**
      * @static
+     * @param Asset_Image|Asset_Video|string
      * @param Asset_Image_Thumbnail_Config $config
+     * @param string $path
      * @return string
      */
-    public static function process (Asset_Image $asset, Asset_Image_Thumbnail_Config $config) {
+    public static function process ($asset, Asset_Image_Thumbnail_Config $config, $fileSystemPath = null) {
 
         $format = strtolower($config->getFormat());
+        if(!$fileSystemPath) {
+            $fileSystemPath = $asset->getFileSystemPath();
+        }
 
         // simple detection for source type if SOURCE is selected
         if($format == "source") {
@@ -75,7 +80,7 @@ class Asset_Image_Thumbnail_Processor {
 
         // transform image
         $image = Asset_Image::getImageTransformInstance();
-        if(!$image->load($asset->getFileSystemPath())) {
+        if(!$image->load($fileSystemPath)) {
             return "/pimcore/static/img/image-not-supported.png";
         }
 

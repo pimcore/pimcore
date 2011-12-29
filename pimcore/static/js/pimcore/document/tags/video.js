@@ -82,11 +82,10 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
             width: this.options.width,
             autoHeight: true,
             bodyStyle: "background: none;",
-            html: Ext.get("pimcore_video_" + name).dom.innerHTML,
             tbar: toolbar
         });
 
-        this.element.on("render", function (el) {
+        this.element.on("afterrender", function (el) {
             var domElement = el.getEl().dom;
             domElement.dndOver = false;
             domElement.reference = this;
@@ -99,9 +98,8 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
                 this.dndOver = false;
             }.bind(domElement));
 
+            Ext.get("pimcore_video_" + name).appendTo(el.body);
         }.bind(this));
-
-        Ext.get("pimcore_video_" + name).dom.innerHTML = "";
 
         this.element.render(id);
     },

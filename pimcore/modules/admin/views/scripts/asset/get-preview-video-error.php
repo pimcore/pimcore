@@ -35,12 +35,43 @@
     <tr>
         <td class="error" align="center" valign="center">
             <?php if ($this->thumbnail && $this->thumbnail["status"] == "inprogress") { ?>
-                <?php echo $this->translate("video_preview_in_progress"); ?>
-                <br />
-                <b><?php echo $this->translate("status"); ?> : <?= number_format(Asset_Video_Thumbnail_Processor::getProgress($this->thumbnail["processId"]),2) ?>%</b>
-                <br />
-                <br />
-                <?php echo $this->translate("please_wait"); ?>
+                <?php $progress = Asset_Video_Thumbnail_Processor::getProgress($this->thumbnail["processId"]) ?>
+
+                <style type="text/css">
+                    .pimcore_tag_video_progress {
+                        position:relative;
+                        background:#555;
+                        font-family:Arial,Verdana,sans-serif;
+                        color:#fff;
+                    }
+                    .pimcore_tag_video_progress_status {
+                        font-size:18px;
+                        color:#555;
+                        font-family:Arial,Verdana,sans-serif;
+                        line-height:66px;
+                        background:#fff url(/pimcore/static/img/video-loading.gif) center center no-repeat;
+                        width:66px;
+                        height:66px;
+                        padding:20px;
+                        border:1px solid #555;
+                        text-align:center;
+                        box-shadow: 2px 2px 5px #333;
+                        border-radius:20px;
+                        top: <?= ((300-106)/2) ?>px;
+                        left: <?= ((400-106)/2) ?>px;
+                        position:absolute;
+                    }
+                </style>
+                <div class="pimcore_tag_video_progress" style="width:400px; height:300px;">
+                    <br />
+                    <?php echo $this->translate("video_preview_in_progress"); ?>
+                    <br />
+                    <?php echo $this->translate("please_wait"); ?>
+
+                    <div class="pimcore_tag_video_progress_status"><?= number_format($progress,0) ?>%</div>
+                </div>
+
+
                 <script type="text/javascript">
                     window.setTimeout(function () {
                         location.reload();

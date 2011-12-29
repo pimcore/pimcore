@@ -32,10 +32,10 @@
 
 <div id="flashcontent"></div>
 
-<script type="text/javascript" src="/pimcore/static/js/lib/flowplayer/flowplayer-3.2.0.min.js"></script><script type="text/javascript" src="/pimcore/static/js/lib/array_merge.js"></script><script type="text/javascript" src="/pimcore/static/js/lib/array_merge_recursive.js"></script><div id="pimcore_video_myVideocontentblock2"><div id="video_4efc79ca37515"></div></div>
+<script type="text/javascript" src="/pimcore/static/js/lib/flowplayer/flowplayer.min.js"></script><script type="text/javascript" src="/pimcore/static/js/lib/array_merge.js"></script><script type="text/javascript" src="/pimcore/static/js/lib/array_merge_recursive.js"></script><div id="pimcore_video_myVideocontentblock2"><div id="video_4efc79ca37515"></div></div>
     <script type="text/javascript">
         flowplayer("flashcontent", {
-            src: "/pimcore/static/js/lib/flowplayer/flowplayer-3.2.1.swf",
+            src: "/pimcore/static/js/lib/flowplayer/flowplayer.swf",
             width: "100%",
             height: "100%",
             wmode: "transparent"

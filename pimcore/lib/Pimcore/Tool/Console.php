@@ -42,6 +42,28 @@ class Pimcore_Tool_Console {
 
     /**
      * @static
+     * @param $cmd
+     * @param null $outputFile
+     */
+    public static function exec ($cmd, $outputFile = null) {
+
+        if(!$outputFile) {
+            if(stripos(php_uname("s"), "windows") !== false) {
+                $outputFile = "NUL";
+            } else {
+                $outputFile = "/dev/null";
+            }
+        }
+
+        $commandWrapped = $cmd . " > ". $outputFile ." 2>&1";
+        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell");
+        $pid = shell_exec($commandWrapped);
+
+        Logger::debug("Process started with PID " . $pid);
+    }
+
+    /**
+     * @static
      * @param string $cmd
      * @param null|string $outputFile
      */
@@ -67,7 +89,7 @@ class Pimcore_Tool_Console {
         }
 
         $commandWrapped = "/usr/bin/nohup " . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
-        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell");
+        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
         $pid = shell_exec($commandWrapped);
 
         Logger::debug("Process started with PID " . $pid);
@@ -85,7 +107,7 @@ class Pimcore_Tool_Console {
         }
 
         $commandWrapped = "cmd /c " . $cmd . " > ". $outputFile . " 2>&1";
-        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell");
+        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
 
         $WshShell = new COM("WScript.Shell");
         $WshShell->Run($commandWrapped, 0, false);
