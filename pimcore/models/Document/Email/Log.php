@@ -291,7 +291,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
      */
     public function setEmailLogExistsHtml()
     {
-        $file = PIMCORE_LOG_MAIL_TEMP . '/email-' . $this->getId() . '-html.log';
+        $file = PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log';
         $this->emailLogExistsHtml = (is_file($file) && is_readable($file)) ? 1 : 0;
     }
 
@@ -310,7 +310,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
      */
     public function setEmailLogExistsText()
     {
-        $file = PIMCORE_LOG_MAIL_TEMP . '/email-' . $this->getId() . '-text.log';
+        $file = PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log';
         $this->emailLogExistsText = (is_file($file) && is_readable($file)) ? 1 : 0;
     }
 
@@ -332,7 +332,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function getHtmlLog()
     {
         if ($this->getEmailLogExistsHtml()) {
-            return file_get_contents(PIMCORE_LOG_MAIL_TEMP . '/email-' . $this->getId() . '-html.log');
+            return file_get_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log');
         }
     }
 
@@ -344,7 +344,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     public function getTextLog()
     {
         if ($this->getEmailLogExistsText()) {
-            return file_get_contents(PIMCORE_LOG_MAIL_TEMP . '/email-' . $this->getId() . '-text.log');
+            return file_get_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log');
         }
     }
 
@@ -353,8 +353,8 @@ class Document_Email_Log extends Pimcore_Model_Abstract
      */
     public function delete()
     {
-        @unlink(PIMCORE_LOG_MAIL_TEMP . '/email-' . $this->getId() . '-html.log');
-        @unlink(PIMCORE_LOG_MAIL_TEMP . '/email-' . $this->getId() . '-text.log');
+        @unlink(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log');
+        @unlink(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log');
         $this->getResource()->delete();
     }
 
@@ -398,18 +398,18 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     protected function update()
     {
         $this->getResource()->update();
-        if (!is_dir(PIMCORE_LOG_MAIL_TEMP)) {
-            mkdir(PIMCORE_LOG_MAIL_TEMP, 0755, true);
+        if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
+            mkdir(PIMCORE_LOG_MAIL_PERMANENT, 0755, true);
         }
 
         if ($html = $this->getBodyHtml()) {
-            if (file_put_contents(PIMCORE_LOG_MAIL_TEMP . '/email-' . $this->getId() . '-html.log', $html) === false) {
+            if (file_put_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log', $html) === false) {
                 Logger::warn('Could not write html email log file. LogId: ' . $this->getId());
             }
         }
 
         if ($text = $this->getBodyText()) {
-            if (file_put_contents(PIMCORE_LOG_MAIL_TEMP . '/email-' . $this->getId() . '-text.log', $text) === false) {
+            if (file_put_contents(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log', $text) === false) {
                 Logger::warn('Could not write text email log file. LogId: ' . $this->getId());
             }
         }

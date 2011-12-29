@@ -39,6 +39,7 @@ if (!defined("PIMCORE_CLASS_DIRECTORY"))  define("PIMCORE_CLASS_DIRECTORY", PIMC
 if (!defined("PIMCORE_BACKUP_DIRECTORY"))  define("PIMCORE_BACKUP_DIRECTORY", PIMCORE_WEBSITE_PATH . "/var/backup");
 if (!defined("PIMCORE_RECYCLEBIN_DIRECTORY"))  define("PIMCORE_RECYCLEBIN_DIRECTORY", PIMCORE_WEBSITE_PATH . "/var/recyclebin");
 if (!defined("PIMCORE_SYSTEM_TEMP_DIRECTORY"))  define("PIMCORE_SYSTEM_TEMP_DIRECTORY", PIMCORE_WEBSITE_PATH . "/var/system");
+if (!defined("PIMCORE_LOG_MAIL_PERMANENT"))  define("PIMCORE_LOG_MAIL_PERMANENT", PIMCORE_SYSTEM_TEMP_DIRECTORY . "/email");
 
 // setup include paths
 // include paths defined in php.ini are ignored because they're causing problems with open_basedir, see PIMCORE-1233
