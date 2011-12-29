@@ -192,8 +192,23 @@ class Document_Tag_Video extends Document_Tag
 
     public function getAssetCode()
     {
-        $path = Asset::getById($this->id);
-        return $this->getFlowplayerCode((string)$path);
+
+        $asset = Asset::getById($this->id);
+
+        $options = $this->getOptions();
+        if ($options["thumbnail"]) {
+            $thumbnail = $asset->getThumbnail($options["thumbnail"]);
+            if ($thumbnail) {
+                if ($thumbnail["status"] == "finished") {
+                    return $this->getFlowplayerCode((string) $thumbnail["formats"]["mp4"]);
+                } else if ($thumbnail["status"] == "inprogress") {
+                    $progress = Asset_Video_Thumbnail_Processor::getProgress($thumbnail["processId"]);
+                    return $this->getProgressCode($progress);
+                }
+            }
+        }
+
+        return $this->getFlowplayerCode((string) $asset);
     }
 
     public function getUrlCode()
@@ -339,6 +354,41 @@ class Document_Tag_Video extends Document_Tag
             </script>
         ';
 
+        return $code;
+    }
+
+    public function getProgressCode($progress)
+    {
+        $uid = "video_" . uniqid();
+        $code = '
+        <div id="pimcore_video_' . $this->getName() . '">
+            <style type="text/css">
+                .pimcore_tag_video_progress {
+                    position:relative;
+                    background:#555;
+                }
+                .pimcore_tag_video_progress_status {
+                    font-size:18px;
+                    color:#555;
+                    font-family:Arial,Verdana,sans-serif;
+                    line-height:66px;
+                    background:#fff url(/pimcore/static/img/video-loading.gif) center center no-repeat;
+                    width:66px;
+                    height:66px;
+                    padding:20px;
+                    border:1px solid #555;
+                    text-align:center;
+                    box-shadow: 2px 2px 5px #333;
+                    border-radius:20px;
+                    top: ' . (($this->getHeight()-106)/2) . 'px;
+                    left: ' . (($this->getWidth()-106)/2) . 'px;
+                    position:absolute;
+                }
+            </style>
+            <div class="pimcore_tag_video_progress" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
+                <div class="pimcore_tag_video_progress_status">' . number_format($progress,0) . '%</div>
+            </div>
+        </div>';
         return $code;
     }
 

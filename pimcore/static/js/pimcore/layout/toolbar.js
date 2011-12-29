@@ -262,6 +262,14 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("thumbnails")) {
+            settingsItems.push({
+                text: t("video_thumbnails"),
+                iconCls: "pimcore_icon_videothumbnails",
+                handler: this.editVideoThumbnails
+            });
+        }
+
         if (user.isAllowed("objects")) {
 
             var objectMenu = {
@@ -526,6 +534,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("thumbnails", new pimcore.settings.thumbnail.panel());
+        }
+    },
+
+    editVideoThumbnails: function () {
+        try {
+            pimcore.globalmanager.get("videothumbnails").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("videothumbnails", new pimcore.settings.videothumbnail.panel());
         }
     },
 

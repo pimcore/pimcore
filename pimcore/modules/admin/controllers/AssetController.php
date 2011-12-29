@@ -473,7 +473,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     public function replaceAssetAction() {
         $asset = Asset::getById($this->_getParam("id"));
         $asset->setData(file_get_contents($_FILES["Filedata"]["tmp_name"]));
-        $asset->setCustomSetting("youtube", null);
+        $asset->setCustomSetting("thumbnails",null);
         $asset->getPermissionsForUser($this->getUser());
 
         if ($asset->isAllowed("publish")) {
@@ -1096,30 +1096,35 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $this->view->asset = $asset;
 
-        $youtubeSettings = $asset->getCustomSetting("youtube");
+        $config = new Asset_Video_Thumbnail_Config();
+        $config->setName("pimcore_video_preview_" . $asset->getId());
+        $config->setAudioBitrate(128000);
+        $config->setVideoBitrate(700000);
 
-        if (!Asset_Video_Youtube::getYoutubeCredentials()) {
-            $this->view->configError = true;
-            $this->render("get-preview-video-error");
-        } else {
+        $config->setItems(array(
+            array(
+                "method" => "scaleByWidth",
+                "arguments" =>
+                    array(
+                        "width" => 500
+                    )
+            )
+        ));
 
-            if (!is_array($youtubeSettings)) {
+        $thumbnail = $asset->getThumbnail($config);
 
-                $this->view->asset = $asset;
+        if ($thumbnail) {
+            $this->view->asset = $asset;
+            $this->view->thumbnail = $thumbnail;
 
-                if (Asset_Video_Youtube::upload($asset)) {
-                    $this->render("get-preview-video-display");
-                } else {
-                    $this->render("get-preview-video-error");
-                }
-
-            }
-            else if ($youtubeSettings["failed"]) {
+            if ($thumbnail["status"] == "finished") {
+                $this->render("get-preview-video-display");
+            } else {
                 $this->render("get-preview-video-error");
             }
-            else {
-                $this->render("get-preview-video-display");
-            }
+        }
+        else {
+            $this->render("get-preview-video-error");
         }
     }
 

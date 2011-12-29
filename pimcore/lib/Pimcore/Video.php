@@ -38,4 +38,20 @@ class Pimcore_Video {
 
         return null;
     }
+
+    public static function isAvailable () {
+        try {
+            $ffmpeg = Pimcore_Video_Adapter_Ffmpeg::getFfmpegCli();
+            $phpCli = Pimcore_Tool_Console::getPhpCli();
+            if(!$ffmpeg || !$phpCli) {
+                throw new Exception("ffmpeg is not available");
+            }
+
+            return true;
+        } catch (Exception $e) {
+            Logger::warning($e);
+        }
+
+        return false;
+    }
 }

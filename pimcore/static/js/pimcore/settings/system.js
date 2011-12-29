@@ -231,6 +231,12 @@ pimcore.settings.system = Class.create({
                                 ],
                                 mode: "local",
                                 triggerAction: "all"
+                            },{
+                                fieldLabel: t("absolute_path_to_php_cli_binary"),
+                                xtype: "textfield",
+                                name: "general.php_cli",
+                                value: this.getValue("general.php_cli"),
+                                width: 300
                             },
                             {
                                 xtype:'combo',
@@ -850,6 +856,12 @@ pimcore.settings.system = Class.create({
                                     "spin": this.checkVersionInputs.bind(this, "assets", "steps"),
                                     "afterrender": this.checkVersionInputs.bind(this, "assets", "steps", "init")
                                 }
+                            },
+                            {
+                                fieldLabel: t('absolute_path_to_ffmpeg_binary'),
+                                name: 'assets.ffmpeg',
+                                value: this.getValue("assets.ffmpeg"),
+                                width: 300
                             }
                         ]
                     },
@@ -906,19 +918,6 @@ pimcore.settings.system = Class.create({
                                 style: "margin-top: 10px;",
                                 width: 600,
                                 value: "&nbsp;"
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: "<b>" + t('youtube_api_for_asset_preview') + "</b>",
-                                cls: "pimcore_extra_label"
-                            },
-                            {
-                                fieldLabel: t('developer_key'),
-                                name: 'services.youtube.apikey',
-                                value: this.getValue("services.youtube.apikey"),
-                                width: 650
                             },{
                                 xtype: "displayfield",
                                 hideLabel: true,

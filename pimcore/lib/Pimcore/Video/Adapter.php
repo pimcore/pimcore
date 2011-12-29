@@ -15,15 +15,6 @@
  
 abstract class Pimcore_Video_Adapter {
 
-    /**
-     * @var int
-     */
-    public $width;
-
-    /**
-     * @var int
-     */
-    public $height;
 
     /**
      * @var int
@@ -34,6 +25,22 @@ abstract class Pimcore_Video_Adapter {
      * @var int
      */
     public $audioBitrate;
+
+    /**
+     * @var string
+     */
+    public $format;
+
+    /**
+     * @var string
+     */
+    public $destinationFile;
+
+    /**
+     * length in seconds
+     * @var int
+     */
+    public $length;
 
 
     /**
@@ -53,22 +60,6 @@ abstract class Pimcore_Video_Adapter {
     }
 
     /**
-     * @param int $height
-     */
-    public function setHeight($height)
-    {
-        $this->height = $height;
-    }
-
-    /**
-     * @return int
-     */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /**
      * @param int $videoBitrate
      */
     public function setVideoBitrate($videoBitrate)
@@ -85,23 +76,6 @@ abstract class Pimcore_Video_Adapter {
     }
 
     /**
-     * @param int $width
-     */
-    public function setWidth($width)
-    {
-        $this->width = $width;
-    }
-
-    /**
-     * @return int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-
-    /**
      * @param string $file
      * @return Pimcore_Video_Adapter
      */
@@ -109,16 +83,73 @@ abstract class Pimcore_Video_Adapter {
 
     /**
      * @abstract
-     * @param  $path
-     * @param $format
      * @return Pimcore_Video_Adapter
      */
-    public abstract function save ($path, $format = null);
+    public abstract function save ();
 
     /**
      * @abstract
      */
     public abstract function getConversionStatus();
+
+    /**
+     * @abstract
+     */
+    public abstract function destroy();
+
+    /**
+     * @abstract
+     * @return bool
+     */
+    public abstract function isFinished();
+
+    /**
+     * @param string $format
+     */
+    public function setFormat($format)
+    {
+        $this->format = $format;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+    /**
+     * @param string $destinationFile
+     */
+    public function setDestinationFile($destinationFile)
+    {
+        $this->destinationFile = $destinationFile;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDestinationFile()
+    {
+        return $this->destinationFile;
+    }
+
+    /**
+     * @param int $length
+     */
+    public function setLength($length)
+    {
+        $this->length = $length;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLength()
+    {
+        return $this->length;
+    }
 
 
 }

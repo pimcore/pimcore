@@ -27,6 +27,36 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     protected $processId;
 
     /**
+     * @var string
+     */
+    protected $arguments = array();
+
+    /**
+     * @static
+     * @return string
+     */
+    public static function getFfmpegCli () {
+
+        if(Pimcore_Config::getSystemConfig()->assets->ffmpeg) {
+            if(is_executable(Pimcore_Config::getSystemConfig()->assets->ffmpeg)) {
+                return Pimcore_Config::getSystemConfig()->assets->ffmpeg;
+            } else {
+                Logger::critical("FFMPEG binary: " . Pimcore_Config::getSystemConfig()->assets->ffmpeg . " is not executable");
+            }
+        }
+
+        $paths = array("/usr/bin/ffmpeg","/usr/local/bin/ffmpeg", "/bin/ffmpeg");
+
+        foreach ($paths as $path) {
+            if(is_executable($path)) {
+                return $path;
+            }
+        }
+
+        throw new Exception("No ffmpeg executable found, please configure the correct path in the system settings");
+    }
+
+    /**
      * @param string $file
      * @return Pimcore_Video_Adapter
      */
@@ -39,9 +69,55 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
      * @param  $path
      * @return Pimcore_Video_Adapter
      */
-    public function save ($path, $format = null) {
+    public function save () {
+        if($this->getDestinationFile()) {
 
-        Pimcore_Tool_Console::execInBackground('/usr/local/bin/ffmpeg -i ' . $this->file . ' -vcodec libx264 -acodec libfaac -vb 1500000 -ab 196000 -ar 44000 -f flv -vf "scale=670:trunc(ow/a/vsub)*vsub" ' . $path, $this->getConversionLogFile());
+            if(is_file($this->getConversionLogFile())) {
+                @unlink($this->getConversionLogFile());
+            }
+            if(is_file($this->getDestinationFile())) {
+                @unlink($this->getDestinationFile());
+            }
+
+            // get the argument string from the configurations
+            $arguments = implode(" ", $this->arguments);
+
+            // add format specific arguments
+            if($this->getFormat() == "f4v") {
+                $arguments = "-vcodec libx264 -acodec libfaac -f flv -ar 44000 " . $arguments;
+            } else if($this->getFormat() == "mp4") {
+                $arguments = "-vcodec libx264 -f mp4 " . $arguments;
+                //$arguments = "-strict experimental -f mp4 -vcodec mpeg4 -acodec aac " . $arguments;
+            } else if($this->getFormat() == "webm") {
+                $arguments = "-vcodec libvpx -acodec libvorbis -f webm -ar 44000 " . $arguments;
+            } else {
+                throw new Exception("Unsupported video output format: " . $this->getFormat());
+            }
+
+            $cmd = self::getFfmpegCli() . ' -i ' . $this->file . ' ' . $arguments . " " . $this->getDestinationFile();
+            Pimcore_Tool_Console::execInBackground($cmd, $this->getConversionLogFile());
+        } else {
+            throw new Exception("There is no destination file for video converter");
+        }
+    }
+
+    /**
+     *
+     */
+    public function destroy() {
+        Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
+        @unlink($this->getConversionLogFile());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFinished() {
+        $status = $this->getConversionStatus();
+        if($status === "error" || $status > 99) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -49,6 +125,47 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
      */
     public function getConversionStatus() {
 
+        $log = file_get_contents($this->getConversionLogFile());
+
+        // get total video duration
+        preg_match("/Duration: ([0-9:\.]+),/", $log, $matches);
+        $durationRaw = $matches[1];
+        $durationParts = explode(":",$durationRaw);
+
+        // calculate duration in seconds
+        $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
+
+        // get conversion time
+        preg_match_all("/time=([0-9:\.]+) bitrate/", $log, $matches);
+        $conversionTimeRaw = $matches[1][count($matches[1])-1];
+        $conversionTimeParts = explode(":",$conversionTimeRaw);
+        // calculate time in seconds
+        $conversionTime = (intval($conversionTimeParts[0]) * 3600) + (intval($conversionTimeParts[1]) * 60) + floatval($conversionTimeParts[2]);
+
+        if($duration > 0) {
+            $status = $conversionTime / $duration;
+        } else {
+            $status = 0;
+        }
+
+        $percent = round($status * 100);
+        // check if the conversion is finished
+        clearstatcache(); // clear stat cache otherwise filemtime always returns the same timestamp
+        if((time() - filemtime($this->getConversionLogFile())) > 10) {
+            return 100;
+            @unlink($this->getConversionLogFile());
+        }
+
+        if(!$percent) {
+            $percent = 1;
+        }
+
+        // check if the conversion failed
+        if(stripos($log, "Invalid data found when processing") !== false || stripos($log, "incorrect parameters") !== false || stripos($log, "error") !== false) {
+            return "error";
+        }
+
+        return $percent;
     }
 
     /**
@@ -70,4 +187,33 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     protected function getConversionLogFile () {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ffmpeg-" . $this->getProcessId() . ".log";
     }
+
+    public function addArgument($key, $value) {
+        $this->arguments[$key] = $value;
+    }
+
+    public function setVideoBitrate($videoBitrate) {
+        parent::setVideoBitrate($videoBitrate);
+
+        $this->addArgument("videoBitrate", "-vb " . $videoBitrate);
+    }
+
+    public function setAudioBitrate($audioBitrate) {
+        parent::setAudioBitrate($audioBitrate);
+
+        $this->addArgument("audioBitrate", "-ab " . $audioBitrate);
+    }
+
+    public function resize ($width, $height) {
+        $this->addArgument("resize", "-s ".$width."x".$height);
+    }
+
+    public function scaleByWidth ($width) {
+        $this->addArgument("scaleByWidth", '-vf "scale='.$width.':trunc(ow/a/vsub)*vsub"');
+    }
+
+    public function scaleByHeight ($height) {
+        $this->addArgument("scaleByHeight", '-vf "scale=trunc(oh/(ih/iw)/hsub)*hsub:'.$height.'"');
+    }
+
 }

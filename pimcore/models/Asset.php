@@ -136,7 +136,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
     /**
      * List of some custom settings  [key] => value
-     * Here there can be stored some data, eg. the youtube-ID of the asset, ...
+     * Here there can be stored some data, eg. the video thumbnail files, ...  of the asset, ...
      *
      * @var array
      */
