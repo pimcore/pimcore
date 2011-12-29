@@ -18,7 +18,7 @@ include_once("startup.php");
 
 try {
     $opts = new Zend_Console_Getopt(array(
-        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, youtubepreview, logmaintenance, sanitycheck, cleanupoldpidfiles, versioncleanup, and plugin classes if you want to call a plugin maintenance)',
+        'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, logmaintenance, sanitycheck, cleanupoldpidfiles, versioncleanup, and plugin classes if you want to call a plugin maintenance)',
         'manager|m=s' => 'force a specific manager (valid options: procedural, daemon)',
         'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
         'help|h' => 'display this help'
@@ -74,7 +74,6 @@ $manager->setValidJobs($validJobs);
 
 // register scheduled tasks
 $manager->registerJob(new Schedule_Maintenance_Job("scheduledtasks", new Schedule_Task_Executor(), "execute"));
-$manager->registerJob(new Schedule_Maintenance_Job("youtubepreview", new Asset_Video_Youtube(), "maintenanceupload"));
 $manager->registerJob(new Schedule_Maintenance_Job("logmaintenance", new Pimcore_Log_Maintenance(), "execute"));
 $manager->registerJob(new Schedule_Maintenance_Job("sanitycheck", "Element_Service", "runSanityCheck",array(false)));
 $manager->registerJob(new Schedule_Maintenance_Job("cleanupoldpidfiles", "Schedule_Manager_Factory", "cleanupOldPidFiles"), true);

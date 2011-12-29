@@ -5,6 +5,6 @@ if(!is_dir(PIMCORE_LOG_MAIL_PERMANENT)){
 }
 
 if(is_dir(PIMCORE_LOG_MAIL_TEMP)){
-    $cmd = "mv " . PIMCORE_LOG_MAIL_TEMP."/email-* " . PIMCORE_LOG_MAIL_PERMANENT."/";
+    $cmd = "mv " . PIMCORE_LOG_MAIL_TEMP . DIRECTORY_SEPARATOR . "email-* " . PIMCORE_LOG_MAIL_PERMANENT . DIRECTORY_SEPARATOR;
     system($cmd);
 }

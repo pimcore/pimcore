@@ -26,53 +26,35 @@
 
     </style>
 
-
-    <script type="text/javascript" src="/pimcore/static/js/lib/swfobject/swfobject.js"></script>
-
 </head>
 
 <body>
 
-<?php $video = $this->asset->getCustomSetting("youtube"); ?>
+<div id="flashcontent"></div>
 
-
-<script type="text/javascript">
-
-    var ytplayer = null;
-    var interval = null;
-
-    function onYouTubePlayerReady(playerId) {
-
-        try {
-            ytplayer = document.getElementById("myytplayer");
-            ytplayer.playVideo();
-
-            interval = window.setTimeout(function () {
-                try {
-                var duration = ytplayer.getDuration();
-                    if (duration < 1) {
-                        location.reload();
+<script type="text/javascript" src="/pimcore/static/js/lib/flowplayer/flowplayer-3.2.0.min.js"></script><script type="text/javascript" src="/pimcore/static/js/lib/array_merge.js"></script><script type="text/javascript" src="/pimcore/static/js/lib/array_merge_recursive.js"></script><div id="pimcore_video_myVideocontentblock2"><div id="video_4efc79ca37515"></div></div>
+    <script type="text/javascript">
+        flowplayer("flashcontent", {
+            src: "/pimcore/static/js/lib/flowplayer/flowplayer-3.2.1.swf",
+            width: "100%",
+            height: "100%",
+            wmode: "transparent"
+        },{
+            "clip": {
+                "autoPlay":false,
+                scaling: "orig",
+                "url": <?= Zend_Json::encode($this->thumbnail["formats"]["mp4"]); ?>
+            },
+            "plugins": {
+                "controls": {
+                    "autoHide": {
+                        "enabled": false
                     }
-                } catch (e) {
-                    console.log("video is not converted yet");
                 }
-            }, 10000);
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-</script>
-
-<div id="ytapiplayer"></div>
-
-<script type="text/javascript">
-
-    var params = { allowScriptAccess: "always", wmode: "transparent" };
-    var atts = { id: "myytplayer" };
-    swfobject.embedSWF("http://www.youtube.com/v/<?php echo $video["id"] ?>?enablejsapi=1&playerapiid=ytplayer&rel=0&hd=1", "ytapiplayer", "100%", "100%", "8", null, null, params, atts);
-
-</script>
+            }
+        });
+    </script>
+</div>
 
 
 </body>

@@ -15,6 +15,36 @@
 
 class Pimcore_Tool_Console {
 
+    /**
+     * @static
+     * @return string
+     */
+    public static function getPhpCli () {
+
+        if(Pimcore_Config::getSystemConfig()->general->php_cli) {
+            if(is_executable(Pimcore_Config::getSystemConfig()->general->php_cli)) {
+                return Pimcore_Config::getSystemConfig()->general->php_cli;
+            } else {
+                Logger::critical("PHP-CLI binary: " . Pimcore_Config::getSystemConfig()->general->php_cli . " is not executable");
+            }
+        }
+
+        $paths = array("/usr/bin/php","/usr/local/bin/php","/usr/local/zend/bin/php", "/bin/php");
+
+        foreach ($paths as $path) {
+            if(is_executable($path)) {
+                return $path;
+            }
+        }
+
+        throw new Exception("No php executable found, please configure the correct path in the system settings");
+    }
+
+    /**
+     * @static
+     * @param string $cmd
+     * @param null|string $outputFile
+     */
     public static function execInBackground($cmd, $outputFile = null) {
 
         // windows systems
@@ -25,6 +55,11 @@ class Pimcore_Tool_Console {
         }
     }
 
+    /**
+     * @static
+     * @param string $cmd
+     * @param string $outputFile
+     */
     protected static function execInBackgroundUnix ($cmd, $outputFile) {
 
         if(!$outputFile) {
@@ -38,6 +73,11 @@ class Pimcore_Tool_Console {
         Logger::debug("Process started with PID " . $pid);
     }
 
+    /**
+     * @static
+     * @param string $cmd
+     * @param string $outputFile
+     */
     protected static function execInBackgroundWindows($cmd, $outputFile) {
 
         if(!$outputFile) {

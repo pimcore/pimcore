@@ -171,6 +171,8 @@
             "pimcore/settings/profile/panel.js",
             "pimcore/settings/thumbnail/item.js",
             "pimcore/settings/thumbnail/panel.js",
+            "pimcore/settings/videothumbnail/item.js",
+            "pimcore/settings/videothumbnail/panel.js",
             "pimcore/settings/translations.js",
             "pimcore/settings/translation/website.js",
             "pimcore/settings/translation/admin.js",
