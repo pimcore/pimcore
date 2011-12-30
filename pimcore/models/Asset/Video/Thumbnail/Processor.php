@@ -67,7 +67,25 @@ class Asset_Video_Thumbnail_Processor {
         // check for running or already created thumbnails
         $customSetting = $asset->getCustomSetting("thumbnails");
         if(is_array($customSetting) && array_key_exists($config->getName(), $customSetting)) {
-            return;
+            if ($customSetting[$config->getName()]["status"] == "inprogress") {
+                if(is_file($instance->getJobFile($customSetting[$config->getName()]["processId"]))) {
+                    return;
+                }
+            } else if($customSetting[$config->getName()]["status"] == "finished") {
+                // check if the files are there
+                $formatsToConvert = array();
+                foreach($formats as $f) {
+                    if(!is_file(PIMCORE_DOCUMENT_ROOT . $customSetting[$config->getName()]["formats"][$f])) {
+                        $formatsToConvert[] = $f;
+                    }
+                }
+
+                if(!empty($formatsToConvert)) {
+                    $formats = $formatsToConvert;
+                } else {
+                    return;
+                }
+            }
         }
 
         foreach ($formats as $format) {
@@ -205,7 +223,10 @@ class Asset_Video_Thumbnail_Processor {
     public static function getProgress($processId) {
         $instance = new self();
         $instance->setProcessId($processId);
-        $instance = unserialize(file_get_contents($instance->getJobFile()));
+
+        if(is_file($instance->getJobFile())) {
+            $instance = unserialize(file_get_contents($instance->getJobFile()));
+        }
 
         return $instance->getStatus();
     }
@@ -230,8 +251,11 @@ class Asset_Video_Thumbnail_Processor {
     /**
      * @return string
      */
-    protected function getJobFile () {
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/video-job-" . $this->getProcessId() . ".psf";
+    protected function getJobFile ($processId = null) {
+        if(!$processId) {
+            $processId = $this->getProcessId();
+        }
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/video-job-" . $processId . ".psf";
     }
 
     /**

@@ -101,6 +101,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
     }
 
+    private function deleteVideoThumbnailTmpFiles(Asset_Video_Thumbnail_Config $thumbnail) {
+        // delete all thumbnails which are using this config
+        $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
+        foreach ($files as $file) {
+            if (preg_match("/^video_(.*)__" . $thumbnail->getName() . "/", $file)) {
+                unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
+            }
+        }
+    }
+
     public function getSystemAction() {
         if ($this->getUser()->isAllowed("system_settings")) {
             $values = Pimcore_Config::getSystemConfig();
@@ -1423,7 +1433,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $pipe->save();
 
-        //$this->deleteThumbnailTmpFiles($pipe);
+        $this->deleteVideoThumbnailTmpFiles($pipe);
 
         $this->_helper->json(array("success" => true));
     }

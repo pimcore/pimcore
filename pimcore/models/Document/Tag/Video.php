@@ -202,11 +202,15 @@ class Document_Tag_Video extends Document_Tag
                 $image = $asset->getImageThumbnail(array(
                     "width" => $this->getWidth(),
                     "height" => $this->getHeight()
-                ),5);
+                ));
 
                 if ($thumbnail["status"] == "finished") {
                     return $this->getFlowplayerCode((string) $thumbnail["formats"]["mp4"], $image);
                 } else if ($thumbnail["status"] == "inprogress") {
+                    // disable the output-cache if enabled
+                    $front = Zend_Controller_Front::getInstance();
+                    $front->unregisterPlugin("Pimcore_Controller_Plugin_Cache");
+
                     $progress = Asset_Video_Thumbnail_Processor::getProgress($thumbnail["processId"]);
                     return $this->getProgressCode($progress, $image);
                 }
@@ -352,25 +356,27 @@ class Document_Tag_Video extends Document_Tag
             ';
         }
 
-        $code .= '
-            <style type="text/css">
-                #' . $uid . ' .play {
-                    margin-top:' . (($this->getHeight()-83)/2) . 'px;
-                    border:0px;
-                    display:inline-block;
-                    width:83px;
-                    height:83px;
-                    background:url(/pimcore/static/js/lib/flowplayer/play_large.png);
-                }
-            </style>
-        ';
+        if (Pimcore_Video::isAvailable()) {
+            $code .= '
+                <style type="text/css">
+                    #' . $uid . ' .play {
+                        margin-top:' . (($this->getHeight()-83)/2) . 'px;
+                        border:0px;
+                        display:inline-block;
+                        width:83px;
+                        height:83px;
+                        background:url(/pimcore/static/js/lib/flowplayer/play_large.png);
+                    }
+                </style>
+            ';
+        }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
             <a id="' . $uid . '"
             	href="'.$url.'"
             	class="pimcore_video_flowplayer"
             	style="background-image:url(' . $thumbnail . '); width:' . $this->getWidth() . 'px; height:' . $this->getHeight() . 'px;">
-            	<span class="play"></span>
+            	' . (Pimcore_Video::isAvailable() ? '<span class="play">' : "") .'</span>
             </a>
         </div>';
 
@@ -399,7 +405,7 @@ class Document_Tag_Video extends Document_Tag
             <style type="text/css">
                 #' . $uid . ' {
                     position:relative;
-                    background:url('. ( $thumbnail ? $thumbnail : "#555") . ');
+                    background:#555 url('. $thumbnail . ') center center no-repeat;
                 }
                 #' . $uid . ' .pimcore_tag_video_progress_status {
                     font-size:18px;
@@ -417,12 +423,24 @@ class Document_Tag_Video extends Document_Tag
                     top: ' . (($this->getHeight()-106)/2) . 'px;
                     left: ' . (($this->getWidth()-106)/2) . 'px;
                     position:absolute;
+                    opacity: 0.8;
                 }
             </style>
             <div class="pimcore_tag_video_progress" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
                 <div class="pimcore_tag_video_progress_status">' . number_format($progress,0) . '%</div>
             </div>
         </div>';
+
+        if(!$this->editmode) {
+            $code .= '
+                <script type="text/javascript">
+                    window.setTimeout(function() {
+                        location.reload();
+                    },6000);
+                </script>
+            ';
+        }
+
         return $code;
     }
 

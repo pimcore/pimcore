@@ -88,7 +88,12 @@ class Pimcore_Tool_Console {
             $outputFile = "/dev/null";
         }
 
-        $commandWrapped = "/usr/bin/nohup " . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
+        $nice = "";
+        if(is_executable("/usr/bin/nice")) {
+            $nice = "/usr/bin/nice -n 19 ";
+        }
+
+        $commandWrapped = "/usr/bin/nohup " . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
         Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
         $pid = shell_exec($commandWrapped);
 

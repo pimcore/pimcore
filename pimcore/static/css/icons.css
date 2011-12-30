@@ -1077,3 +1077,7 @@
 .pimcore_icon_videothumbnails {
     background: url(/pimcore/static/img/icon/film_edit.png) left center no-repeat !important;
 }
+
+.pimcore_icon_videoedit {
+    background: url(/pimcore/static/img/icon/film_edit.png) left center no-repeat !important;
+}

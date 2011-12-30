@@ -94,6 +94,9 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
                 throw new Exception("Unsupported video output format: " . $this->getFormat());
             }
 
+            // add some global arguments
+            $arguments = "-threads 4 " . $arguments;
+
             $cmd = self::getFfmpegCli() . ' -i ' . $this->file . ' ' . $arguments . " " . $this->getDestinationFile();
             Pimcore_Tool_Console::execInBackground($cmd, $this->getConversionLogFile());
         } else {
