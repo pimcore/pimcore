@@ -120,7 +120,11 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
             this.previewImagePanel.on("beforedestroy", function () {
                 clearInterval(this.checkFlowplayerInterval);
-                delete window[this.previewFrameId];
+                try {
+                    delete window[this.previewFrameId];
+                } catch (e) {
+
+                }
             }.bind(this));
 
             this.editPanel = new Ext.Panel({
