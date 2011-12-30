@@ -18,6 +18,36 @@
 class Asset_Video extends Asset {
 
     /**
+     * @return void
+     */
+    public function update() {
+        $this->clearThumbnails();
+        parent::update();
+    }
+
+
+    /**
+     * @return void
+     */
+    public function clearThumbnails() {
+
+        if($this->_dataChanged) {
+            // clear the thumbnail custom settings
+            $this->setCustomSetting("thumbnails", null);
+
+            // video thumbnails and image previews
+            $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
+            foreach ($files as $file) {
+                if (is_file(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file)) {
+                    if (preg_match("/video_" . $this->getId() . "/", $file)) {
+                        unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @param string $config
      * @return Asset_Video_Thumbnail|null
      */
@@ -53,15 +83,16 @@ class Asset_Video extends Asset {
         if($thumbnail) {
             try {
                 Asset_Video_Thumbnail_Processor::process($this, $thumbnail);
+
+                // check for existing videos
+                $customSetting = $this->getCustomSetting("thumbnails");
+                if(is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
+                    return $customSetting[$thumbnail->getName()];
+                }
+
             } catch (Exception $e) {
                 Logger::error("Couldn't create thumbnail of video " . $this->getFullPath());
                 Logger::error($e);
-            }
-
-            // check for existing videos
-            $customSetting = $this->getCustomSetting("thumbnails");
-            if(is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
-                return $customSetting[$thumbnail->getName()];
             }
         }
 
@@ -107,13 +138,17 @@ class Asset_Video extends Asset {
         $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
         $thumbnail->setName($thumbnail->getName()."-".$timeOffset);
 
+        $cs = $this->getCustomSetting("image_thumbnail_time");
+        if(!$timeOffset && $cs) {
+            $timeOffset = $cs;
+        }
         if(!$timeOffset) {
             $timeOffset = 5;
         }
 
         $converter = Pimcore_Video::getInstance();
         $converter->load($this->getFileSystemPath());
-        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnail_" . $this->getId() . "__" .  $timeOffset . ".png";
+        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video_" . $this->getId() . "__thumbnail_" .  $timeOffset . ".png";
 
         if(!is_file($path)) {
             $converter->saveImage($path, $timeOffset);

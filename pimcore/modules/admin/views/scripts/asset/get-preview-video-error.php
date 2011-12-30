@@ -40,12 +40,13 @@
                 <style type="text/css">
                     .pimcore_tag_video_progress {
                         position:relative;
-                        background:#555;
+                        background:#555 url(<?php echo $this->asset->getImageThumbnail(array("width" => 640)); ?>) no-repeat center center;
                         font-family:Arial,Verdana,sans-serif;
                         color:#fff;
+                        text-shadow: 0 0 3px #000, 0 0 5px #000, 0 0 1px #000;
                     }
                     .pimcore_tag_video_progress_status {
-                        font-size:18px;
+                        font-size:16px;
                         color:#555;
                         font-family:Arial,Verdana,sans-serif;
                         line-height:66px;
@@ -57,18 +58,21 @@
                         text-align:center;
                         box-shadow: 2px 2px 5px #333;
                         border-radius:20px;
-                        top: <?= ((300-106)/2) ?>px;
-                        left: <?= ((400-106)/2) ?>px;
+                        top: <?php echo ((380-106)/2); ?>px;
+                        left: <?php echo ((640-106)/2); ?>px;
                         position:absolute;
+                        opacity: 0.8;
+                        text-shadow: none;
                     }
                 </style>
-                <div class="pimcore_tag_video_progress" style="width:400px; height:300px;">
+                <div class="pimcore_tag_video_progress" style="width:640px; height:380px;">
+
                     <br />
                     <?php echo $this->translate("video_preview_in_progress"); ?>
                     <br />
                     <?php echo $this->translate("please_wait"); ?>
 
-                    <div class="pimcore_tag_video_progress_status"><?= number_format($progress,0) ?>%</div>
+                    <div class="pimcore_tag_video_progress_status"><?php echo number_format($progress,0) ?>%</div>
                 </div>
 
 

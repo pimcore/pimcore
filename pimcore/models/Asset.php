@@ -185,6 +185,12 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public $scheduledTasks = null;
 
     /**
+     * Indicator if data has changed
+     * @var bool
+     */
+    protected $_dataChanged = false;
+
+    /**
      *
      * @return array
      */
@@ -368,6 +374,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public function loadData() {
         if ($this->getType() != "folder") {
             $this->setData(file_get_contents($this->getFileSystemPath()));
+            $this->_dataChanged = false;
         }
     }
 
@@ -918,6 +925,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setData($data) {
         $this->data = $data;
+        $this->_dataChanged = true;
     }
 
     /**

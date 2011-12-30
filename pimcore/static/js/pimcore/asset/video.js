@@ -68,18 +68,62 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
     getEditPanel: function () {
 
         if (!this.editPanel) {
-
-            this.editPanel = new Ext.Panel({
-                title: t("preview"),
-                html: '<iframe src="/admin/asset/get-preview-video/id/' + this.id + '/" frameborder="0" id="asset_video_edit_' + this.id + '"></iframe>',
-                iconCls: "pimcore_icon_tab_edit"
+            this.previewPanel = new Ext.Panel({
+                region: "center",
+                html: '<iframe src="/admin/asset/get-preview-video/id/' + this.id + '/" frameborder="0" id="asset_video_edit_' + this.id + '" name="asset_video_edit_' + this.id + '"></iframe>'
             });
-            this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
+            this.previewPanel.on("resize", function (el, width, height, rWidth, rHeight) {
                 Ext.get("asset_video_edit_" + this.id).setStyle({
                     width: width + "px",
                     height: (height) + "px"
                 });
             }.bind(this));
+
+            this.previewImagePanel = new Ext.Panel({
+                width: 300,
+                region: "east",
+                bodyStyle: "display:none;",
+                items: [{
+                    xtype: "panel",
+                    id: "pimcore_asset_video_imagepreview_" + this.id,
+                    title: t("select_image_preview"),
+                    bodyStyle: "text-align:center; padding:10px;min-height:150px;",
+                    html: '<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/250/aspectratio/true" />',
+                    bbar: [{
+                        xtype: "button",
+                        text: t("use_current_player_position_as_preview"),
+                        iconCls: "pimcore_icon_videoedit",
+                        handler: function () {
+                            var frameId = 'asset_video_edit_' + this.id;
+
+                            try {
+                                var time = window[frameId].player.getTime();
+                                Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id).update('<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/250/aspectratio/true/time/' + time  + '/settime/true" />');
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }.bind(this)
+                    }]
+                }]
+            });
+
+            this.previewImagePanel.on("afterrender", function () {
+                window.setTimeout(function () {
+                    var frameId = 'asset_video_edit_' + this.id;
+                    if(window[frameId].player) {
+                        this.previewImagePanel.body.setStyle({
+                            display: "block"
+                        });
+                    }
+                }.bind(this), 2000);
+            }.bind(this));
+
+            this.editPanel = new Ext.Panel({
+                layout: "border",
+                items: [this.previewPanel, this.previewImagePanel],
+                title: t("preview"),
+                iconCls: "pimcore_icon_tab_edit"
+            });
         }
 
         return this.editPanel;
