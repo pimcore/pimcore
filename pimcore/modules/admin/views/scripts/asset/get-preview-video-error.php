@@ -79,7 +79,7 @@
                 <script type="text/javascript">
                     window.setTimeout(function () {
                         location.reload();
-                    }, 2000);
+                    }, 5000);
                 </script>
             <?php } else if (!Pimcore_Video::isAvailable()) { ?>
                 <?php echo $this->translate("preview_not_available"); ?>
