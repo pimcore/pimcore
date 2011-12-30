@@ -79,6 +79,8 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 });
             }.bind(this));
 
+            this.previewFrameId = 'asset_video_edit_' + this.id;
+
             this.previewImagePanel = new Ext.Panel({
                 width: 300,
                 region: "east",
@@ -94,10 +96,8 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         text: t("use_current_player_position_as_preview"),
                         iconCls: "pimcore_icon_videoedit",
                         handler: function () {
-                            var frameId = 'asset_video_edit_' + this.id;
-
                             try {
-                                var time = window[frameId].player.getTime();
+                                var time = window[this.previewFrameId].player.getTime();
                                 Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id).update('<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/250/aspectratio/true/time/' + time  + '/settime/true" />');
                             } catch (e) {
                                 console.log(e);
@@ -108,14 +108,19 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
             });
 
             this.previewImagePanel.on("afterrender", function () {
-                window.setTimeout(function () {
-                    var frameId = 'asset_video_edit_' + this.id;
-                    if(window[frameId].player) {
+                this.checkFlowplayerInterval = window.setInterval(function () {
+                    if(window[this.previewFrameId].flowplayer) {
                         this.previewImagePanel.body.setStyle({
                             display: "block"
                         });
+                        clearInterval(this.checkFlowplayerInterval);
                     }
-                }.bind(this), 2000);
+                }.bind(this), 1000);
+            }.bind(this));
+
+            this.previewImagePanel.on("beforedestroy", function () {
+                clearInterval(this.checkFlowplayerInterval);
+                delete window[this.previewFrameId];
             }.bind(this));
 
             this.editPanel = new Ext.Panel({
