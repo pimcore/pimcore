@@ -205,7 +205,7 @@ class Document_Tag_Video extends Document_Tag
                 ));
 
                 if ($thumbnail["status"] == "finished") {
-                    return $this->getFlowplayerCode((string) $thumbnail["formats"]["mp4"], $image);
+                    return $this->getFlowplayerCode((string) $thumbnail["formats"]["f4v"], $image);
                 } else if ($thumbnail["status"] == "inprogress") {
                     // disable the output-cache if enabled
                     $front = Zend_Controller_Front::getInstance();
