@@ -205,7 +205,7 @@ class Document_Tag_Video extends Document_Tag
                 ));
 
                 if ($thumbnail["status"] == "finished") {
-                    return $this->getFlowplayerCode((string) $thumbnail["formats"]["f4v"], $image);
+                    return $this->getFlowplayerCode($thumbnail["formats"], $image);
                 } else if ($thumbnail["status"] == "inprogress") {
                     // disable the output-cache if enabled
                     $front = Zend_Controller_Front::getInstance();
@@ -303,7 +303,7 @@ class Document_Tag_Video extends Document_Tag
         return $code;
     }
 
-    public function getFlowplayerCode($url = null, $thumbnail = null)
+    public function getFlowplayerCode($urls = array(), $thumbnail = null)
     {
 
         $options = $this->getOptions();
@@ -333,8 +333,8 @@ class Document_Tag_Video extends Document_Tag
             }
         }
 
-        $config["clip"]["url"] = $url;
-        if (!$url) {
+        $config["clip"]["url"] = $urls["f4v"];
+        if (empty($urls)) {
             return $this->getEmptyCode();
             //$config["clip"]["url"] = "/pimcore/static/f4v/pimcore.f4v";
         }
@@ -373,7 +373,7 @@ class Document_Tag_Video extends Document_Tag
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
             <a id="' . $uid . '"
-            	href="'.$url.'"
+            	href="'.$urls["mp4"].'"
             	class="pimcore_video_flowplayer"
             	style="background-image:url(' . $thumbnail . '); width:' . $this->getWidth() . 'px; height:' . $this->getHeight() . 'px;">
             	' . (Pimcore_Video::isAvailable() ? '<span class="play">' : "") .'</span>
