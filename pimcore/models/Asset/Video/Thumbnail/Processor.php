@@ -59,13 +59,14 @@ class Asset_Video_Thumbnail_Processor {
         }
 
         $instance = new self();
-        $formats = array("mp4","webm");
+        $formats = array("mp4","webm","f4v");
         $instance->setProcessId(uniqid());
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);
 
         // check for running or already created thumbnails
         $customSetting = $asset->getCustomSetting("thumbnails");
+        $existingFormats = array();
         if(is_array($customSetting) && array_key_exists($config->getName(), $customSetting)) {
             if ($customSetting[$config->getName()]["status"] == "inprogress") {
                 if(is_file($instance->getJobFile($customSetting[$config->getName()]["processId"]))) {
@@ -77,6 +78,8 @@ class Asset_Video_Thumbnail_Processor {
                 foreach($formats as $f) {
                     if(!is_file(PIMCORE_DOCUMENT_ROOT . $customSetting[$config->getName()]["formats"][$f])) {
                         $formatsToConvert[] = $f;
+                    } else {
+                        $existingFormats[$f] = $customSetting[$config->getName()]["formats"][$f];
                     }
                 }
 
@@ -138,7 +141,7 @@ class Asset_Video_Thumbnail_Processor {
         $customSetting = is_array($customSetting) ? $customSetting : array();
         $customSetting[$config->getName()] = array(
             "status" => "inprogress",
-            "formats" => array(),
+            "formats" => $existingFormats,
             "processId" => $instance->getProcessId()
         );
         $asset->setCustomSetting("thumbnails", $customSetting);
@@ -204,6 +207,14 @@ class Asset_Video_Thumbnail_Processor {
         if($asset) {
             $customSetting = $asset->getCustomSetting("thumbnails");
             $customSetting = is_array($customSetting) ? $customSetting : array();
+
+            if(array_key_exists($instance->getConfig()->getName(), $customSetting)
+                && array_key_exists("formats", $customSetting[$instance->getConfig()->getName()])
+                && is_array($customSetting[$instance->getConfig()->getName()]["formats"]) ) {
+
+                $formats = array_merge($customSetting[$instance->getConfig()->getName()]["formats"], $formats);
+            }
+
             $customSetting[$instance->getConfig()->getName()] = array(
                 "status" => "finished",
                 "formats" => $formats
