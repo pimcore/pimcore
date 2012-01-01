@@ -25,13 +25,20 @@ class Asset_Video extends Asset {
         parent::update();
     }
 
+    /**
+     *
+     */
+    public function delete() {
+        parent::delete();
+        $this->clearThumbnails();
+    }
 
     /**
      * @return void
      */
-    public function clearThumbnails() {
+    public function clearThumbnails($force = false) {
 
-        if($this->_dataChanged) {
+        if($this->_dataChanged || $force) {
             // clear the thumbnail custom settings
             $this->setCustomSetting("thumbnails", null);
 
@@ -40,7 +47,7 @@ class Asset_Video extends Asset {
             foreach ($files as $file) {
                 if (is_file(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file)) {
                     if (preg_match("/video_" . $this->getId() . "/", $file)) {
-                        unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
+                        @unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
                     }
                 }
             }
