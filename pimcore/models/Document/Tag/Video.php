@@ -196,7 +196,7 @@ class Document_Tag_Video extends Document_Tag
         $asset = Asset::getById($this->id);
 
         $options = $this->getOptions();
-        if ($options["thumbnail"]) {
+        if ($asset && $options["thumbnail"]) {
             $thumbnail = $asset->getThumbnail($options["thumbnail"]);
             if ($thumbnail) {
                 $image = $asset->getImageThumbnail(array(
