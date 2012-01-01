@@ -77,11 +77,11 @@ class Pimcore_Log_Writer_Mail extends Zend_Log_Writer_Mail{
     {
         parent::shutdown();
         unset($this->_tempLogger);
-        if(is_file($this->_tempfile)){
-            unlink($this->_tempfile);
-        }
-        
 
+        clearstatcache();
+        if(is_file($this->_tempfile)){
+            @unlink($this->_tempfile);
+        }
     }
 
 
