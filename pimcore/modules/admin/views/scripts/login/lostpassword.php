@@ -54,9 +54,9 @@
         <?php if($this->success) { ?>
             <form action="/admin/login/" id="loginform" method="post">
                 <p style="text-align: center;">
-                    A temporary login link has been sent to your email address.
+                    <?php echo $this->translate("A temporary login link has been sent to your email address."); ?>
                     <br />
-                    Please check your mailbox.
+                    <?php echo $this->translate("Please check your mailbox."); ?>
                 </p>
                 <p class="submit">
                     <input class="submit" type="submit" value="Back to Login" />
@@ -65,16 +65,16 @@
         <?php } else { ?>
             <form action="/admin/login/lostpassword" id="loginform" method="post" enctype="application/x-www-form-urlencoded">
                 <p>
-                    Enter your username and pimcore will send a login link to your email address:
+                    <?php echo $this->translate("Enter your username and pimcore will send a login link to your email address"); ?>:
                 </p>
                 <p>
-                    <label>Username</label>
+                    <label><?php echo $this->translate("Username"); ?></label>
                     <input class="credential" name="username" id="username" type="text" />
                     <span class="clear"></span>
                 </p>
                 <p class="submit">
-                    <input class="submit" type="submit" value="Submit" />
-                    <a href="/admin/login/" class="lostpassword">Back to Login</a>
+                    <input class="submit" type="submit" value="<?php echo $this->translate("Submit"); ?>" />
+                    <a href="/admin/login/" class="lostpassword"><?php echo $this->translate("Back to Login"); ?></a>
                 </p>
             </form>
         <?php } ?>
