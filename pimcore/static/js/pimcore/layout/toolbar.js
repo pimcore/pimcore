@@ -681,8 +681,12 @@ pimcore.layout.toolbar = Class.create({
     },
 
     clearCache: function () {
-        Ext.Ajax.request({
-            url: '/admin/settings/clear-cache'
+        Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
+            if (btn == 'yes'){
+                Ext.Ajax.request({
+                    url: '/admin/settings/clear-cache'
+                });
+            }
         });
     },
 
@@ -693,8 +697,12 @@ pimcore.layout.toolbar = Class.create({
     },
 
     clearTemporaryFiles: function () {
-        Ext.Ajax.request({
-            url: '/admin/settings/clear-temporary-files'
+        Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
+            if (btn == 'yes'){
+                Ext.Ajax.request({
+                    url: '/admin/settings/clear-temporary-files'
+                });
+            }
         });
     },
 
