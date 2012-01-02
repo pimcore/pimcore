@@ -83,31 +83,31 @@ $config = Pimcore_Config::getSystemConfig();
 
         <form id="loginform" action="/admin/login/login" method="post" enctype="application/x-www-form-urlencoded">
             <p>
-                <label>Username</label>
+                <label><?php echo $this->translate("Username"); ?></label>
                 <input class="credential" name="username" id="username" type="text" />
                 <span class="clear"></span>
             </p>
             <p>
-                <label>Password</label>
+                <label><?php echo $this->translate("Password"); ?></label>
                 <input class="credential" name="password" type="password" />
                 <span class="clear"></span>
             </p>
             <p class="submit">
-                <input class="submit" type="submit" value="Login" />
-                <a href="/admin/login/lostpassword" class="lostpassword">Forgot your password?</a>
+                <input class="submit" type="submit" value="<?php echo $this->translate("Login"); ?>" />
+                <a href="/admin/login/lostpassword" class="lostpassword"><?php echo $this->translate("Forgot your password"); ?>?</a>
             </p>
         </form>
 
         <?php if (!$supported) { ?>
             <div id="browserinfo">
-                <div class="message">Your browser is not supported. Please install the latest version of one of the following browsers.</div>
+                <div class="message"><?php echo $this->translate("Your browser is not supported. Please install the latest version of one of the following browsers."); ?></div>
                 <div class="links">
                     <a href="http://www.mozilla.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/firefox.png"/></a>
                     <a href="http://www.google.com/chrome/" target="_blank"><img src="/pimcore/static/img/login-reloaded/chrome.png"/></a>
                     <a href="http://www.apple.com/safari/" target="_blank"><img src="/pimcore/static/img/login-reloaded/safari.png"/></a>
                     <a href="http://www.microsoft.com/" target="_blank"><img src="/pimcore/static/img/login-reloaded/ie.png"/></a>
                 </div>
-                <div class="proceed" style="cursor: pointer;" onclick="showLogin();">Click here to proceed</div>
+                <div class="proceed" style="cursor: pointer;" onclick="showLogin();"><?php echo $this->translate("Click here to proceed"); ?></div>
             </div>
             <script type="text/javascript">
                 function showLogin() {

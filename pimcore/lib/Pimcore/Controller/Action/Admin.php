@@ -41,6 +41,9 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             else {
                 $config = Pimcore_Config::getSystemConfig();
                 $this->setLanguage($config->general->language);
+
+                // try to set browser-language (validation if installed is in $this->setLanguage() )
+                $this->setLanguage(new Zend_Locale());
             }
         }
 
@@ -124,6 +127,11 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         }
         else {
             $locale = new Zend_Locale("en");
+        }
+
+        // check if given language is installed if not => skip
+        if(!in_array($locale->getLanguage(), Pimcore_Tool_Admin::getLanguages())) {
+            return;
         }
 
         $this->language = $locale->getLanguage();
