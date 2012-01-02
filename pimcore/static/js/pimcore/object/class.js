@@ -192,21 +192,26 @@ pimcore.object.klass = Class.create({
     },
 
     deleteClass: function () {
-        Ext.Ajax.request({
-            url: "/admin/class/delete",
-            params: {
-                id: this.id
+
+        Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
+            if (btn == 'yes'){
+                Ext.Ajax.request({
+                    url: "/admin/class/delete",
+                    params: {
+                        id: this.id
+                    }
+                });
+
+                this.attributes.reference.getEditPanel().removeAll();
+                this.remove();
+
+                // refresh the object tree
+                pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
+
+                // update object type store
+                pimcore.globalmanager.get("object_types_store").reload();
             }
-        });
-
-        this.attributes.reference.getEditPanel().removeAll();
-        this.remove();
-
-        // refresh the object tree
-        pimcore.globalmanager.get("layout_object_tree").tree.getRootNode().reload();
-
-        // update object type store
-        pimcore.globalmanager.get("object_types_store").reload();
+        }.bind(this));
     },
 
     activate: function () {
