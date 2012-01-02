@@ -6,6 +6,8 @@
 "Back to Login","Back to Login"
 "Enter your username and pimcore will send a login link to your email address","Enter your username and pimcore will send a login link to your email address"
 "Please check your mailbox.","Please check your mailbox."
+"Login","Login"
+"Submit","Submit"
 "A temporary login link has been sent to your email address.","A temporary login link has been sent to your email address."
 "system_performance_stability_warning","Please do not perform this action unless your are not sure what you are doing.<br /><b style='color:red'>This action can have a major impact onto the stability and performance of the entire system, and may causes an overload or complete crash of the server!</b><br /><br />Are you sure?"
 "use_current_player_position_as_preview","Use current player position as preview"
