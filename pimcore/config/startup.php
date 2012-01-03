@@ -19,7 +19,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 $pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..'); 
 
 if (!defined("PIMCORE_DOCUMENT_ROOT"))  define("PIMCORE_DOCUMENT_ROOT", $pimcoreDocumentRoot);
-if (!defined("PIMCORE_FRONTEND_MODULE"))  define("PIMCORE_FRONTEND_MODULE", "website"); // frontend module, this is the module containing your website, please be sure that the module folder is in PIMCORE_DOCUMENT_ROOT and is named identically with this name
+// frontend module, this is the module containing your website, please be sure that the module folder is in PIMCORE_DOCUMENT_ROOT and is named identically with this name
+if (!defined("PIMCORE_FRONTEND_MODULE"))  define("PIMCORE_FRONTEND_MODULE", "website");
 if (!defined("PIMCORE_PATH"))  define("PIMCORE_PATH", PIMCORE_DOCUMENT_ROOT . "/pimcore");
 if (!defined("PIMCORE_PLUGINS_PATH"))  define("PIMCORE_PLUGINS_PATH", PIMCORE_DOCUMENT_ROOT . "/plugins");
 
@@ -51,7 +52,7 @@ $includePaths = array(
     PIMCORE_WEBSITE_PATH . "/models",
     PIMCORE_PATH . "/modules/searchadmin/models",
     PIMCORE_CLASS_DIRECTORY,
-    PIMCORE_PATH . "/lib/_deprecated",  // depricated libraries and classes
+    PIMCORE_PATH . "/lib/_deprecated",  // deprecated libraries and classes
 );
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
@@ -69,6 +70,10 @@ $autoloader->registerNamespace('Pimcore');
 $autoloader->suppressNotFoundWarnings(true);
 
 // do some general stuff
+$websiteStartup = PIMCORE_CONFIGURATION_DIRECTORY . "/startup.php";
+if(@is_file($websiteStartup)) {
+    include_once($websiteStartup);
+}
 
 // on pimcore shutdown
 register_shutdown_function("Pimcore::shutdown");
