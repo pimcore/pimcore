@@ -459,6 +459,11 @@ class Pimcore_Tool {
         return $ip;
     }
 
+    /**
+     * @static
+     * @param $class
+     * @return bool
+     */
     public static function classExists ($class) {
         Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
         $exists = class_exists($class);
