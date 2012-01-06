@@ -94,6 +94,7 @@ class Document_Service extends Element_Service {
                     $layout->disableLayout();
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
+                $layout->resetMvcInstance();
             }
         }
 
