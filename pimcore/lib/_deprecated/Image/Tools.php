@@ -336,7 +336,7 @@ class Image_Tools
         require_once($toolPath);
 
         $className = "Image_Tools_${tool}";
-        if (!class_exists($className)) {
+        if (!Pimcore_Tool::classExists($className)) {
             return PEAR::raiseError('File not found ' . $toolPath .
                                     ' or undefined class '.$className,
                                     IMAGE_TOOLS_BASE_ERR_CLASS_INVALID);

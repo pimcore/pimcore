@@ -56,7 +56,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         if($classRaw["id"]) {
             $this->assignVariablesToModel($classRaw);
         
-            $this->model->setPropertyVisibility(unserialize($classRaw["propertyVisibility"]));
+            $this->model->setPropertyVisibility(Pimcore_Tool_Serialize::unserialize($classRaw["propertyVisibility"]));
             $this->model->setLayoutDefinitions($this->getLayoutData());
         } else {
             throw new Exception("Class with ID " . $id . " doesn't exist");
@@ -91,7 +91,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
     protected function getLayoutData () {
         $file = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
         if(is_file($file)) {
-            return unserialize(file_get_contents($file));
+            return Pimcore_Tool_Serialize::unserialize(file_get_contents($file));
         }
         return;
     }
@@ -122,7 +122,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             if (in_array($key, $this->validColumns)) {
 
                 if (is_array($value) || is_object($value)) {
-                    $value = serialize($value);
+                    $value = Pimcore_Tool_Serialize::serialize($value);
                 } else  if(is_bool($value)) {
                     $value = (int)$value;
                 }
@@ -144,7 +144,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         if(!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
             throw new Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
         }
-        file_put_contents($definitionFile, serialize($this->model->layoutDefinitions));
+        file_put_contents($definitionFile, Pimcore_Tool_Serialize::serialize($this->model->layoutDefinitions));
         chmod($definitionFile,0766);
                     
         $objectTable = "object_query_" . $this->model->getId();

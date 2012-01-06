@@ -137,7 +137,7 @@ class Document_Tag_Area extends Document_Tag {
                 include_once($action);
 
                 $actionClassname = "Document_Tag_Area_" . ucfirst($options["type"]);
-                if(class_exists($actionClassname)) {
+                if(Pimcore_Tool::classExists($actionClassname)) {
                     $actionObj = new $actionClassname();
 
                     if($actionObj instanceof Document_Tag_Area_Abstract) {

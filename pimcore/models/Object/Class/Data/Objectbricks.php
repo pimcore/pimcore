@@ -262,7 +262,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     {
         $classname = "Object_" . ucfirst($object->getClass()->getName()) . "_" . ucfirst($this->getName());
 
-        if(class_exists($classname)) {
+        if(Pimcore_Tool::classExists($classname)) {
             $container = new $classname($object, $this->getName());
             $container->load($object);
 
@@ -508,7 +508,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
         $classname = "Object_" . ucfirst($class->getName()) . "_" . ucfirst($this->getName());
 
-        $code .= "\t\t" . 'if(class_exists("' . $classname . '")) { ' . "\n";
+        $code .= "\t\t" . 'if(Pimcore_Tool::classExists("' . $classname . '")) { ' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
         $code .= "\t\t\t" . '$this->' . $key . ' = $data;' . "\n";
         $code .= "\t\t" . '} else {' . "\n";

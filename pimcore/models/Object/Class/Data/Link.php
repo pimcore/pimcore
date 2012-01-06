@@ -55,7 +55,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
         if($data instanceof Object_Data_Link and isset($data->object)){
             unset($data->object);
         }
-        return serialize($data);
+        return Pimcore_Tool_Serialize::serialize($data);
     }
 
     /**
@@ -64,7 +64,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
      * @return Object_Data_Link
      */
     public function getDataFromResource($data) {
-        $link = unserialize($data);
+        $link = Pimcore_Tool_Serialize::unserialize($data);
 
         if ($link instanceof Object_Data_Link) {
             if ($link->isEmpty()) {
@@ -81,7 +81,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
      * @return string
      */
     public function getDataForQueryResource($data, $object = null) {
-        return serialize($data);
+        return Pimcore_Tool_Serialize::serialize($data);
     }
 
     /**
@@ -241,7 +241,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
             $key = $this->getName();
             $getter = "get".ucfirst($key);
             if ($object->$getter() instanceof Object_Data_Link) {
-                return base64_encode(serialize($object->$getter()));
+                return base64_encode(Pimcore_Tool_Serialize::serialize($object->$getter()));
             } else return null;
         } else return null;
     }
@@ -252,7 +252,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
      * @return Object_Class_Data_Link
      */
     public function getFromCsvImport($importValue) {
-        $value = unserialize(base64_decode($importValue));
+        $value = Pimcore_Tool_Serialize::unserialize(base64_decode($importValue));
         if ($value instanceof Object_Data_Link) {
             return $value;
         } else return null;

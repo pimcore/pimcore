@@ -123,7 +123,7 @@ abstract class Pimcore_Model_Abstract {
         $fileToInclude = str_replace("_", "/", $className) . ".php";
         if (Pimcore_File::isIncludeable($fileToInclude)) {
             include_once($fileToInclude);
-            if(class_exists($className)) {
+            if(Pimcore_Tool::classExists($className)) {
                 return $className;
             }
         } else {

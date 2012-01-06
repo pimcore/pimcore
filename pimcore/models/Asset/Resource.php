@@ -116,7 +116,7 @@ class Asset_Resource extends Element_Resource {
                 if (in_array($key, $this->validColumns)) {
 
                     if (is_array($value)) {
-                        $value = serialize($value);
+                        $value = Pimcore_Tool_Serialize::serialize($value);
                     }
                     $data[$key] = $value;
                 }

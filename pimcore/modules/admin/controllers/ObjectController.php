@@ -1201,7 +1201,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 if (!is_dir($configDir)) {
                     mkdir($configDir, 0755, true);
                 }
-                file_put_contents($configFile, serialize($gridConfig));
+                file_put_contents($configFile, Pimcore_Tool_Serialize::serialize($gridConfig));
                 chmod($configFile, 0766);
 
 

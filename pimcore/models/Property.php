@@ -114,7 +114,7 @@ class Property extends Pimcore_Model_Abstract {
             $this->data = Object_Abstract::getById(intval($data));
         }
         else if ($this->type == "date") {
-            $this->data = unserialize($data);
+            $this->data = Pimcore_Tool_Serialize::unserialize($data);
         }
         else if ($this->type == "bool") {
             $this->data = false;

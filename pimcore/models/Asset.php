@@ -255,7 +255,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
                     $typeClass = "Asset_" . ucfirst($asset->getType());
                     $typeClass = Pimcore_Tool::getModelClassMapping($typeClass);
 
-                    if (class_exists($typeClass)) {
+                    if (Pimcore_Tool::classExists($typeClass)) {
                         $asset = new $typeClass();
                         Zend_Registry::set($cacheKey, $asset);
                         $asset->getResource()->getById($id);
@@ -1098,7 +1098,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setCustomSettings($customSettings) {
         if (is_string($customSettings)) {
-            $customSettings = unserialize($customSettings);
+            $customSettings = Pimcore_Tool_Serialize::unserialize($customSettings);
         }
 
         $this->customSettings = $customSettings;

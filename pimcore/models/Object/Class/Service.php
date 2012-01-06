@@ -77,7 +77,7 @@ class Object_Class_Service  {
         if (is_array($array) && count($array) > 0) {
 
             $class = "Object_Class_".ucfirst($array["datatype"])."_" . ucfirst($array["fieldtype"]);
-            if (class_exists($class)) {
+            if (Pimcore_Tool::classExists($class)) {
                 $item = new $class();
 
                 if(method_exists($item,"addChild")) { // allows childs

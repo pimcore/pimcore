@@ -262,7 +262,7 @@ class Pimcore_View extends Zend_View {
 
         if (Pimcore_File::isIncludeable($tagFile)) {
             include_once($tagFile);
-            if (@class_exists($class)) {
+            if (@Pimcore_Tool::classExists($class)) {
                 if(!isset($arguments[0])) {
                     throw new Exception ("You have to set a name for the called tag (editable): " . $method);
                 }

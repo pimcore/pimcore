@@ -1080,7 +1080,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 "x" => $this->_getParam("cropLeft")
             ));
 
-            $hash = md5(serialize($this->_getAllParams()));
+            $hash = md5(Pimcore_Tool_Serialize::serialize($this->_getAllParams()));
             $thumbnail->setName("auto_" . $hash);
         }
 

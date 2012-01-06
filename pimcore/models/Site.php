@@ -146,7 +146,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setDomains($domains) {
         if (is_string($domains)) {
-            $domains = unserialize($domains);
+            $domains = Pimcore_Tool_Serialize::unserialize($domains);
         }
         $this->domains = $domains;
     }

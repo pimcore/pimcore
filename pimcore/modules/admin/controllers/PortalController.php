@@ -29,7 +29,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
     protected function getCurrentConfiguration () {
         
         if(is_file($this->getConfigFile())) {
-            $conf = unserialize(file_get_contents($this->getConfigFile()));
+            $conf = Pimcore_Tool_Serialize::unserialize(file_get_contents($this->getConfigFile()));
             if($conf["positions"]) {
                 return $conf;
             }
@@ -60,7 +60,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
             mkdir($this->getConfigDir());
         }
         
-        file_put_contents($this->getConfigFile(), serialize($config));
+        file_put_contents($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($config));
         chmod($this->getConfigFile(), 0766);
     }
     

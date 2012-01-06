@@ -120,7 +120,7 @@ class Document_Tag_Href extends Document_Tag {
     public function setDataFromResource($data) {
 
         if (!empty($data)) {
-            $data = unserialize($data);
+            $data = Pimcore_Tool_Serialize::unserialize($data);
         }
 
         $this->id = $data["id"];

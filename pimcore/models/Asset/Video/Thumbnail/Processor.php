@@ -155,7 +155,7 @@ class Asset_Video_Thumbnail_Processor {
     public static function execute ($processId) {
         $instance = new self();
         $instance->setProcessId($processId);
-        $instance = unserialize(file_get_contents($instance->getJobFile()));
+        $instance = Pimcore_Tool_Serialize::unserialize(file_get_contents($instance->getJobFile()));
         $formats = array();
         $overallStatus = array();
 
@@ -236,7 +236,7 @@ class Asset_Video_Thumbnail_Processor {
         $instance->setProcessId($processId);
 
         if(is_file($instance->getJobFile())) {
-            $instance = unserialize(file_get_contents($instance->getJobFile()));
+            $instance = Pimcore_Tool_Serialize::unserialize(file_get_contents($instance->getJobFile()));
         }
 
         return $instance->getStatus();
@@ -255,7 +255,7 @@ class Asset_Video_Thumbnail_Processor {
      * @return bool
      */
     public function save() {
-        file_put_contents($this->getJobFile(), serialize($this));
+        file_put_contents($this->getJobFile(), Pimcore_Tool_Serialize::serialize($this));
         return true;
     }
 

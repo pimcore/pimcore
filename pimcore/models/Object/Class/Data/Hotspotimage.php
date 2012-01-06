@@ -155,7 +155,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
         $key = $this->getName();
         $getter = "get".ucfirst($key);
         if ($object->$getter() instanceof Object_Data_Hotspotimage) {
-            return base64_encode(serialize($object->$getter()));
+            return base64_encode(Pimcore_Tool_Serialize::serialize($object->$getter()));
         } else return null;
     }
 
@@ -168,7 +168,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
      */
     public function getFromCsvImport($importValue) {
         $value = null;
-        $value = unserialize(base64_decode($importValue));
+        $value = Pimcore_Tool_Serialize::unserialize(base64_decode($importValue));
         if ($value instanceof Object_Data_Hotspotimage) {
             return $value;
         } else {

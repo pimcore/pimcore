@@ -389,11 +389,11 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                         // Object_Class_Data_Fieldcollections is special because it doesn't support the csv export
                         if($value instanceof Object_Class_Data_Fieldcollections) {
                             $getter = "get".$value->getName();
-                            $this->fieldcollectionData.= serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+                            $this->fieldcollectionData.= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
                         } else if ($value instanceof Object_Class_Data_Localizedfields){
 
                             $getter = "get".$value->getName();
-                            $this->localizedData.= serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+                            $this->localizedData.= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
                         } else {
                             $this->data.=$value->getForCsvExport($element)." ";
                         }

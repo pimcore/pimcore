@@ -55,7 +55,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         $fieldFile = $objectBrickFolder . "/" . $key . ".psf";
         if(is_file($fieldFile)) {
             $fcData = file_get_contents($fieldFile);
-            $fc = unserialize($fcData);
+            $fc = Pimcore_Tool_Serialize::unserialize($fcData);
             
             return $fc;
         }
@@ -95,7 +95,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
 
 
-        $serialized = serialize($this);
+        $serialized = Pimcore_Tool_Serialize::serialize($this);
         $serializedFilename = $objectBrickFolder . "/" . $this->getKey() . ".psf";
 
 
@@ -166,7 +166,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
             $prevSerialized = file_get_contents($serializedFilename);
         }
 
-        $oldObject = unserialize($prevSerialized);
+        $oldObject = Pimcore_Tool_Serialize::unserialize($prevSerialized);
 
         if(!empty($oldObject->classDefinitions)) {
             foreach($oldObject->classDefinitions as $cl) {

@@ -133,7 +133,7 @@ class Document_Tag_Renderlet extends Document_Tag {
      */
     public function setDataFromResource($data) {
 
-        $data = unserialize($data);
+        $data = Pimcore_Tool_Serialize::unserialize($data);
 
         $this->id = $data["id"];
         $this->type = $data["type"];

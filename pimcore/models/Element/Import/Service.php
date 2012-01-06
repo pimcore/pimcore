@@ -85,7 +85,7 @@ class Element_Import_Service
             $maintype = "object";
             if ($type == "object") {
                 $className = "Object_" . ucfirst($apiElement->className);
-                if (!class_exists($className)) {
+                if (!Pimcore_Tool::classExists($className)) {
                     throw new Exception("Unknown class [ " . $className . " ]");
                 }
             } else {

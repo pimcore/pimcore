@@ -32,9 +32,9 @@ class Pimcore_Tool_Serialize {
      */
     public static function unserialize ($data) {
         if(!empty($data) && is_string($data)) {
-            return unserialize($data);
+            $data = @unserialize($data);
         }
-        return null;
+        return $data;
     }
     
 }

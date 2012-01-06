@@ -37,7 +37,7 @@ class Webservice_Tool {
                 $file = str_replace(".php","",$file);
                 $class = str_replace(DIRECTORY_SEPARATOR,"_",$file);
                 
-                if(class_exists($class)) {
+                if(Pimcore_Tool::classExists($class)) {
                     $match = false;
                     foreach ($includePatterns as $pattern) {
                        if(preg_match($pattern,$file)) {
