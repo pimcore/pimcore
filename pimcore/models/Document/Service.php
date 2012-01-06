@@ -58,6 +58,11 @@ class Document_Service extends Element_Service {
             $view = new Pimcore_View();
         }
 
+        // add the view script path from the website module to the view, because otherwise it's not possible to call
+        // this method out of other modules to render documents, eg. sending e-mails out of an plugin with Pimcore_Mail
+        $view->addScriptPath(PIMCORE_FRONTEND_MODULE . "/views/layouts");
+        $view->addScriptPath(PIMCORE_FRONTEND_MODULE . "/views/scripts");
+
         $documentBackup = null;
         if($view->document) {
             $documentBackup = $view->document;
