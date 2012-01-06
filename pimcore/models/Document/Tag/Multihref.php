@@ -153,7 +153,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      * @return boolean
      */
     public function isEmpty() {
-        return count($this->elements) > 0 ? true : false;
+        return count($this->elements) > 0 ? false : true;
     }
 
     /**
