@@ -51,7 +51,7 @@ class Property_Resource extends Pimcore_Model_Resource_Abstract {
 
 
         if (is_array($data) || is_object($data)) {
-            $data = serialize($data);
+            $data = Pimcore_Tool_Serialize::serialize($data);
         }
 
         $saveData = array(

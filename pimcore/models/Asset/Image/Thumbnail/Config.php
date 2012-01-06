@@ -283,7 +283,7 @@ class Asset_Image_Thumbnail_Config {
         }
 
         // set name
-        $hash = md5(serialize($config));
+        $hash = md5(Pimcore_Tool_Serialize::serialize($config));
         $pipe->setName("auto_" . $hash);
 
         return $pipe;
@@ -299,7 +299,7 @@ class Asset_Image_Thumbnail_Config {
     public static function getByLegacyConfig ($config) {
 
         $pipe = new Asset_Image_Thumbnail_Config();
-        $hash = md5(serialize($config));
+        $hash = md5(Pimcore_Tool_Serialize::serialize($config));
         $pipe->setName("auto_" . $hash);
 
         if($config["format"]) {

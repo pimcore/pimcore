@@ -30,7 +30,7 @@ class Object_Objectbrick_Definition_List {
                 $file = $objectBricksFolder . "/" . $file;
                 if(is_file($file)) {
                     $fieldData = file_get_contents($file);
-                    $fields[] = unserialize($fieldData);
+                    $fields[] = Pimcore_Tool_Serialize::unserialize($fieldData);
                 }
             }
         }

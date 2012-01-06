@@ -220,9 +220,9 @@ class Pimcore_Placeholder
                 }
 
                 //first try to init the website class -> then the pimcore class
-                if (class_exists($websiteClass)) {
+                if (Pimcore_Tool::classExists($websiteClass)) {
                     $placeholderObject = new $websiteClass();
-                } elseif (class_exists($pimcoreClass)) {
+                } elseif (Pimcore_Tool::classExists($pimcoreClass)) {
                     $placeholderObject = new $pimcoreClass();
                 }
 

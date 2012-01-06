@@ -48,9 +48,9 @@ abstract class Webservice_Data_Mapper {
 
             if (in_array($orgclass,$mappingClasses)) {
                 $apiclass = "Webservice_Data_" . $orgclass . "_" . ucfirst($type);
-                if (!class_exists($apiclass)) {
+                if (!Pimcore_Tool::classExists($apiclass)) {
                     $apiclass = "Webservice_Data_" . $orgclass;
-                    if (!class_exists($apiclass)) {
+                    if (!Pimcore_Tool::classExists($apiclass)) {
                         throw new Exception("Webservice_Data_Mapper: no SOAP API class found for [ " . $orgclass . " ]");
                     }
                 }
@@ -75,7 +75,7 @@ abstract class Webservice_Data_Mapper {
         if($object instanceof Zend_Date){
             $object=$object->toString();
         } else if (is_object($object)) {
-            if (class_exists($apiclass)) {
+            if (Pimcore_Tool::classExists($apiclass)) {
                 $new = new $apiclass();
                 if (method_exists($new, "map")) {
                     $new->map($object);

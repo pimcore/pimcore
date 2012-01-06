@@ -116,7 +116,7 @@ class Document_Tag_Areablock extends Document_Tag {
                     include_once($action);
                     
                     $actionClassname = "Document_Tag_Area_" . ucfirst($index["type"]);
-                    if(class_exists($actionClassname)) {
+                    if(Pimcore_Tool::classExists($actionClassname)) {
                         $actionObj = new $actionClassname();
                         
                         if($actionObj instanceof Document_Tag_Area_Abstract) {
@@ -180,7 +180,7 @@ class Document_Tag_Areablock extends Document_Tag {
      * @return void
      */
     public function setDataFromResource($data) {
-        $this->indices = unserialize($data);
+        $this->indices = Pimcore_Tool_Serialize::unserialize($data);
     }
 
     /**

@@ -73,7 +73,7 @@ class Document_Tag_Table extends Document_Tag {
      * @return void
      */
     public function setDataFromResource($data) {
-        $this->data = unserialize($data);
+        $this->data = Pimcore_Tool_Serialize::unserialize($data);
     }
 
     /**

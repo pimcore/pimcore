@@ -53,7 +53,7 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
      * @return string
      */
     public function getDataForResource($data, $object = null) {
-        return serialize($data);
+        return Pimcore_Tool_Serialize::serialize($data);
     }
 
     /**
@@ -62,7 +62,7 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
      * @return string
      */
     public function getDataFromResource($data) {
-        return unserialize($data);
+        return Pimcore_Tool_Serialize::unserialize($data);
     }
 
     /**

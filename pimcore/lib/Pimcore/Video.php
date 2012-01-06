@@ -23,7 +23,7 @@ class Pimcore_Video {
         try {
             if($adapter) {
                 $adapterClass = "Pimcore_Video_Adapter_" . $adapter;
-                if(class_exists($adapterClass)) {
+                if(Pimcore_Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
                     throw new Exception("Video-transcode adapter `" . $adapter . "´ does not exist.");

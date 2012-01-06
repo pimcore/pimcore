@@ -127,7 +127,7 @@ class Document_Tag_Image extends Document_Tag {
                         "y" => $this->cropTop,
                         "x" => $this->cropLeft
                     ));
-                    $hash = md5(serialize($thumbConfig->getItems()));
+                    $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
                     $thumbConfig->setName("auto_" . $hash);
                 }
 
@@ -187,7 +187,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setDataFromResource($data) {
 
         if (strlen($data) > 2) {
-            $data = unserialize($data);
+            $data = Pimcore_Tool_Serialize::unserialize($data);
         }
 
         $this->id = $data["id"];
@@ -260,7 +260,7 @@ class Document_Tag_Image extends Document_Tag {
                     "y" => $this->cropTop,
                     "x" => $this->cropLeft
                 ));
-                $hash = md5(serialize($thumbConfig->getItems()));
+                $hash = md5(Pimcore_Tool_Serialize::serialize($thumbConfig->getItems()));
                 $thumbConfig->setName("auto_" . $hash);
             }
 

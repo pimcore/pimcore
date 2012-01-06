@@ -23,7 +23,7 @@ class Pimcore_Image {
         try {
             if($adapter) {
                 $adapterClass = "Pimcore_Image_Adapter_" . $adapter;
-                if(class_exists($adapterClass)) {
+                if(Pimcore_Tool::classExists($adapterClass)) {
                     return new $adapterClass();
                 } else {
                     throw new Exception("Image-transform adapter `" . $adapter . "´ does not exist.");

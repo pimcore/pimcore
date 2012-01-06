@@ -235,7 +235,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                     $typeClass = "Document_" . ucfirst($document->getType());
                     $typeClass = Pimcore_Tool::getModelClassMapping($typeClass);
 
-                    if (class_exists($typeClass)) {
+                    if (Pimcore_Tool::classExists($typeClass)) {
                         $document = new $typeClass();
                         Zend_Registry::set($cacheKey, $document);
                         $document->getResource()->getById($id);

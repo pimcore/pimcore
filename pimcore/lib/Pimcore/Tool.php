@@ -351,7 +351,7 @@ class Pimcore_Tool {
         $clientConfig["timeout"] = 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;
 
-        if(class_exists($type)) {
+        if(Pimcore_Tool::classExists($type)) {
             $client = new $type(null, $clientConfig);
         } else {
             throw new Exception("Pimcore_Tool::getHttpClient: Unable to create an instance of $type");
@@ -414,7 +414,7 @@ class Pimcore_Tool {
         if($map = Pimcore_Config::getModelClassMappingConfig()) {
             $tmpClassName = $map->{$sourceClassName};
             if($tmpClassName) {
-                if(class_exists($tmpClassName)) {
+                if(Pimcore_Tool::classExists($tmpClassName)) {
                     if(is_subclass_of($tmpClassName, $sourceClassName)) {
                         $targetClassName = $tmpClassName;
                     }
@@ -457,5 +457,13 @@ class Pimcore_Tool {
         }
 
         return $ip;
+    }
+
+    public static function classExists ($class) {
+        Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
+        $exists = class_exists($class);
+        Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
+
+        return $exists;
     }
 }

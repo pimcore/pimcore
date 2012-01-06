@@ -335,7 +335,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                 // check for a mapped class
                 $listClass = Pimcore_Tool::getModelClassMapping($listClass);
 
-                if (class_exists($listClass)) {
+                if (Pimcore_Tool::classExists($listClass)) {
                     $list = new $listClass();
                 }
             }

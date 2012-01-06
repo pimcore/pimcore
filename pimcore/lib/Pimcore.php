@@ -476,7 +476,7 @@ class Pimcore {
 
                     try {
                         $className = $p['plugin']['pluginClassName'];
-                        if (!empty($className) && class_exists($className)) {
+                        if (!empty($className) && Pimcore_Tool::classExists($className)) {
                          
                             $plugin = new $className($jsPaths, $cssPaths);
                             if ($plugin instanceof Pimcore_API_Plugin_Abstract) {

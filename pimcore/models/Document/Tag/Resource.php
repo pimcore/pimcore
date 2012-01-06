@@ -23,7 +23,7 @@ class Document_Tag_Resource extends Pimcore_Model_Resource_Abstract {
         $data = $this->model->getDataForResource();
         
         if (is_array($data) or is_object($data)) {
-            $data = serialize($data);
+            $data = Pimcore_Tool_Serialize::serialize($data);
         }
 
         $element = array(

@@ -157,7 +157,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return string
      */
     public function getDataForResource($data, $object = null) {
-        return serialize($data);
+        return Pimcore_Tool_Serialize::serialize($data);
     }
 
     /**
@@ -166,7 +166,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return string
      */
     public function getDataFromResource($data) {
-        return unserialize((string) $data);
+        return Pimcore_Tool_Serialize::unserialize((string) $data);
     }
 
     /**
@@ -263,7 +263,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
         $key = $this->getName();
         $getter = "get".ucfirst($key);
         if (is_array($object->$getter())) {
-            return base64_encode(serialize($object->$getter()));
+            return base64_encode(Pimcore_Tool_Serialize::serialize($object->$getter()));
         } else return null;
 
     }
@@ -277,7 +277,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      */
     public function getFromCsvImport($importValue) {
 
-       $value = unserialize(base64_decode($importValue));
+       $value = Pimcore_Tool_Serialize::unserialize(base64_decode($importValue));
         Logger::log("table data");
         Logger::log($value);
         if (is_array($value)) {

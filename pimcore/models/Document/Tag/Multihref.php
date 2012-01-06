@@ -108,7 +108,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      * @return void
      */
     public function setDataFromResource($data) {
-        if($data = unserialize($data)) {
+        if($data = Pimcore_Tool_Serialize::unserialize($data)) {
             $this->setDataFromEditmode($data);
         }
     }

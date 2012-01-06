@@ -68,7 +68,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
                 $class = "Object_Class_Data_" . ucfirst($element->type);
-                if (class_exists($class)) {
+                if (Pimcore_Tool::classExists($class)) {
                     $setter = "set" . ucfirst($element->name);
                     if (method_exists($object, $setter)) {
                         $tag = $object->getO_class()->getFieldDefinition($element->name);

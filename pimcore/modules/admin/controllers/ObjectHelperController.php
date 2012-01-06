@@ -70,7 +70,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
             foreach ($configFiles as $configFile) {
                 if (is_file($configFile)) {
-                    $gridConfig = unserialize(file_get_contents($configFile));
+                    $gridConfig = Pimcore_Tool_Serialize::unserialize(file_get_contents($configFile));
                     break;
                 }
             }

@@ -112,7 +112,7 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
             if (in_array($key, $this->validColumns)) {
 
                 if (is_array($value) || is_object($value)) {
-                    $value = serialize($value);
+                    $value = Pimcore_Tool_Serialize::serialize($value);
                 }
                 $data[$key] = $value;
             }

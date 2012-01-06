@@ -129,7 +129,7 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
         }
 
         $importData = file_get_contents($importDir . "/" . $file);
-        $apiData = unserialize($importData);
+        $apiData = Pimcore_Tool_Serialize::unserialize($importData);
 
 
         //first run - just save elements so that they are there
@@ -147,7 +147,7 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
             $importSession->elementCounter++;
 
             $importFile = $importDir . "/" . $file;
-            file_put_contents($importFile, serialize($apiData));
+            file_put_contents($importFile, Pimcore_Tool_Serialize::serialize($apiData));
             chmod($importFile, 0766);
         }
 
@@ -174,7 +174,7 @@ class Admin_ImportController extends Pimcore_Controller_Action_Admin
             }
 
             $importFile = $importDir . "/" . $file;
-            file_put_contents($importFile, serialize($apiData));
+            file_put_contents($importFile, Pimcore_Tool_Serialize::serialize($apiData));
             chmod($importFile, 0766);
         }
 

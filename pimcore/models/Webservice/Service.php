@@ -484,7 +484,7 @@ class Webservice_Service
             if ($wsDocument instanceof Webservice_Data_Object_Concrete_In) {
                 $wsDocument->type = "object";
                 $classname = "Object_" . ucfirst($wsDocument->className);
-                if (class_exists($classname)) {
+                if (Pimcore_Tool::classExists($classname)) {
                     $object = new $classname();
 
                     if ($object instanceof Object_Concrete) {
@@ -675,7 +675,7 @@ class Webservice_Service
             $listClassName = "Object_Abstract";
             if(!empty($objectClass)) {
                 $listClassName = "Object_" . ucfirst($objectClass);
-                if(!class_exists($listClassName)) {
+                if(!Pimcore_Tool::classExists($listClassName)) {
                     $listClassName = "Object_Abstract";
                 }
             }

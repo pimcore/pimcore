@@ -58,7 +58,7 @@ class Document_Tag_Multiselect extends Document_Tag {
      * @return void
      */
     public function setDataFromResource($data) {
-        $this->values = unserialize($data);
+        $this->values = Pimcore_Tool_Serialize::unserialize($data);
     }
 
     /**

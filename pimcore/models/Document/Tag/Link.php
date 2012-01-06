@@ -223,7 +223,7 @@ class Document_Tag_Link extends Document_Tag {
      * @return void
      */
     public function setDataFromResource($data) {
-        $this->data = unserialize($data);
+        $this->data = Pimcore_Tool_Serialize::unserialize($data);
     }
 
     /**

@@ -142,7 +142,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         $fieldFile = $fieldCollectionFolder . "/" . $key . ".psf";
         if(is_file($fieldFile)) {
             $fcData = file_get_contents($fieldFile);
-            $fc = unserialize($fcData);
+            $fc = Pimcore_Tool_Serialize::unserialize($fcData);
             
             return $fc;
         }
@@ -163,7 +163,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
             mkdir($fieldCollectionFolder);
         }
         
-        $serialized = serialize($this);
+        $serialized = Pimcore_Tool_Serialize::serialize($this);
 
         $definitionFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";
 

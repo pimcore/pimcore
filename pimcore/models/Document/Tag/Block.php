@@ -69,7 +69,7 @@ class Document_Tag_Block extends Document_Tag {
      * @return void
      */
     public function setDataFromResource($data) {
-        $this->indices = unserialize($data);
+        $this->indices = Pimcore_Tool_Serialize::unserialize($data);
     }
 
     /**
