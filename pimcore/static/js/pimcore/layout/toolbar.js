@@ -254,21 +254,23 @@ pimcore.layout.toolbar = Class.create({
                 handler: this.editProfile
             });
         }
+
         if (user.isAllowed("thumbnails")) {
             settingsItems.push({
                 text: t("thumbnails"),
                 iconCls: "pimcore_icon_thumbnails",
-                handler: this.editThumbnails
+                menu : [{
+                    text: t("image_thumbnails"),
+                    iconCls: "pimcore_icon_thumbnails",
+                    handler: this.editThumbnails
+                },{
+                    text: t("video_thumbnails"),
+                    iconCls: "pimcore_icon_videothumbnails",
+                    handler: this.editVideoThumbnails
+                }]
             });
         }
 
-        if (user.isAllowed("thumbnails")) {
-            settingsItems.push({
-                text: t("video_thumbnails"),
-                iconCls: "pimcore_icon_videothumbnails",
-                handler: this.editVideoThumbnails
-            });
-        }
 
         if (user.isAllowed("objects")) {
 
