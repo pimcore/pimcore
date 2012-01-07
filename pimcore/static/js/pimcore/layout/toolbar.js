@@ -259,6 +259,7 @@ pimcore.layout.toolbar = Class.create({
             settingsItems.push({
                 text: t("thumbnails"),
                 iconCls: "pimcore_icon_thumbnails",
+                hideOnClick: false,
                 menu : [{
                     text: t("image_thumbnails"),
                     iconCls: "pimcore_icon_thumbnails",
