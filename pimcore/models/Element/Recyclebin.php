@@ -21,7 +21,8 @@ class Element_Recyclebin extends Pimcore_Model_Abstract {
         $files = scandir(PIMCORE_RECYCLEBIN_DIRECTORY);
         foreach ($files as $file) {
             if (is_file(PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $file)) {
-                unlink(PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $file);
+            	$recycleFile = new Pimcore_File_Recyclebin(PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $file);
+            	$recycleFile->delete();
             }
         }
     }

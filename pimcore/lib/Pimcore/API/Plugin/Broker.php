@@ -520,6 +520,50 @@ class Pimcore_API_Plugin_Broker {
             }
         }
     }
+    
+    
+    /**
+     *
+     * Calls preFileChange functions of all registered plugins and system modules
+     *
+     * @param Pimcore_Event_File $event
+     */
+    public function preFileChange(Pimcore_Event_File $event) {
+
+        foreach ($this->_systemModules as $module) {
+            $module->preFileChange($event);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preFileChange($event);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preFileChange");
+            }
+        }
+
+    }
+    
+    
+    /**
+     *
+     * Calls postFileChange functions of all registered plugins and system modules
+     *
+     * @param Pimcore_Event_File $event
+     */
+    public function postFileChange(Pimcore_Event_File $event) {
+
+        foreach ($this->_systemModules as $module) {
+            $module->postFileChange($event);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postFileChange($event);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postFileChange");
+            }
+        }
+
+    }
 
 
     /**

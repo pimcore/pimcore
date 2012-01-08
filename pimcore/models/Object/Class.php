@@ -262,13 +262,12 @@ class Object_Class extends Pimcore_Model_Abstract {
 
         $cd .= "}\n";
         $cd .= "\n";
-
-        $classFile = PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php";
-        if(!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
-            throw new Exception("Cannot write class file in " . $classFile . " please check the rights on this directory");
+        
+        $classFile = $this->getClassFile();
+        $classFile->setContents($cd);
+        if($classFile->save() === FALSE) {
+            throw new Exception("Cannot write class file in " . $classFile->getPath() . " please check the rights on this directory");
         }
-        file_put_contents($classFile,$cd);
-        chmod($classFile, 0766);
 
         // create list class
 
@@ -285,15 +284,11 @@ class Object_Class extends Pimcore_Model_Abstract {
         $cd .= "}\n";
         /*$cd .= "?>";*/
 
-
-        @mkdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
-
-        $classListFile = PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php";
-        if(!is_writable(dirname($classListFile)) || (is_file($classListFile) && !is_writable($classListFile))) {
-            throw new Exception("Cannot write class file in " . $classListFile . " please check the rights on this directory");
+        $classListFile = $this->getClassListFile();
+        $classListFile->setContents($cd);
+        if($classListFile->save() === FALSE) {
+            throw new Exception("Cannot write class file in " . $classListFile->getPath() . " please check the rights on this directory");
         }
-        file_put_contents($classListFile,$cd);
-        chmod($classListFile, 0766);
 
         // empty object cache
         try {
@@ -301,6 +296,22 @@ class Object_Class extends Pimcore_Model_Abstract {
         }
         catch (Exception $e) {
         }
+    }
+    
+    /**
+     * @return Pimcore_File_Php
+     */
+    public function getClassFile() {
+    	$classFile = new Pimcore_File_Php(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php");
+    	return $classFile;
+    }
+    
+    /**
+     * @return Pimcore_File_Php
+     */
+    public function getClassListFile() {
+	    $classListFile = new Pimcore_File_Php(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php");
+    	return $classListFile;
     }
 
     /**
@@ -339,9 +350,11 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     protected function deletePhpClasses() {
         // delete the class files
-        @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php");
-        @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php");
-        @rmdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
+        $this->getClassFile()->delete();
+        $this->getClassListFile()->delete();
+        $listFolder = new Pimcore_File(dirname($this->getClassListFile()->getPath()));
+        $listFolder->isFolder(true);
+        $listFolder->delete();
     }
 
     /**
