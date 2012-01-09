@@ -130,7 +130,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     updateImage: function (initialLoad) {
-        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/aspectratio/true";
+        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/height/" + (this.fieldConfig.height - 40) + "/aspectratio/true";
         var name = this.getName();
         this.panel.getEl().update(
             '<img id="' + name + this.uniqeFieldId + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />',
