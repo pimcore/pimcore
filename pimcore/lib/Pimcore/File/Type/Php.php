@@ -13,5 +13,5 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_File_Version extends Pimcore_File {
+class Pimcore_File_Type_Php extends Pimcore_File {
 }

@@ -141,7 +141,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         
          // save definition as a serialized file
         $definitionFilePath = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
-        $definitionFile = new Pimcore_File_Psf($definitionFilePath);
+        $definitionFile = new Pimcore_File_Type_Psf($definitionFilePath);
         $definitionFile->setContents(Pimcore_Tool_Serialize::serialize($this->model->layoutDefinitions));
         if($definitionFile->save() === FALSE) {
             throw new Exception("Cannot write definition file in: " . $definitionFile->getPath() . " please check write permission on this directory.");

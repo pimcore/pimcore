@@ -13,5 +13,5 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_File_Temp extends Pimcore_File {
+class Pimcore_File_Type_Psf extends Pimcore_File {
 }

@@ -9,31 +9,23 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
+ * @category   Pimcore
+ * @package    File
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
 class Pimcore_File {
 
-    /**
+	/**
+     * @var Pimcore_File_Adapter
+     */
+    private $adapter;
+    
+	/**
      * @var string
      */
-    private $filepath;
-    
-    /**
-     * @var string
-     */
-    private $filename;
-    
-    /**
-     * @var string
-     */
-    private $contents;
-    
-    /**
-     * @var bool
-     */
-    private $isFolder;
+    private static $defaultAdapterName = 'Pimcore_File_Adapter_Disk';
     
     /**
      * @var bool
@@ -50,14 +42,68 @@ class Pimcore_File {
      * Creates a new Pimcore_File instance with the provided filepath.
      * 
      * @access public
-     * @param mixed $path The full system filepath for the file. (default: null)
+     * @param mixed $path The full filepath for the file. (default: null)
      * @param mixed $isFolder Whether this file represents a folder. (default: false)
      */
-    public function __construct($path = null, $isFolder = false) {    
-    	if(isset($path)) {
-    		$this->setPath($path);
-    	}
+    public function __construct($path = null, $isFolder = false) {
+    	$this->adapter = $this->getAdapter();
+    	$this->adapter->setPath($path);
+    	$this->adapter->isFolder($isFolder);
     }
+    
+    
+    /**
+     * Internal function to retrieve the appropriate file adapter. Pimcore's disk 
+     * file adapter is used by default unless a different one is specified 
+     * in the system config.
+     * 
+     * @access private
+     * @param mixed $adapterName. (default: null)
+     * @return Pimcore_File_Adapter
+     */
+    private function getAdapter($adapterName = null) {
+    	if(isset($adapterName)) {
+    		$adapterName = new $adapterName();
+    	} else {
+    		$config = Pimcore_Config::getSystemConfig()->toArray();
+	        
+	        if(!empty($config["files"]["adapter"])) {
+        		$adapterName = $config["files"]["adapter"];
+	        } else {
+	        	$adapterName = self::$defaultAdapterName;
+	        }
+    	}
+    	
+		$adapter = new $adapterName();
+    	return $adapter;
+    }
+    
+    
+    /**
+     * The class name of the adapter this file is currently using.
+     * 
+     * @access public
+     * @return string The class name of the adapter.
+     */
+    public function getAdapterType() {
+    	return get_class($this->adapter);
+    }
+    
+    
+    /**
+     * Sets the adapter type for this file to use.
+     * 
+     * @access public
+     * @param mixed $adapterName The full classname of the adapter to use.
+     * @return void
+     */
+    public function setAdapter($adapterName) {
+    	$adapter = $this->getAdapter($adapterName);
+    	$adapter->setPath($this->adapter->getPath());
+    	$adapter->isFolder($this->adapter->isFolder());
+    	$this->adapter = $adapter;
+    }
+    
     
     /**
      * Returns the filepath.
@@ -66,7 +112,7 @@ class Pimcore_File {
      * @return string The full system filepath
      */
     public function getPath() {
-    	return $this->filepath;
+    	return $this->adapter->getPath();
     }
 
 
@@ -78,7 +124,7 @@ class Pimcore_File {
      * @return void
      */
     public function setPath($path) {
-    	$this->filepath = $path;
+    	$this->adapter->setPath($path);
     }
     
     
@@ -90,45 +136,33 @@ class Pimcore_File {
      * @return void
      */
     public function getContents() {
-    	return $this->contents;
+    	return $this->adapter->getContents();
     }
 
 
     /**
      * Sets the file contents prior to saving the file. If the $write parameter
-     * is true, the contents will be written to filesystem. Otherwise, the save function
-     * still must be called for the contents to be written.
+     * is true, the contents will be written. Otherwise, the save function
+     * still must be called to write the file.
      * 
      * @access public
      * @param string $contents The contents of the file.
-     * @param string $write If TRUE, the new contents will also be written to the filesystem.
+     * @param string $write If TRUE, the new contents will also be saved to file.
      * @return bool If $write is TRUE, returns the result of the save operation. Returns TRUE otherwise.
      */
     public function setContents($contents, $write = FALSE) {
-    	$this->contents = $contents;
-    	
-    	if($write) {
-    		return $this->save();
-    	} else {
-    		return true;
-    	}
+    	return $this->adapter->setContents($contents, $write = FALSE);
     }
     
     
     /**
-     * Loads the file contents from the filesystem.
+     * Loads the file contents.
      * 
      * @access public
      * @return string The contents of the file, or FALSE on failure
      */
     public function loadContents() {
-    	if(!is_file($this->getPath()) or !is_readable($this->getPath())) {
-    		return FALSE;
-    	} else {
-    		$contents = file_get_contents($this->getPath());
-	    	$this->setContents($contents);
-	    	return $contents;
-    	}
+    	return $this->adapter->load();
     }
 
 
@@ -140,12 +174,8 @@ class Pimcore_File {
 	 * @param bool $isFolder If passed, sets whether this file is a directory. (default: NULL)
 	 * @return bool TRUE if the current file is a directory, FALSE otherwise
 	 */
-	public function isFolder($value = NULL) {
-    	if(is_bool($value)) {
-    		$this->isFolder = $value;
-    	}
-    
-    	return $this->isFolder;
+	public function isFolder($isFolder = NULL) {
+    	return $this->adapter->isFolder($isFolder);
     }
     
     
@@ -159,43 +189,35 @@ class Pimcore_File {
      * @return bool|int The number of bytes that were written to the file, or FALSE on failure.
      */
     public function save() {
-    	$exists = $this->exists();
-    	$destinationPath = $this->getPath();
-        $eventType = $exists ? Pimcore_Event::EVENT_TYPE_FILE_MODIFIED : Pimcore_Event::EVENT_TYPE_FILE_CREATED;
-        
+    	$eventType = $this->exists() ? Pimcore_Event::EVENT_TYPE_FILE_MODIFIED : Pimcore_Event::EVENT_TYPE_FILE_CREATED;
     	$this->dispatchPreEvent($eventType);
     	
-    	// create the parent folder if it doesn't exist
-    	if (!is_dir(dirname($destinationPath))) {
-            mkdir(dirname($destinationPath), $this->getChmod(), true);
-        }
-        
-        // check if file and directory are writeable, if so save the file
-        if (!is_writable(dirname($destinationPath)) || (is_file($destinationPath) && !is_writable($destinationPath))) {
-        	$result = FALSE;
-        } elseif ($this->isFolder()) {
-        	if ($this->folderExists()) {
-        		$result = TRUE;
-        	} elseif ($this->fileExists()) {
-        		$result = FALSE;
-        	} else {
-        		$result = mkdir($destinationPath, $this->getChmod(), true);
-        	}
-        } else {
-        	if ($this->folderExists()) {
-        		$result = FALSE;
-        	} else {
-        		$result = file_put_contents($destinationPath, $this->getContents());
-        	}
-        }
-        
-        // don't dispatch event if save failed
-        if ($result !== FALSE) {
-        	chmod($destinationPath, $this->getChmod());
-        	$this->dispatchPostEvent($eventType);
-        }
-        
-        return $result;
+    	$result = $this->adapter->save();
+    	if($result !== FALSE) {
+    		$this->dispatchPostEvent($eventType);
+    	}
+    	
+    	return $result;
+    }
+    
+    
+    /**
+     * Makes a copy of the file. If a file exists at the destination,
+     * it will be overwritten. If the destination directory does not exist, 
+     * it will be created.
+     * 
+     * @access public
+     * @param string $destination The destination path
+     * @return bool Returns the result of the save operation.
+     */
+    public function copy($destination) {
+    	if(empty($this->contents)) {
+    		$this->loadContents();
+    	}
+    	
+    	$fileCopy = new Pimcore_File($destination);
+    	$fileCopy->setContents($this->getContents());
+    	return $fileCopy->save();
     }
     
     
@@ -222,26 +244,6 @@ class Pimcore_File {
     	
     	return $result;
     }
-    
-    
-    /**
-     * Makes a copy of the file. If a file exists at the destination,
-     * it will be overwritten. If the destination directory does not exist, 
-     * it will be created.
-     * 
-     * @access public
-     * @param string $destination The destination path
-     * @return bool Returns the result of the save operation.
-     */
-    public function copy($destination) {
-    	if(empty($this->contents)) {
-    		$this->loadContents();
-    	}
-    	
-    	$fileCopy = new Pimcore_File($destination);
-    	$fileCopy->setContents($this->getContents());
-    	return $fileCopy->save();
-    }
 
 
 	/**
@@ -251,22 +253,14 @@ class Pimcore_File {
      * @return bool Returns TRUE on success or FALSE on failure.
      */
 	public function delete() {
-		$path = $this->getPath();	
 		$this->dispatchPreEvent(Pimcore_Event::EVENT_TYPE_FILE_DELETED);
 		
-		if(!$this->exists()) return false;
-        
-        if(!$this->isFolder()) {
-        	if(is_file($path) && is_writable($path)) {
-	            $result = @unlink($path);
-	        }
-        } else {
-            if(is_dir($path) && is_writable($path)) {
-                $result = recursiveDelete($path, true);
-            }
-        }
-                
-        $this->dispatchPostEvent(Pimcore_Event::EVENT_TYPE_FILE_DELETED);
+		$result = $this->adapter->delete();
+		if($result !== FALSE) {
+			$this->dispatchPostEvent(Pimcore_Event::EVENT_TYPE_FILE_DELETED);
+		}
+		
+		return $result;
 	}
 	
 	
@@ -277,7 +271,7 @@ class Pimcore_File {
      * @return bool Returns TRUE on success or FALSE on failure.
      */
 	public function exists() {
-		return file_exists($this->getPath());
+		return $this->adapter->exists();
 	}
 	
 	
@@ -288,7 +282,7 @@ class Pimcore_File {
      * @return bool Returns TRUE on success or FALSE on failure.
      */
 	public function fileExists() {
-		return is_file($this->getPath());
+		return $this->adapter->fileExists();
 	}
 	
 	
@@ -299,7 +293,7 @@ class Pimcore_File {
      * @return bool Returns TRUE on success or FALSE on failure.
      */
 	public function folderExists() {
-		return is_dir($this->getPath());
+		return $this->adapter->folderExists();
 	}
 	
 	
@@ -310,7 +304,7 @@ class Pimcore_File {
      * @return string The mime type of the file.
      */
 	public function getMimeType() {
-		return MIME_Type::autoDetect($this->getPath());
+		return $this->adapter->getMimeType();
 	}
 	
 	
@@ -388,12 +382,6 @@ class Pimcore_File {
 				Pimcore_API_Plugin_Broker::getInstance()->postFileChange(new Pimcore_Event_File($this));
 			break;
 		}
-		
-	}
-	
-	
-	public function getChmod() {
-		return 0766;
 	}
 
 

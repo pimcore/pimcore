@@ -107,7 +107,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
     }
     
     public function getFile() {
-        $recycleFile = new Pimcore_File_Recyclebin($this->getStoreageFile());
+        $recycleFile = new Pimcore_File_Type_Recyclebin($this->getStoreageFile());
         return $recycleFile;
     }
     

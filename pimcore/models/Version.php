@@ -155,14 +155,14 @@ class Version extends Pimcore_Model_Abstract {
     }
     
     /**
-     * Returns a Pimcore_File_Version for this version
+     * Returns a Pimcore_File_Type_Version for this version
      * 
      * @access public
-     * @return Pimcore_File_Version
+     * @return Pimcore_File_Type_Version
      */
     public function getFile() {
     	if(!isset($this->file)) {
-    		$this->file = new Pimcore_File_Version($this->getFilePath());
+    		$this->file = new Pimcore_File_Type_Version($this->getFilePath());
     	}
     	
     	return $this->file;

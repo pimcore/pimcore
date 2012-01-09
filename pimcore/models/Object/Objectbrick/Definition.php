@@ -145,7 +145,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
     
     public function getClassFile() {
     	$fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
-    	$classFile = new Pimcore_File_Php($fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php");
+    	$classFile = new Pimcore_File_Type_Php($fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php");
     	
     	return $classFile;
     }
@@ -153,7 +153,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
     
     public function getDefinitionFile() {
     	$objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-    	$definitionFile = new Pimcore_File_Psf($objectBrickFolder . "/" . $this->getKey() . ".psf");
+    	$definitionFile = new Pimcore_File_Type_Psf($objectBrickFolder . "/" . $this->getKey() . ".psf");
     	
     	return $definitionFile;
     }
@@ -334,7 +334,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
     
     private function getContainerClassFile($class, $fieldname) {
     	$folder = $this->getContainerClassFolder($class->getName());
-    	$classFile = new Pimcore_File_Php($folder . "/" . ucfirst($fieldname) . ".php");
+    	$classFile = new Pimcore_File_Type_Php($folder . "/" . ucfirst($fieldname) . ".php");
     	return $classFile;
     }
     

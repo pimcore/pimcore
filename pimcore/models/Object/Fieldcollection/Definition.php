@@ -250,7 +250,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
     
     public function getClassFile() {
     	$fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data";
-    	$classFile = new Pimcore_File_Php($fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php");
+    	$classFile = new Pimcore_File_Type_Php($fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php");
     	
     	return $classFile;
     }
@@ -258,7 +258,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
     
     public function getDefinitionFile() {
     	$fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
-    	$definitionFile = new Pimcore_File_Psf($fieldCollectionFolder . "/" . $this->getKey() . ".psf");
+    	$definitionFile = new Pimcore_File_Type_Psf($fieldCollectionFolder . "/" . $this->getKey() . ".psf");
     	
     	return $definitionFile;
     }

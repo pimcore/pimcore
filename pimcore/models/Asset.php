@@ -358,17 +358,17 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     }
     
     /**
-     * Returns a Pimcore_File_Asset for this asset
+     * Returns a Pimcore_File_Type_Asset for this asset
      * 
      * @access public
-     * @return Pimcore_File_Asset
+     * @return Pimcore_File_Type_Asset
      */
 	public function getFile() {
     	if(!isset($this->file)) {
     		if ($this->_oldPath) {
-            	$this->file = new Pimcore_File_Asset(PIMCORE_ASSET_DIRECTORY . $this->_oldPath);
+            	$this->file = new Pimcore_File_Type_Asset(PIMCORE_ASSET_DIRECTORY . $this->_oldPath);
         	} else {
-        		$this->file = new Pimcore_File_Asset($this->getFileSystemPath());
+        		$this->file = new Pimcore_File_Type_Asset($this->getFileSystemPath());
         	}
     		
     		if($this->getType() == "folder") {

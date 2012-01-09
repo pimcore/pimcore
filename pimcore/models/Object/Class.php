@@ -299,18 +299,18 @@ class Object_Class extends Pimcore_Model_Abstract {
     }
     
     /**
-     * @return Pimcore_File_Php
+     * @return Pimcore_File_Type_Php
      */
     public function getClassFile() {
-    	$classFile = new Pimcore_File_Php(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php");
+    	$classFile = new Pimcore_File_Type_Php(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php");
     	return $classFile;
     }
     
     /**
-     * @return Pimcore_File_Php
+     * @return Pimcore_File_Type_Php
      */
     public function getClassListFile() {
-	    $classListFile = new Pimcore_File_Php(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php");
+	    $classListFile = new Pimcore_File_Type_Php(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php");
     	return $classListFile;
     }
 
