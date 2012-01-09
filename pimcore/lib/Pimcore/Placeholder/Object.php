@@ -35,7 +35,9 @@ class Pimcore_Placeholder_Object extends Pimcore_Placeholder_Abstract
     public function getReplacement()
     {
         $string = '';
-        if ($object = Object_Concrete::getById($this->getValue())) {
+        $object = is_object($this->getValue()) ? $this->getValue() : Object_Concrete::getById($this->getValue());
+
+        if ($object) {
             if (is_string($this->getPlaceholderConfig()->method) && method_exists($object, $this->getPlaceholderConfig()->method)) {
                 $string = $object->{$this->getPlaceholderConfig()->method}($this->getLocale());
             }
