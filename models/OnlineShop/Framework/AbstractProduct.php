@@ -110,19 +110,4 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
         return null;
     }
 
-    /**
-     * @param \OnlineShop_Framework_PriceWrapper $priceInfo
-     */
-    public function setPricesInfo($priceInfo) {
-        $this->pricesInfo = $priceInfo;
-    }
-
-    /**
-     * @return \OnlineShop_Framework_PriceWrapper
-     */
-    public function getPricesInfo() {
-        return $this->pricesInfo;
-    }
-
-
 }
