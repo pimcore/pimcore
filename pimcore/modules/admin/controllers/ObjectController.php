@@ -1414,7 +1414,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $colMappings = array(
                 "filename" => "o_key",
-                "fullpath", array("o_path", "o_key"),
+                "fullpath" => array("o_path", "o_key"),
                 "id" => "o_id",
                 "published" => "o_published",
                 "modificationDate" => "o_modificationDate",
