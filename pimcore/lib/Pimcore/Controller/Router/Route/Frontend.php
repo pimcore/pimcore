@@ -373,7 +373,11 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                                 throw new Exception("Target of redirect no found!");
                             }
                         }
+
+                        // replace escaped % signs so that they didn't have effects to vsprintf (PIMCORE-1215)
+                        $target = str_replace("\\%","###URLENCODE_PLACEHOLDER###", $target);
                         $url = vsprintf($target, $matches);
+                        $url = str_replace("###URLENCODE_PLACEHOLDER###", "%", $url);
 
                         header($redirect->getHttpStatus());
                         header("Location: " . $url);
