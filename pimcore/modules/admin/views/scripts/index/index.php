@@ -227,7 +227,6 @@
             "pimcore/document/link.js",
             "pimcore/document/hardlink.js",
             "pimcore/document/folder.js",
-            "pimcore/document/permissions.js",
             "pimcore/document/tree.js",
             "pimcore/document/snippet.js",
             "pimcore/document/email.js", //ckogler
@@ -243,7 +242,6 @@
             "pimcore/asset/text.js",
             "pimcore/asset/folder.js",
             "pimcore/asset/versions.js",
-            "pimcore/asset/permissions.js",
             "pimcore/asset/tree.js",
         
             // object
@@ -334,7 +332,6 @@
             "pimcore/object/versions.js",
             "pimcore/object/variantsTab.js",
             "pimcore/object/importer.js",
-            "pimcore/object/permissions.js",
             "pimcore/object/folder/search.js",
             "pimcore/object/edit.js",
             "pimcore/object/abstract.js",

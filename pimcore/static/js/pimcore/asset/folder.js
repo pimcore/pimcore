@@ -25,7 +25,6 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         this.id = intval(id);
 
         this.properties = new pimcore.element.properties(this, "asset");
-        this.permissions = new pimcore.asset.permissions(this);
         this.dependencies = new pimcore.element.dependencies(this, "asset");
 
         this.getData();
@@ -105,9 +104,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
         }
-        if (this.isAllowed("permissions")) {
-            items.push(this.permissions.getLayout());
-        }
+
         items.push(this.dependencies.getLayout());
 
         this.tabbar = new Ext.TabPanel({

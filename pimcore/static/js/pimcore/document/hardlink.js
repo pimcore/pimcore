@@ -30,9 +30,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
-        if (this.isAllowed("permissions")) {
-            this.permissions = new pimcore.document.permissions(this);
-        }
+
         this.dependencies = new pimcore.element.dependencies(this, "document");
     },
 
@@ -193,9 +191,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
         }
-        if (this.isAllowed("permissions")) {
-            items.push(this.permissions.getLayout());
-        }
+
         items.push(this.dependencies.getLayout());
         
         this.tabbar = new Ext.TabPanel({

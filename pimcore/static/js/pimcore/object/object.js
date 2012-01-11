@@ -28,7 +28,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.properties = new pimcore.element.properties(this, "object");
         this.versions = new pimcore.object.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "object");
-        this.permissions = new pimcore.object.permissions(this);
         this.dependencies = new pimcore.element.dependencies(this, "object");
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
@@ -195,9 +194,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         if (this.isAllowed("settings")) {
             items.push(this.scheduler.getLayout());
         }
-        if (this.isAllowed("permissions")) {
-            items.push(this.permissions.getLayout());
-        }
+
         items.push(this.dependencies.getLayout());
         
         var reportLayout = this.reports.getLayout();

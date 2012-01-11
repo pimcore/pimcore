@@ -33,9 +33,6 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.element.properties(this, "object");
         }
-        if (this.isAllowed("permissions")) {
-            this.permissions = new pimcore.object.permissions(this);
-        }
 
         //this.dependencies = new pimcore.element.dependencies(this, "object");
     },
@@ -200,10 +197,6 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
         }
-        if (this.isAllowed("permissions")) {
-            items.push(this.permissions.getLayout());
-        }
-
 
         var tabbar = new Ext.TabPanel({
             tabPosition: "top",
