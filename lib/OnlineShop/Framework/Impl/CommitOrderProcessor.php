@@ -166,11 +166,11 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
 
     /**
-     * @param $item
-     * @param $parent
+     * @param \OnlineShop_Framework_ICartItem $item
+     * @param OnlineShop_Framework_AbstractOrder |OnlineShop_Framework_AbstractOrderItem $parent
      * @return Object_OnlineShopOrderItem
      */
-    protected function createOrderItem(OnlineShop_Framework_ICartItem $item, OnlineShop_Framework_AbstractOrder $parent) {
+    protected function createOrderItem(OnlineShop_Framework_ICartItem $item,  $parent) {
         $orderItem = $this->getNewOrderItemObject();
         $orderItem->setParent($parent);
         $orderItem->setPublished(true);
