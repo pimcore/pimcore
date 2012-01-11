@@ -1,0 +1,74 @@
+<?php
+
+interface OnlineShop_Framework_ICartManager extends OnlineShop_Framework_IComponent {
+    /**
+     * @abstract
+     * @param OnlineShop_Framework_AbstractProduct $product
+     * @param int $count
+     * @param string $itemKey
+     * @param bool replace replace item if same key already exists
+     * @param array $params optional addtional item informations
+     * @param OnlineShop_Framework_AbstractSetProductEntry[] $subProducts
+     * @param int $key optional identification of cart in case of multicart (cartId)
+     * @return string $itemKey
+    */
+    public function addToCart(OnlineShop_Framework_AbstractProduct $product, $count,  $key ,$itemKey = null, $replace = false, $params = array(), $subProducts = array());
+
+
+    /**
+     * @abstract
+     * @param string $itemKey
+     * @param null $key optional identification of cart in case of multicart
+     * @return void
+     */
+    public function removeFromCart($itemKey, $key = null);
+
+    /**
+     * @abstract
+     * @param null $key optional identification of cart in case of multicart
+     * @return OnlineShop_Framework_ICart
+     */
+    public function getCart($key = null);
+
+    /**
+     * @abstract
+     * @return OnlineShop_Framework_ICart[]
+     */
+    public function getCarts();
+
+    /**
+     * @abstract
+     * @param null $key optional identification of cart in case of multicart
+     * @return void
+     */
+    public function clearCart($key = null);
+
+    /**
+     * @abstract
+     * @param  $param array of cart informations
+     * @return $key
+     */
+    public function createCart($param);
+
+    /**
+     * @abstract
+     * @param  $param array of cart informations
+     * @param null $key optional identification of cart in case of multicart
+     * @return void
+     */
+    public function updateCartInformation($param, $key = null);
+
+    /**
+     * @abstract
+     * @param  $key
+     * @return void
+     */
+    public function deleteCart($key);
+
+
+    /**
+     * @abstract
+     * @return OnlineShop_Framework_ICartPriceCalculator
+     */
+    public function getCartPriceCalcuator(OnlineShop_Framework_ICart $cart);
+}

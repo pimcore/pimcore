@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+    <onlineshop>
+
+        <environment class="OnlineShop_Framework_Impl_Environment">
+            <config>
+            </config>
+        </environment>
+
+        <!-- <user class="OnlineShop_Framework_AbstractUser">
+           <config>
+           </config>
+       </user> -->
+
+        <cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
+            <config>
+                <cart class="OnlineShop_Framework_Impl_Cart"/>
+
+                <pricecalcualtor class="OnlineShop_Framework_Impl_CartPriceCalculator">
+                    <config>
+                        <modificators>
+                            <shipping class="OnlineShop_Framework_Impl_CartPriceModificatorShipping"/>
+                        </modificators>
+                    </config>
+                </pricecalcualtor>
+            </config>
+        </cartmanager>
+
+        <pricesystems>
+            <pricesystem name="default" class="OnlineShop_Framework_Impl_AttributePriceSystem"/>
+        </pricesystems>
+        <availablitysystems>
+            <availablitysystem name="default" class="OnlineShop_Framework_Impl_AttributeAvailabilitySystem"/>
+        </availablitysystems>
+
+
+        <checkoutmanager class="OnlineShop_Framework_Impl_CheckoutManager">
+            <config>
+                <steps>
+                    <deliveryaddress class="OnlineShop_Framework_Impl_Checkout_DeliveryAddress"/>
+                    <deliverydate class="OnlineShop_Framework_Impl_Checkout_DeliveryDate"/>
+                </steps>
+                <commitorderprocessor class="OnlineShop_Framework_Impl_CommitOrderProcessor"/>
+                <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
+                <mails confirmation="/emails/order-confirmation"/>
+                <parentorderfolder>1</parentorderfolder>
+            </config>
+        </checkoutmanager>
+
+        <productindex>
+            <generalSearchColumns>
+                <column name="name"/>
+                <column name="shortDescription"/>
+                <column name="supplierRemoteId"/>
+            </generalSearchColumns>
+            <columns>
+                <column name="name" type="varchar(255)"/>
+                <column name="shortDescription" type="longtext"/>
+                <column name="supplierRemoteId" type="varchar(255)"/>
+                <column name="mainImage" type="int" interpreter="OnlineShop_Framework_IndexService_Interpreter_AssetId"/>
+                <column name="weight" type="DOUBLE" getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
+                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
+                    <config brickfield="dimensionAndWeight" bricktype="Weight" fieldname="weight"/>
+                </column>
+                <column name="bundledSoftware" type="longtext"
+                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter">
+                    <config brickfield="generalFeatures" bricktype="AccessoriesAttributes" fieldname="bundledSoftware"/>
+                </column>
+                <column name="warranty" type="longtext"
+                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter">
+                    <config brickfield="generalFeatures" bricktype="Features" fieldname="warranty"/>
+                </column>
+                <column name="totalStorageCapacity" type="DOUBLE"
+                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
+                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
+                    <config brickfield="specialFeatures" bricktype="Memory" fieldname="totalStorageCapacity"/>
+                </column>
+                <column name="processorClockSpeed" type="DOUBLE"
+                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
+                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
+                    <config brickfield="specialFeatures" bricktype="Processor" fieldname="processorClockSpeed"/>
+                </column>
+                <column name="compatibleOperatingSystems" type="longtext"
+                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter">
+                    <config brickfield="generalFeatures" bricktype="Environment" fieldname="compatibleOperatingSystems"/>
+                </column>
+                <column name="hardDiskRotationalSpeed" type="DOUBLE"
+                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
+                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
+                    <config brickfield="specialFeatures" bricktype="Memory" fieldname="hardDiskRotationalSpeed"/>
+                </column>
+                <column name="hardDiskDriveCapacity" type="DOUBLE"
+                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
+                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
+                    <config brickfield="specialFeatures" bricktype="Memory" fieldname="hardDiskDriveCapacity"/>
+                </column>
+            </columns>
+
+        </productindex>
+
+        <filtertypes>
+            <select class="OnlineShop_Framework_FilterService_Select"/>
+            <multiselect class="OnlineShop_Framework_FilterService_MultiSelect"/>
+            <slider class="OnlineShop_Framework_FilterService_Range"/>
+            <relationMultiselect class="OnlineShop_Framework_FilterService_MultiSelectRelation"/>
+        </filtertypes>
+
+    </onlineshop>
+</zend-config>
