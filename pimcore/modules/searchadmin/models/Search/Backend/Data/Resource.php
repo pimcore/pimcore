@@ -82,8 +82,6 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
                 "userowner" => $this->model->getUserOwner(),
                 "usermodification" => $this->model->getUserModification(),
                 "data" => $this->model->getData(),
-                "localizeddata" => $this->model->getLocalizedData(),
-                "fieldcollectiondata" => $this->model->getFieldcollectionData(),
                 "properties" => $this->model->getProperties()
             ));
         } else {
@@ -110,8 +108,6 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
             $data["userowner"] = $this->model->getUserOwner();
             $data["usermodification"] = $this->model->getUserModification();
             $data["data"] = $this->model->getData();
-            $data["localizeddata"] = $this->model->getLocalizedData();
-            $data["fieldcollectiondata"] = $this->model->getFieldcollectionData();
             $data["properties"] = $this->model->getProperties();
 
             $this->db->update("search_backend_data", $data, "id='" . $data["id"] . "' AND maintype ='" . $data["maintype"] . "'");
