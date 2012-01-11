@@ -124,7 +124,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 if ($document instanceof Document) {
                     if (in_array($document->getType(), array("page","snippet","email"))) {
 
-                        if (!empty($params["pimcore_version"]) || !empty($params["pimcore_preview"]) || !empty($params["pimcore_admin"]) || !empty($params["pimcore_editmode"]) || $document->isPublished() || !empty($_COOKIE["pimcore_admin_sid"])) {
+                        if (!empty($params["pimcore_version"]) || !empty($params["pimcore_preview"]) || !empty($params["pimcore_admin"]) || !empty($params["pimcore_editmode"]) || $document->isPublished() ) {
                             $params["document"] = $document;
                             if ($controller = $document->getController()) {
                                 $params["controller"] = $controller;
