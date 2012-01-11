@@ -246,7 +246,8 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 iconCls: "pimcore_icon_cursor_medium",
                 scale: "medium",
                 handler: function () {
-                    window.open(this.data.path + this.data.key);
+                    var date = new Date();
+                    window.open(this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime());
                 }.bind(this)
             });
             buttons.push("-");
