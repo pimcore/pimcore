@@ -247,7 +247,7 @@ class Asset_Video_Thumbnail_Processor {
      */
     public function convert() {
         $this->save();
-        $cmd = Pimcore_Tool_Console::getPhpCli() . " " . PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "video-converter.php " . $this->getProcessId();
+        $cmd = Pimcore_Tool_Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "video-converter.php"). " " . $this->getProcessId();
         Pimcore_Tool_Console::execInBackground($cmd);
     }
 

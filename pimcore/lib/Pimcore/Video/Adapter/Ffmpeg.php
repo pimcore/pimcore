@@ -97,7 +97,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             // add some global arguments
             $arguments = "-threads 4 " . $arguments;
 
-            $cmd = self::getFfmpegCli() . ' -i ' . $this->file . ' ' . $arguments . " " . $this->getDestinationFile();
+            $cmd = self::getFfmpegCli() . ' -i ' . realpath($this->file) . ' ' . $arguments . " " . str_replace("/", DIRECTORY_SEPARATOR, $this->getDestinationFile());
             Pimcore_Tool_Console::execInBackground($cmd, $this->getConversionLogFile());
         } else {
             throw new Exception("There is no destination file for video converter");
@@ -113,7 +113,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             $timeOffset = 5;
         }
 
-        $cmd = self::getFfmpegCli() . " -i " .$this->file . " -vcodec png -vframes 1 -ss " . $timeOffset . " " . $file;
+        $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
         Pimcore_Tool_Console::exec($cmd);
     }
 
