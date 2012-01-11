@@ -40,9 +40,6 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("versions")) {
             this.versions = new pimcore.document.versions(this);
         }
-        if (this.isAllowed("permissions")) {
-            this.permissions = new pimcore.document.permissions(this);
-        }
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
         this.reports = new pimcore.report.panel("document_snippet", this);
@@ -66,9 +63,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("settings")) {
             items.push(this.scheduler.getLayout());
         }
-        if (this.isAllowed("permissions")) {
-            items.push(this.permissions.getLayout());
-        }
+
         items.push(this.dependencies.getLayout());
 
         var reportLayout = this.reports.getLayout();
