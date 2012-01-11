@@ -352,8 +352,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         // delete the class files
         $this->getClassFile()->delete();
         $this->getClassListFile()->delete();
-        $listFolder = new Pimcore_File(dirname($this->getClassListFile()->getPath()));
-        $listFolder->isFolder(true);
+        $listFolder = new Pimcore_File_Directory(dirname($this->getClassListFile()->getPath()));
         $listFolder->delete();
     }
 

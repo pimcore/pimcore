@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -13,12 +13,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Event {
+class Pimcore_Event_File_Moved extends Pimcore_Event_File {
 
-	//event types
-	const EVENT_TYPE_FILE = 100;
-    const EVENT_TYPE_FILE_MODIFIED = 101;
-    const EVENT_TYPE_FILE_CREATED = 102;
-    const EVENT_TYPE_FILE_DELETED = 103;
-    const EVENT_TYPE_FILE_MOVED = 104;
 }

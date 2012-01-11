@@ -372,7 +372,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         	}
     		
     		if($this->getType() == "folder") {
-    			$this->file->isFolder(true);
+    			$this->file->isDir(true);
     		}
     	}
     	
