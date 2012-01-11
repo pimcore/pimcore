@@ -524,7 +524,7 @@ CREATE TABLE `search_backend_data` (
   KEY `published` (`published`),
   FULLTEXT KEY `data` (`data`),
   FULLTEXT KEY `properties` (`properties`),
-  FULLTEXT KEY `fulltext` (`data`,`properties`,`fullpath`)
+  FULLTEXT KEY `fulltext` (`data`,`properties`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 

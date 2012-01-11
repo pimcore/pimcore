@@ -286,90 +286,95 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setDataFromElement($element){
 
-            $this->data = null;
+        $this->data = null;
 
-            $this->id = new Search_Backend_Data_Id($element);
-            $this->fullPath = $element->getFullPath();
-            $this->creationDate=$element->getCreationDate();
-            $this->modificationDate=$element->getModificationDate();
-            $this->userModification = $element->getUserModification();
-            $this->userOwner = $element->getUserOwner();
+        $this->id = new Search_Backend_Data_Id($element);
+        $this->fullPath = $element->getFullPath();
+        $this->creationDate=$element->getCreationDate();
+        $this->modificationDate=$element->getModificationDate();
+        $this->userModification = $element->getUserModification();
+        $this->userOwner = $element->getUserOwner();
 
-            $this->type = $element->getType();
-            if($element instanceof Object_Concrete){
-                $this->subtype = $element->getO_className();
-            } else {
-                $this->subtype = $this->type;
-            }
+        $this->type = $element->getType();
+        if($element instanceof Object_Concrete){
+            $this->subtype = $element->getO_className();
+        } else {
+            $this->subtype = $this->type;
+        }
 
-            $this->properties = "";
-            $properties = $element->getProperties();
-            if(is_array($properties)){
-                foreach($properties as $nextProperty){
-                    if($nextProperty->getType() == 'text'){
-                        $this->properties.=$nextProperty->getData()." ";
-                    }
+        $this->properties = "";
+        $properties = $element->getProperties();
+        if(is_array($properties)){
+            foreach($properties as $nextProperty){
+                if($nextProperty->getType() == 'text'){
+                    $this->properties.=$nextProperty->getData()." ";
                 }
             }
+        }
 
-            $this->data = "";
-            if($element instanceof Document){
-                if($element instanceof Document_Folder){
-                    $this->data = $element->getKey();
-                    $this->published = true;
-                } else if ($element instanceof Document_Link){
-                    $this->published = $element->isPublished();
-                    $this->data = $element->getName()." ".$element->getTitle()." ".$element->getHref();
-                } else if ($element instanceof Document_PageSnippet){
-                    $this->published = $element->isPublished();
-                    $elements = $element->getElements();
-                    if(is_array($elements)){
-                        foreach($elements as $tag){
-                            if($tag instanceof Document_Tag_Interface){
-                                ob_start();
-                                $this->data .= strip_tags($tag->frontend())." ";
-                                $this->data .= ob_get_clean();
-                            }
-                        }
-                    }
-                    if($element instanceof Document_Page){
-                        $this->published = $element->isPublished();
-                        $this->data.=" ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords();
-                    }
-                }
-            } else if($element instanceof Asset) {
-                $this->data = $element->getFilename();
+        $this->data = "";
+        if($element instanceof Document){
+            if($element instanceof Document_Folder){
+                $this->data = $element->getKey();
                 $this->published = true;
-            } else if ($element instanceof Object_Abstract){
-                if ($element instanceof Object_Concrete) {
-                    $getInheritedValues = Object_Abstract::doGetInheritedValues();
-                    Object_Abstract::setGetInheritedValues(true);
-
-                    $this->published = $element->isPublished();
-                    foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
-                        // Object_Class_Data_Fieldcollections, Object_Class_Data_Localizedfields and Object_Class_Data_Objectbricks is special because it doesn't support the csv export
-                        if($value instanceof Object_Class_Data_Fieldcollections) {
-                            $getter = "get".$value->getName();
-                            $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
-                        } else if ($value instanceof Object_Class_Data_Localizedfields){
-                            $getter = "get".$value->getName();
-                            $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
-                        } else if ($value instanceof Object_Class_Data_Objectbricks){
-                            $getter = "get".$value->getName();
-                            $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
-                        } else {
-                            $this->data .= $value->getForCsvExport($element)." ";
+            } else if ($element instanceof Document_Link){
+                $this->published = $element->isPublished();
+                $this->data = $element->getName()." ".$element->getTitle()." ".$element->getHref();
+            } else if ($element instanceof Document_PageSnippet){
+                $this->published = $element->isPublished();
+                $elements = $element->getElements();
+                if(is_array($elements)){
+                    foreach($elements as $tag){
+                        if($tag instanceof Document_Tag_Interface){
+                            ob_start();
+                            $this->data .= strip_tags($tag->frontend())." ";
+                            $this->data .= ob_get_clean();
                         }
                     }
-                    Object_Abstract::setGetInheritedValues($getInheritedValues);
-                    
-                } else if ($element instanceof Object_Folder){
-                    $this->data=$element->getKey();
-                    $this->published = true;
                 }
-            } else {
-                Logger::crit("Search_Backend_Data received an unknown element!");
+                if($element instanceof Document_Page){
+                    $this->published = $element->isPublished();
+                    $this->data.=" ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords();
+                }
             }
+        } else if($element instanceof Asset) {
+            $this->data = $element->getFilename();
+            $this->published = true;
+        } else if ($element instanceof Object_Abstract){
+            if ($element instanceof Object_Concrete) {
+                $getInheritedValues = Object_Abstract::doGetInheritedValues();
+                Object_Abstract::setGetInheritedValues(true);
+
+                $this->published = $element->isPublished();
+                foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
+                    // Object_Class_Data_Fieldcollections, Object_Class_Data_Localizedfields and Object_Class_Data_Objectbricks is special because it doesn't support the csv export
+                    if($value instanceof Object_Class_Data_Fieldcollections) {
+                        $getter = "get".$value->getName();
+                        $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+                    } else if ($value instanceof Object_Class_Data_Localizedfields){
+                        $getter = "get".$value->getName();
+                        $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+                    } else if ($value instanceof Object_Class_Data_Objectbricks){
+                        $getter = "get".$value->getName();
+                        $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+                    } else {
+                        $this->data .= $value->getForCsvExport($element)." ";
+                    }
+                }
+                Object_Abstract::setGetInheritedValues($getInheritedValues);
+
+            } else if ($element instanceof Object_Folder){
+                $this->data=$element->getKey();
+                $this->published = true;
+            }
+        } else {
+            Logger::crit("Search_Backend_Data received an unknown element!");
+        }
+
+        if($element instanceof Element_Interface) {
+            $this->data = "ID: " . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->data;
+        }
+
 
     }
 

@@ -89,10 +89,11 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         if (!empty($query)) {
             $queryCondition = "( MATCH (`data`,`properties`,`fullpath`) AGAINST (" . $db->quote($query) . " IN BOOLEAN MODE) )";
 
+            // the following should be done with an exact-search now "ID", because the Element-ID is now in the fulltext index
             // if the query is numeric the user might want to search by id
-            if(is_numeric($query)) {
-                $queryCondition = "(" . $queryCondition . " OR id = " . $db->quote($query) ." )";
-            }
+            //if(is_numeric($query)) {
+                //$queryCondition = "(" . $queryCondition . " OR id = " . $db->quote($query) ." )";
+            //}
 
             $conditionParts[] = $queryCondition;
         }                      
