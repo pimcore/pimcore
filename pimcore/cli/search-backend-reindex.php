@@ -17,7 +17,7 @@ include_once("startup.php");
 
 // clear all data
 $db = Pimcore_Resource::get();
-$db->query("TRUNCATE `pimcore`.`search_backend_data`;");
+$db->query("TRUNCATE `search_backend_data`;");
 
 $elementsPerLoop = 100;
 $types = array("object","asset","document");
