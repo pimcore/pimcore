@@ -356,28 +356,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $tags[$this->getCacheTag()] = $this->getCacheTag();
         return $tags;
     }
-    
-    /**
-     * Returns a Pimcore_File_Type_Asset for this asset
-     * 
-     * @access public
-     * @return Pimcore_File_Type_Asset
-     */
-	public function getFile() {
-    	if(!isset($this->file)) {
-    		if ($this->_oldPath) {
-            	$this->file = new Pimcore_File_Type_Asset(PIMCORE_ASSET_DIRECTORY . $this->_oldPath);
-        	} else {
-        		$this->file = new Pimcore_File_Type_Asset($this->getFileSystemPath());
-        	}
-    		
-    		if($this->getType() == "folder") {
-    			$this->file->isDir(true);
-    		}
-    	}
-    	
-    	return $this->file;
-    }
 
     /**
      * Get full path to the asset on the filesystem
@@ -395,7 +373,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function loadData() {
         if ($this->getType() != "folder") {
-            $this->setData($this->getFile()->loadContents());
+            $this->setData(file_get_contents($this->getFileSystemPath()));
             $this->_dataChanged = false;
         }
     }
@@ -463,33 +441,39 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         // set date
         $this->setModificationDate(time());
-        
-        $assetFile = $this->getFile();
+
+        // create foldertree
         $destinationPath = $this->getFileSystemPath();
+        if (!is_dir(dirname($destinationPath))) {
+            mkdir(dirname($destinationPath), self::$chmod, true);
+        }
 
         if ($this->_oldPath) {
-            $assetFile->move($this->getFileSystemPath());
+            rename(PIMCORE_ASSET_DIRECTORY . $this->_oldPath, $this->getFileSystemPath());
         }
 
         if ($this->getType() != "folder") {
 
             // get data
-            $assetFile->setContents($this->getData());
+            $this->getData();
 
             // remove if exists
             if (is_file($destinationPath)) {
-                $assetFile->delete();
+                unlink($destinationPath);
             }
-            
-            $assetFile->save();
+
+            file_put_contents($destinationPath, $this->getData());
+            chmod($destinationPath, self::$chmod);
 
             // check file exists
-            if (!$assetFile->fileExists()) {
+            if (!is_file($destinationPath)) {
                 throw new Exception("couldn't create new asset");
             }
 
             // set mime type
-            $this->setMimetype($assetFile->getMimeType());
+
+            $mimetype = MIME_Type::autoDetect($this->getFileSystemPath());
+            $this->setMimetype($mimetype);
 
             // set type
             $this->setTypeFromMapping();
@@ -712,7 +696,18 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         }
 
         // remove file on filesystem
-        $this->getFile()->delete();
+        $fsPath = PIMCORE_ASSET_DIRECTORY . $this->getPath() . $this->getFilename();
+
+        if ($this->getType() != "folder") {
+            if (is_file($fsPath) && is_writable($fsPath)) {
+                unlink($fsPath);
+            }
+        }
+        else {
+            if (is_dir($fsPath) && is_writable($fsPath)) {
+                recursiveDelete($fsPath, true);
+            }
+        }
 
         $versions = $this->getVersions();
         foreach ($versions as $version) {

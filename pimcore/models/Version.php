@@ -135,12 +135,17 @@ class Version extends Pimcore_Model_Abstract {
 
         $this->id = $this->getResource()->save();
 
-        $versionFile = $this->getFile();
-        $versionFile->setContents($dataString);
+        // check if directory exists
+        $saveDir = dirname($this->getFilePath());
+        if(!is_dir($saveDir)) {
+            mkdir($saveDir, 0766, true);
+        }
 
         // save data to filesystem
-        if($versionFile->save() === FALSE) {
+        if(!is_writable(dirname($this->getFilePath())) || (is_file($this->getFilePath()) && !is_writable($this->getFilePath()))) {
             throw new Exception("Cannot save version for element " . $this->getCid() . " with type " . $this->getCtype() . " because the file " . $this->getFilePath() . " is not writeable.");
+        } else {
+            file_put_contents($this->getFilePath(),$dataString);
         }
 
         $this->cleanHistory();
@@ -149,25 +154,14 @@ class Version extends Pimcore_Model_Abstract {
     /**
      * @return void
      */
-    public function delete() {  	
-		$this->getFile()->delete();
+    public function delete() {
+
+        if(is_file($this->getFilePath())) {
+            @unlink($this->getFilePath());
+        }
+
         $this->getResource()->delete();
     }
-    
-    /**
-     * Returns a Pimcore_File_Type_Version for this version
-     * 
-     * @access public
-     * @return Pimcore_File_Type_Version
-     */
-    public function getFile() {
-    	if(!isset($this->file)) {
-    		$this->file = new Pimcore_File_Type_Version($this->getFilePath());
-    	}
-    	
-    	return $this->file;
-    }
-    
 
     /**
      * Object
@@ -175,13 +169,14 @@ class Version extends Pimcore_Model_Abstract {
      * @return mixed
      */
     public function loadData() {
-        $data = $this->getFile()->loadContents();
 
-        if($data === FALSE) {
+        if(!is_file($this->getFilePath()) or !is_readable($this->getFilePath())){
             Logger::err("Version: cannot read version data from file system.");
             $this->delete();
             return;
         }
+
+        $data = file_get_contents($this->getFilePath());
 
         if ($this->getSerialized()) {
             $data = Pimcore_Tool_Serialize::unserialize($data);

@@ -93,22 +93,20 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         // serialize data
         $this->element->_fulldump = true;
         $data = Pimcore_Tool_Serialize::serialize($this->getElement());
-
+        
         $this->getResource()->save();
-
-        $recycleFile = $this->getFile();
-        $recycleFile->save();
+        
+        if(!is_dir(PIMCORE_RECYCLEBIN_DIRECTORY)) {
+            mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
+        }
+        
+        file_put_contents($this->getStoreageFile(),$data);
+        chmod($this->getStoreageFile(), 0766);
     }
     
     public function delete () {
-        $recycleFile = $this->getFile();
-        $recycleFile->delete();
+        unlink($this->getStoreageFile());
         $this->getResource()->delete();
-    }
-    
-    public function getFile() {
-        $recycleFile = new Pimcore_File_Type_Recyclebin($this->getStoreageFile());
-        return $recycleFile;
     }
     
     public function loadChilds (Element_Interface $element) {

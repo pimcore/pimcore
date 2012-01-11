@@ -75,6 +75,11 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
         $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
 
+        // create folder if not exist
+        if(!is_dir($objectBrickFolder)) {
+            mkdir($objectBrickFolder);
+        }
+
         $newClassDefinitions = array();
         $classDefinitionsToDelete = array();
 
@@ -87,15 +92,18 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         }
 
         $this->classDefinitions = $newClassDefinitions;
+
+
+
         $serialized = Pimcore_Tool_Serialize::serialize($this);
-        
-        $fieldClassFile = $this->getDefinitionFile();
-        
-        $this->cleanupOldFiles($fieldClassFile->getPath());
-        
-        $fieldClassFile->setContents($serialized);
-        $fieldClassFile->save();
-        
+        $serializedFilename = $objectBrickFolder . "/" . $this->getKey() . ".psf";
+
+
+        $this->cleanupOldFiles($serializedFilename);
+
+
+        file_put_contents($serializedFilename, $serialized);
+        chmod($serializedFilename, 0766);
 
         $extendClass = "Object_Objectbrick_Data_Abstract";
         if ($this->getParentClass()) {
@@ -134,28 +142,17 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
         $cd .= "}\n"; 
         $cd .= "\n";
 
-        $fieldClassFile = $this->getClassFile();
-        $fieldClassFile->setContents($cd);
-        $fieldClassFile->save();
+        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
+        if(!is_dir($fieldClassFolder)) {
+            mkdir($fieldClassFolder,0766,true);
+        }
+
+        $fieldClassFile = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
+        file_put_contents($fieldClassFile,$cd);
+        chmod($fieldClassFile, 0766);
 
         $this->createContainerClasses();
         $this->updateDatabase(); 
-    }
-    
-    
-    public function getClassFile() {
-    	$fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
-    	$classFile = new Pimcore_File_Type_Php($fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php");
-    	
-    	return $classFile;
-    }
-    
-    
-    public function getDefinitionFile() {
-    	$objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-    	$definitionFile = new Pimcore_File_Type_Psf($objectBrickFolder . "/" . $this->getKey() . ".psf");
-    	
-    	return $definitionFile;
     }
 
 
@@ -175,9 +172,9 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
             foreach($oldObject->classDefinitions as $cl) {
                 $this->oldClassDefinitions[$cl['classname']] = $cl['classname'];
                 $class = Object_Class::getById($cl['classname']);
-                
-                $containerClassFile = $this->getContainerClassFile($class, $cl['fieldname']);
-                $containerClassFile->delete();
+                $path = $this->getContainerClassFolder($class->getName());
+                @unlink($path . "/" . ucfirst($cl['fieldname'] . ".php"));
+
 
                 foreach ($class->getFieldDefinitions() as $fieldDef) {
                     if($fieldDef instanceof Object_Class_Data_Objectbricks) {
@@ -275,7 +272,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
 
         foreach($containerDefinition as $classId => $cd) {
-            $class = Object_Class::getById($classId);
+             $class = Object_Class::getById($classId);
 
             foreach($cd as $fieldname => $brickKeys) {
                 $className = $this->getContainerClassName($class->getName(), $fieldname);
@@ -322,22 +319,19 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
                 $cd .= "}\n";
                 $cd .= "\n";
-                
-                $containerClassFile = $this->getContainerClassFile($class, $fieldname);
-                $containerClassFile->setContents($cd);
-                $containerClassFile->save();
+
+                $folder = $this->getContainerClassFolder($class->getName());
+                if(!is_dir($folder)) {
+                    mkdir($folder,0766,true);
+                }
+
+                $file = $folder . "/" . ucfirst($fieldname) . ".php";
+                file_put_contents($file,$cd);
+                chmod($file, 0766);
             }
         }
 
     }
-    
-    
-    private function getContainerClassFile($class, $fieldname) {
-    	$folder = $this->getContainerClassFolder($class->getName());
-    	$classFile = new Pimcore_File_Type_Php($folder . "/" . ucfirst($fieldname) . ".php");
-    	return $classFile;
-    }
-    
 
     /**
      * @param $classname
@@ -360,11 +354,16 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
      * @return void
      */
     public function delete () {
-        $fieldFile = $this->getDefinitionFile();
-        $fieldFile->delete();
+        $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
+        $fieldFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";
         
-        $fieldClass = $this->getClassFile();
-        $fieldClass->delete();
+        @unlink($fieldFile);
+        
+        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
+        $fieldClass = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
+        
+        @unlink($fieldClass);
+
 
         $processedClasses = array();
         if(!empty($this->classDefinitions)) {
