@@ -514,8 +514,6 @@ CREATE TABLE `search_backend_data` (
   `userOwner` int(11) DEFAULT NULL,
   `userModification` int(11) DEFAULT NULL,
   `data` longtext,
-  `fieldcollectiondata` longtext,
-  `localizeddata` longtext,
   `properties` text,
   PRIMARY KEY (`id`,`maintype`),
   KEY `id` (`id`),
@@ -525,10 +523,8 @@ CREATE TABLE `search_backend_data` (
   KEY `subtype` (`subtype`),
   KEY `published` (`published`),
   FULLTEXT KEY `data` (`data`),
-  FULLTEXT KEY `fieldcollectiondata` (`fieldcollectiondata`),
-  FULLTEXT KEY `localizeddata` (`localizeddata`),
   FULLTEXT KEY `properties` (`properties`),
-  FULLTEXT KEY `fulltext` (`data`,`fieldcollectiondata`,`localizeddata`,`properties`,`fullpath`)
+  FULLTEXT KEY `fulltext` (`data`,`properties`,`fullpath`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 

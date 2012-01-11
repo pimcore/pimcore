@@ -89,16 +89,6 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
     public $properties;
 
     /**
-     * @var string
-     */
-    public $localizedData;
-
-    /**
-     * @var string
-     */
-    public $fieldcollectionData;
-
-    /**
      * @param  Element_Interface $element
      * @return void
      */
@@ -273,37 +263,6 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
         $this->data = $data;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getLocalizedData(){
-        return $this->localizedData;
-    }
-
-    /**
-     * @param  string $data
-     * @return void
-     */
-    public function setLocalizedData($data){
-        $this->localizedData = $data;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFieldcollectionData(){
-        return $this->fieldcollectionData;
-    }
-
-    /**
-     * @param  string $data
-     * @return void
-     */
-    public function setFieldcollectionData($data){
-        $this->fieldcollectionData = $data;
-    }
-
     /**
     * @return string
     */
@@ -343,6 +302,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                 $this->subtype = $this->type;
             }
 
+            $this->properties = "";
             $properties = $element->getProperties();
             if(is_array($properties)){
                 foreach($properties as $nextProperty){
@@ -352,6 +312,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                 }
             }
 
+            $this->data = "";
             if($element instanceof Document){
                 if($element instanceof Document_Folder){
                     $this->data = $element->getKey();
@@ -386,16 +347,18 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
 
                     $this->published = $element->isPublished();
                     foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
-                        // Object_Class_Data_Fieldcollections is special because it doesn't support the csv export
+                        // Object_Class_Data_Fieldcollections, Object_Class_Data_Localizedfields and Object_Class_Data_Objectbricks is special because it doesn't support the csv export
                         if($value instanceof Object_Class_Data_Fieldcollections) {
                             $getter = "get".$value->getName();
-                            $this->fieldcollectionData.= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+                            $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
                         } else if ($value instanceof Object_Class_Data_Localizedfields){
-
                             $getter = "get".$value->getName();
-                            $this->localizedData.= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+                            $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+                        } else if ($value instanceof Object_Class_Data_Objectbricks){
+                            $getter = "get".$value->getName();
+                            $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
                         } else {
-                            $this->data.=$value->getForCsvExport($element)." ";
+                            $this->data .= $value->getForCsvExport($element)." ";
                         }
                     }
                     Object_Abstract::setGetInheritedValues($getInheritedValues);

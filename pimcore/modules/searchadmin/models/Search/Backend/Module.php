@@ -15,7 +15,7 @@
 
 class Search_Backend_Module extends Pimcore_API_Module_Abstract{
 
-       protected function postAddElement(Element_Interface $element){
+    protected function postAddElement(Element_Interface $element){
         $searchEntry = new Search_Backend_Data($element);
         $searchEntry->save();
 
