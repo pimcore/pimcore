@@ -10,7 +10,6 @@
 interface OnlineShop_Framework_IPriceSystem {
 
     /**
-     * @Deprecated
      * @abstract
      * @param OnlineShop_Framework_AbstractProduct $abstractProduct
      * @param int|null $quantityScale
