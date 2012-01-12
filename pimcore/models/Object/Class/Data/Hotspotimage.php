@@ -230,5 +230,20 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
         return $this->getFromCsvImport($value);
     }
 
+    /**
+     * @param $data
+     * @param null $object
+     * @return null
+     */
+    public function getDataForGrid($data, $object = null) {
+
+        if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset) {
+            //return $data->getImage();
+            return null;
+        } else {
+            return null;
+        }
+    }
+
 
 }

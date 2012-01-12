@@ -38,6 +38,20 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         this.uniqeFieldId = uniqid();
     },
 
+
+    getGridColumnConfig: function(field) {
+
+        return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
+            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                metaData.css += " grid_value_inherited";
+            }
+
+            if (value && value.id) {
+                return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id + '/width/88/height/88/frame/true" />';
+            }
+        }.bind(this, field.key)};
+    },
+
     getLayoutEdit: function () {
 
         if (intval(this.fieldConfig.width) < 1) {

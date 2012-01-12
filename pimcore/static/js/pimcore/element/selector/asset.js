@@ -171,13 +171,13 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
     getResultPanel: function () {
         if (!this.resultPanel) {
         
-            this.pagingtoolbar = new Ext.PagingToolbar({
+            /*this.pagingtoolbar = new Ext.PagingToolbar({
                 pageSize: 15,
                 store: this.store,
                 displayInfo: true,
                 displayMsg: '{0} - {1} / {2}',
                 emptyMsg: t("no_assets_found")
-            });
+            });*/
         
             this.resultPanel = new Ext.grid.GridPanel({
                 region: "center",
@@ -202,7 +202,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     forceFit: true
                 },
                 sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
-                bbar: this.pagingtoolbar,
+                //bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, rowIndex, ev) {
                         
@@ -233,7 +233,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         this.store.setBaseParam("type", "asset");
         this.store.setBaseParam("query", formValues.query);
         this.store.setBaseParam("subtype", formValues.subtype);
-        
-        this.pagingtoolbar.moveFirst();
+        this.store.load();
+
+        //this.pagingtoolbar.moveFirst();
     }
 });

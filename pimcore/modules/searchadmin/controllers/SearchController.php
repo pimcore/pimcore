@@ -37,6 +37,9 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         $offset = intval($this->_getParam("start"));
         $limit = intval($this->_getParam("limit"));
 
+        $offset = $offset ? $offset : 0;
+        $limit = $limit ? $limit : 50;
+
         $searcherList = new Search_Backend_Data_List();
         $conditionParts = array();
         $db = Pimcore_Resource::get();
@@ -87,7 +90,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
 
         if (!empty($query)) {
-            $queryCondition = "( MATCH (`data`,`properties`,`fullpath`) AGAINST (" . $db->quote($query) . " IN BOOLEAN MODE) )";
+            $queryCondition = "( MATCH (`data`,`properties`) AGAINST (" . $db->quote($query) . " IN BOOLEAN MODE) )";
 
             // the following should be done with an exact-search now "ID", because the Element-ID is now in the fulltext index
             // if the query is numeric the user might want to search by id
@@ -178,7 +181,6 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
 
         $hits = $searcherList->load();
-        $totalMatches = $searcherList->getTotalCount();
 
         $elements=array();
         foreach ($hits as $hit) {
@@ -200,6 +202,14 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
                 //$data = Element_Service::gridElementData($element);
             }
 
+        }
+
+
+        // only get the real total-count when the limit parameter is given otherwise use the default limit
+        if($this->_getParam("limit")) {
+            $totalMatches = $searcherList->getTotalCount();
+        } else {
+            $totalMatches = count($elements);
         }
 
         $this->_helper->json(array("data" => $elements, "success" => true, "total" => $totalMatches));
