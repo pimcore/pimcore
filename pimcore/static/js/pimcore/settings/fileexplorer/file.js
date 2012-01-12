@@ -98,6 +98,10 @@ pimcore.settings.fileexplorer.file = Class.create({
                 content: content
             }
         });
+    },
+
+    activate: function () {
+        this.explorer.editorPanel.activate(this.editor);
     }
 
 });
