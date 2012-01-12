@@ -17,6 +17,8 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     initialize: function () {
 
+        this.openfiles = {};
+
         this.panel = new Ext.Panel({
             id: "pimcore_fileexplorer",
             title: t("server_fileexplorer"),
@@ -169,7 +171,12 @@ pimcore.settings.fileexplorer.explorer = Class.create({
     },
 
     openFile: function (path) {
-        new pimcore.settings.fileexplorer.file(path, this);
+
+        if(typeof this.openfiles[path] != "undefined") {
+            this.openfiles[path].activate();
+        } else {
+            this.openfiles[path] = new pimcore.settings.fileexplorer.file(path, this);
+        }
     },
 
     activate: function () {
