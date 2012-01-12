@@ -164,8 +164,9 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        $searcherList->setOrder("desc");
-        $searcherList->setOrderKey("modificationdate");
+        // do not sort per default, it is VERY SLOW
+        //$searcherList->setOrder("desc");
+        //$searcherList->setOrderKey("modificationdate");
 
         if ($this->_getParam("sort")) {
             $searcherList->setOrderKey($this->_getParam("sort"));

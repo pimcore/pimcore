@@ -350,13 +350,67 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                     // Object_Class_Data_Fieldcollections, Object_Class_Data_Localizedfields and Object_Class_Data_Objectbricks is special because it doesn't support the csv export
                     if($value instanceof Object_Class_Data_Fieldcollections) {
                         $getter = "get".$value->getName();
-                        $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+
+                        $fcData = $element->$getter();
+                        if ($fcData instanceof Object_Fieldcollection) {
+                            foreach ($fcData as $item) {
+
+                                if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
+                                    continue;
+                                }
+
+                                try {
+                                    $collectionDef = Object_Fieldcollection_Definition::getByKey($item->getType());
+                                } catch (Exception $e) {
+                                    continue;
+                                }
+
+                                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                                    $this->data .= $fd->getForCsvExport($item) . " ";
+                                }
+                            }
+                        }
+                        //$this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
                     } else if ($value instanceof Object_Class_Data_Localizedfields){
+
+                        // only for text-values at the moment, because the CSV doesn't work for localized fields (getter-problem)
                         $getter = "get".$value->getName();
-                        $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+
+                        $lfData = $element->$getter();
+                        if ($lfData instanceof Object_Localizedfield) {
+                            foreach ($lfData->getItems() as $language => $values) {
+                                foreach ($values as $lData) {
+                                    if(is_string($lData)) {
+                                        $this->data .= $lData . " ";
+                                    }
+                                }
+                            }
+                        }
+                        //$this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
                     } else if ($value instanceof Object_Class_Data_Objectbricks){
                         $getter = "get".$value->getName();
-                        $this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
+
+                        $obData = $element->$getter();
+                        if ($obData instanceof Object_Objectbrick) {
+                            $items = $obData->getItems();
+                            foreach ($items as $item) {
+                                if (!$item instanceof Object_Objectbrick_Data_Abstract) {
+                                    continue;
+                                }
+
+                                try {
+                                    $collectionDef = Object_Objectbrick_Definition::getByKey($item->getType());
+                                } catch (Exception $e) {
+                                    continue;
+                                }
+
+                                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                                    $this->data .= $fd->getForCsvExport($item) . " ";
+                                }
+                            }
+                        }
+
+                        //$this->data .= Pimcore_Tool_Serialize::serialize($value->getDataForEditmode($element->$getter(), $element))." ";
                     } else {
                         $this->data .= $value->getForCsvExport($element)." ";
                     }
@@ -372,10 +426,25 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
         }
 
         if($element instanceof Element_Interface) {
-            $this->data = "ID: " . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->data;
+            $this->data = "ID: " . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->cleanupData($this->data);
         }
 
 
+    }
+
+    /**
+     * @param $data
+     */
+    protected function cleanupData ($data) {
+
+        $data = strip_tags($data);
+        $data = str_replace("\r\n", " ", $data);
+        $data = str_replace("\n", " ", $data);
+        $data = str_replace("\r", " ", $data);
+        $data = str_replace("\t", "", $data);
+        $data = preg_replace ('#[ ]+#', ' ', $data);
+
+        return $data;
     }
 
     /**
