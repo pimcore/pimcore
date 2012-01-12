@@ -74,7 +74,7 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
                 "id" => $this->model->getId()->getId(),
                 "fullpath" => $this->model->getFullPath(),
                 "maintype" => $this->model->getId()->getType(),
-                "type" => $this->model->getId()->getType(),
+                "type" => $this->model->getType(),
                 "subtype" => $this->model->getSubtype(),
                 "published" => $this->model->isPublished(),
                 "creationdate" => $this->model->getCreationDate(),

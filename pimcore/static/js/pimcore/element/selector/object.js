@@ -301,14 +301,15 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     
     getGridPanel: function (columns, gridfilters, selectedClass) {
         
-        this.pagingtoolbar = new Ext.PagingToolbar({
+        /*this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: 15,
             store: this.store,
             displayInfo: true,
             displayMsg: '{0} - {1} / {2}',
             emptyMsg: t("no_objects_found")
         });
-    
+        */
+
         this.gridPanel = new Ext.grid.GridPanel({
             store: this.store,
             border: false,
@@ -321,7 +322,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 forceFit: false
             },
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
-            bbar: this.pagingtoolbar,
+            //bbar: this.pagingtoolbar,
             listeners: {
                 rowdblclick: function (grid, rowIndex, ev) {
                     
@@ -429,7 +430,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.store.setBaseParam("query", formValues.query);
         this.store.setBaseParam("subtype", formValues.subtype);
         this.store.setBaseParam("class", formValues["class"]);
-        
-        this.pagingtoolbar.moveFirst();
+        this.store.load();
+
+        //this.pagingtoolbar.moveFirst();
     }
 });

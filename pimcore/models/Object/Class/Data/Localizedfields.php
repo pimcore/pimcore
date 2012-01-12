@@ -128,6 +128,9 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         foreach ($this->getFieldDefinitions() as $fd) {
             $key = $fd->getName();
             $result->$key = $object->{"get".ucfirst($fd->getName())}();
+            if(method_exists($fd, "getDataForGrid")) {
+                $result->$key = $fd->getDataForGrid($result->$key);
+            }
         }
         return $result;
     }

@@ -293,7 +293,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
         return $table;
     }
 
-    public function getDataForGrid($data, $object) {
+    public function getDataForGrid($data, $object = null) {
         if($data instanceof Object_Data_StructuredTable) {
             if(!$data->isEmpty()) {
                 return $data->getData();

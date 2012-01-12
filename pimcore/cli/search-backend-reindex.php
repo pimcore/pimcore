@@ -20,7 +20,7 @@ $db = Pimcore_Resource::get();
 $db->query("TRUNCATE `search_backend_data`;");
 
 $elementsPerLoop = 100;
-$types = array("object","asset","document");
+$types = array("asset","document","object");
 
 foreach ($types as $type) {
     $listClassName = ucfirst($type) . "_List";
@@ -44,7 +44,9 @@ foreach ($types as $type) {
 
             $searchEntry->save();
         }
-
         Pimcore::collectGarbage();
     }
 }
+
+$db->query("OPTIMIZE TABLE search_backend_data;");
+

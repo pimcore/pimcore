@@ -32,12 +32,8 @@
          */
         public function __construct($webResource){
             $this->id = $webResource->getId();
-            if($webResource instanceof Document){
-                $this->type = "document";
-            } else if ($webResource instanceof Asset){
-                $this->type = "asset";
-            } else if ($webResource instanceof Object_Abstract){
-                $this->type = "object";
+            if($webResource instanceof Element_Interface){
+                $this->type = Element_Service::getType($webResource);
             } else {
                 $this->type = "unknown";
             }
