@@ -24,6 +24,10 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         $this->addExpireHeader = false;
     }
 
+    public function enableExpireHeader() {
+        $this->addExpireHeader = true;
+    }
+
     public function disable() {
         $this->enabled = false;
         return true;
@@ -50,7 +54,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
                 }
 
                 if ($conf->lifetime) {
-                    $this->lifetime = (int) $conf->lifetime;
+                    $this->setLifetime((int) $conf->lifetime);
                 }
 
                 if ($conf->excludePatterns) {
@@ -137,5 +141,15 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
                 return;
             }
         }
+    }
+
+    public function setLifetime($lifetime)
+    {
+        $this->lifetime = $lifetime;
+    }
+
+    public function getLifetime()
+    {
+        return $this->lifetime;
     }
 }
