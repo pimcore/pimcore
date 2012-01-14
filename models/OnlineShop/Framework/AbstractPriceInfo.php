@@ -1,0 +1,89 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: rtippler
+ * Date: 10.01.12
+ * Time: 15:32
+ * To change this template use File | Settings | File Templates.
+ */
+
+ class OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo{
+
+    public static function getInstance(){
+        return new static(func_get_args());
+    }
+
+
+     /**
+     * @var \OnlineShop_Framework_IPriceSystem
+     */
+    private $priceSystem;
+
+
+
+    /** @var int | string */
+    private $quantity;
+
+     private $product;
+     private $products;
+
+    /**
+     * @param int|string $quantity
+     * numeric quantity or constant OnlineShop_Framework_IPriceInfo::MIN_PRICE
+     */
+    public function setQuantity($quantity) {
+        $this->quantity = $quantity;
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getQuantity() {
+        return $this->quantity;
+    }
+
+
+
+    /**
+     * @return bool
+     */
+    public function isMinPrice(){
+        return $this->getQuantity()===self::MIN_PRICE;
+    }
+
+    /**
+     * @param \OnlineShop_Framework_IPriceSystem $priceSystem
+     */
+    public function setPriceSystem($priceSystem) {
+        $this->priceSystem = $priceSystem;
+    }
+
+    /**
+     * @return \OnlineShop_Framework_IPriceSystem
+     */
+    protected  function getPriceSystem() {
+        return $this->priceSystem;
+    }
+
+     public function getPrice() {
+         throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
+     }
+
+     public function setProduct($product) {
+         $this->product = $product;
+     }
+
+     public function getProduct() {
+         return $this->product;
+     }
+
+     public function setProducts($products) {
+         $this->products = $products;
+     }
+
+     public function getProducts() {
+         return $this->products;
+     }
+
+ }
+

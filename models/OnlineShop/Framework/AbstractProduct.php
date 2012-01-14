@@ -1,23 +1,6 @@
 <?php
 
 class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
-    /**
-     * @var OnlineShop_Framework_PriceWrapper[]
-     */
-    private $pricesPerQuantity = array();
-
-
-    /**
-     * @param int $quantity | null
-     * @return OnlineShop_Framework_PriceWrapper
-     */
-    public function getPriceWrapper($quantity = 1) {
-        return $this->pricesPerQuantity[$quantity];
-    }
-
-    public function setPriceWrapper( $priceInfo, $quantity = 1) {
-        $this->pricesPerQuantity[$quantity] = $priceInfo;
-    }
 
 
     public function getName() {
@@ -68,28 +51,16 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
      * @return OnlineShop_Framework_Price
      */
     public function getOSPrice($quantityScale = 1) {
-        $priceWrapper = $this->getPriceWrapper($quantityScale);
-        if (!$priceWrapper) {
-            $priceWrapper=new OnlineShop_Framework_PriceWrapper();
-            $this->setPriceWrapper($priceWrapper, $quantityScale);
-        }
-        if (!$priceWrapper->getPrice()){
-            $priceWrapper->setPrice($this->getPriceSystemImplementation()->getPrice($this, $quantityScale));
-        }
-        return $priceWrapper->getPrice();
+        return $this->getOSPriceInfo($quantityScale)->getPrice();
 
     }
 
+    /**
+     * @param int $quantityScale
+     * @return OnlineShop_Framework_IPriceInfo
+     */
     public function getOSPriceInfo($quantityScale = 1) {
-        $priceWrapper = $this->getPriceWrapper($quantityScale);
-        if (!$priceWrapper) {
-            $priceWrapper=new OnlineShop_Framework_PriceWrapper();
-            $this->setPriceWrapper($priceWrapper, $quantityScale);
-        }
-        if (!$priceWrapper->getExtendedPriceInfo()){
-            $priceWrapper->setExtendedPriceInfo($this->getPriceSystemImplementation()->getPriceInfo($this, $quantityScale));
-        }
-        return $priceWrapper->getExtendedPriceInfo();
+        return $this->getPriceSystemImplementation()->getPriceInfo($this,$quantityScale);
     }
 
     /**

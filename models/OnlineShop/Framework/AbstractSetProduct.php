@@ -56,10 +56,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * @return OnlineShop_Framework_IPrice
      */
     public function getOSPrice($quantityScale = null, $products = null) {
-        if (!is_array($products)) {
-            $products = $this->getMandatoryProductEntries();
-        }
-        return $this->getPriceSystemImplementation()->getPrice($this, $quantityScale, $products);
+        return $this->getOSPriceInfo($quantityScale,$products)->getPrice();
     }
 
     /**
@@ -68,7 +65,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param int $quantityScale
      * @param null $products
-     * @return stdClass
+     * @return OnlineShop_Framework_IPriceInfo
      */
     public function getOSPriceInfo($quantityScale = null, $products = null) {
         if (!is_array($products)) {

@@ -9,23 +9,14 @@
  
 interface OnlineShop_Framework_IPriceSystem {
 
-    /**
-     * @abstract
+     /**
      * @param OnlineShop_Framework_AbstractProduct $abstractProduct
-     * @param int|null $quantityScale
+     * @param int | string $quantityScale
+     *    quantityScale - numeric or string (allowed values: OnlineShop_Framework_IPriceInfo::MIN_PRICE
      * @param OnlineShop_Framework_AbstractProduct[] $products
-     * @return OnlineShop_Framework_IPrice
+     * @return OnlineShop_Framework_AbstractPriceInfo
      */
-    public function getPrice(OnlineShop_Framework_AbstractProduct $abstractProduct, $quantityScale = 1, $products = null);
-
-    /**
-     * @abstract
-     * @param OnlineShop_Framework_AbstractProduct $abstractProduct
-     * @param int $quantityScale
-     * @param OnlineShop_Framework_AbstractProduct[] $products
-     * @return OnlineShop_Framework_PriceWrapper
-     */
-    public function getPriceInfo(OnlineShop_Framework_AbstractProduct $abstractProduct, $quantityScale = 1, $products = null);
+    public function getPriceInfo(OnlineShop_Framework_AbstractProduct $abstractProduct, $quantityScale = null, $products = null);
 
     /**
      * @abstract
@@ -38,4 +29,7 @@ interface OnlineShop_Framework_IPriceSystem {
      * @return array(pimcore productid => price value)
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
+
+
+
 }
