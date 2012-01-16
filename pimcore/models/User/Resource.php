@@ -58,9 +58,9 @@ class User_Resource extends Pimcore_Model_Resource_Abstract {
      * @param string $name
      * @return void
      */
-    public function getByName($username) {
+    public function getByName($name) {
         try {
-            $data = $this->db->fetchRow("SELECT * FROM users WHERE username = ?", $username);
+            $data = $this->db->fetchRow("SELECT * FROM users WHERE `name` = ?", $name);
 
             if ($data["id"]) {
                 $this->assignVariablesToModel($data);
@@ -97,7 +97,7 @@ class User_Resource extends Pimcore_Model_Resource_Abstract {
     public function create() {
         try {
             $this->db->insert("users", array(
-                "username" => $this->model->getUsername(),
+                "name" => $this->model->getName(),
                 "password" => $this->model->getPassword()
             ));
 
@@ -139,7 +139,7 @@ class User_Resource extends Pimcore_Model_Resource_Abstract {
         try {
             $data["id"] = $this->model->getId();
             $data["parentId"] = $this->model->getParentId();
-            $data["username"] = $this->model->getUsername();
+            $data["name"] = $this->model->getName();
             $data["password"] = $this->model->getPassword();
             $data["language"] = $this->model->getLanguage();
             $data["firstname"] = $this->model->getFirstname();
@@ -147,7 +147,6 @@ class User_Resource extends Pimcore_Model_Resource_Abstract {
             $data["email"] = $this->model->getEmail();
             $data["admin"] = intval($this->model->getAdmin());
             $data["active"] = intval($this->model->getActive());
-            $data["hasCredentials"] = intval($this->model->getHasCredentials());
 
             $this->db->update("users", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
             if ($this->model->getUserPermissionList() != null) {

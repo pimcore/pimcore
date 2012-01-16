@@ -179,7 +179,7 @@ class Object_Permissions extends Pimcore_Model_Abstract {
     public function getUser() {
         if (!$this->user && $this->userId) {
             $this->user = User::getById($this->userId);
-            $this->setUsername($this->user->getUsername());
+            $this->setUsername($this->user->getName());
         }
         return $this->user;
     }

@@ -52,7 +52,6 @@
             "/pimcore/static/js/lib/ext-plugins/ux/css/ColumnHeaderGroup.css",
             "/pimcore/static/js/lib/ext-plugins/ux/gridfilters/css/GridFilters.css",
             "/pimcore/static/js/lib/ext-plugins/ux/gridfilters/css/RangeMenu.css",
-            "/pimcore/static/js/lib/ext-plugins/ux.maximgb.tg/css/TreeGrid.css",
             "/pimcore/static/js/lib/ext-plugins/ux/fileuploadfield/css/fileuploadfield.css",
             "/pimcore/static/css/ext-admin-overwrite.css"
         );
@@ -109,7 +108,6 @@
             "lib/ext-plugins/ux/treegrid/TreeGridLoader.js",
             "lib/ext-plugins/ux/treegrid/TreeGridColumns.js",
             "lib/ext-plugins/ux/treegrid/TreeGrid.js",
-            "lib/ext-plugins/ux.maximgb.tg/TreeGrid.js",
             "lib/ext-plugins/SuperBoxSelect/SuperBoxSelect.js",
 
             "lib/ext-plugins/ux/RowEditor.js",
@@ -167,7 +165,7 @@
 
             // settings
             "pimcore/settings/user/panel.js",
-            "pimcore/settings/user/PermissionRowEditor.js",
+            "pimcore/settings/user/user.js",
             "pimcore/settings/profile/panel.js",
             "pimcore/settings/thumbnail/item.js",
             "pimcore/settings/thumbnail/panel.js",

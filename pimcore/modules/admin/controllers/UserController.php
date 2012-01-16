@@ -29,10 +29,9 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
     }
 
-    public function treeGetChildsByIdAction() {
+    public function treeGetListAction() {
 
         $list = new User_List();
-        $list->setCondition("parentId = ?", intval($this->_getParam("node")));
         $list->load();
 
         $users = array();
@@ -59,7 +58,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
                 $this->_helper->json(array(
                     "success" => true,
-                    "username" => $user->getUsername(),
+                    "username" => $user->getName(),
                     "id" => $user->getId(),
                     "parentId" => $user->getParentId(),
                     "hasCredentials" => $user->getHasCredentials()
@@ -108,7 +107,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
         $user->setPassword(null);
         $conf = Pimcore_Config::getSystemConfig();
-        $this->_helper->json(array("wsenabled"=>$conf->webservice->enabled,"user" => $user->getIterator(), "objectDependencies" => array("hasHidden" => $hasHidden, "dependencies" => $userObjectData)));
+        $this->_helper->json(array("wsenabled"=>$conf->webservice->enabled,"user" => $user, "objectDependencies" => array("hasHidden" => $hasHidden, "dependencies" => $userObjectData)));
     }
 
     public function getMinimalAction() {
@@ -140,7 +139,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $user = User::getById(intval($this->_getParam("id")));
 
             if (!empty($values["password"])) {
-                $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getUsername(),$values["password"]);
+                $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
             }
 
 
@@ -174,7 +173,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             if ($user->getId() == $this->_getParam("id")) {
                 $values = Zend_Json::decode($this->_getParam("data"));
                 if (!empty($values["password"])) {
-                    $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getUsername(),$values["password"]);
+                    $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
                 }
                 $user->setValues($values);
                 $user->save();
@@ -197,7 +196,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $users = $list->getUsers();
         if (!empty($users)) {
             foreach ($users as $user) {
-                $userList[] = $user->getIterator();
+                $userList[] = $user;
             }
         }
 
@@ -211,9 +210,6 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         header("Content-Type: text/javascript");
 
         $user = $this->getUser();
-        if ($user != null) {
-            $user = $user->getIterator();
-        }
 
         echo "pimcore.currentuser = " . Zend_Json::encode($user);
         exit;
@@ -228,7 +224,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     protected function getTreeNodeConfig($user) {
         $tmpUser = array(
             "id" => $user->getId(),
-            "text" => $user->getUsername(),
+            "text" => $user->getName(),
             "elementType" => "user",
             "qtipCfg" => array(
                 "title" => "ID: " . $user->getId()

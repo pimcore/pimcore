@@ -29,9 +29,9 @@ class Pimcore_Tool_Authentication {
         // get session namespace
         $adminSession = new Zend_Session_Namespace("pimcore_admin");
 
-        $thawedUser = User::thaw($adminSession->frozenuser);
-        if ($thawedUser instanceof User) {
-            return $thawedUser;
+        $user = $adminSession->user;
+        if ($user instanceof User) {
+            return $user;
         }
     }
 
@@ -178,6 +178,7 @@ class Pimcore_Tool_Authentication {
      * @return  string
      */
     protected static function hex2str($hex) {
+        $str = "";
         for ($i = 0; $i < strlen($hex); $i += 2) {
             $str .= chr(hexdec(substr($hex, $i, 2)));
         }

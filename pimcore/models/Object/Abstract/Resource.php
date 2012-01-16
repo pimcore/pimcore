@@ -372,7 +372,7 @@ class Object_Abstract_Resource extends Element_Resource {
             //neither user group nor user has permissions set -> use default all allowed
             $permission->setUser($user);
             $permission->setUserId($user->getId());
-            $permission->setUsername($user->getUsername());
+            $permission->setUsername($user->getName());
             $permission->setCid($this->model->getId());
             $permission->setCpath($this->model->getFullPath());
 

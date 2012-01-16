@@ -459,9 +459,6 @@ CREATE TABLE `users` (
   KEY `parentId` (`parentId`)
 ) DEFAULT CHARSET=utf8;
 
-INSERT INTO  `users` (parentId,username,admin,hasCredentials,active) values (0,'system',1,1,1);
-UPDATE  `users` SET id = 0 WHERE username = 'system';
-ALTER TABLE `users` AUTO_INCREMENT = 1;
 
 DROP TABLE IF EXISTS `users_permission_definitions`;
 CREATE TABLE `users_permission_definitions` (
