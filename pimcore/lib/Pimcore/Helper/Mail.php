@@ -218,6 +218,7 @@ CSS;
                     $absolutePath = $netUrl->getNormalizedURL();
                 }
 
+                $path = preg_quote($path);
                 $string = preg_replace("!([\"'])$path([\"'])!is", "\\1" . $absolutePath . "\\2", $string);
             }
         }
