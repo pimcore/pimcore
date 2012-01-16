@@ -274,95 +274,18 @@ class Asset_Resource extends Element_Resource {
      * @return Asset_Permission
      */
     public function getPermissionsForUser(User $user) {
+
+        // @TODO PERMISSIONS_REFACTORE must be updated to the new permissions
         $pathParts = explode("/", $this->model->getPath() . $this->model->getFilename());
         unset($pathParts[0]);
-        $tmpPathes = array();
-        $pathConditionParts[] = "cpath = '/'";
-        foreach ($pathParts as $pathPart) {
-            $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $tmpPathes));
-        }
 
-        $pathCondition = implode(" OR ", $pathConditionParts);
-        $permissionRaw = $this->db->fetchRow("SELECT id FROM assets_permissions WHERE (" . $pathCondition . ") AND userId = ? ORDER BY cpath DESC LIMIT 1", $user->getId());
-
-        //path condition for parent asset
-        $parentAssetPathParts = array_slice($pathParts, 0, -1);
-        $parentAssetPathConditionParts[] = "cpath = '/'";
-        foreach ($parentAssetPathParts as $parentAssetPathPart) {
-            $parentAssetTmpPaths[] = $parentAssetPathPart;
-            $parentAssetPathConditionParts[] = $this->db->quoteInto("cpath = ?", "/" . implode("/", $parentAssetTmpPaths));
-        }
-        $parentAssetPathCondition = implode(" OR ", $parentAssetPathConditionParts);
-        $parentAssetPermissionRaw = $this->db->fetchRow("SELECT id FROM assets_permissions WHERE (" . $parentAssetPathCondition . ") AND userId = ? ORDER BY cpath DESC LIMIT 1", $user->getId());
-        $parentAssetPermissions = new Asset_Permissions();
-        if ($parentAssetPermissionRaw["id"]) {
-
-            $parentAssetPermissions = Asset_Permissions::getById($parentAssetPermissionRaw["id"]);
-        }
-
-
-        $parentUser = $user->getParent();
-        if ($parentUser instanceof User and $parentUser->isAllowed("assets")) {
-            $parentPermission = $this->getPermissionsForUser($parentUser);
-        } else $parentPermission = null;
-
+        //neither user group nor user has permissions set -> use default all allowed
         $permission = new Asset_Permissions();
-
-        if ($permissionRaw["id"] and $parentPermission instanceof Asset_Permissions ) {
-
-            //consider user group permissions
-            $permission = Asset_Permissions::getById($permissionRaw["id"]);
-            $permissionKeys = $permission->getValidPermissionKeys();
-
-            foreach ($permissionKeys as $key) {
-                $getter = "get" . ucfirst($key);
-                $setter = "set" . ucfirst($key);
-
-                if ((!$permission->getList() and !$parentPermission->getList())  or !$parentAssetPermissions->getList()) {
-                    //no list - return false for all
-                    $permission->$setter(false);
-                } else if ($parentPermission->$getter()) {
-                    //if user group allows -> return true, it overrides the user permission!
-                    $permission->$setter(true);
-                }
-            }
-
-
-        } else if ($permissionRaw["id"]) {
-            //use user permissions, no user group to override anything
-            $permission = Asset_Permissions::getById($permissionRaw["id"]);
-
-            //check parent asset's list permission and current object's list permission
-            if (!$parentAssetPermissions->getList() or !$permission->getList()) {
-                $permissionKeys = $permission->getValidPermissionKeys();
-                foreach ($permissionKeys as $key) {
-                    $setter = "set" . ucfirst($key);
-                    $permission->$setter(false);
-                }
-            }
-
-        } else if ($parentPermission instanceof Asset_Permissions and $parentPermission->getId() > 0) {
-            //use user group permissions - no permission found for user at all
-            $permission = $parentPermission;
-            //check parent asset's list permission and current object's list permission
-            if (!$parentAssetPermissions->getList() or !$permission->getList()) {
-                $permissionKeys = $permission->getValidPermissionKeys();
-                foreach ($permissionKeys as $key) {
-                    $setter = "set" . ucfirst($key);
-                    $permission->$setter(false);
-                }
-            }
-
-        } else {
-            //neither user group nor user has permissions set -> use default all allowed
-            $permission->setUser($user);
-            $permission->setUserId($user->getId());
-            $permission->setUsername($user->getUsername());
-            $permission->setCid($this->model->getId());
-            $permission->setCpath($this->model->getFullPath());
-
-        }
+        $permission->setUser($user);
+        $permission->setUserId($user->getId());
+        $permission->setUsername($user->getName());
+        $permission->setCid($this->model->getId());
+        $permission->setCpath($this->model->getFullPath());
 
         $this->model->setUserPermissions($permission);
         return $permission;

@@ -15,22 +15,12 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User extends Pimcore_Model_Abstract {
-
-    /**
-     * @var integer
-     */
-    public $id;
-
-    /**
-     * @var integer
-     */
-    private $parentId;
+class User extends User_UserRole {
 
     /**
      * @var string
      */
-    public $name;
+    public $type = "user";
 
     /**
      * @var string
@@ -52,7 +42,6 @@ class User extends Pimcore_Model_Abstract {
      */
     public $email;
 
-
     /**
      * @var string
      */
@@ -64,38 +53,51 @@ class User extends Pimcore_Model_Abstract {
     public $admin = false;
 
     /**
-     * @var User
-     */
-    public $parent;
-
-    /**
-     * @var array
-     */
-    public $permissions = array();
-
-    /**
-     * @var boolean
-     */
-    public $hasChilds;
-
-    /**
      * @var boolean
      */
     public $active = true;
 
     /**
-     * @return integer
+     * @param integer $id
+     * @return User
      */
-    public function getId() {
-        return $this->id;
+    public static function getById($id) {
+
+        try {
+            $user = new self();
+            $user->getResource()->getById($id);
+            return $user;
+        }
+        catch (Exception $e) {
+            return false;
+        }
     }
 
     /**
-     * @param integer $id
-     * @return void
+     * @param array $values
+     * @return User
      */
-    public function setId($id) {
-        $this->id = $id;
+    public static function create($values = array()) {
+        $user = new self();
+        $user->setValues($values);
+        $user->save();
+        return $user;
+    }
+
+    /**
+     * @param string $name
+     * @return User
+     */
+    public static function getByName($name) {
+
+        try {
+            $user = new self();
+            $user->getResource()->getByName($name);
+            return $user;
+        }
+        catch (Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -113,21 +115,6 @@ class User extends Pimcore_Model_Abstract {
         if (strlen($password) > 4) {
             $this->password = $password;
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getName() {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return void
-     */
-    public function setName($name) {
-        $this->name = $name;
     }
 
     /**
@@ -196,23 +183,6 @@ class User extends Pimcore_Model_Abstract {
         $this->email = $email;
     }
 
-
-
-    /**
-     * @return integer
-     */
-    public function getParentId() {
-        return $this->parentId;
-    }
-
-    /**
-     * @param integer $parentId
-     * @return void
-     */
-    public function setParentId($parentId) {
-        $this->parentId = $parentId;
-    }
-
     /**
      * @return string
      */
@@ -268,159 +238,20 @@ class User extends Pimcore_Model_Abstract {
         $this->active = (bool) $active;
     }
 
+    /**
+     * @return bool
+     */
     public function isActive(){
         return $this->getActive();
     }
 
 
     /**
-     * @param boolean $state
-     */
-    function setHasChilds($state){
-        $this->hasChilds= $state;
-
-    }
-
-    /**
-     * Returns true if the document has at least one child
      *
-     * @return boolean
      */
-    public function hasChilds() {
-        if ($this->hasChilds !== null) {
-            return $this->hasChilds;
-        }
-        return $this->getResource()->hasChilds();
-    }
-
-
-
-    /**
-     * @param string $name
-     * @return User
-     */
-    public static function getByName($name) {
-
-        try {
-            $user = new self();
-            $user->getResource()->getByName($name);
-            return $user;
-        }
-        catch (Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * @param integer $id
-     * @return User
-     */
-    public static function getById($id) {
-
-        try {
-            $user = new self();
-            $user->getResource()->getById($id);
-            return $user;
-        }
-        catch (Exception $e) {
-            return false;
-        }
-    }
-
-
-    /**
-     * Generates the permission list required for frontend display
-     *
-     * @return void
-     */
-    public function generatePermissionList() {
-        $permissionInfo = null;
-
-        $list = new User_Permission_Definition_List();
-        $definitions = $list->load();
-
-        if (!$this->isAdmin()) {
-            foreach ($definitions as $definition) {
-                $permissionInfo[$definition->getKey()] = $this->getPermission($definition->getKey());
-            }
-
-        } else {
-            foreach ($definitions as $definition) {
-                $permissionInfo[$definition->getKey()] = true;
-            }
-        }
-        return $permissionInfo;
-    }
-
-
-    /**
-     * @param array $values
-     * @return User
-     */
-    public static function create($values = array()) {
-        $user = new self();
-        $user->setValues($values);
-        $user->save();
-        return $user;
-    }
-
-
     public function setAllAclToFalse() {
-        // @TODO must be replaced with new permissions list (in an array $this->permissions)
+        // @TODO PERMISSIONS_REFACTORE must be replaced with new permissions list (in an array $this->permissions)
         //$this->permissions->removeAll();
-    }
-
-
-    /**
-     * @return User_Permission_List $permissionList
-     */
-    public function getUserPermissionList() {
-        return $this->permissions;
-    }
-
-    /**
-     * @return User returns parent
-     */
-    public function getParent() {
-        return $this->parent;
-    }
-
-
-    /**
-     *
-     * @param String $permissionName
-     * @return User_Permission $userPermission
-     */
-    public function getPermission($permissionName) {
-
-        if ($this->isAdmin()) {
-            return true;
-        } else {
-            $thisHasPermission = false;
-
-            // @TODO must be replaced with new permissions list (in an array $this->permissions)
-            /*if ($this->permissions != null) {
-                $thisHasPermission = $this->permissions->hasPermission($permissionName);
-            }
-            */
-
-            /*
-            // this was for inheritance! @TODO: Must be replaced with groups
-            $parentHasPermission = false;
-            
-            if ($this->getParent() != null and $this->getParent()->getUserPermissionList() != null) {
-               $parentHasPermission = $this->getParent()->getPermission($permissionName);
-            }
-            if (!$thisHasPermission && $parentHasPermission) {
-                return true;
-            } else {
-
-                return $thisHasPermission;
-            }*/
-
-            return $thisHasPermission;
-        }
-
     }
 
     /**
@@ -433,38 +264,19 @@ class User extends Pimcore_Model_Abstract {
 
     /**
      *
-     * @param String $permissionName
+     * @param string $permissionName
+     * @return array
      */
-    public function setPermission($permissionName) {
-        $availableUserPermissionsList = new User_Permission_Definition_List();
-        $availableUserPermissions = $availableUserPermissionsList->load();
+    public function getPermission($permissionName) {
 
-        $availableUserPermissionKeys = array();
-        foreach($availableUserPermissions as $permission){
-            if($permission instanceof User_Permission_Definition){
-                $availableUserPermissionKeys[]=$permission->getKey();
-            }
-        }
-        if(in_array($permissionName,$availableUserPermissionKeys)){
-
-            // @TODO must be replaced with new permissions list (in an array $this->permissions)
-            /*if (empty($this->permissions) or !in_array($permissionName, $this->permissions->getPermissionNames())) {
-                $permission = new User_Permission($permissionName, false);
-                $this->permissions->add($permission);
-            }*/
-
+        if ($this->isAdmin()) {
+            return true;
         }
 
-
+        return parent::getPermission($permissionName);
     }
 
-    /**
-     * delete user
-     */
-    public function delete() {
-
-        $this->getResource()->delete();
-        Pimcore_Model_Cache::clearAll();
+    public function getParent() {
+        $test = "asd";
     }
-
 }

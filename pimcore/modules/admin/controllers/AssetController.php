@@ -747,24 +747,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     }
                 }
 
-                // permissions
-                if ($this->_getParam("permissions")) {
-                    $permissions = array();
-                    $permissionsData = Zend_Json::decode($this->_getParam("permissions"));
-
-                    if (is_array($permissionsData)) {
-                        foreach ($permissionsData as $permissionData) {
-
-                            $permission = new Asset_Permissions();
-                            $permission->setValues($permissionData);
-
-                            $permissions[] = $permission;
-                        }
-                    }
-
-                    $asset->setPermissions($permissions);
-                }
-
                 // scheduled tasks
                 if ($this->_getParam("scheduler")) {
                     $tasks = array();

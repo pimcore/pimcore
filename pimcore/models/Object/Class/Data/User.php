@@ -29,7 +29,7 @@ class Object_Class_Data_User extends Object_Class_Data_Select {
 
         $list = new User_List();
         $list->setOrder("asc");
-        $list->setOrderKey("username");
+        $list->setOrderKey("name");
         $users = $list->load();
 
         $options = array();

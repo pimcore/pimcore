@@ -445,19 +445,20 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `username` varchar(50) DEFAULT NULL,
+  `type` enum('user','userfolder','role','rolefolder') NOT NULL DEFAULT 'user',
+  `name` varchar(50) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `language` varchar(2) DEFAULT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
-  `hasCredentials` tinyint(1) unsigned DEFAULT '1',
   `active` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `username` (`name`),
   KEY `parentId` (`parentId`)
 ) DEFAULT CHARSET=utf8;
+
 
 
 DROP TABLE IF EXISTS `users_permission_definitions`;

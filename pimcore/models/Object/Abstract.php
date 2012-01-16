@@ -162,11 +162,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     public $o_properties = null;
 
     /**
-     * @var array
-     */
-    public $o_permissions = null;
-
-    /**
      * @var Object_Permissions
      */
     public $o_userPermissions;
@@ -620,19 +615,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                 }
             }
         }
-       
-        // save permissions
-        $this->getO_Permissions();
-        $this->getResource()->deleteAllPermissions();
-        if (is_array($this->o_permissions)) {
-            foreach ($this->o_permissions as $permission) {
-                $permission->setId(null);
-                $permission->setCid($this->getO_Id());
-                $permission->setCpath($this->getO_FullPath());
-                $permission->save();
-            }
-        }
-
 
         // save dependencies
         $d = $this->getDependencies();
@@ -1244,40 +1226,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         
         $this->o_properties[$name] = $property;
     }
-    
-    /**
-     * @return array
-     */
-    public function getO_permissions() {
-        if ($this->o_permissions === null) {
-            $this->setO_permissions($this->getResource()->getPermissions());
-        }
-        return $this->o_permissions;
-    }
-    
-    /**
-     * @return array
-     */
-    public function getPermissions() {
-        return $this->getO_permissions();
-    }    
-
-    /**
-     * @param array $o_permissions
-     * @return void
-     */
-    public function setO_permissions($o_permissions) {
-        $this->o_permissions = $o_permissions;
-    }
-
-    /**
-     * @param array $o_permissions
-     * @return void
-     */
-    public function setPermissions($o_permissions) {
-        $this->setO_permissions($o_permissions);
-    }
-
 
     /**
      * @return Element_AdminStyle
@@ -1315,12 +1263,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("o_userPermissions","o_dependencies","o_permissions","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_parent","omitMandatoryCheck");
+            $blockedVars = array("o_userPermissions","o_dependencies","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_parent","omitMandatoryCheck");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("o_userPermissions","o_dependencies","o_permissions","o_childs","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_properties","o_parent","o___loadedLazyFields","omitMandatoryCheck");
+            $blockedVars = array("o_userPermissions","o_dependencies","o_childs","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_properties","o_parent","o___loadedLazyFields","omitMandatoryCheck");
         }
         
 

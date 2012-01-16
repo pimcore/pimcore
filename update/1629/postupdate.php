@@ -13,8 +13,8 @@ function sendQuery ($sql) {
 
 sendQuery("DELETE FROM `users` WHERE hasCredentials != 1;");
 sendQuery("ALTER TABLE `users` DROP COLUMN `hasCredentials`;");
-sendQuery("ALTER TABLE `users` ADD COLUMN `type` enum('user','folder') NOT NULL DEFAULT 'user' AFTER `parentId`;");
+sendQuery("ALTER TABLE `users` ADD COLUMN `type` enum('user','userfolder','role','rolefolder') NOT NULL DEFAULT 'user' AFTER `parentId`;");
 sendQuery("ALTER TABLE `users` CHANGE COLUMN `username` `name` varchar(50) NULL DEFAULT NULL;");
-sendQuery("");
+//sendQuery("");
 
 ?>

@@ -315,7 +315,6 @@ class Install_IndexController extends Pimcore_Controller_Action {
                 "parentId" => 0,
                 "username" => $this->_getParam("admin_username"),
                 "password" => Pimcore_Tool_Authentication::getPasswordHash($this->_getParam("admin_username"),$this->_getParam("admin_password")),
-                "hasCredentials" => true,
                 "active" => true
             ));
             $user->setAdmin(true);

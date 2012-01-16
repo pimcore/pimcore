@@ -123,14 +123,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public $userModification;
 
     /**
-     * Permissions set to this document (user-independend)
-     * Contains a list of Document_Permissions
-     *
-     * @var array
-     */
-    public $permissions = null;
-
-    /**
      * Permissions for the user which requested this document in editmode
      *
      * @var Document_Permissions
@@ -403,20 +395,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             }
         }
 
-        // save permissions
-        $this->getPermissions();
-        // remove all permissions
-        $this->getResource()->deleteAllPermissions();
-
-        if (is_array($this->permissions)) {
-            foreach ($this->permissions as $permission) {
-                $permission->setId(null);
-                $permission->setCid($this->getId());
-                $permission->setCpath($this->getFullPath());
-                $permission->save();
-            }
-        }
-
         // save dependencies
         $d = $this->getDependencies();
         $d->clean();
@@ -650,29 +628,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         Zend_Registry::set("document_" . $this->getId(), null);
 
         Pimcore_API_Plugin_Broker::getInstance()->postDeleteDocument($this);
-    }
-
-    /**
-     * Get a list of permissions set to the document (not user-specific)
-     * If they aren't already set try to get them from resource
-     *
-     * @return array
-     */
-    public function getPermissions() {
-        if ($this->permissions === null) {
-            $this->setPermissions($this->getResource()->getPermissions());
-        }
-        return $this->permissions;
-    }
-
-    /**
-     * Set a list of Permissions
-     *
-     * @param array $permissions
-     * @return void
-     */
-    public function setPermissions($permissions) {
-        $this->permissions = $permissions;
     }
 
     /**
@@ -1083,12 +1038,12 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("dependencies", "userPermissions", "permissions", "hasChilds", "_oldPath", "versions", "scheduledTasks", "parent");
+            $blockedVars = array("dependencies", "userPermissions", "hasChilds", "_oldPath", "versions", "scheduledTasks", "parent");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("dependencies", "userPermissions", "permissions", "childs", "hasChilds", "_oldPath", "versions", "scheduledTasks", "properties", "parent");
+            $blockedVars = array("dependencies", "userPermissions", "childs", "hasChilds", "_oldPath", "versions", "scheduledTasks", "properties", "parent");
         }
         
 
