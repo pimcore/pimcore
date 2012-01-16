@@ -52,7 +52,6 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                     "parentId" => intval($this->_getParam("parentId")),
                     "username" => $this->_getParam("username"),
                     "password" => md5(time()),
-                    "hasCredentials" => $this->_getParam("hasCredentials"),
                     "active" => $this->_getParam("active")
                 ));
 
@@ -60,8 +59,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                     "success" => true,
                     "username" => $user->getName(),
                     "id" => $user->getId(),
-                    "parentId" => $user->getParentId(),
-                    "hasCredentials" => $user->getHasCredentials()
+                    "parentId" => $user->getParentId()
                 ));
             } catch (Exception $e) {
 
@@ -115,7 +113,6 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $user->setPassword(null);
 
         $minimalUserData['id'] = $user->getId();
-        $minimalUserData['hasCredentials'] = $user->getHasCredentials();
         $minimalUserData['admin'] = $user->isAdmin();
         $minimalUserData['active'] = $user->isActive();
         $minimalUserData['permissionInfo']['assets']['granted'] = $user->isAllowed("assets");
@@ -232,7 +229,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         );
 
         // set type specific settings
-        if (!$user->getHasCredentials()) {
+        // @TODO: INTEGRATE FOLDERS HERE
+        if (1==2) {
             $tmpUser["leaf"] = false;
             $tmpUser["iconCls"] = "pimcore_icon_usergroup";
             $tmpUser["expanded"] = true;
