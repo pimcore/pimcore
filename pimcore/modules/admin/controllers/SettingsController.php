@@ -205,7 +205,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $users = $userList->load();
             if (is_array($users)) {
                 foreach ($users as $user) {
-                    $adminUsers[] = array("id" => $user->getId(), "username" => $user->getUsername());
+                    $adminUsers[] = array("id" => $user->getId(), "username" => $user->getName());
                 }
             }
             $adminUsers[] = array("id" => "", "username" => "-");

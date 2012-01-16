@@ -51,7 +51,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $permission = $object->getUserPermissions($user);
                 $permission->setUser($user);
                 $permission->setUserId($user->getId());
-                $permission->setUsername($user->getUsername());
+                $permission->setUsername($user->getName());
                 $permissions[] = $permission;
             }
         }
@@ -113,7 +113,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $childs = $childsList->load();
 
             foreach ($childs as $child) {
-
                 $tmpObject = $this->getTreeNodeConfig($child);
 
                 if ($child->isAllowed("list")) {
@@ -155,199 +154,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
         $this->_helper->json(false);
     }
-
-    public function getTreePermissionsAction()
-    {
-
-
-        $this->removeViewRenderer();
-        $user = User::getById($this->_getParam("user"));
-
-        if ($this->_getParam("xaction") == "update") {
-            $data = json_decode($this->_getParam("data"));
-            if (!empty($data->id)) {
-                $nodes[] = $data;
-            } else {
-                $nodes = $data;
-            }
-            //loop through store nodes  = objects to edit
-            if (is_array($nodes)) {
-
-                foreach ($nodes as $node) {
-                    $object = Object_Abstract::GetById($node->id);
-                    $parent = Object_Abstract::getById($object->getParentId());
-                    $objectPermission = $object->getPermissionsForUser($user);
-                    if ($objectPermission instanceof Object_Permissions) {
-                        $found = true;
-                        if (!$node->permissionSet) {
-                            //reset permission by deleting it
-                            if($objectPermission->getCid() == $object->getId()){
-                                $objectPermission->delete();
-                                $permissions = $object->getPermissions();
-                            }
-                            break;
-
-                        } else {
-
-                            if ($objectPermission->getCid() != $object->getId() or $objectPermission->getUser()->getId() != $user->getId()) {
-                                //we got a parent's permission create new permission
-                                //or we got a usergroup permission, create a new permission for specific user
-                                $objectPermission = new Object_Permissions();
-                                $objectPermission->setUser($user);
-                                $objectPermission->setUserId($user->getId());
-                                $objectPermission->setUsername($user->getUsername());
-                                $objectPermission->setCid($object->getId());
-                                $objectPermission->setCpath($object->getFullPath());
-                            }
-
-                            //update object_permission
-                            $permissionNames = $objectPermission->getValidPermissionKeys();
-                            foreach ($permissionNames as $name) {
-                                //check if parent allows list
-                                if ($parent) {
-                                    $parent->getPermissionsForUser($user);
-                                    $parentList = $parent->isAllowed("list");
-                                } else {
-                                    $parentList = true;
-                                }
-                                $setterName = "set" . ucfirst($name);
-
-                                if (isset($node->$name) and $node->$name and $parentList) {
-                                    $objectPermission->$setterName(true);
-                                } else if (isset($node->$name)) {
-                                    $objectPermission->$setterName(false);
-                                    //if no list permission set all to false
-                                    if ($name == "list") {
-
-                                        foreach ($permissionNames as $n) {
-                                            $setterName = "set" . ucfirst($n);
-                                            $objectPermission->$setterName(false);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-
-                            $objectPermission->save();
-
-                            if ($node->evictChildrenPermissions) {
-
-                                $successorList = new Object_List();
-                                $successorList->setOrderKey("o_key");
-                                $successorList->setOrder("asc");
-                                if ($object->getParentId() < 1) {
-                                    $successorList->setCondition("o_parentId > 0");
-
-                                } else {
-                                    $successorList->setCondition("o_path like '" . $object->getFullPath() . "/%'");
-                                }
-
-                                $successors = $successorList->load();
-                                foreach ($successors as $successor) {
-
-                                    $permission = $successor->getPermissionsForUser($user);
-                                    if ($permission->getId() > 0 and $permission->getCid() == $successor->getId()) {
-                                        $permission->delete();
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                $this->_helper->json(array(
-                                          "success" => true
-                                     ));
-            }
-        } else if ($this->_getParam("xaction") == "destroy") {
-            //ignore
-        } else {
-
-            //read
-            if ($user instanceof User) {
-                $userPermissionsNamespace = new Zend_Session_Namespace('objectUserPermissions');
-                if (!isset($userPermissionsNamespace->expandedNodes) or $userPermissionsNamespace->currentUser != $user->getId()) {
-                    $userPermissionsNamespace->currentUser = $user->getId();
-                    $userPermissionsNamespace->expandedNodes = array();
-                }
-                if (is_numeric($this->_getParam("anode")) and $this->_getParam("anode") > 0) {
-                    $node = $this->_getParam("anode");
-                    $object = Object_Abstract::getById($node);
-                    $objects = array();
-                    if ($user instanceof User and $object->hasChilds()) {
-
-                        $total = $object->getChildAmount();
-                        $list = new Object_List();
-                        $list->setCondition("o_parentId = ?", $object->getId());
-                        $list->setOrderKey("o_key");
-                        $list->setOrder("asc");
-
-                        $childsList = $list->load();
-                        $requestedNodes = array();
-                        foreach ($childsList as $childObject) {
-                            $requestedNodes[] = $childObject->getId();
-                        }
-
-                        $userPermissionsNamespace->expandedNodes = array_merge($userPermissionsNamespace->expandedNodes, $requestedNodes);
-                    }
-                } else {
-                    $userPermissionsNamespace->expandedNodes = array_merge($userPermissionsNamespace->expandedNodes, array(1));
-                }
-
-
-                //load all nodes which are open in client
-                $objectList = new Object_List();
-                $objectList->setOrderKey("o_key");
-                $objectList->setOrder("asc");
-                $queryIds = "'" . implode("','", $userPermissionsNamespace->expandedNodes) . "'";
-                $objectList->setCondition("o_id in (" . $queryIds . ")");
-                $o = $objectList->load();
-                $total = count($o);
-                foreach ($o as $object) {
-                    if ($object->getParentId() > 0) {
-                        $parent = Object_Abstract::getById($object->getParentId());
-                    } else $parent = null;
-
-                    // get current user permissions
-                    $object->getPermissionsForUser($this->getUser());
-                    // only display object if listing is allowed for the current user
-                    if ($object->isAllowed("list") and $object->isAllowed("permissions")) {
-                        $treeNodePermissionConfig = $this->getTreeNodePermissionConfig($user, $object, $parent, true);
-                        $objects[] = $treeNodePermissionConfig;
-                        $tmpObjects[$object->getId()] = $treeNodePermissionConfig;
-                    }
-                }
-
-
-                //only visible nodes and in the order how they should be displayed ... doesn't make sense but seems to fix bug of duplicate nodes
-                $objectsForFrontend = array();
-                $visible = $this->_getParam("visible");
-                if ($visible) {
-                    $visibleNodes = explode(",", $visible);
-                    foreach ($visibleNodes as $nodeId) {
-                        $objectsForFrontend[] = $tmpObjects[$nodeId];
-                        if ($nodeId == $this->_getParam("anode") and is_array($requestedNodes)) {
-                            foreach ($requestedNodes as $nId) {
-                                $objectsForFrontend[] = $tmpObjects[$nId];
-                            }
-                        }
-                    }
-                    $objects = $objectsForFrontend;
-                }
-
-
-            }
-            $this->_helper->json(array(
-                                      "total" => $total,
-                                      "data" => $objects,
-                                      "success" => true
-                                 ));
-
-
-        }
-
-    }
-
 
     public function treeGetRootAction()
     {

@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User extends Pimcore_Model_Abstract implements IteratorAggregate {
+class User extends Pimcore_Model_Abstract {
 
     /**
      * @var integer
@@ -30,68 +30,58 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
     /**
      * @var string
      */
-    public $username;
+    public $name;
 
     /**
      * @var string
      */
-    private $password;
+    public $password;
 
     /**
      * @var string
      */
-    private $firstname;
+    public $firstname;
 
     /**
      * @var string
      */
-    private $lastname;
+    public $lastname;
 
     /**
      * @var string
      */
-    private $email;
+    public $email;
 
 
     /**
      * @var string
      */
-    private $language = "en";
+    public $language = "en";
 
     /**
      * @var boolean
      */
-    private $admin = false;
-
-    /**
-     * @var boolean
-     */
-    private $hasCredentials;
+    public $admin = false;
 
     /**
      * @var User
      */
-    private $parent;
+    public $parent;
 
     /**
      * @var array
      */
-    private $permissions;
+    public $permissions = array();
 
     /**
      * @var boolean
      */
-    private $hasChilds;
+    public $hasChilds;
 
     /**
      * @var boolean
      */
-    private $active = true;
-
-
-    public function __construct() {
-        $this->init();
-    }
+    public $active = true;
 
     /**
      * @return integer
@@ -128,16 +118,34 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
     /**
      * @return string
      */
-    public function getUsername() {
-        return $this->username;
+    public function getName() {
+        return $this->name;
     }
 
     /**
-     * @param string $username
+     * @param string $name
      * @return void
      */
-    public function setUsername($username) {
-        $this->username = $username;
+    public function setName($name) {
+        $this->name = $name;
+    }
+
+    /**
+     * Alias for getName()
+     * @deprecated
+     * @return string
+     */
+    public function getUsername () {
+        return $this->getName();
+    }
+
+    /**
+     * Alias for setName()
+     * @deprecated
+     * @param $username
+     */
+    public function setUsername ($username) {
+        $this->setName($username);
     }
 
     /**
@@ -264,20 +272,6 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
         return $this->getActive();
     }
 
-    /**
-     * @return boolean
-     */
-    function getHasCredentials() {
-        return $this->hasCredentials;
-    }
-
-    /**
-     * @param boolean $hasCredentials
-     * @return void
-     */
-    function setHasCredentials($hasCredentials) {
-        $this->hasCredentials = (bool) $hasCredentials;
-    }
 
     /**
      * @param boolean $state
@@ -300,34 +294,16 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
     }
 
 
-    /**
-     * initializes user object
-     */
-    public function init() {
-
-        //set parent
-        if ($this->getParentId() > 0) {
-            $parent = new self();
-            $parent->getResource()->getById($this->getParentId());
-            $parent->init();
-            $this->parent = $parent;
-        } else $this->parent = null;
-
-        $this->permissions = new User_Permission_List();
-        $this->permissions->load($this);
-
-    }
 
     /**
-     * @param string $username
+     * @param string $name
      * @return User
      */
-    public static function getByName($username) {
+    public static function getByName($name) {
 
         try {
             $user = new self();
-            $user->getResource()->getByName($username);
-            $user->init();
+            $user->getResource()->getByName($name);
             return $user;
         }
         catch (Exception $e) {
@@ -344,39 +320,11 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
         try {
             $user = new self();
             $user->getResource()->getById($id);
-            $user->init();
             return $user;
         }
         catch (Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * returns an ArrayIterator which should be used for json_encode of user to make private properties accessible
-     *
-     * @return ArrayIterator $arrayIterator
-     */
-    public function getIterator() {
-
-        $iArray['id'] = $this->id;
-        if ($this->parent != null) {
-            $iArray['parentId'] = $this->parent->getId();
-        } else {
-            $iArray['parentId'] = 0;
-        }
-        $iArray['username'] = $this->username;
-        $iArray['password'] = $this->password;
-        $iArray['language'] = $this->language;
-        $iArray['firstname'] = $this->firstname;
-        $iArray['lastname'] = $this->lastname;
-        $iArray['email'] = $this->email;
-        $iArray['admin'] = $this->admin;
-        $iArray['active'] = $this->active;
-        $iArray['hasCredentials'] = $this->hasCredentials;
-        $iArray['hasChilds'] = $this->hasChilds;
-        $iArray['permissionInfo'] = $this->generatePermissionList();
-        return new ArrayIterator($iArray);
     }
 
 
@@ -385,24 +333,20 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
      *
      * @return void
      */
-    private function generatePermissionList() {
+    public function generatePermissionList() {
         $permissionInfo = null;
-        $definitions = User_Permission_List::getAllPermissionDefinitions();
+
+        $list = new User_Permission_Definition_List();
+        $definitions = $list->load();
 
         if (!$this->isAdmin()) {
-            if ($this->parent != null) {
-                foreach ($definitions as $definition) {
-                    $permissionInfo[$definition->getKey()]["inherited"] = $this->getParent()->getPermission($definition->getKey());
-                }
-            }
             foreach ($definitions as $definition) {
-                $permissionInfo[$definition->getKey()]["granted"] = $this->getPermission($definition->getKey());
+                $permissionInfo[$definition->getKey()] = $this->getPermission($definition->getKey());
             }
 
         } else {
             foreach ($definitions as $definition) {
-                $permissionInfo[$definition->getKey()]["granted"] = true;
-                $permissionInfo[$definition->getKey()]["inherited"] = true;
+                $permissionInfo[$definition->getKey()] = true;
             }
         }
         return $permissionInfo;
@@ -422,7 +366,8 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
 
 
     public function setAllAclToFalse() {
-        $this->permissions->removeAll();
+        // @TODO must be replaced with new permissions list (in an array $this->permissions)
+        //$this->permissions->removeAll();
     }
 
 
@@ -452,9 +397,15 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
             return true;
         } else {
             $thisHasPermission = false;
-            if ($this->permissions != null) {
+
+            // @TODO must be replaced with new permissions list (in an array $this->permissions)
+            /*if ($this->permissions != null) {
                 $thisHasPermission = $this->permissions->hasPermission($permissionName);
             }
+            */
+
+            /*
+            // this was for inheritance! @TODO: Must be replaced with groups
             $parentHasPermission = false;
             
             if ($this->getParent() != null and $this->getParent()->getUserPermissionList() != null) {
@@ -465,7 +416,9 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
             } else {
 
                 return $thisHasPermission;
-            }
+            }*/
+
+            return $thisHasPermission;
         }
 
     }
@@ -483,7 +436,9 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
      * @param String $permissionName
      */
     public function setPermission($permissionName) {
-        $availableUserPermissions = User_Permission_List::getAllPermissionDefinitions();
+        $availableUserPermissionsList = new User_Permission_Definition_List();
+        $availableUserPermissions = $availableUserPermissionsList->load();
+
         $availableUserPermissionKeys = array();
         foreach($availableUserPermissions as $permission){
             if($permission instanceof User_Permission_Definition){
@@ -491,67 +446,17 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
             }
         }
         if(in_array($permissionName,$availableUserPermissionKeys)){
-            if (empty($this->permissions) or !in_array($permissionName, $this->permissions->getPermissionNames())) {
+
+            // @TODO must be replaced with new permissions list (in an array $this->permissions)
+            /*if (empty($this->permissions) or !in_array($permissionName, $this->permissions->getPermissionNames())) {
                 $permission = new User_Permission($permissionName, false);
                 $this->permissions->add($permission);
-            }
+            }*/
+
         }
 
 
     }
-
-    /**
-     * returns a freezable user object i.e. without database resources
-     * @return User $user
-     */
-    private function getFreezable() {
-        $freezable = clone $this;
-        $freezable->setResource(null);
-        $freezable->getUserPermissionList()->setResource(null);
-        $ancestor = $this->getParent();
-        while ($ancestor != null) {
-            $ancestor->setResource(null);
-            if ($ancestor->getUserPermissionList() != null) {
-                $ancestor->getUserPermissionList()->setResource(null);
-            }
-            $ancestor = $ancestor->getParent();
-        }
-        return $freezable;
-    }
-
-    /**
-     * freezes the user and returns it frozen
-     * @return Array $frozenUser
-     */
-    public function getAsFrozen() {
-        $freezer = new Object_Freezer();
-        return $freezer->freeze($this->getFreezable());
-    }
-
-
-    /**
-     * thaws a frozen user
-     * @param Array $frozenUser
-     * @return User $user returns User Object or null if user could not be thawed
-     */
-    public static function thaw($frozenUser) {
-        $thawedUser = null;
-
-        if (is_array($frozenUser)) {
-            $freezer = new Object_Freezer();
-            $thawedUser = $freezer->thaw($frozenUser);
-            if ($thawedUser instanceof User) {
-                $thawedUser->getResource()->getById($thawedUser->getId());
-                //TODO: do we need to reinitialize parent's resources?
-            } else {
-                $thawedUser = null;
-                Logger::error("could not thaw user");
-            }
-        }
-
-        return $thawedUser;
-    }
-
 
     /**
      * delete user
@@ -561,4 +466,5 @@ class User extends Pimcore_Model_Abstract implements IteratorAggregate {
         $this->getResource()->delete();
         Pimcore_Model_Cache::clearAll();
     }
+
 }

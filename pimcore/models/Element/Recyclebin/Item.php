@@ -86,7 +86,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $this->setDate(time());
         $this->loadChilds($this->getElement());
         if($user instanceof User){
-            $this->setDeletedby($user->getUsername());
+            $this->setDeletedby($user->getName());
         }
 
 

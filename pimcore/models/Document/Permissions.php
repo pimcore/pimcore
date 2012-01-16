@@ -194,7 +194,7 @@ class Document_Permissions extends Pimcore_Model_Abstract {
         if (!$this->user && $this->userId) {
             $this->user = User::getById($this->userId);
             if($this->user instanceof User){
-                $this->setUsername($this->user->getUsername());
+                $this->setUsername($this->user->getName());
             }    
         }
         return $this->user;
