@@ -114,7 +114,11 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             throw $e;
         }
 
-        $this->sendConfirmationMail($cart, $order);
+        try {
+            $this->sendConfirmationMail($cart, $order);
+        } catch(Exception $e) {
+            Logger::err("Error during sending confirmation e-mail", $e);
+        }
         $cart->delete();
         return $order;
     }
