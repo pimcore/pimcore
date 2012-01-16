@@ -233,7 +233,6 @@ class Pimcore_Tool {
         $protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($protocol, 0, strpos($protocol, "/"));
         $protocol .= ($_SERVER["HTTPS"] == "on") ? "s" : "";
-        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
 
         $hostname = self::getHostname();
 
@@ -245,11 +244,10 @@ class Pimcore_Tool {
                 Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
             } else {
                 $protocol   = 'http';
-                $port       = '';
             }
         }
 
-        return $protocol . "://" . $hostname . $port;
+        return $protocol . "://" . $hostname;
     }
 
 
