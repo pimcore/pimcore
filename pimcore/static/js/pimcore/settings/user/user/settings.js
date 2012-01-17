@@ -192,7 +192,6 @@ pimcore.settings.user.user.settings = Class.create({
     },
 
     getValues: function () {
-
         return this.panel.getForm().getFieldValues();
     }
 });

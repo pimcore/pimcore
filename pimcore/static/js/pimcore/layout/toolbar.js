@@ -111,7 +111,7 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.isAllowed("update")) {
+        if (user.admin) {
             extrasItems.push({
                 text: t("update"),
                 iconCls: "pimcore_icon_update",

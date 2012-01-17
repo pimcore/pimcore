@@ -172,6 +172,7 @@
             "pimcore/settings/user/user/objectrelations.js",
             "pimcore/settings/user/user/settings.js",
             "pimcore/settings/user/user/workspaces.js",
+            "pimcore/settings/user/role/settings.js",
             "pimcore/settings/profile/panel.js",
             "pimcore/settings/thumbnail/item.js",
             "pimcore/settings/thumbnail/panel.js",
