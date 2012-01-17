@@ -37,7 +37,6 @@ class User_UserTest extends PHPUnit_Framework_TestCase {
         $user = new User();
         $user->setUsername("unitTestUser");
         $user->setParentId($group->getId());
-        $user->setHasCredentials(true);
         $user->setPassword(md5("unitTestUser"));
         $user->save();
 
