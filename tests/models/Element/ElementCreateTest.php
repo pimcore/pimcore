@@ -491,7 +491,6 @@ class Element_ElementCreateTest extends PHPUnit_Framework_TestCase
                 $user = new User();
                 $user->setUsername(uniqid());
                 $user->setParentId(0);
-                $user->setHasCredentials(true);
                 $user->setPassword(md5("unitTestUser"));
                 $user->save();
                 $object->$setter($user->getId());
