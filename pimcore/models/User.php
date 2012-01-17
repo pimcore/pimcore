@@ -57,48 +57,6 @@ class User extends User_UserRole {
      */
     public $active = true;
 
-    /**
-     * @param integer $id
-     * @return User
-     */
-    public static function getById($id) {
-
-        try {
-            $user = new self();
-            $user->getResource()->getById($id);
-            return $user;
-        }
-        catch (Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * @param array $values
-     * @return User
-     */
-    public static function create($values = array()) {
-        $user = new self();
-        $user->setValues($values);
-        $user->save();
-        return $user;
-    }
-
-    /**
-     * @param string $name
-     * @return User
-     */
-    public static function getByName($name) {
-
-        try {
-            $user = new self();
-            $user->getResource()->getByName($name);
-            return $user;
-        }
-        catch (Exception $e) {
-            return false;
-        }
-    }
 
     /**
      * @return string
@@ -245,20 +203,13 @@ class User extends User_UserRole {
         return $this->getActive();
     }
 
-
-    /**
-     *
-     */
-    public function setAllAclToFalse() {
-        // @TODO PERMISSIONS_REFACTORE must be replaced with new permissions list (in an array $this->permissions)
-        //$this->permissions->removeAll();
-    }
-
     /**
      * @param String $key
      * @return boolean
      */
     public function isAllowed($key) {
+        // @TODO PERMISSIONS_REFACTORE : take note of roles etc (do it directly in the database => $this->getResource()->isAllowed() )
+
         return $this->getPermission($key);
     }
 
@@ -274,9 +225,5 @@ class User extends User_UserRole {
         }
 
         return parent::getPermission($permissionName);
-    }
-
-    public function getParent() {
-        $test = "asd";
     }
 }

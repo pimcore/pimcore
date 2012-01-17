@@ -23,9 +23,23 @@ class User_UserRole extends User_Abstract {
     public $permissions = array();
 
     /**
-     * @param String $permissionName
+     *
      */
-    public function setPermission($permissionName) {
+    public function setAllAclToFalse() {
+        $list = new User_Permission_Definition_List();
+        $definitions = $list->load();
+
+        foreach ($definitions as $definition) {
+            $this->permissions[$definition->getKey()] = false;
+        }
+    }
+
+    /**
+     * @param string $permissionName
+     * @param bool $value
+     */
+    public function setPermission($permissionName, $value = null) {
+
         $availableUserPermissionsList = new User_Permission_Definition_List();
         $availableUserPermissions = $availableUserPermissionsList->load();
 
@@ -35,14 +49,9 @@ class User_UserRole extends User_Abstract {
                 $availableUserPermissionKeys[]=$permission->getKey();
             }
         }
+
         if(in_array($permissionName,$availableUserPermissionKeys)){
-
-            // @TODO PERMISSIONS_REFACTORE must be replaced with new permissions list (in an array $this->permissions)
-            /*if (empty($this->permissions) or !in_array($permissionName, $this->permissions->getPermissionNames())) {
-                $permission = new User_Permission($permissionName, false);
-                $this->permissions->add($permission);
-            }*/
-
+            $this->permissions[$permissionName] = (bool) $value;
         }
     }
 
@@ -60,30 +69,11 @@ class User_UserRole extends User_Abstract {
      */
     public function getPermission($permissionName) {
 
-        $thisHasPermission = false;
-
-        // @TODO PERMISSIONS_REFACTORE must be replaced with new permissions list (in an array $this->permissions)
-        /*if ($this->permissions != null) {
-            $thisHasPermission = $this->permissions->hasPermission($permissionName);
+        if(array_key_exists($permissionName, $this->permissions)) {
+            return $this->permissions[$permissionName];
         }
-        */
 
-        /*
-        // this was for inheritance! @TODO: PERMISSIONS_REFACTORE Must be replaced with groups
-        $parentHasPermission = false;
-
-        if ($this->getParent() != null and $this->getParent()->getUserPermissionList() != null) {
-           $parentHasPermission = $this->getParent()->getPermission($permissionName);
-        }
-        if (!$thisHasPermission && $parentHasPermission) {
-            return true;
-        } else {
-
-            return $thisHasPermission;
-        }*/
-
-        return $thisHasPermission;
-
+        return false;
     }
 
     /**
@@ -97,16 +87,10 @@ class User_UserRole extends User_Abstract {
         $list = new User_Permission_Definition_List();
         $definitions = $list->load();
 
-        if (!$this->isAdmin()) {
-            foreach ($definitions as $definition) {
-                $permissionInfo[$definition->getKey()] = $this->getPermission($definition->getKey());
-            }
-
-        } else {
-            foreach ($definitions as $definition) {
-                $permissionInfo[$definition->getKey()] = true;
-            }
+        foreach ($definitions as $definition) {
+            $permissionInfo[$definition->getKey()] = $this->getPermission($definition->getKey());
         }
+
         return $permissionInfo;
     }
 }

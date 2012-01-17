@@ -37,34 +37,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $this->_objectService = new Object_Service($this->getUser());
     }
 
-
-    public function getUserPermissionsAction()
-    {
-
-        $object = Object_Abstract::getById($this->_getParam("object"));
-
-        $list = new User_List();
-        $list->load();
-        $users = $list->getUsers();
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $permission = $object->getUserPermissions($user);
-                $permission->setUser($user);
-                $permission->setUserId($user->getId());
-                $permission->setUsername($user->getName());
-                $permissions[] = $permission;
-            }
-        }
-
-        $object->getUserPermissions($this->getUser());
-        if ($object->isAllowed("view")) {
-            $this->_helper->json(array("permissions" => $permissions));
-        }
-
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
-    }
-
-
     public function treeGetChildsByIdAction()
     {
 

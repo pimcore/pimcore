@@ -15,10 +15,20 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Folder extends User_UserRole_Folder {
+class User_Service {
 
     /**
-     * @var string
+     * Mapping between database types and pimcore class names
+     * @static
+     * @param $type
+     * @return string
      */
-    public $type = "userfolder";
+    public static function getClassNameForType ($type) {
+        switch($type) {
+            case "user": return "User";
+            case "userfolder": return "User_Folder";
+            case "role": return "User_Role";
+            case "rolefolder": return "User_Role_Folder";
+        }
+    }
 }

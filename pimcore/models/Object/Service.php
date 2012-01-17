@@ -177,7 +177,6 @@ class Object_Service extends Element_Service {
         $new->setKey($target->getKey());
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
-        $new->setPermissions($source->getPermissions());
         $new->setProperties($source->getProperties());
 
         $new->save();

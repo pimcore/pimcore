@@ -130,7 +130,6 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         
         // for all
         $element->getProperties();
-        $element->getPermissions();
         if(method_exists($element,"getScheduledTasks")) {
             $element->getScheduledTasks();
         }

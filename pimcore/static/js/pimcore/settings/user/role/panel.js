@@ -13,48 +13,46 @@
  */
 
 
-pimcore.registerNS("pimcore.settings.user.panel");
-pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract, {
+pimcore.registerNS("pimcore.settings.user.role.panel");
+pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abstract, {
 
     getTabPanel: function () {
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id: "pimcore_users",
-                title: t("users"),
-                iconCls: "pimcore_icon_users",
+                id: "pimcore_roles",
+                title: t("roles"),
+                iconCls: "pimcore_icon_roles",
                 border: false,
                 layout: "border",
                 closable:true,
-                items: [this.getUserTree(), this.getEditPanel()]
+                items: [this.getRoleTree(), this.getEditPanel()]
             });
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.activate("pimcore_users");
+            tabPanel.activate("pimcore_roles");
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("users");
+                pimcore.globalmanager.remove("roles");
             }.bind(this));
 
             pimcore.layout.refresh();
-
-
         }
 
         return this.panel;
     },
 
-    getUserTree: function () {
+    getRoleTree: function () {
         if (!this.tree) {
             this.tree = new Ext.tree.TreePanel({
-                id: "pimcore_panel_users_tree",
+                id: "pimcore_panel_roles_tree",
                 region: "west",
                 useArrows:true,
                 autoScroll:true,
                 animate:true,
                 enableDD:true,
-                ddGroup: "users",
+                ddGroup: "roles",
                 containerScroll: true,
                 border: true,
                 split:true,
@@ -65,10 +63,10 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                     nodeType: 'async',
                     draggable:false,
                     id: '0',
-                    text: t("all_users")
+                    text: t("all_roles")
                 },
                 loader: new Ext.tree.TreeLoader({
-                    dataUrl: '/admin/user/tree-get-childs-by-id/',
+                    dataUrl: '/admin/user/role-tree-get-childs-by-id/',
                     requestMethod: "GET",
                     baseAttrs: {
                         listeners: this.getTreeNodeListeners(),
@@ -92,12 +90,12 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
     onTreeNodeClick: function (node) {
 
         if(!this.allowChildren) {
-            var userPanelKey = "user_" + node.id;
-            if(this.panels[userPanelKey]) {
-                this.panels[userPanelKey].activate();
+            var rolePanelKey = "role_" + node.id;
+            if(this.panels[rolePanelKey]) {
+                this.panels[rolePanelKey].activate();
             } else {
-                var userPanel = new pimcore.settings.user.usertab(this, node.id);
-                this.panels[userPanelKey] = userPanel;
+                var rolePanel = new pimcore.settings.user.role.tab(this, node.id);
+                this.panels[rolePanelKey] = rolePanel;
             }
         }
     },
@@ -115,38 +113,36 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                     text: t('add_folder'),
                     iconCls: "pimcore_icon_folder_add",
                     listeners: {
-                        "click": this.attributes.reference.add.bind(this, "userfolder")
+                        "click": this.attributes.reference.add.bind(this, "rolefolder")
                     }
                 }));
                 menu.add(new Ext.menu.Item({
-                    text: t('add_user'),
-                    iconCls: "pimcore_icon_user_add",
+                    text: t('add_role'),
+                    iconCls: "pimcore_icon_role_add",
                     listeners: {
-                        "click": this.attributes.reference.add.bind(this, "user")
+                        "click": this.attributes.reference.add.bind(this, "role")
                     }
                 }));
             }
 
 
-            if (this.id != user.id) {
-                var isEnabled = true;
+            var isEnabled = true;
 
-                // folders
-                if(this.allowChildren) {
-                    isEnabled = false;
-                }
-                if (this.childNodes == 0) {
-                    isEnabled = true;
-                }
-                menu.add(new Ext.menu.Item({
-                    text: t('delete'),
-                    iconCls: "pimcore_icon_delete",
-                    listeners: {
-                        "click": this.attributes.reference.delete.bind(this)
-                    },
-                    disabled: !isEnabled
-                }));
+            // folders
+            if(this.allowChildren) {
+                isEnabled = false;
             }
+            if (this.childNodes == 0) {
+                isEnabled = true;
+            }
+            menu.add(new Ext.menu.Item({
+                text: t('delete'),
+                iconCls: "pimcore_icon_delete",
+                listeners: {
+                    "click": this.attributes.reference.delete.bind(this)
+                },
+                disabled: !isEnabled
+            }));
 
             if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined" && menu.items.items.length > 0) {
                 menu.show(this.ui.getAnchor());
@@ -160,11 +156,11 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             if(data && data.success){
                 this.tree.getNodeById(parentId).reload();
             } else {
-                 pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error",t(data.message));
+                 pimcore.helpers.showNotification(t("error"), t("role_creation_error"), "error",t(data.message));
             }
 
         } catch(e){
-             pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error")
+             pimcore.helpers.showNotification(t("error"), t("role_creation_error"), "error")
         }
     },
 
@@ -181,19 +177,19 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 try{
                     var res = Ext.decode(transport.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("role_save_success"), "success");
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("role_save_error"), "error",t(res.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("role_save_error"), "error");
                 }
             }.bind(this)
         });
     },
 
     activate: function () {
-        Ext.getCmp("pimcore_panel_tabs").activate("pimcore_users");
+        Ext.getCmp("pimcore_panel_tabs").activate("pimcore_roles");
     }
 });
 

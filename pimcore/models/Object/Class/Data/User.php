@@ -35,16 +35,18 @@ class Object_Class_Data_User extends Object_Class_Data_Select {
         $options = array();
         if (is_array($users) and count($users) > 0) {
             foreach ($users as $user) {
-                $value = $user->getName();
-                $first = $user->getFirstname();
-                $last = $user->getLastname();
-                if (!empty($first) or !empty($last)) {
-                    $value .= " (" . $first . " " . $last . ")";
+                if($user instanceof User) {
+                    $value = $user->getName();
+                    $first = $user->getFirstname();
+                    $last = $user->getLastname();
+                    if (!empty($first) or !empty($last)) {
+                        $value .= " (" . $first . " " . $last . ")";
+                    }
+                    $options[] = array(
+                        "value" => $user->getId(),
+                        "key" => $value
+                    );
                 }
-                $options[] = array(
-                    "value" => $user->getId(),
-                    "key" => $value
-                );
             }
         }
         $this->setOptions($options);

@@ -219,7 +219,6 @@ class Document_Service extends Element_Service {
             $target->setTabindex($source->getTabindex());
         }
 
-        $target->setPermissions($source->getPermissions());
         $target->setProperties($source->getProperties());
         $target->save();
 

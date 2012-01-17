@@ -80,33 +80,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
-
-    public function getUserPermissionsAction() {
-
-        $document = Document::getById($this->_getParam("document"));
-
-        $list = new User_List();
-        $list->load();
-        $users = $list->getUsers();
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $permission = $document->getUserPermissions($user);
-                $permission->setUser($user);
-                $permission->setUserId($user->getId());
-                $permission->setUsername($user->getName());
-                $permissions[] = $permission;
-                Logger::debug($permission->getUser()->getName());
-            }
-        }
-
-        $document->getPermissionsForUser($this->getUser());
-        if ($document->isAllowed("view")) {
-            $this->_helper->json(array("permissions" => $permissions));
-        }
-
-       $this->_helper->json(array("success" => false, "message" => "missing_permission"));
-    }
-
     public function treeGetChildsByIdAction() {
 
         $document = Document::getById($this->_getParam("node"));

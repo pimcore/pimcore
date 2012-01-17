@@ -241,11 +241,20 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.isAllowed("users")) {
+        if (user.admin) {
             settingsItems.push({
-                text: t("users"),
+                text: t("users") + " / " + t("roles"),
                 iconCls: "pimcore_icon_users",
-                handler: this.editUsers
+                hideOnClick: false,
+                menu: [{
+                    text: t("users"),
+                    handler: this.editUsers,
+                    iconCls: "pimcore_icon_users"
+                }, {
+                    text: t("roles"),
+                    handler: this.editRoles,
+                    iconCls: "pimcore_icon_roles"
+                }]
             });
         } else {
             settingsItems.push({
@@ -518,6 +527,16 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("users", new pimcore.settings.user.panel());
+        }
+    },
+
+    editRoles: function () {
+
+        try {
+            pimcore.globalmanager.get("roles").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("roles", new pimcore.settings.user.role.panel());
         }
     },
 

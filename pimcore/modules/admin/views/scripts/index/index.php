@@ -164,8 +164,14 @@
             "pimcore/tool/genericiframewindow.js",
 
             // settings
+            "pimcore/settings/user/panels/abstract.js",
             "pimcore/settings/user/panel.js",
-            "pimcore/settings/user/user.js",
+            "pimcore/settings/user/usertab.js",
+            "pimcore/settings/user/role/panel.js",
+            "pimcore/settings/user/role/tab.js",
+            "pimcore/settings/user/user/objectrelations.js",
+            "pimcore/settings/user/user/settings.js",
+            "pimcore/settings/user/user/workspaces.js",
             "pimcore/settings/profile/panel.js",
             "pimcore/settings/thumbnail/item.js",
             "pimcore/settings/thumbnail/panel.js",

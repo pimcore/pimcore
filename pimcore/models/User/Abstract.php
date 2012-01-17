@@ -25,7 +25,7 @@ class User_Abstract extends Pimcore_Model_Abstract {
     /**
      * @var integer
      */
-    private $parentId;
+    public $parentId;
 
     /**
      * @var string
@@ -37,6 +37,54 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public $type;
 
+    /**
+     * @param integer $id
+     * @return User
+     */
+    public static function getById($id) {
+
+        try {
+            $user = new static();
+            $user->getResource()->getById($id);
+
+            if(get_class($user) == "User_Abstract") {
+                $className = User_Service::getClassNameForType($user->getType());
+                $user = $className::getById($user->getId());
+            }
+
+            return $user;
+        }
+        catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @param array $values
+     * @return User
+     */
+    public static function create($values = array()) {
+        $user = new static();
+        $user->setValues($values);
+        $user->save();
+        return $user;
+    }
+
+    /**
+     * @param string $name
+     * @return User
+     */
+    public static function getByName($name) {
+
+        try {
+            $user = new static();
+            $user->getResource()->getByName($name);
+            return $user;
+        }
+        catch (Exception $e) {
+            return false;
+        }
+    }
 
     /**
      * @return integer
@@ -97,5 +145,13 @@ class User_Abstract extends Pimcore_Model_Abstract {
 
         $this->getResource()->delete();
         Pimcore_Model_Cache::clearAll();
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 }
