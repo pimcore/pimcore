@@ -28,11 +28,12 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
             if(empty($products)) {
                 $products = $this->getMandatoryProductEntries();
             }
-            foreach($products as $productEntry) {
-                if($productEntry->getQuantity() > 0) {
-                    if(!$productEntry->getProduct()->getOSIsBookable($productEntry->getQuantity())) {
-                        p_r($productEntry->getProduct()->getId());
-                        return false;
+            if(!empty($products)) {
+                foreach($products as $productEntry) {
+                    if($productEntry->getQuantity() > 0) {
+                        if(!$productEntry->getProduct()->getOSIsBookable($productEntry->getQuantity())) {
+                            return false;
+                        }
                     }
                 }
             }
