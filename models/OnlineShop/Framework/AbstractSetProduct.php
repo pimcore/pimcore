@@ -24,14 +24,16 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * @return bool
      */
     public function getOSIsBookable($quantityScale = 1, $products = null) {
-        $bookable = parent::getOSIsBookable($quantityScale);
-        if($bookable) {
+        if($this->isActive()) {
             if(empty($products)) {
                 $products = $this->getMandatoryProductEntries();
             }
             foreach($products as $productEntry) {
-                if(!$productEntry->getProduct()->getOSIsBookable($productEntry->getQuantity())) {
-                    return false;
+                if($productEntry->getQuantity() > 0) {
+                    if(!$productEntry->getProduct()->getOSIsBookable($productEntry->getQuantity())) {
+                        p_r($productEntry->getProduct()->getId());
+                        return false;
+                    }
                 }
             }
             return true;
