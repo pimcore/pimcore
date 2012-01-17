@@ -251,29 +251,6 @@ class Object_Abstract_Resource extends Element_Resource {
         return $properties;
     }
 
-
-    /**
-     * @return array
-     *
-     */
-    public function getPermissions() {
-
-        $permissions = array();
-
-        $permissionsRaw = $this->db->fetchAll("SELECT id FROM objects_permissions WHERE cid = ? ORDER BY cpath ASC", $this->model->geto_Id());
-
-        $userIdMappings = array();
-        foreach ($permissionsRaw as $permissionRaw) {
-            $permissions[] = Object_Permissions::getById($permissionRaw["id"]);
-        }
-
-
-        $this->model->setO_Permissions($permissions);
-
-        return $permissions;
-    }
-
-
     /**
      *
      * @return void

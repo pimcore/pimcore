@@ -207,6 +207,10 @@
 	background: url(/pimcore/static/img/icon/folder_user.png) left center no-repeat !important;
 }
 
+.pimcore_icon_roles {
+	background: url(/pimcore/static/img/icon/group_link.png) left center no-repeat !important;
+}
+
 .pimcore_icon_thumbnails {
 	background: url(/pimcore/static/img/icon/pictures.png) left center no-repeat !important;
 }

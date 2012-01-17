@@ -22,7 +22,7 @@ class Pimcore_Controller_Action_Webservice extends Pimcore_Controller_Action {
         }
 
         $userList = new User_List();
-        $userList->setCondition("password = ?", $this->_getParam("apikey"));
+        $userList->setCondition("password = ? AND type = ?", array($this->_getParam("apikey"), "user"));
         $users = $userList->load();
 
         if(!is_array($users) or count($users)!==1){

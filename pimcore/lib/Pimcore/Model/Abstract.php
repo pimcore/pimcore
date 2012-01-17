@@ -170,11 +170,6 @@ abstract class Pimcore_Model_Abstract {
         $method = "set" . $key;
         if (method_exists($this, $method)) {
             $this->$method($value);
-        } else if($this instanceof User) {
-            $method = "setPermission";
-            if (method_exists($this, $method)) {
-                $this->$method($key);
-            }
         }
     }
 

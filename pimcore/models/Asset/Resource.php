@@ -291,30 +291,6 @@ class Asset_Resource extends Element_Resource {
         return $permission;
     }
 
-
-    /**
-     * all user permissions for this document
-     * @return void
-     */
-
-    public function getPermissions() {
-
-        $permissions = array();
-
-        $permissionsRaw = $this->db->fetchAll("SELECT id FROM assets_permissions WHERE cid = ? ORDER BY cpath ASC", $this->model->getId());
-
-        $userIdMappings = array();
-        foreach ($permissionsRaw as $permissionRaw) {
-            $permissions[] = Asset_Permissions::getById($permissionRaw["id"]);
-        }
-
-
-        $this->model->setPermissions($permissions);
-
-        return $permissions;
-    }
-
-
     /**
      * @return void
      */

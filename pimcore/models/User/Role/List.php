@@ -15,10 +15,15 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Folder extends User_UserRole_Folder {
+class User_Role_List extends User_List_Abstract {
+
+    public $type = "role";
 
     /**
-     * @var string
+     * Alias for $this->getItems()
+     * @return array
      */
-    public $type = "userfolder";
+    public function getRoles() {
+        return $this->getItems();
+    }
 }

@@ -21,7 +21,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("get-current-user", "update-current-user", "get-all-users", "get-available-permissions", "tree-get-childs-by-id", "get-minimal");
         if (!in_array($this->_getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("users")) {
+            if (!$this->getUser()->isAdmin()) {
 
                 $this->_redirect("/admin/login");
                 die();
@@ -29,9 +29,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
     }
 
-    public function treeGetListAction() {
+    public function treeGetChildsByIdAction() {
 
         $list = new User_List();
+        $list->setCondition("parentId = ?", intval($this->_getParam("node")));
         $list->load();
 
         $users = array();
@@ -43,46 +44,138 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($users);
     }
 
+    protected function getTreeNodeConfig($user) {
+        $tmpUser = array(
+            "id" => $user->getId(),
+            "text" => $user->getName(),
+            "elementType" => "user",
+            "qtipCfg" => array(
+                "title" => "ID: " . $user->getId()
+            )
+        );
+
+        // set type specific settings
+        if ($user instanceof User_Folder) {
+            $tmpUser["leaf"] = false;
+            $tmpUser["iconCls"] = "pimcore_icon_folder";
+            $tmpUser["expanded"] = true;
+
+            if($user->hasChilds()) {
+                $tmpUser["expanded"] = false;
+            }
+        }
+        else {
+            $tmpUser["leaf"] = true;
+            $tmpUser["iconCls"] = "pimcore_icon_user";
+            $tmpUser["allowChildren"] = false;
+
+        }
+
+        return $tmpUser;
+    }
+
     public function addAction() {
 
-        if ($this->getUser()->isAllowed("users")) {
+        try {
+            $className = User_Service::getClassNameForType($this->_getParam("type"));
+            $user = $className::create(array(
+                "parentId" => intval($this->_getParam("parentId")),
+                "name" => $this->_getParam("name"),
+                "password" => md5(microtime()),
+                "active" => $this->_getParam("active")
+            ));
 
-            try {
-                $user = User::create(array(
-                    "parentId" => intval($this->_getParam("parentId")),
-                    "username" => $this->_getParam("username"),
-                    "password" => md5(time()),
-                    "active" => $this->_getParam("active")
-                ));
-
-                $this->_helper->json(array(
-                    "success" => true,
-                    "username" => $user->getName(),
-                    "id" => $user->getId(),
-                    "parentId" => $user->getParentId()
-                ));
-            } catch (Exception $e) {
-
-                if (($e instanceof PDOException or $e instanceof Zend_Db_Statement_Exception) and $e->getCode() == 23000) {
-                    $this->_helper->json(array("success" => false, "message" => "duplicate_username"));
-                } else {
-                    $this->_helper->json(array("success" => false));
-                }
-
-            }
+            $this->_helper->json(array(
+                "success" => true,
+                "id" => $user->getId()
+            ));
+        } catch (Exception $e) {
+            $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
         }
 
         $this->_helper->json(false);
     }
 
     public function deleteAction() {
-        if ($this->getUser()->isAllowed("users")) {
-            $user = User::getById(intval($this->_getParam("id")));
-            $user->delete();
-        }
-        $this->removeViewRenderer();
+        $user = User_Abstract::getById(intval($this->_getParam("id")));
+        $user->delete();
+
+        $this->_helper->json(array("success" => true));
     }
 
+    public function updateAction() {
+
+        $user = User_Abstract::getById(intval($this->_getParam("id")));
+
+        if($this->_getParam("data")) {
+            $allValues = Zend_Json::decode($this->_getParam("data"));
+            $values = array();
+
+            //simulate behaviour from before change form prototype to jquery
+            foreach ($allValues as $k => $v) {
+                if (!empty($v) and $v!==FALSE) {
+                    $values[$k] = $v;
+                }
+            }
+
+            if (!empty($values["password"])) {
+                $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
+            }
+
+
+            $user->setAllAclToFalse();
+            $user->setValues($values);
+
+            // booleans
+            if (isset($allValues["parentId"])) {
+                $user->setParentId($allValues["parentId"]);
+            }
+
+            if (isset($allValues["active"])) {
+                $user->setActive($allValues["active"]);
+            }
+
+            if (isset($allValues["admin"])) {
+                $user->setAdmin($allValues["admin"]);
+            }
+
+            // check for permissions
+            $availableUserPermissionsList = new User_Permission_Definition_List();
+            $availableUserPermissions = $availableUserPermissionsList->load();
+
+            foreach($availableUserPermissions as $permission) {
+                if($values["permission_" . $permission->getKey()]) {
+                    $user->setPermission($permission->getKey(), (bool) $values["permission_" . $permission->getKey()]);
+                }
+            }
+        }
+
+        if($this->_getParam("workspaces")) {
+            // ...
+        }
+
+        $user->save();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function getAllUsersAction() {
+        $list = new User_List();
+        $list->load();
+
+        $users = $list->getUsers();
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                if($user instanceof User) {
+                    $userList[] = $user;
+                }
+            }
+        }
+
+        $this->_helper->json(array(
+            "users" => $userList
+        ));
+    }
 
     public function getAction() {
         $user = User::getById(intval($this->_getParam("id")));
@@ -103,9 +196,25 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 $hasHidden = true;
             }
         }
+
+        // get available permissions
+        $availableUserPermissionsList = new User_Permission_Definition_List();
+        $availableUserPermissions = $availableUserPermissionsList->load();
+
+
         $user->setPassword(null);
         $conf = Pimcore_Config::getSystemConfig();
-        $this->_helper->json(array("wsenabled"=>$conf->webservice->enabled,"user" => $user, "objectDependencies" => array("hasHidden" => $hasHidden, "dependencies" => $userObjectData)));
+        $this->_helper->json(array(
+            "success" => true,
+            "wsenabled"=>$conf->webservice->enabled,
+            "user" => $user,
+            "permissions" => $user->generatePermissionList(),
+            "availablePermissions" => $availableUserPermissions,
+            "objectDependencies" => array(
+                "hasHidden" => $hasHidden,
+                "dependencies" => $userObjectData
+            )
+        ));
     }
 
     public function getMinimalAction() {
@@ -115,52 +224,11 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $minimalUserData['id'] = $user->getId();
         $minimalUserData['admin'] = $user->isAdmin();
         $minimalUserData['active'] = $user->isActive();
-        $minimalUserData['permissionInfo']['assets']['granted'] = $user->isAllowed("assets");
-        $minimalUserData['permissionInfo']['documents']['granted'] = $user->isAllowed("documents");
-        $minimalUserData['permissionInfo']['objects']['granted'] = $user->isAllowed("objects");
+        $minimalUserData['permissionInfo']['assets'] = $user->isAllowed("assets");
+        $minimalUserData['permissionInfo']['documents'] = $user->isAllowed("documents");
+        $minimalUserData['permissionInfo']['objects'] = $user->isAllowed("objects");
 
         $this->_helper->json($minimalUserData);
-    }
-
-    public function updateAction() {
-        if ($this->getUser()->isAllowed("users")) {
-            $allValues = Zend_Json::decode($this->_getParam("data"));
-            $values = array();
-            //simulate behaviour from before change form prototype to jquery
-            foreach ($allValues as $k => $v) {
-                if (!empty($v) and $v!==FALSE) {
-                    $values[$k] = $v;
-                }
-            }
-
-            $user = User::getById(intval($this->_getParam("id")));
-
-            if (!empty($values["password"])) {
-                $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
-            }
-
-
-            $user->setAllAclToFalse();
-            $user->setValues($values);
-
-            if (isset($allValues["parentId"])) {
-                $user->setParentId($allValues["parentId"]);
-            }
-
-            if (isset($allValues["active"])) {
-                $user->setActive($allValues["active"]);
-            }
-
-            if (isset($allValues["admin"])) {
-                $user->setAdmin($allValues["admin"]);
-            }
-
-            $user->save();
-
-            $this->_helper->json(array("success" => true));
-        }
-
-        $this->_helper->json(false);
     }
 
     public function updateCurrentUserAction() {
@@ -169,6 +237,9 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         if ($user != null) {
             if ($user->getId() == $this->_getParam("id")) {
                 $values = Zend_Json::decode($this->_getParam("data"));
+
+                unset($values["admin"]);
+
                 if (!empty($values["password"])) {
                     $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
                 }
@@ -185,23 +256,6 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     }
 
-
-    public function getAllUsersAction() {
-        $list = new User_List();
-        $list->load();
-
-        $users = $list->getUsers();
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $userList[] = $user;
-            }
-        }
-
-        $this->_helper->json(array(
-            "users" => $userList
-        ));
-    }
-
     public function getCurrentUserAction() {
 
         header("Content-Type: text/javascript");
@@ -212,41 +266,54 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         exit;
     }
 
-    public function getAvailablePermissionsAction() {
 
-        $list = User_Permission_List::getAllPermissionDefinitions();
-        $this->_helper->json($list);
+
+
+
+    /* ROLES */
+
+    public function roleTreeGetChildsByIdAction() {
+
+        $list = new User_Role_List();
+        $list->setCondition("parentId = ?", intval($this->_getParam("node")));
+        $list->load();
+
+        $roles = array();
+        if(is_array($list->getItems())){
+            foreach ($list->getItems() as $role) {
+                $roles[] = $this->getRoleTreeNodeConfig($role);
+            }
+        }
+        $this->_helper->json($roles);
     }
 
-    protected function getTreeNodeConfig($user) {
+    protected function getRoleTreeNodeConfig($role) {
         $tmpUser = array(
-            "id" => $user->getId(),
-            "text" => $user->getName(),
-            "elementType" => "user",
+            "id" => $role->getId(),
+            "text" => $role->getName(),
+            "elementType" => "role",
             "qtipCfg" => array(
-                "title" => "ID: " . $user->getId()
+                "title" => "ID: " . $role->getId()
             )
         );
 
         // set type specific settings
-        // @TODO: INTEGRATE FOLDERS HERE
-        if (1==2) {
+        if ($role instanceof User_Role_Folder) {
             $tmpUser["leaf"] = false;
-            $tmpUser["iconCls"] = "pimcore_icon_usergroup";
+            $tmpUser["iconCls"] = "pimcore_icon_folder";
             $tmpUser["expanded"] = true;
 
-            if($user->hasChilds()) {
+            if($role->hasChilds()) {
                 $tmpUser["expanded"] = false;
             }
         }
         else {
             $tmpUser["leaf"] = true;
-            $tmpUser["iconCls"] = "pimcore_icon_user";
+            $tmpUser["iconCls"] = "pimcore_icon_roles";
             $tmpUser["allowChildren"] = false;
 
         }
 
         return $tmpUser;
     }
-
 }

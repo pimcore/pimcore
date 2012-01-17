@@ -16,6 +16,7 @@ pimcore.registerNS("pimcore.settings.fileexplorer.file");
 pimcore.settings.fileexplorer.file = Class.create({
 
     initialize: function (path, explorer) {
+        this.path = path;
         this.explorer = explorer;
         this.loadFileContents(path);
     },
@@ -54,6 +55,10 @@ pimcore.settings.fileexplorer.file = Class.create({
                 tbar: toolbarItems,
                 items: [this.textarea]
             });
+
+            this.tab.on("beforedestroy", function () {
+                delete this.explorer.openfiles[this.path];
+            }.bind(this));
 
             this.explorer.editorPanel.add(this.editor);
             this.explorer.editorPanel.activate(this.editor);

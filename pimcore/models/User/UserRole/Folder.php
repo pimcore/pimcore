@@ -15,15 +15,30 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_List extends User_List_Abstract {
-
-    public $type = "user";
+class User_UserRole_Folder extends User_Abstract {
 
     /**
-     * Alias for $this->getItems()
-     * @return array
+     * @var boolean
      */
-    public function getUsers() {
-        return $this->getItems();
+    public $hasChilds;
+
+    /**
+     * @param boolean $state
+     */
+    function setHasChilds($state){
+        $this->hasChilds= $state;
+
+    }
+
+    /**
+     * Returns true if the document has at least one child
+     *
+     * @return boolean
+     */
+    public function hasChilds() {
+        if ($this->hasChilds !== null) {
+            return $this->hasChilds;
+        }
+        return $this->getResource()->hasChilds();
     }
 }

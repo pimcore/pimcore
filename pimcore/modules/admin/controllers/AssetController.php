@@ -36,32 +36,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $this->_assetService = new Asset_Service($this->getUser());
     }
 
-    public function getUserPermissionsAction() {
-
-        $asset = Asset::getById($this->_getParam("asset"));
-
-        $list = new User_List();
-        $list->load();
-        $users = $list->getUsers();
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $permission = $asset->getUserPermissions($user);
-                $permission->setUser($user);
-                $permission->setUserId($user->getId());
-                $permission->setUsername($user->getName());
-                $permissions[] = $permission;
-            }
-        }
-
-        $asset->getPermissionsForUser($this->getUser());
-        if ($asset->isAllowed("view")) {
-            $this->_helper->json(array("permissions" => $permissions));
-        }
-
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
-    }
-
-
     public function getDataByIdAction() {
 
         // check for lock

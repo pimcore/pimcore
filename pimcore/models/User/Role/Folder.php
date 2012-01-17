@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class User_Role_Folder extends User_Role_Folder {
+class User_Role_Folder extends User_UserRole_Folder {
 
     /**
      * @var string
