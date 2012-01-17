@@ -78,7 +78,10 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      * @return OnlineShop_Framework_IPrice
      */
     public function getOSPrice($quantityScale = null, $products = null) {
-        return $this->getOSPriceInfo($quantityScale,$products)->getPrice();
+        if( $this->getOSPriceInfo($quantityScale,$products)) {
+            return $this->getOSPriceInfo($quantityScale,$products)->getPrice();
+        }
+        return null;
     }
 
     /**
