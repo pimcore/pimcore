@@ -1,3 +1,8 @@
+"all_roles","All Roles"
+"add_role","Add Role"
+"role_creation_error","Could not create role"
+"role_save_success","Role was saved sucessfully"
+"role_save_error","Could not save role"
 "roles","Roles"
 "workspaces","Workspaces"
 "Username","Username"

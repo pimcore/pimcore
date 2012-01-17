@@ -1,3 +1,4 @@
+<?php
 /**
  * Pimcore
  *
@@ -8,30 +9,12 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
+ * @category   Pimcore
+ * @package    User
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+class User_Role_Folder_Resource extends User_Abstract_Resource {
 
-pimcore.registerNS("pimcore.settings.user.user.workspaces");
-pimcore.settings.user.user.workspaces = Class.create({
-
-    initialize: function (userPanel) {
-        this.userPanel = userPanel;
-    },
-
-    getPanel: function () {
-
-
-
-        this.panel = new Ext.Panel({
-            title: t("workspaces")
-        });
-
-        return this.panel;
-    },
-
-    getValues: function () {
-        return {};
-    }
-});
+}

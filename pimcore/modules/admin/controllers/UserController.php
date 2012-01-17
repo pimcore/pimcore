@@ -206,7 +206,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $conf = Pimcore_Config::getSystemConfig();
         $this->_helper->json(array(
             "success" => true,
-            "wsenabled"=>$conf->webservice->enabled,
+            "wsenabled" => $conf->webservice->enabled,
             "user" => $user,
             "permissions" => $user->generatePermissionList(),
             "availablePermissions" => $availableUserPermissions,
@@ -315,5 +315,20 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         }
 
         return $tmpUser;
+    }
+
+    public function roleGetAction() {
+        $role = User_Role::getById(intval($this->_getParam("id")));
+
+        // get available permissions
+        $availableUserPermissionsList = new User_Permission_Definition_List();
+        $availableUserPermissions = $availableUserPermissionsList->load();
+
+        $this->_helper->json(array(
+            "success" => true,
+            "role" => $role,
+            "permissions" => $role->generatePermissionList(),
+            "availablePermissions" => $availableUserPermissions
+        ));
     }
 }

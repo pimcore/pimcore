@@ -22,7 +22,7 @@ pimcore.settings.user.role.tab = Class.create({
         this.data;
 
         Ext.Ajax.request({
-            url: "/admin/user/get",
+            url: "/admin/user/role-get",
             success: this.loadComplete.bind(this),
             params: {
                 id: this.id
@@ -41,10 +41,10 @@ pimcore.settings.user.role.tab = Class.create({
     initPanel: function () {
 
         this.panel = new Ext.TabPanel({
-            title: this.data.user.name,
+            title: this.data.role.name,
             closable: true,
             activeTab: 0,
-            iconCls: "pimcore_icon_user",
+            iconCls: "pimcore_icon_roles",
             buttons: [{
                 text: t("save"),
                 handler: this.save.bind(this),
@@ -53,16 +53,14 @@ pimcore.settings.user.role.tab = Class.create({
         });
 
         this.panel.on("beforedestroy", function () {
-            delete this.parentPanel.userPanels["user_" + this.id];
+            delete this.parentPanel.panels["role_" + this.id];
         }.bind(this));
 
-        this.settings = new pimcore.settings.user.user.settings(this);
+        this.settings = new pimcore.settings.user.role.settings(this);
         this.workspaces = new pimcore.settings.user.user.workspaces(this);
-        this.objectrelations = new pimcore.settings.user.user.objectrelations(this);
 
         this.panel.add(this.settings.getPanel());
         this.panel.add(this.workspaces.getPanel());
-        this.panel.add(this.objectrelations.getPanel());
 
         this.parentPanel.getEditPanel().add(this.panel);
         this.parentPanel.getEditPanel().activate(this.panel);
@@ -98,12 +96,12 @@ pimcore.settings.user.role.tab = Class.create({
                 try{
                     var res = Ext.decode(transport.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("role_save_success"), "success");
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error",t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("role_save_error"), "error",t(res.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("role_save_error"), "error");
                 }
             }.bind(this)
         });
