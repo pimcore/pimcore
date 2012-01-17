@@ -74,6 +74,9 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         $this->items = array();
     }
 
+    /**
+     * @return OnlineShop_Framework_ICartItem[]
+     */
     public function getItems() {
         return $this->items;
     }
@@ -92,6 +95,15 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
     public function getName() {
         return $this->name;
+    }
+
+    public function getIsBookable() {
+        foreach($this->getItems() as $item) {
+            if(!$item->getProduct()->getOSIsBookable($item->getCount())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function setId($id) {

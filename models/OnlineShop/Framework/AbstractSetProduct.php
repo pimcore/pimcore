@@ -18,6 +18,28 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
         throw new OnlineShop_Framework_Exception_UnsupportedException("getOptionalProductEntries is not supported for " . get_class($this));
     }
 
+
+    /**
+     * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
+     * @return bool
+     */
+    public function getOSIsBookable($quantityScale = 1, $products = null) {
+        $bookable = parent::getOSIsBookable($quantityScale);
+        if($bookable) {
+            if(empty($products)) {
+                $products = $this->getMandatoryProductEntries();
+            }
+            foreach($products as $productEntry) {
+                if(!$productEntry->getProduct()->getOSIsBookable($productEntry->getQuantity())) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Delivers price of setproduct with given products
      *

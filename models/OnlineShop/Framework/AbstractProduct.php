@@ -14,11 +14,19 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
     public function  getAvailabilitySystemName() {
         //default
         return "default";
-
     }
 
     public function isActive($inProductList = false) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getActive is not supported for " . get_class($this));
+    }
+
+    /**
+     * checks if product is bookable
+     * @return bool
+     */
+    public function getOSIsBookable($quantityScale = 1) {
+        $price = $this->getOSPrice($quantityScale);
+        return !empty($price) && $this->isActive();
     }
 
     public function getOSIndexType() {

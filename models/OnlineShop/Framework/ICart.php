@@ -71,6 +71,9 @@ interface OnlineShop_Framework_ICart {
     public function getName();
     public function setName($name);
 
+
+    public function getIsBookable();
+
     /**
      * @abstract
      * @return Zend_Date
