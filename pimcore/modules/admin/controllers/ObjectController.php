@@ -41,8 +41,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     {
 
         $object = Object_Abstract::getById($this->_getParam("node"));
-        $object->getPermissionsForUser($this->getUser());
-
         if ($object->hasChilds()) {
 
             $limit = intval($this->_getParam("limit"));
@@ -136,124 +134,11 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
 
         $root = Object_Abstract::getById($id);
-        $root->getPermissionsForUser($this->getUser());
-
         if ($root->isAllowed("list")) {
             $this->_helper->json($this->getTreeNodeConfig($root));
         }
 
         $this->_helper->json(array("success" => false, "message" => "missing_permission"));
-    }
-
-    /**
-     * @param  User $user
-     * @param  Object_Abstract $child
-     * @param  Object_Abstract $parent
-     * @param  boolean $expanded
-     * @return
-     */
-    protected function getTreeNodePermissionConfig($user, $child, $parent, $expanded)
-    {
-
-        $userGroup = $user->getParent();
-        if ($userGroup instanceof User) {
-            $child->getPermissionsForUser($userGroup);
-
-            $lock_list = $child->isAllowed("list");
-            $lock_view = $child->isAllowed("view");
-            $lock_save = $child->isAllowed("save");
-            $lock_publish = $child->isAllowed("publish");
-            $lock_unpublish = $child->isAllowed("unpublish");
-            $lock_delete = $child->isAllowed("delete");
-            $lock_rename = $child->isAllowed("rename");
-            $lock_create = $child->isAllowed("create");
-            $lock_permissions = $child->isAllowed("permissions");
-            $lock_settings = $child->isAllowed("settings");
-            $lock_versions = $child->isAllowed("versions");
-            $lock_properties = $child->isAllowed("properties");
-            $lock_properties = $child->isAllowed("properties");
-        }
-
-
-        if ($parent instanceof Object_Abstract) {
-            $parent->getPermissionsForUser($user);
-        }
-        $objectPermissions = $child->getPermissionsForUser($user);
-
-        $generallyAllowed = $user->isAllowed("objects");
-        $parentId = (int)$child->getParentId();
-        $parentAllowedList = true;
-        if ($parent instanceof Object_Abstract) {
-            $parentAllowedList = $parent->isAllowed("list") and $generallyAllowed;
-        }
-
-        $listAllowed = $child->isAllowed("list");
-
-        $child->getPermissionsForUser($user);
-        $tmpObject = array(
-            "_parent" => $parentId > 0 ? $parentId : null,
-            "_id" => (int)$child->getId(),
-            "text" => $child->getKey(),
-            "type" => $child->getType(),
-            "path" => $child->getFullPath(),
-            "basePath" => $child->getPath(),
-            "elementType" => "object",
-            "permissionSet" => $objectPermissions->getId() > 0 and $objectPermissions->getCid() === $child->getId(),
-            "list" => $listAllowed,
-            "list_editable" => $parentAllowedList and $generallyAllowed and !$lock_list and !$user->isAdmin(),
-            "view" => $child->isAllowed("view"),
-            "view_editable" => $listAllowed and $generallyAllowed and !$lock_view and !$user->isAdmin(),
-            "save" => $child->isAllowed("save"),
-            "save_editable" => $listAllowed and $generallyAllowed and !$lock_save and !$user->isAdmin(),
-            "publish" => $child->isAllowed("publish"),
-            "publish_editable" => $listAllowed and $generallyAllowed and !$lock_publish and !$user->isAdmin(),
-            "unpublish" => $child->isAllowed("unpublish"),
-            "unpublish_editable" => $listAllowed and $generallyAllowed and !$lock_unpublish and !$user->isAdmin(),
-            "delete" => $child->isAllowed("delete"),
-            "delete_editable" => $listAllowed and $generallyAllowed and !$lock_delete and !$user->isAdmin(),
-            "rename" => $child->isAllowed("rename"),
-            "rename_editable" => $listAllowed and $generallyAllowed and !$lock_rename and !$user->isAdmin(),
-            "create" => $child->isAllowed("create"),
-            "create_editable" => $listAllowed and $generallyAllowed and !$lock_create and !$user->isAdmin(),
-            "permissions" => $child->isAllowed("permissions"),
-            "permissions_editable" => $listAllowed and $generallyAllowed and !$lock_permissions and !$user->isAdmin(),
-            "settings" => $child->isAllowed("settings"),
-            "settings_editable" => $listAllowed and $generallyAllowed and !$lock_settings and !$user->isAdmin(),
-            "versions" => $child->isAllowed("versions"),
-            "versions_editable" => $listAllowed and $generallyAllowed and !$lock_versions and !$user->isAdmin(),
-            "properties" => $child->isAllowed("properties"),
-            "properties_editable" => $listAllowed and $generallyAllowed and !$lock_properties and !$user->isAdmin()
-
-        );
-
-        $tmpObject["expanded"] = $expanded;
-        $tmpObject["_is_leaf"] = $child->hasNoChilds();
-        $tmpObject["iconCls"] = "pimcore_icon_object";
-
-
-        if ($child->getType() == "folder") {
-            $tmpObject["iconCls"] = "pimcore_icon_folder";
-            $tmpObject["qtipCfg"] = array(
-                "title" => "ID: " . $child->getId()
-            );
-        }
-        else {
-            $tmpObject["className"] = $child->getClass()->getName();
-            $tmpObject["qtipCfg"] = array(
-                "title" => "ID: " . $child->getId(),
-                "text" => 'Type: ' . $child->getClass()->getName()
-            );
-
-            if (!$child->isPublished()) {
-                $tmpObject["cls"] = "pimcore_unpublished";
-            }
-            if ($child->getClass()->getIcon()) {
-                unset($tmpObject["iconCls"]);
-                $tmpObject["icon"] = $child->getClass()->getIcon();
-            }
-        }
-
-        return $tmpObject;
     }
 
     /**
@@ -350,9 +235,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         // set the latest available version for editmode
         $object = $this->getLatestVersion($object);
-
-        $object->getPermissionsForUser($this->getUser());
-
         if ($object->isAllowed("view")) {
 
             $objectData = array();
@@ -374,8 +256,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
             $objectData["properties"] = Element_Service::minimizePropertiesForEditmode($object->getProperties());
-            //$objectData["permissions"] = $object->getO_permissions();
-            $objectData["userPermissions"] = $object->getUserPermissions($this->getUser());
+            $objectData["userPermissions"] = $object->getUserPermissions();
             $objectData["versions"] = $object->getVersions();
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["allowedClasses"] = $object->getClass();
@@ -524,8 +405,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         Element_Editlock::lock($this->_getParam("id"), "object");
 
         $object = Object_Abstract::getById(intval($this->_getParam("id")));
-        $object->getPermissionsForUser($this->getUser());
-
         if ($object->isAllowed("view")) {
 
             $objectData = array();
@@ -540,8 +419,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
             $objectData["properties"] = Element_Service::minimizePropertiesForEditmode($object->getProperties());
-            //$objectData["permissions"] = $object->getO_permissions();
-            $objectData["userPermissions"] = $object->getUserPermissions($this->getUser());
+            $objectData["userPermissions"] = $object->getUserPermissions();
             $objectData["classes"] = $object->getResource()->getClasses();
 
             $this->_helper->json($objectData);
@@ -561,7 +439,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $className = "Object_" . ucfirst($this->_getParam("className"));
 
         $parent = Object_Abstract::getById($this->_getParam("parentId"));
-        $parent->getPermissionsForUser($this->getUser());
 
         $message = "";
         if ($parent->isAllowed("create")) {
@@ -624,8 +501,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $success = false;
 
         $parent = Object_Abstract::getById($this->_getParam("parentId"));
-        $parent->getPermissionsForUser($this->getUser());
-
         if ($parent->isAllowed("create")) {
 
             if (!Object_Service::pathExists($parent->getFullPath() . "/" . $this->_getParam("key"))) {
@@ -681,8 +556,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             
         } else if($this->_getParam("id")) {
             $object = Object_Abstract::getById($this->_getParam("id"));
-            $object->getPermissionsForUser($this->getUser());
-
             if ($object->isAllowed("delete")) {
                 $object->delete();
 
@@ -771,8 +644,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $allowUpdate = true;
 
         $object = Object_Abstract::getById($this->_getParam("id"));
-        $object->getPermissionsForUser($this->getUser());
-
         if($object instanceof Object_Concrete) {
             $object->setOmitMandatoryCheck(true);
         }
@@ -854,9 +725,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         // set the latest available version for editmode
         $object = $this->getLatestVersion($object);
-
-        $objectUserPermissions = $object->getPermissionsForUser($this->getUser());
-
         $object->setUserModification($this->getUser()->getId());
 
         // data
@@ -955,7 +823,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         $object = Object_Abstract::getById($this->_getParam("id"));
         $classId = $this->_getParam("class_id");
-        $object->getPermissionsForUser($this->getUser());
 
         // general settings
         $general = Zend_Json::decode($this->_getParam("general"));
@@ -1065,7 +932,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $object = $version->loadData();
 
         $currentObject = Object_Abstract::getById($object->getId());
-        $currentObject->getPermissionsForUser($this->getUser());
         if ($currentObject->isAllowed("publish")) {
             $object->setPublished(true);
             try {
@@ -1371,7 +1237,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $target = Object_Abstract::getById($targetId);
         }
 
-        $target->getPermissionsForUser($this->getUser());
         if ($target->isAllowed("create")) {
             $source = Object_Abstract::getById($sourceId);
             if ($source != null) {

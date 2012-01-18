@@ -533,7 +533,6 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $className = "Object_" . ucfirst($this->_getParam("className"));
 
         $parent = Object_Abstract::getById($this->_getParam("parentId"));
-        $parent->getPermissionsForUser($this->getUser());
 
         $objectKey = "object_" . $job;
         if ($this->_getParam("filename") == "id") {

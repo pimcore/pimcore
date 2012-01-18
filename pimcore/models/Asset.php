@@ -150,13 +150,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public $dependencies;
 
     /**
-     * Permissions for a specific user
-     *
-     * @var Asset_Permissions
-     */
-    public $userPermissions;
-
-    /**
      * Contains the child elements
      *
      * @var array
@@ -1099,30 +1092,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     }
 
     /**
-     * @param Asset_Permissions $permissions
-     * @return void
-     */
-    public function setUserPermissions(Asset_Permissions $permissions = null) {
-        $this->userPermissions = $permissions;
-    }
-
-    /**
-     * @return Asset_Permissions
-     */
-    public function getUserPermissions(User $user = null) {
-        
-        // get global user if no user is specified and permissions are undefined
-        if(!$user && !$this->userPermissions) {
-            $user = Zend_Registry::get("pimcore_admin_user");
-        }
-        
-        if ($user) {
-            $this->userPermissions = $this->getPermissionsForUser($user);
-        }
-        return $this->userPermissions;
-    }
-
-    /**
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
      *
      * @param string $type
@@ -1130,34 +1099,31 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function isAllowed($type) {
 
-        if (!$this->getUserPermissions() instanceof Asset_Permissions) {
-            return false;
-        }
-
-        $currentUser = $this->getUserPermissions()->getUser();
-
+        $currentUser = Pimcore_Tool_Admin::getCurrentUser();
         //everything is allowed for admin
         if ($currentUser->isAdmin()) {
             return true;
         }
 
-        //check general permission on assets
-        if (!$currentUser->isAllowed("assets")) {
-            return false;
-        }
+        return $this->getResource()->isAllowed($type, $currentUser);
+    }
 
+    /**
+     * @return array
+     */
+    public function getUserPermissions () {
 
-        if ($this->getUserPermissions() instanceof Asset_Permissions) {
+        $vars = get_class_vars("User_Workspace_Asset");
+        $ignored = array("userId","cid");
+        $permissions = array();
 
-            $method = "get" . $type;
-
-            if (method_exists($this->getUserPermissions(), $method)) {
-                return $this->getUserPermissions()->$method();
+        foreach ($vars as $name => $defaultValue) {
+            if(!in_array($name, $ignored)) {
+                $permissions[$name] = $this->isAllowed($name);
             }
-
         }
 
-        return false;
+        return $permissions;
     }
 
 

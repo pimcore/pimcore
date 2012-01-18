@@ -47,12 +47,11 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         Element_Editlock::lock($this->_getParam("id"), "asset");
 
         $asset = Asset::getById(intval($this->_getParam("id")));
-
-        $asset->getPermissionsForUser($this->getUser());
         $asset->setProperties(Element_Service::minimizePropertiesForEditmode($asset->getProperties()));
         $asset->getVersions();
         $asset->getScheduledTasks();
         $asset->idPath = Pimcore_Tool::getIdPathForElement($asset);
+        $asset->userPermissions = $asset->getUserPermissions();
 
         if ($asset instanceof Asset_Text) {
             $asset->getData();
@@ -122,7 +121,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         $root = Asset::getById($id);
-        $root->getPermissionsForUser($this->getUser());
         if ($root->isAllowed("list")) {
             $this->_helper->json($this->getTreeNodeConfig($root));
         }
@@ -155,9 +153,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $childs = $childsList->load();
 
             foreach ($childs as $childAsset) {
-
-                $childAsset->getPermissionsForUser($this->getUser());
-
                 if ($childAsset->isAllowed("list")) {
                     $assets[] = $this->getTreeNodeConfig($childAsset);
                 }
@@ -217,7 +212,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         $parentAsset = Asset::getById(intval($this->_getParam("parentId")));
-        $parentAsset->getPermissionsForUser($this->getUser());
 
         // check for dublicate filename
         $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
@@ -263,7 +257,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset = Asset::getById($this->_getParam("id"));
         $asset->setData(file_get_contents($_FILES["Filedata"]["tmp_name"]));
         $asset->setCustomSetting("thumbnails",null);
-        $asset->getPermissionsForUser($this->getUser());
 
         if ($asset->isAllowed("publish")) {
 
@@ -289,8 +282,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $success = false;
         $parentAsset = Asset::getById(intval($this->_getParam("parentId")));
-        $parentAsset->getPermissionsForUser($this->getUser());
-
         $equalAsset = Asset::getByPath($parentAsset->getFullPath() . "/" . $this->_getParam("name"));
 
         if ($parentAsset->isAllowed("create")) {
@@ -336,7 +327,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         } else if($this->_getParam("id")) {
             $asset = Asset::getById($this->_getParam("id"));
-            $asset->getPermissionsForUser($this->getUser());
 
             if ($asset->isAllowed("delete")) {
                 $asset->delete();
@@ -502,90 +492,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         return $tmpAsset;
     }
 
-    /**
-     * @param  User $user
-     * @param  Asset $asset
-     * @param  Asset $parent
-     * @param boolean $expanded
-     * @return
-     */
-    protected function getTreeNodePermissionConfig($user, $child, $parent, $expanded) {
-
-        $userGroup = $user->getParent();
-        if ($userGroup instanceof User) {
-            $child->getPermissionsForUser($userGroup);
-
-            $lock_list = $child->isAllowed("list");
-            $lock_view = $child->isAllowed("view");
-            $lock_publish = $child->isAllowed("publish");
-            $lock_delete = $child->isAllowed("delete");
-            $lock_rename = $child->isAllowed("rename");
-            $lock_create = $child->isAllowed("create");
-            $lock_permissions = $child->isAllowed("permissions");
-            $lock_settings = $child->isAllowed("settings");
-            $lock_versions = $child->isAllowed("versions");
-            $lock_properties = $child->isAllowed("properties");
-        }
-
-        if ($parent instanceof Asset) {
-            $parent->getPermissionsForUser($user);
-        }
-        $assetPermission = $child->getPermissionsForUser($user);
-
-        $generallyAllowed = $user->isAllowed("assets");
-
-        $parentId = (int) $child->getParentId();
-        $parentAllowedList = true;
-        if ($parent instanceof Asset) {
-            $parentAllowedList = $parent->isAllowed("list") and $generallyAllowed;
-        }
-
-        $tmpAsset = array(
-
-            "_parent" => $parentId > 0 ? $parentId : null,
-            "_id" => (int) $child->getId(),
-            "text" => $child->getFilename(),
-            "type" => $child->getType(),
-            "path" => $child->getFullPath(),
-            "basePath" => $child->getPath(),
-            "elementType" => "asset",
-            "permissionSet" => $assetPermission->getId() > 0 and $assetPermission->getCid() === $child->getId(),
-            "list" => $child->isAllowed("list"),
-            "list_editable" => $parentAllowedList  and $generallyAllowed and !$lock_list and !$user->isAdmin(),
-            "view" => $child->isAllowed("view"),
-            "view_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_view and !$user->isAdmin(),
-            "publish" => $child->isAllowed("publish"),
-            "publish_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_publish and !$user->isAdmin(),
-            "delete" => $child->isAllowed("delete"),
-            "delete_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_delete and !$user->isAdmin(),
-            "rename" => $child->isAllowed("rename"),
-            "rename_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_rename and !$user->isAdmin(),
-            "create" => $child->isAllowed("create"),
-            "create_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_create and !$user->isAdmin(),
-            "permissions" => $child->isAllowed("permissions"),
-            "permissions_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_permissions and !$user->isAdmin(),
-            "settings" => $child->isAllowed("settings"),
-            "settings_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_settings and !$user->isAdmin(),
-            "versions" => $child->isAllowed("versions"),
-            "versions_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_versions and !$user->isAdmin(),
-            "properties" => $child->isAllowed("properties"),
-            "properties_editable" => $child->isAllowed("list") and $generallyAllowed and !$lock_properties and !$user->isAdmin()
-
-        );
-        $tmpAsset["expanded"] = $expanded;
-        $tmpAsset["_is_leaf"] = $child->hasNoChilds();
-        // set type specific settings
-        if ($child->getType() == "folder") {
-            $tmpAsset["iconCls"] = "pimcore_icon_folder";
-        }
-        else {
-            $tmpAsset["iconCls"] = "pimcore_icon_" . Pimcore_File::getFileExtension($child->getFilename());
-        }
-
-
-        return $tmpAsset;
-    }
-
     public function updateAction() {
 
         $success = false;
@@ -594,8 +500,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $updateData = $this->_getAllParams();
 
         $asset = Asset::getById($this->_getParam("id"));
-        $asset->getPermissionsForUser($this->getUser());
-
         if ($asset->isAllowed("settings")) {
 
             // if the position is changed the path must be changed || also from the childs
@@ -687,8 +591,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $success = false;
         if ($this->_getParam("id")) {
             $asset = Asset::getById($this->_getParam("id"));
-
-            $asset->getPermissionsForUser($this->getUser());
             if ($asset->isAllowed("publish")) {
 
 
@@ -776,7 +678,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset = $version->loadData();
 
         $currentAsset = Asset::getById($asset->getId());
-        $currentAsset->getPermissionsForUser($this->getUser());
         if ($currentAsset->isAllowed("publish")) {
             try {
                 $asset->save();
@@ -1088,7 +989,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $target = Asset::getById($targetId);
         }
 
-        $target->getPermissionsForUser($this->getUser());
         if ($target->isAllowed("create")) {
             $source = Asset::getById($sourceId);
             if ($source != null) {
@@ -1201,7 +1101,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     protected function importFromFileSystem ($path, $parentId) {
 
         $assetFolder = Asset::getById($parentId);
-        $assetFolder->getPermissionsForUser($this->getUser());
         $files = rscandir($path."/");
 
         foreach ($files as $file) {

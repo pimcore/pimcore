@@ -31,10 +31,9 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
         $snippet = $this->getLatestVersion($snippet);
         
         $snippet->getVersions();
-        //$snippet->getPermissions();
         $snippet->getScheduledTasks();
-        $snippet->getPermissionsForUser($this->getUser());
         $snippet->idPath = Pimcore_Tool::getIdPathForElement($snippet);
+        $snippet->userPermissions = $snippet->getUserPermissions();
 
         $this->minimizeProperties($snippet);
 
@@ -52,8 +51,7 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
         if ($this->_getParam("id")) {
             $snippet = Document_Snippet::getById($this->_getParam("id"));
             $snippet = $this->getLatestVersion($snippet);
-            
-            $snippet->getPermissionsForUser($this->getUser());
+
             $snippet->setUserModification($this->getUser()->getId());
 
             // save to session

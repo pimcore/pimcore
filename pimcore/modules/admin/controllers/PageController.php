@@ -29,10 +29,9 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $page = $this->getLatestVersion($page);
         
         $page->getVersions();
-        //$page->getPermissions();
         $page->getScheduledTasks();
-        $page->getPermissionsForUser($this->getUser());
         $page->idPath = Pimcore_Tool::getIdPathForElement($page);
+        $page->userPermissions = $page->getUserPermissions();
         
         // unset useless data
         $page->setElements(null);
@@ -54,8 +53,6 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
             $page = Document_Page::getById($this->_getParam("id"));
             
             $page = $this->getLatestVersion($page);
-            
-            $page->getPermissionsForUser($this->getUser());
             $page->setUserModification($this->getUser()->getId());
 
             // save to session

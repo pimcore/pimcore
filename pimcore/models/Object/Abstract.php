@@ -162,11 +162,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     public $o_properties = null;
 
     /**
-     * @var Object_Permissions
-     */
-    public $o_userPermissions;
-
-    /**
      * @var boolean
      */
     public $o_hasChilds;
@@ -465,33 +460,33 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function isAllowed($type) {
         
-        if(!$this->getUserPermissions() instanceof Object_Permissions){
-            return false;
-        }
-
-        $currentUser = $this->getUserPermissions()->getUser();
+        $currentUser = Pimcore_Tool_Admin::getCurrentUser();
         
         //everything is allowed for admin
         if($currentUser->isAdmin()){
             return true;
         }
 
-        //check general permission on objects
-        if(!$currentUser->isAllowed("objects")){
-            return false;
-        }
-
-        if ($this->getUserPermissions() instanceof Object_Permissions) {
-
-            $method = "get" . $type;
-
-            if (method_exists($this->getUserPermissions(), $method)) {
-                    return $this->getUserPermissions()->$method();
-            }
-
-        }
         return false;
 
+    }
+
+    /**
+     * @return array
+     */
+    public function getUserPermissions () {
+
+        $vars = get_class_vars("User_Workspace_Object");
+        $ignored = array("userId","cid");
+        $permissions = array();
+
+        foreach ($vars as $name => $defaultValue) {
+            if(!in_array($name, $ignored)) {
+                $permissions[$name] = $this->isAllowed($name);
+            }
+        }
+
+        return $permissions;
     }
 
     /**
@@ -716,47 +711,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function getFullPath() {
         return $this->getO_FullPath();
-    }
-
-    /**
-     * @param User $user
-     * @return Object_Permissions
-     */
-    public function getO_userPermissions(User $user = null) {
-        
-        // get global user if no user is specified and permissions are undefined
-        if(!$user && !$this->o_userPermissions) {
-            $user = Zend_Registry::get("pimcore_admin_user");
-        }
-        
-        if ($user) {
-            $this->setO_userPermissions($this->getResource()->getPermissionsForUser($user));
-        }
-        return $this->o_userPermissions;
-    }
-
-    /**
-     * @param User $user
-     * @return Object_Permissions
-     */
-    public function getUserPermissions(User $user = null) {
-        return $this->getO_userPermissions($user);
-    }
-
-    /**
-     * @param Object_Permissions $p
-     * @return void
-     */
-    public function setO_userPermissions($p) {
-        $this->o_userPermissions=$p;
-    }
-
-    /**
-     * @param Object_Permissions $p
-     * @return void
-     */
-    public function setUserPermissions($p) {
-        $this->setO_userPermissions($p);
     }
 
     /**

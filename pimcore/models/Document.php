@@ -859,31 +859,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     }
 
     /**
-     * @param Document_Permissions $permissions
-     * @return void
-     */
-    public function setUserPermissions(Document_Permissions $permissions = null) {
-        $this->userPermissions = $permissions;
-    }
-
-    /**
-     * @return Document_Permissions
-     */
-    public function getUserPermissions(User $user = null) {
-        
-        // get global user if no user is specified and permissions are undefined
-        if(!$user && !$this->userPermissions) {
-            $user = Zend_Registry::get("pimcore_admin_user");
-        }
-        
-        if ($user) {
-            $this->userPermissions = $this->getPermissionsForUser($user);
-        }
-        return $this->userPermissions;
-    }
-
-
-    /**
      * Get a list of properties (including the inherited)
      *
      * @return Property[]
@@ -991,33 +966,32 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function isAllowed($type) {
 
-        if (!$this->getUserPermissions() instanceof Document_Permissions) {
-            return false;
-        }
-
-        $currentUser = $this->getUserPermissions()->getUser();
+        $currentUser = Pimcore_Tool_Admin::getCurrentUser();
 
         //everything is allowed for admin
         if ($currentUser->isAdmin()) {
             return true;
         }
 
-        //check general permission on documents
-        if (!$currentUser->isAllowed("documents")) {
-            return false;
-        }
-
-
-        if ($this->getUserPermissions() instanceof Document_Permissions) {
-
-            $method = "get" . $type;
-            if (method_exists($this->getUserPermissions(), $method)) {
-                return $this->getUserPermissions()->$method();
-            }
-
-        }
-
         return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getUserPermissions () {
+
+        $vars = get_class_vars("User_Workspace_Document");
+        $ignored = array("userId","cid");
+        $permissions = array();
+
+        foreach ($vars as $name => $defaultValue) {
+            if(!in_array($name, $ignored)) {
+                $permissions[$name] = $this->isAllowed($name);
+            }
+        }
+
+        return $permissions;
     }
 
     /**

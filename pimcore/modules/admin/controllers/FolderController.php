@@ -26,9 +26,8 @@ class Admin_FolderController extends Pimcore_Controller_Action_Admin_Document {
         Element_Editlock::lock($this->_getParam("id"), "document");
 
         $folder = Document_Folder::getById($this->_getParam("id"));
-        //$folder->getPermissions();
-        $folder->getPermissionsForUser($this->getUser());
         $folder->idPath = Pimcore_Tool::getIdPathForElement($folder);
+        $folder->userPermissions = $folder->getUserPermissions();
         
         $this->minimizeProperties($folder);
 
@@ -42,8 +41,6 @@ class Admin_FolderController extends Pimcore_Controller_Action_Admin_Document {
     public function saveAction() {
         if ($this->_getParam("id")) {
             $folder = Document_Folder::getById($this->_getParam("id"));
-            $folder->getPermissionsForUser($this->getUser());
-
             $folder->setModificationDate(time());
             $folder->setUserModification($this->getUser()->getId());
 

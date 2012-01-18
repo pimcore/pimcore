@@ -129,7 +129,6 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
             if (!$document = $session->$key) {
                 $document = Document::getById($this->_getParam("id"));
-                $document->getPermissionsForUser($this->getUser());
             }
 
             // set _fulldump otherwise the properties will be removed because of the session-serialize 

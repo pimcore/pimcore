@@ -32,7 +32,6 @@ class Element_Service
         // requiredBy
         foreach ($d->getRequiredBy() as $r) {
             if ($e = self::getDependedElement($r)) {
-                $e->getUserPermissions($user);
                 if ($e->isAllowed("list")) {
                     $dependencies["requiredBy"][] = self::getDependencyForFrontend($e);
                 } else {
@@ -57,8 +56,6 @@ class Element_Service
         // requires
         foreach ($d->getRequires() as $r) {
             if ($e = self::getDependedElement($r)) {
-
-                $e->getUserPermissions($user);
                 if ($e->isAllowed("list")) {
                     $dependencies["requires"][] = self::getDependencyForFrontend($e);
                 } else {
