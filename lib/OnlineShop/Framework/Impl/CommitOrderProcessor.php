@@ -42,7 +42,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
      /**
      * @param OnlineShop_Framework_ICart $cart
-     * @return mixed
+     * @return OnlineShop_Framework_AbstractOrder
      */
     public function commitOrder(OnlineShop_Framework_ICart $cart) {
 
@@ -182,6 +182,10 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
         $orderItem->setAmount($item->getCount());
         $orderItem->setProduct($item->getProduct());
+        if($item->getProduct()) {
+            $orderItem->setProductName($item->getProduct()->getOSName());
+            $orderItem->setProductNumber($item->getProduct()->getOSProductNumber());
+        }
 
         $price = 0;
         if($item->getPrice($item->getCount())) {

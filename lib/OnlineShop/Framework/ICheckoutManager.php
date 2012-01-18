@@ -43,7 +43,7 @@ interface OnlineShop_Framework_ICheckoutManager {
 
     /**
      * @abstract
-     * @return bool
+     * @return OnlineShop_Framework_AbstractOrder
      */
     public function commitOrder();
 

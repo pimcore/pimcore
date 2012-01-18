@@ -3,7 +3,11 @@
 class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
 
 
-    public function getName() {
+    public function getOSName() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getName is not supported for " . get_class($this));
+    }
+
+    public function getOSProductNumber() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getName is not supported for " . get_class($this));
     }
 

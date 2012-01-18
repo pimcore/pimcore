@@ -5,6 +5,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     const CURRENT_STEP = "checkout_current_step";
     const FINISHED = "checkout_finished";
     const COMMITTED = "checkout_committed";
+    const TRACK_ECOMMERCE = "checkout_trackecommerce";
 
     private $checkoutSteps;
     private $checkoutStepOrder;
@@ -65,7 +66,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     }
 
     /**
-     * @return bool
+     * @return OnlineShop_Framework_AbstractOrder
      */
     public function commitOrder() {
         if($this->committed) {
@@ -83,9 +84,50 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
         $env->removeCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId());
         $env->removeCustomItem(self::FINISHED . "_" . $this->cart->getId());
         $env->removeCustomItem(self::COMMITTED . "_" . $this->cart->getId());
+
+        $env->setCustomItem(self::TRACK_ECOMMERCE . "_" . $result->getOrdernumber(), $this->generateGaEcommerceCode($result));
+
         $env->save();
 
         return $result;
+    }
+
+
+    protected function generateGaEcommerceCode(OnlineShop_Framework_AbstractOrder $order) {
+        $code = "";
+
+        $code .= "
+            _gaq.push(['_addTrans',
+              '" . $order->getId() . "',           // order ID - required
+              '',  // affiliation or store name
+              '" . $order->getTotalPrice() . "',          // total - required
+              '',           // tax
+              '',              // shipping
+              '',       // city
+              '',     // state or province
+              ''             // country
+            ]);
+        \n";
+
+        $items = $order->getItems();
+        if(!empty($items)) {
+            foreach($items as $item) {
+                $code .= "
+                    _gaq.push(['_addItem',
+                        '" . $order->getId() . "', // order ID - required
+                        '" . $item->getProductNumber() . "', // SKU/code - required
+                        '" . $item->getProductName() . "', // product name
+                        '',   // category or variation
+                        '" . $item->getTotalPrice() . "', // unit price - required
+                        '" . $item->getAmount() . "'      // quantity - required
+                    ]);
+                \n";
+            }
+        }
+
+        $code .= "_gaq.push(['_trackTrans']);";
+
+        return $code;
     }
 
     /**

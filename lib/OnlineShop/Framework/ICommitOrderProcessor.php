@@ -4,7 +4,7 @@ interface OnlineShop_Framework_ICommitOrderProcessor {
     /**
      * @abstract
      * @param OnlineShop_Framework_ICart $cart
-     * @return mixed
+     * @return OnlineShop_Framework_AbstractOrder
      */
     public function commitOrder(OnlineShop_Framework_ICart $cart);
 
