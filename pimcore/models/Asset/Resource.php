@@ -268,30 +268,6 @@ class Asset_Resource extends Element_Resource {
     }
 
     /**
-     * get recursivly the permissions for the passed user
-     *
-     * @param User $user
-     * @return Asset_Permission
-     */
-    public function getPermissionsForUser(User $user) {
-
-        // @TODO PERMISSIONS_REFACTORE must be updated to the new permissions
-        $pathParts = explode("/", $this->model->getPath() . $this->model->getFilename());
-        unset($pathParts[0]);
-
-        //neither user group nor user has permissions set -> use default all allowed
-        $permission = new Asset_Permissions();
-        $permission->setUser($user);
-        $permission->setUserId($user->getId());
-        $permission->setUsername($user->getName());
-        $permission->setCid($this->model->getId());
-        $permission->setCpath($this->model->getFullPath());
-
-        $this->model->setUserPermissions($permission);
-        return $permission;
-    }
-
-    /**
      * @return void
      */
     public function deleteAllPermissions() {
@@ -397,5 +373,27 @@ class Asset_Resource extends Element_Resource {
             }
         }
         return;
+    }
+
+    public function isAllowed($type, $user) {
+
+        // collect properties via parent - ids
+        $parentIds = array(1);
+
+        $obj = $this->model->getParent();
+        if($obj) {
+            while($obj) {
+                $parentIds[] = $obj->getId();
+                $obj = $obj->getParent();
+            }
+        }
+        $parentIds[] = $this->model->getId();
+
+        $userIds = $user->getRoles();
+        $userIds[] = $user->getId();
+
+        $permissions = $this->db->fetchAll("SELECT " . $type . " FROM users_workspaces_asset WHERE cid IN (".implode(",",$parentIds).") AND userId IN (" . implode(",",$userIds) . ")");
+
+        $bla = "test";
     }
 }  

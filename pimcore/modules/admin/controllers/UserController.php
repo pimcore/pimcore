@@ -220,7 +220,6 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $currentUser = Zend_Registry::get("pimcore_user");
         foreach ($userObjects as $o) {
             $hasHidden = false;
-            $o->getUserPermissions($currentUser);
             if ($o->isAllowed("list")) {
                 $userObjectData[] = array(
                     "path" => $o->getFullPath(),

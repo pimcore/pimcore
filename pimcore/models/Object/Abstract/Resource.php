@@ -260,32 +260,6 @@ class Object_Abstract_Resource extends Element_Resource {
     }
 
     /**
-     * get recursively the permissions for the passed user under consideration of the parent user group
-     *
-     * @param User $user
-     * @return Object_Permissions
-     */
-    public function getPermissionsForUser(User $user) {
-
-        // @TODO PERMISSIONS_REFACTORE must be updated to the new permissions
-        $pathParts = explode("/", $this->model->getO_Path() . $this->model->getO_Key());
-        unset($pathParts[0]);
-
-        $permission = new Object_Permissions();
-
-        //neither user group nor user has permissions set -> use default all allowed
-        $permission->setUser($user);
-        $permission->setUserId($user->getId());
-        $permission->setUsername($user->getName());
-        $permission->setCid($this->model->getId());
-        $permission->setCpath($this->model->getFullPath());
-
-
-        $this->model->setO_UserPermissions($permission);
-        return $permission;
-    }
-
-    /**
      * Quick test if there are childs
      *
      * @return boolean

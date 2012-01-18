@@ -26,8 +26,8 @@ class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document 
         Element_Editlock::lock($this->_getParam("id"), "document");
 
         $link = Document_Hardlink::getById($this->_getParam("id"));
-        $link->getPermissionsForUser($this->getUser());
         $link->idPath = Pimcore_Tool::getIdPathForElement($link);
+        $link->userPermissions = $link->getUserPermissions();
 
         if($link->getSourceDocument()) {
             $link->sourcePath = $link->getSourceDocument()->getFullpath();
@@ -45,8 +45,6 @@ class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document 
     public function saveAction() {
         if ($this->_getParam("id")) {
             $link = Document_Hardlink::getById($this->_getParam("id"));
-            $link->getPermissionsForUser($this->getUser());
-
             $this->setValuesToDocument($link);
 
             $link->setModificationDate(time());

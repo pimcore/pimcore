@@ -289,32 +289,6 @@ class Document_Resource extends Element_Resource {
     }
 
     /**
-     * get recursivly the permissions for the passed user
-     *
-     * @param User $user
-     * @return Document_Permission
-     */
-    public function getPermissionsForUser(User $user) {
-
-        // @TODO PERMISSIONS_REFACTORE must be updated to the new permissions
-        $pathParts = explode("/", $this->model->getRealFullPath());
-        unset($pathParts[0]);
-
-        $permission = new Document_Permissions();
-
-        //neither user group nor user has permissions set -> use default all allowed
-        $permission->setUser($user);
-        $permission->setUserId($user->getId());
-        $permission->setUsername($user->getName());
-        $permission->setCid($this->model->getId());
-        $permission->setCpath($this->model->getFullPath());
-
-        $this->model->setUserPermissions($permission);
-
-        return $permission;
-    }
-
-    /**
      * @return void
      */
     public function deleteAllPermissions() {

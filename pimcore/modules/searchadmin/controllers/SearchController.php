@@ -186,7 +186,6 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         foreach ($hits as $hit) {
 
             $element = Element_Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
-            $element->getPermissionsForUser($user);
             if ($element->isAllowed("list")) {
                 if ($element instanceof Object_Abstract) {
                     $data = Object_Service::gridObjectData($element, $fields);

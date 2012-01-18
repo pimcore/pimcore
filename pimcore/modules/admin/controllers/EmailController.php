@@ -30,10 +30,8 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         $email = Document_Email::getById($this->_getParam("id"));
         $email = $this->getLatestVersion($email);
         $email->getVersions();
-        //$page->getPermissions();
-        #$email->getScheduledTasks();
-        $email->getPermissionsForUser($this->getUser());
         $email->idPath = Pimcore_Tool::getIdPathForElement($email);
+        $email->userPermissions = $email->getUserPermissions();
 
         // unset useless data
         $email->setElements(null);
@@ -56,8 +54,6 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
             $page = Document_Email::getById($this->_getParam("id"));
 
             $page = $this->getLatestVersion($page);
-
-            $page->getPermissionsForUser($this->getUser());
             $page->setUserModification($this->getUser()->getId());
 
             // save to session

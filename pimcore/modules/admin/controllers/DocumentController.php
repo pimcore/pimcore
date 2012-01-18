@@ -55,7 +55,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     public function getDataByIdAction() {
 
         $document = Document::getById($this->_getParam("id"));
-        $document->getPermissionsForUser($this->getUser());
         if ($document->isAllowed("view")) {
             $this->_helper->json($document);
         }
@@ -71,8 +70,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         }
 
         $root = Document::getById($id);
-        $root->getPermissionsForUser($this->getUser());
-
         if ($root->isAllowed("list")) {
             $this->_helper->json($this->getTreeNodeConfig($root));
         }
@@ -102,8 +99,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             $childsList = $list->load();
 
             foreach ($childsList as $childDocument) {
-                // get current user permissions
-                $childDocument->getPermissionsForUser($this->getUser());
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed("list")) {
                     $documents[] = $this->getTreeNodeConfig($childDocument);
@@ -130,7 +125,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         // check for permission
         $parentDocument = Document::getById(intval($this->_getParam("parentId")));
-        $parentDocument->getPermissionsForUser($this->getUser());
         if ($parentDocument->isAllowed("create")) {
             $intendedPath = $parentDocument->getFullPath() . "/" . $this->_getParam("key");
 
@@ -240,8 +234,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         } else if($this->_getParam("id")) {
             $document = Document::getById($this->_getParam("id"));
-            $document->getPermissionsForUser($this->getUser());
-
             if ($document->isAllowed("delete")) {
                 Element_Recyclebin_Item::create($document, $this->getUser());
                 $document->delete();
@@ -348,10 +340,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $allowUpdate = true;
 
         $document = Document::getById($this->_getParam("id"));
-
-        // check for permissions
-        $document->getPermissionsForUser($this->getUser());
-
         if ($document->isAllowed("settings")) {
 
             // if the position is changed the path must be changed || also from the childs
@@ -572,7 +560,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $document = $version->loadData();
 
         $currentDocument = Document::getById($document->getId());
-        $currentDocument->getPermissionsForUser($this->getUser());
         if ($currentDocument->isAllowed("publish")) {
             $document->setPublished(true);
             try {
@@ -791,7 +778,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         }
 
         if($target instanceof Document) {
-            $target->getPermissionsForUser($this->getUser());
             if ($target->isAllowed("create")) {
                 if ($source != null) {
                     if ($this->_getParam("type") == "child") {
@@ -941,129 +927,6 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         return $tmpDocument;
     }
-
-    /**
-     * @param  User $user
-     * @param  Document $childDocument
-     * @param  Document $parentDocument
-     * @param boolean $expanded
-     * @return
-     */
-    protected function getTreeNodePermissionConfig($user, $childDocument, $parentDocument, $expanded) {
-
-        $userGroup = $user->getParent();
-        if ($userGroup instanceof User) {
-            $childDocument->getPermissionsForUser($userGroup);
-
-            $lock_list = $childDocument->isAllowed("list");
-            $lock_view = $childDocument->isAllowed("view");
-            $lock_save = $childDocument->isAllowed("save");
-            $lock_publish = $childDocument->isAllowed("publish");
-            $lock_unpublish = $childDocument->isAllowed("unpublish");
-            $lock_delete = $childDocument->isAllowed("delete");
-            $lock_rename = $childDocument->isAllowed("rename");
-            $lock_create = $childDocument->isAllowed("create");
-            $lock_permissions = $childDocument->isAllowed("permissions");
-            $lock_settings = $childDocument->isAllowed("settings");
-            $lock_versions = $childDocument->isAllowed("versions");
-            $lock_properties = $childDocument->isAllowed("properties");
-            $lock_properties = $childDocument->isAllowed("properties");
-        }
-
-
-        if ($parentDocument) {
-            $parentDocument->getPermissionsForUser($user);
-        }
-        $documentPermission = $childDocument->getPermissionsForUser($user);
-
-        $generallyAllowed = $user->isAllowed("documents");
-        $parentId = (int) $childDocument->getParentId();
-        $parentAllowedList = true;
-        if ($parentDocument instanceof Document) {
-            $parentAllowedList = $parentDocument->isAllowed("list") and $generallyAllowed;
-        }
-
-        $tmpDocument = array(
-            "_parent" => $parentId > 0 ? $parentId : null,
-            "_id" => (int) $childDocument->getId(),
-            "text" => $childDocument->getKey(),
-            "type" => $childDocument->getType(),
-            "path" => $childDocument->getFullPath(),
-            "basePath" => $childDocument->getPath(),
-            "elementType" => "document",
-            "permissionSet" => $documentPermission->getId() > 0 and $documentPermission->getCid() === $childDocument->getId(),
-            "list" => $childDocument->isAllowed("list"),
-            "list_editable" => $parentAllowedList and $generallyAllowed and !$lock_list and !$user->isAdmin(),
-            "view" => $childDocument->isAllowed("view"),
-            "view_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_view and !$user->isAdmin(),
-            "save" => $childDocument->isAllowed("save"),
-            "save_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_save and !$user->isAdmin(),
-            "publish" => $childDocument->isAllowed("publish"),
-            "publish_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_publish and !$user->isAdmin(),
-            "unpublish" => $childDocument->isAllowed("unpublish"),
-            "unpublish_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_unpublish and !$user->isAdmin(),
-            "delete" => $childDocument->isAllowed("delete"),
-            "delete_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_delete and !$user->isAdmin(),
-            "rename" => $childDocument->isAllowed("rename"),
-            "rename_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_rename and !$user->isAdmin(),
-            "create" => $childDocument->isAllowed("create"),
-            "create_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_create and !$user->isAdmin(),
-            "permissions" => $childDocument->isAllowed("permissions"),
-            "permissions_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_permissions and !$user->isAdmin(),
-            "settings" => $childDocument->isAllowed("settings"),
-            "settings_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_settings and !$user->isAdmin(),
-            "versions" => $childDocument->isAllowed("versions"),
-            "versions_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_versions and !$user->isAdmin(),
-            "properties" => $childDocument->isAllowed("properties"),
-            "properties_editable" => $childDocument->isAllowed("list") and $generallyAllowed and !$lock_properties and !$user->isAdmin()
-
-        );
-
-        $tmpDocument["expanded"] = $expanded;
-        $tmpDocument["iconCls"] = "pimcore_icon_" . $childDocument->getType();
-
-        // set type specific settings
-        if ($childDocument->getType() == "page") {
-            $tmpDocument["_is_leaf"] = $childDocument->hasNoChilds();
-            $tmpDocument["iconCls"] = "pimcore_icon_page";
-
-            // test for a site
-            try {
-                $site = Site::getByRootId($childDocument->getId());
-                $tmpDocument["iconCls"] = "pimcore_icon_site";
-                $tmpDocument["site"] = $site;
-            }
-            catch (Exception $e) {
-            }
-        }
-        else if ($childDocument->getType() == "folder") {
-
-            $tmpDocument["_is_leaf"] = $childDocument->hasNoChilds();
-
-            if ($childDocument->hasNoChilds()) {
-                $tmpDocument["iconCls"] = "pimcore_icon_folder";
-            }
-
-        } else if ($childDocument->getType() == "link") {
-
-            $tmpDocument["_is_leaf"] = $childDocument->hasNoChilds();
-
-            if ($childDocument->hasNoChilds()) {
-                $tmpDocument["iconCls"] = "pimcore_icon_link";
-            }
-        }
-        else {
-            $tmpDocument["leaf"] = true;
-            $tmpDocument["_is_leaf"] = true;
-        }
-
-        if (!$childDocument->isPublished()) {
-            $tmpDocument["cls"] = "pimcore_unpublished";
-        }
-
-        return $tmpDocument;
-    }
-
 
     public function getIdForPathAction() {
 
