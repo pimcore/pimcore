@@ -175,7 +175,6 @@ class Document_Resource extends Element_Resource {
         $this->db->query("update documents set path = replace(path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where path like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update documents child permission paths
-        // @TODO: PERMISSIONS_REFACTORE
         //$this->db->query("update documents_permissions set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") .";");
 
         //update documents child properties paths
@@ -319,7 +318,7 @@ class Document_Resource extends Element_Resource {
      * @return void
      */
     public function deleteAllPermissions() {
-        $this->db->delete("documents_permissions", $this->db->quoteInto("cid = ?", $this->model->getId()));
+        $this->db->delete("users_workspaces_document", $this->db->quoteInto("cid = ?", $this->model->getId()));
     }
 
     /**

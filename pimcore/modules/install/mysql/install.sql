@@ -20,28 +20,6 @@ CREATE TABLE `assets` (
   KEY `locked` (`locked`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `assets_permissions`;
-CREATE TABLE `assets_permissions` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `cid` int(11) unsigned DEFAULT NULL,
-  `cpath` varchar(255) DEFAULT NULL,
-  `userId` int(11) unsigned DEFAULT NULL,
-  `list` tinyint(1) DEFAULT '0',
-  `view` tinyint(1) DEFAULT '0',
-  `publish` tinyint(1) DEFAULT '0',
-  `delete` tinyint(1) DEFAULT '0',
-  `rename` tinyint(1) DEFAULT '0',
-  `create` tinyint(1) DEFAULT '0',
-  `permissions` tinyint(1) DEFAULT '0',
-  `settings` tinyint(1) DEFAULT '0',
-  `versions` tinyint(1) DEFAULT '0',
-  `properties` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `cid` (`cid`),
-  KEY `cpath` (`cpath`),
-  KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
   `id` varchar(80) NOT NULL DEFAULT '',
@@ -191,30 +169,6 @@ CREATE TABLE `documents_page` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `documents_permissions`;
-CREATE TABLE `documents_permissions` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `cid` int(11) unsigned default NULL,
-  `cpath` varchar(255) default NULL,
-  `userId` int(11) unsigned default NULL,
-  `list` tinyint(1) unsigned default '0',
-  `view` tinyint(1) unsigned default '0',
-  `save` tinyint(1) unsigned default '0',
-  `publish` tinyint(1) unsigned default '0',
-  `unpublish` tinyint(1) unsigned default '0',
-  `delete` tinyint(1) unsigned default '0',
-  `rename` tinyint(1) unsigned default '0',
-  `create` tinyint(1) unsigned default '0',
-  `permissions` tinyint(1) unsigned default '0',
-  `settings` tinyint(1) unsigned default '0',
-  `versions` tinyint(1) unsigned default '0',
-  `properties` tinyint(1) unsigned default '0',
-  PRIMARY KEY  (`id`),
-  KEY `cid` (`cid`),
-  KEY `cpath` (`cpath`),
-  KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
@@ -275,31 +229,6 @@ CREATE TABLE `objects` (
   KEY `parentId` (`o_parentId`),
   KEY `o_locked` (`o_locked`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `objects_permissions`;
-CREATE TABLE `objects_permissions` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `cid` int(11) unsigned DEFAULT NULL,
-  `cpath` varchar(255) DEFAULT NULL,
-  `userId` int(11) unsigned DEFAULT NULL,
-  `list` tinyint(1) unsigned DEFAULT '0',
-  `view` tinyint(1) unsigned DEFAULT '0',
-  `save` tinyint(1) unsigned DEFAULT '0',
-  `publish` tinyint(1) unsigned DEFAULT '0',
-  `unpublish` tinyint(1) unsigned DEFAULT '0',
-  `delete` tinyint(1) unsigned DEFAULT '0',
-  `rename` tinyint(1) unsigned DEFAULT '0',
-  `create` tinyint(1) unsigned DEFAULT '0',
-  `permissions` tinyint(1) unsigned DEFAULT '0',
-  `settings` tinyint(1) unsigned DEFAULT '0',
-  `versions` tinyint(1) unsigned DEFAULT '0',
-  `properties` tinyint(1) unsigned DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `object_user` (`cid`,`userId`),
-  KEY `cid` (`cid`),
-  KEY `cpath` (`cpath`),
-  KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
@@ -454,25 +383,75 @@ CREATE TABLE `users` (
   `language` varchar(2) DEFAULT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
   `active` tinyint(1) unsigned DEFAULT '1',
+  `permissions` varchar(1000) DEFAULT NULL,
+  `roles` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`name`),
   KEY `parentId` (`parentId`)
 ) DEFAULT CHARSET=utf8;
 
-
-
 DROP TABLE IF EXISTS `users_permission_definitions`;
 CREATE TABLE `users_permission_definitions` (
   `key` varchar(50) NOT NULL DEFAULT '',
-  `translation` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`key`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `users_permissions`;
-CREATE TABLE `users_permissions` (
-  `userId` int(11) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`userId`,`name`)
+DROP TABLE IF EXISTS `users_workspaces_asset`;
+CREATE TABLE `users_workspaces_asset` (
+  `cid` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `list` tinyint(1) DEFAULT '0',
+  `view` tinyint(1) DEFAULT '0',
+  `publish` tinyint(1) DEFAULT '0',
+  `delete` tinyint(1) DEFAULT '0',
+  `rename` tinyint(1) DEFAULT '0',
+  `create` tinyint(1) DEFAULT '0',
+  `settings` tinyint(1) DEFAULT '0',
+  `versions` tinyint(1) DEFAULT '0',
+  `properties` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`cid`, `userId`),
+  KEY `cid` (`cid`),
+  KEY `userId` (`userId`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `users_workspaces_document`;
+CREATE TABLE `users_workspaces_document` (
+  `cid` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `list` tinyint(1) unsigned DEFAULT '0',
+  `view` tinyint(1) unsigned DEFAULT '0',
+  `save` tinyint(1) unsigned DEFAULT '0',
+  `publish` tinyint(1) unsigned DEFAULT '0',
+  `unpublish` tinyint(1) unsigned DEFAULT '0',
+  `delete` tinyint(1) unsigned DEFAULT '0',
+  `rename` tinyint(1) unsigned DEFAULT '0',
+  `create` tinyint(1) unsigned DEFAULT '0',
+  `settings` tinyint(1) unsigned DEFAULT '0',
+  `versions` tinyint(1) unsigned DEFAULT '0',
+  `properties` tinyint(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`cid`, `userId`),
+  KEY `cid` (`cid`),
+  KEY `userId` (`userId`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `users_workspaces_object`;
+CREATE TABLE `users_workspaces_object` (
+  `cid` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `list` tinyint(1) unsigned DEFAULT '0',
+  `view` tinyint(1) unsigned DEFAULT '0',
+  `save` tinyint(1) unsigned DEFAULT '0',
+  `publish` tinyint(1) unsigned DEFAULT '0',
+  `unpublish` tinyint(1) unsigned DEFAULT '0',
+  `delete` tinyint(1) unsigned DEFAULT '0',
+  `rename` tinyint(1) unsigned DEFAULT '0',
+  `create` tinyint(1) unsigned DEFAULT '0',
+  `settings` tinyint(1) unsigned DEFAULT '0',
+  `versions` tinyint(1) unsigned DEFAULT '0',
+  `properties` tinyint(1) unsigned DEFAULT '0',
+  PRIMARY KEY (`cid`, `userId`),
+  KEY `cid` (`cid`),
+  KEY `userId` (`userId`)
 ) DEFAULT CHARSET=utf8;
 
 

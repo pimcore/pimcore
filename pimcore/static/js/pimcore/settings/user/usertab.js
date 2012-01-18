@@ -53,16 +53,20 @@ pimcore.settings.user.usertab = Class.create({
         });
 
         this.panel.on("beforedestroy", function () {
-            delete this.parentPanel.userPanels["user_" + this.id];
+            delete this.parentPanel.panels["user_" + this.id];
         }.bind(this));
 
         this.settings = new pimcore.settings.user.user.settings(this);
-        this.workspaces = new pimcore.settings.user.user.workspaces(this);
+        this.workspaces = new pimcore.settings.user.workspaces(this);
         this.objectrelations = new pimcore.settings.user.user.objectrelations(this);
 
         this.panel.add(this.settings.getPanel());
         this.panel.add(this.workspaces.getPanel());
         this.panel.add(this.objectrelations.getPanel());
+
+        if(this.data.user.admin) {
+            this.workspaces.disable();
+        }
 
         this.parentPanel.getEditPanel().add(this.panel);
         this.parentPanel.getEditPanel().activate(this.panel);

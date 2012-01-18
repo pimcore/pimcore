@@ -147,6 +147,9 @@ class User_Abstract_Resource extends Pimcore_Model_Resource_Abstract {
 
                     if (is_bool($value)) {
                         $value = (int) $value;
+                    } else if($key == "permissions" || $key == "roles") {
+                        // permission and roles are stored as csv
+                        $value = implode(",", $value);
                     }
                     $data[$key] = $value;
                 }

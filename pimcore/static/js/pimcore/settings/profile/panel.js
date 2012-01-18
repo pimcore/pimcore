@@ -27,8 +27,9 @@ pimcore.settings.profile.panel = Class.create({
                 id: "profile",
                 title: t("profile"),
                 border: false,
-                layout: "border",
                 closable:true,
+                layout: "fit",
+                bodyStyle: "padding: 10px;",
                 items: [this.getEditPanel()]
             });
 
@@ -48,75 +49,46 @@ pimcore.settings.profile.panel = Class.create({
         return this.panel;
     },
 
-
-
     getEditPanel: function () {
 
-        if (!this.editPanel) {
-            this.editPanel = new Ext.Panel({
-                title: "&nbsp;",
-                region: "center",
-                bodyStyle:'padding:10px;',
-                layout: "fit"
-            });
-        }
-
-        this.addUserPanel();
-
-        return this.editPanel;
-    },
-
-
-
-    addUserPanel: function () {
+        console.log(1);
 
         this.forceReloadOnSave = false;
         this.currentUser = pimcore.currentuser;
-        if (this.userPanel) {
-            this.editPanel.remove(this.userPanel);
-        }
 
-        var generalItems = new Array();
-
-        generalItems.push(new Array({
-            xtype: "textfield",
-            fieldLabel: t("username"),
-            value: this.currentUser.username,
-            width: 300,
-            disabled: true
-        }));
-        generalItems.push(new Array({
+        var generalItems = [];
+        generalItems.push({
             xtype: "textfield",
             fieldLabel: t("password"),
             name: "password",
             inputType: "password",
             width: 300
-        }));
+        });
 
-        generalItems.push(new Array({
+        generalItems.push({
             xtype: "textfield",
             fieldLabel: t("firstname"),
             name: "firstname",
             value: this.currentUser.firstname,
             width: 300
-        }));
-        generalItems.push(new Array({
+        });
+        generalItems.push({
             xtype: "textfield",
             fieldLabel: t("lastname"),
             name: "lastname",
             value: this.currentUser.lastname,
             width: 300
-        }));
-        generalItems.push(new Array({
+        });
+        generalItems.push({
             xtype: "textfield",
             fieldLabel: t("email"),
             name: "email",
             value: this.currentUser.email,
             width: 300
-        }));
+        });
 
 
-        generalItems.push(new Array({
+        generalItems.push({
             xtype:'combo',
             fieldLabel: t('language'),
             typeAhead:true,
@@ -137,36 +109,23 @@ pimcore.settings.profile.panel = Class.create({
                     this.forceReloadOnSave = true;
                 }.bind(this)
             }
-        }));
-
-        var userItems = new Array();
-
-        if (this.currentUser.hasCredentials) {
-            userItems.push(new Array({
-                xtype: "fieldset",
-                title: t("general"),
-                items: generalItems
-            }));
-        }
-
+        });
 
         this.userPanel = new Ext.form.FormPanel({
             border: false,
             layout: "pimcoreform",
-            items: userItems,
-            buttons: [
-                {
-                    text: t("save"),
-                    handler: this.saveCurrentUser.bind(this)
-                }
-            ],
+            items: generalItems,
+            buttons: [{
+                text: t("save"),
+                iconCls: "pimcore_icon_apply",
+                handler: this.saveCurrentUser.bind(this)
+            }],
             autoScroll: true
         });
 
-        this.editPanel.add(this.userPanel);
-        this.editPanel.setTitle(t("user") + ": " + this.currentUser.username);
+        console.log(2);
 
-        pimcore.layout.refresh();
+        return this.userPanel;
     },
 
     saveCurrentUser: function () {

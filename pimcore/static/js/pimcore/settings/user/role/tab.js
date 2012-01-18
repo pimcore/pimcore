@@ -57,7 +57,7 @@ pimcore.settings.user.role.tab = Class.create({
         }.bind(this));
 
         this.settings = new pimcore.settings.user.role.settings(this);
-        this.workspaces = new pimcore.settings.user.user.workspaces(this);
+        this.workspaces = new pimcore.settings.user.workspaces(this);
 
         this.panel.add(this.settings.getPanel());
         this.panel.add(this.workspaces.getPanel());

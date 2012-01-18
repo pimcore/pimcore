@@ -144,7 +144,7 @@ class Object_Abstract_Resource extends Element_Resource {
         $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where o_path like " . $this->db->quote($oldPath . "/%") .";");
 
         //update object child permission paths
-        $this->db->query("update objects_permissions set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+        //$this->db->query("update objects_permissions set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update object child properties paths
         $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
@@ -256,7 +256,7 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return void
      */
     public function deleteAllPermissions() {
-        $this->db->delete("objects_permissions", $this->db->quoteInto("cid = ?", $this->model->getO_Id()));
+        $this->db->delete("users_workspaces_object", $this->db->quoteInto("cid = ?", $this->model->getO_Id()));
     }
 
     /**

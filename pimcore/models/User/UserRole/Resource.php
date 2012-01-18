@@ -19,55 +19,35 @@ class User_UserRole_Resource extends User_Abstract_Resource {
 
     public function getById($id) {
         parent::getById($id);
-        $this->loadPermissions();
         $this->loadWorkspaces();
     }
 
     public function getByName($name) {
         parent::getByName($name);
-        $this->loadPermissions();
         $this->loadWorkspaces();
-    }
-
-    public function loadPermissions () {
-        $permissions = $this->db->fetchCol("SELECT name FROM users_permissions WHERE userId = ?", $this->model->getId());
-
-        $list = new User_Permission_Definition_List();
-        $definitions = $list->load();
-
-        foreach ($definitions as $definition) {
-            if(in_array($definition->getKey(), $permissions)) {
-                $this->model->setPermission($definition->getKey(), true);
-            } else {
-                $this->model->setPermission($definition->getKey(), false);
-            }
-        }
     }
 
     public function loadWorkspaces () {
 
-    }
+        $types = array("asset","document","object");
 
-    public function delete() {
-        $this->db->delete("users_permissions", $this->db->quoteInto("userId = ?", $this->model->getId()));
-    }
-
-    public function update() {
-
-        parent::update();
-
-        $list = new User_Permission_Definition_List();
-        $definitions = $list->load();
-
-        $this->db->delete("users_permissions", $this->db->quoteInto("userId = ?", $this->model->getId()));
-
-        foreach ($definitions as $definition) {
-            if($this->model->getPermission($definition->getKey())) {
-                $this->db->insert("users_permissions", array(
-                    "userId" => $this->model->getId(),
-                    "name" => $definition->getKey()
-                ));
+        foreach ($types as $type) {
+            $workspaces = array();
+            $className = "User_Workspace_" . ucfirst($type);
+            $result = $this->db->fetchAll("SELECT * FROM users_workspaces_" . $type . " WHERE userId = ?", $this->model->getId());
+            foreach ($result as $row) {
+                $workspace = new $className();
+                $workspace->setValues($row);
+                $workspaces[] = $workspace;
             }
+
+            $this->model->{"setWorkspaces" . ucfirst($type)}($workspaces);
         }
+    }
+
+    public function emptyWorkspaces () {
+        $this->db->delete("users_workspaces_asset", $this->db->quoteInto("userId = ?", $this->model->getId() ));
+        $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $this->model->getId() ));
+        $this->db->delete("users_workspaces_object", $this->db->quoteInto("userId = ?", $this->model->getId() ));
     }
 }

@@ -139,7 +139,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 listeners: {
-                    "click": this.attributes.reference.delete.bind(this)
+                    "click": this.attributes.reference.remove.bind(this)
                 },
                 disabled: !isEnabled
             }));
