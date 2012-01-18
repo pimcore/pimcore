@@ -26,6 +26,7 @@ sendQuery("DROP TABLE `users_permissions`;");
 
 sendQuery("CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned DEFAULT NULL,
+  `cpath` varchar(255) DEFAULT NULL,
   `userId` int(11) unsigned DEFAULT NULL,
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -43,6 +44,7 @@ sendQuery("CREATE TABLE `users_workspaces_asset` (
 
 sendQuery("CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned DEFAULT NULL,
+  `cpath` varchar(255) DEFAULT NULL,
   `userId` int(11) unsigned DEFAULT NULL,
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -62,6 +64,7 @@ sendQuery("CREATE TABLE `users_workspaces_document` (
 
 sendQuery("CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned DEFAULT NULL,
+  `cpath` varchar(255) DEFAULT NULL,
   `userId` int(11) unsigned DEFAULT NULL,
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',

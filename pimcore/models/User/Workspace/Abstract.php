@@ -28,6 +28,11 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public $cid;
 
     /**
+     * @var string
+     */
+    public $cpath;
+
+    /**
      * @var bool
      */
     public $list = false;
@@ -247,5 +252,21 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * @param string $cpath
+     */
+    public function setCpath($cpath)
+    {
+        $this->cpath = $cpath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCpath()
+    {
+        return $this->cpath;
     }
 }

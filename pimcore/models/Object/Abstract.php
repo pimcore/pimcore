@@ -477,7 +477,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     public function getUserPermissions () {
 
         $vars = get_class_vars("User_Workspace_Object");
-        $ignored = array("userId","cid");
+        $ignored = array("userId","cid","cpath");
         $permissions = array();
 
         foreach ($vars as $name => $defaultValue) {
