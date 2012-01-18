@@ -982,7 +982,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function getUserPermissions () {
 
         $vars = get_class_vars("User_Workspace_Document");
-        $ignored = array("userId","cid");
+        $ignored = array("userId","cid","cpath");
         $permissions = array();
 
         foreach ($vars as $name => $defaultValue) {

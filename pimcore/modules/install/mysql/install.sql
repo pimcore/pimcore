@@ -399,6 +399,7 @@ CREATE TABLE `users_permission_definitions` (
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned DEFAULT NULL,
+  `cpath` varchar(255) DEFAULT NULL,
   `userId` int(11) unsigned DEFAULT NULL,
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -417,6 +418,7 @@ CREATE TABLE `users_workspaces_asset` (
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned DEFAULT NULL,
+  `cpath` varchar(255) DEFAULT NULL,
   `userId` int(11) unsigned DEFAULT NULL,
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -437,6 +439,7 @@ CREATE TABLE `users_workspaces_document` (
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned DEFAULT NULL,
+  `cpath` varchar(255) DEFAULT NULL,
   `userId` int(11) unsigned DEFAULT NULL,
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',

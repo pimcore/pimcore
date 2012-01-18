@@ -164,6 +164,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                             $workspace->setValues($space);
 
                             $workspace->setCid($element->getId());
+                            $workspace->setCpath($element->getFullPath());
                             $workspace->setUserId($user->getId());
 
                             $newWorkspaces[] = $workspace;
