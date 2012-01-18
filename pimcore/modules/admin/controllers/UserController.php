@@ -148,10 +148,30 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                     $user->setPermission($permission->getKey(), (bool) $values["permission_" . $permission->getKey()]);
                 }
             }
-        }
 
-        if($this->_getParam("workspaces")) {
-            // ...
+            // check for workspaces
+            if($this->_getParam("workspaces")) {
+                $workspaces = Zend_Json::decode($this->_getParam("workspaces"));
+                foreach ($workspaces as $type => $spaces) {
+
+                    $newWorkspaces = array();
+                    foreach ($spaces as $space) {
+
+                        $element = Element_Service::getElementByPath($type, $space["path"]);
+                        if($element) {
+                            $className = "User_Workspace_" . ucfirst($type);
+                            $workspace = new $className();
+                            $workspace->setValues($space);
+
+                            $workspace->setCid($element->getId());
+                            $workspace->setUserId($user->getId());
+
+                            $newWorkspaces[] = $workspace;
+                        }
+                    }
+                    $user->{"setWorkspaces" . ucfirst($type)}($newWorkspaces);
+                }
+            }
         }
 
         $user->save();
@@ -167,6 +187,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         if (!empty($users)) {
             foreach ($users as $user) {
                 if($user instanceof User) {
+                    $user->password = null;
                     $userList[] = $user;
                 }
             }
@@ -179,8 +200,22 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     public function getAction() {
         $user = User::getById(intval($this->_getParam("id")));
-        $userObjects = Object_Service::getObjectsReferencingUser($user->getId());
 
+        // workspaces
+        $types = array("asset","document","object");
+        foreach ($types as $type) {
+            $workspaces = $user->{"getWorkspaces" . ucfirst($type)}();
+            foreach ($workspaces as $workspace) {
+                $el = Element_Service::getElementById($type, $workspace->getCid());
+                if($el) {
+                    // direct injection => not nice but in this case ok ;-)
+                    $workspace->path = $el->getFullPath();
+                }
+            }
+        }
+
+        // object <=> user dependencies
+        $userObjects = Object_Service::getObjectsReferencingUser($user->getId());
         $userObjectData = array();
         $currentUser = Zend_Registry::get("pimcore_user");
         foreach ($userObjects as $o) {
@@ -201,6 +236,18 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $availableUserPermissionsList = new User_Permission_Definition_List();
         $availableUserPermissions = $availableUserPermissionsList->load();
 
+        // get available roles
+        $roles = array();
+        $list = new User_Role_List();
+        $list->setCondition("`type` = ?", array("role"));
+        $list->load();
+
+        $roles = array();
+        if(is_array($list->getItems())){
+            foreach ($list->getItems() as $role) {
+                $roles[] = array($role->getId(), $role->getName());
+            }
+        }
 
         $user->setPassword(null);
         $conf = Pimcore_Config::getSystemConfig();
@@ -208,6 +255,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             "success" => true,
             "wsenabled" => $conf->webservice->enabled,
             "user" => $user,
+            "roles" => $roles,
             "permissions" => $user->generatePermissionList(),
             "availablePermissions" => $availableUserPermissions,
             "objectDependencies" => array(
@@ -239,6 +287,9 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 $values = Zend_Json::decode($this->_getParam("data"));
 
                 unset($values["admin"]);
+                unset($values["permissions"]);
+                unset($values["roles"]);
+                unset($values["active"]);
 
                 if (!empty($values["password"])) {
                     $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
@@ -253,7 +304,6 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         } else {
             $this->_helper->json(false);
         }
-
     }
 
     public function getCurrentUserAction() {
@@ -262,12 +312,16 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         $user = $this->getUser();
 
+        $list = new User_Permission_Definition_List();
+        $definitions = $list->load();
+
+        foreach ($definitions as $definition) {
+            $user->setPermission($definition->getKey(), $user->isAllowed($definition->getKey()));
+        }
+
         echo "pimcore.currentuser = " . Zend_Json::encode($user);
         exit;
     }
-
-
-
 
 
     /* ROLES */
@@ -320,6 +374,19 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     public function roleGetAction() {
         $role = User_Role::getById(intval($this->_getParam("id")));
 
+        // workspaces
+        $types = array("asset","document","object");
+        foreach ($types as $type) {
+            $workspaces = $role->{"getWorkspaces" . ucfirst($type)}();
+            foreach ($workspaces as $workspace) {
+                $el = Element_Service::getElementById($type, $workspace->getCid());
+                if($el) {
+                    // direct injection => not nice but in this case ok ;-)
+                    $workspace->path = $el->getFullPath();
+                }
+            }
+        }
+
         // get available permissions
         $availableUserPermissionsList = new User_Permission_Definition_List();
         $availableUserPermissions = $availableUserPermissionsList->load();
@@ -331,4 +398,5 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             "availablePermissions" => $availableUserPermissions
         ));
     }
+
 }

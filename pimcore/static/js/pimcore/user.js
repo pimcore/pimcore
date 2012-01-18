@@ -27,8 +27,10 @@ pimcore.user = Class.create({
             return true;
         }
 
-        if (typeof this.permissions == "object" && this.permissions && this.permissions[type]) {
-            return this.permissions[type];
+        if (typeof this.permissions == "object") {
+            if(in_array(type,this.permissions)) {
+                return true;
+            }
         }
         return false;
     }

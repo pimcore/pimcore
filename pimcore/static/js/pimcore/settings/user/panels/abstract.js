@@ -49,7 +49,7 @@ pimcore.settings.user.panels.abstract = Class.create({
         });
     },
 
-    delete: function () {
+    remove: function () {
         Ext.Ajax.request({
             url: "/admin/user/delete",
             params: {

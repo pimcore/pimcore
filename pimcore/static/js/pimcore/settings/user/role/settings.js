@@ -28,7 +28,7 @@ pimcore.settings.user.role.settings = Class.create({
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
             availPermsItems.push({
                 xtype: "checkbox",
-                fieldLabel: t(this.data.availablePermissions[i].translation),
+                fieldLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
                 checked: this.data.permissions[this.data.availablePermissions[i].key],
                 labelStyle: "width: 200px;"

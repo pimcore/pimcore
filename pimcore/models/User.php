@@ -57,6 +57,11 @@ class User extends User_UserRole {
      */
     public $active = true;
 
+    /**
+     * @var array
+     */
+    public $roles = array();
+
 
     /**
      * @return string
@@ -208,7 +213,16 @@ class User extends User_UserRole {
      * @return boolean
      */
     public function isAllowed($key) {
-        // @TODO PERMISSIONS_REFACTORE : take note of roles etc (do it directly in the database => $this->getResource()->isAllowed() )
+
+        if(!$this->getPermission($key)) {
+            // check roles
+            foreach ($this->getRoles() as $roleId) {
+                $role = User_Role::getById($roleId);
+                if($role->getPermission($key)) {
+                    return true;
+                }
+            }
+        }
 
         return $this->getPermission($key);
     }
@@ -225,5 +239,25 @@ class User extends User_UserRole {
         }
 
         return parent::getPermission($permissionName);
+    }
+
+    /**
+     * @param array $roles
+     */
+    public function setRoles($roles)
+    {
+        if(is_string($roles)) {
+            $this->roles = explode(",", $roles);
+        } else if (is_array($roles)) {
+            $this->roles = $roles;
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles()
+    {
+        return $this->roles;
     }
 }

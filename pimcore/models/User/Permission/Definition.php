@@ -18,8 +18,6 @@
 class User_Permission_Definition extends Pimcore_Model_Abstract {
 
     public $key;
-    public $translation;
-
 
     /**
      * @param array
@@ -38,24 +36,9 @@ class User_Permission_Definition extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @return string
-     */
-    function getTranslation() {
-        return $this->translation;
-    }
-
-    /**
      * @param string $key
      */
     function setKey($key) {
         $this->key = $key;
     }
-
-    /**
-     * @param string $translation
-     */
-    function setTranslation($translation) {
-        $this->translation = $translation;
-    }
-
 }

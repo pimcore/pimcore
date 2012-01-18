@@ -23,15 +23,46 @@ class User_UserRole extends User_Abstract {
     public $permissions = array();
 
     /**
+     * @var array
+     */
+    public $workspacesAsset = array();
+
+    /**
+     * @var array
+     */
+    public $workspacesObject = array();
+
+    /**
+     * @var array
+     */
+    public $workspacesDocument = array();
+
+
+    /**
+     *
+     */
+    public function update () {
+        $this->getResource()->update();
+
+        // save all workspaces
+        $this->getResource()->emptyWorkspaces();
+
+        foreach ($this->getWorkspacesAsset() as $workspace) {
+            $workspace->save();
+        }
+        foreach ($this->getWorkspacesDocument() as $workspace) {
+            $workspace->save();
+        }
+        foreach ($this->getWorkspacesObject() as $workspace) {
+            $workspace->save();
+        }
+    }
+
+    /**
      *
      */
     public function setAllAclToFalse() {
-        $list = new User_Permission_Definition_List();
-        $definitions = $list->load();
-
-        foreach ($definitions as $definition) {
-            $this->permissions[$definition->getKey()] = false;
-        }
+        $this->permissions = array();
     }
 
     /**
@@ -40,18 +71,11 @@ class User_UserRole extends User_Abstract {
      */
     public function setPermission($permissionName, $value = null) {
 
-        $availableUserPermissionsList = new User_Permission_Definition_List();
-        $availableUserPermissions = $availableUserPermissionsList->load();
-
-        $availableUserPermissionKeys = array();
-        foreach($availableUserPermissions as $permission){
-            if($permission instanceof User_Permission_Definition){
-                $availableUserPermissionKeys[]=$permission->getKey();
-            }
-        }
-
-        if(in_array($permissionName,$availableUserPermissionKeys)){
-            $this->permissions[$permissionName] = (bool) $value;
+        if(!in_array($permissionName, $this->permissions) && $value) {
+            $this->permissions[] = $permissionName;
+        } else if (in_array($permissionName, $this->permissions) && !$value) {
+            $position = array_search($permissionName, $this->permissions);
+            array_splice($this->permissions, $position, 1);
         }
     }
 
@@ -69,8 +93,8 @@ class User_UserRole extends User_Abstract {
      */
     public function getPermission($permissionName) {
 
-        if(array_key_exists($permissionName, $this->permissions)) {
-            return $this->permissions[$permissionName];
+        if(in_array($permissionName, $this->permissions)) {
+            return true;
         }
 
         return false;
@@ -92,5 +116,65 @@ class User_UserRole extends User_Abstract {
         }
 
         return $permissionInfo;
+    }
+
+    /**
+     * @param array $permissions
+     */
+    public function setPermissions($permissions)
+    {
+        if(is_string($permissions)) {
+            $this->permissions = explode(",", $permissions);
+        } else if (is_array($permissions)) {
+            $this->permissions = $permissions;
+        }
+    }
+
+    /**
+     * @param array $workspacesAsset
+     */
+    public function setWorkspacesAsset($workspacesAsset)
+    {
+        $this->workspacesAsset = $workspacesAsset;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWorkspacesAsset()
+    {
+        return $this->workspacesAsset;
+    }
+
+    /**
+     * @param array $workspacesDocument
+     */
+    public function setWorkspacesDocument($workspacesDocument)
+    {
+        $this->workspacesDocument = $workspacesDocument;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWorkspacesDocument()
+    {
+        return $this->workspacesDocument;
+    }
+
+    /**
+     * @param array $workspacesObject
+     */
+    public function setWorkspacesObject($workspacesObject)
+    {
+        $this->workspacesObject = $workspacesObject;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWorkspacesObject()
+    {
+        return $this->workspacesObject;
     }
 }
