@@ -180,6 +180,9 @@ class Document_Tag_Area extends Document_Tag {
                     $this->getView()->template($edit);
                     echo '</div>';
                 }
+
+                echo '</div>';
+
             }
         }
 
