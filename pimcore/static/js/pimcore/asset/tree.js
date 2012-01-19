@@ -44,14 +44,15 @@ pimcore.asset.tree = Class.create({
                 id: this.config.rootId
             },
             success: function (response) {
-                pimcore.layout.treepanelmanager.initPanel(this.config.treeId, this.init.bind(this, response));
+                var res = Ext.decode(response.responseText);
+                if(res["id"]) {
+                    pimcore.layout.treepanelmanager.initPanel(this.config.treeId, this.init.bind(this, res));
+                }
             }.bind(this) 
         });
     },
 
-    init: function(rootNodeRaw) {
-
-        var rootNodeConfig = Ext.decode(rootNodeRaw.responseText);
+    init: function(rootNodeConfig) {
 
         rootNodeConfig.nodeType = "async";
         rootNodeConfig.text = "home";
