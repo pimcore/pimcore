@@ -77,10 +77,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
     public static function lock($cid, $ctype) {
 
         // try to get user
-        try {
-            $user = Zend_Registry::get("pimcore_admin_user");
-        }
-        catch (Exception $e) {
+        if(!$user = Pimcore_Tool_Admin::getCurrentUser()) {
             return false;
         }
 

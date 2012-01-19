@@ -24,7 +24,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         parent::init();
 
         // check permissions
-        $notRestrictedActions = array();
+        $notRestrictedActions = array("doc-types");
         if (!in_array($this->_getParam("action"), $notRestrictedActions)) {
             if (!$this->getUser()->isAllowed("documents")) {
 
@@ -871,6 +871,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             "elementType" => "document",
             "leaf" => true,
             "permissions" => array(
+                "view" => $childDocument->isAllowed("view"),
                 "remove" => $childDocument->isAllowed("delete"),
                 "settings" => $childDocument->isAllowed("settings"),
                 "rename" => $childDocument->isAllowed("rename"),
