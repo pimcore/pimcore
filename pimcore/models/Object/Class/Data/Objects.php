@@ -217,7 +217,9 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $o) {
-                $pathes[] = $o->geto_FullPath();
+                if($o instanceof Element_Interface) {
+                    $pathes[] = $o->geto_FullPath();
+                }
             }
             return implode("<br />", $pathes);
         }

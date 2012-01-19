@@ -375,8 +375,9 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $e) {
-
-                $pathes[] = get_class($e) . $e->getFullPath();
+                if($e instanceof Element_Interface) {
+                    $pathes[] = get_class($e) . $e->getFullPath();
+                }
             }
             return implode("<br />", $pathes);
         }
