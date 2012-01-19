@@ -79,6 +79,9 @@ $scripts = array(
                         {
                             title: "MySQL Settings",
                             xtype: "fieldset",
+                            defaults: {
+                                width: 130
+                            },
                             items: [{
                                     xtype: "combo",
                                     name: "mysql_adapter",
@@ -125,6 +128,9 @@ $scripts = array(
                         {
                             title: "Admin User",
                             xtype: "fieldset",
+                            defaults: {
+                                width: 130
+                            },
                             items: [
                                 {
                                     xtype: "textfield",
