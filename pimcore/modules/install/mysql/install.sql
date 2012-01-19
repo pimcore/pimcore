@@ -386,8 +386,10 @@ CREATE TABLE `users` (
   `permissions` varchar(1000) DEFAULT NULL,
   `roles` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`),
-  KEY `parentId` (`parentId`)
+  UNIQUE KEY `type_name` (`type`,`name`),
+  KEY `parentId` (`parentId`),
+  KEY `name` (`name`),
+  KEY `password` (`password`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `users_permission_definitions`;
