@@ -954,4 +954,57 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     }
 
 
+
+
+    /**
+     * SEO PANEL
+     */
+    public function seopanelTreeRootAction() {
+        $root = Document::getById(1);
+        if ($root->isAllowed("list")) {
+
+            $nodeConfig = $this->getTreeNodeConfig($root);
+            $nodeConfig["title"] = $root->getTitle();
+            $nodeConfig["description"] = $root->getDescription();
+
+            $this->_helper->json($nodeConfig);
+        }
+
+        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
+    }
+
+
+    public function seopanelTreeAction() {
+
+        $document = Document::getById($this->_getParam("node"));
+
+        $documents = array();
+        if ($document->hasChilds()) {
+
+            $list = new Document_List();
+            $list->setCondition("parentId = ?", $document->getId());
+            $list->setOrderKey("index");
+            $list->setOrder("asc");
+
+            $childsList = $list->load();
+
+            foreach ($childsList as $childDocument) {
+                // only display document if listing is allowed for the current user
+                if ($childDocument->isAllowed("list")) {
+                    $nodeConfig = $this->getTreeNodeConfig($childDocument);
+
+                    if(method_exists($childDocument, "getTitle") && method_exists($childDocument, "getDescription")) {
+                        $nodeConfig["title"] = $childDocument->getTitle();
+                        $nodeConfig["description"] = $childDocument->getDescription();
+                    }
+
+                    $documents[] = $nodeConfig;
+                }
+            }
+        }
+
+        $this->_helper->json($documents);
+    }
+
+
 }
