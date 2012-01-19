@@ -220,11 +220,11 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
             $db->insert("users", array(
                 "parentId" => 0,
-                "username" => "system",
+                "name" => "system",
                 "admin" => 1,
                 "active" => 1
             ));
-            $db->update("users",array("id" => 0), $db->quoteInto("username = ?", "system"));
+            $db->update("users",array("id" => 0), $db->quoteInto("name = ?", "system"));
 
 
             $userPermissions = array(

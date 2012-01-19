@@ -386,7 +386,7 @@ CREATE TABLE `users` (
   `permissions` varchar(1000) DEFAULT NULL,
   `roles` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`name`),
+  UNIQUE KEY `name` (`name`),
   KEY `parentId` (`parentId`)
 ) DEFAULT CHARSET=utf8;
 
