@@ -392,6 +392,25 @@ class Asset_Resource extends Element_Resource {
         $userIds = $user->getRoles();
         $userIds[] = $user->getId();
 
-        $permissions = $this->db->fetchAll("SELECT " . $type . " FROM users_workspaces_asset WHERE cid IN (".implode(",",$parentIds).") AND userId IN (" . implode(",",$userIds) . ")");
+        try {
+            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_asset WHERE cid IN (".implode(",",$parentIds).") AND userId IN (" . implode(",",$userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+
+            if($permissionsParent) {
+                return true;
+            }
+
+            // exception for list permission
+            if(empty($permissionsParent) && $type == "list") {
+                // check for childs with permissions
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? LIMIT 1", $this->model->getFullPath()."%");
+                if($permissionsChilds) {
+                    return true;
+                }
+            }
+        } catch (Exception $e) {
+            Logger::warn("Unable to get permission " . $type . " for asset " . $this->model->getId());
+        }
+
+        return false;
     }
 }  

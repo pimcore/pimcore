@@ -426,7 +426,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 "remove" => $asset->isAllowed("delete"),
                 "settings" => $asset->isAllowed("settings"),
                 "rename" => $asset->isAllowed("rename"),
-                "publish" => $asset->isAllowed("publish")
+                "publish" => $asset->isAllowed("publish"),
+                "view" => $asset->isAllowed("view")
             )
         );
 

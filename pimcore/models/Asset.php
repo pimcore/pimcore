@@ -1114,7 +1114,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public function getUserPermissions () {
 
         $vars = get_class_vars("User_Workspace_Asset");
-        $ignored = array("userId","cid","cpath");
+        $ignored = array("userId","cid","cpath","resource");
         $permissions = array();
 
         foreach ($vars as $name => $defaultValue) {

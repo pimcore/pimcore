@@ -459,16 +459,14 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return boolean
      */
     public function isAllowed($type) {
-        
+
         $currentUser = Pimcore_Tool_Admin::getCurrentUser();
-        
         //everything is allowed for admin
-        if($currentUser->isAdmin()){
+        if ($currentUser->isAdmin()) {
             return true;
         }
 
-        return false;
-
+        return $this->getResource()->isAllowed($type, $currentUser);
     }
 
     /**
