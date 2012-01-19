@@ -360,4 +360,43 @@ class Document_Resource extends Element_Resource {
         return false;
     }
 
+    public function isAllowed($type, $user) {
+
+        // collect properties via parent - ids
+        $parentIds = array(1);
+
+        $obj = $this->model->getParent();
+        if($obj) {
+            while($obj) {
+                $parentIds[] = $obj->getId();
+                $obj = $obj->getParent();
+            }
+        }
+        $parentIds[] = $this->model->getId();
+
+        $userIds = $user->getRoles();
+        $userIds[] = $user->getId();
+
+        try {
+            $permissionsParent = $this->db->fetchOne("SELECT `" . $type . "` FROM users_workspaces_document WHERE cid IN (".implode(",",$parentIds).") AND userId IN (" . implode(",",$userIds) . ") ORDER BY LENGTH(cpath) DESC LIMIT 1");
+
+            if($permissionsParent) {
+                return true;
+            }
+
+            // exception for list permission
+            if(empty($permissionsParent) && $type == "list") {
+                // check for childs with permissions
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? LIMIT 1", $this->model->getFullPath()."%");
+                if($permissionsChilds) {
+                    return true;
+                }
+            }
+        } catch (Exception $e) {
+            Logger::warn("Unable to get permission " . $type . " for document " . $this->model->getId());
+        }
+
+        return false;
+    }
+
 }

@@ -136,7 +136,9 @@ pimcore.asset.tree = Class.create({
     },
 
     onTreeNodeClick: function () {
-        pimcore.helpers.openAsset(this.id, this.attributes.type);
+        if(this.attributes.permissions.view) {
+            pimcore.helpers.openAsset(this.id, this.attributes.type);
+        }
     },
 
     onTreeNodeOver: function (event) {

@@ -967,13 +967,12 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function isAllowed($type) {
 
         $currentUser = Pimcore_Tool_Admin::getCurrentUser();
-
         //everything is allowed for admin
         if ($currentUser->isAdmin()) {
             return true;
         }
 
-        return false;
+        return $this->getResource()->isAllowed($type, $currentUser);
     }
 
     /**
@@ -982,7 +981,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function getUserPermissions () {
 
         $vars = get_class_vars("User_Workspace_Document");
-        $ignored = array("userId","cid","cpath");
+        $ignored = array("userId","cid","cpath","resource");
         $permissions = array();
 
         foreach ($vars as $name => $defaultValue) {
