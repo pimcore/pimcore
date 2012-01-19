@@ -393,7 +393,5 @@ class Asset_Resource extends Element_Resource {
         $userIds[] = $user->getId();
 
         $permissions = $this->db->fetchAll("SELECT " . $type . " FROM users_workspaces_asset WHERE cid IN (".implode(",",$parentIds).") AND userId IN (" . implode(",",$userIds) . ")");
-
-        $bla = "test";
     }
 }  
