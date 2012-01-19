@@ -146,15 +146,6 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        // admin translations only for admins
-        if(user.admin) {
-            extrasItems.push({
-                text: t("translations_admin"),
-                iconCls: "pimcore_icon_translations",
-                handler: this.editTranslationsSpecific
-            });
-        }
-
         if (user.isAllowed("system_settings")) {
             extrasItems.push({
                 text: t("systemlog"),
@@ -168,6 +159,14 @@ pimcore.layout.toolbar = Class.create({
                 text: t("server_fileexplorer"),
                 iconCls: "pimcore_icon_fileexplorer",
                 handler: this.showFilexplorer
+            });
+        }
+
+        if (user.isAllowed("documents")) {
+            extrasItems.push({
+                text: t("document_seo_view"),
+                iconCls: "pimcore_icon_seo",
+                handler: this.showDocumentSeo
             });
         }
 
@@ -281,7 +280,6 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-
         if (user.isAllowed("objects")) {
 
             var objectMenu = {
@@ -362,6 +360,15 @@ pimcore.layout.toolbar = Class.create({
             }
 
             settingsItems.push(cacheMenu);
+        }
+
+        // admin translations only for admins
+        if(user.admin) {
+            settingsItems.push({
+                text: t("translations_admin"),
+                iconCls: "pimcore_icon_translations",
+                handler: this.editTranslationsSpecific
+            });
         }
 
         if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
@@ -699,6 +706,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("customviews", new pimcore.object.customviews.settings());
+        }
+    },
+
+    showDocumentSeo: function () {
+        try {
+            pimcore.globalmanager.get("document_seopanel").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("document_seopanel", new pimcore.document.seopanel());
         }
     },
 

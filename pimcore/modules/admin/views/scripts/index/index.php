@@ -49,6 +49,7 @@
             "/pimcore/static/js/lib/ext-plugins/ux/statusbar/css/statusbar.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/Portal.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/MultiSelect.css",
+            "/pimcore/static/js/lib/ext-plugins/ux/treegrid/treegrid.css",
             "/pimcore/static/js/lib/ext-plugins/ux/css/ColumnHeaderGroup.css",
             "/pimcore/static/js/lib/ext-plugins/ux/gridfilters/css/GridFilters.css",
             "/pimcore/static/js/lib/ext-plugins/ux/gridfilters/css/RangeMenu.css",
@@ -223,22 +224,22 @@
             "pimcore/document/properties.js",
             "pimcore/document/document.js",
             "pimcore/document/page_snippet.js",
-            //"pimcore/document/page_email.js", //ckogler
             "pimcore/document/edit.js",
-            "pimcore/document/editemail.js", //ckogler
+            "pimcore/document/editemail.js",
             "pimcore/document/versions.js",
             "pimcore/document/pages/settings.js",
             "pimcore/document/pages/preview.js",
             "pimcore/document/snippets/settings.js",
-            "pimcore/document/emails/settings.js", //ckogler
-            "pimcore/document/emails/logs.js", //ckogler
+            "pimcore/document/emails/settings.js",
+            "pimcore/document/emails/logs.js",
             "pimcore/document/link.js",
             "pimcore/document/hardlink.js",
             "pimcore/document/folder.js",
             "pimcore/document/tree.js",
             "pimcore/document/snippet.js",
-            "pimcore/document/email.js", //ckogler
+            "pimcore/document/email.js",
             "pimcore/document/page.js",
+            "pimcore/document/seopanel.js",
             
             // assets
             "pimcore/asset/asset.js",
