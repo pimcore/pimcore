@@ -50,9 +50,6 @@ pimcore.settings.profile.panel = Class.create({
     },
 
     getEditPanel: function () {
-
-        console.log(1);
-
         this.forceReloadOnSave = false;
         this.currentUser = pimcore.currentuser;
 
@@ -122,8 +119,6 @@ pimcore.settings.profile.panel = Class.create({
             }],
             autoScroll: true
         });
-
-        console.log(2);
 
         return this.userPanel;
     },

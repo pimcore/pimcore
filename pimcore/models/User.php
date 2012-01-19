@@ -246,7 +246,7 @@ class User extends User_UserRole {
      */
     public function setRoles($roles)
     {
-        if(is_string($roles)) {
+        if(is_string($roles) && !empty($roles) ) {
             $this->roles = explode(",", $roles);
         } else if (is_array($roles)) {
             $this->roles = $roles;
@@ -258,6 +258,9 @@ class User extends User_UserRole {
      */
     public function getRoles()
     {
+        if(empty($this->roles)) {
+            return array();
+        }
         return $this->roles;
     }
 }

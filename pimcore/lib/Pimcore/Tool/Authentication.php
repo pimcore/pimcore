@@ -31,6 +31,8 @@ class Pimcore_Tool_Authentication {
 
         $user = $adminSession->user;
         if ($user instanceof User) {
+            // renew user
+            $user = User::getById($user->getId());
             return $user;
         }
     }

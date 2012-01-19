@@ -127,7 +127,9 @@ pimcore.object.tree = Class.create({
     },
 
     onTreeNodeClick: function () {
-        pimcore.helpers.openObject(this.id, this.attributes.type);
+        if(this.attributes.permissions.view) {
+            pimcore.helpers.openObject(this.id, this.attributes.type);
+        }
     },
 
     onTreeNodeOver: function (event) {

@@ -129,7 +129,9 @@ pimcore.document.tree = Class.create({
     },
 
     onTreeNodeClick: function () {
-        pimcore.helpers.openDocument(this.id, this.attributes.type);
+        if(this.attributes.permissions.view) {
+            pimcore.helpers.openDocument(this.id, this.attributes.type);
+        }
     },
 
     onTreeNodeOver: function (event) {
