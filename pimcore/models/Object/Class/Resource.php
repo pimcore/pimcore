@@ -136,7 +136,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         foreach ($data as $key => $value) {
             $setsql[] = "`" . $key . "` = '" . $value . "'";
         }
-        $this->logSql("UPDATE classes SET ". implode(",",$setsql) ." WHERE id = " . $this->db->quote($this->model->getId()) . ";");
+        Pimcore_Resource::logDefinitionModification("UPDATE classes SET ". implode(",",$setsql) ." WHERE id = " . $this->db->quote($this->model->getId()) . ";");
         
         
          // save definition as a serialized file
@@ -157,19 +157,19 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         $protectedColums = array("oo_id", "oo_classId", "oo_className");
         $protectedDatastoreColumns = array("oo_id");
 
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $objectTable . "` (
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
 			  `oo_classId` int(11) default '" . $this->model->getId() . "',
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
 			  PRIMARY KEY  (`oo_id`)
 			) DEFAULT CHARSET=utf8;");
 
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTable . "` (
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`)
 			) DEFAULT CHARSET=utf8;");
 
-            $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
+            $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
               `src_id` int(11) NOT NULL DEFAULT '0',
               `dest_id` int(11) NOT NULL DEFAULT '0',
               `type` varchar(50) NOT NULL DEFAULT '',
@@ -245,8 +245,8 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
         // create view
         try {
-            //$this->dbexec('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`o_classId` = ' . $this->model->getId() . ';');
-            $this->dbexec('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
+            //$this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`o_classId` = ' . $this->model->getId() . ';');
+            $this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
         }
         catch (Exception $e) {
             Logger::debug($e);
@@ -258,12 +258,12 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->dbexec('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
+                    $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
                     
                     if($emptyRelations) {
                         $tableRelation = "object_relations_" . $this->model->getId();
                         $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
-                        $this->logSql("DELETE FROM ".$tableRelation." WHERE fieldname = " . $this->db->quote($value) . " AND ownertype = 'object';"); // only for logging
+                        Pimcore_Resource::logDefinitionModification("DELETE FROM ".$tableRelation." WHERE fieldname = " . $this->db->quote($value) . " AND ownertype = 'object';"); // only for logging
                     }
 
                     // @TODO: remove localized fields and fieldcollections
@@ -303,9 +303,9 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         if ($existingColName === null) {
-            $this->dbexec('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         } else {
-            $this->dbexec('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         }
     }
     
@@ -317,14 +317,14 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                 foreach ($field->getQueryColumnType() as $fkey => $fvalue) {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
-                        $this->dbexec("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
+                        $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                     } catch (Exception $e) {}
                 }            
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
-                    $this->dbexec("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
+                    $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                 } catch (Exception $e) {}
             }
         } else {
@@ -333,14 +333,14 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                 foreach ($field->getQueryColumnType() as $fkey => $fvalue) {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
-                        $this->dbexec("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
+                        $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                     } catch (Exception $e) {}
                 }            
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
-                    $this->dbexec("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
+                    $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                 } catch (Exception $e) {}
             }
         }
@@ -361,7 +361,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
     public function create() {
         $this->db->insert("classes", array("name" => $this->model->getName()));
         // only for logging
-        $this->logSql("INSERT INTO `classes` SET `name`=".$this->db->quote($this->model->getName()).";");
+        Pimcore_Resource::logDefinitionModification("INSERT INTO `classes` SET `name`=".$this->db->quote($this->model->getName()).";");
         
         $this->model->setId($this->db->lastInsertId());
         $this->model->setCreationDate(time());
@@ -379,7 +379,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->db->delete("classes", $this->db->quoteInto("id = ?", $this->model->getId()));
         // only for logging
-        $this->logSql("DELETE FROM classes WHERE id = " . $this->db->quote($this->model->getId()) . ";");
+        Pimcore_Resource::logDefinitionModification("DELETE FROM classes WHERE id = " . $this->db->quote($this->model->getId()) . ";");
 
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
@@ -387,37 +387,37 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         $objectMetadataTable = "object_metadata_" . $this->model->getId();
 
         
-        $this->dbexec('DROP TABLE `' . $objectTable . '`');
-        $this->dbexec('DROP TABLE `' . $objectDatastoreTable . '`');
-        $this->dbexec('DROP TABLE `' . $objectDatastoreTableRelation . '`');
-        $this->dbexec('DROP TABLE IF EXISTS `' . $objectMetadataTable . '`');
+        $this->db->query('DROP TABLE `' . $objectTable . '`');
+        $this->db->query('DROP TABLE `' . $objectDatastoreTable . '`');
+        $this->db->query('DROP TABLE `' . $objectDatastoreTableRelation . '`');
+        $this->db->query('DROP TABLE IF EXISTS `' . $objectMetadataTable . '`');
 
-        $this->dbexec('DROP VIEW `object_' . $this->model->getId() . '`');
+        $this->db->query('DROP VIEW `object_' . $this->model->getId() . '`');
         
         // delete data
         $this->db->delete("objects", $this->db->quoteInto("o_classId = ?", $this->model->getId()));
-        $this->logSql("DELETE FROM objects WHERE o_classId = '" . $this->model->getId() . "';"); // only for logging
+        Pimcore_Resource::logDefinitionModification("DELETE FROM objects WHERE o_classId = '" . $this->model->getId() . "';"); // only for logging
         
         // remove fieldcollection tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_collection_%_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $collectionTable = current($table);
-            $this->dbexec("DROP TABLE IF EXISTS `".$collectionTable."`");
+            $this->db->query("DROP TABLE IF EXISTS `".$collectionTable."`");
         }
 
         // remove localized fields tables and views
         $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object_localized_" . $this->model->getId() . "_%'");
         foreach ($allViews as $view) {
             $localizedView = current($view);
-            $this->dbexec("DROP VIEW IF EXISTS `".$localizedView."`");
+            $this->db->query("DROP VIEW IF EXISTS `".$localizedView."`");
         }
-        $this->dbexec("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
+        $this->db->query("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
 
         // objectbrick tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_brick_%_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $brickTable = current($table);
-            $this->dbexec("DROP TABLE `".$brickTable."`");
+            $this->db->query("DROP TABLE `".$brickTable."`");
         }
         
         @unlink(PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf");
@@ -433,45 +433,12 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
             "o_className" => $newName
         ), $this->db->quoteInto("o_classId = ?", $this->model->getId()));
         // only for logging 
-        $this->logSql("UPDATE objects SET `o_className` = ".$this->db->quote($newName)." WHERE o_classId = " . $this->db->quote($this->model->getId()) . ";");
+        Pimcore_Resource::logDefinitionModification("UPDATE objects SET `o_className` = ".$this->db->quote($newName)." WHERE o_classId = " . $this->db->quote($this->model->getId()) . ";");
         
         $this->db->update("object_query_" . $this->model->getId(), array(
             "oo_className" => $newName
         ));
         // only for logging
-        $this->logSql("UPDATE object_query_" . $this->model->getId() . " SET `oo_className` = " . $this->db->quote($newName));
-    }
-    
-    private function dbexec($sql) {
-        $this->db->query($sql);
-        $this->logSql($sql);
-    }
-    
-    private function logSql ($sql) {
-        $this->_sqlChangeLog[] = $sql;
-    }
-    
-    public function __destruct () {
-        
-        // write sql change log for deploying to production system
-        if(!empty($this->_sqlChangeLog)) {
-            $log = implode("\n\n\n", $this->_sqlChangeLog);
-            
-            $filename = "db-change-log_".time()."_class-".$this->model->getName().".sql";
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY."/".$filename;
-            if(defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
-                $file = PIMCORE_DB_CHANGELOG_DIRECTORY."/".$filename;
-            }
-
-            $logContent = '';
-
-            if(file_exists($filename) && is_readable($filename)) {
-                $logContent = file_get_contents($filename)."\n\n\n";
-            }
-
-            file_put_contents($logContent.$file, $log);
-            chmod($file, 0766);
-            $this->_sqlChangeLog = array();
-        }
+        Pimcore_Resource::logDefinitionModification("UPDATE object_query_" . $this->model->getId() . " SET `oo_className` = " . $this->db->quote($newName));
     }
 }

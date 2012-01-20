@@ -24,14 +24,14 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
     public function delete (Object_Class $class) {
         
         $table = $this->getTableName($class);
-        $this->dbexec("DROP TABLE IF EXISTS `" . $table . "`");
+        $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
     }
     
     public function createUpdateTable (Object_Class $class) {
         
         $table = $this->getTableName($class);
         
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $table . "` (
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `o_id` int(11) NOT NULL default '0',
 		  `index` int(11) default '0',
           `fieldname` varchar(255) default NULL,
@@ -98,14 +98,14 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
                 foreach ($field->getColumnType() as $fkey => $fvalue) {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
-                        $this->dbexec("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
+                        $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                     } catch (Exception $e) {}
                 }            
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
-                    $this->dbexec("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
+                    $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                 } catch (Exception $e) {}
             }
         } else {
@@ -114,14 +114,14 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
                 foreach ($field->getColumnType() as $fkey => $fvalue) {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
-                        $this->dbexec("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
+                        $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                     } catch (Exception $e) {}
                 }            
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
-                    $this->dbexec("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
+                    $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                 } catch (Exception $e) {}
             }
         }
@@ -139,9 +139,9 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
             $existingColName = current($matchingExisting);
         }
         if ($existingColName === null) {
-            $this->dbexec('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         } else {
-            $this->dbexec('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         }
 
     }
@@ -151,35 +151,9 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->dbexec('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
+                    $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
                 }
             }
-        }
-    }
-    
-    protected function dbexec($sql) {
-        $this->db->query($sql);
-        $this->logSql($sql);
-    }
-    
-    protected function logSql ($sql) {
-        $this->_sqlChangeLog[] = $sql;
-    }
-    
-    public function __destruct () {
-        
-        // write sql change log for deploying to production system
-        if(!empty($this->_sqlChangeLog)) {
-            $log = implode("\n\n\n", $this->_sqlChangeLog);
-            
-            $filename = "db-change-log_".time()."_class-".$this->model->getKey().".sql";
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY."/".$filename;
-            if(defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
-                $file = PIMCORE_DB_CHANGELOG_DIRECTORY."/".$filename;
-            }
-            
-            file_put_contents($file, $log);
-            chmod($file, 0766);
         }
     }
 }

@@ -27,10 +27,10 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
     
     public function delete (Object_Class $class) {
         $table = $this->getTableName($class, false);
-        $this->dbexec("DROP TABLE IF EXISTS `" . $table . "`");
+        $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
 
         $table = $this->getTableName($class, true);
-        $this->dbexec("DROP TABLE IF EXISTS `" . $table . "`");
+        $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
     }
     
     public function createUpdateTable (Object_Class $class) {
@@ -38,7 +38,7 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
         
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $tableStore . "` (
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $tableStore . "` (
 		  `o_id` int(11) NOT NULL default '0',
           `fieldname` varchar(255) default NULL,
           PRIMARY KEY (`o_id`,`fieldname`),
@@ -46,7 +46,7 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
           INDEX `fieldname` (`fieldname`)
 		) DEFAULT CHARSET=utf8;");
 
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $tableQuery . "` (
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $tableQuery . "` (
 		  `o_id` int(11) NOT NULL default '0',
           `fieldname` varchar(255) default NULL,
           PRIMARY KEY (`o_id`,`fieldname`),
@@ -54,8 +54,6 @@ class Object_Objectbrick_Definition_Resource extends Object_Fieldcollection_Defi
           INDEX `fieldname` (`fieldname`)
 		) DEFAULT CHARSET=utf8;");
 
-
-        
         $existingColumnsStore = $this->getValidTableColumns($tableStore, false); // no caching of table definition
         $columnsToRemoveStore = $existingColumnsStore;
         $existingColumnsQuery = $this->getValidTableColumns($tableQuery, false); // no caching of table definition

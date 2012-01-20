@@ -133,7 +133,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         foreach ($languages as $language) {
             try {
 
-                $this->dbexec('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` AND `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
+                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` AND `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
             }
             catch (Exception $e) {
                 Logger::error($e);
@@ -155,14 +155,14 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $furtherSelects = "," . $furtherSelects;
         }
 
-        $this->dbexec('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.* ' . $furtherSelects . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
+        $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.* ' . $furtherSelects . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
     }
 
     public function createUpdateTable () {
 
         $table = $this->getTableName();
 
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $table . "` (
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `ooo_id` int(11) NOT NULL default '0',
 		  `language` varchar(5) default NULL,
 		  PRIMARY KEY (`ooo_id`,`language`),
@@ -233,14 +233,14 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 foreach ($field->getColumnType() as $fkey => $fvalue) {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
-                        $this->dbexec("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
+                        $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                     } catch (Exception $e) {}
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
-                    $this->dbexec("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
+                    $this->db->query("ALTER TABLE `" . $table . "` ADD INDEX `p_index_" . $columnName . "` (`" . $columnName . "`);");
                 } catch (Exception $e) {}
             }
         } else {
@@ -249,14 +249,14 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                 foreach ($field->getColumnType() as $fkey => $fvalue) {
                     $columnName = $field->getName() . "__" . $fkey;
                     try {
-                        $this->dbexec("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
+                        $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                     } catch (Exception $e) {}
                 }
             } else {
                 // single -column field
                 $columnName = $field->getName();
                 try {
-                    $this->dbexec("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
+                    $this->db->query("ALTER TABLE `" . $table . "` DROP INDEX `p_index_" . $columnName . "`;");
                 } catch (Exception $e) {}
             }
         }
@@ -274,9 +274,9 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         if ($existingColName === null) {
-            $this->dbexec('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         } else {
-            $this->dbexec('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         }
     }
 
@@ -285,35 +285,9 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             foreach ($columnsToRemove as $value) {
                 //if (!in_array($value, $protectedColumns)) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->dbexec('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
+                    $this->db->query('ALTER TABLE `' . $table . '` DROP COLUMN `' . $value . '`;');
                 }
             }
-        }
-    }
-
-    private function dbexec($sql) {
-        $this->db->query($sql);
-        $this->logSql($sql);
-    }
-
-    private function logSql ($sql) {
-        $this->_sqlChangeLog[] = $sql;
-    }
-
-    public function __destruct () {
-
-        // write sql change log for deploying to production system
-        if(!empty($this->_sqlChangeLog)) {
-            $log = implode("\n\n\n", $this->_sqlChangeLog);
-
-            $filename = "db-change-log_".time()."_class-".$this->model->getClass()->getId().".sql";
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY."/".$filename;
-            if(defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
-                $file = PIMCORE_DB_CHANGELOG_DIRECTORY."/".$filename;
-            }
-
-            file_put_contents($file, $log);
-            chmod($file, 0766);
         }
     }
 }

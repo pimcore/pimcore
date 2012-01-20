@@ -16,6 +16,11 @@
 class Pimcore_Resource_Mysql {
 
     /**
+     * @var string
+     */
+    protected static $_sqlLogFilename;
+
+    /**
      * @static
      * @return string
      */
@@ -134,6 +139,49 @@ class Pimcore_Resource_Mysql {
         } catch (Exception $e) {
             Logger::error($e);
         }
+    }
+
+    /**
+     * @static
+     * @param string $method
+     * @param array $args
+     */
+    public static function checkForDefinitionModifications ($method, $args) {
+
+        $methodsToCheck = array("query","update","delete","insert");
+        if(in_array($method, $methodsToCheck)) {
+            if($method == "query") {
+                if(preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE)(.*)(DATABASE|EVENT|FUNCTION|PROCEDURE|TABLE|TABLESPACE|VIEW|INDEX|TRIGGER)/i",$args[0])) {
+                    self::logDefinitionModification($args[0]);
+                }
+            } else {
+                $tablesToCheck = array("class");
+                // @TODO find a way how to get the real query
+            }
+        }
+    }
+
+    /**
+     * @static
+     * @param string $sql
+     */
+    public static function logDefinitionModification ($sql) {
+
+        if(!self::$_sqlLogFilename) {
+            self::$_sqlLogFilename = "db-change-log_". time() ."-" . uniqid() . ".sql";
+        }
+
+        // write sql change log for deploying to production system
+        $sql .= "\n\n\n";
+
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY."/". self::$_sqlLogFilename;
+        if(defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
+            $file = PIMCORE_DB_CHANGELOG_DIRECTORY."/" . self::$_sqlLogFilename;
+        }
+
+        $handle = fopen($file,"a");
+        fwrite($handle, $sql);
+        fclose($handle);
     }
 
 
