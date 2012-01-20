@@ -36,5 +36,5 @@ class Pimcore_Tool_Serialize {
         }
         return $data;
     }
-    
+
 }
