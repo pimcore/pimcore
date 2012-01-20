@@ -86,7 +86,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             if($this->getFormat() == "f4v") {
                 $arguments = "-vcodec libx264 -acodec libfaac -f flv -ar 44000 " . $arguments;
             } else if($this->getFormat() == "mp4") {
-                $arguments = "-vcodec libx264 -f mp4 " . $arguments;
+                $arguments = "-vcodec libx264 -f mp4 -vpre baseline " . $arguments;
                 //$arguments = "-strict experimental -f mp4 -vcodec mpeg4 -acodec aac " . $arguments;
             } else if($this->getFormat() == "webm") {
                 $arguments = "-vcodec libvpx -acodec libvorbis -f webm -ar 44000 " . $arguments;
