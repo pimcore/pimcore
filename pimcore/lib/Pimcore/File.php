@@ -70,14 +70,25 @@ class Pimcore_File {
             return self::$isIncludeableCache[$filename];
         }
 
-        $include_paths = explode(PATH_SEPARATOR, get_include_path());
         $isIncludeAble = false;
 
-        foreach ($include_paths as $path) {
-            $include = $path.DIRECTORY_SEPARATOR.$filename;
-            if (@is_file($include) && @is_readable($include)) {
-                $isIncludeAble = true;
-                break;
+        // use stream_resolve_include_path if PHP is >= 5.3.2 because the performance is better
+        if(function_exists("stream_resolve_include_path")) {
+            if($include = stream_resolve_include_path($filename)) {
+                if(@is_readable($include)) {
+                    $isIncludeAble = true;
+                }
+            }
+        } else {
+            // this is the fallback for PHP < 5.3.2
+            $include_paths = explode(PATH_SEPARATOR, get_include_path());
+
+            foreach ($include_paths as $path) {
+                $include = $path.DIRECTORY_SEPARATOR.$filename;
+                if (@is_file($include) && @is_readable($include)) {
+                    $isIncludeAble = true;
+                    break;
+                }
             }
         }
         
