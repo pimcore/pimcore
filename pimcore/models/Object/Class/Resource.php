@@ -131,14 +131,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $this->db->update("classes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
-        // only for logging
-        $setsql = array();
-        foreach ($data as $key => $value) {
-            $setsql[] = "`" . $key . "` = '" . $value . "'";
-        }
-        Pimcore_Resource::logDefinitionModification("UPDATE classes SET ". implode(",",$setsql) ." WHERE id = " . $this->db->quote($this->model->getId()) . ";");
-        
-        
+
          // save definition as a serialized file
         $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
         if(!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
@@ -263,7 +256,6 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                     if($emptyRelations) {
                         $tableRelation = "object_relations_" . $this->model->getId();
                         $this->db->delete($tableRelation, "fieldname = " . $this->db->quote($value) . " AND ownertype = 'object'");
-                        Pimcore_Resource::logDefinitionModification("DELETE FROM ".$tableRelation." WHERE fieldname = " . $this->db->quote($value) . " AND ownertype = 'object';"); // only for logging
                     }
 
                     // @TODO: remove localized fields and fieldcollections
@@ -360,9 +352,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
      */
     public function create() {
         $this->db->insert("classes", array("name" => $this->model->getName()));
-        // only for logging
-        Pimcore_Resource::logDefinitionModification("INSERT INTO `classes` SET `name`=".$this->db->quote($this->model->getName()).";");
-        
+
         $this->model->setId($this->db->lastInsertId());
         $this->model->setCreationDate(time());
         $this->model->setModificationDate(time());
@@ -378,8 +368,6 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
     public function delete() {
 
         $this->db->delete("classes", $this->db->quoteInto("id = ?", $this->model->getId()));
-        // only for logging
-        Pimcore_Resource::logDefinitionModification("DELETE FROM classes WHERE id = " . $this->db->quote($this->model->getId()) . ";");
 
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
@@ -396,8 +384,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         
         // delete data
         $this->db->delete("objects", $this->db->quoteInto("o_classId = ?", $this->model->getId()));
-        Pimcore_Resource::logDefinitionModification("DELETE FROM objects WHERE o_classId = '" . $this->model->getId() . "';"); // only for logging
-        
+
         // remove fieldcollection tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_collection_%_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
@@ -432,13 +419,9 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         $this->db->update("objects", array(
             "o_className" => $newName
         ), $this->db->quoteInto("o_classId = ?", $this->model->getId()));
-        // only for logging 
-        Pimcore_Resource::logDefinitionModification("UPDATE objects SET `o_className` = ".$this->db->quote($newName)." WHERE o_classId = " . $this->db->quote($this->model->getId()) . ";");
-        
+
         $this->db->update("object_query_" . $this->model->getId(), array(
             "oo_className" => $newName
         ));
-        // only for logging
-        Pimcore_Resource::logDefinitionModification("UPDATE object_query_" . $this->model->getId() . " SET `oo_className` = " . $this->db->quote($newName));
     }
 }
