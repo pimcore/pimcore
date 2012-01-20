@@ -67,6 +67,11 @@ class Pimcore_Resource_Wrapper {
      * @return mixed
      */
     public function callResourceMethod ($method, $args) {
+
+        if(Pimcore::inAdmin()) {
+            Pimcore_Resource::checkForDefinitionModifications($method, $args);
+        }
+
         $r = call_user_func_array(array($this->getResource(), $method), $args);
         return $r;
     }

@@ -69,7 +69,7 @@ class Object_Data_ObjectMetadata_Resource extends Pimcore_Model_Resource_Abstrac
         $classId = $class->getId();
         $table = "object_metadata_" . $classId;
 
-        $this->dbexec("CREATE TABLE IF NOT EXISTS `" . $table . "` (
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `o_id` int(11) NOT NULL default '0',
 		  `dest_id` int(11) NOT NULL default '0',
 		  `fieldname` varchar(71) NOT NULL,
@@ -80,36 +80,7 @@ class Object_Data_ObjectMetadata_Resource extends Pimcore_Model_Resource_Abstrac
           INDEX `dest_id` (`dest_id`),
           INDEX `fieldname` (`fieldname`),
           INDEX `column` (`column`)
-		) DEFAULT CHARSET=utf8;", $classId);
+		) DEFAULT CHARSET=utf8;");
 
     }
-
-    private function dbexec($sql, $classId) {
-        $db = Pimcore_Resource::get();
-        $db->query($sql);
-        $this->logSql($sql, $classId);
-    }
-
-    private function logSql ($sql, $classId) {
-        $this->_sqlChangeLog[] = $sql;
-        $this->classId = $classId;
-    }
-
-    public function __destruct () {
-
-        // write sql change log for deploying to production system
-        if(!empty($this->_sqlChangeLog)) {
-            $log = implode("\n\n\n", $this->_sqlChangeLog);
-
-            $filename = "db-change-log_".time()."_class-".$this->classId.".sql";
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY."/".$filename;
-            if(defined("PIMCORE_DB_CHANGELOG_DIRECTORY")) {
-                $file = PIMCORE_DB_CHANGELOG_DIRECTORY."/".$filename;
-            }
-
-            file_put_contents($file, $log);
-            chmod($file, 0766);
-        }
-    }
-
 }
