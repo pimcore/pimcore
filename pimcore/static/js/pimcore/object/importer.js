@@ -41,7 +41,7 @@ pimcore.object.importer = Class.create({
             remove_completed: true,
             listeners: {
                 "fileUploadComplete": function (upload, file) {
-                    this.getFileInfo(str_replace(".", "", file.type));
+                    this.getFileInfo();
                 }.bind(this)
             }
         });
@@ -58,16 +58,12 @@ pimcore.object.importer = Class.create({
         this.uploadWin.show();
     },
 
-    getFileInfo: function (type) {
-
-        this.type = type;
-
+    getFileInfo: function () {
         Ext.Ajax.request({
             url: "/admin/object-helper/import-get-file-info",
             params: {
                 id: this.importId,
                 method: "post",
-                type: type,
                 className: this.className,
                 classId: this.classId
             },
@@ -304,7 +300,6 @@ pimcore.object.importer = Class.create({
         this.jobRequest = {
             mapping: Ext.encode(mappingData),
             id: this.importId,
-            type: this.type,
             className: this.className,
             classId: this.classId,
             job: 1,
