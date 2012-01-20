@@ -15,16 +15,67 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Translation_Website extends Translation_Abstract {
-
-        /**
-     * @param string $key
-     * @return Translation
+class Translation_Website extends Translation_Abstract
+{
+    /**
+     * @static
+     * @param $id - translation key
+     * @param bool $create - creates an empty translation entry if the key doesn't exists
+     * @param bool $returnIdIfEmpty - returns $id if no translation is available
+     * @return Translation_Website
      */
-    public static function getByKey($id) {
+    public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
+    {
         $translation = new self();
-        $translation->getResource()->getByKey($id);
+
+        try {
+            $translation->getResource()->getByKey($id);
+        } catch (Exception $e) {
+            if (!$create) {
+                throw new Exception($e->getMessage());
+            } else {
+                $translation->setKey($id);
+                $translation->setDate(time());
+
+                $translations = array();
+                foreach (Pimcore_Tool::getValidLanguages() as $lang) {
+                    $translations[$lang] = "";
+                }
+                $translation->setTranslations($translations);
+                $translation->save();
+            }
+
+        }
+
+        if ($returnIdIfEmpty) {
+            $translations = $translation->getTranslations();
+            foreach ($translations as $key => $value) {
+                $translations[$key] = $value ? : $id;
+            }
+            $translation->setTranslations($translations);
+        }
 
         return $translation;
+    }
+
+    /**
+     * Static Helper to get the translation of the current locale
+     *
+     * @static
+     * @param $id - translation key
+     * @param bool $create - creates an empty translation entry if the key doesn't exists
+     * @param bool $returnIdIfEmpty - returns $id if no translation is available
+     * @return string
+     * @throws Exception
+     */
+    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false)
+    {
+        try {
+            $language = Zend_Registry::get('Zend_Locale')->getLanguage();
+        } catch (Exception $e) {
+            throw new Exception("Couldn't determine current language.");
+        }
+
+        return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
     }
 }
