@@ -373,51 +373,35 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
     {
 
         $success = true;
-        $typeMapping = array(
-            "xls" => "xls",
-            "xlsx" => "xls",
-            "csv" => "csv"
-        );
-
         $supportedFieldTypes = array("checkbox", "country", "date", "datetime", "href", "image", "input", "language", "table", "multiselect", "numeric", "password", "select", "slider", "textarea", "wysiwyg", "objects", "multihref", "geopoint", "geopolygon", "geobounds", "link", "user");
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->_getParam("id");
-        $type = $typeMapping[$this->_getParam("type")];
 
-        // unsupported filetype
-        if (!$type) {
-            $success = false;
-        }
+        // determine type
+        $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->_getParam("id") . "_original");
 
-        if ($type == "csv") {
-
-            // determine type
-            $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->_getParam("id") . "_original");
-
-            $count = 0;
-            if (($handle = fopen($file, "r")) !== false) {
-                while (($rowData = fgetcsv($handle, 10000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                    if ($count == 0) {
-                        $firstRowData = $rowData;
-                    }
-                    $tmpData = array();
-                    foreach ($rowData as $key => $value) {
-                        $tmpData["field_" . $key] = $value;
-                    }
-                    $data[] = $tmpData;
-                    $cols = count($rowData);
-
-                    $count++;
-
-                    if ($count > 18) {
-                        break;
-                    }
-
+        $count = 0;
+        if (($handle = fopen($file, "r")) !== false) {
+            while (($rowData = fgetcsv($handle, 10000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                if ($count == 0) {
+                    $firstRowData = $rowData;
                 }
-                fclose($handle);
-            }
-        }
+                $tmpData = array();
+                foreach ($rowData as $key => $value) {
+                    $tmpData["field_" . $key] = $value;
+                }
+                $data[] = $tmpData;
+                $cols = count($rowData);
 
+                $count++;
+
+                if ($count > 18) {
+                    break;
+                }
+
+            }
+            fclose($handle);
+        }
 
         // get class data
         $class = Object_Class::getById($this->_getParam("classId"));
@@ -471,7 +455,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
               "mappingStore" => $mappingStore,
               "rows" => count(file($file)),
               "cols" => $cols,
-              "type" => $type
+              "type" => "csv"
         ));
     }
 
