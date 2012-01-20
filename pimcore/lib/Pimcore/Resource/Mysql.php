@@ -21,6 +21,16 @@ class Pimcore_Resource_Mysql {
     protected static $_sqlLogFilename;
 
     /**
+     * @var bool
+     */
+    protected static $_logProfilerWasEnabled;
+
+    /**
+     * @var bool
+     */
+    protected static $_logCaptureActive = false;
+
+    /**
      * @static
      * @return string
      */
@@ -146,19 +156,48 @@ class Pimcore_Resource_Mysql {
      * @param string $method
      * @param array $args
      */
-    public static function checkForDefinitionModifications ($method, $args) {
+    public static function startCapturingDefinitionModifications ($method, $args) {
+        if($method == "query") {
+            if(preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE)(.*)(DATABASE|EVENT|FUNCTION|PROCEDURE|TABLE|TABLESPACE|VIEW|INDEX|TRIGGER)/i",$args[0])) {
+                self::logDefinitionModification($args[0]);
+            }
+        } else {
+            $tablesToCheck = array("classes","users_permission_definitions");
 
-        $methodsToCheck = array("query","update","delete","insert");
-        if(in_array($method, $methodsToCheck)) {
-            if($method == "query") {
-                if(preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE)(.*)(DATABASE|EVENT|FUNCTION|PROCEDURE|TABLE|TABLESPACE|VIEW|INDEX|TRIGGER)/i",$args[0])) {
-                    self::logDefinitionModification($args[0]);
-                }
-            } else {
-                $tablesToCheck = array("class");
-                // @TODO find a way how to get the real query
+            if(in_array($args[0], $tablesToCheck)) {
+                self::$_logProfilerWasEnabled = self::get()->getProfiler()->getEnabled();
+                self::get()->getProfiler()->setEnabled(true);
+                self::$_logCaptureActive = true;
             }
         }
+    }
+
+    /**
+     * @static
+     *
+     */
+    public static function stopCapturingDefinitionModifications () {
+
+        if(self::$_logCaptureActive) {
+            $search = array();
+            $replace = array();
+            $query = self::get()->getProfiler()->getLastQueryProfile()->getQuery();
+            $params = self::get()->getProfiler()->getLastQueryProfile()->getQueryParams();
+
+            // @TODO named parameters
+            if(!empty($params)) {
+                for ($i=0; $i<count($params); $i++) {
+                    $search[] = "?";
+                    $replace[] = self::get()->quote($params[$i]);
+                }
+                $query = str_replace($search, $replace, $query);
+            }
+
+            self::logDefinitionModification($query);
+            self::get()->getProfiler()->setEnabled(self::$_logProfilerWasEnabled);
+        }
+
+        self::$_logCaptureActive = false;
     }
 
     /**
