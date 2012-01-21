@@ -54,7 +54,7 @@ $includePaths = array(
     PIMCORE_CLASS_DIRECTORY,
     PIMCORE_PATH . "/lib/_deprecated",  // deprecated libraries and classes
 );
-set_include_path(implode(PATH_SEPARATOR, $includePaths));
+set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR . get_include_path());
 
 // helper functions
 include(dirname(__FILE__) . "/helper.php");
