@@ -1090,6 +1090,14 @@
     background: url(/pimcore/static/img/icon/group_add.png) left center no-repeat !important;
 }
 
-.pimcore_icon_seo {
+.pimcore_icon_seo_document {
     background: url(/pimcore/static/img/icon/report_edit.png) left center no-repeat !important;
+}
+
+.pimcore_icon_robots {
+    background: url(/pimcore/static/img/icon/page_white_text.png) left center no-repeat !important;
+}
+
+.pimcore_icon_seo {
+    background: url(/pimcore/static/img/icon/zoom_in.png) left center no-repeat !important;
 }

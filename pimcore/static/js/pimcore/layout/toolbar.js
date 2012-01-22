@@ -164,9 +164,18 @@ pimcore.layout.toolbar = Class.create({
 
         if (user.isAllowed("documents")) {
             extrasItems.push({
-                text: t("document_seo_view"),
+                text: t("search_engine_optimization"),
                 iconCls: "pimcore_icon_seo",
-                handler: this.showDocumentSeo
+                hideOnClick: false,
+                menu: [{
+                    text: t("document_seo_view"),
+                    iconCls: "pimcore_icon_seo_document",
+                    handler: this.showDocumentSeo
+                }, {
+                    text: "robots.txt",
+                    iconCls: "pimcore_icon_robots",
+                    handler: this.showRobotsTxt
+                }]
             });
         }
 
@@ -715,6 +724,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("document_seopanel", new pimcore.document.seopanel());
+        }
+    },
+
+    showRobotsTxt: function () {
+        try {
+            pimcore.globalmanager.get("robotstxt").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
         }
     },
 
