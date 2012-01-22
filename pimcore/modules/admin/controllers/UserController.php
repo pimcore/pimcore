@@ -291,9 +291,15 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 unset($values["roles"]);
                 unset($values["active"]);
 
-                if (!empty($values["password"])) {
-                    $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
+                if (!empty($values["new_password"])) {
+                    $oldPassword = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["old_password"]);
+                    if($oldPassword == $user->getPassword() && $values["new_password"] == $values["retype_password"]) {
+                        $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["new_password"]);
+                    } else {
+                        $this->_helper->json(array("success" => false, "message" => "password_cannot_be_changed"));
+                    }
                 }
+
                 $user->setValues($values);
                 $user->save();
                 $this->_helper->json(array("success" => true));
