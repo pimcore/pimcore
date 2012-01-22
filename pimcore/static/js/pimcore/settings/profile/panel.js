@@ -56,10 +56,26 @@ pimcore.settings.profile.panel = Class.create({
         var generalItems = [];
         generalItems.push({
             xtype: "textfield",
-            fieldLabel: t("password"),
-            name: "password",
+            fieldLabel: t("old_password"),
+            name: "old_password",
             inputType: "password",
             width: 300
+        });
+
+        generalItems.push({
+            xtype: "textfield",
+            fieldLabel: t("new_password"),
+            name: "new_password",
+            inputType: "password",
+            width: 300
+        });
+        generalItems.push({
+            xtype: "textfield",
+            fieldLabel: t("retype_password"),
+            name: "retype_password",
+            inputType: "password",
+            width: 300,
+            style: "margin-bottom: 20px;"
         });
 
         generalItems.push({
@@ -112,6 +128,7 @@ pimcore.settings.profile.panel = Class.create({
             border: false,
             layout: "pimcoreform",
             items: generalItems,
+            labelWidth: 130,
             buttons: [{
                 text: t("save"),
                 iconCls: "pimcore_icon_apply",
