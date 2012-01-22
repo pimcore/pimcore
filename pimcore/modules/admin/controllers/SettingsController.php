@@ -1437,4 +1437,29 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json(array("success" => true));
     }
+
+    public function robotsTxtAction () {
+
+        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots.txt";
+
+        if($this->_getParam("data")) {
+            // save data
+            file_put_contents($robotsPath, $this->_getParam("data"));
+
+            $this->_helper->json(array(
+                "success" => true
+            ));
+        } else {
+            // get data
+            $data = "";
+            if(is_file($robotsPath)) {
+                $data = file_get_contents($robotsPath);
+            }
+
+            $this->_helper->json(array(
+                "success" => true,
+                "data" => $data
+            ));
+        }
+    }
 }

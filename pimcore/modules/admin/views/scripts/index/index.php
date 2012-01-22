@@ -201,6 +201,7 @@
             "pimcore/settings/fileexplorer/explorer.js",
             "pimcore/settings/maintenance.js",
             "pimcore/settings/liveconnect.js",
+            "pimcore/settings/robotstxt.js",
 
             // element
             "pimcore/element/abstract.js",
