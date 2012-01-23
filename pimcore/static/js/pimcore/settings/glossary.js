@@ -26,6 +26,7 @@ pimcore.settings.glossary = Class.create({
             success: function (response) {
                 try {
                     this.languages = Ext.decode(response.responseText);
+                    this.languages.splice(0,0,"");
                     this.getTabPanel();
                 }
                 catch (e) {
@@ -82,7 +83,7 @@ pimcore.settings.glossary = Class.create({
         }, [
             {name: 'id'},
             {name: 'text', allowBlank: false},
-            {name: 'language', allowBlank: false},
+            {name: 'language', allowBlank: true},
             {name: 'link', allowBlank: true},
             {name: 'abbr', allowBlank: true},
             {name: 'acronym', allowBlank: true}
