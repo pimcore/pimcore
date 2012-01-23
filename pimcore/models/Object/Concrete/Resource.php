@@ -172,7 +172,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
 
         $this->createDataRows();
 
-        $this->model->save();
+        //$this->model->save();
     }
 
 
