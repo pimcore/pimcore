@@ -74,7 +74,13 @@ class Document_Resource extends Element_Resource {
             $this->assignVariablesToModel($data);
         }
         else {
-            throw new Exception("document with path $path doesn't exist");
+            // try to find a page with a pretty URL (use the original $path)
+            $data = $this->db->fetchRow("SELECT id FROM documents_page WHERE prettyUrl = " . $this->db->quote($path));
+            if ($data["id"]) {
+                $this->assignVariablesToModel($data);
+            } else {
+                throw new Exception("document with path $path doesn't exist");
+            }
         }
     }
 

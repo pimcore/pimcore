@@ -680,20 +680,23 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function getPath() {
 
-        // check for site
-        try {
+        if(!Pimcore::inAdmin()) {
+            // check for site
+            try {
 
-            $site = Zend_Registry::get("pimcore_site");
-            if ($site instanceof Site) {
-                if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
-                    $rootPath = $site->getRootPath();
-                    $rootPath = addcslashes($rootPath, "/");
+                $site = Zend_Registry::get("pimcore_site");
+                if ($site instanceof Site) {
+                    if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
+                        $rootPath = $site->getRootPath();
+                        $rootPath = addcslashes($rootPath, "/");
 
-                    return preg_replace("/^" . $rootPath . "/", "", $this->path);
+                        return preg_replace("/^" . $rootPath . "/", "", $this->path);
+                    }
                 }
             }
-        }
-        catch (Exception $e) {
+            catch (Exception $e) {
+
+            }
         }
 
         return $this->path;

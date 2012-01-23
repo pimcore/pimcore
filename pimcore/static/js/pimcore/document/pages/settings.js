@@ -74,6 +74,32 @@ pimcore.document.pages.settings = Class.create({
                     },
                     {
                         xtype:'fieldset',
+                        title: t('search_engine_optimization'),
+                        collapsible: true,
+                        autoHeight:true,
+                        labelWidth: 200,
+                        defaults: {width: 500},
+                        defaultType: 'textfield',
+                        items :[
+                            {
+                                fieldLabel: t('pretty_url'),
+                                name: 'prettyUrl',
+                                maxLength: 255,
+                                value: this.page.data.prettyUrl,
+                                validator: function (url) {
+                                    if(url.charAt(0) == "/") {
+                                        var result = url.match(/[a-zA-Z0-9_.\-\/]+/);
+                                        if (result == url) {
+                                            return true;
+                                        }
+                                    }
+                                    return t("path_error_message");
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        xtype:'fieldset',
                         title: t('controller_and_view_settings'),
                         collapsible: true,
                         autoHeight:true,
