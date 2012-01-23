@@ -34,10 +34,10 @@ pimcore.document.versions = Class.create({
                     field: 'date',
                     direction: 'DESC'
                 },
-                fields: ['id', 'date', 'note', {name:'username', convert: function (v, rec) {
+                fields: ['id', 'date', 'note', {name:'name', convert: function (v, rec) {
                     if (rec.user) {
-                        if (rec.user.username) {
-                            return rec.user.username;
+                        if (rec.user.name) {
+                            return rec.user.name;
                         }
                     }
                     return null;
@@ -68,7 +68,7 @@ pimcore.document.versions = Class.create({
                         var date = new Date(d * 1000);
                         return date.format("Y-m-d H:i:s");
                     }, editable: false},
-                    {header: t("user"), sortable: true, dataIndex: 'username', editable: false},
+                    {header: t("user"), sortable: true, dataIndex: 'name', editable: false},
                     {header: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()},
                     checkPublic,
                     {header: t("public_url"), width:300, sortable: false, dataIndex: 'publicurl', editable: false}

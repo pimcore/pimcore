@@ -30,6 +30,17 @@ pimcore.document.pages.settings = Class.create({
                 root: "docTypes"
             });
 
+            this.urlAliasPanel = new Ext.form.FieldSet({
+                title: t("path_aliases"),
+                collapsible: false,
+                autoHeight:true,
+                items: [],
+                buttons: [{
+                    text: t("add"),
+                    iconCls: "pimcore_icon_add"
+                }]
+            });
+
             this.layout = new Ext.FormPanel({
                 title: t('settings'),
                 bodyStyle:'padding:20px 5px 20px 5px;',
@@ -47,8 +58,6 @@ pimcore.document.pages.settings = Class.create({
                         defaults: {width: 500},
                         defaultType: 'textarea',
                         items :[
-                            
-
                             {
                                 fieldLabel: t('title'),
                                 name: 'title',
@@ -95,7 +104,7 @@ pimcore.document.pages.settings = Class.create({
                                     }
                                     return t("path_error_message");
                                 }
-                            }
+                            }, this.urlAliasPanel
                         ]
                     },
                     {

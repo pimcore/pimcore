@@ -28,7 +28,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     if (this.data.editlock) {
                         var lockDate = new Date(this.data.editlock.date * 1000);
                         var lockDetails = "<br /><br />";
-                        lockDetails += "<b>" + t("user") + ":</b> " + this.data.editlock.user.username + "<br />";
+                        lockDetails += "<b>" + t("user") + ":</b> " + this.data.editlock.user.name + "<br />";
                         lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
                         lockDetails += "<br /><br />" + t("element_implicit_edit_question");
 
@@ -280,7 +280,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     if (this.data.editlock) {
                         var lockDate = new Date(this.data.editlock.date * 1000);
                         var lockDetails = "<br /><br />";
-                        lockDetails += "<b>" + t("user") + ":</b> " + this.data.editlock.user.username + "<br />";
+                        lockDetails += "<b>" + t("user") + ":</b> " + this.data.editlock.user.name + "<br />";
                         lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
                         lockDetails += "<br /><br />" + t("element_implicit_edit_question");
 
