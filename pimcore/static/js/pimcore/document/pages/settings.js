@@ -50,7 +50,20 @@ pimcore.document.pages.settings = Class.create({
                         value: url,
                         width: 500,
                         name: "redirect_url_" + count,
-                        style: "float:left;margin-right:5px;"
+                        style: "float:left;margin-right:5px;",
+                        enableKeyEvents: true,
+                        listeners: {
+                            keyup: function () {
+                                if(this.getValue().indexOf("http") >= 0) {
+                                    try {
+                                        var newUrl = "@" + parse_url(this.getValue(), "path") + "@";
+                                        this.setValue(newUrl);
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+                                }
+                            }
+                        }
                     },{
                         xtype: "hidden",
                         value: id,
