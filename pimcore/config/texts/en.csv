@@ -1,6 +1,7 @@
 "path_aliases","Path Aliases"
 "path_error_message","A path must start with / and should only contain the following characters: a-zA-Z0-9-_./"
-"pretty_url","Pretty URL (overrides path from tree-structure)"
+"pretty_url","Pretty URL"
+"pretty_url_label","Pretty URL (overrides path from tree-structure)"
 "search_engine_optimization","Search Engine Optimization"
 "save_success","Saved successfully"
 "save_error","Cannot save data"

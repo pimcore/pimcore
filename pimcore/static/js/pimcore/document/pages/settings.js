@@ -155,14 +155,14 @@ pimcore.document.pages.settings = Class.create({
                     },
                     {
                         xtype:'fieldset',
-                        title: t('search_engine_optimization'),
+                        title: t('pretty_url') + " / " + t("redirects"),
                         collapsible: true,
                         autoHeight:true,
                         labelWidth: 300,
                         defaultType: 'textfield',
                         items :[
                             {
-                                fieldLabel: t('pretty_url'),
+                                fieldLabel: t('pretty_url_label'),
                                 name: 'prettyUrl',
                                 maxLength: 255,
                                 width: 400,
