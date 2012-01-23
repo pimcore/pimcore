@@ -30,16 +30,75 @@ pimcore.document.pages.settings = Class.create({
                 root: "docTypes"
             });
 
+
+            var addUrlAlias = function (url, id) {
+
+                if(typeof url != "string") {
+                    url = "";
+                }
+                if(typeof id != "string" && typeof id != "number") {
+                    id = "";
+                }
+
+                var count = this.urlAliasPanel.findByType("textfield").length+1;
+
+                var compositeField = new Ext.Container({
+                    hideLabel: true,
+                    style: "padding-bottom:5px;",
+                    items: [{
+                        xtype: "textfield",
+                        value: url,
+                        width: 500,
+                        name: "redirect_url_" + count,
+                        style: "float:left;margin-right:5px;"
+                    },{
+                        xtype: "hidden",
+                        value: id,
+                        name: "redirect_id_"  + count
+                    }]
+                });
+
+                compositeField.add([{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    style: "float:left;",
+                    handler: function (compositeField, el) {
+                        this.urlAliasPanel.remove(compositeField);
+                        this.urlAliasPanel.doLayout();
+                    }.bind(this, compositeField)
+                },{
+                    xtype: "box",
+                    style: "clear:both;"
+                }]);
+
+
+                this.urlAliasPanel.add(compositeField);
+
+                this.urlAliasPanel.doLayout();
+            }.bind(this);
+
             this.urlAliasPanel = new Ext.form.FieldSet({
-                title: t("path_aliases"),
+                title: t("path_aliases") + " (" + t("redirects") + ")",
                 collapsible: false,
                 autoHeight:true,
+                width: 700,
+                style: "margin-top: 20px;",
                 items: [],
                 buttons: [{
                     text: t("add"),
-                    iconCls: "pimcore_icon_add"
+                    iconCls: "pimcore_icon_add",
+                    handler: addUrlAlias
                 }]
             });
+
+            for(var r=0; r<this.page.data.redirects.length; r++) {
+                addUrlAlias(this.page.data.redirects[r].source, this.page.data.redirects[r]["id"]);
+            }
+
+            var user = pimcore.globalmanager.get("user");
+            if(!user.isAllowed("redirects")) {
+                this.urlAliasPanel.deactivate();
+            }
 
             this.layout = new Ext.FormPanel({
                 title: t('settings'),
@@ -86,14 +145,14 @@ pimcore.document.pages.settings = Class.create({
                         title: t('search_engine_optimization'),
                         collapsible: true,
                         autoHeight:true,
-                        labelWidth: 200,
-                        defaults: {width: 500},
+                        labelWidth: 300,
                         defaultType: 'textfield',
                         items :[
                             {
                                 fieldLabel: t('pretty_url'),
                                 name: 'prettyUrl',
                                 maxLength: 255,
+                                width: 400,
                                 value: this.page.data.prettyUrl,
                                 validator: function (url) {
                                     if(url.charAt(0) == "/") {
@@ -101,6 +160,8 @@ pimcore.document.pages.settings = Class.create({
                                         if (result == url) {
                                             return true;
                                         }
+                                    } else if (url.length < 1) {
+                                        return true;
                                     }
                                     return t("path_error_message");
                                 }
