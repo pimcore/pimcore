@@ -46,6 +46,11 @@ class Document_Page extends Document_PageSnippet {
      */
     public $type = "page";
 
+    /**
+     * @var string
+     */
+    public $prettyUrl;
+
 
     /**
      * @see Document::delete and Document_PageSnippet::delete
@@ -123,5 +128,38 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setTitle($title) {
         $this->title = $title;
+    }
+
+    /**
+     *
+     */
+    public function getFullPath() {
+
+        $path = parent::getFullPath();
+        if(!Pimcore::inAdmin()) {
+            // check for a pretty url
+            $prettyUrl = $this->getPrettyUrl();
+            if(!empty($prettyUrl) && strlen($prettyUrl) > 1) {
+                return $prettyUrl;
+            }
+        }
+
+        return $path;
+    }
+
+    /**
+     * @param string $prettyUrl
+     */
+    public function setPrettyUrl($prettyUrl)
+    {
+        $this->prettyUrl = $prettyUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrettyUrl()
+    {
+        return $this->prettyUrl;
     }
 }
