@@ -1,3 +1,4 @@
+"casesensitive","case-sensitive"
 "path_aliases","Path Aliases"
 "path_error_message","A path must start with / and should only contain the following characters: a-zA-Z0-9-_./"
 "pretty_url","Pretty URL"

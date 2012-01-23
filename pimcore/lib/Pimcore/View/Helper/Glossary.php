@@ -72,8 +72,8 @@ class Pimcore_View_Helper_Glossary_Controller {
 
             foreach ($es as $e) {
                 if(!in_array((string) $e->parent()->tag,$blockedTags)) {
-                    $e->innertext = str_ireplace($data["search"], $data["placeholder"], $e->innertext);
-                    $e->innertext = str_ireplace($data["placeholder"], $data["replace"], $e->innertext);
+                    $e->innertext = preg_replace($data["search"], $data["placeholder"], $e->innertext);
+                    $e->innertext = str_replace($data["placeholder"], $data["replace"], $e->innertext);
                 }
             }
             echo $html->save();
@@ -171,6 +171,12 @@ class Pimcore_View_Helper_Glossary_Controller {
                     }
 
                     $r = '<a class="pimcore_glossary" href="' . $d["link"] . '">' . $r . '</a>';
+                }
+
+                // add PCRE delimiter and modifiers
+                $d["text"] = "/" . preg_quote($d["text"],"/") . "/";
+                if(!$d["casesensitive"]) {
+                    $d["text"] .= "i";
                 }
 
                 $mappedData[$d["text"]] = $r;

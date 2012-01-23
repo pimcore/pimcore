@@ -81,6 +81,9 @@ class Glossary_Resource extends Pimcore_Model_Resource_Abstract {
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->validColumns)) {
+                    if(is_bool($value)) {
+                        $value = (int) $value;
+                    }
                     $data[$key] = $value;
                 }
             }

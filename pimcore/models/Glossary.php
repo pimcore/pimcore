@@ -42,6 +42,15 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public $acronym;
 
+    /**
+     * @var string
+     */
+    public $language;
+
+    /**
+     * @var bool
+     */
+    public $casesensitive;
 
     /**
      * @param integer $id
@@ -159,5 +168,21 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public function getLanguage() {
         return $this->language;
+    }
+
+    /**
+     * @param boolean $casesensitive
+     */
+    public function setCasesensitive($casesensitive)
+    {
+        $this->casesensitive = (bool) $casesensitive;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCasesensitive()
+    {
+        return $this->casesensitive;
     }
 }

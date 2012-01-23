@@ -199,6 +199,7 @@ DROP TABLE IF EXISTS `glossary`;
 CREATE TABLE `glossary` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `language` varchar(2) DEFAULT NULL,
+  `casesensitive` tinyint(1) DEFAULT NULL,
   `text` varchar(255) DEFAULT NULL,
   `link` varchar(255) DEFAULT NULL,
   `abbr` varchar(255) DEFAULT NULL,
