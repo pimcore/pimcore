@@ -49,7 +49,7 @@ pimcore.element.importer = Class.create({
                 single_file_select: true,
                 confirm_delete: false,
                 remove_completed: true,
-                post_params: { id: this.user.username },
+                post_params: { id: this.user.name },
                 listeners: {
                     "fileUploadComplete": function (win) {
                         win.hide();
@@ -74,7 +74,7 @@ pimcore.element.importer = Class.create({
         Ext.Ajax.request({
             url: "/admin/import/get-upload-info",
             params: {
-                id: this.user.username,
+                id: this.user.name,
                 method: "post"
             },
             success: function(response) {

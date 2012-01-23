@@ -45,7 +45,7 @@ pimcore.report.websiteoptimizer.abcreate = Class.create(pimcore.report.abstract,
 
                 var ret = d.format("Y-m-d H:i");
                 if (r.user) {
-                    ret += " - " + r.user.username;
+                    ret += " - " + r.user.name;
                 }
                 return ret;
             }}]

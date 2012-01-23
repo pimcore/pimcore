@@ -86,13 +86,13 @@ pimcore.element.scheduler = Class.create({
 
                     var ret = d.format("Y-m-d H:i");
                     if (r.user) {
-                        ret += " - " + r.user.username;
+                        ret += " - " + r.user.name;
                     }
                     return ret;
-                }}, 'note', {name:'username', convert: function (v, rec) {
+                }}, 'note', {name:'name', convert: function (v, rec) {
                     if (rec.user) {
-                        if (rec.user.username) {
-                            return rec.user.username;
+                        if (rec.user.name) {
+                            return rec.user.name;
                         }
                     }
                     return null;
