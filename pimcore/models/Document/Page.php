@@ -61,6 +61,15 @@ class Document_Page extends Document_PageSnippet {
             throw new Exception("root-node cannot be deleted");
         }
 
+        // check for redirects pointing to this document, and delete them too
+        $redirects = new Redirect_List();
+        $redirects->setCondition("target = ?", $this->getId());
+        $redirects->load();
+
+        foreach($redirects->getRedirects() as $redirect) {
+            $redirect->delete();
+        }
+
         parent::delete();
     }
 
