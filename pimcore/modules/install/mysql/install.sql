@@ -168,7 +168,7 @@ CREATE TABLE `documents_page` (
   `keywords` varchar(255) DEFAULT NULL,
   `prettyUrl` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `prettyUrl` (`prettyUrl`)
+  KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_snippet`;

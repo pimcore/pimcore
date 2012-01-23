@@ -413,7 +413,15 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $this->getResource()->update();
 
         if ($this->_oldPath) {
+            // update childs path
             $this->getResource()->updateChildsPaths($this->_oldPath);
+
+            // create redirect for old path
+            $redirect = new Redirect();
+            $redirect->setTarget($this->getId());
+            $redirect->setSource("@" . $this->_oldPath . "/?@");
+            $redirect->setStatusCode(301);
+            $redirect->save();
         }
 
         // empty object cache
