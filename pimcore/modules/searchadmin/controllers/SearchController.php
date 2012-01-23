@@ -51,7 +51,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $forbiddenAssetPaths = Element_Service::findForbiddenPaths("asset", $user);
             if (count($forbiddenAssetPaths) > 0) {
                 for ($i = 0; $i < count($forbiddenAssetPaths); $i++) {
-                    $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like ''" . $forbiddenAssetPaths[$i] . "%')";
+                    $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like " . $db->quote($forbiddenAssetPaths[$i] . "%") . ")";
                 }
                 $forbiddenConditions[] = implode(" AND ", $forbiddenAssetPaths) ;
             }
@@ -65,7 +65,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $forbiddenDocumentPaths = Element_Service::findForbiddenPaths("document", $user);
             if (count($forbiddenDocumentPaths) > 0) {
                 for ($i = 0; $i < count($forbiddenDocumentPaths); $i++) {
-                    $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like '" . $forbiddenDocumentPaths[$i] . "%')";
+                    $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like " . $db->quote($forbiddenDocumentPaths[$i] . "%") . ")";
                 }
                 $forbiddenConditions[] =  implode(" AND ", $forbiddenDocumentPaths) ;
             }
@@ -78,7 +78,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
             $forbiddenObjectPaths = Element_Service::findForbiddenPaths("object", $user);
             if (count($forbiddenObjectPaths) > 0) {
                 for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
-                    $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like '" . $forbiddenObjectPaths[$i] . "%')";
+                    $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like " . $db->quote($forbiddenObjectPaths[$i] . "%") . ")";
                 }
                 $forbiddenConditions[] = implode(" AND ", $forbiddenObjectPaths);
             }

@@ -467,36 +467,28 @@ class Element_Service
      */
     public static function findForbiddenPaths($type, $user)
     {
-
-        $parentIds = array();
-        $parent = $user->getParent();
-        while ($parent instanceof User) {
-            $parentIds[] = "userId = " . $parent->getId();
-            $parent = $parent->getParent();
+        if($user->isAdmin()) {
+            return array();
         }
-        $userCondition = "( userId= " . $user->getId();
-        if (count($parentIds) > 0) {
-            $userCondition .= " OR " . implode(" or ", $parentIds) . ")";
-        } else $userCondition .= ")";
 
+        // get workspaces
+        $workspaces = $user->{"getWorkspaces".ucfirst($type)}();
+        foreach ($user->getRoles() as $roleId) {
+            $role = User_Role::getById($roleId);
+            $workspaces = array_merge($workspaces, $role->{"getWorkspaces".ucfirst($type)}());
+        }
 
-        $condition = "SELECT cpath FROM (SELECT cid,cpath,
-                sum(`list`) as `list`
-                FROM " . $type . "s_permissions
-                WHERE " . $userCondition . "
-                GROUP by cid
-                ORDER BY cpath DESC ) temp WHERE list = 0";
-
-        //Logger::log($condition);
-        $db = Pimcore_Resource::get();
-        $data = $db->fetchAll($condition);
         $forbidden = array();
-
-        if (is_array($data)) {
-            foreach ($data as $row) {
-                $forbidden[] = $row["cpath"];
+        if(count($workspaces) > 0) {
+            foreach ($workspaces as $workspace) {
+                if(!$workspace->getList()) {
+                    $forbidden[] = $workspace->getCpath();
+                }
             }
+        } else {
+            $forbidden[] = "/";
         }
+
         return $forbidden;
     }
 
