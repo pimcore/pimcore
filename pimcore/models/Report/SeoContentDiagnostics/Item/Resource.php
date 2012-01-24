@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
+class Report_SeoContentDiagnostics_Item_Resource extends Pimcore_Model_Resource_Abstract {
 
     /**
      * Contains all valid columns in the database table
@@ -30,7 +30,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function init() {
-        $this->validColumns = $this->getValidTableColumns("redirects");
+        $this->validColumns = $this->getValidTableColumns("seo_content_diagnostics_data");
     }
 
     /**
@@ -45,7 +45,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM redirects WHERE id = ?", $this->model->getId());
+        $data = $this->db->fetchRow("SELECT * FROM seo_content_diagnostics_data WHERE id = ?", $this->model->getId());
         $this->assignVariablesToModel($data);
     }
 
@@ -67,9 +67,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("redirects", $this->db->quoteInto("id = ?", $this->model->getId()));
-        
-        $this->model->clearDependedCache();
+        $this->db->delete("seo_content_diagnostics_data", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -90,13 +88,11 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }
 
-            $this->db->update("redirects", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update("seo_content_diagnostics_data", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;
         }
-        
-        $this->model->clearDependedCache();
     }
 
     /**
@@ -105,7 +101,7 @@ class Redirect_Resource extends Pimcore_Model_Resource_Abstract {
      * @return boolean
      */
     public function create() {
-        $this->db->insert("redirects", array());
+        $this->db->insert("seo_content_diagnostics_data", array());
 
         $this->model->setId($this->db->lastInsertId());
 
