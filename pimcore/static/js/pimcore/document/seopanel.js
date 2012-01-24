@@ -30,7 +30,7 @@ pimcore.document.seopanel = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_document_seopanel",
-                title: t("document_seo_view"),
+                title: t("document_seo_grid"),
                 iconCls: "pimcore_icon_seo_document",
                 border: false,
                 layout: "fit",
@@ -84,7 +84,17 @@ pimcore.document.seopanel = Class.create({
             header: t("description"),
             dataIndex: 'description',
             width: 400
-        }];
+        }/*,{
+            header: '',
+            dataIndex: "id",
+            width: 50,
+            id: "btn_edit",
+            tpl: new Ext.XTemplate('{id:this.format}', {
+                format: function(value, node) {
+                    return value;
+                }
+            })
+        }*/];
 
         var tree = new Ext.ux.tree.TreeGrid({
             columns: columns,
@@ -104,7 +114,8 @@ pimcore.document.seopanel = Class.create({
                     isTarget: true,
                     nodeType: "async",
                     listeners: {
-                        "click": this.openEditPanel.bind(this)
+                        "click": this.openEditPanel.bind(this),
+                        "contextmenu": this.onRightClick.bind(this)
                     }
                 }
             })
@@ -112,6 +123,20 @@ pimcore.document.seopanel = Class.create({
 
         this.panel.add(tree);
         this.panel.doLayout();
+    },
+
+    onRightClick: function (node) {
+        node.select();
+
+        var menu = new Ext.menu.Menu();
+        menu.add(new Ext.menu.Item({
+            text: t('reload'),
+            iconCls: "pimcore_icon_reload",
+            handler: function (node) {
+                node.reload();
+            }.bind(this, node)
+        }));
+        menu.show(node.ui.getAnchor());
     },
 
     openEditPanel: function (node) {
