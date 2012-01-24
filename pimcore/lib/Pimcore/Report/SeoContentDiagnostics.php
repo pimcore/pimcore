@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -13,24 +13,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Google_Webmastertools {
-    
-    public static $stack = array();
-    
-    public static function isConfigured (Site $site = null) {
-        if(self::getSiteConfig($site)) {
-            return true;
-        }
-        return false;
-    }
-    
+class Pimcore_Report_SeoContentDiagnostics {
 
     public static function getSiteConfig ($site = null) {
-        
+
         $siteKey = Pimcore_Report::getSiteKey($site);
-        
-        if(Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey->profile) {
-            return Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey;
+
+        if(Pimcore_Config::getReportConfig()->seocontentdiagnostics->sites->$siteKey) {
+            return Pimcore_Config::getReportConfig()->seocontentdiagnostics->sites->$siteKey;
         }
         return false;
     }
