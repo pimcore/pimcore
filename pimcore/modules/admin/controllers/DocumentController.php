@@ -991,14 +991,20 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             foreach ($childsList as $childDocument) {
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed("list")) {
-                    $nodeConfig = $this->getTreeNodeConfig($childDocument);
 
-                    if(method_exists($childDocument, "getTitle") && method_exists($childDocument, "getDescription")) {
-                        $nodeConfig["title"] = $childDocument->getTitle();
-                        $nodeConfig["description"] = $childDocument->getDescription();
+                    $list = new Document_List();
+                    $list->setCondition("path LIKE ? and type = ?", array($childDocument->getFullPath() . "/%", "page"));
+
+                    if($childDocument instanceof Document_Page || $list->getTotalCount() > 0) {
+                        $nodeConfig = $this->getTreeNodeConfig($childDocument);
+
+                        if(method_exists($childDocument, "getTitle") && method_exists($childDocument, "getDescription")) {
+                            $nodeConfig["title"] = $childDocument->getTitle();
+                            $nodeConfig["description"] = $childDocument->getDescription();
+                        }
+
+                        $documents[] = $nodeConfig;
                     }
-
-                    $documents[] = $nodeConfig;
                 }
             }
         }

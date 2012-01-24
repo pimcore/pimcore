@@ -168,7 +168,7 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: "pimcore_icon_seo",
                 hideOnClick: false,
                 menu: [{
-                    text: t("document_seo_view"),
+                    text: t("document_seo_grid"),
                     iconCls: "pimcore_icon_seo_document",
                     handler: this.showDocumentSeo
                 }, {
