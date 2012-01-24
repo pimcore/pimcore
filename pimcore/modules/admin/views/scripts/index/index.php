@@ -369,6 +369,7 @@
             "pimcore/report/webmastertools/keywords.js",
             "pimcore/report/webmastertools/crawling.js",
             "pimcore/report/websiteoptimizer/abcreate.js",
+            "pimcore/report/seocontentdiagnostics/settings.js",
 
             // extension manager
             "pimcore/extensionmanager/settings.js",
