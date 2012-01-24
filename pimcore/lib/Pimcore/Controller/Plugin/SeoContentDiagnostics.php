@@ -46,6 +46,7 @@ class Pimcore_Controller_Plugin_SeoContentDiagnostics extends Zend_Controller_Pl
             $uri = $this->getRequest()->getRequestUri();
             $db->insert("seo_content_diagnostics_queue", array(
                 "siteId" => $siteId,
+                "scheme" => $this->getRequest()->getScheme(),
                 "host" => $host,
                 "uri" => $uri,
                 "documentId" => $documentId,
@@ -55,9 +56,9 @@ class Pimcore_Controller_Plugin_SeoContentDiagnostics extends Zend_Controller_Pl
                 "content" => $this->getResponse()->getBody(),
                 "date" => time()
             ));
+
         } catch (Exception $e) {
             Logger::error($e);
         }
     }
 }
-

@@ -9,19 +9,14 @@
  * It is also available through the world-wide-web at this URL:
  * http://www.pimcore.org/license
  *
+ * @category   Pimcore
+ * @package    Redirect
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Report_SeoContentDiagnostics_Processor {
+class Report_SeoContentDiagnostics_Precessor_Resource extends Pimcore_Model_Resource_Abstract {
 
 
 
-    public static function process ($data) {
-
-    }
-
-    public static function maintenance () {
-
-    }
 }
