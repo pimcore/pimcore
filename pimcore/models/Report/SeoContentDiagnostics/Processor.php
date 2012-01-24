@@ -15,4 +15,9 @@
 
 class Report_SeoContentDiagnostics_Processor {
 
+
+
+    public static function process ($data) {
+
+    }
 }

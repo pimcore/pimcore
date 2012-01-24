@@ -220,4 +220,20 @@ abstract class Pimcore_Model_Abstract {
     public function __clone() {
         $this->resource = null;
     }
+
+    /**
+     * @param array $resourceClassCache
+     */
+    public static function setResourceClassCache($resourceClassCache)
+    {
+        self::$resourceClassCache = $resourceClassCache;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getResourceClassCache()
+    {
+        return self::$resourceClassCache;
+    }
 }
