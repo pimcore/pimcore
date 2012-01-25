@@ -67,6 +67,8 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     public function indexAction() {
 
+        Zend_Session::regenerateId();
+
         if ($this->getUser() instanceof User) {
             $this->_redirect("/admin/?_dc=" . time());
         }
