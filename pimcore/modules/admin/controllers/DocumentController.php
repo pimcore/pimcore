@@ -1001,6 +1001,44 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         if(method_exists($childDocument, "getTitle") && method_exists($childDocument, "getDescription")) {
                             $nodeConfig["title"] = $childDocument->getTitle();
                             $nodeConfig["description"] = $childDocument->getDescription();
+
+                            // anaylze content
+                            $nodeConfig["links"] = 0;
+
+                            $content = Document_Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
+                            if($content) {
+                                $html = str_get_html($content);
+                                if($html) {
+                                    $nodeConfig["links"] = count($html->find("a"));
+                                    $nodeConfig["externallinks"] = count($html->find("a[href^=http]"));
+                                    $nodeConfig["h1"] = count($html->find("h1"));
+                                    $nodeConfig["hx"] = count($html->find("h2,h2,h4,h5"));
+
+                                    $nodeConfig["imgwithalt"] = 0;
+                                    $nodeConfig["imgwithoutalt"] = 0;
+
+                                    $images = $html->find("img");
+                                    if($images) {
+                                        foreach ($images as $image) {
+                                            $alt = $image->alt;
+                                            if(empty($alt)) {
+                                                $nodeConfig["imgwithoutalt"]++;
+                                            } else {
+                                                $nodeConfig["imgwithalt"]++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if(strlen($childDocument->getTitle()) > 80
+                              || strlen($childDocument->getTitle()) < 5
+                              || strlen($childDocument->getDescription()) > 180
+                              || strlen($childDocument->getDescription()) < 20
+                              || $nodeConfig["h1"] != 1
+                              || $nodeConfig["hx"] < 1) {
+                                $nodeConfig["cls"] = "pimcore_document_seo_warning";
+                            }
                         }
 
                         $documents[] = $nodeConfig;
