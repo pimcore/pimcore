@@ -84,6 +84,30 @@ pimcore.document.seopanel = Class.create({
             header: t("description"),
             dataIndex: 'description',
             width: 400
+        },{
+            header: t("links"),
+            dataIndex: 'links',
+            width: 50
+        },{
+            header: t("external_links"),
+            dataIndex: 'externallinks',
+            width: 90
+        },{
+            header: "H1",
+            dataIndex: 'h1',
+            width: 25
+        },{
+            header: "H2-5",
+            dataIndex: 'hx',
+            width: 35
+        },{
+            header: t("images_with_alt"),
+            dataIndex: 'imgwithalt',
+            width: 120
+        },{
+            header: t("images_without_alt"),
+            dataIndex: 'imgwithoutalt',
+            width: 120
         }/*,{
             header: '',
             dataIndex: "id",
@@ -129,13 +153,17 @@ pimcore.document.seopanel = Class.create({
         node.select();
 
         var menu = new Ext.menu.Menu();
-        menu.add(new Ext.menu.Item({
+        menu.add([{
+            text: t("open"),
+            iconCls: "pimcore_icon_edit",
+            handler: pimcore.helpers.openDocument.bind(window, node.attributes.id, node.attributes.type)
+        },{
             text: t('reload'),
             iconCls: "pimcore_icon_reload",
             handler: function (node) {
                 node.reload();
             }.bind(this, node)
-        }));
+        }]);
         menu.show(node.ui.getAnchor());
     },
 

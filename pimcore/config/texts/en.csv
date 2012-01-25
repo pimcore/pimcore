@@ -1,3 +1,7 @@
+"images_with_alt","Images with alt-Text"
+"images_without_alt","Images without alt-Text"
+"external_links","External Links"
+"links","Links"
 "only_required_for_reporting_in_pimcore_but_not_for_code_integration","The following is only required if you want to use the reporting functionalities in pimcore, but this is not required for the code integration. "
 "analytics_additional_code","Additional tracking parameters, eg. _gaq.push(['_setDomainName', 'example.com']);"
 "casesensitive","case-sensitive"

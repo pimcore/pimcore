@@ -69,13 +69,21 @@ class Document_Service extends Element_Service {
         }
         $view->document = $document;
 
+        if ($useLayout) {
+            if(!$layout = Zend_Layout::getMvcInstance()) {
+                $layout = Zend_Layout::startMvc();
+                if($layoutHelper = $view->getHelper("layout")) {
+                    $layoutHelper->setLayout($layout);
+                }
+            }
+            $layout->setLayout("--modification-indicator--");
+        }
+
         $params["document"] = $document;
         $content = $view->action($document->getAction(), $document->getController(), null, $params);
 
         //has to be called after $view->action so we can determine if a layout is enabled in $view->action()
         if ($useLayout) {
-            $layout = Zend_Layout::getMvcInstance();
-
             if ($layout instanceof Zend_Layout) {
                 $layout->{$layout->getContentKey()} = $content;
                 if (is_array($params)) {
@@ -86,15 +94,21 @@ class Document_Service extends Element_Service {
                     }
                 }
 
-                $content = $layout->render();
+                // when using Document_Service::render() you have to set a layout in the view ($this->layout()->setLayout("mylayout"))
+                if($layout->getLayout() != "--modification-indicator--") {
+                    $content = $layout->render();
+                }
 
                 //deactivate the layout if it was not activated in the called action
                 //otherwise we would activate the layout in the called action
+                Zend_Layout::resetMvcInstance();
                 if (!$layoutEnabledInCurrentAction) {
                     $layout->disableLayout();
+                } else {
+                    Zend_Layout::startMvc();
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
-                $layout->resetMvcInstance();
+
             }
         }
 
