@@ -56,7 +56,7 @@ pimcore.settings.fileexplorer.file = Class.create({
                 items: [this.textarea]
             });
 
-            this.tab.on("beforedestroy", function () {
+            this.editor.on("beforedestroy", function () {
                 delete this.explorer.openfiles[this.path];
             }.bind(this));
 
