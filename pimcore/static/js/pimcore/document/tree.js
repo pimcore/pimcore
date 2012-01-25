@@ -27,7 +27,7 @@ pimcore.document.tree = Class.create({
                 treeId: "pimcore_panel_tree_documents",
                 treeIconCls: "pimcore_icon_document",
                 treeTitle: t('documents'),
-                parentPanel: Ext.getCmp("pimcore_panel_tree"),
+                parentPanel: Ext.getCmp("pimcore_panel_tree_left"),
                 index: 1
             };
         }
@@ -75,6 +75,14 @@ pimcore.document.tree = Class.create({
             containerScroll: true,
             rootVisible: this.config.rootVisible,
             border: false,
+            tools: [{
+                id: "right",
+                handler: pimcore.layout.treepanelmanager.toRight.bind(this)
+            },{
+                id: "left",
+                handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
+                hidden: true
+            }],
             root: rootNodeConfig,
             plugins: new Ext.ux.tree.TreeNodeMouseoverPlugin(),
             loader: new Ext.ux.tree.PagingTreeLoader({

@@ -27,7 +27,7 @@ pimcore.asset.tree = Class.create({
                 treeId: "pimcore_panel_tree_assets",
                 treeIconCls: "pimcore_icon_asset",
                 treeTitle: t('assets'),
-                parentPanel: Ext.getCmp("pimcore_panel_tree"),
+                parentPanel: Ext.getCmp("pimcore_panel_tree_left"),
                 index: 2
             };
         }
@@ -75,6 +75,14 @@ pimcore.asset.tree = Class.create({
             rootVisible: this.config.rootVisible,
             forceLayout: true,            
             border: false,
+            tools: [{
+                id: "right",
+                handler: pimcore.layout.treepanelmanager.toRight.bind(this)
+            },{
+                id: "left",
+                handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
+                hidden: true
+            }],
             root: rootNodeConfig,
             plugins: new Ext.ux.tree.TreeNodeMouseoverPlugin(),
             loader: new Ext.ux.tree.PagingTreeLoader({
