@@ -274,12 +274,13 @@ Ext.onReady(function() {
                     items: [
                         {
                             region:'west',
-                            id:'pimcore_panel_tree',
+                            id:'pimcore_panel_tree_left',
                             split:true,
                             width: 250,
                             minSize: 175,
                             maxSize: 400,
                             collapsible: true,
+                            animCollapse: false,
                             layout:'accordion',
                             layoutConfig:{
                                 animate:false
@@ -295,7 +296,25 @@ Ext.onReady(function() {
                             enableTabScroll:true,
                             defaults: {autoScroll:true},
                             cls: "tab_panel"
-                        })
+                        }),{
+                            region:'east',
+                            id:'pimcore_panel_tree_right',
+                            split:true,
+                            width: 250,
+                            minSize: 175,
+                            maxSize: 400,
+                            collapsible: true,
+                            collapsed: true,
+                            animCollapse: false,
+                            layout:'accordion',
+                            hidden: true,
+                            layoutConfig:{
+                                animate:false
+                            },
+                            forceLayout: true,
+                            hideMode: "offsets",
+                            items: []
+                        }
                     ],
                     bbar: statusbar
                 }
@@ -313,7 +332,7 @@ Ext.onReady(function() {
 
         // add sidebar panels
         var user = pimcore.globalmanager.get("user");
-        var treepanel = Ext.getCmp("pimcore_panel_tree");
+        var treepanel = Ext.getCmp("pimcore_panel_tree_left");
         
         if (user.isAllowed("documents")) {
             layoutDocumentTree = new pimcore.document.tree();
@@ -342,7 +361,7 @@ Ext.onReady(function() {
                             treeId: "pimcore_panel_tree_customviews_" + cv.id,
                             treeIconCls: "pimcore_object_customviews_icon_" + cv.id,
                             treeTitle: ts(cv.name),
-                            parentPanel: Ext.getCmp("pimcore_panel_tree"),
+                            parentPanel: Ext.getCmp("pimcore_panel_tree_left"),
                             index: (cvs+10),
                             loaderBaseParams: {}
                         });

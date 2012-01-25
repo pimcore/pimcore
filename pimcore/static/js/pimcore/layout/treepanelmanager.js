@@ -65,5 +65,44 @@ pimcore.layout.treepanelmanager = {
         }
         
         this.inital = false;
+    },
+
+    toLeft: function () {
+        pimcore.layout.treepanelmanager.move(this.tree, Ext.getCmp("pimcore_panel_tree_right"), Ext.getCmp("pimcore_panel_tree_left"));
+        this.tree.tools.left.hide();
+        this.tree.tools.right.show();
+    },
+
+    toRight: function () {
+        pimcore.layout.treepanelmanager.move(this.tree, Ext.getCmp("pimcore_panel_tree_left"), Ext.getCmp("pimcore_panel_tree_right"));
+        this.tree.tools.right.hide();
+        this.tree.tools.left.show();
+    },
+
+    move: function (tree, source, target) {
+        if(target.hidden) {
+            target.show();
+            target.expand();
+        }
+
+        tree.collapse();
+
+        target.items.each(function (item, index, length) {
+            item.collapse();
+        });
+
+        target.add(tree);
+        target.doLayout();
+        tree.expand();
+
+        if(source.items.getCount() < 1) {
+            source.collapse();
+            source.hide();
+        } else if(!source.getLayout().activeItem) {
+            source.items.first().expand();
+        }
+        source.doLayout();
+
+        pimcore.layout.refresh();
     }
 };
