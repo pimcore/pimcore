@@ -358,7 +358,7 @@ pimcore.settings.redirects = Class.create({
         if(values.mode == "begin") {
             source = "/^" + pattern + "/";
         } else if (values.mode == "exact") {
-            source = "/^" + pattern + "$";
+            source = "/^" + pattern + "$/";
         } else if (values.mode == "contain") {
             source = "/" + pattern + "/";
         } else if (values.mode == "begin_end_slash") {

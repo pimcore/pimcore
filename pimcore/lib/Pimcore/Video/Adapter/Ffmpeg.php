@@ -84,18 +84,17 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
             // add format specific arguments
             if($this->getFormat() == "f4v") {
-                $arguments = "-vcodec libx264 -acodec libfaac -f flv -ar 44000 " . $arguments;
+                $arguments = "-f flv -vcodec libx264 -acodec libfaac -ar 44000 " . $arguments;
             } else if($this->getFormat() == "mp4") {
-                $arguments = "-vcodec libx264 -f mp4 -vpre baseline " . $arguments;
-                //$arguments = "-strict experimental -f mp4 -vcodec mpeg4 -acodec aac " . $arguments;
+                $arguments = "-strict experimental -f mp4 -vcodec libx264 -vpre baseline -acodec aac " . $arguments;
             } else if($this->getFormat() == "webm") {
-                $arguments = "-vcodec libvpx -acodec libvorbis -f webm -ar 44000 " . $arguments;
+                $arguments = "-f webm -vcodec libvpx -acodec libvorbis -ar 44000 " . $arguments;
             } else {
                 throw new Exception("Unsupported video output format: " . $this->getFormat());
             }
 
             // add some global arguments
-            $arguments = "-threads 4 " . $arguments;
+            $arguments = "-threads 0 " . $arguments;
 
             $cmd = self::getFfmpegCli() . ' -i ' . realpath($this->file) . ' ' . $arguments . " " . str_replace("/", DIRECTORY_SEPARATOR, $this->getDestinationFile());
             Pimcore_Tool_Console::execInBackground($cmd, $this->getConversionLogFile());
@@ -211,13 +210,13 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public function setVideoBitrate($videoBitrate) {
         parent::setVideoBitrate($videoBitrate);
 
-        $this->addArgument("videoBitrate", "-vb " . $videoBitrate);
+        $this->addArgument("videoBitrate", "-vb " . $videoBitrate . "k");
     }
 
     public function setAudioBitrate($audioBitrate) {
         parent::setAudioBitrate($audioBitrate);
 
-        $this->addArgument("audioBitrate", "-ab " . $audioBitrate);
+        $this->addArgument("audioBitrate", "-ab " . $audioBitrate . "k");
     }
 
     public function resize ($width, $height) {
