@@ -129,7 +129,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $validLanguages = array();
             foreach ($languages as $short => $translation) {
 
-                if (strlen($short) == 2 or (strlen($short) == 5 and strpos($short, "_") == 2)) {
+                if (strlen($short) == 2 or strpos($short, "_") == 2) {
                     $languageOptions[] = array(
                         "language" => $short,
                         "display" => $translation . " ($short)"
