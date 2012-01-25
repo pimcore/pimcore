@@ -68,6 +68,8 @@ class Pimcore_Google_Analytics {
               } else {
                 _gaq.push(['_trackPageview']);
               }
+
+              " . $config->additionalcode . "
             
               (function() {
                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
