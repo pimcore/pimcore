@@ -1302,23 +1302,19 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function thumbnailUpdateAction () {
 
         $pipe = Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
-        $data = Zend_Json::decode($this->_getParam("configuration"));
+        $settingsData = Zend_Json::decode($this->_getParam("settings"));
+        $itemsData = Zend_Json::decode($this->_getParam("items"));
 
-        $items = array();
-        foreach ($data as $key => $value) {
+        foreach ($settingsData as $key => $value) {
             $setter = "set" . ucfirst($key);
             if(method_exists($pipe, $setter)) {
                 $pipe->$setter($value);
             }
-
-            if(strpos($key,"item.") === 0) {
-                $cleanKeyParts = explode(".",$key);
-                $items[$cleanKeyParts[1]][$cleanKeyParts[2]] = $value;
-            }
         }
 
         $pipe->resetItems();
-        foreach ($items as $item) {
+
+        foreach ($itemsData as $item) {
 
             $type = $item["type"];
             unset($item["type"]);
