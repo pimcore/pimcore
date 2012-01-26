@@ -1,3 +1,4 @@
+"robots_txt_exists_on_filesystem","The robots.txt exists already in the document-root on the filesystem"
 "images_with_alt","Images with alt-Text"
 "images_without_alt","Images without alt-Text"
 "external_links","External Links"

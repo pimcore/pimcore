@@ -28,7 +28,7 @@ pimcore.settings.robotstxt = Class.create({
                 try {
                     var data = Ext.decode(response.responseText);
                     if(data.success) {
-                        this.data = data.data;
+                        this.data = data;
                         this.getTabPanel().add(this.getEditPanel());
                         this.getTabPanel().doLayout();
                     }
@@ -75,12 +75,19 @@ pimcore.settings.robotstxt = Class.create({
 
         if (!this.editPanel) {
 
-            this.editArea = new Ext.form.TextArea({
-                xtype: "textarea",
-                name: "data",
-                value: this.data,
-                style: "font-family: 'Courier New', Courier, monospace;"
-            });
+            if(this.data.onFileSystem) {
+                this.editArea = new Ext.Panel({
+                    bodyStyle: "padding:50px;",
+                    html: t("robots_txt_exists_on_filesystem")
+                });
+            } else {
+                this.editArea = new Ext.form.TextArea({
+                    xtype: "textarea",
+                    name: "data",
+                    value: this.data.data,
+                    style: "font-family: 'Courier New', Courier, monospace;"
+                });
+            }
 
             this.editPanel = new Ext.Panel({
                 bodyStyle: "padding: 10px;",
