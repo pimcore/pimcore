@@ -31,6 +31,11 @@ class Object_Class_Layout_Panel extends Object_Class_Layout {
      */
     public $labelWidth = 100;
 
+    /**
+     * @var string
+     */
+    public $layout;
+
 
     /**
      * @param int $labelWidth
@@ -48,5 +53,21 @@ class Object_Class_Layout_Panel extends Object_Class_Layout {
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @param string $layout
+     */
+    public function setLayout($layout)
+    {
+        $this->layout = $layout;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLayout()
+    {
+        return $this->layout;
     }
 }

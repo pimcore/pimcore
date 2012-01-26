@@ -42,6 +42,14 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
             style: "margin: 10px 0 10px 0",
             items: [
                 {
+                    xtype: "combo",
+                    fieldLabel: t("layout"),
+                    name: "layout",
+                    value: this.datax.layout,
+                    store: ["","fit"],
+                    triggerAction: 'all',
+                    editable: false
+                },{
                     xtype: "spinnerfield",
                     name: "labelWidth",
                     fieldLabel: t("label_width"),

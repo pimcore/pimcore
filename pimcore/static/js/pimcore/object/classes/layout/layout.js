@@ -67,15 +67,6 @@ pimcore.object.classes.layout.layout = Class.create({
                             editable: false
                         },
                         {
-                            xtype: "combo",
-                            fieldLabel: t("layout"),
-                            name: "layout",
-                            value: this.datax.layout,
-                            store: ["","fit"],
-                            triggerAction: 'all',
-                            editable: false
-                        },
-                        {
                             xtype: "textfield",
                             fieldLabel: t("title"),
                             name: "title",
