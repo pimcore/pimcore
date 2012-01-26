@@ -1005,30 +1005,34 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             // anaylze content
                             $nodeConfig["links"] = 0;
 
-                            $content = Document_Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
-                            if($content) {
-                                $html = str_get_html($content);
-                                if($html) {
-                                    $nodeConfig["links"] = count($html->find("a"));
-                                    $nodeConfig["externallinks"] = count($html->find("a[href^=http]"));
-                                    $nodeConfig["h1"] = count($html->find("h1"));
-                                    $nodeConfig["hx"] = count($html->find("h2,h2,h4,h5"));
+                            try {
+                                $content = Document_Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
+                                if($content) {
+                                    $html = str_get_html($content);
+                                    if($html) {
+                                        $nodeConfig["links"] = count($html->find("a"));
+                                        $nodeConfig["externallinks"] = count($html->find("a[href^=http]"));
+                                        $nodeConfig["h1"] = count($html->find("h1"));
+                                        $nodeConfig["hx"] = count($html->find("h2,h2,h4,h5"));
 
-                                    $nodeConfig["imgwithalt"] = 0;
-                                    $nodeConfig["imgwithoutalt"] = 0;
+                                        $nodeConfig["imgwithalt"] = 0;
+                                        $nodeConfig["imgwithoutalt"] = 0;
 
-                                    $images = $html->find("img");
-                                    if($images) {
-                                        foreach ($images as $image) {
-                                            $alt = $image->alt;
-                                            if(empty($alt)) {
-                                                $nodeConfig["imgwithoutalt"]++;
-                                            } else {
-                                                $nodeConfig["imgwithalt"]++;
+                                        $images = $html->find("img");
+                                        if($images) {
+                                            foreach ($images as $image) {
+                                                $alt = $image->alt;
+                                                if(empty($alt)) {
+                                                    $nodeConfig["imgwithoutalt"]++;
+                                                } else {
+                                                    $nodeConfig["imgwithalt"]++;
+                                                }
                                             }
                                         }
                                     }
                                 }
+                            } catch (Exception $e) {
+                                Logger::debug($e);
                             }
 
                             if(strlen($childDocument->getTitle()) > 80
