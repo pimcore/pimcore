@@ -35,14 +35,18 @@ foreach ($types as $type) {
 
         $elements = $list->load();
         foreach ($elements as $element) {
-            $searchEntry = Search_Backend_Data::getForElement($element);
-            if($searchEntry instanceof Search_Backend_Data and $searchEntry->getId() instanceof Search_Backend_Data_Id ) {
-                $searchEntry->setDataFromElement($element);
-            } else {
-                $searchEntry = new Search_Backend_Data($element);
-            }
+            try {
+                $searchEntry = Search_Backend_Data::getForElement($element);
+                if($searchEntry instanceof Search_Backend_Data and $searchEntry->getId() instanceof Search_Backend_Data_Id ) {
+                    $searchEntry->setDataFromElement($element);
+                } else {
+                    $searchEntry = new Search_Backend_Data($element);
+                }
 
-            $searchEntry->save();
+                $searchEntry->save();
+            } catch (Exception $e) {
+                Logger::err($e);
+            }
         }
         Pimcore::collectGarbage();
     }
