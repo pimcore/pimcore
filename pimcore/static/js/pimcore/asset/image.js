@@ -194,12 +194,14 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                         title: t("dimensions"),
                         source: this.data.imageInfo.dimensions,
                         autoHeight: true,
+
                         clicksToEdit: 1000,
                         viewConfig : {
                             forceFit: true,
                             scrollOffset: 2
                         }
                     });
+                    dimensionPanel.getStore().singleSort("name","DESC");
 
                     details.push(dimensionPanel);
                 }
