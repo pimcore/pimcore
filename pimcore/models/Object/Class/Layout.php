@@ -35,11 +35,6 @@ class Object_Class_Layout {
     /**
      * @var string
      */
-    public $layout;
-
-    /**
-     * @var string
-     */
     public $title;
 
     /**
@@ -267,23 +262,8 @@ class Object_Class_Layout {
     /**
      * @return mixed
      */
-    public function getLayout() {
-        return $this->layout;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getDatatype() {
         return $this->datatype;
-    }
-
-    /**
-     * @param mixed $layout
-     * @return void
-     */
-    public function setLayout($layout) {
-        $this->layout = $layout;
     }
 
     /**
