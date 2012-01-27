@@ -249,9 +249,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                             $params["module"] = $module;
                         }
 
-
                         // try to get nearest document to the route
-                        $params["document"] = $this->getNearestDocumentByPath($path);
+                        $document = $this->getNearestDocumentByPath($path);
+                        if($document instanceof Document_Hardlink) {
+                            $document = Document_Hardlink_Service::wrap($document);
+                        }
+                        $params["document"] = $document;
 
                         $matchFound = true;
                         Staticroute::setCurrentRoute($route);
