@@ -194,11 +194,6 @@ pimcore.settings.thumbnail.items = {
             xtype: "tbtext",
             text: "<b>" + name + "</b>"
         },"-",{
-            iconCls: "pimcore_icon_delete",
-            handler: function (index, parent) {
-                parent.itemContainer.remove(Ext.getCmp(index));
-            }.bind(window, index, parent)
-        },{
             iconCls: "pimcore_icon_up",
             handler: function (blockId, parent) {
 
@@ -248,6 +243,11 @@ pimcore.settings.thumbnail.items = {
                 tmpContainer.doLayout();
 
                 pimcore.layout.refresh();
+            }.bind(window, index, parent)
+        },"->",{
+            iconCls: "pimcore_icon_delete",
+            handler: function (index, parent) {
+                parent.itemContainer.remove(Ext.getCmp(index));
             }.bind(window, index, parent)
         }];
     },
