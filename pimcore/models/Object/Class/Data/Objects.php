@@ -37,6 +37,11 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public $height;
 
     /**
+     * @var int
+     */
+    public $maxItems;
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -463,5 +468,21 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function getFieldtype()
     {
         return $this->fieldtype;
+    }
+
+    /**
+     * @param int $maxItems
+     */
+    public function setMaxItems($maxItems)
+    {
+        $this->maxItems = $maxItems;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems()
+    {
+        return $this->maxItems;
     }
 }

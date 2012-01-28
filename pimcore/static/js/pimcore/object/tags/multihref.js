@@ -348,6 +348,15 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     },
 
     elementAlreadyExists: function (id, type) {
+
+        // check max amount in field
+        if(this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] > 1) {
+            if(this.store.getCount() >= this.fieldConfig.maxItems) {
+                Ext.Msg.alert(t("error"),t("limit_reached"));
+                return true;
+            }
+        }
+
         // check for existing element
         var result = this.store.queryBy(function (id, type, record, rid) {
             if (record.data.id == id && record.data.type == type) {
