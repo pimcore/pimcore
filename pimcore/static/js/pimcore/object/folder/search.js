@@ -312,6 +312,13 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 pimcore.helpers.openObject(data.data.id, "object");
             }.bind(this, data)
         }));
+        menu.add(new Ext.menu.Item({
+            text: t('delete'),
+            iconCls: "pimcore_icon_delete",
+            handler: function (data) {
+                pimcore.helpers.deleteObject(data.data.id, this.getStore().reload.bind(this.getStore()));
+            }.bind(grid, data)
+        }));
 
         event.stopEvent();
         menu.showAt(event.getXY());

@@ -161,13 +161,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     remove: function () {
-
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
-
-        var documentNode = pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(this.id)
-        var f = pimcore.globalmanager.get("layout_document_tree").deleteDocument.bind(documentNode);
-        f();
+        pimcore.helpers.deleteDocument(this.id);
     },
 
     saveClose: function(only){

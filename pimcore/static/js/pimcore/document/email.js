@@ -65,9 +65,6 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("versions")) {
             items.push(this.versions.getLayout());
         }
-       /* if (this.isAllowed("settings")) {
-            items.push(this.scheduler.getLayout());
-        }*/
 
         items.push(this.dependencies.getLayout());
 

@@ -189,6 +189,16 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 buttons.push(this.toolbarButtons.publish);
             }
 
+            if (this.isAllowed("delete")) {
+                this.toolbarButtons.remove = new Ext.Button({
+                     text: t('delete'),
+                     iconCls: "pimcore_icon_delete_medium",
+                     scale: "medium",
+                     handler: this.remove.bind(this)
+                });
+                buttons.push(this.toolbarButtons.remove);
+            }
+
             buttons.push("-");
 
             if (this.isAllowed("publish")) {
@@ -322,13 +332,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     remove: function () {
-
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
-
-        var documentNode = pimcore.globalmanager.get("layout_asset_tree").tree.getNodeById(this.id)
-        var f = pimcore.globalmanager.get("layout_asset_tree").deleteAsset.bind(documentNode);
-        f();
+        pimcore.helpers.deleteAsset(this.id);
     },
 
     upload: function () {
