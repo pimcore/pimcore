@@ -124,6 +124,8 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         if (!this.toolbar) {
 
+            var buttons = [];
+
             this.toolbarButtons = {};
 
             this.toolbarButtons.publish = new Ext.Button({
@@ -132,6 +134,20 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 scale: "medium",
                 handler: this.save.bind(this)
             });
+
+            if(this.isAllowed("publish")) {
+                buttons.push(this.toolbarButtons.publish);
+            }
+
+            this.toolbarButtons.remove = new Ext.Button({
+                 text: t('delete'),
+                 iconCls: "pimcore_icon_delete_medium",
+                 scale: "medium",
+                 handler: this.remove.bind(this)
+            });
+            if (this.isAllowed("delete")) {
+                buttons.push(this.toolbarButtons.remove);
+            }
             
             this.toolbarButtons.download = new Ext.Button({
                 text: t("download_as_zip"),
@@ -139,12 +155,20 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 scale: "medium",
                 handler: this.downloadZip.bind(this)
             });
+            buttons.push(this.toolbarButtons.download);
 
             this.toolbarButtons.reload = new Ext.Button({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
                 scale: "medium",
                 handler: this.reload.bind(this)
+            });
+            buttons.push(this.toolbarButtons.reload);
+
+            buttons.push("-");
+            buttons.push({
+                text: this.data.id,
+                disabled: true
             });
 
             this.toolbar = new Ext.Toolbar({
@@ -153,10 +177,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 border: false,
                 height: 26,
                 cls: "document_toolbar",
-                items: [this.toolbarButtons.publish, "-", this.toolbarButtons.reload, "-", this.toolbarButtons.download, "-",{
-                    text: this.data.id,
-                    disabled: true
-                }]
+                items: buttons
             });
         }
 

@@ -286,12 +286,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 handler: this.reload.bind(this)
             });
 
-            /*this.toolbarButtons.remove = new Ext.Button({
-             text: t("delete"),
-             iconCls: "pimcore_icon_delete_medium",
-             scale: "medium",
-             handler: this.remove.bind(this)
-             });*/
+            this.toolbarButtons.remove = new Ext.Button({
+                text: t("delete"),
+                iconCls: "pimcore_icon_delete_medium",
+                scale: "medium",
+                handler: this.remove.bind(this)
+            });
 
             if (this.isAllowed("save")) {
                 buttons.push(this.toolbarButtons.save);
@@ -303,9 +303,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 buttons.push(this.toolbarButtons.unpublish);
             }
 
-            /*if(this.isAllowed("delete")) {
-             buttons.push(this.toolbarButtons.remove);
-             }*/
+            if(this.isAllowed("delete")) {
+                buttons.push(this.toolbarButtons.remove);
+            }
 
             buttons.push(this.toolbarButtons.reload);
 
@@ -529,12 +529,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
 
     remove: function () {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
-
-        var objectNode = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id)
-        var f = pimcore.globalmanager.get("layout_object_tree").remove.bind(objectNode);
-        f();
+        pimcore.helpers.deleteObject(this.id);
     },
 
     isAllowed: function (key) {
