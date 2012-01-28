@@ -180,6 +180,11 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getAction() {
+
+        if(intval($this->_getParam("id")) < 1) {
+            $this->_helper->json(array("success" => false));
+        }
+
         $user = User::getById(intval($this->_getParam("id")));
 
         // workspaces
