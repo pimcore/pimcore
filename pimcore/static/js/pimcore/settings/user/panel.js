@@ -65,7 +65,8 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                     nodeType: 'async',
                     draggable:false,
                     id: '0',
-                    text: t("all_users")
+                    text: t("all_users"),
+                    allowChildren: true
                 },
                 loader: new Ext.tree.TreeLoader({
                     dataUrl: '/admin/user/tree-get-childs-by-id/',
