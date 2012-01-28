@@ -80,6 +80,11 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
                 hideLabel: true,
                 value: t('lazy_loading_description'),
                 cls: "pimcore_extra_label_bottom"
+            },{
+                xtype: "spinnerfield",
+                fieldLabel: t("maximum_items"),
+                name: "maxItems",
+                value: this.datax.maxItems
             }
         ]);
 

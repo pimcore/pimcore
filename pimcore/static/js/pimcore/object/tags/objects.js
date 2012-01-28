@@ -487,7 +487,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 allowedClasses.push(this.fieldConfig.classes[i].classes);
             }
         }
-//console.log(this.fieldConfig.classes);
+
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
             type: ["object"],
             subtype: {
@@ -541,6 +541,15 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     ,
 
     objectAlreadyExists: function (id) {
+
+        // check max amount in field
+        if(this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] > 1) {
+            if(this.store.getCount() >= this.fieldConfig.maxItems) {
+                Ext.Msg.alert(t("error"),t("limit_reached"));
+                return true;
+            }
+        }
+
         // check for existing object
         var result = this.store.query("id", new RegExp("^" + id + "$"));
 
