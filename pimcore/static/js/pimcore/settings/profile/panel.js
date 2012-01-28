@@ -124,6 +124,13 @@ pimcore.settings.profile.panel = Class.create({
             }
         });
 
+        generalItems.push({
+            xtype: "checkbox",
+            fieldLabel: t("show_welcome_screen"),
+            name: "welcomescreen",
+            checked: this.currentUser.welcomescreen
+        });
+
         this.userPanel = new Ext.form.FormPanel({
             border: false,
             layout: "pimcoreform",

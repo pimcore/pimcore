@@ -292,12 +292,6 @@ pimcore.settings.system = Class.create({
                                 listWidth: 100
                             },
                             {
-                                fieldLabel: t('show_welcome_screen'),
-                                xtype: "checkbox",
-                                name: "general.welcomescreen",
-                                checked: this.getValue("general.welcomescreen")
-                            },
-                            {
                                 fieldLabel: t('show_random_pictures_on_login_screen'),
                                 xtype: "checkbox",
                                 name: "general.loginscreenimageservice",

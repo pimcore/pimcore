@@ -183,6 +183,13 @@ pimcore.settings.user.user.settings = Class.create({
         generalItems.push(this.apiKeyField );
         generalItems.push(this.apiKeyDescription);
 
+        generalItems.push({
+            xtype: "checkbox",
+            fieldLabel: t("show_welcome_screen"),
+            name: "welcomescreen",
+            checked: this.currentUser.welcomescreen
+        });
+
         this.roleField = new Ext.ux.form.MultiSelect({
             name: "roles",
             triggerAction: "all",
