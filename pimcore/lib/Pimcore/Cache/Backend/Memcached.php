@@ -277,6 +277,37 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
     }
 
     /**
+     * @param array $tags
+     * @return array
+     */
+    public function getIdsMatchingAnyTags($tags = array()) {
+        $tags_ = array();
+        foreach($tags as $tag) {
+            $tags_[] = $this->getDb()->quote($tag);
+        }
+
+        $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE tag IN (".implode(",",$tags_).")");
+        return $itemIds;
+    }
+
+
+    /**
+     * @param array $tags
+     * @return array
+     */
+    public function getIdsMatchingTags($tags = array()) {
+
+        $tags_ = array();
+        foreach($tags as $tag) {
+            $tags_[] = " tag = ".$this->getDb()->quote($tag);
+        }
+
+        $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ",$tags_));
+        return $itemIds;
+    }
+
+
+    /**
      * @return array
      */
     public function getCapabilities() {
