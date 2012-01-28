@@ -92,7 +92,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
 
     onTreeNodeClick: function (node) {
 
-        if(!this.allowChildren) {
+        if(!node.attributes.allowChildren && node.id > 0) {
             var userPanelKey = "user_" + node.id;
             if(this.panels[userPanelKey]) {
                 this.panels[userPanelKey].activate();
