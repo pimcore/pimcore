@@ -59,6 +59,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $tmpUser["leaf"] = false;
             $tmpUser["iconCls"] = "pimcore_icon_folder";
             $tmpUser["expanded"] = true;
+            $tmpUser["allowChildren"] = true;
 
             if($user->hasChilds()) {
                 $tmpUser["expanded"] = false;
@@ -347,6 +348,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             $tmpUser["leaf"] = false;
             $tmpUser["iconCls"] = "pimcore_icon_folder";
             $tmpUser["expanded"] = true;
+            $tmpUser["allowChildren"] = true;
 
             if($role->hasChilds()) {
                 $tmpUser["expanded"] = false;

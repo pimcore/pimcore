@@ -63,7 +63,8 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                     nodeType: 'async',
                     draggable:false,
                     id: '0',
-                    text: t("all_roles")
+                    text: t("all_roles"),
+                    allowChildren: true
                 },
                 loader: new Ext.tree.TreeLoader({
                     dataUrl: '/admin/user/role-tree-get-childs-by-id/',
@@ -89,7 +90,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
 
     onTreeNodeClick: function (node) {
 
-        if(!this.allowChildren) {
+        if(!node.attributes.allowChildren && node.id > 0) {
             var rolePanelKey = "role_" + node.id;
             if(this.panels[rolePanelKey]) {
                 this.panels[rolePanelKey].activate();
