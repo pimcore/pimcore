@@ -102,7 +102,8 @@ class User_Abstract_Resource extends Pimcore_Model_Resource_Abstract {
     public function create() {
         try {
             $this->db->insert("users", array(
-                "name" => $this->model->getName()
+                "name" => $this->model->getName(),
+                "type" => $this->model->getType()
             ));
 
             $this->model->setId($this->db->lastInsertId());

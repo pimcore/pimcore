@@ -19,12 +19,18 @@ class User_UserRole_Resource extends User_Abstract_Resource {
 
     public function getById($id) {
         parent::getById($id);
-        $this->loadWorkspaces();
+
+        if(in_array($this->model->getType(), array("user","role"))) {
+            $this->loadWorkspaces();
+        }
     }
 
     public function getByName($name) {
         parent::getByName($name);
-        $this->loadWorkspaces();
+
+        if(in_array($this->model->getType(), array("user","role"))) {
+            $this->loadWorkspaces();
+        }
     }
 
     public function loadWorkspaces () {

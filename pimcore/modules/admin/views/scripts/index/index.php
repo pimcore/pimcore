@@ -409,7 +409,6 @@
             maintenance_active: <?php echo $this->maintenance_enabled; ?>,
             maintenance_mode: <?php echo Pimcore_Tool_Admin::isInMaintenanceMode() ? "true" : "false"; ?>,
             mail: <?php echo $this->mail_settings_incomplete ?>,
-            welcomescreen: <?php echo $this->config->general->welcomescreen ? "true" : "false"; ?>,
             debug: <?php echo Pimcore::inDebugMode() ? "true" : "false"; ?>,
             devmode: <?php echo PIMCORE_DEVMODE ? "true" : "false"; ?>,
             google_analytics_enabled: <?php echo Zend_Json::encode((bool) Pimcore_Google_Analytics::isConfigured()) ?>,

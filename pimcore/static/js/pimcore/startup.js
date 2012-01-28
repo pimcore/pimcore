@@ -385,7 +385,7 @@ Ext.onReady(function() {
     }
 
     
-    if (pimcore.settings.welcomescreen) {
+    if (pimcore.globalmanager.get("user").welcomescreen) {
         layoutPortal = new pimcore.layout.portal();
         pimcore.globalmanager.add("layout_portal", layoutPortal);
     }

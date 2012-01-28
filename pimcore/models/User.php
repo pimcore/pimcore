@@ -62,6 +62,11 @@ class User extends User_UserRole {
      */
     public $roles = array();
 
+    /**
+     * @var bool
+     */
+    public $welcomescreen = true;
+
 
     /**
      * @return string
@@ -262,5 +267,21 @@ class User extends User_UserRole {
             return array();
         }
         return $this->roles;
+    }
+
+    /**
+     * @param boolean $welcomescreen
+     */
+    public function setWelcomescreen($welcomescreen)
+    {
+        $this->welcomescreen = $welcomescreen;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getWelcomescreen()
+    {
+        return $this->welcomescreen;
     }
 }

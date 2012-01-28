@@ -108,36 +108,16 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         $user = User_Abstract::getById(intval($this->_getParam("id")));
 
         if($this->_getParam("data")) {
-            $allValues = Zend_Json::decode($this->_getParam("data"));
-            $values = array();
-
-            //simulate behaviour from before change form prototype to jquery
-            foreach ($allValues as $k => $v) {
-                if (!empty($v) and $v!==FALSE) {
-                    $values[$k] = $v;
-                }
-            }
+            $values = Zend_Json::decode($this->_getParam("data"));
 
             if (!empty($values["password"])) {
                 $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
             }
 
-
-            $user->setAllAclToFalse();
+            if(method_exists($user, "setAllAclToFalse")) {
+                $user->setAllAclToFalse();
+            }
             $user->setValues($values);
-
-            // booleans
-            if (isset($allValues["parentId"])) {
-                $user->setParentId($allValues["parentId"]);
-            }
-
-            if (isset($allValues["active"])) {
-                $user->setActive($allValues["active"]);
-            }
-
-            if (isset($allValues["admin"])) {
-                $user->setAdmin($allValues["admin"]);
-            }
 
             // check for permissions
             $availableUserPermissionsList = new User_Permission_Definition_List();
