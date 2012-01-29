@@ -187,7 +187,7 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.isAllowed("system_settings") && user.admin) {
+        if (user.admin) {
             extrasItems.push({
                 text: t("system_infos"),
                 iconCls: "pimcore_icon_info",
