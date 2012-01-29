@@ -28,7 +28,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/js/pimcore/namespace.js",
             
             "/pimcore/static/js/lib/prototype-light.js",
-            "/pimcore/static/js/lib/jquery-1.4.2.min.js",
+            "/pimcore/static/js/lib/jquery-1.7.1.min.js",
             "/pimcore/static/js/lib/ext/adapter/jquery/ext-jquery-adapter-debug.js",
             
             "/pimcore/static/js/lib/ext/ext-all-debug.js",
