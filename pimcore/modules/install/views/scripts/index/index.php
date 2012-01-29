@@ -22,7 +22,7 @@
 $scripts = array(
     // library
     "lib/prototype-light.js",
-    "lib/jquery-1.4.2.min.js",
+    "lib/jquery-1.7.1.min.js",
     "lib/ext/adapter/jquery/ext-jquery-adapter.js",
     "lib/ext/ext-all-debug.js"
 );
