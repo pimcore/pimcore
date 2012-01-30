@@ -165,7 +165,7 @@ class Pimcore_Mail extends Zend_Mail
      * @return void
      */
     protected static function determineHtml2TextIsInstalled(){
-        exec('html2text -version',$output,$check);
+        @exec('html2text -version',$output,$check);
         self::$html2textInstalled = (!empty($output)) ? true : false;
     }
 
@@ -605,7 +605,7 @@ class Pimcore_Mail extends Zend_Mail
                 //using temporary file so we don't have problems with special characters
                 $tmpFileName = PIMCORE_TEMPORARY_DIRECTORY . "/" . uniqid('email_', true) . ".tmp";
                 if (file_put_contents($tmpFileName, $htmlContent)) {
-                    $content = shell_exec("html2text $tmpFileName " . $this->getHtml2TextOptions());
+                    $content = @shell_exec("html2text $tmpFileName " . $this->getHtml2TextOptions());
                     @unlink($tmpFileName);
                 }
             }
