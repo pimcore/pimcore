@@ -110,7 +110,6 @@ abstract class Pimcore_Model_Abstract {
         $this->resource->setModel($this);
 
         $db = Pimcore_Resource::get();
-
         $this->resource->configure($db);
 
         if (method_exists($this->resource, "init")) {
