@@ -1004,6 +1004,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
                             // anaylze content
                             $nodeConfig["links"] = 0;
+                            $nodeConfig["externallinks"] = 0;
+                            $nodeConfig["h1"] = 0;
+                            $nodeConfig["h1_text"] = "";
+                            $nodeConfig["hx"] = 0;
+                            $nodeConfig["imgwithalt"] = 0;
+                            $nodeConfig["imgwithoutalt"] = 0;
 
                             try {
                                 $content = Document_Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
@@ -1013,10 +1019,13 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                         $nodeConfig["links"] = count($html->find("a"));
                                         $nodeConfig["externallinks"] = count($html->find("a[href^=http]"));
                                         $nodeConfig["h1"] = count($html->find("h1"));
-                                        $nodeConfig["hx"] = count($html->find("h2,h2,h4,h5"));
 
-                                        $nodeConfig["imgwithalt"] = 0;
-                                        $nodeConfig["imgwithoutalt"] = 0;
+                                        $h1 = $html->find("h1",0);
+                                        if($h1) {
+                                            $nodeConfig["h1_text"] = strip_tags($h1->innertext);
+                                        }
+
+                                        $nodeConfig["hx"] = count($html->find("h2,h2,h4,h5"));
 
                                         $images = $html->find("img");
                                         if($images) {
