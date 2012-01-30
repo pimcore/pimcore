@@ -51,4 +51,3 @@ Object_Abstract::setGetInheritedValues(true);
 @ini_set("display_startup_errors", "On");
 error_reporting(E_ALL ^ E_NOTICE);
 
-?>

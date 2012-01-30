@@ -252,6 +252,9 @@ class Pimcore {
      */
     public static function initLogger() {
 
+        // for forks, etc ...
+        Logger::resetLoggers();
+
         // try to load configuration
         $conf = Pimcore_Config::getSystemConfig();
 
@@ -277,7 +280,7 @@ class Pimcore {
             if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
                 file_put_contents(PIMCORE_LOG_DEBUG, "");
             }
-            
+
             $prioMapping = array(
                 "debug" => Zend_Log::DEBUG,
                 "info" => Zend_Log::INFO,
@@ -288,8 +291,7 @@ class Pimcore {
                 "alert" => Zend_Log::ALERT,
                 "emergency" => Zend_Log::EMERG
             );
-            
-            $prioConf = array();
+
             $prios = array();
 
             if($conf && $conf->general->loglevel) {
@@ -308,23 +310,21 @@ class Pimcore {
                     $prios[] = $p;
                 }
             }
-            
+
             if(!empty($prios)) {
                 $writerFile = new Zend_Log_Writer_Stream(PIMCORE_LOG_DEBUG);
                 $loggerFile = new Zend_Log($writerFile);
                 Logger::addLogger($loggerFile);
-                
+
                 Logger::setPriorities($prios);
             }
 
-
-           
             $conf = Pimcore_Config::getSystemConfig();
             if($conf) {
                 //email logger
-                if(!empty($conf->general->logrecipient)){
+                if(!empty($conf->general->logrecipient)) {
                     $user = User::getById($conf->general->logrecipient);
-                    if($user instanceof User && $user->isAdmin() ){
+                    if($user instanceof User && $user->isAdmin()) {
                         $email = $user->getEmail();
                         if(!empty($email)){
                             $mail = Pimcore_Tool::getMail(array($email),"pimcore log notification");
@@ -336,11 +336,9 @@ class Pimcore {
                             $loggerEmail = new Zend_Log($writerEmail);
                             Logger::addLogger($loggerEmail);
                         }
-
                     }
                 }
             }
-
         }
     }
 

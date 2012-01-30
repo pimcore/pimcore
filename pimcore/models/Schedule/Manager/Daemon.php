@@ -101,8 +101,9 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
         else {
             //Forked child
             try {
+                Pimcore_Resource::reset(); // reset resource
+                Pimcore::initLogger(); // reinit logger so that he gets a different token eg for mailing
                 Logger::debug("Executing job [ " . $job->getId() . " ] as forked child");
-                Pimcore_Resource::reset();
                 $job->execute();
             } catch (Exception $e) {
                 Logger::error($e);

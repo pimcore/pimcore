@@ -164,9 +164,19 @@ class Pimcore_Mail extends Zend_Mail
      * @static
      * @return void
      */
-    protected static function determineHtml2TextIsInstalled(){
-        @exec('html2text -version',$output,$check);
-        self::$html2textInstalled = (!empty($output)) ? true : false;
+    protected static function determineHtml2TextIsInstalled() {
+
+        $paths = array("/usr/bin/html2text","/usr/local/bin/html2text", "/bin/html2text");
+
+        foreach ($paths as $path) {
+            if(is_executable($path)) {
+                self::$html2textInstalled = true;
+            }
+        }
+
+        // produces wired error message in maintenance script
+        //$output = @shell_exec('html2text -version');
+        //self::$html2textInstalled = (!empty($output)) ? true : false;
     }
 
     /**
@@ -451,20 +461,21 @@ class Pimcore_Mail extends Zend_Mail
     {
         if ($this->getDocument()) {
             $this->setDocumentSettings();
+
+            $this->setSubject($this->getSubjectRendered());
+            $this->setBodyHtml($this->getBodyHtmlRendered());
+            $this->setBodyText($this->getBodyTextRendered());
         }
 
-        $this->setSubject($this->getSubjectRendered());
-        $this->setBodyHtml($this->getBodyHtmlRendered());
-        $this->setBodyText($this->getBodyTextRendered());
-
         $this->checkDebugMode();
+
         $result = parent::send($transport);
 
-        if ($this->loggingIsEnabled()) {
+        if ($this->loggingIsEnabled() && $this->getDocument()) {
             try {
                 Pimcore_Helper_Mail::logEmail($this);
             } catch (Exception $e) {
-                Logger::emerg("Couldn't log Email ");
+                Logger::emerg("Couldn't log Email");
             }
         }
 
