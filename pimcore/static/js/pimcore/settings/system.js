@@ -898,7 +898,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: "<b>" + t('google_maps_api_key') + ' <b style="color:red;">DEPRECATED</b>',
+                                value: "<b>" + t('google_maps_api_v3_key'),
                                 cls: "pimcore_extra_label"
                             },
                             {
@@ -906,12 +906,6 @@ pimcore.settings.system = Class.create({
                                 name: 'services.googlemaps.apikey',
                                 value: this.getValue("services.googlemaps.apikey"),
                                 width: 650
-                            },{
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                style: "margin-top: 10px;",
-                                width: 600,
-                                value: "&nbsp;"
                             },{
                                 xtype: "displayfield",
                                 hideLabel: true,
@@ -927,7 +921,7 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label"
                             },
                             {
-                                fieldLabel: t('developer_key'),
+                                fieldLabel: t('api_key'),
                                 name: 'services.translate.apikey',
                                 value: this.getValue("services.translate.apikey"),
                                 width: 650
