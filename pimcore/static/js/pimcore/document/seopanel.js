@@ -153,7 +153,7 @@ pimcore.document.seopanel = Class.create({
         this.panel.doLayout();
     },
 
-    onRightClick: function (node) {
+    onRightClick: function (node, event) {
         node.select();
 
         var menu = new Ext.menu.Menu();
@@ -167,8 +167,15 @@ pimcore.document.seopanel = Class.create({
             handler: function (node) {
                 node.reload();
             }.bind(this, node)
+        },{
+            text: t('open_in_new_window'),
+            iconCls: "pimcore_icon_open_in_new_window",
+            handler: function (node) {
+                window.open(node.attributes.path);
+            }.bind(this, node)
         }]);
-        menu.show(node.ui.getAnchor());
+
+        menu.showAt(event.getXY());
     },
 
     openEditPanel: function (node) {
