@@ -292,10 +292,6 @@ class Pimcore_Tool {
      */
     public static function getMail($recipients = null, $subject = null) {
 
-        $values = Pimcore_Config::getSystemConfig();
-        $valueArray = $values->toArray();
-        $emailSettings = $valueArray["email"];
-
         $mail = new Pimcore_Mail();
 
         if($recipients) {

@@ -17,20 +17,24 @@ class Logger {
 	
 	private static $logger = array();
 	private static $priorities = array();
-	private static $dummyMode = true;
+	private static $enabled = false;
 	
 	public static function setLogger ($logger) {
         self::$logger = array();
 		self::$logger[] = $logger;
-        self::$dummyMode = false;
+        self::$enabled = true;
 	}
+
+    public static function resetLoggers() {
+        self::$logger = array();
+    }
     
     public static function addLogger ($logger,$reset = false) {
         if($reset) {
             self::$logger = array();
         }
         self::$logger[] = $logger;
-        self::$dummyMode = false;
+        self::$enabled = true;
     }
     
     public static function getLogger () {
@@ -42,12 +46,20 @@ class Logger {
 	}
 	
 	public static function initDummy() {
-		self::$dummyMode = true;
+		self::$enabled = false;
 	}
+
+    public static function disable() {
+        self::$enabled = false;
+    }
+
+    public static function enable() {
+        self::$enabled = true;
+    }
 	
 	public static function log ($message,$code=Zend_Log::INFO) {
 		
-		if(self::$dummyMode) {
+		if(!self::$enabled) {
 			return;
 		}
 		
