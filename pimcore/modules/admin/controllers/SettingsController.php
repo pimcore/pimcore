@@ -154,25 +154,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 }
             }
 
-            //cdn hosts - add as array
-            if (!empty($valueArray['outputfilters']['cdnhostnames'])) {
-                $hostNames = explode(",", $valueArray['outputfilters']['cdnhostnames']);
-                if (is_array($hostNames)) {
-                    foreach ($hostNames as $host) {
-                        $valueArray['outputfilters']['cdnhostnamesArray'][] = array("value" => $host);
-                    }
-                }
-            }
-            //cdn patterns - add as array
-            if (!empty($valueArray['outputfilters']['cdnpatterns'])) {
-                $patterns = explode(",", $valueArray['outputfilters']['cdnpatterns']);
-                if (is_array($patterns)) {
-                    foreach ($patterns as $pattern) {
-                        $valueArray['outputfilters']['cdnpatternsArray'][] = array("value" => $pattern);
-                    }
-                }
-            }
-
             //debug email addresses - add as array ckogler
             if (!empty($valueArray['email']['debug']['emailaddresses'])) {
                 $emailAddresses = explode(",", $valueArray['email']['debug']['emailaddresses']);
@@ -325,11 +306,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "lesscpath" => $values["outputfilters.lesscpath"],
                     "cssminify" => $values["outputfilters.cssminify"],
                     "javascriptminify" => $values["outputfilters.javascriptminify"],
-                    "javascriptminifyalgorithm" => $values["outputfilters.javascriptminifyalgorithm"],
-                    "htmlminify" => $values["outputfilters.htmlminify"],
-                    "cdn" => $values["outputfilters.cdn"],
-                    "cdnhostnames" => $values["outputfilters.cdnhostnames"],
-                    "cdnpatterns" => $values["outputfilters.cdnpatterns"]
+                    "javascriptminifyalgorithm" => $values["outputfilters.javascriptminifyalgorithm"]
                 ),
                 "email" => array(
                     "sender" => array(
