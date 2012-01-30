@@ -57,21 +57,6 @@ pimcore.settings.system = Class.create({
                     });
                 }
 
-                //cdn patterns
-                try {
-                    this.cdnPatternsStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        data: this.data.values.outputfilters,
-                        root: 'cdnpatternsArray',
-                        fields: ['value']
-                    });
-                } catch(e) {
-                    this.cdnPatternsStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        fields: ['value']
-                    });
-                }
-
                 //email - debug email addresses ckogler
                  try {
                     this.emailDebugAddressesStore = new Ext.data.JsonStore({
@@ -82,21 +67,6 @@ pimcore.settings.system = Class.create({
                     });
                 } catch(e) {
                     this.emailDebugAddressesStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        fields: ['value']
-                    });
-                }
-
-                //cdn host names
-                try {
-                    this.cdnHostsStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        data: this.data.values.outputfilters,
-                        root: 'cdnhostnamesArray',
-                        fields: ['value']
-                    });
-                } catch(e) {
-                    this.cdnHostsStore = new Ext.data.JsonStore({
                         autoDestroy: true,
                         fields: ['value']
                     });
@@ -1059,79 +1029,6 @@ pimcore.settings.system = Class.create({
                                 triggerAction: "all",
                                 editable: false,
                                 style: "margin-bottom: 15px;"
-                            },
-                            {
-                                fieldLabel: t("minify_html"),
-                                xtype: "checkbox",
-                                name: "outputfilters.htmlminify",
-                                checked: this.getValue("outputfilters.htmlminify"),
-                                style: "margin-bottom: 15px;"
-                            },
-                            {
-                                fieldLabel: t("cdn"),
-                                xtype: "checkbox",
-                                name: "outputfilters.cdn",
-                                checked: this.getValue("outputfilters.cdn")
-                            },
-                            {
-                                xtype: 'superboxselect',
-                                allowBlank:true,
-                                queryDelay: 100,
-                                triggerAction: 'all',
-                                resizable: true,
-                                mode: 'local',
-                                anchor:'100%',
-                                minChars: 2,
-                                fieldLabel: t('cdn_hostnames'),
-                                name: 'outputfilters.cdnhostnames',
-                                value: this.getValue("outputfilters.cdnhostnames"),
-                                emptyText: t("superselectbox_empty_text"),
-                                store: this.cdnHostsStore,
-                                fields: ['value'],
-                                displayField: 'value',
-                                valueField: 'value',
-                                allowAddNewData: true,
-                                ctCls: 'superselect-no-drop-down',
-                                listeners: {
-                                    newitem: function(bs, v, f) {
-                                        v = v + '';
-                                        var newObj = {
-                                            value: v
-                                        };
-                                        bs.addNewItem(newObj);
-                                    }
-                                }
-
-                            },
-                            {
-                                xtype: 'superboxselect',
-                                allowBlank:true,
-                                queryDelay: 100,
-                                triggerAction: 'all',
-                                resizable: true,
-                                mode: 'local',
-                                anchor:'100%',
-                                minChars: 2,
-                                fieldLabel: t('cdn_include_patterns'),
-                                name: 'outputfilters.cdnpatterns',
-                                value: this.getValue("outputfilters.cdnpatterns"),
-                                emptyText: t("superselectbox_empty_text"),
-                                store: this.cdnPatternsStore,
-                                fields: ['value'],
-                                displayField: 'value',
-                                valueField: 'value',
-                                allowAddNewData: true,
-                                ctCls: 'superselect-no-drop-down',
-                                listeners: {
-                                    newitem: function(bs, v, f) {
-                                        v = v + '';
-                                        var newObj = {
-                                            value: v
-                                        };
-                                        bs.addNewItem(newObj);
-                                    }
-                                }
-
                             }
                         ]
                     },{

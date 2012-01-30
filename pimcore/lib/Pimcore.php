@@ -76,9 +76,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_Analytics(), 798);
             $front->registerPlugin(new Pimcore_Controller_Plugin_CssMinify(), 800);
             $front->registerPlugin(new Pimcore_Controller_Plugin_JavascriptMinify(), 801);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_HtmlMinify(), 802);
             $front->registerPlugin(new Pimcore_Controller_Plugin_ImageDataUri(), 803);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_CDN(), 804);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
 
