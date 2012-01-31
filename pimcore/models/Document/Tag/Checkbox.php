@@ -72,7 +72,7 @@ class Document_Tag_Checkbox extends Document_Tag {
      * @return boolean
      */
     public function isEmpty() {
-        return $this->value;
+        return !$this->value;
     }
 
     /**
