@@ -234,7 +234,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $object = Object_Abstract::getById(intval($this->_getParam("id")));
 
         // set the latest available version for editmode
-        $object = $this->getLatestVersion($object);
+        $latestObject = $this->getLatestVersion($object);
+
+        // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
+        $objectFromVersion = $latestObject === $object ? false : true;
+        $object = $latestObject;
+
         if ($object->isAllowed("view")) {
 
             $objectData = array();
@@ -242,7 +247,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["idPath"] = Pimcore_Tool::getIdPathForElement($object);
             $objectData["previewUrl"] = $object->getClass()->getPreviewUrl();
             $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
-            $this->getDataForObject($object);
+            $this->getDataForObject($object, $objectFromVersion);
             $objectData["data"] = $this->objectData;
             $objectData["metaData"] = $this->metaData;
 
@@ -280,9 +285,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     private $objectData;
     private $metaData;
 
-    private function getDataForObject(Object_Concrete $object) {
+    private function getDataForObject(Object_Concrete $object, $objectFromVersion = false) {
         foreach ($object->getClass()->getFieldDefinitions() as $key => $def) {
-            $this->getDataForField($object, $key, $def);
+            $this->getDataForField($object, $key, $def, $objectFromVersion);
         }
     }
 
@@ -294,12 +299,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
      * @param  $fielddefinition
      * @return void
      */
-    private function getDataForField($object, $key, $fielddefinition, $level = 0) {
+    private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0) {
         $parent = Object_Service::hasInheritableParentObject($object);
         $getter = "get" . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
-        if ($fielddefinition instanceof Object_Class_Data_Relations_Abstract and $fielddefinition->getLazyLoading() and !$fielddefinition instanceof Object_Class_Data_ObjectsMetadata) {
+        if (!$objectFromVersion && $fielddefinition instanceof Object_Class_Data_Relations_Abstract and $fielddefinition->getLazyLoading() and !$fielddefinition instanceof Object_Class_Data_ObjectsMetadata) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {
@@ -311,7 +316,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
             $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             if(empty($relations) && !empty($parent)) {
-                $this->getDataForField($parent, $key, $fielddefinition, $level + 1);
+                $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $data = array();
 
@@ -332,9 +337,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
         } else {
-            $value = $fielddefinition->getDataForEditmode($object->$getter(), $object);
+            $value = $fielddefinition->getDataForEditmode($object->$getter(), $object, $objectFromVersion);
             if(empty($value) && !empty($parent)) {
-                $this->getDataForField($parent, $key, $fielddefinition, $level + 1);
+                $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $level != 0;
                 $this->metaData[$key]['objectid'] = $object->getId();

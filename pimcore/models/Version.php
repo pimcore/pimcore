@@ -125,6 +125,12 @@ class Version extends Pimcore_Model_Abstract {
         $data = $this->getData();
         // if necessary convert the data to save it to filesystem
         if (is_object($data) or is_array($data)) {
+
+            // this is because of lazy loaded element inside documents and objects (eg: multihref, objects, fieldcollections, ...)
+            if($data instanceof Element_Interface) {
+                Element_Service::loadAllFields($data);
+            }
+
             $this->setSerialized(true);
             $data->_fulldump = true;
             $dataString = Pimcore_Tool_Serialize::serialize($this->getData());

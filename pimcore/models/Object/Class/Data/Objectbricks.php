@@ -43,7 +43,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param null|Object_Abstract $object
      * @return string
      */
-    public function getDataForEditmode($data, $object = null)
+    public function getDataForEditmode($data, $object = null, $objectFromVersion = null)
     {
         $editmodeData = array();
 
@@ -51,20 +51,20 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             $getters = $data->getBrickGetters();
 
             foreach ($getters as $getter) {
-                $editmodeData[] = $this->doGetDataForEditmode($data, $getter);
+                $editmodeData[] = $this->doGetDataForEditmode($data, $getter, $objectFromVersion);
             }
         }
 
         return $editmodeData;
     }
 
-    private function doGetDataForEditmode($data, $getter, $level = 0) {
+    private function doGetDataForEditmode($data, $getter, $objectFromVersion, $level = 0) {
 //        p_r($data); die();
         $parent = Object_Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
         if(!$item && !empty($parent)) {
             $data = $parent->{"get" . ucfirst($this->getName())}();
-            return $this->doGetDataForEditmode($data, $getter, $level + 1);
+            return $this->doGetDataForEditmode($data, $getter, $objectFromVersion, $level + 1);
         }
 
         if (!$item instanceof Object_Objectbrick_Data_Abstract) {
@@ -82,7 +82,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
         $inherited = false;
         foreach ($collectionDef->getFieldDefinitions() as $fd) {
-            $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter); //$fd->getDataForEditmode($item->{$fd->getName()});
+            $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $objectFromVersion); //$fd->getDataForEditmode($item->{$fd->getName()});
             $brickData[$fd->getName()] = $fieldData->objectData;
             $brickMetaData[$fd->getName()] = $fieldData->metaData;
             if($fieldData->metaData['inherited'] == true) {
@@ -108,13 +108,13 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param  $fielddefinition
      * @return void
      */
-    private function getDataForField($item, $key, $fielddefinition, $level = 0, $baseObject, $getter) {
+    private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion) {
         $result = new stdClass();
         $parent = Object_Service::hasInheritableParentObject($baseObject);
         $valueGetter = "get" . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
-        if (method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading() and !$fielddefinition instanceof Object_Class_Data_ObjectsMetadata) {
+        if (!$objectFromVersion && method_exists($fielddefinition, "getLazyLoading") and $fielddefinition->getLazyLoading() and !$fielddefinition instanceof Object_Class_Data_ObjectsMetadata) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {
@@ -128,7 +128,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             if(empty($relations) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}();
                 if(!empty($parentItem)) {
-                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
+                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
                 }
             }
             $data = array();
@@ -156,7 +156,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             if(empty($value) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
                 if(!empty($parentItem)) {
-                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter);
+                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
                 }
             }
             $result->objectData = $value;

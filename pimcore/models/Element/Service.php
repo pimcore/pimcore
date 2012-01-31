@@ -553,4 +553,20 @@ class Element_Service
 
         return $path;
     }
+
+    /**
+     * @static
+     * @param Element_Interface $element
+     * @return Element_Interface
+     */
+    public static function loadAllFields (Element_Interface $element) {
+
+        if($element instanceof Document) {
+            Document_Service::loadAllDocumentFields($element);
+        } else if ($element instanceof Object_Concrete) {
+            Object_Service::loadAllObjectFields($element);
+        }
+
+        return $element;
+    }
 }
