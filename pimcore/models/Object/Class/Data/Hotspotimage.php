@@ -141,7 +141,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
      */
     public function getVersionPreview($data) {
         if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset_Image) {
-            return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getId() . '/width/100/height/100/aspectratio/true" />';
+            return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getImage()->getId() . '/width/100/height/100/aspectratio/true" />';
         }
     }
 
