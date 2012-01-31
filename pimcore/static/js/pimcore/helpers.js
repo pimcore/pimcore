@@ -29,6 +29,7 @@ pimcore.helpers.openAsset = function (id, type) {
             pimcore.globalmanager.add("asset_" + id, new pimcore.asset[type](id));
         }
 
+        pimcore.helpers.rememberOpenTab("asset_" + id + "_" + type);
     }
     else {
         pimcore.globalmanager.get("asset_" + id).activate();
@@ -50,6 +51,7 @@ pimcore.helpers.openDocument = function (id, type) {
         if (pimcore.document[type]) {
             pimcore.helpers.addTreeNodeLoadingIndicator("document", id);
             pimcore.globalmanager.add("document_" + id, new pimcore.document[type](id));
+            pimcore.helpers.rememberOpenTab("document_" + id + "_" + type);
         }
     }
     else {
@@ -77,6 +79,7 @@ pimcore.helpers.openObject = function (id, type) {
         }
 
         pimcore.globalmanager.add("object_" + id, new pimcore.object[type](id));
+        pimcore.helpers.rememberOpenTab("object_" + id + "_" + type);
     }
     else {
         var tab = pimcore.globalmanager.get("object_" + id);
@@ -780,6 +783,57 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
     }
 };
 
+pimcore.helpers.rememberOpenTab = function (item) {
+    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
+    var openTabs = [];
+    if(openTabsCsv) {
+        openTabs = openTabsCsv.split(",");
+    }
+
+    if(!in_array(item, openTabs)) {
+        openTabs.push(item);
+    }
+
+    Ext.util.Cookies.set("pimcore_opentabs", "," + openTabs.join(",") + ",");
+}
+
+pimcore.helpers.forgetOpenTab = function (item) {
+    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
+    if(openTabsCsv) {
+        openTabsCsv = str_replace("," + item + ",", "", openTabsCsv);
+    }
+    Ext.util.Cookies.set("pimcore_opentabs", openTabsCsv);
+}
+
+pimcore.helpers.openMemorizedTabs = function () {
+    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
+    var openTabs = [];
+    var parts = [];
+    var openedTabs = [];
+    if(openTabsCsv) {
+        openTabs = openTabsCsv.split(",");
+    }
+
+    for(var i=0; i<openTabs.length; i++) {
+        if(!empty(openTabs[i])) {
+            if(!in_array(openTabs[i], openedTabs)) {
+                parts = openTabs[i].split("_");
+                window.setTimeout(function (parts) {
+                    if(parts[1] && parts[2]) {
+                        if(parts[0] == "asset") {
+                            pimcore.helpers.openAsset(parts[1], parts[2]);
+                        } else if(parts[0] == "document") {
+                            pimcore.helpers.openDocument(parts[1], parts[2]);
+                        } else if(parts[0] == "object") {
+                            pimcore.helpers.openObject(parts[1], parts[2]);
+                        }
+                    }
+                }.bind(this, parts), 200);
+            }
+            openedTabs.push(openTabs[i]);
+        }
+    }
+}
 
 
 pimcore.helpers.startPong = function () {

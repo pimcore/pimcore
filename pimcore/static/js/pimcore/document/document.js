@@ -101,11 +101,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     activate: function () {
-
         var tabId = "document_" + this.id;
         this.tabPanel.activate(tabId);
-
-
     },
 
     save : function (task, only) {

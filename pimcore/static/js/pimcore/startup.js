@@ -330,6 +330,13 @@ Ext.onReady(function() {
             }
         });
 
+        // open previous opened tabs after the trees are ready
+        pimcore.layout.treepanelmanager.addOnReadyCallback(function () {
+            window.setTimeout(function () {
+                pimcore.helpers.openMemorizedTabs();
+            }, 500);
+        });
+
         // add sidebar panels
         var user = pimcore.globalmanager.get("user");
         var treepanel = Ext.getCmp("pimcore_panel_tree_left");

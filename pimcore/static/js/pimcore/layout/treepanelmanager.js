@@ -19,6 +19,7 @@ pimcore.layout.treepanelmanager = {
     finished: [],
     callbacks: {},
     inital: true,
+    onReadyCallback: [],
 
     /**
      * This method is called in the tree classes of the elements (document, asset, object, custom views, ...)
@@ -36,7 +37,7 @@ pimcore.layout.treepanelmanager = {
     startup: function () {
         if(this.items.length < 1) {
             // fire pimcoreReady because there is no treepanel
-            pimcore.plugin.broker.fireEvent("pimcoreReady", pimcore.viewport);
+            this.onReady();
         }
     },
 
@@ -61,10 +62,23 @@ pimcore.layout.treepanelmanager = {
         
         if(this.inital) {
             // all processed fire the pimcoreReady event
-            pimcore.plugin.broker.fireEvent("pimcoreReady", pimcore.viewport);
+            this.onReady();
         }
         
         this.inital = false;
+    },
+
+    onReady: function () {
+        for (var i=0; i<this.onReadyCallback.length; i++) {
+            if(typeof this.onReadyCallback[i] == "function") {
+                this.onReadyCallback[i]();
+            }
+        }
+        pimcore.plugin.broker.fireEvent("pimcoreReady", pimcore.viewport);
+    },
+
+    addOnReadyCallback: function (event) {
+        this.onReadyCallback.push(event);
     },
 
     toLeft: function () {

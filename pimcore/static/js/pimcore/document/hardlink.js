@@ -86,6 +86,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         // remove this instance when the panel is closed
         this.tab.on("destroy", function () {
             pimcore.globalmanager.remove("document_" + this.id);
+            pimcore.helpers.forgetOpenTab("document_" + this.id + "_hardlink");
         }.bind(this));
 
         this.tab.on("activate", function () {
