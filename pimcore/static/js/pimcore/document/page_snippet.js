@@ -54,6 +54,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
         this.tab.on("destroy", function () {
             pimcore.globalmanager.remove("document_" + this.id);
+            pimcore.helpers.forgetOpenTab("document_" + this.id + "_" + this.data.type);
         }.bind(this));
 
 

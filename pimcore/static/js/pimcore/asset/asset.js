@@ -142,6 +142,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         // remove this instance when the panel is closed
         this.tab.on("destroy", function () {
             pimcore.globalmanager.remove("asset_" + this.id);
+            pimcore.helpers.forgetOpenTab("asset_" + this.id + "_" + this.getType());
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {

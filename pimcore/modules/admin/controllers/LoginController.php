@@ -85,6 +85,14 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         }
     }
 
+    public function deeplinkAction () {
+        // check for deeplink
+        if($_SERVER["QUERY_STRING"]) {
+            setcookie("pimcore_opentabs", "," . $_SERVER["QUERY_STRING"] . ",", null, "/");
+        }
+        $this->_redirect("/admin/");
+    }
+
     public function loginAction() {
 
         $userInactive = false;

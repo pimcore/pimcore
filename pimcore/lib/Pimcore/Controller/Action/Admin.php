@@ -90,7 +90,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             }
 
             // redirect to the login-page if the user isn't authenticated
-            if (!$this->getUser() instanceof User && !($this->_getParam("module") == "admin" && $this->_getParam("controller") == "login")) {
+            if (!$this->getUser() instanceof User && !($this->_getParam("module") == "admin" && ($this->_getParam("controller") == "login" || $this->_getParam("controller") == "deeplink"))) {
                 $this->_redirect("/admin/login");
                 $this->getResponse()->sendResponse();
                 exit;
