@@ -37,7 +37,10 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
                     }
                 }
             }
-            return true;
+            //set is only bookable when price is valid!!! //
+            /** @var $priceInfo OnlineShop_Boesch_SetPriceInfo */
+            $priceInfo =$this->getOSPriceInfo($quantityScale,$products);
+            return $priceInfo!=null&&$priceInfo->isPriceValid();
         } else {
             return false;
         }

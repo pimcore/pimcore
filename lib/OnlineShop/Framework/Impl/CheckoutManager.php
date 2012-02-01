@@ -98,7 +98,7 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
 
         $code .= "
             _gaq.push(['_addTrans',
-              '" . $order->getId() . "',           // order ID - required
+              '" . $order->getOrdernumber() . "',           // order ID - required
               '',  // affiliation or store name
               '" . $order->getTotalPrice() . "',          // total - required
               '',           // tax
@@ -114,11 +114,11 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
             foreach($items as $item) {
                 $code .= "
                     _gaq.push(['_addItem',
-                        '" . $order->getId() . "', // order ID - required
+                        '" . $order->getOrdernumber() . "', // order ID - required
                         '" . $item->getProductNumber() . "', // SKU/code - required
                         '" . $item->getProductName() . "', // product name
                         '',   // category or variation
-                        '" . $item->getTotalPrice() . "', // unit price - required
+                        '" . $item->getTotalPrice() / $item->getAmount() . "', // unit price - required
                         '" . $item->getAmount() . "'      // quantity - required
                     ]);
                 \n";
