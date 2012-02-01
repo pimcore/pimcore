@@ -203,7 +203,7 @@ class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implemen
      /**
      * @return OnlineShop_Framework_AbstractSetProductEntry[]
      */
-    protected  function getSetEntries() {
+    public function getSetEntries() {
         $products = array();
         foreach ($this->getSubItems() as $item) {
             $products[] = new OnlineShop_Framework_AbstractSetProductEntry($item->getProduct(), $item->getCount());

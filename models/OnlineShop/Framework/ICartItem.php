@@ -68,6 +68,17 @@ interface OnlineShop_Framework_ICartItem {
 
     /**
      * @abstract
+     * @return string
+     */
+    public function getComment();
+
+    /**
+     * @return OnlineShop_Framework_AbstractSetProductEntry[]
+     */
+    public function getSetEntries();
+
+    /**
+     * @abstract
      * @return OnlineShop_Framework_IAvailability
      */
     public function getAvailabilityInfo();

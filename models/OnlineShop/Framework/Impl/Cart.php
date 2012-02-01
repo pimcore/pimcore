@@ -100,7 +100,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
     public function getIsBookable() {
         foreach($this->getItems() as $item) {
-            if(!$item->getProduct()->getOSIsBookable($item->getCount())) {
+            if(!$item->getProduct()->getOSIsBookable($item->getCount(), $item->getSetEntries())) {
                 return false;
             }
         }
