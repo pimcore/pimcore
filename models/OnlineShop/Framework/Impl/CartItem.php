@@ -9,6 +9,7 @@ class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implemen
     protected $productId;
     protected $itemKey;
     protected $count;
+    protected $comment;
     protected $parentItemKey = "";
 
     protected $subItems = null;
@@ -210,4 +211,20 @@ class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implemen
         return $products;
 
     }
+
+    /**
+     * @param string $comment
+     */
+    public function setComment($comment) {
+        $this->comment = $comment;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComment() {
+        return $this->comment;
+    }
+
+
 }
