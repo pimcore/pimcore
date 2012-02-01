@@ -125,54 +125,51 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
             if ($fd) {
                 if ($fd->getQueryColumnType()) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
-                    if (!is_array($this->model->$key)) {
-                        $method = "get" . $key;
-                        $insertData = $fd->getDataForQueryResource($this->model->$method(), $object);
-                        
+
+                    $method = "get" . $key;
+                    $insertData = $fd->getDataForQueryResource($this->model->$method(), $object);
+
+                    if (is_array($insertData)) {
+                        $data = array_merge($data, $insertData);
+                    }
+                    else {
+                        $data[$key] = $insertData;
+                    }
+
+
+                    //get changed fields for inheritance
+                    if($fd->isRelationType()) {
                         if (is_array($insertData)) {
-                            $data = array_merge($data, $insertData);
-                        }
-                        else {
-                            $data[$key] = $insertData;
-                        }
-
-
-                        //get changed fields for inheritance
-                        if($fd->isRelationType()) {
-                            if (is_array($insertData)) {
-                                $doInsert = false;
-                                foreach($insertData as $insertDataKey => $insertDataValue) {
-                                    if($oldData[$insertDataKey] != $insertDataValue) {
-                                        $doInsert = true;
-                                    }
-                                }
-
-                                if($doInsert) {
-                                    $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
-                                }
-                            } else {
-                                if($oldData[$key] != $insertData) {
-                                    $this->inheritanceHelper->addRelationToCheck($key);
+                            $doInsert = false;
+                            foreach($insertData as $insertDataKey => $insertDataValue) {
+                                if($oldData[$insertDataKey] != $insertDataValue) {
+                                    $doInsert = true;
                                 }
                             }
 
+                            if($doInsert) {
+                                $this->inheritanceHelper->addRelationToCheck($key, array_keys($insertData));
+                            }
                         } else {
-                            if (is_array($insertData)) {
-                                foreach($insertData as $insertDataKey => $insertDataValue) {
-                                    if($oldData[$insertDataKey] != $insertDataValue) {
-                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey);
-                                    }
-                                }
-                            } else {
-                                if($oldData[$key] != $insertData) {
-                                    $this->inheritanceHelper->addFieldToCheck($key);
-                                }
+                            if($oldData[$key] != $insertData) {
+                                $this->inheritanceHelper->addRelationToCheck($key);
                             }
                         }
 
                     } else {
-                        Logger::debug("Excluding untouchable query value for object - objectbrick [ " . $object->getId() . " ]  key [ $key ] because it has not been loaded");
+                        if (is_array($insertData)) {
+                            foreach($insertData as $insertDataKey => $insertDataValue) {
+                                if($oldData[$insertDataKey] != $insertDataValue) {
+                                    $this->inheritanceHelper->addFieldToCheck($insertDataKey);
+                                }
+                            }
+                        } else {
+                            if($oldData[$key] != $insertData) {
+                                $this->inheritanceHelper->addFieldToCheck($key);
+                            }
+                        }
                     }
+
                 }
             }
         }
