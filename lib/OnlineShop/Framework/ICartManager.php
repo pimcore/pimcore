@@ -4,16 +4,15 @@ interface OnlineShop_Framework_ICartManager extends OnlineShop_Framework_ICompon
     /**
      * @abstract
      * @param OnlineShop_Framework_AbstractProduct $product
-     * @param int $count
-     * @param string $itemKey
-     * @param bool replace replace item if same key already exists
-     * @param array $params optional addtional item informations
+     * @param $count
+     * @param $key
+     * @param null $itemKey
+     * @param bool $replace  replace item if same key already exists
+     * @param array $params  optional addtional item informations
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $subProducts
-     * @param int $key optional identification of cart in case of multicart (cartId)
-     * @return string $itemKey
-    */
-    public function addToCart(OnlineShop_Framework_AbstractProduct $product, $count,  $key ,$itemKey = null, $replace = false, $params = array(), $subProducts = array());
-
+     * @param null $comment
+     */
+    public function addToCart(OnlineShop_Framework_AbstractProduct $product, $count,  $key ,$itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * @abstract

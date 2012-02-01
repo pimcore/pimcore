@@ -59,22 +59,23 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
     }
 
     /**
-     * @throws OnlineShop_Framework_Exception_InvalidConfigException
      * @param OnlineShop_Framework_AbstractProduct $product
      * @param $count
+     * @param $key
      * @param null $itemKey
      * @param bool $replace
      * @param array $params
      * @param array $subProducts
-     * @param null $key
-     * @return string $itemKey
+     * @param null $comment
+     * @return string
+     * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
-    public function addToCart(OnlineShop_Framework_AbstractProduct $product, $count,  $key , $itemKey = null, $replace = false, $params = array(), $subProducts = array()) {
+    public function addToCart(OnlineShop_Framework_AbstractProduct $product, $count,  $key , $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
         if(empty($key) || !array_key_exists($key, $this->carts)) {
             throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart " . $key . " not found.");
         }
 
-        $itemKey = $this->carts[$key]->addItem($product, $count, $itemKey, $replace, $params, $subProducts);
+        $itemKey = $this->carts[$key]->addItem($product, $count, $itemKey, $replace, $params, $subProducts, $comment);
         $this->save();
         return $itemKey;
     }

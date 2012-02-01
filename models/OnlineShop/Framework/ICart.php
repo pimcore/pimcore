@@ -22,9 +22,10 @@ interface OnlineShop_Framework_ICart {
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item informations
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $subProducts
+     * @param string $comment
      * @return string $itemKey
      */
-    public function addItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array());
+    public function addItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
 
     /**
@@ -34,9 +35,10 @@ interface OnlineShop_Framework_ICart {
      * @param int $count
      * @param array $params optional additional item informations
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $subProducts
+     * @param string $comment
      * @return string $itemKey
      */
-    public function updateItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array());
+    public function updateItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null);
 
     /**
      * @abstract

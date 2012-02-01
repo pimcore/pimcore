@@ -18,7 +18,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      */
     protected $priceCalcuator;
 
-    public function addItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array()) {
+    public function addItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
 
         if(empty($itemKey)) {
             $itemKey = $product->getId();
@@ -28,10 +28,10 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
             }
         }
 
-        return $this->updateItem($itemKey, $product, $count, $replace, $params, $subProducts);
+        return $this->updateItem($itemKey, $product, $count, $replace, $params, $subProducts, $comment);
     }
 
-    public function updateItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array()) {
+    public function updateItem($itemKey, OnlineShop_Framework_AbstractProduct $product, $count, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
 
         $item = $this->items[$itemKey];
         if (empty($item)) {
@@ -41,6 +41,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
         $item->setProduct($product);
         $item->setItemKey($itemKey);
+        $item->setComment($comment);
         if($replace) {
             $item->setCount($count);
         } else {
