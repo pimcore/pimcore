@@ -105,7 +105,9 @@ class Document_Service extends Element_Service {
                 if (!$layoutEnabledInCurrentAction) {
                     $layout->disableLayout();
                 } else {
-                    Zend_Layout::startMvc();
+                    $layout = Zend_Layout::startMvc();
+                    $layout->setViewSuffix(Pimcore_View::getViewScriptSuffix()); // set pimcore specifiy view suffix
+                    $view->getHelper("Layout")->setLayout($layout);
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
 
