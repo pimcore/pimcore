@@ -90,12 +90,15 @@ pimcore.document.pages.settings = Class.create({
                 this.urlAliasPanel.doLayout();
             }.bind(this);
 
+            var user = pimcore.globalmanager.get("user");
+
             this.urlAliasPanel = new Ext.form.FieldSet({
                 title: t("path_aliases") + " (" + t("redirects") + ")",
                 collapsible: false,
                 autoHeight:true,
                 width: 700,
                 style: "margin-top: 20px;",
+                disabled: !user.isAllowed("redirects"),
                 items: [],
                 buttons: [{
                     text: t("add"),
@@ -106,11 +109,6 @@ pimcore.document.pages.settings = Class.create({
 
             for(var r=0; r<this.page.data.redirects.length; r++) {
                 addUrlAlias(this.page.data.redirects[r].source, this.page.data.redirects[r]["id"]);
-            }
-
-            var user = pimcore.globalmanager.get("user");
-            if(!user.isAllowed("redirects")) {
-                this.urlAliasPanel.deactivate();
             }
 
             this.layout = new Ext.FormPanel({
