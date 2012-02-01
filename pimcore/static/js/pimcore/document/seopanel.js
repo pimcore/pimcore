@@ -85,14 +85,6 @@ pimcore.document.seopanel = Class.create({
             dataIndex: 'description',
             width: 400
         },{
-            header: t("links"),
-            dataIndex: 'links',
-            width: 50
-        },{
-            header: t("external_links"),
-            dataIndex: 'externallinks',
-            width: 90
-        },{
             header: "H1",
             dataIndex: 'h1',
             width: 25
@@ -112,6 +104,14 @@ pimcore.document.seopanel = Class.create({
             header: t("images_without_alt"),
             dataIndex: 'imgwithoutalt',
             width: 120
+        },{
+            header: t("links"),
+            dataIndex: 'links',
+            width: 50
+        },{
+            header: t("external_links"),
+            dataIndex: 'externallinks',
+            width: 90
         }/*,{
             header: '',
             dataIndex: "id",
