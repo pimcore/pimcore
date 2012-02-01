@@ -1012,7 +1012,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             $nodeConfig["imgwithoutalt"] = 0;
 
                             try {
-                                $content = Document_Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
+
+                                // cannot use the rendering service from Document_Service::render() because of singleton's ...
+                                // $content = Document_Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
+                                $contentUrl = $this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $childDocument->getFullPath();
+                                $content = Pimcore_Tool::getHttpData($contentUrl);
+
                                 if($content) {
                                     $html = str_get_html($content);
                                     if($html) {
