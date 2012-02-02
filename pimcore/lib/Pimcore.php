@@ -53,13 +53,6 @@ class Pimcore {
             }
         }
 
-        // set timezone
-        if ($conf instanceof Zend_Config) {
-            if ($conf->general->timezone) {
-                date_default_timezone_set($conf->general->timezone);
-            }
-        }
-
         $front->registerPlugin(new Pimcore_Controller_Plugin_Maintenance(), 2);
 
 
@@ -551,6 +544,13 @@ class Pimcore {
         // init configuration
         try {
             $conf = Pimcore_Config::getSystemConfig();
+
+            // set timezone
+            if ($conf instanceof Zend_Config) {
+                if ($conf->general->timezone) {
+                    date_default_timezone_set($conf->general->timezone);
+                }
+            }
 
             $debug = self::inDebugMode();
             
