@@ -34,7 +34,7 @@ pimcore.settings.liveconnect = {
                     }
                 }.bind(this)
             },
-            html: '<iframe id="pimcore_liveconnect_iframe" allowTransparency="true" src="http://www.pimcore.org/liveconnect/?source=' + urlencode(window.location.href) + '" width="280" height="180" frameborder="0"></iframe>'
+            html: '<iframe id="pimcore_liveconnect_iframe" allowTransparency="true" src="https://www.pimcore.org/liveconnect/?source=' + urlencode(window.location.href) + '" width="280" height="180" frameborder="0"></iframe>'
         });
 
 

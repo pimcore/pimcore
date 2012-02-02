@@ -27,7 +27,7 @@
 
 <body>
 
-<iframe src="http://docs.google.com/viewer?embedded=true&url=<?php echo urlencode($this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $this->asset->getFullPath() . "?dc_=" . time()); ?>" frameborder="0" width="100%" height="100%"></iframe>
+<iframe src="https://docs.google.com/viewer?embedded=true&url=<?php echo urlencode($this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $this->asset->getFullPath() . "?dc_=" . time()); ?>" frameborder="0" width="100%" height="100%"></iframe>
 
 </body>
 </html>
