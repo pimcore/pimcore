@@ -118,7 +118,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
         var imageUrl = document.location.protocol + "//" + window.location.hostname + "/admin/asset/get-image-thumbnail/id/" + this.id + "/width/1000/aspectratio/true/pimcore_admin_sid/" + pimcore.settings.sessionId + "/" + this.data.filename;
         var targetUrl = document.location.protocol + "//" + window.location.hostname + "/admin/asset/save-image-pixlr/?pimcore_admin_sid=" + pimcore.settings.sessionId + "&id=" + this.id;
-        var editorUrl = "http://www.pixlr.com/" + type + "/?image=" + escape(imageUrl) + "&title=" + this.data.filename + "&locktitle=true&locktarget=true&locktype=" + imageType + "&wmode=transparent&target=" + escape(targetUrl);
+        var editorUrl = "https://www.pixlr.com/" + type + "/?image=" + escape(imageUrl) + "&title=" + this.data.filename + "&locktitle=true&locktarget=true&locktype=" + imageType + "&wmode=transparent&target=" + escape(targetUrl);
 
         if (type == "editor") {
             editorUrl = editorUrl + "&redirect=false";

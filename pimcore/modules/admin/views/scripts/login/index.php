@@ -137,7 +137,7 @@ $config = Pimcore_Config::getSystemConfig();
 </script>
 
 <?php if ($config->general->loginscreenimageservice) { ?>
-    <script type="text/javascript" src="http://www.pimcore.org/imageservice/?nocache=1"></script>
+    <script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1"></script>
 <?php } ?>
 
 </body>

@@ -129,10 +129,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 mapZoom = Math.min(Math.floor(xZoom), Math.floor(yZoom));
                 
                 var path = "color:0xff0000ff|weight:2|" + pointConfig.join("|");
-                mapUrl = "http://maps.googleapis.com/maps/api/staticmap?center=" + center.lat() + "," + center.lng() + "&zoom=" + mapZoom + "&size=" + px + "x" + py + "&path=" + path + "&sensor=false";
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.lat() + "," + center.lng() + "&zoom=" + mapZoom + "&size=" + px + "x" + py + "&path=" + path + "&sensor=false";
             }
             else {
-                mapUrl = "http://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size=" + px + "x" + py + "&sensor=false";
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size=" + px + "x" + py + "&sensor=false";
             }
         }
         catch (e) {
