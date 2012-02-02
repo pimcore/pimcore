@@ -38,6 +38,7 @@ Ext.onReady(function() {
     }
 
     // define some globals
+    Ext.chart.Chart.CHART_URL = '/pimcore/static/js/lib/ext/resources/charts.swf';
     Ext.QuickTips.init();
     Ext.Ajax.method = "get";
     Ext.Ajax.timeout = 900000;
