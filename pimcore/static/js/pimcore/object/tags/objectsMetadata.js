@@ -147,6 +147,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 editor: editor,
                 renderer: renderer,
                 listeners: listeners,
+                sortable: true,
                 width: width
             });
         }
