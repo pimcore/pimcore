@@ -115,7 +115,9 @@ class Install_IndexController extends Pimcore_Controller_Action {
                     ),
                     "default_controller" => "default",
                     "default_action" => "default",
-                    "error_page" => "/",
+                    "error_pages" => array(
+                        "default" => "/"
+                    ),
                     "allowtrailingslash" => "no",
                     "allowcapitals" => "no"
                 ),

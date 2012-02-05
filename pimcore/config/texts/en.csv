@@ -572,7 +572,7 @@
 "base","Base"
 "default_controller","Default controller"
 "default_action","Default action"
-"error_page","Error page"
+"error_pages","Error Pages"
 "no_preview_available","Sorry, no preview available"
 "add_object","Add object"
 "basic_configuration","Basic configuration"

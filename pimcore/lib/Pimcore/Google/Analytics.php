@@ -26,7 +26,7 @@ class Pimcore_Google_Analytics {
 
     public static function getSiteConfig ($site = null) {
         
-        $siteKey = Pimcore_Report::getSiteKey($site);
+        $siteKey = Pimcore_Tool_Frontend::getSiteKey($site);
         
         if(Pimcore_Config::getReportConfig()->analytics->sites->$siteKey) {
             return Pimcore_Config::getReportConfig()->analytics->sites->$siteKey;

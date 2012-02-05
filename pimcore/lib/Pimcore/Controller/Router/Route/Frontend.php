@@ -273,19 +273,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             $this->checkForRedirect(false);
         }
 
-        if (!$matchFound && $site instanceof Site) {
-            if ($config->general->domain) {
-                header("Location: http://" . $_SERVER["HTTP_HOST"], true, 301);
-            }
-            else {
-                $errorMessage = "You have to specify a main domain in system-settings (Settings -> System -> Website -> Domain) if you want to use sites!";
-                Logger::emerg($errorMessage);
-                die($errorMessage);
-            }
-            exit;
-        }
-
-
         if (!$matchFound) {
             return false;
         }
