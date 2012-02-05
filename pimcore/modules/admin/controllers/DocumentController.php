@@ -1068,5 +1068,65 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json($documents);
     }
 
+    /**
+     * page & snippet controller/action/template selector store providers
+     */
 
+
+    public function getAvailableControllersAction() {
+
+        $controllers = array();
+        $controllerFiles = scandir(PIMCORE_WEBSITE_PATH . "/controllers");
+        foreach ($controllerFiles as $file) {
+            $dat = array();
+            if(strpos($file, ".php") !== false) {
+                $file = lcfirst(str_replace("Controller.php","",$file));
+                $dat["name"] = strtolower(preg_replace("/[A-Z]/","-\\0", $file));
+                $controllers[] = $dat;
+            }
+        }
+
+        $this->_helper->json(array(
+            "data" => $controllers
+        ));
+    }
+
+    public function getAvailableActionsAction () {
+
+        $actions = array();
+        $controller = $this->_getParam("controllerName");
+        $controllerClass = str_replace("-", " ", $controller);
+        $controllerClass = str_replace(" ", "", ucwords($controllerClass));
+        $controllerFile = PIMCORE_WEBSITE_PATH . "/controllers/" . $controllerClass . "Controller.php";
+        if(is_file($controllerFile)) {
+            preg_match_all("/function[ ]+([a-zA-Z0-9]+)Action/i", file_get_contents($controllerFile), $matches);
+            foreach ($matches[1] as $match) {
+                $dat = array();
+                $dat["name"] = strtolower(preg_replace("/[A-Z]/","-\\0", $match));
+                $actions[] = $dat;
+            }
+        }
+
+        $this->_helper->json(array(
+            "data" => $actions
+        ));
+    }
+
+    public function getAvailableTemplatesAction () {
+
+        $templates = array();
+        $viewPath = PIMCORE_WEBSITE_PATH . "/views/scripts";
+        $files = rscandir($viewPath . "/");
+        foreach ($files as $file) {
+            $dat = array();
+            if(strpos($file, Pimcore_View::getViewScriptSuffix()) !== false) {
+                $dat["path"] = str_replace($viewPath, "", $file);
+                $templates[] = $dat;
+            }
+        }
+
+        $this->_helper->json(array(
+            "data" => $templates
+        ));
+    }
 }
