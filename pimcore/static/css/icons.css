@@ -1105,3 +1105,7 @@
 .pimcore_icon_open_in_new_window {
     background: url(/pimcore/static/img/icon/cursor.png) left center no-repeat !important;
 }
+
+.pimcore_icon_show_in_tree {
+    background: url(/pimcore/static/img/icon/application_side_tree.png) left center no-repeat !important;
+}

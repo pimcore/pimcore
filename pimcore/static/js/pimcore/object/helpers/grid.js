@@ -58,6 +58,7 @@ pimcore.object.helpers.grid = Class.create({
         // the store
         var readerFields = [];
         readerFields.push({name: "id", allowBlank: true});
+        readerFields.push({name: "idPath", allowBlank: true});
         readerFields.push({name: "fullpath", allowBlank: true});
         readerFields.push({name: "published", allowBlank: true});
         readerFields.push({name: "type", allowBlank: true});

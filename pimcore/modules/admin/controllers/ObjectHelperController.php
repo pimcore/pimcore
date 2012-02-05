@@ -93,9 +93,8 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             $count = 0;
 
             if(!$this->_getParam("no_system_columns")) {
+                $vis = $class->getPropertyVisibility();
                 foreach($systemColumns as $sc) {
-                    $vis = $class->getPropertyVisibility();
-
                     $key = $sc;
                     if($key == "fullpath") {
                         $key = "path";
