@@ -33,6 +33,7 @@ DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
+  `description` text,
   `creationDate` bigint(20) unsigned DEFAULT NULL,
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,

@@ -499,6 +499,13 @@ pimcore.object.classes.klass = Class.create({
                     width: 300,
                     value: this.data.name
                 },
+                {
+                    xtype: "textarea",
+                    fieldLabel: t("description"),
+                    name: "description",
+                    width: 300,
+                    value: this.data.description
+                },
                 this.allowInheritance,
                 this.allowVariants,
                 {
