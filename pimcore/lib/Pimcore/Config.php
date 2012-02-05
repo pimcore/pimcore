@@ -32,6 +32,9 @@ class Pimcore_Config {
                 self::setSystemConfig($config);
             } catch (Exception $e) {
                 Logger::emergency("Cannot find system configuration, should be located at: " . PIMCORE_CONFIGURATION_SYSTEM);
+                if(is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
+                    die("Your system.xml located at " . PIMCORE_CONFIGURATION_SYSTEM . " is invalid, please check and correct it manually!");
+                }
             }
         }
 
