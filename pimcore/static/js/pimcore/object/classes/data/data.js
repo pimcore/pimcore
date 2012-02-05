@@ -215,7 +215,7 @@ pimcore.object.classes.data.data = Class.create({
             "childs","values","cachetag","cachetags","parent","published","valuefromparent","userpermissions",
             "dependencies","modificationdate","usermodification","byid","bypath","data","versions","properties",
             "permissions","permissionsforuser","childamount","apipluginbroker","resource","parentClass","definition",
-            "locked","language","omitmandatorycheck"
+            "locked","language","omitmandatorycheck", "idPath"
         ];
         var data = this.getData();
         data.name = trim(data.name);

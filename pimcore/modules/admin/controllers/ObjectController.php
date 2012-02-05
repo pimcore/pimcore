@@ -989,20 +989,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
 
         if ($this->_getParam("data")) {
-
-            if ($this->_getParam("xaction") == "destroy") {
-
-                // currently not supported
-
-                /*$id = Zend_Json::decode($this->_getParam("data"));
-
-                $object = Object_Abstract::getById($id);
-                $object->delete();
-
-                $this->_helper->json(array("success" => true, "data" => array()));
-                */
-            }
-            else if ($this->_getParam("xaction") == "update") {
+            if ($this->_getParam("xaction") == "update") {
 
                 $data = Zend_Json::decode($this->_getParam("data"));
 
@@ -1043,18 +1030,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 } catch (Exception $e) {
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
-
-
             }
-            else if ($this->_getParam("xaction") == "create") {
-                // currently not supported
-
-                /*
-                $object = new Object_Abstract();
-                $this->_helper->json(array("data" => Object_Service::gridObjectData($object), "success" => true));
-                */
-            }
-
         } else {
             // get list of objects
             $folder = Object_Abstract::getById($this->_getParam("folderId"));
@@ -1139,9 +1115,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $objects = array();
             foreach ($list->getObjects() as $object) {
-
                 $o = Object_Service::gridObjectData($object, $fields);
-
                 $objects[] = $o;
             }
             $this->_helper->json(array("data" => $objects, "success" => true, "total" => $list->getTotalCount()));

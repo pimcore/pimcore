@@ -196,6 +196,7 @@ class Object_Service extends Element_Service {
 
         if ($object instanceof Object_Concrete) {
             $data["classname"] = $object->geto_ClassName();
+            $data["idPath"] = Pimcore_Tool::getIdPathForElement($object);
             $data['inheritedFields'] = array();
 
             if(empty($fields)) {
