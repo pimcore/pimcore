@@ -60,7 +60,7 @@ class Pimcore_Resource_Mysql {
             Logger::warn($e);
         }
 
-        if(PIMCORE_DEVMODE) {
+        if(PIMCORE_DEVMODE && !$db->getProfiler()->getEnabled()) {
             $profiler = new Pimcore_Db_Profiler('All DB Queries');
             $profiler->setEnabled(true);
             $db->setProfiler($profiler);
