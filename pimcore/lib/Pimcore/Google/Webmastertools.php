@@ -27,7 +27,7 @@ class Pimcore_Google_Webmastertools {
 
     public static function getSiteConfig ($site = null) {
         
-        $siteKey = Pimcore_Report::getSiteKey($site);
+        $siteKey = Pimcore_Tool_Frontend::getSiteKey($site);
         
         if(Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey->profile) {
             return Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey;

@@ -227,6 +227,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // convert all special characters to their entities so the xml writer can put it into the file
             $values = array_htmlspecialchars($values);
 
+            $errorPages = array();
+            foreach ($values as $key => $value) {
+                if(strpos($key, "error_pages")) {
+                    $keySteps = explode(".",$key);
+                    $errorPages[$keySteps[2]] = $value;
+                }
+            }
+
             $settings = array(
                 "general" => array(
                     "timezone" => $values["general.timezone"],
@@ -262,7 +270,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     ),
                     "default_controller" => $values["documents.default_controller"],
                     "default_action" => $values["documents.default_action"],
-                    "error_page" => $values["documents.error_page"],
+                    "error_pages" => $errorPages,
                     "allowtrailingslash" => $values["documents.allowtrailingslash"],
                     "allowcapitals" => $values["documents.allowcapitals"]
                 ),

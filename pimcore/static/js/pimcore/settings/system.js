@@ -145,6 +145,15 @@ pimcore.settings.system = Class.create({
                 ]
             });
 
+            // sites error pages
+            var sitesErrorPagesFields = [];
+            var sites = pimcore.globalmanager.get("sites");
+            sitesErrorPagesFields.push(this.getErrorPageFieldConfig("default", t("main_site")));
+
+            sites.each(function (record) {
+                sitesErrorPagesFields.push(this.getErrorPageFieldConfig("site_" + record.data.id, record.data.domains.split(",")[0]));
+            }, this);
+
             // debug
             if (this.data.values.general.debug) {
                 this.data.values.general.debug = true;
@@ -587,34 +596,14 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("general.domain")
                             },
                             {
-                                fieldLabel: t('error_page'),
-                                name: 'documents.error_page',
-                                cls: "input_drop_target",
-                                value: this.getValue("documents.error_page"),
-                                width: 300,
-                                listeners: {
-                                    "render": function (el) {
-                                        new Ext.dd.DropZone(el.getEl(), {
-                                            reference: this,
-                                            ddGroup: "element",
-                                            getTargetFromEvent: function(e) {
-                                                return this.getEl();
-                                            }.bind(el),
-
-                                            onNodeOver : function(target, dd, e, data) {
-                                                return Ext.dd.DropZone.prototype.dropAllowed;
-                                            },
-
-                                            onNodeDrop : function (target, dd, e, data) {
-                                                if (data.node.attributes.elementType == "document") {
-                                                    this.setValue(data.node.attributes.path);
-                                                    return true;
-                                                }
-                                                return false;
-                                            }.bind(el)
-                                        });
-                                    }
-                                }
+                                xtype:'fieldset',
+                                title: t('error_pages'),
+                                collapsible: false,
+                                collapsed: false,
+                                autoHeight:true,
+                                labelWidth: 300,
+                                width: 600,
+                                items: sitesErrorPagesFields
                             }
                         ]
                     },
@@ -1205,6 +1194,7 @@ pimcore.settings.system = Class.create({
         pimcore.layout.refresh();
 
     },
+
     smtpAuthSelected: function(combo, record, index, forceDisable) {
         var disabled = true;
         if (index != 0 && !forceDisable) {
@@ -1216,6 +1206,40 @@ pimcore.settings.system = Class.create({
             this.layout.getForm().findField("system.settings.email.smtp.auth.username").setValue("");
             this.layout.getForm().findField("system.settings.email.smtp.auth.password").setValue("");
         }
+    },
+
+    getErrorPageFieldConfig: function (siteKey, labelText) {
+        return {
+            fieldLabel: labelText,
+            name: "documents.error_pages." + siteKey,
+            cls: "input_drop_target",
+            value: this.getValue("documents.error_pages." + siteKey),
+            width: 250,
+            xtype: "textfield",
+            listeners: {
+                "render": function (el) {
+                    new Ext.dd.DropZone(el.getEl(), {
+                        reference: this,
+                        ddGroup: "element",
+                        getTargetFromEvent: function(e) {
+                            return this.getEl();
+                        }.bind(el),
+
+                        onNodeOver : function(target, dd, e, data) {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        },
+
+                        onNodeDrop : function (target, dd, e, data) {
+                            if (data.node.attributes.elementType == "document") {
+                                this.setValue(data.node.attributes.path);
+                                return true;
+                            }
+                            return false;
+                        }.bind(el)
+                    });
+                }
+            }
+        };
     },
     
     checkVersionInputs: function (elementType, type, field, event) {

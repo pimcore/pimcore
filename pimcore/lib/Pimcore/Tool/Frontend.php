@@ -23,4 +23,31 @@ class Pimcore_Tool_Frontend {
     public static function getWebsiteConfig () {
         return Pimcore_Config::getWebsiteConfig();
     }
+
+    /**
+     * @static
+     * @param null|Site $site
+     * @return string
+     */
+    public static function getSiteKey (Site $site = null) {
+        // check for site
+        if(!$site) {
+            try {
+                $site = Zend_Registry::get("pimcore_site");
+            }
+            catch (Exception $e) {
+                $site = false;
+            }
+        }
+
+
+        if($site) {
+            $siteKey = "site_" . $site->getId();
+        }
+        else {
+            $siteKey = "default";
+        }
+
+        return $siteKey;
+    }
 }
