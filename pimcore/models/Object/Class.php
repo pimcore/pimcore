@@ -28,6 +28,11 @@ class Object_Class extends Pimcore_Model_Abstract {
     public $name;
 
     /**
+     * @var string
+     */
+    public $description;
+
+    /**
      * @var int
      */
     public $creationDate;
@@ -615,6 +620,22 @@ class Object_Class extends Pimcore_Model_Abstract {
     public function getPreviewUrl()
     {
         return $this->previewUrl;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
 
