@@ -81,6 +81,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         if($this->document->getProperty("language")) {
             $locale = new Zend_Locale($this->document->getProperty("language"));
 		    Zend_Registry::set('Zend_Locale', $locale);
+            $this->getResponse()->setHeader("Content-Language",strtolower(str_replace("_","-", (string) $locale)), true);
         }
 
 
