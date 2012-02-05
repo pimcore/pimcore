@@ -208,9 +208,14 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(this.data.id).getUI().addClass("pimcore_unpublished");
         } catch (e) {
         }
-        ;
 
         this.save("unpublish");
+    },
+
+    unpublishClose: function () {
+        this.unpublish();
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.remove(this.tab);
     },
 
     reload: function () {

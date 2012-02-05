@@ -240,11 +240,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 text: t('save'),
                 iconCls: "pimcore_icon_save_medium",
                 scale: "medium",
-                handler: this.save.bind(this),
+                handler: this.unpublish.bind(this),
                 menu:[{
                         text: t('save_close'),
                         iconCls: "pimcore_icon_save",
-                        handler: this.saveClose.bind(this)
+                        handler: this.unpublishClose.bind(this)
                     }]
             });
 
@@ -467,6 +467,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI().addClass("pimcore_unpublished");
             } catch (e) {};
         }
+    },
+
+    unpublishClose: function () {
+        this.unpublish();
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.remove(this.tab);
     },
 
     saveToSession: function (callback) {
