@@ -809,8 +809,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $config = new Asset_Video_Thumbnail_Config();
         $config->setName("pimcore_video_preview_" . $asset->getId());
-        $config->setAudioBitrate(128000);
-        $config->setVideoBitrate(700000);
+        $config->setAudioBitrate(128);
+        $config->setVideoBitrate(700);
 
         $config->setItems(array(
             array(

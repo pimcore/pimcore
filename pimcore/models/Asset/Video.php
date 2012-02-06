@@ -167,7 +167,7 @@ class Asset_Video extends Asset {
             } catch (Exception $e) {
                 Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath());
                 Logger::error($e);
-                return "/pimcore/static/img/image-not-supported.png";
+                return "/pimcore/static/img/filetype-not-supported.png";
             }
         }
 

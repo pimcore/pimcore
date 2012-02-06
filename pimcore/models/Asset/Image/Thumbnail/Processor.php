@@ -81,7 +81,7 @@ class Asset_Image_Thumbnail_Processor {
         // transform image
         $image = Asset_Image::getImageTransformInstance();
         if(!$image->load($fileSystemPath)) {
-            return "/pimcore/static/img/image-not-supported.png";
+            return "/pimcore/static/img/filetype-not-supported.png";
         }
 
         $transformations = $config->getItems();
