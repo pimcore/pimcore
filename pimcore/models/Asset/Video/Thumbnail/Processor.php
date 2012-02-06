@@ -88,6 +88,8 @@ class Asset_Video_Thumbnail_Processor {
                 } else {
                     return;
                 }
+            } else if($customSetting[$config->getName()]["status"] == "error") {
+                throw new Exception("Unable to convert video, see logs for details.");
             }
         }
 
@@ -158,6 +160,7 @@ class Asset_Video_Thumbnail_Processor {
         $instance = Pimcore_Tool_Serialize::unserialize(file_get_contents($instance->getJobFile()));
         $formats = array();
         $overallStatus = array();
+        $conversionStatus = "finished";
 
         // set overall status for all formats to 0
         foreach ($instance->queue as $converter) {
@@ -193,6 +196,8 @@ class Asset_Video_Thumbnail_Processor {
 
                 if($converter->getConversionStatus() !== "error") {
                     $formats[$converter->getFormat()] = str_replace(PIMCORE_DOCUMENT_ROOT, "", $converter->getDestinationFile());
+                } else {
+                    $conversionStatus = "error";
                 }
 
                 $converter->destroy();
@@ -216,7 +221,7 @@ class Asset_Video_Thumbnail_Processor {
             }
 
             $customSetting[$instance->getConfig()->getName()] = array(
-                "status" => "finished",
+                "status" => $conversionStatus,
                 "formats" => $formats
             );
             $asset->setCustomSetting("thumbnails", $customSetting);

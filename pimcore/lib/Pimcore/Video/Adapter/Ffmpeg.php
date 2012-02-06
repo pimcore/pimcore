@@ -147,6 +147,9 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
            || stripos($log, "incorrect parameters") !== false
            || stripos($log, "error") !== false) {
 
+            Logger::critical("Problem converting video: " . $this->file . " to format " . $this->getFormat());
+            Logger::critical($log);
+
             return "error";
         }
 
