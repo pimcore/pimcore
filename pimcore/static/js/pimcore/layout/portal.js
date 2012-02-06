@@ -86,7 +86,6 @@ pimcore.layout.portal = Class.create({
                 id: "pimcore_portal",
                 title: t("welcome"),
                 border: false,
-                layout: "fit",
                 iconCls: "pimcore_icon_welcome",
                 closable:true,
                 tbar: {
@@ -100,6 +99,8 @@ pimcore.layout.portal = Class.create({
                     {
                         xtype:'portal',
                         region:'center',
+                        autoScroll: false,
+                        autoHeight: true,
                         items:[
                             {
                                 id: "pimcore_portal_col0",
