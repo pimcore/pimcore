@@ -79,6 +79,12 @@ class Pimcore_Mail extends Zend_Mail
     protected $preventDebugInformationAppending = false;
 
     /**
+     * if true - the Pimcore debug mode is ignored
+     * @var bool
+     */
+    protected $ignoreDebugMode = false;
+
+    /**
      * Creates a new Pimcore_Mail object (extends Zend_Mail)
      *
      * @param array $options
@@ -155,6 +161,24 @@ class Pimcore_Mail extends Zend_Mail
         }
 
         $this->placeholderObject = new Pimcore_Placeholder();
+    }
+
+    /**
+     * To ignore the Pimcore debug mode
+     *
+     * @param bool $value
+     */
+    public function setIgnoreDebugMode($value){
+        $this->ignoreDebugMode = (bool)$value;
+    }
+
+    /**
+     * Checks if the Debug mode is ignored
+     *
+     * @return bool
+     */
+    public function getIgnoreDebugMode(){
+        return $this->ignoreDebugMode;
     }
 
     /**
@@ -467,7 +491,9 @@ class Pimcore_Mail extends Zend_Mail
             $this->setBodyText($this->getBodyTextRendered());
         }
 
-        $this->checkDebugMode();
+        if($this->ignoreDebugMode == false){
+            $this->checkDebugMode();
+        }
 
         $result = parent::send($transport);
 
