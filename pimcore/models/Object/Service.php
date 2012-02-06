@@ -243,7 +243,7 @@ class Object_Service extends Element_Service {
 
                         if(method_exists($def, "getDataForGrid")) {
                             $tempData = $def->getDataForGrid($valueObject->value, $object);
-                            if(is_object($tempData)) {
+                            if($def instanceof Object_Class_Data_Localizedfields) {
                                 foreach($tempData as $tempKey => $tempValue) {
                                     $data[$tempKey] = $tempValue;
                                 }
