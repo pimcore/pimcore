@@ -875,12 +875,20 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $assets = array();
 
         foreach ($list as $asset) {
-            if (method_exists($asset, "getThumbnail")) {
+
+            $thumbnailMethod = "";
+            if ($asset instanceof Asset_Image) {
+                $thumbnailMethod = "getThumbnail";
+            } else if ($asset instanceof Asset_Video && Pimcore_Video::isAvailable()) {
+                $thumbnailMethod = "getImageThumbnail";
+            }
+
+            if (!empty($thumbnailMethod)) {
                 $assets[] = array(
                     "id" => $asset->getId(),
                     "type" => $asset->getType(),
                     "filename" => $asset->getFilename(),
-                    "url" => $asset->getThumbnail(array(
+                    "url" => $asset->$thumbnailMethod(array(
                         "contain" => true,
                         "width" => 250,
                         "height" => 250,

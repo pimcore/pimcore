@@ -142,6 +142,14 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
         $log = file_get_contents($this->getConversionLogFile());
 
+        // check if the conversion failed
+        if(stripos($log, "Invalid data found when processing") !== false
+           || stripos($log, "incorrect parameters") !== false
+           || stripos($log, "error") !== false) {
+
+            return "error";
+        }
+
         // get total video duration
         preg_match("/Duration: ([0-9:\.]+),/", $log, $matches);
         $durationRaw = $matches[1];
@@ -173,11 +181,6 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
         if(!$percent) {
             $percent = 1;
-        }
-
-        // check if the conversion failed
-        if(stripos($log, "Invalid data found when processing") !== false || stripos($log, "incorrect parameters") !== false || stripos($log, "error") !== false) {
-            return "error";
         }
 
         return $percent;
