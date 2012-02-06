@@ -42,6 +42,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     getGridColumnConfig: function(field) {
 
         return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
+            console.log(value);
             if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.css += " grid_value_inherited";
             }

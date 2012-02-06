@@ -238,8 +238,7 @@ class Object_Class_Data_Hotspotimage extends Object_Class_Data_Image {
     public function getDataForGrid($data, $object = null) {
 
         if ($data instanceof Object_Data_Hotspotimage && $data->getImage() instanceof Asset) {
-            //return $data->getImage();
-            return null;
+            return $data->getImage();
         } else {
             return null;
         }
