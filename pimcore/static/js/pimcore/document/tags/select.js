@@ -28,7 +28,7 @@ pimcore.document.tags.select = Class.create(pimcore.document.tag, {
             options.listeners.select = eval(options.onchange);
         }
 
-        if (options.reload) {
+        if (options["reload"]) {
             options.listeners.select = this.reloadDocument;
         }
 

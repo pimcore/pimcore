@@ -32,7 +32,12 @@ pimcore.document.tags.date = Class.create(pimcore.document.tag, {
 
         options.name = id + "_editable";
 
+
+
         this.element = new Ext.form.DateField(options);
+        if (options["reload"]) {
+            this.element.on("change", this.reloadDocument);
+        }
 
         this.element.render(id);
     },
