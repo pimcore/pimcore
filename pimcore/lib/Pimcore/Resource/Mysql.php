@@ -60,6 +60,7 @@ class Pimcore_Resource_Mysql {
             Logger::warn($e);
         }
 
+        // enable the db-profiler if the devmode is on and there is no custom profiler set (eg. in system.xml)
         if(PIMCORE_DEVMODE && !$db->getProfiler()->getEnabled()) {
             $profiler = new Pimcore_Db_Profiler('All DB Queries');
             $profiler->setEnabled(true);
