@@ -194,6 +194,12 @@ class Document_Tag_Video extends Document_Tag
     {
         $asset = Asset::getById($this->id);
 
+        // compatibility mode when FFMPEG is not present
+        if(!Pimcore_Video::isAvailable()) {
+            // try to load the assigned asset into the flowplayer
+            return $this->getFlowplayerCode(array("f4v" => (string) $asset, "mp4" => (string) $asset));
+        }
+
         $options = $this->getOptions();
         if ($asset instanceof Asset_Video && $options["thumbnail"]) {
             $thumbnail = $asset->getThumbnail($options["thumbnail"]);
@@ -212,6 +218,8 @@ class Document_Tag_Video extends Document_Tag
 
                     $progress = Asset_Video_Thumbnail_Processor::getProgress($thumbnail["processId"]);
                     return $this->getProgressCode($progress, $image);
+                } else {
+                    return $this->getErrorCode();
                 }
             } else {
                 return $this->getErrorCode();
@@ -219,8 +227,6 @@ class Document_Tag_Video extends Document_Tag
         } else {
             return $this->getErrorCode();
         }
-
-        return $this->getFlowplayerCode((string) $asset);
     }
 
     public function getUrlCode()
