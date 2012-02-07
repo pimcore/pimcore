@@ -105,6 +105,37 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
+     * returns true if the current process/request is inside a site
+     * @static
+     * @return bool
+     */
+    public static function isSiteRequest () {
+        try {
+            $site = Zend_Registry::get("pimcore_site");
+            $inSubSite = true;
+        } catch (Exception $e) {
+            $inSubSite = false;
+        }
+
+        return $inSubSite;
+    }
+
+    /**
+     * returns the current active site if present, otherwise throws an exception
+     * @static
+     * @return Site
+     * @throw Exception
+     */
+    public static function getCurrentSite() {
+        try {
+            $site = Zend_Registry::get("pimcore_site");
+            return $site;
+        } catch (Exception $e) {
+            throw new Exception("This request/process is not inside a subsite");
+        }
+    }
+
+    /**
      * @return integer
      */
     public function getId() {
