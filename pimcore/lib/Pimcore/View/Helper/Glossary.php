@@ -15,13 +15,21 @@ class Pimcore_View_Helper_Glossary extends Zend_View_Helper_Abstract {
     }
 
     public function glossary() {
-        return self::getController();
+        $controller = self::getController();
+        $controller->setView($this->view);
+        return $controller;
     }
 
 }
 
 
 class Pimcore_View_Helper_Glossary_Controller {
+
+    /**
+     * @var Pimcore_View
+     */
+    protected $view;
+
 
     public function start() {
         ob_start();
@@ -43,7 +51,7 @@ class Pimcore_View_Helper_Glossary_Controller {
         if (!empty($data) && $enabled) {
             // replace
 
-            $blockedTags = array("a","script","style","code","pre","textarea","acronym","abbr","option");
+            $blockedTags = array("a","script","style","code","pre","textarea","acronym","abbr","option","h1","h2","h3","h4","h5","h6");
 
             // why not using a simple str_ireplace(array(), array(), $subject) ?
             // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content of the html must be reloaded every searchterm to ensure that there is no replacement within a blocked tag
@@ -59,9 +67,13 @@ class Pimcore_View_Helper_Glossary_Controller {
             $es = $html->find('text');
 
             $tmpData = array();
-            foreach ($data as $search => $replace) {
-                $tmpData["search"][] = $search;
-                $tmpData["replace"][] = $replace;
+            foreach ($data as $entry) {
+                if($this->view->document instanceof Document && $entry["linkType"] == "internal" && $this->view->document->getId() == $entry["linkTarget"]) {
+                    continue;
+                }
+
+                $tmpData["search"][] = $entry["search"];
+                $tmpData["replace"][] = $entry["replace"];
             }
             $data = $tmpData;
 
@@ -162,11 +174,19 @@ class Pimcore_View_Helper_Glossary_Controller {
                     $r = '<acronym class="pimcore_glossary" title="' . $d["acronym"] . '">' . $r . '</acronym>';
                 }
 
+                $linkType = "";
+                $linkTarget = "";
+
                 if ($d["link"]) {
+
+                    $linkType = "external";
+                    $linkTarget = $d["link"];
 
                     if (intval($d["link"])) {
                         if ($doc = Document::getById($d["link"])) {
                             $d["link"] = $doc->getFullPath();
+                            $linkType = "internal";
+                            $linkTarget = $doc->getId();
                         }
                     }
 
@@ -179,10 +199,31 @@ class Pimcore_View_Helper_Glossary_Controller {
                     $d["text"] .= "i";
                 }
 
-                $mappedData[$d["text"]] = $r;
+                $mappedData[] = array(
+                    "replace" => $r,
+                    "search" => $d["text"],
+                    "linkType" => $linkType,
+                    "linkTarget" => $linkTarget
+                );
             }
         }
 
         return $mappedData;
+    }
+
+    /**
+     * @param \Pimcore_View $view
+     */
+    public function setView($view)
+    {
+        $this->view = $view;
+    }
+
+    /**
+     * @return \Pimcore_View
+     */
+    public function getView()
+    {
+        return $this->view;
     }
 }
