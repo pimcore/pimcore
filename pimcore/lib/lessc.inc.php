@@ -1,12 +1,12 @@
 <?php
 
 /**
- * lessphp v0.2.1
+ * lessphp v0.3.1
  * http://leafo.net/lessphp
  *
- * LESS css compiler, adapted from http://lesscss.org/docs.html
+ * LESS css compiler, adapted from http://lesscss.org
  *
- * Copyright 2010, Leaf Corcoran <leafot@gmail.com>
+ * Copyright 2011, Leaf Corcoran <leafot@gmail.com>
  * Licensed under MIT or GPLv3, see LICENSE
  */
 
@@ -36,6 +36,8 @@ class lessc {
 	protected $buffer;
 	protected $count;
 	protected $line;
+	protected $libFunctions = array();
+	static protected $nextBlockId = 0;
 
 	public $indentLevel;
 	public $indentChar = '  ';
@@ -47,7 +49,7 @@ class lessc {
 	public $vPrefix = '@'; // prefix of abstract properties
 	public $mPrefix = '$'; // prefix of abstract blocks
 	public $imPrefix = '!'; // special character to add !important
-	public $selfSelector = '&';
+	public $parentSelector = '&';
 
 	static protected $precedence = array(
 		'+' => 0,
@@ -65,7 +67,7 @@ class lessc {
 	/**
 	 * @link http://www.w3.org/TR/css3-values/
 	 */
-	static protected $units=array(
+	static protected $units = array(
 		'em', 'ex', 'px', 'gd', 'rem', 'vw', 'vh', 'vm', 'ch', // Relative length units
 		'in', 'cm', 'mm', 'pt', 'pc', // Absolute length units
 		'%', // Percentages
@@ -168,11 +170,11 @@ class lessc {
 
 
 			// media
-			if ($this->literal('@media') && $this->mediaTypes($types, $rest) &&
+			if ($this->literal('@media') && $this->mediaTypes($types) &&
 				$this->literal('{'))
 			{
 				$b = $this->pushSpecialBlock('@media');
-				$b->media = array($types, $rest);
+				$b->media = $types;
 				return true;
 			} else {
 				$this->seek($s);
@@ -267,15 +269,17 @@ class lessc {
 
 			if (!$hidden) $this->append(array('block', $block));
 			foreach ($block->tags as $tag) {
+				if (isset($this->env->children[$tag])) {
+					$block = $this->mergeBlock($this->env->children[$tag], $block);
+				}
 				$this->env->children[$tag] = $block;
 			}
 
 			return true;
 		}
 
-
-		// mixin 
-		if ($this->tags($tags, true, '>') &&
+		// mixin
+		if ($this->mixinTags($tags) &&
 			($this->argumentValues($argv) || true) && $this->end())
 		{
 			$tags = $this->fixTags($tags);
@@ -284,6 +288,7 @@ class lessc {
 		} else {
 			$this->seek($s);
 		}
+
 		// spare ;
 		if ($this->literal(';')) return true;
 
@@ -472,6 +477,22 @@ class lessc {
 			return true;
 		}
 
+		// unquote string
+		if ($this->literal("~") && $this->string($value, $d)) {
+			$value = array("keyword", $value);
+			return true;
+		} else {
+			$this->seek($s);
+		}
+
+		// css hack: \0
+		if ($this->literal('\\') && $this->match('([0-9]+)', $m)) {
+			$value = array('keyword', '\\'.$m[1]);
+			return true;
+		} else {
+			$this->seek($s);
+		}
+
 		return false;
 	}
 
@@ -505,20 +526,13 @@ class lessc {
 	}
 
 	// a list of media types, very lenient
-	function mediaTypes(&$types, &$rest) {
-		$s = $this->seek();
-		$types = array();
-		while ($this->match('([^,{\s]+)', $m)) {
-			$types[] = $m[1];
-			if (!$this->literal(',')) break;
-		}
-
-		// get everything else
+	function mediaTypes(&$types) {
 		if ($this->to('{', $rest, true, true)) {
-			$rest = trim($rest);
+			$types = trim($rest);
+			return true;
 		}
 
-		return count($types) > 0;
+		return false;
 	}
 
 	// a scoped value accessor
@@ -631,13 +645,13 @@ class lessc {
 	}
 
 	// consume a list of property values delimited by ; and wrapped in ()
-	function argumentValues(&$args, $delim = ';') {
+	function argumentValues(&$args, $delim = ',') {
 		$s = $this->seek();
 		if (!$this->literal('(')) return false;
 
 		$values = array();
 		while (true) {
-			if ($this->propertyValue($value)) $values[] = $value;
+			if ($this->expressionList($value)) $values[] = $value;
 			if (!$this->literal($delim)) break;
 			else {
 				if ($value == null) $values[] = null;
@@ -656,14 +670,14 @@ class lessc {
 
 	// consume an argument definition list surrounded by ()
 	// each argument is a variable name with optional value
-	function argumentDef(&$args, $delim = ';') {
+	function argumentDef(&$args, $delim = ',') {
 		$s = $this->seek();
 		if (!$this->literal('(')) return false;
 
 		$values = array();
 		while ($this->variable($vname)) {
 			$arg = array($vname);
-			if ($this->assign() && $this->propertyValue($value)) {
+			if ($this->assign() && $this->expressionList($value)) {
 				$arg[] = $value;
 				// let the : slide if there is no value
 			}
@@ -694,6 +708,21 @@ class lessc {
 		return true;
 	}
 
+	// list of tags of specifying mixin path
+	// optionally separated by > (lazy, accepts extra >)
+	function mixinTags(&$tags) {
+		$s = $this->seek();
+		$tags = array();
+		while ($this->tag($tt, true)) {
+			$tags[] = $tt;
+			$this->literal(">");
+		}
+
+		if (count($tags) == 0) return false;
+
+		return true;
+	}
+
 	// a bracketed value (contained within in a tag definition)
 	function tagBracket(&$value) {
 		$s = $this->seek();
@@ -701,6 +730,9 @@ class lessc {
 			$value = '['.$c.']';
 			// whitespace?
 			if ($this->match('', $_)) $value .= $_[0];
+
+			// escape parent selector
+			$value = str_replace($this->parentSelector, "&&", $value);
 			return true;
 		}
 
@@ -711,9 +743,9 @@ class lessc {
 	// a single tag
 	function tag(&$tag, $simple = false) {
 		if ($simple)
-			$chars = '^,:;{}\][>\(\) ';
+			$chars = '^,:;{}\][>\(\) "\'';
 		else
-			$chars = '^,;{}[';
+			$chars = '^,;{}["\'';
 
 		$tag = '';
 		while ($this->tagBracket($first)) $tag .= $first;
@@ -733,7 +765,7 @@ class lessc {
 	function func(&$func) {
 		$s = $this->seek();
 
-		if ($this->match('([\w\-_][\w\-_:\.]*)', $m) && $this->literal('(')) {
+		if ($this->match('(%|[\w\-_][\w\-_:\.]*)', $m) && $this->literal('(')) {
 			$fname = $m[1];
 			if ($fname == 'url') {
 				$this->to(')', $content, true);
@@ -810,6 +842,13 @@ class lessc {
 		else return array('list', $delim, $items);
 	}
 
+	// just do a shallow propety merge, seems to be what lessjs does
+	function mergeBlock($target, $from) {
+		$target = clone $target;
+		$target->props = array_merge($target->props, $from->props);
+		return $target;
+	}
+
 	/**
 	 * Recursively compiles a block. 
 	 * @param $block the block
@@ -863,9 +902,7 @@ class lessc {
 		if ($special_block) {
 			$this->indentLevel--;
 			if (isset($block->media)) {
-				list($media_types, $media_rest) = $block->media;
-				echo "@media ".join(', ', $media_types).
-					(!empty($media_rest) ? " $media_rest" : '' );
+				echo "@media ".$block->media;
 			} elseif (isset($block->keyframes)) {
 				echo $block->tags[0]." ".
 					$this->compileValue($this->reduce($block->keyframes));
@@ -910,9 +947,22 @@ class lessc {
 		$tags = array();
 		foreach ($parents as $ptag) {
 			foreach ($current as $tag) {
-				$tags[] = trim($ptag.
-					($tag{0} == $this->selfSelector || $tag{0} == ':'
-						? ltrim($tag, $this->selfSelector) : ' '.$tag));
+				// inject parent in place of parent selector, ignoring escaped valuews
+				$count = 0;
+				$parts = explode("&&", $tag);
+
+				foreach ($parts as $i => $chunk) {
+					$parts[$i] = str_replace($this->parentSelector, $ptag, $chunk, $c);
+					$count += $c;
+				}
+				
+				$tag = implode("&", $parts);
+
+				if ($count > 0) {
+					$tags[] = trim($tag);
+				} else {
+					$tags[] = trim($ptag . ' ' . $tag);
+				}
 			}
 		}
 
@@ -920,8 +970,11 @@ class lessc {
 	}
 
 	// attempt to find block pointed at by path within search_in or its parent
-	function findBlock($search_in, $path) {
+	function findBlock($search_in, $path, $seen=array()) {
 		if ($search_in == null) return null;
+		if (isset($seen[$search_in->id])) return null;
+		$seen[$search_in->id] = true;
+
 		$name = $path[0];
 
 		if (isset($search_in->children[$name])) {
@@ -929,10 +982,11 @@ class lessc {
 			if (count($path) == 1) {
 				return $block;
 			} else {
-				return $this->findBlock($block, array_slice($path, 1));
+				return $this->findBlock($block, array_slice($path, 1), $seen);
 			}
 		} else {
-			return $this->findBlock($search_in->parent, $path);
+			if ($search_in->parent === $search_in) return null;
+			return $this->findBlock($search_in->parent, $path, $seen);
 		}
 	}
 
@@ -940,6 +994,7 @@ class lessc {
 	// or the one passed in through $values
 	function zipSetArgs($args, $values) {
 		$i = 0;
+		$assigned_values = array();
 		foreach ($args as $a) {
 			if ($i < count($values) && !is_null($values[$i])) {
 				$value = $values[$i];
@@ -947,9 +1002,18 @@ class lessc {
 				$value = $a[1];
 			} else $value = null;
 
-			$this->set($this->vPrefix.$a[0], $this->reduce($value));
+			$value = $this->reduce($value);
+			$this->set($this->vPrefix.$a[0], $value);
+			$assigned_values[] = $value;
 			$i++;
 		}
+
+		// copy over any extra default args
+		for ($i = count($values); $i < count($assigned_values); $i++) {
+			$values[] = $assigned_values[$i];
+		}
+
+		$this->env->arguments = $values;
 	}
 
 	// compile a prop and update $lines or $blocks appropriately
@@ -982,11 +1046,6 @@ class lessc {
 				$have_args = true;
 				$this->pushEnv();
 				$this->zipSetArgs($mixin->args, $args);
-			}
-
-			list($name) = $mixin->tags;
-			if ($name == "div") {
-				print_r($mixin->props);
 			}
 
 			$old_parent = $mixin->parent;
@@ -1054,18 +1113,18 @@ class lessc {
 			
 			// search for inline variables to replace
 			$replace = array();
-			if (preg_match_all('/{('.$this->preg_quote($this->vPrefix).'[\w-_][0-9\w-_]*?)}/', $value[1], $m)) {
+			if (preg_match_all('/'.$this->preg_quote($this->vPrefix).'\{([\w-_][0-9\w-_]*)\}/', $value[1], $m)) {
 				foreach ($m[1] as $name) {
 					if (!isset($replace[$name]))
-						$replace[$name] = $this->compileValue($this->reduce(array('variable', $name)));
+						$replace[$name] = $this->compileValue($this->reduce(array('variable', $this->vPrefix . $name)));
 				}
 			}
+
 			foreach ($replace as $var=>$val) {
-				// strip quotes
-				if (preg_match('/^(["\']).*?(\1)$/', $val)) {
+				if ($this->quoted($val)) {
 					$val = substr($val, 1, -1);
 				}
-				$value[1] = str_replace('{'.$var.'}', $val, $value[1]);
+				$value[1] = str_replace($this->vPrefix. '{'.$var.'}', $val, $value[1]);
 			}
 
 			return $value[1];
@@ -1102,19 +1161,51 @@ class lessc {
 			$color[1],$color[2], $color[3]);
 	}
 
-	function lib_quote($arg) {
-		return '"'.$this->compileValue($arg).'"';
-	}
-
-	function lib_unquote($arg) {
-		$out = $this->compileValue($arg);
-		if ($this->quoted($out)) $out = substr($out, 1, -1);
-		return $out;
-	}
-
-	// alias for unquote
+	// utility func to unquote a string
 	function lib_e($arg) {
-		return $this->lib_unquote($arg);
+		switch ($arg[0]) {
+			case "list":
+				$items = $arg[2];
+				if (isset($items[0])) {
+					return $this->lib_e($items[0]);
+				}
+				return "";
+			case "string":
+				$str = $this->compileValue($arg);
+				return substr($str, 1, -1);
+			default:
+				return $this->compileValue($arg);
+		}
+	}
+
+	function lib__sprintf($args) {
+		if ($args[0] != "list") return $args;
+		$values = $args[2];
+		$source = $this->reduce(array_shift($values));
+		if ($source[0] != "string") {
+			return $source;
+		}
+
+		$str = $source[1];
+		$i = 0;
+		if (preg_match_all('/%[dsa]/', $str, $m)) {
+			foreach ($m[0] as $match) {
+				$val = isset($values[$i]) ? $this->reduce($values[$i]) : array('keyword', '');
+				$i++;
+				switch ($match[1]) {
+				case "s":
+					if ($val[0] == "string") {
+						$rep = substr($val[1], 1, -1);
+						break;
+					}
+				default:
+					$rep = $this->compileValue($val);
+				}
+				$str = preg_replace('/'.$this->preg_quote($match).'/', $rep, $str, 1);
+			}
+		}
+
+		return array('string', $str);
 	}
 
 	function lib_floor($arg) {
@@ -1141,7 +1232,8 @@ class lessc {
 			return array(array('color', 0, 0, 0));
 		}
 		list($color, $delta) = $args[2];
-		if ($color[0] != 'color')
+		$color = $this->coerceColor($color);
+		if (is_null($color))
 			$color = array('color', 0, 0, 0);
 
 		$delta = floatval($delta[1]);
@@ -1217,6 +1309,64 @@ class lessc {
 		if ($color[0] != 'color') return 0;
 		$hsl = $this->toHSL($color);
 		return round($hsl[3]);
+	}
+
+	// get the alpha of a color
+	// defaults to 1 for non-colors or colors without an alpha
+	function lib_alpha($color) {
+		if ($color[0] != 'color') return 1;
+		return isset($color[4]) ? $color[4] : 1;
+	}
+
+	// set the alpha of the color
+	function lib_fade($args) {
+		list($color, $alpha) = $this->colorArgs($args);
+		$color[4] = $this->clamp($alpha / 100.0);
+		return $color;
+	}
+
+	function lib_percentage($number) {
+		return array('%', $number[1]*100);
+	}
+
+	// mixes two colors by weight
+	// mix(@color1, @color2, @weight);
+	// http://sass-lang.com/docs/yardoc/Sass/Script/Functions.html#mix-instance_method
+	function lib_mix($args) {
+		if ($args[0] != "list")
+			throw new exception("mix expects (color1, color2, weight)");
+
+		list($first, $second, $weight) = $args[2];
+		$first = $this->assertColor($first);
+		$second = $this->assertColor($second);
+
+		$first_a = $this->lib_alpha($first);
+		$second_a = $this->lib_alpha($second);
+		$weight = $weight[1] / 100.0;
+
+		$w = $weight * 2 - 1;
+		$a = $first_a - $second_a;
+
+		$w1 = (($w * $a == -1 ? $w : ($w + $a)/(1 + $w * $a)) + 1) / 2.0;
+		$w2 = 1.0 - $w1;
+
+		$new = array('color',
+			$w1 * $first[1] + $w2 * $second[1],
+			$w1 * $first[2] + $w2 * $second[2],
+			$w1 * $first[3] + $w2 * $second[3],
+		);
+
+		if ($first_a != 1.0 || $second_a != 1.0) {
+			$new[] = $first_a * $p + $second_a * ($p - 1);
+		}
+
+		return $this->fixColor($new);
+	}
+
+	function assertColor($value, $error = "expected color value") {
+		$color = $this->coerceColor($value);
+		if (is_null($color)) throw new exception($error);
+		return $color;
 	}
 
 	function toHSL($color) {
@@ -1368,7 +1518,10 @@ class lessc {
 				if ($color) $var = $color;
 				else {
 					list($_, $name, $args) = $var;
-					$f = array($this, 'lib_'.$name);
+					if ($name == "%") $name = "_sprintf";
+					$f = isset($this->libFunctions[$name]) ?
+						$this->libFunctions[$name] : array($this, 'lib_'.$name);
+
 					if (is_callable($f)) {
 						if ($args[0] == 'list')
 							$args = $this->compressList($args[2], $args[1]);
@@ -1396,10 +1549,31 @@ class lessc {
 		return $var;
 	}
 
+	function coerceColor($value) {
+		switch($value[0]) {
+			case 'color': return $value;
+			case 'keyword':
+				$name = $value[1];
+				if (isset(self::$cssColors[$name])) {
+					list($r, $g, $b) = explode(',', self::$cssColors[$name]);
+					return array('color', $r, $g, $b);
+				}
+				return null;
+		}
+	}
+
 	// evaluate an expression
 	function evaluate($op, $left, $right) {
 		$left = $this->reduce($left);
 		$right = $this->reduce($right);
+
+		if ($left_color = $this->coerceColor($left)) {
+			$left = $left_color;
+		}
+
+		if ($right_color = $this->coerceColor($right)) {
+			$right = $right_color;
+		}
 
 		if ($left[0] == 'color' && $right[0] == 'color') {
 			$out = $this->op_color_color($op, $left, $right);
@@ -1533,6 +1707,7 @@ class lessc {
 		$b = new stdclass;
 		$b->parent = $this->env;
 
+		$b->id = self::$nextBlockId++;
 		$b->tags = $tags;
 		$b->props = array();
 		$b->children = array();
@@ -1579,7 +1754,13 @@ class lessc {
 	// get the highest occurrence entry for a name
 	function get($name) {
 		$current = $this->env;
+
+		$is_arguments = $name == $this->vPrefix . 'arguments';
 		while ($current) {
+			if ($is_arguments && isset($current->arguments)) {
+				return array('list', ' ', $current->arguments);
+			}
+
 			if (isset($current->store[$name]))
 				return $current->store[$name];
 			else
@@ -1596,7 +1777,7 @@ class lessc {
 		if ($this->count >= strlen($this->buffer)) return false;
 
 		// shortcut on single letter
-		if (!$eatWhitespace and strlen($what) == 1) {
+		if (!$eatWhitespace && strlen($what) == 1) {
 			if ($this->buffer{$this->count} == $what) {
 				$this->count++;
 				return true;
@@ -1614,7 +1795,7 @@ class lessc {
 	// advance counter to next occurrence of $what
 	// $until - don't include $what in advance
 	function to($what, &$out, $until = false, $allowNewline = false) {
-		$validChars = $allowNewline ? "[^\n]" : '.';
+		$validChars = $allowNewline ? "." : "[^\n]";
 		if (!$this->match('('.$validChars.'*?)'.$this->preg_quote($what), $m, !$until)) return false;
 		if ($until) $this->count -= strlen($what); // give back $what
 		$out = $m[1];
@@ -1753,6 +1934,14 @@ class lessc {
 
 			$this->addParsedFile($fname);
 		}
+	}
+
+	public function registerFunction($name, $func) {
+		$this->libFunctions[$name] = $func;
+	}
+
+	public function unregisterFunction($name) {
+		unset($this->libFunctions[$name]);
 	}
 
 	// remove comments from $text
@@ -1896,4 +2085,155 @@ class lessc {
 		}
 
 	}
+
+	static protected $cssColors = array(
+		'aliceblue' => '240,248,255',
+		'antiquewhite' => '250,235,215',
+		'aqua' => '0,255,255',
+		'aquamarine' => '127,255,212',
+		'azure' => '240,255,255',
+		'beige' => '245,245,220',
+		'bisque' => '255,228,196',
+		'black' => '0,0,0',
+		'blanchedalmond' => '255,235,205',
+		'blue' => '0,0,255',
+		'blueviolet' => '138,43,226',
+		'brown' => '165,42,42',
+		'burlywood' => '222,184,135',
+		'cadetblue' => '95,158,160',
+		'chartreuse' => '127,255,0',
+		'chocolate' => '210,105,30',
+		'coral' => '255,127,80',
+		'cornflowerblue' => '100,149,237',
+		'cornsilk' => '255,248,220',
+		'crimson' => '220,20,60',
+		'cyan' => '0,255,255',
+		'darkblue' => '0,0,139',
+		'darkcyan' => '0,139,139',
+		'darkgoldenrod' => '184,134,11',
+		'darkgray' => '169,169,169',
+		'darkgreen' => '0,100,0',
+		'darkgrey' => '169,169,169',
+		'darkkhaki' => '189,183,107',
+		'darkmagenta' => '139,0,139',
+		'darkolivegreen' => '85,107,47',
+		'darkorange' => '255,140,0',
+		'darkorchid' => '153,50,204',
+		'darkred' => '139,0,0',
+		'darksalmon' => '233,150,122',
+		'darkseagreen' => '143,188,143',
+		'darkslateblue' => '72,61,139',
+		'darkslategray' => '47,79,79',
+		'darkslategrey' => '47,79,79',
+		'darkturquoise' => '0,206,209',
+		'darkviolet' => '148,0,211',
+		'deeppink' => '255,20,147',
+		'deepskyblue' => '0,191,255',
+		'dimgray' => '105,105,105',
+		'dimgrey' => '105,105,105',
+		'dodgerblue' => '30,144,255',
+		'firebrick' => '178,34,34',
+		'floralwhite' => '255,250,240',
+		'forestgreen' => '34,139,34',
+		'fuchsia' => '255,0,255',
+		'gainsboro' => '220,220,220',
+		'ghostwhite' => '248,248,255',
+		'gold' => '255,215,0',
+		'goldenrod' => '218,165,32',
+		'gray' => '128,128,128',
+		'green' => '0,128,0',
+		'greenyellow' => '173,255,47',
+		'grey' => '128,128,128',
+		'honeydew' => '240,255,240',
+		'hotpink' => '255,105,180',
+		'indianred' => '205,92,92',
+		'indigo' => '75,0,130',
+		'ivory' => '255,255,240',
+		'khaki' => '240,230,140',
+		'lavender' => '230,230,250',
+		'lavenderblush' => '255,240,245',
+		'lawngreen' => '124,252,0',
+		'lemonchiffon' => '255,250,205',
+		'lightblue' => '173,216,230',
+		'lightcoral' => '240,128,128',
+		'lightcyan' => '224,255,255',
+		'lightgoldenrodyellow' => '250,250,210',
+		'lightgray' => '211,211,211',
+		'lightgreen' => '144,238,144',
+		'lightgrey' => '211,211,211',
+		'lightpink' => '255,182,193',
+		'lightsalmon' => '255,160,122',
+		'lightseagreen' => '32,178,170',
+		'lightskyblue' => '135,206,250',
+		'lightslategray' => '119,136,153',
+		'lightslategrey' => '119,136,153',
+		'lightsteelblue' => '176,196,222',
+		'lightyellow' => '255,255,224',
+		'lime' => '0,255,0',
+		'limegreen' => '50,205,50',
+		'linen' => '250,240,230',
+		'magenta' => '255,0,255',
+		'maroon' => '128,0,0',
+		'mediumaquamarine' => '102,205,170',
+		'mediumblue' => '0,0,205',
+		'mediumorchid' => '186,85,211',
+		'mediumpurple' => '147,112,219',
+		'mediumseagreen' => '60,179,113',
+		'mediumslateblue' => '123,104,238',
+		'mediumspringgreen' => '0,250,154',
+		'mediumturquoise' => '72,209,204',
+		'mediumvioletred' => '199,21,133',
+		'midnightblue' => '25,25,112',
+		'mintcream' => '245,255,250',
+		'mistyrose' => '255,228,225',
+		'moccasin' => '255,228,181',
+		'navajowhite' => '255,222,173',
+		'navy' => '0,0,128',
+		'oldlace' => '253,245,230',
+		'olive' => '128,128,0',
+		'olivedrab' => '107,142,35',
+		'orange' => '255,165,0',
+		'orangered' => '255,69,0',
+		'orchid' => '218,112,214',
+		'palegoldenrod' => '238,232,170',
+		'palegreen' => '152,251,152',
+		'paleturquoise' => '175,238,238',
+		'palevioletred' => '219,112,147',
+		'papayawhip' => '255,239,213',
+		'peachpuff' => '255,218,185',
+		'peru' => '205,133,63',
+		'pink' => '255,192,203',
+		'plum' => '221,160,221',
+		'powderblue' => '176,224,230',
+		'purple' => '128,0,128',
+		'red' => '255,0,0',
+		'rosybrown' => '188,143,143',
+		'royalblue' => '65,105,225',
+		'saddlebrown' => '139,69,19',
+		'salmon' => '250,128,114',
+		'sandybrown' => '244,164,96',
+		'seagreen' => '46,139,87',
+		'seashell' => '255,245,238',
+		'sienna' => '160,82,45',
+		'silver' => '192,192,192',
+		'skyblue' => '135,206,235',
+		'slateblue' => '106,90,205',
+		'slategray' => '112,128,144',
+		'slategrey' => '112,128,144',
+		'snow' => '255,250,250',
+		'springgreen' => '0,255,127',
+		'steelblue' => '70,130,180',
+		'tan' => '210,180,140',
+		'teal' => '0,128,128',
+		'thistle' => '216,191,216',
+		'tomato' => '255,99,71',
+		'turquoise' => '64,224,208',
+		'violet' => '238,130,238',
+		'wheat' => '245,222,179',
+		'white' => '255,255,255',
+		'whitesmoke' => '245,245,245',
+		'yellow' => '255,255,0',
+		'yellowgreen' => '154,205,50'
+	);
 }
+
