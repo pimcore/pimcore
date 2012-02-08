@@ -66,7 +66,11 @@ class Pimcore_View_Helper_Glossary_Controller {
 
             $es = $html->find('text');
 
-            $tmpData = array();
+            $tmpData = array(
+                "search" => array(),
+                "replace" => array(),
+                "placeholder" => array()
+            );
             foreach ($data as $entry) {
                 if($this->view->document instanceof Document && $entry["linkType"] == "internal" && $this->view->document->getId() == $entry["linkTarget"]) {
                     continue;
