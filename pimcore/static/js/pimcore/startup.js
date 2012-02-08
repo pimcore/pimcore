@@ -250,8 +250,8 @@ Ext.onReady(function() {
         script.type = "text/javascript";
         Ext.query("body")[0].appendChild(script);
     }, 5000);
-    
-    
+
+
     // remove loading
     Ext.get("pimcore_loading").remove();
 
