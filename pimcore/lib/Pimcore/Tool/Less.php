@@ -98,7 +98,7 @@ class Pimcore_Tool_Less {
         if($conf->outputfilters->lesscpath) {
             $output = array();
             exec($conf->outputfilters->lesscpath . " " . $path, $output);
-            $compiledContent = implode($output);
+            $compiledContent = implode(" ",$output);
 
             // add a comment to the css so that we know it's compiled by lessc
             if(!empty($compiledContent)) {
@@ -108,6 +108,7 @@ class Pimcore_Tool_Less {
 
         // use php implementation of lessc if it doesn't work
         if(empty($compiledContent)) {
+            include_once("lessc.inc.php");
             $less = new lessc();
             $less->importDir = dirname($path);
             $compiledContent = $less->parse(file_get_contents($path));
