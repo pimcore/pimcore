@@ -58,20 +58,6 @@ class Pimcore_Mail extends Zend_Mail
     protected $params = array();
 
     /**
-     * html2text form mbayer is installed (http://www.mbayer.de/html2text/)
-     *
-     * @var bool
-     */
-    protected static $html2textInstalled = null;
-
-    /**
-     * Options passed to html2text
-     *
-     * @var string
-     */
-    protected $html2textOptions = "";
-
-    /**
      * Prevent adding debug information
      *
      * @var bool
@@ -101,10 +87,6 @@ class Pimcore_Mail extends Zend_Mail
         }
         if ($options['subject']) {
             $this->setSubject($options['subject']);
-        }
-
-        if(is_null(self::$html2textInstalled)){
-            self::determineHtml2TextIsInstalled();
         }
 
         $this->init();
@@ -180,53 +162,6 @@ class Pimcore_Mail extends Zend_Mail
     public function getIgnoreDebugMode(){
         return $this->ignoreDebugMode;
     }
-
-    /**
-     * Determines if mbayer html2text is installed (more information at http://www.mbayer.de/html2text/)
-     * and uses it to automatically create a text version of the html email
-     *
-     * @static
-     * @return void
-     */
-    protected static function determineHtml2TextIsInstalled() {
-
-        $paths = array("/usr/bin/html2text","/usr/local/bin/html2text", "/bin/html2text");
-
-        foreach ($paths as $path) {
-            if(is_executable($path)) {
-                self::$html2textInstalled = true;
-            }
-        }
-
-        // produces wired error message in maintenance script
-        //$output = @shell_exec('html2text -version');
-        //self::$html2textInstalled = (!empty($output)) ? true : false;
-    }
-
-    /**
-     * Sets options that are passed to html2text
-     *
-     * @param string $options
-     * @return Pimcore_Mail
-     */
-    public function setHtml2TextOptions($options = ''){
-        if(is_string($options)){
-            $this->html2textOptions = $options;
-        }else{
-            Logger::warn('Html2Text options ignored. You have to pass a string');
-        }
-        return $this;
-    }
-
-    /**
-     * Returns options for html2text
-     *
-     * @return string
-     */
-    public function getHtml2TextOptions(){
-        return $this->html2textOptions;
-    }
-
 
     // overwriting Zend_Mail methods - necessary for logging... - start
 
@@ -487,7 +422,7 @@ class Pimcore_Mail extends Zend_Mail
             $this->setDocumentSettings();
 
             $this->setSubject($this->getSubjectRendered());
-            $this->setBodyHtml($this->getBodyHtmlRendered());
+            //$this->setBodyHtml($this->getBodyHtmlRendered());
             $this->setBodyText($this->getBodyTextRendered());
         }
 
@@ -620,10 +555,7 @@ class Pimcore_Mail extends Zend_Mail
 
     /**
      * Replaces the placeholders with the content and returns
-     * the rendered text if a text was set with "$mail->setBodyText()"
-     *
-     * If html2text is installed a text version on the html email will be automatically created
-     *
+     * the rendered text if a text was set with "$mail->setBodyText()"     *
      * @return string
      */
     public function getBodyTextRendered()
@@ -636,15 +568,23 @@ class Pimcore_Mail extends Zend_Mail
             $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument());
         } else {
             //creating text version from html email if html2text is installed
-            if (self::$html2textInstalled) {
-                $htmlContent = $this->getBodyHtmlRendered();
+            try {
+                include_once("simple_html_dom.php");
+                include_once("html2text.php");
 
-                //using temporary file so we don't have problems with special characters
-                $tmpFileName = PIMCORE_TEMPORARY_DIRECTORY . "/" . uniqid('email_', true) . ".tmp";
-                if (file_put_contents($tmpFileName, $htmlContent)) {
-                    $content = @shell_exec("html2text $tmpFileName " . $this->getHtml2TextOptions());
-                    @unlink($tmpFileName);
+                $htmlContent = $this->getBodyHtmlRendered();
+                $html = str_get_html($htmlContent);
+                if($html) {
+                    $body = $html->find("body",0);
+                    if($body) {
+                        $htmlContent = $body->innertext;
+                    }
                 }
+
+                $content = @html2text($htmlContent);
+            } catch (Exception $e) {
+                Logger::err($e);
+                $content = "";
             }
         }
 
