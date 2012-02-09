@@ -191,8 +191,15 @@ class Pimcore {
 
         Pimcore_API_Plugin_Broker::getInstance()->preDispatch();
 
+
+        // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
+        $throwExceptions = false;
+        if(array_key_exists("pimcore_editmode", $_REQUEST) || array_key_exists("pimcore_preview", $_REQUEST) || array_key_exists("pimcore_admin", $_REQUEST)) {
+            $throwExceptions = true;
+        }
+
         // run dispatcher
-        if ($frontend && !PIMCORE_DEBUG) {
+        if ($frontend && !(PIMCORE_DEBUG || $throwExceptions)) {
             @ini_set("display_errors", "Off");
             @ini_set("display_startup_errors", "Off");
 
