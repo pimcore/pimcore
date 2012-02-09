@@ -1147,12 +1147,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 )
             ));
 
-            if($object->hasChilds()) {
+            if($object->hasChilds(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT))) {
                 // get amount of childs
                 $list = new Object_List();
                 $list->setCondition("o_path LIKE '" . $object->getFullPath() . "/%'");
                 $list->setOrderKey("LENGTH(o_path)", false);
                 $list->setOrder("ASC");
+                $list->setObjectTypes(array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER, Object_Abstract::OBJECT_TYPE_VARIANT));
                 $childIds = $list->loadIdList();
 
                 if(count($childIds) > 0) {
