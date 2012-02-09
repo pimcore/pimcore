@@ -40,6 +40,12 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     loadFieldDefinitions: function () {
+
+        var allowedTypes = this.fieldConfig.allowedTypes;
+        if(!allowedTypes) {
+            allowedTypes = []
+        }
+
         this.fieldstore = new Ext.data.JsonStore({
             autoDestroy: false,
             url: "/admin/class/fieldcollection-list",
@@ -52,7 +58,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 load: this.initData.bind(this)
             },
             baseParams: {
-                allowedTypes: this.fieldConfig.allowedTypes.join(",")
+                allowedTypes: allowedTypes.join(",")
             }
         });
         
