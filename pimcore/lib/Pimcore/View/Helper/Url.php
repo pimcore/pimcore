@@ -50,6 +50,10 @@ class Pimcore_View_Helper_Url extends Zend_View_Helper_Url {
         }
 
         
-        return parent::url($urlOptions, $name, $reset, $encode);
+        try {
+            return parent::url($urlOptions, $name, $reset, $encode);
+        } catch (Exception $e) {
+            throw new Exception("Route '".$name."' for building the URL not found");
+        }
     }    
 }
