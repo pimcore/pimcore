@@ -124,7 +124,6 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
         $cart->setName($param['name']);
 
         $cart->save();
-
         $this->carts[$cart->getId()] = $cart;
 
         return $cart->getId();

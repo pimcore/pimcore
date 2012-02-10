@@ -40,6 +40,7 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends OnlineShop_Fram
      */
     public function getData() {
         $data = new stdClass();
+
         if($this->cart->getCheckoutData(self::LINE1)) {
             $data->line1 = $this->cart->getCheckoutData(self::LINE1);
             $data->isSet = true;

@@ -29,7 +29,6 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
 
         $subTotal = 0;
         $currency = null;
-
         foreach($this->cart->getItems() as $item) {
             if($item->getPrice()) {
                 if(!$currency) {

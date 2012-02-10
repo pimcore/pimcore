@@ -136,7 +136,6 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
      * @return bool
      */
     public function commitStep(OnlineShop_Framework_ICheckoutStep $step, $data) {
-
         $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
         $index = array_search($step, $this->checkoutStepOrder);
 
