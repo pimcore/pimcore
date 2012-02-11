@@ -49,7 +49,6 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
         try {
             Zend_Registry::get("pimcore_admin_initialized");
-
             $this->setUser(Zend_Registry::get("pimcore_admin_user"));
         }
         catch (Exception $e) {
@@ -84,14 +83,13 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 }
             }
 
-            // send a auth header for the client (is covered by the ajax object in javascript)
-            if (!$this->getUser() instanceof User) {
-                $this->getResponse()->setHeader("X-Pimcore-Auth","required");
-            }
-
             // redirect to the login-page if the user isn't authenticated
-            if (!$this->getUser() instanceof User && !($this->_getParam("module") == "admin" && ($this->_getParam("controller") == "login" || $this->_getParam("controller") == "deeplink"))) {
+            if (!$this->getUser() instanceof User && !($this->_getParam("module") == "admin" && $this->_getParam("controller") == "login")) {
+                // send a auth header for the client (is covered by the ajax object in javascript)
+                $this->getResponse()->setHeader("X-Pimcore-Auth","required");
+                // redirect to login page
                 $this->_redirect("/admin/login");
+                // send immetiatley the response and exit the execution
                 $this->getResponse()->sendResponse();
                 exit;
             }
