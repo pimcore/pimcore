@@ -24,6 +24,7 @@ define('LOCAL_PATH', dirname(__FILE__) . '/');
 // Anti hack, as in allow included files to ensure they were included
 define('IN_INFO', true);
 
+######### PIMCORE MODIFICATION #########
 $workingDirectory = getcwd();
 include("../../../cli/startup.php");
 chdir($workingDirectory);
@@ -43,6 +44,7 @@ foreach ($files as $file) {
         include_once(LOCAL_PATH . "lib/" . $file);
     }
 }
+######### /PIMCORE MODIFICATION #########
 
 // Timer
 define('TIME_START', microtime(true));
