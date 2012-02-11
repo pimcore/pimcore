@@ -197,5 +197,6 @@ class Pimcore_Tool_Admin {
         } catch (Exception $e) {
 
         }
+        return null;
     }
 }
