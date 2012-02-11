@@ -1,5 +1,6 @@
 <?php
 
+/*######### PIMCORE MODIFICATION #########*/
 if(!class_exists("Pimcore")) exit;
 
 
