@@ -72,6 +72,12 @@ class Pimcore_Model_Cache {
      * @var array
      */
     public static $ignoredTagsOnClear = array();
+
+    /**
+     * if set to truq items are directly written into the cache, and do not get into the queue
+     * @var bool
+     */
+    protected static $forceImmendiateWrite = false;
     
     /**
      * Returns a instance of the cache, if the instance isn't available it creates a new one
@@ -224,7 +230,11 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function save($data, $key, $tags = array(), $lifetime = null, $priority = 0) {
-        self::addToSaveStack(func_get_args());
+        if(self::getForceImmendiateWrite()) {
+            self::storeToCache($data, $key, $tags, $lifetime, $priority);
+        } else {
+            self::addToSaveStack(func_get_args());
+        }
     }
     
     /**
@@ -501,5 +511,21 @@ class Pimcore_Model_Cache {
      */
     public static function enable() {
         self::$enabled = true;
+    }
+
+    /**
+     * @param boolean $forceImmendiateWrite
+     */
+    public static function setForceImmendiateWrite($forceImmendiateWrite)
+    {
+        self::$forceImmendiateWrite = $forceImmendiateWrite;
+    }
+
+    /**
+     * @return boolean
+     */
+    public static function getForceImmendiateWrite()
+    {
+        return self::$forceImmendiateWrite;
     }
 }
