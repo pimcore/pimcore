@@ -15,7 +15,6 @@
 
 class Pimcore_Tool_Authentication {
 
-
     /**
      * @static
      * @throws Exception
@@ -33,8 +32,12 @@ class Pimcore_Tool_Authentication {
         if ($user instanceof User) {
             // renew user
             $user = User::getById($user->getId());
-            return $user;
+            if($user && $user->isActive()) {
+                return $user;
+            }
         }
+
+        return null;
     }
 
     /**
@@ -78,7 +81,6 @@ class Pimcore_Tool_Authentication {
             die();
         }
     }
-
 
     /**
      * @static
