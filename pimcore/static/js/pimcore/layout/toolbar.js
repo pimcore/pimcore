@@ -66,13 +66,38 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        /*if (user.isAllowed("plugins")) {
+        if (user.isAllowed("translations")) {
             extrasItems.push({
-                text: t("plugins"),
-                iconCls: "pimcore_icon_plugin",
-                handler: this.pluginsOverview
+                text: t("translations"),
+                iconCls: "pimcore_icon_translations",
+                handler: this.editTranslations
             });
-        }*/
+        }
+
+        if (user.isAllowed("system_settings")) {
+            extrasItems.push({
+                text: t("recyclebin"),
+                iconCls: "pimcore_icon_recyclebin",
+                handler: this.recyclebin
+            });
+        }
+
+        if (user.isAllowed("documents")) {
+            extrasItems.push({
+                text: t("search_engine_optimization"),
+                iconCls: "pimcore_icon_seo",
+                hideOnClick: false,
+                menu: [{
+                    text: t("document_seo_analysis_overview"),
+                    iconCls: "pimcore_icon_seo_document",
+                    handler: this.showDocumentSeo
+                }, {
+                    text: "robots.txt",
+                    iconCls: "pimcore_icon_robots",
+                    handler: this.showRobotsTxt
+                }]
+            });
+        }
 
         if (user.isAllowed("plugins")) {
             extrasItems.push({
@@ -95,14 +120,16 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        
-        if (user.isAllowed("system_settings")) {
+        if (user.isAllowed("reports")) {
             extrasItems.push({
-                text: t("recyclebin"),
-                iconCls: "pimcore_icon_recyclebin",
-                handler: this.recyclebin
+                text: t("reports_and_marketing") + " (beta)",
+                iconCls: "pimcore_icon_reports",
+                handler: this.showReports
             });
         }
+
+        extrasItems.push("-");
+
         if (user.isAllowed("system_settings")) {
             extrasItems.push({
                 text: t("backup"),
@@ -128,68 +155,20 @@ pimcore.layout.toolbar = Class.create({
                 }
             });
 
-        }
-
-        if (user.isAllowed("system_settings") && user.admin) {
             extrasItems.push({
                 text: t("maintenance_mode"),
                 iconCls: "pimcore_icon_maintenance",
                 handler: this.showMaintenance
             });
-        }
 
-        if (user.isAllowed("translations")) {
-            extrasItems.push({
-                text: t("translations"),
-                iconCls: "pimcore_icon_translations",
-                handler: this.editTranslations
-            });
-        }
-
-        if (user.isAllowed("system_settings")) {
             extrasItems.push({
                 text: t("systemlog"),
                 iconCls: "pimcore_icon_systemlog",
                 handler: this.showLog
             });
-        }
 
-        if (user.isAllowed("system_settings") && user.admin) {
             extrasItems.push({
-                text: t("server_fileexplorer"),
-                iconCls: "pimcore_icon_fileexplorer",
-                handler: this.showFilexplorer
-            });
-        }
-
-        if (user.isAllowed("documents")) {
-            extrasItems.push({
-                text: t("search_engine_optimization"),
-                iconCls: "pimcore_icon_seo",
-                hideOnClick: false,
-                menu: [{
-                    text: t("document_seo_analysis_overview"),
-                    iconCls: "pimcore_icon_seo_document",
-                    handler: this.showDocumentSeo
-                }, {
-                    text: "robots.txt",
-                    iconCls: "pimcore_icon_robots",
-                    handler: this.showRobotsTxt
-                }]
-            });
-        }
-
-        if (user.isAllowed("reports")) {
-            extrasItems.push({
-                text: t("reports_and_marketing") + " (beta)",
-                iconCls: "pimcore_icon_reports",
-                handler: this.showReports
-            });
-        }
-
-        if (user.admin) {
-            extrasItems.push({
-                text: t("system_infos"),
+                text: t("system_infos_and_tools"),
                 iconCls: "pimcore_icon_info",
                 hideOnClick: false,
                 menu: [{
@@ -200,11 +179,15 @@ pimcore.layout.toolbar = Class.create({
                     text: "Server Info",
                     iconCls: "pimcore_icon_server_info",
                     handler: this.showServerInfo
-                }/*,{
-                    text: "MySQL Status",
+                },{
+                    text: "Database Administration",
                     iconCls: "pimcore_icon_mysql",
-                    handler: this.showMysqlStatus
-                }*/]
+                    handler: this.showAdminer
+                },{
+                    text: t("server_fileexplorer"),
+                    iconCls: "pimcore_icon_fileexplorer",
+                    handler: this.showFilexplorer
+                }]
             });
         }
 
@@ -832,15 +815,15 @@ pimcore.layout.toolbar = Class.create({
 
     },
 
-    showMysqlStatus: function () {
+    showAdminer: function () {
 
-        var id = "mysqlstatus";
+        var id = "adminer";
 
         try {
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/reports/system/mysql", "pimcore_icon_mysql", "MySQL Status"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/adminer/index.php", "pimcore_icon_mysql", "Database Admin"));
         }
 
     }
