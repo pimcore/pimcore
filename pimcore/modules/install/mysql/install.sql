@@ -42,6 +42,7 @@ CREATE TABLE `classes` (
   `allowVariants` tinyint(1) unsigned DEFAULT '0',
   `parentClass` varchar(255) DEFAULT NULL,
   `icon` varchar(255) DEFAULT NULL,
+  `previewUrl` varchar(255) NULL DEFAULT NULL,
   `propertyVisibility` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
