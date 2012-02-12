@@ -67,6 +67,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         if (!this.editPanel) {
             this.previewPanel = new Ext.Panel({
                 region: "center",
+                bodyStyle: "-webkit-overflow-scrolling:touch;",
                 html: '<iframe src="/admin/asset/get-preview-video/id/' + this.id + '/" frameborder="0" id="asset_video_edit_' + this.id + '" name="asset_video_edit_' + this.id + '"></iframe>'
             });
             this.previewPanel.on("resize", function (el, width, height, rWidth, rHeight) {

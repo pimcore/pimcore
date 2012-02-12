@@ -55,6 +55,7 @@ pimcore.settings.systemlog = Class.create({
                 layout: "fit",
                 closable:true,
                 layout: "fit",
+                bodyStyle: "-webkit-overflow-scrolling:touch;",
                 html: '<iframe src="about:blank" frameborder="0" width="100%" id="pimcore_systemlog_frame"></iframe>',
                 tbar: [this.startButton, this.stopButton, "-", this.reloadButton]
             });
