@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -13,16 +13,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-
-/**
- * Writes DB events as log messages to the Firebug Console via FirePHP.
- *
- * @category   Zend
- * @package    Zend_Db
- * @subpackage Profiler
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
- */
 class Pimcore_Db_Profiler extends Zend_Db_Profiler
 {
     /**
