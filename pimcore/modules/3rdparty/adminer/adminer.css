@@ -8,6 +8,18 @@
     display: none !important;
 }
 
+#menu {
+    width:320px !important;
+}
+
+#content {
+    margin-left: 360px !important;
+}
+
+#breadcrumb {
+    left:360px !important;
+}
+
 /*######### /PIMCORE MODIFICATION #########*/
 
 
