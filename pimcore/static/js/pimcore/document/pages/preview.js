@@ -31,6 +31,7 @@ pimcore.document.pages.preview = Class.create({
                 border: false,
                 autoScroll: true,
                 iconCls: "pimcore_icon_tab_preview",
+                bodyStyle: "-webkit-overflow-scrolling:touch;",
                 html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="document_preview_iframe_' + this.page.id + '"></iframe>'
             });
 

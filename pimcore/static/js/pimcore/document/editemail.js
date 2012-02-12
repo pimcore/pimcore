@@ -37,6 +37,7 @@ pimcore.document.edit = Class.create({
                 html: html,
                 title: t('edit'),
                 autoScroll: true,
+                bodyStyle: "-webkit-overflow-scrolling:touch;",
                 forceLayout: true,
                 hideMode: "offsets",
                 iconCls: "pimcore_icon_tab_edit"

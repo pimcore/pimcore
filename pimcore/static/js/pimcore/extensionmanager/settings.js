@@ -35,8 +35,8 @@ pimcore.extensionmanager.settings = Class.create({
                 border: false,
                 layout: "fit",
                 closable:true,
+                bodyStyle: "-webkit-overflow-scrolling:touch;",
                 html: '<iframe frameborder="0" style="width:100%; height: ' + height + 'px" src="' + iframeSrc + '"></iframe>'
-
             });
 
 
