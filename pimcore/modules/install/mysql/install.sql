@@ -22,11 +22,11 @@ CREATE TABLE `assets` (
 
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
-  `id` varchar(80) NOT NULL DEFAULT '',
-  `tag` varchar(80) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`(80),`tag`(80)),
-  INDEX `id` (`id`(80)),
-  INDEX `tag` (`tag`(80))
+  `id` varchar(255) NOT NULL DEFAULT '',
+  `tag` varchar(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`,`tag`),
+  INDEX `id` (`id`),
+  INDEX `tag` (`tag`)
 ) ENGINE=MEMORY;
 
 DROP TABLE IF EXISTS `classes` ;
@@ -42,7 +42,7 @@ CREATE TABLE `classes` (
   `allowVariants` tinyint(1) unsigned DEFAULT '0',
   `parentClass` varchar(255) DEFAULT NULL,
   `icon` varchar(255) DEFAULT NULL,
-  `previewUrl` varchar(255) NULL DEFAULT NULL,
+  `previewUrl` varchar(255) DEFAULT NULL,
   `propertyVisibility` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
@@ -108,26 +108,6 @@ CREATE TABLE `documents_elements` (
   KEY `documentId` (`documentId`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `documents_link`;
-CREATE TABLE `documents_link` (
-  `id` int(11) unsigned NOT NULL default '0',
-  `internalType` enum('document','asset') default NULL,
-  `internal` int(11) unsigned default NULL,
-  `direct` varchar(255) default NULL,
-  `linktype` enum('direct','internal') default NULL,
-  PRIMARY KEY  (`id`)
-) DEFAULT CHARSET=utf8;
-
-
-DROP TABLE IF EXISTS `documents_hardlink`;
-CREATE TABLE `documents_hardlink` (
-  `id` int(11) DEFAULT NULL,
-  `sourceId` int(11) DEFAULT NULL,
-  `propertiesFromSource` tinyint(1) DEFAULT NULL,
-  `childsFromSource` tinyint(1) DEFAULT NULL,
-  UNIQUE KEY `id` (`id`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `documents_email`;
 CREATE TABLE `documents_email` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
@@ -143,19 +123,23 @@ CREATE TABLE `documents_email` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `email_log`;
-CREATE TABLE `email_log` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `documentId` int(11) DEFAULT NULL,
-  `requestUri` varchar(255) DEFAULT NULL,
-  `params` text,
-  `from` varchar(255) DEFAULT NULL,
-  `to` varchar(255) DEFAULT NULL,
-  `cc` varchar(255) DEFAULT NULL,
-  `bcc` varchar(255) DEFAULT NULL,
-  `sentDate` bigint(20) DEFAULT NULL,
-  `subject` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+DROP TABLE IF EXISTS `documents_hardlink`;
+CREATE TABLE `documents_hardlink` (
+  `id` int(11) DEFAULT NULL,
+  `sourceId` int(11) DEFAULT NULL,
+  `propertiesFromSource` tinyint(1) DEFAULT NULL,
+  `childsFromSource` tinyint(1) DEFAULT NULL,
+  UNIQUE KEY `id` (`id`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `documents_link`;
+CREATE TABLE `documents_link` (
+  `id` int(11) unsigned NOT NULL default '0',
+  `internalType` enum('document','asset') default NULL,
+  `internal` int(11) unsigned default NULL,
+  `direct` varchar(255) default NULL,
+  `linktype` enum('direct','internal') default NULL,
+  PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_page` ;
@@ -195,6 +179,21 @@ CREATE TABLE `edit_lock` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `email_log`;
+CREATE TABLE `email_log` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `documentId` int(11) DEFAULT NULL,
+  `requestUri` varchar(255) DEFAULT NULL,
+  `params` text,
+  `from` varchar(255) DEFAULT NULL,
+  `to` varchar(255) DEFAULT NULL,
+  `cc` varchar(255) DEFAULT NULL,
+  `bcc` varchar(255) DEFAULT NULL,
+  `sentDate` bigint(20) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `glossary`;
@@ -279,6 +278,7 @@ CREATE TABLE `recyclebin` (
   `path` varchar(255) default NULL,
   `amount` int(3) default NULL,
   `date` bigint(20) default NULL,
+  `deletedby` varchar(50) DEFAULT NULL,
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -291,6 +291,13 @@ CREATE TABLE `redirects` (
   `priority` int(2) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `sanitycheck`;
+CREATE TABLE `sanitycheck` (
+  `id` int(11) unsigned NOT NULL,
+  `type` enum('document','asset','object') NOT NULL,
+  PRIMARY KEY  (`id`,`type`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `schedule_tasks`;
@@ -307,6 +314,32 @@ CREATE TABLE `schedule_tasks` (
   KEY `ctype` (`ctype`),
   KEY `active` (`active`)
 ) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `search_backend_data`;
+CREATE TABLE `search_backend_data` (
+  `id` int(11) NOT NULL,
+  `fullpath` varchar(510) DEFAULT NULL,
+  `maintype` varchar(8) NOT NULL DEFAULT '',
+  `type` varchar(20) DEFAULT NULL,
+  `subtype` varchar(255) DEFAULT NULL,
+  `published` bigint(20) DEFAULT NULL,
+  `creationDate` bigint(20) DEFAULT NULL,
+  `modificationDate` bigint(20) DEFAULT NULL,
+  `userOwner` int(11) DEFAULT NULL,
+  `userModification` int(11) DEFAULT NULL,
+  `data` longtext,
+  `properties` text,
+  PRIMARY KEY (`id`,`maintype`),
+  KEY `id` (`id`),
+  KEY `fullpath` (`fullpath`),
+  KEY `maintype` (`maintype`),
+  KEY `type` (`type`),
+  KEY `subtype` (`subtype`),
+  KEY `published` (`published`),
+  FULLTEXT KEY `data` (`data`),
+  FULLTEXT KEY `properties` (`properties`),
+  FULLTEXT KEY `fulltext` (`data`,`properties`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
@@ -334,21 +367,15 @@ CREATE TABLE `staticroutes` (
   KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `thumbnails`;
-CREATE TABLE `thumbnails` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
-  `description` text,
-  `width` int(11) unsigned DEFAULT NULL,
-  `height` int(11) unsigned DEFAULT NULL,
-  `aspectratio` tinyint(1) unsigned DEFAULT '0',
-  `cover` tinyint(1) unsigned NOT NULL default '0',
-  `contain` tinyint(1) unsigned NOT NULL default '0',
-  `interlace` tinyint(1) unsigned DEFAULT '0',
-  `quality` int(3) DEFAULT NULL,
-  `format` enum('PNG','JPEG','GIF','SOURCE') DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
+DROP TABLE IF EXISTS `translations_admin`;
+CREATE TABLE `translations_admin` (
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `language` varchar(10) NOT NULL DEFAULT '',
+  `text` text,
+  `date` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`key`,`language`),
+  KEY `language` (`language`),
+  KEY `key` (`key`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `translations_website`;
@@ -361,19 +388,6 @@ CREATE TABLE `translations_website` (
   KEY `language` (`language`),
   KEY `key` (`key`)
 ) DEFAULT CHARSET=utf8;
-
-
-DROP TABLE IF EXISTS `translations_admin`;
-CREATE TABLE `translations_admin` (
-  `key` varchar(255) NOT NULL DEFAULT '',
-  `language` varchar(10) NOT NULL DEFAULT '',
-  `text` text,
-  `date` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`key`,`language`),
-  KEY `language` (`language`),
-  KEY `key` (`key`)
-) DEFAULT CHARSET=utf8;
-
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -480,42 +494,6 @@ CREATE TABLE `versions` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
 ) DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `sanitycheck`;
-CREATE TABLE `sanitycheck` (
-  `id` int(11) unsigned NOT NULL,
-  `type` enum('document','asset','object') NOT NULL,
-  PRIMARY KEY  (`id`,`type`)
-) DEFAULT CHARSET=utf8;
-
-
-DROP TABLE IF EXISTS `search_backend_data`;
-CREATE TABLE `search_backend_data` (
-  `id` int(11) NOT NULL,
-  `fullpath` varchar(510) DEFAULT NULL,
-  `maintype` varchar(8) NOT NULL DEFAULT '',
-  `type` varchar(20) DEFAULT NULL,
-  `subtype` varchar(255) DEFAULT NULL,
-  `published` bigint(20) DEFAULT NULL,
-  `creationDate` bigint(20) DEFAULT NULL,
-  `modificationDate` bigint(20) DEFAULT NULL,
-  `userOwner` int(11) DEFAULT NULL,
-  `userModification` int(11) DEFAULT NULL,
-  `data` longtext,
-  `properties` text,
-  PRIMARY KEY (`id`,`maintype`),
-  KEY `id` (`id`),
-  KEY `fullpath` (`fullpath`),
-  KEY `maintype` (`maintype`),
-  KEY `type` (`type`),
-  KEY `subtype` (`subtype`),
-  KEY `published` (`published`),
-  FULLTEXT KEY `data` (`data`),
-  FULLTEXT KEY `properties` (`properties`),
-  FULLTEXT KEY `fulltext` (`data`,`properties`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
 
 
 /* ------ DON'T REMOVE OR MODIFY THE FOLLOWING COMMENT, IT IS REQUIRED FOR BACKUPS ------ */
