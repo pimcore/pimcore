@@ -637,7 +637,7 @@ pimcore.asset.tree = Class.create({
             border: false,
             upload_url: '/admin/asset/add-asset/?pimcore_admin_sid=' + pimcore.settings.sessionId,
             post_params: { parentId: this.id },
-            debug: false,
+            debug: pimcore.settings.devmode,
             file_size_limit: (pimcore.settings.upload_max_filesize/1000),
             flash_url: "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/swfupload.swf",
             confirm_delete: false,
