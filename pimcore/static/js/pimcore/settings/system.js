@@ -815,6 +815,12 @@ pimcore.settings.system = Class.create({
                                 name: 'assets.ffmpeg',
                                 value: this.getValue("assets.ffmpeg"),
                                 width: 300
+                            },
+                            {
+                                fieldLabel: t('absolute_path_to_qtfaststart'),
+                                name: 'assets.qtfaststart',
+                                value: this.getValue("assets.qtfaststart"),
+                                width: 300
                             }
                         ]
                     },

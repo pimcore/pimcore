@@ -104,24 +104,41 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         }
     }
 
+    /**
+     * @static
+     * @return bool|string
+     */
+    public static function getQtfaststartCli () {
+
+        if(Pimcore_Config::getSystemConfig()->assets->qtfaststart) {
+            if(is_executable(Pimcore_Config::getSystemConfig()->assets->qtfaststart)) {
+                return Pimcore_Config::getSystemConfig()->assets->qtfaststart;
+            } else {
+                Logger::critical("qtfaststart binary: " . Pimcore_Config::getSystemConfig()->assets->qtfaststart . " is not executable");
+            }
+        }
+
+        $paths = array("/usr/bin/qtfaststart","/usr/local/bin/qtfaststart", "/bin/qtfaststart");
+        foreach ($paths as $path) {
+            if(is_executable($path)) {
+                return $path;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return mixed
+     */
     protected function addMp4MetaData () {
 
         if(isset($this->__mp4MetaDataAdded)) {
             return;
         }
 
-        $paths = array("/usr/bin/qtfaststart","/usr/local/bin/qtfaststart", "/bin/qtfaststart");
-        $qtfaststartBin = "";
-
-        foreach ($paths as $path) {
-            if(is_executable($path)) {
-                $qtfaststartBin = $path;
-                break;
-            }
-        }
-
-        if(!empty($qtfaststartBin)) {
-            $cmd = $qtfaststartBin . " " . $this->getDestinationFile();
+        if(self::getQtfaststartCli()) {
+            $cmd = self::getQtfaststartCli() . " " . $this->getDestinationFile();
             Pimcore_Tool_Console::exec($cmd);
         } else {
             Logger::error("qtfaststart is not installed on your system, unable to move (to the beginning -> pseudo streaming) metadata in the converted mp4 file: " . $this->getDestinationFile());
