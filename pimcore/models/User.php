@@ -255,6 +255,8 @@ class User extends User_UserRole {
             $this->roles = explode(",", $roles);
         } else if (is_array($roles)) {
             $this->roles = $roles;
+        } else if (empty($roles)) {
+            $this->roles = array();
         }
     }
 
