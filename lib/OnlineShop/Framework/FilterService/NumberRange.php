@@ -1,12 +1,13 @@
 <?php
 
-class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framework_FilterService_AbstractFilterType {
+class OnlineShop_Framework_FilterService_NumberRange extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
     public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
         return $this->view->partial($this->script, array(
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => $productList->getGroupByValues($filterDefinition->getField(), true),
+            "definition" => $filterDefinition,
             "fieldname" => $filterDefinition->getField()
         ));
     }
@@ -15,25 +16,28 @@ class OnlineShop_Framework_FilterService_MultiSelect extends OnlineShop_Framewor
         $value = $params[$filterDefinition->getField()];
 
         if(empty($value)) {
-            $value = explode(",", $filterDefinition->getPreSelect());
-        } else if(in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
-            $value = null;
+            $value['from'] = $filterDefinition->getPreSelectFrom();
+            $value['to'] = $filterDefinition->getPreSelectTo();
         }
 
         $currentFilter[$filterDefinition->getField()] = $value;
 
         if(!empty($value)) {
-            $quotedValues = array();
-            foreach($value as $v) {
-                if(!empty($v)) {
-                    $quotedValues[] = $productList->quote($v);
-                }
-            }
-            if(!empty($quotedValues)) {
+            if(!empty($value['from'])) {
+
                 if($isPrecondition) {
-                    $productList->addCondition($filterDefinition->getField() . " IN (" . implode(",", $quotedValues) . ")", "PRECONDITION_" . $filterDefinition->getField());
+                    $productList->addCondition($filterDefinition->getField() . " >= " . $productList->quote($value['from']), "PRECONDITION_" . $filterDefinition->getField());
                 } else {
-                    $productList->addCondition($filterDefinition->getField() . " IN (" . implode(",", $quotedValues) . ")", $filterDefinition->getField());
+                    $productList->addCondition($filterDefinition->getField() . " >= " . $productList->quote($value['from']), $filterDefinition->getField());
+                }
+
+            }
+            if(!empty($value['to'])) {
+
+                if($isPrecondition) {
+                    $productList->addCondition($filterDefinition->getField() . " <= " . $productList->quote($value['to']), "PRECONDITION_" . $filterDefinition->getField());
+                } else {
+                    $productList->addCondition($filterDefinition->getField() . " <= " . $productList->quote($value['to']), $filterDefinition->getField());
                 }
 
             }

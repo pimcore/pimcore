@@ -22,19 +22,43 @@ class OnlineShop_Framework_FilterService {
      */
     public function getFilterDefinitionClass($name) {
         if($this->config->$name) {
-            return new $this->config->$name->class($this->view);
+            return new $this->config->$name->class($this->view, $this->config->$name->script);
         } else {
             return $name; //throw new OnlineShop_Framework_Exception_UnsupportedException($name . " not as filter type configured.");
         }
     }
 
+
+    public function initFilterService(OnlineShop_Framework_AbstractFilterDefinition $filterObject, OnlineShop_Framework_ProductList $productList, $params = array()) {
+        $currentFilter = array();
+
+        foreach($filterObject->getFilters() as $filter) {
+
+            /**
+             * @var $filter OnlineShop_Framework_AbstractFilterDefinitionType
+             */
+            $currentFilter = $this->addCondition($filter, $productList, $currentFilter, $params);
+        }
+
+
+        foreach($filterObject->getConditions() as $condition) {
+
+            /**
+             * @var $condition OnlineShop_Framework_AbstractFilterDefinitionType
+             */
+            $this->addCondition($condition, $productList, $currentFilter, array(), true);
+        }
+
+        return $currentFilter;
+
+    }
     
-    public function getFilterFrontend($name, OnlineShop_Framework_ProductList $productList, $filterDefinition, $currentFilter) {
-        return $this->getFilterDefinitionClass($name)->getFilterFrontend($productList, $filterDefinition, $currentFilter);
+    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
+        return $this->getFilterDefinitionClass($filterDefinition->getType())->getFilterFrontend($filterDefinition, $productList, $currentFilter);
     }
 
-    public function addCondition($name, OnlineShop_Framework_ProductList $productList, $filterDefinition, $currentFilter, $params) {
-        return $this->getFilterDefinitionClass($name)->addCondition($productList, $filterDefinition, $currentFilter, $params);
+    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
+        return $this->getFilterDefinitionClass($filterDefinition->getType())->addCondition($filterDefinition, $productList, $currentFilter, $params, $isPrecondition);
     }
 
 }

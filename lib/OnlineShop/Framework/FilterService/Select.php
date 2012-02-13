@@ -1,14 +1,8 @@
 <?php
 
-class OnlineShop_Framework_FilterService_Select implements OnlineShop_Framework_FilterService_IFilterService {
+class OnlineShop_Framework_FilterService_Select extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
-    protected $script = "/sample/filters/select.php";
-
-    public function __construct($view) {
-        $this->view = $view;
-    }
-
-    public function getFilterFrontend(OnlineShop_Framework_ProductList $productList, $filterDefinition, $currentFilter) {
+    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
         return $this->view->partial($this->script, array(
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
@@ -17,12 +11,25 @@ class OnlineShop_Framework_FilterService_Select implements OnlineShop_Framework_
         ));
     }
 
-    public function addCondition(OnlineShop_Framework_ProductList $productList, $filterDefinition, $currentFilter, $params) {
+    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $value = $params[$filterDefinition->getField()];
+
+        if($value == OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING) {
+            $value = null;
+        } else if(empty($value)) {
+            $value = $filterDefinition->getPreSelect();
+        }
+
         $currentFilter[$filterDefinition->getField()] = $value;
 
+
         if(!empty($value)) {
-            $productList->addCondition($filterDefinition->getField() . " = " . $productList->quote($value));
+            if($isPrecondition) {
+                $productList->addCondition($filterDefinition->getField() . " = " . $productList->quote($value), "PRECONDITION_" . $filterDefinition->getField());
+            } else {
+                $productList->addCondition($filterDefinition->getField() . " = " . $productList->quote($value), $filterDefinition->getField());
+            }
+
         }
         return $currentFilter;
     }

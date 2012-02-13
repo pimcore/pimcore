@@ -1,14 +1,8 @@
 <?php
 
-class OnlineShop_Framework_FilterService_MultiSelectRelation implements OnlineShop_Framework_FilterService_IFilterService {
+class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
-    protected $script = "/sample/filters/multiselect-relation.php";
-
-    public function __construct($view) {
-        $this->view = $view;
-    }
-
-    public function getFilterFrontend(OnlineShop_Framework_ProductList $productList, $filterDefinition, $currentFilter) {
+    public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
 
         $values = $productList->getGroupByRelationValues($filterDefinition->getField(), true);
 
@@ -28,8 +22,20 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation implements OnlineSh
         ));
     }
 
-    public function addCondition(OnlineShop_Framework_ProductList $productList, $filterDefinition, $currentFilter, $params) {
+    public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $value = $params[$filterDefinition->getField()];
+
+        if(empty($value)) {
+            $objects = $filterDefinition->getPreSelect();
+            $value = array();
+            foreach($objects as $o) {
+                $value[] = $o->getId();
+            }
+
+        } else if(in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
+            $value = null;
+        }
+
         $currentFilter[$filterDefinition->getField()] = $value;
 
         if(!empty($value)) {
@@ -40,7 +46,12 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation implements OnlineSh
                 }
             }
             if(!empty($quotedValues)) {
-                $productList->addRelationCondition($filterDefinition->getField(),  "dest IN (" . implode(",", $quotedValues) . ")");
+
+                if($isPrecondition) {
+                    $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest IN (" . implode(",", $quotedValues) . ")");
+                } else {
+                    $productList->addRelationCondition($filterDefinition->getField(),  "dest IN (" . implode(",", $quotedValues) . ")");
+                }
             }
         }
         return $currentFilter;
