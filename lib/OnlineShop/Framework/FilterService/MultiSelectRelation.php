@@ -13,7 +13,12 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
         }
         Logger::log("done.", Zend_Log::INFO);
 
-        return $this->view->partial($this->script, array(
+        if ($filterDefinition->getScriptPath()) {
+            $script = $filterDefinition->getScriptPath();
+        } else {
+            $script = $this->script;
+        }
+        return $this->view->partial($script, array(
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => $values,

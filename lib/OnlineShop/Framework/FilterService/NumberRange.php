@@ -3,7 +3,12 @@
 class OnlineShop_Framework_FilterService_NumberRange extends OnlineShop_Framework_FilterService_AbstractFilterType {
 
     public function getFilterFrontend(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter) {
-        return $this->view->partial($this->script, array(
+        if ($filterDefinition->getScriptPath()) {
+            $script = $filterDefinition->getScriptPath();
+        } else {
+            $script = $this->script;
+        }
+        return $this->view->partial($script, array(
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => $productList->getGroupByValues($filterDefinition->getField(), true),
