@@ -83,12 +83,13 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             $arguments = implode(" ", $this->arguments);
 
             // add format specific arguments
-            if($this->getFormat() == "f4v") {
-                $arguments = "-f flv -vcodec libx264 -acodec libfaac -ar 44000 -g 250 " . $arguments;
-            } else if($this->getFormat() == "mp4") {
-                $arguments = "-strict experimental -f mp4 -vcodec libx264 -vpre baseline -acodec aac " . $arguments;
+            /*if($this->getFormat() == "f4v") {
+                $arguments = "-f flv -vcodec libx264 -acodec libfaac -ar 44000 -g 100 " . $arguments;
+            } else*/
+            if($this->getFormat() == "mp4") {
+                $arguments = "-strict experimental -f mp4 -vcodec libx264 -vpre baseline -acodec aac -g 100 " . $arguments;
             } else if($this->getFormat() == "webm") {
-                $arguments = "-f webm -vcodec libvpx -acodec libvorbis -ar 44000 " . $arguments;
+                $arguments = "-f webm -vcodec libvpx -acodec libvorbis -ar 44000 -g 100 " . $arguments;
             } else {
                 throw new Exception("Unsupported video output format: " . $this->getFormat());
             }
@@ -101,6 +102,32 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         } else {
             throw new Exception("There is no destination file for video converter");
         }
+    }
+
+    protected function addMp4MetaData () {
+
+        if(isset($this->__mp4MetaDataAdded)) {
+            return;
+        }
+
+        $paths = array("/usr/bin/qtfaststart","/usr/local/bin/qtfaststart", "/bin/qtfaststart");
+        $qtfaststartBin = "";
+
+        foreach ($paths as $path) {
+            if(is_executable($path)) {
+                $qtfaststartBin = $path;
+                break;
+            }
+        }
+
+        if(!empty($qtfaststartBin)) {
+            $cmd = $qtfaststartBin . " " . $this->getDestinationFile();
+            Pimcore_Tool_Console::exec($cmd);
+        } else {
+            Logger::error("qtfaststart is not installed on your system, unable to move (to the beginning -> pseudo streaming) metadata in the converted mp4 file: " . $this->getDestinationFile());
+        }
+
+        $this->__mp4MetaDataAdded = true;
     }
 
     /**
@@ -178,13 +205,20 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         // check if the conversion is finished
         clearstatcache(); // clear stat cache otherwise filemtime always returns the same timestamp
         if((time() - filemtime($this->getConversionLogFile())) > 10) {
-            return 100;
+            $percent = 100;
             @unlink($this->getConversionLogFile());
         }
 
         if(!$percent) {
             $percent = 1;
         }
+
+        // add flash video metadata when conversion is finished
+        if($percent > 99 && $this->getFormat() == "mp4") {
+            $this->addMp4MetaData();
+        }
+
+        Logger::debug("Video transcoding status of " . $this->getDestinationFile() . ": " . $percent . " - " . $this->getFormat());
 
         return $percent;
     }

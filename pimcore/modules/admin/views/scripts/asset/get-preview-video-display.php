@@ -43,7 +43,7 @@
             "clip": {
                 "autoPlay":false,
                 scaling: "orig",
-                "url": <?php echo Zend_Json::encode($this->thumbnail["formats"]["f4v"]); ?>
+                "url": <?php echo Zend_Json::encode($this->thumbnail["formats"]["mp4"]); ?>
             },
             "plugins": {
                 "controls": {
