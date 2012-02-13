@@ -85,6 +85,17 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
             // redirect to the login-page if the user isn't authenticated
             if (!$this->getUser() instanceof User && !($this->_getParam("module") == "admin" && $this->_getParam("controller") == "login")) {
+
+                // put a detailed message into the debug.log
+                Logger::crit("Prevented access to " . print_r($this->getRequest()->getParams()) . " because there is no user in the session!");
+                Logger::crit(array(
+                    "server" => $_SERVER,
+                    "get" => $_GET,
+                    "post" => $_POST,
+                    "session" => $_SESSION,
+                    "cookie" => $_COOKIE
+                ));
+
                 // send a auth header for the client (is covered by the ajax object in javascript)
                 $this->getResponse()->setHeader("X-Pimcore-Auth","required");
                 // redirect to login page
