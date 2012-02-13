@@ -395,6 +395,7 @@
             "pimcore/document/seemode.js"
         );
 
+        // they're here because they are using some pimcore core functionality like t() for i18n , ...
         $modifiedPlugins = array(
             "lib/ext-plugins/SwfUploadPanel/swfupload.js",
             "lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.js"

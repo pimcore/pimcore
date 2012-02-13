@@ -98,16 +98,9 @@ class Pimcore_Tool_Authentication {
 
         try {
             // register session
-            $front = Zend_Controller_Front::getInstance();
-            if ($front->getRequest() != null && $front->getRequest()->getParam("pimcore_admin_sid")) {
-                // hack to get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                $_REQUEST["pimcore_admin_sid"] = $front->getRequest()->getParam("pimcore_admin_sid");
-                $_COOKIE["pimcore_admin_sid"] = $front->getRequest()->getParam("pimcore_admin_sid");
-            }
-            if (!empty($_GET["pimcore_admin_sid"])) {
-                // hack to get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                $_REQUEST["pimcore_admin_sid"] = $_GET["pimcore_admin_sid"];
-                $_COOKIE["pimcore_admin_sid"] = $_GET["pimcore_admin_sid"];
+            if (array_key_exists("pimcore_admin_sid", $_GET) && !empty($_GET["pimcore_admin_sid"])) {
+                // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
+                Zend_Session::setId($_GET["pimcore_admin_sid"]);
             }
 
             try {
@@ -119,7 +112,6 @@ class Pimcore_Tool_Authentication {
                 Logger::error("Problem while starting session");
                 Logger::error($e);
             }
-
         }
         catch (Exception $e) {
             Logger::emergency("there is a problem with admin session");
