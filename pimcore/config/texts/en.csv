@@ -54,6 +54,7 @@
 "audio_bitrate","Audio Bitrate (kB/s)"
 "php_cli_binary_and_or_ffmpeg_binary_setting_is_missing","PHP-CLI binary or FFMPEG is not available, please ensure that both are installed/executable and configured in the system settings!"
 "video_thumbnails","Video Thumbnails"
+"absolute_path_to_qtfaststart","Absolute path to qtfaststart"
 "absolute_path_to_ffmpeg_binary","Absolute path to FFMPEG binary"
 "absolute_path_to_php_cli_binary","Absolute path to PHP commandline binary"
 "module_optional","Module (optional)"

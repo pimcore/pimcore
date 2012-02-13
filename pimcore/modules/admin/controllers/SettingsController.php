@@ -288,7 +288,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "days" => $values["assets.versions.days"],
                         "steps" => $values["assets.versions.steps"]
                     ),
-                    "ffmpeg" => $values["assets.ffmpeg"]
+                    "ffmpeg" => $values["assets.ffmpeg"],
+                    "qtfaststart" => $values["assets.qtfaststart"]
                 ),
                 "services" => array(
                     "googlemaps" => array(
