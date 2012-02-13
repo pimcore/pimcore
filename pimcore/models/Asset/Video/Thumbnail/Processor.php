@@ -54,14 +54,14 @@ class Asset_Video_Thumbnail_Processor {
      * @param Asset_Video $asset
      * @param Asset_Video_Thumbnail_Config $config
      */
-    public static function process (Asset_Video $asset, $config) {
+    public static function process (Asset_Video $asset, $config, $onlyFormats = array()) {
 
         if(!Pimcore_Video::isAvailable()) {
             throw new Exception("No ffmpeg executable found, please configure the correct path in the system settings");
         }
 
         $instance = new self();
-        $formats = array("mp4","webm","f4v");
+        $formats = empty($onlyFormats) ? array("mp4","webm") : $onlyFormats;
         $instance->setProcessId(uniqid());
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);

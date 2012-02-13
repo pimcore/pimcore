@@ -197,7 +197,7 @@ class Document_Tag_Video extends Document_Tag
         // compatibility mode when FFMPEG is not present
         if(!Pimcore_Video::isAvailable()) {
             // try to load the assigned asset into the flowplayer
-            return $this->getFlowplayerCode(array("f4v" => (string) $asset, "mp4" => (string) $asset));
+            return $this->getFlowplayerCode(array("mp4" => (string) $asset));
         }
 
         $options = $this->getOptions();
@@ -351,7 +351,7 @@ class Document_Tag_Video extends Document_Tag
             }
         }
 
-        $config["clip"]["url"] = $urls["f4v"];
+        $config["clip"]["url"] = $urls["mp4"];
         if (empty($urls)) {
             return $this->getEmptyCode();
             //$config["clip"]["url"] = "/pimcore/static/f4v/pimcore.f4v";

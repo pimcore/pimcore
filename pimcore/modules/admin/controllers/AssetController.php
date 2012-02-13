@@ -822,7 +822,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             )
         ));
 
-        $thumbnail = $asset->getThumbnail($config);
+        $thumbnail = $asset->getThumbnail($config, array("mp4"));
 
         if ($thumbnail) {
             $this->view->asset = $asset;

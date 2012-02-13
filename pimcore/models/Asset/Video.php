@@ -83,13 +83,13 @@ class Asset_Video extends Asset {
      * @param mixed
      * @return string
      */
-    public function getThumbnail($thumbnailName) {
+    public function getThumbnail($thumbnailName, $onlyFormats = array()) {
 
         $thumbnail = $this->getThumbnailConfig($thumbnailName);
 
         if($thumbnail) {
             try {
-                Asset_Video_Thumbnail_Processor::process($this, $thumbnail);
+                Asset_Video_Thumbnail_Processor::process($this, $thumbnail, $onlyFormats);
 
                 // check for existing videos
                 $customSetting = $this->getCustomSetting("thumbnails");
