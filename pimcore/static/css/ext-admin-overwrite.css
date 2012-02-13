@@ -29,3 +29,7 @@ background-image:url("/pimcore/static/img/icon/arrow_refresh.png") !important;
     color: #000000;
 }
 
+/* FF >= 10 fix for menu seperator */
+.x-menu-sep {
+    height: 1px;
+}
