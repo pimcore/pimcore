@@ -556,7 +556,7 @@ Ext.ux.SwfUploadPanel = Ext.extend(Ext.grid.GridPanel, {
      */
     uploadProgress: function(file, bytes_completed, bytes_total) {
         if(this.debug) console.info('UPLOAD PROGRESS');
-        
+
         this.store.getById(file.id).set('status', 1);       
         this.store.getById(file.id).commit();
         this.progress_bar.updateProgress(bytes_completed/bytes_total, String.format(this.strings.text_uploading, file.name, this.formatBytes(bytes_completed), this.formatBytes(bytes_total)));
