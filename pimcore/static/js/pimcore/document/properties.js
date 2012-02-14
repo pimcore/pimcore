@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.document.properties");
 pimcore.document.properties = Class.create(pimcore.element.properties,{
 
 
-    disallowedKeys: ["language","navigation_exclude","navigation_name","navigation_title","navigation_relation","navigation_parameters","navigation_anchor","navigation_target","navigation_class"],
+    disallowedKeys: ["language","navigation_exclude","navigation_name","navigation_title","navigation_relation","navigation_parameters","navigation_anchor","navigation_target","navigation_class","navigation_tabindex","navigation_accesskey"],
 
     inheritableKeys: ["language"],
 
