@@ -78,6 +78,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
         if($classRaw["id"]) {
             $this->assignVariablesToModel($classRaw);
+            // the layout is loaded in Object_Class::getByName();
         } else {
             throw new Exception("Class with name " . $name . " doesn't exist");
         }
