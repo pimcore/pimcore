@@ -52,7 +52,7 @@ class Asset_Image_Thumbnail_Processor {
         }
 
         // simple detection for source type if SOURCE is selected
-        if($format == "source") {
+        if($format == "source" || empty($format)) {
             $typeMapping = array(
                 "gif" => "gif",
                 "jpeg" => "jpeg",
