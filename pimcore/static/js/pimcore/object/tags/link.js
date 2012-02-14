@@ -262,9 +262,17 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             height: 330,
             title: "Edit link",
             items: [this.form],
-            layout: "fit"
+            layout: "fit",
+            listeners: {
+                "close": function () {
+                    this.getObject().edit.enableFieldMasks();
+                }.bind(this)
+            }
         });
         this.window.show();
+
+        // this is because of underlying activated wysiwyg, which will also catch the drop event, when the panel is not disabled
+        this.getObject().edit.disableFieldMasks();
     },
 
     openSearchEditor: function () {

@@ -81,6 +81,17 @@ pimcore.object.edit = Class.create({
         }
     },
 
+    disableFieldMasks: function () {
+        this.fieldsToMaskBackup = this.fieldsToMask;
+        this.fieldsToMask = [];
+    },
+
+    enableFieldMasks: function () {
+        if(this.fieldsToMaskBackup) {
+            this.fieldsToMask = this.fieldsToMaskBackup;
+        }
+    },
+
     getValues: function () {
 
         if (!this.layout.rendered) {
