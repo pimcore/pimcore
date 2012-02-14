@@ -52,7 +52,7 @@ class Asset_Image_Thumbnail_Config {
     /**
      * @var mixed
      */
-    public $quality = 100;
+    public $quality = 90;
 
 
     /**
