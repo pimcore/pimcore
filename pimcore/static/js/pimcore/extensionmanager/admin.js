@@ -136,6 +136,11 @@ pimcore.extensionmanager.admin = Class.create({
                     handler: function (grid, rowIndex) {
 
                         var rec = grid.getStore().getAt(rowIndex);
+
+                        if(rec.get("type") != "plugin") {
+                            return;
+                        }
+
                         var method = rec.get("installed") ? "uninstall" : "install";
 
                         Ext.Ajax.request({
