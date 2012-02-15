@@ -82,13 +82,6 @@ class Pimcore_Backup {
             }
         }
 
-        // config 
-        $dirsToBackup = array(
-            "pimcore",
-            PIMCORE_FRONTEND_MODULE,
-            "plugins"
-        );
-
         $errors = array();
         $this->setFileAmount(0);
         
@@ -145,44 +138,35 @@ class Pimcore_Backup {
         $currentFileSize = 0;
         $currentStepFiles = array();
 
-        $files = scandir(PIMCORE_DOCUMENT_ROOT);
-        foreach ($files as $file) {
-            $dir = PIMCORE_DOCUMENT_ROOT . "/" . $file;
-            if (is_dir($dir) && in_array($file, $dirsToBackup)) {
-                // check permissions
-                $filesIn = rscandir($dir . "/");
-                clearstatcache();
 
-                foreach ($filesIn as $fileIn) {
-                    if (!is_readable($fileIn)) {
-                        $errors[] = $fileIn . " is not readable.";
-                    }
+        // check permissions
+        $filesIn = rscandir(PIMCORE_DOCUMENT_ROOT . "/");
+        clearstatcache();
 
-                    if ($currentFileCount > 300 || $currentFileSize > 20000000) {
+        foreach ($filesIn as $fileIn) {
+            if (!is_readable($fileIn)) {
+                $errors[] = $fileIn . " is not readable.";
+            }
 
-                        $currentFileCount = 0;
-                        $currentFileSize = 0;
-                        if (!empty($currentStepFiles)) {
-                            $filesToBackup[] = $currentStepFiles;
-                        }
-                        $currentStepFiles = array();
-                    }
-
-                    if(file_exists($fileIn)) {
-                        $currentFileSize += filesize($fileIn);
-                        $currentFileCount++;
-                        $currentStepFiles[] = $fileIn;
-                    }
-                }
+            if ($currentFileCount > 300 || $currentFileSize > 20000000) {
 
                 $currentFileCount = 0;
                 $currentFileSize = 0;
                 if (!empty($currentStepFiles)) {
                     $filesToBackup[] = $currentStepFiles;
                 }
-
                 $currentStepFiles = array();
             }
+
+            if(file_exists($fileIn)) {
+                $currentFileSize += filesize($fileIn);
+                $currentFileCount++;
+                $currentStepFiles[] = $fileIn;
+            }
+        }
+
+        if (!empty($currentStepFiles)) {
+            $filesToBackup[] = $currentStepFiles;
         }
 
         $this->setFilesToBackup($filesToBackup);
@@ -214,12 +198,12 @@ class Pimcore_Backup {
         $files = $filesContainer[$step];
 
         $excludePatterns = array(
-            "/^" . PIMCORE_FRONTEND_MODULE . "\/var\/backup\/.*/",
-            "/^" . PIMCORE_FRONTEND_MODULE . "\/var\/cache\/.*/",
-            "/^" . PIMCORE_FRONTEND_MODULE . "\/var\/log\/.*/",
-            "/^" . PIMCORE_FRONTEND_MODULE . "\/var\/system\/.*/",
-            "/^" . PIMCORE_FRONTEND_MODULE . "\/var\/tmp\/.*/",
-            "/^" . PIMCORE_FRONTEND_MODULE . "\/var\/webdav\/.*/"
+            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/backup\/.*/",
+            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/cache\/.*/",
+            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/log\/.*/",
+            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/system\/.*/",
+            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/tmp\/.*/",
+            "/" . PIMCORE_FRONTEND_MODULE . "\/var\/webdav\/.*/"
         );
 
         if(!empty($this->additionalExcludePatterns) && is_array($this->additionalExcludePatterns)) {
@@ -329,8 +313,12 @@ class Pimcore_Backup {
             $dumpData .= "DROP VIEW IF EXISTS `" . $name . "`;";
             $dumpData .= "\n";
 
-            $viewData = $db->fetchRow("SHOW CREATE VIEW " . $name);
-            $dumpData .= $viewData["Create View"] . ";";
+            try {
+                $viewData = $db->fetchRow("SHOW CREATE VIEW " . $name);
+                $dumpData .= $viewData["Create View"] . ";";
+            } catch (Exception $e) {
+                Logger::error($e);
+            }
         }
 
         $dumpData .= "\n\n";
