@@ -25,7 +25,7 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
     }
 
     public function isActive($inProductList = false) {
-        throw new OnlineShop_Framework_Exception_UnsupportedException("getActive is not supported for " . get_class($this));
+        throw new OnlineShop_Framework_Exception_UnsupportedException("isActive is not supported for " . get_class($this));
     }
 
     /**

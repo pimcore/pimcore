@@ -261,7 +261,7 @@ class OnlineShop_Framework_IndexService {
 
 
     private function dbexec($sql) {
-        $this->db->exec($sql);
+        $this->db->query($sql);
         $this->logSql($sql);
     }
 
