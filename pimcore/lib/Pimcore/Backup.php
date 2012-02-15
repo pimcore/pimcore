@@ -151,6 +151,7 @@ class Pimcore_Backup {
             if (is_dir($dir) && in_array($file, $dirsToBackup)) {
                 // check permissions
                 $filesIn = rscandir($dir . "/");
+                clearstatcache();
 
                 foreach ($filesIn as $fileIn) {
                     if (!is_readable($fileIn)) {
@@ -167,9 +168,11 @@ class Pimcore_Backup {
                         $currentStepFiles = array();
                     }
 
-                    $currentFileSize += filesize($fileIn);
-                    $currentFileCount++;
-                    $currentStepFiles[] = $fileIn;
+                    if(file_exists($fileIn)) {
+                        $currentFileSize += filesize($fileIn);
+                        $currentFileCount++;
+                        $currentStepFiles[] = $fileIn;
+                    }
                 }
 
                 $currentFileCount = 0;
@@ -223,9 +226,11 @@ class Pimcore_Backup {
             $excludePatterns = array_merge($excludePatterns, $this->additionalExcludePatterns);
         }
 
+        clearstatcache();
+
         foreach ($files as $file) {
             if ($file) {
-                if (is_readable($file)) {
+                if (file_exists($file) && is_readable($file)) {
 
                     $exclude = false;
                     $relPath = str_replace(PIMCORE_DOCUMENT_ROOT . "/", "", $file);
