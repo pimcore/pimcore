@@ -11,6 +11,10 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getName is not supported for " . get_class($this));
     }
 
+    public function getOSDoIndexProduct() {
+        return true;
+    }
+
     public function getPriceSystemName() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getPriceSystemName is not supported for " . get_class($this));
     }

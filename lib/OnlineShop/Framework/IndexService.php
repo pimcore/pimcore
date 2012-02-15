@@ -107,112 +107,129 @@ class OnlineShop_Framework_IndexService {
 
     public function updateIndex(OnlineShop_Framework_AbstractProduct $object) {
 
-        $b = Object_Abstract::doGetInheritedValues();
-        Object_Abstract::setGetInheritedValues(true);
-        $categories = $object->getCategories();
-        $categoryIds = array();
-        $parentCategoryIds = array();
-        if($categories) {
-            foreach($categories as $c) {
-                $parent = $c;
+        if($object->getOSDoIndexProduct()) {
+            $b = Object_Abstract::doGetInheritedValues();
+            Object_Abstract::setGetInheritedValues(true);
+            $categories = $object->getCategories();
+            $categoryIds = array();
+            $parentCategoryIds = array();
+            if($categories) {
+                foreach($categories as $c) {
+                    $parent = $c;
 
-                if($parent->getOSProductsInParentCategoryVisible()) {
-                    while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory) {
-                        $parentCategoryIds[$parent->getId()] = $parent->getId();
-                        $parent = $parent->getParent();
-                    }
-                } else {
-                    $parentCategoryIds[$parent->getId()] = $parent->getId();
-                }
-
-                $categoryIds[$c->getId()] = $c->getId();
-            }
-        }
-
-
-        $data = array(
-            "o_id" => $object->getId(),
-            "o_classId" => $object->getClassId(),
-            "o_parentId" => $object->getOSParentId(),
-            "o_type" => $object->getOSIndexType(),
-            "categoryIds" => ',' . implode(",", $categoryIds) . ",",
-            "parentCategoryIds" => ',' . implode(",", $parentCategoryIds) . ",",
-            "priceSystemName" => $object->getPriceSystemName(),
-            "active" => $object->isActive(),
-            "inProductList" => $object->isActive(true)
-        );
-
-        $relationData = array();
-
-        $columnConfig = $this->columnConfig->column;
-        if(!empty($columnConfig->name)) {
-            $columnConfig = array($columnConfig);
-        }
-        foreach($columnConfig as $column) {
-            try {
-                $value = null;
-                if(!empty($column->getter)) {
-                    $getter = $column->getter;
-                    $value = $getter::get($object, $column->config);
-                } else {
-                    if(!empty($column->fieldname)) {
-                        $getter = get . ucfirst($column->fieldname);
+                    if($parent->getOSProductsInParentCategoryVisible()) {
+                        while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory) {
+                            $parentCategoryIds[$parent->getId()] = $parent->getId();
+                            $parent = $parent->getParent();
+                        }
                     } else {
-                        $getter = get . ucfirst($column->name);
+                        $parentCategoryIds[$parent->getId()] = $parent->getId();
                     }
 
-                    if(method_exists($object, $getter)) {
-                        $value = $object->$getter();
-                    }
+                    $categoryIds[$c->getId()] = $c->getId();
                 }
+            }
 
-                if(!empty($column->interpreter)) {
-                    $interpreter = $column->interpreter;
-                    $value = $interpreter::interpret($value, $column->config);
-                    $interpreterObject = new $interpreter();
-                    if($interpreterObject instanceof OnlineShop_Framework_IndexService_RelationInterpreter) {
-                        foreach($value as $v) {
-                            $relData = array();
-                            $relData['src'] = $object->getId();
-                            $relData['dest'] = $v['dest'];
-                            $relData['fieldname'] = $column->name;
-                            $relData['type'] = $v['type'];
-                            $relationData[] = $relData;
+
+            $data = array(
+                "o_id" => $object->getId(),
+                "o_classId" => $object->getClassId(),
+                "o_parentId" => $object->getOSParentId(),
+                "o_type" => $object->getOSIndexType(),
+                "categoryIds" => ',' . implode(",", $categoryIds) . ",",
+                "parentCategoryIds" => ',' . implode(",", $parentCategoryIds) . ",",
+                "priceSystemName" => $object->getPriceSystemName(),
+                "active" => $object->isActive(),
+                "inProductList" => $object->isActive(true)
+            );
+
+            $relationData = array();
+
+            $columnConfig = $this->columnConfig->column;
+            if(!empty($columnConfig->name)) {
+                $columnConfig = array($columnConfig);
+            }
+            foreach($columnConfig as $column) {
+                try {
+                    $value = null;
+                    if(!empty($column->getter)) {
+                        $getter = $column->getter;
+                        $value = $getter::get($object, $column->config);
+                    } else {
+                        if(!empty($column->fieldname)) {
+                            $getter = get . ucfirst($column->fieldname);
+                        } else {
+                            $getter = get . ucfirst($column->name);
+                        }
+
+                        if(method_exists($object, $getter)) {
+                            $value = $object->$getter();
+                        }
+                    }
+
+                    if(!empty($column->interpreter)) {
+                        $interpreter = $column->interpreter;
+                        $value = $interpreter::interpret($value, $column->config);
+                        $interpreterObject = new $interpreter();
+                        if($interpreterObject instanceof OnlineShop_Framework_IndexService_RelationInterpreter) {
+                            foreach($value as $v) {
+                                $relData = array();
+                                $relData['src'] = $object->getId();
+                                $relData['dest'] = $v['dest'];
+                                $relData['fieldname'] = $column->name;
+                                $relData['type'] = $v['type'];
+                                $relationData[] = $relData;
+                            }
+                        } else {
+                            $data[$column->name] = $value;
                         }
                     } else {
                         $data[$column->name] = $value;
                     }
-                } else {
-                    $data[$column->name] = $value;
+
+                    if(is_array($data[$column->name])) {
+                        $data[$column->name] = self::MULTISELECT_DELIMITER . implode($data[$column->name], self::MULTISELECT_DELIMITER) . self::MULTISELECT_DELIMITER;
+                    }
+
+                } catch(Exception $e) {
+                    Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
                 }
 
-                if(is_array($data[$column->name])) {
-                    $data[$column->name] = self::MULTISELECT_DELIMITER . implode($data[$column->name], self::MULTISELECT_DELIMITER) . self::MULTISELECT_DELIMITER;
-                }
-
-            } catch(Exception $e) {
-                Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
             }
-
-        }
-        Object_Abstract::setGetInheritedValues($b);
-        try {
-            $this->db->insert(self::TABLENAME, $data);
-        } catch (Exception $e) {
+            Object_Abstract::setGetInheritedValues($b);
             try {
-                $this->db->update(self::TABLENAME, $data, "o_id = " . $object->getId());
-            } catch (Exception $ex) {
-                Logger::warn("Error during updating index table: " . $ex->getMessage(), $ex);
+                $this->db->insert(self::TABLENAME, $data);
+            } catch (Exception $e) {
+                try {
+                    $this->db->update(self::TABLENAME, $data, "o_id = " . $object->getId());
+                } catch (Exception $ex) {
+                    Logger::warn("Error during updating index table: " . $ex->getMessage(), $ex);
+                }
             }
-        }
 
-        try {
-            $this->db->delete(self::RELATIONTABLENAME, "src = " . $this->db->quote($object->getId()));
-            foreach($relationData as $rd) {
-                $this->db->insert(self::RELATIONTABLENAME, $rd);
+            try {
+                $this->db->delete(self::RELATIONTABLENAME, "src = " . $this->db->quote($object->getId()));
+                foreach($relationData as $rd) {
+                    $this->db->insert(self::RELATIONTABLENAME, $rd);
+                }
+            } catch (Exception $e) {
+                Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
             }
-        } catch (Exception $e) {
-            Logger::warn("Error during updating index relation table: " . $ex->getMessage(), $ex);
+
+        } else {
+
+            try {
+                $this->db->delete(self::TABLENAME, "o_id = " . $this->db->quote($object->getId()));
+            } catch (Exception $e) {
+                Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
+            }
+
+            try {
+                $this->db->delete(self::RELATIONTABLENAME, "src = " . $this->db->quote($object->getId()));
+            } catch (Exception $e) {
+                Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
+            }
+
         }
 
     }
