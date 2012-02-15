@@ -32,21 +32,24 @@ class OnlineShop_Framework_FilterService {
     public function initFilterService(OnlineShop_Framework_AbstractFilterDefinition $filterObject, OnlineShop_Framework_ProductList $productList, $params = array()) {
         $currentFilter = array();
 
-        foreach($filterObject->getFilters() as $filter) {
+        if ($filterObject->getFilters()) {
+            foreach($filterObject->getFilters() as $filter) {
 
-            /**
-             * @var $filter OnlineShop_Framework_AbstractFilterDefinitionType
-             */
-            $currentFilter = $this->addCondition($filter, $productList, $currentFilter, $params);
+                /**
+                 * @var $filter OnlineShop_Framework_AbstractFilterDefinitionType
+                 */
+                $currentFilter = $this->addCondition($filter, $productList, $currentFilter, $params);
+            }
         }
 
+        if ($filterObject->getConditions()) {
+            foreach($filterObject->getConditions() as $condition) {
 
-        foreach($filterObject->getConditions() as $condition) {
-
-            /**
-             * @var $condition OnlineShop_Framework_AbstractFilterDefinitionType
-             */
-            $this->addCondition($condition, $productList, $currentFilter, array(), true);
+                /**
+                 * @var $condition OnlineShop_Framework_AbstractFilterDefinitionType
+                 */
+                $this->addCondition($condition, $productList, $currentFilter, array(), true);
+            }
         }
 
         return $currentFilter;
