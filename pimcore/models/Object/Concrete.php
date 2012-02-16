@@ -16,7 +16,9 @@
  */
  
 class Object_Concrete extends Object_Abstract {
-    
+
+    public static $systemColumnNames = array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
+
     /**
      * @var boolean
      */

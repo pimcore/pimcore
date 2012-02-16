@@ -354,7 +354,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $result['objectColumns']['nodeLabel'] = "object_columns";
         $result['objectColumns']['nodeType'] = "object";
 
-        $systemColumnNames = array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
+        $systemColumnNames = Object_Concrete::$systemColumnNames; // array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
         $systemColumns = array();
         foreach($systemColumnNames as $systemColumn) {
             $systemColumns[] = array("title" => $systemColumn, "name" => $systemColumn, "datatype" => "data", "fieldtype" => "system");
