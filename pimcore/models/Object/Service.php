@@ -238,21 +238,31 @@ class Object_Service extends Element_Service {
 
                     //relation type fields with remote owner do not have a getter
                     if(method_exists($object,$getter)) {
-                        $valueObject = self::getValueForObject($object, $getter, $brickType, $brickGetter);
-                        $data['inheritedFields'][$dataKey] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
 
-                        if(method_exists($def, "getDataForGrid")) {
-                            $tempData = $def->getDataForGrid($valueObject->value, $object);
-                            if($def instanceof Object_Class_Data_Localizedfields) {
-                                foreach($tempData as $tempKey => $tempValue) {
-                                    $data[$tempKey] = $tempValue;
+                        //system columns must not be inherited
+                        if(in_array($key, Object_Concrete::$systemColumnNames)) {
+                            $data[$dataKey] = $object->$getter();
+                        } else {
+
+                            $valueObject = self::getValueForObject($object, $getter, $brickType, $brickGetter);
+                            $data['inheritedFields'][$dataKey] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
+
+                            if(method_exists($def, "getDataForGrid")) {
+                                $tempData = $def->getDataForGrid($valueObject->value, $object);
+                                if($def instanceof Object_Class_Data_Localizedfields) {
+                                    foreach($tempData as $tempKey => $tempValue) {
+                                        $data[$tempKey] = $tempValue;
+                                    }
+                                } else {
+                                    $data[$dataKey] = $tempData;
                                 }
                             } else {
-                                $data[$dataKey] = $tempData;
+                                $data[$dataKey] = $valueObject->value;
                             }
-                        } else {
-                            $data[$dataKey] = $valueObject->value;
+
                         }
+
+
                     }
                 }
 
@@ -267,7 +277,7 @@ class Object_Service extends Element_Service {
             if($fd instanceof Object_Class_Data_Objectbricks) {
                 if(in_array($bricktype, $fd->getAllowedTypes())) {
                     return $key;
-                }
+                } 
             }
         }
        return null;
