@@ -252,7 +252,7 @@ class Pimcore_Backup {
 
         $tables = $db->fetchAll("SHOW FULL TABLES");
 
-        $dumpData = "\n\n";
+        $dumpData = "\nSET NAMES UTF8;\n\n";
 
         // tables
         foreach ($tables as $table) {
