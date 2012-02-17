@@ -119,7 +119,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return float
      */
     public function getDataForQueryResource($data, $object = null) {
-        return $data;
+        return $this->getDataForResource($data, $object);
     }
 
     /**
@@ -176,7 +176,6 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return string
      */
     public function getForCsvExport($object) {
-        $this->sanityCheck($object);
         $key = $this->getName();
         $getter = "get".ucfirst($key);
         return strval($object->$getter());
