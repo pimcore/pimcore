@@ -71,7 +71,7 @@ class Element_Sanitycheck_Resource extends Pimcore_Model_Resource_Abstract {
 
     public  function getNext(){
 
-        $data = $this->db->fetchRow("SELECT * FROM sanitycheck");
+        $data = $this->db->fetchRow("SELECT * FROM sanitycheck LIMIT 1");
         if (is_array($data)) {
             $this->assignVariablesToModel($data);
         }  

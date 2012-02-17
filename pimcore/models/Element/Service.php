@@ -341,6 +341,11 @@ class Element_Service {
         if ($dirty) {
             $element->setUserModification(0);
             $element->save();
+
+            if($version = $element->getLatestVersion()) {
+                $version->setNote("Sanitycheck");
+                $version->save();
+            }
         }
     }
 
