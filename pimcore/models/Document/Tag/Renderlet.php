@@ -99,6 +99,12 @@ class Document_Tag_Renderlet extends Document_Tag {
             $document = $this->o;
         }
 
+        if(method_exists($this->o, "isPublished")) {
+            if(!$this->o->isPublished()) {
+                return "";
+            }
+        }
+
         if ($this->o instanceof Element_Interface) {
 
             $blockparams = array("action", "controller", "module", "template");
