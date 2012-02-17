@@ -327,7 +327,17 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
     private function buildOrderBy() {
         if(!empty($this->orderKey) && $this->orderKey !== self::ORDERKEY_PRICE) {
-            return $this->orderKey . " " . $this->order;
+
+            if($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                 if(strtoupper($this->order) == "DESC") {
+                     return "max(" . $this->orderKey . ") " . $this->order;
+                 } else {
+                     return "min(" . $this->orderKey . ") " . $this->order;
+                 }
+            } else {
+                return $this->orderKey . " " . $this->order;
+            }
+
         }
         return null;
     }
