@@ -12,4 +12,10 @@ abstract class OnlineShop_Framework_AbstractFilterDefinitionType extends Object_
     */
     public abstract function getField ();
 
+    /**
+     * @return string
+     *
+     */
+    public abstract function getScriptPath();
+
 }

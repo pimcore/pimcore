@@ -37,6 +37,7 @@ class OnlineShop_Framework_IndexService {
     public function createOrUpdateTable() {
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . self::TABLENAME . "` (
           `o_id` int(11) NOT NULL default '0',
+          `o_virtualProductId` int(11) NOT NULL,
           `o_classId` int(11) NOT NULL,
           `o_parentId` int(11) NOT NULL,
           `o_type` varchar(20) NOT NULL,
@@ -92,6 +93,7 @@ class OnlineShop_Framework_IndexService {
 
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . self::RELATIONTABLENAME . "` (
           `src` int(11) NOT NULL,
+          `src_virtualProductId` int(11) NOT NULL,
           `dest` int(11) NOT NULL,
           `fieldname` varchar(255) COLLATE utf8_bin NOT NULL,
           `type` varchar(20) COLLATE utf8_bin NOT NULL,
@@ -108,7 +110,9 @@ class OnlineShop_Framework_IndexService {
     public function updateIndex(OnlineShop_Framework_AbstractProduct $object) {
 
         if($object->getOSDoIndexProduct()) {
+            $a = Pimcore::inAdmin();
             $b = Object_Abstract::doGetInheritedValues();
+            Pimcore::unsetAdminMode();
             Object_Abstract::setGetInheritedValues(true);
             $categories = $object->getCategories();
             $categoryIds = array();
@@ -131,9 +135,14 @@ class OnlineShop_Framework_IndexService {
             }
 
 
+            $virtualProductId = $object->getId();
+            if($object->getOSIndexType() == "variant") {
+                $virtualProductId = $object->getOSParentId();
+            }
             $data = array(
                 "o_id" => $object->getId(),
                 "o_classId" => $object->getClassId(),
+                "o_virtualProductId" => $virtualProductId,
                 "o_parentId" => $object->getOSParentId(),
                 "o_type" => $object->getOSIndexType(),
                 "categoryIds" => ',' . implode(",", $categoryIds) . ",",
@@ -175,6 +184,7 @@ class OnlineShop_Framework_IndexService {
                             foreach($value as $v) {
                                 $relData = array();
                                 $relData['src'] = $object->getId();
+                                $relData['src_virtualProductId'] = $virtualProductId;
                                 $relData['dest'] = $v['dest'];
                                 $relData['fieldname'] = $column->name;
                                 $relData['type'] = $v['type'];
@@ -195,6 +205,9 @@ class OnlineShop_Framework_IndexService {
                     Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
                 }
 
+            }
+            if($a) {
+                Pimcore::setAdminMode();
             }
             Object_Abstract::setGetInheritedValues($b);
             try {
@@ -218,6 +231,8 @@ class OnlineShop_Framework_IndexService {
 
         } else {
 
+            Logger::info("Don't adding product " . $object->getId() . " to index.");
+
             try {
                 $this->db->delete(self::TABLENAME, "o_id = " . $this->db->quote($object->getId()));
             } catch (Exception $e) {
@@ -239,7 +254,7 @@ class OnlineShop_Framework_IndexService {
     }
 
     private function getSystemColumns() {
-        return array("o_id", "o_classId", "o_parentId", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList");
+        return array("o_id", "o_classId", "o_parentId", "o_virtualProductId", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList");
     }
 
     public function getIndexColumns() {

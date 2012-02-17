@@ -5,9 +5,15 @@ class OnlineShop_Framework_ProductList_Resource {
     /**
      * @var Zend_Db_Adapter_Abstract
      */
-    private $db; 
+    private $db;
 
-    public function __construct() {
+    /**
+     * @var OnlineShop_Framework_ProductList
+     */
+    private $model;
+
+    public function __construct(OnlineShop_Framework_ProductList $model) {
+        $this->model = $model;
         $this->db = Pimcore_Resource::get();
     }
 
@@ -30,7 +36,11 @@ class OnlineShop_Framework_ProductList_Resource {
             }
         }
 
-        $query = "SELECT o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+        if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+            $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+        } else {
+            $query = "SELECT o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+        }
         Logger::log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchAll($query);
         Logger::log("Query done.", Zend_Log::INFO);
@@ -44,7 +54,12 @@ class OnlineShop_Framework_ProductList_Resource {
         }
 
         if($countValues) {
-            $query = "SELECT `$fieldname` as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY `" . $fieldname . "`";
+            if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                $query = "SELECT `$fieldname` as `value`, count(DISTINCT o_virtualProductId) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY `" . $fieldname . "`";
+            } else {
+                $query = "SELECT `$fieldname` as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY `" . $fieldname . "`";
+            }
+
             Logger::log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchAll($query);
             Logger::log("Query done.", Zend_Log::INFO);
@@ -65,7 +80,12 @@ class OnlineShop_Framework_ProductList_Resource {
         }
 
         if($countValues) {
-            $query = "SELECT dest as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
+            if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                $query = "SELECT dest as `value`, count(DISTINCT o_virtualProductId) as `count` FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
+            } else {
+                $query = "SELECT dest as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
+            }
+
             $query .= " AND src IN (SELECT o_id FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . ") GROUP BY dest";
 
             Logger::log("Query: " . $query, Zend_Log::INFO);
@@ -100,7 +120,11 @@ class OnlineShop_Framework_ProductList_Resource {
             }
         }
 
-        $query = "SELECT count(*) FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+        if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+            $query = "SELECT count(DISTINCT o_virtualProductId) FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+        } else {
+            $query = "SELECT count(*) FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+        }
         Logger::log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchOne($query);
         Logger::log("Query done.");

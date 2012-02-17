@@ -41,7 +41,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
     public function __construct() {
         $this->indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
-        $this->resource = new OnlineShop_Framework_ProductList_Resource();
+        $this->resource = new OnlineShop_Framework_ProductList_Resource($this);
     }
 
 
@@ -219,7 +219,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
     public function getGroupByValues($fieldname, $countValues = false) {
         if($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            return $this->resource->loadGroupByValues($fieldname, $this->buildQueryFromConditions(false, $fieldname, self::VARIANT_MODE_INCLUDE), $countValues);
+            return $this->resource->loadGroupByValues($fieldname, $this->buildQueryFromConditions(false, $fieldname, OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE), $countValues);
 
         } else {
             throw new Exception("Not supported yet");
@@ -228,7 +228,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
     public function getGroupByRelationValues($fieldname, $countValues = false) {
         if($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $fieldname, self::VARIANT_MODE_INCLUDE), $countValues);
+            return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $fieldname, OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE), $countValues);
 
         } else {
             throw new Exception("Not supported yet");
@@ -254,23 +254,30 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         //variant handling and userspecific conditions
 
         if($variantMode == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            $userspecific = $this->buildUserspecificConditions($excludedFieldname);
+            if(!$excludeConditions) {
+                $userspecific = $this->buildUserspecificConditions($excludedFieldname);
+                if($userspecific) {
+                    $condition .= " AND " . $userspecific;
+                }
+            }
 
-            $condition .= " AND o_type != 'variant'";
-            $condition .= " AND (";
-            if($userspecific) {
-                $condition .= "(" . $userspecific . ")";
-                $condition .= " OR ";
-            } else {
-                $condition .= "(1=1)";
-                $condition .= " OR ";
-            }
-            $condition .= "( o_id IN (SELECT DISTINCT o_parentId FROM " . OnlineShop_Framework_IndexService::TABLENAME . " WHERE " . $preCondition . " AND o_type = 'variant'";
-            if($userspecific) {
-                $condition .= " AND " . $this->buildUserspecificConditions($excludedFieldname);
-            }
-            $condition .= "))";
-            $condition .= ")";
+//            $userspecific = $this->buildUserspecificConditions($excludedFieldname);
+//
+//            $condition .= " AND o_type != 'variant'";
+//            $condition .= " AND (";
+//            if($userspecific) {
+//                $condition .= "(" . $userspecific . ")";
+//                $condition .= " OR ";
+//            } else {
+//                $condition .= "(1=1)";
+//                $condition .= " OR ";
+//            }
+//            $condition .= "( o_id IN (SELECT DISTINCT o_parentId FROM " . OnlineShop_Framework_IndexService::TABLENAME . " WHERE " . $preCondition . " AND o_type = 'variant'";
+//            if($userspecific) {
+//                $condition .= " AND " . $this->buildUserspecificConditions($excludedFieldname);
+//            }
+//            $condition .= "))";
+//            $condition .= ")";
 
         } else {
             if($variantMode == self::VARIANT_MODE_HIDE) {
