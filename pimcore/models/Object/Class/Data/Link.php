@@ -55,6 +55,16 @@ class Object_Class_Data_Link extends Object_Class_Data {
         if($data instanceof Object_Data_Link and isset($data->object)){
             unset($data->object);
         }
+
+        if($data) {
+            try {
+                $this->checkValidity($data, true);
+            } catch (Exception $e) {
+                $data->setInternalType(null);
+                $data->setInternal(null);
+            }
+        }
+
         return Pimcore_Tool_Serialize::serialize($data);
     }
 
@@ -70,7 +80,15 @@ class Object_Class_Data_Link extends Object_Class_Data {
             if ($link->isEmpty()) {
                 return false;
             }
+
+            try {
+                $this->checkValidity($data, true);
+            } catch (Exception $e) {
+                $data->setInternalType(null);
+                $data->setInternal(null);
+            }
         }
+
         return $link;
     }
 
@@ -137,7 +155,6 @@ class Object_Class_Data_Link extends Object_Class_Data {
                 if (intval($data->getInternal()) > 0) {
                     if ($data->getInternalType() == "document") {
                         $doc = Document::getById($data->getInternal());
-                        Logger::log($doc);
                         if (!$doc instanceof Document) {
                             throw new Exception("invalid internal link, referenced document with id [" . $data->getInternal() . "] does not exist");
                         }
@@ -229,12 +246,10 @@ class Object_Class_Data_Link extends Object_Class_Data {
      * @return string
      */
     public function getForCsvExport($object) {
-        if ($this->sanityCheck($object)) {
-            $key = $this->getName();
-            $getter = "get".ucfirst($key);
-            if ($object->$getter() instanceof Object_Data_Link) {
-                return base64_encode(Pimcore_Tool_Serialize::serialize($object->$getter()));
-            } else return null;
+        $key = $this->getName();
+        $getter = "get".ucfirst($key);
+        if ($object->$getter() instanceof Object_Data_Link) {
+            return base64_encode(Pimcore_Tool_Serialize::serialize($object->$getter()));
         } else return null;
     }
 
@@ -257,24 +272,19 @@ class Object_Class_Data_Link extends Object_Class_Data {
      * @return mixed
      */
     public function getForWebserviceExport($object) {
-        if ($this->sanityCheck($object)) {
-            $k = $this->getName();
-            $getter = "get".ucfirst($k);
-            if ($object->$getter() instanceof Object_Data_Link) {
+        $k = $this->getName();
+        $getter = "get".ucfirst($k);
+        if ($object->$getter() instanceof Object_Data_Link) {
 
-                $keys = get_object_vars($object->$getter());
-                foreach ($keys as $key => $value) {
-                    $method = "get" . ucfirst($key);
-                    if (!method_exists($object->$getter(), $method) or $key=="object") {
-                        unset($keys[$key]);
-                    }
+            $keys = get_object_vars($object->$getter());
+            foreach ($keys as $key => $value) {
+                $method = "get" . ucfirst($key);
+                if (!method_exists($object->$getter(), $method) or $key=="object") {
+                    unset($keys[$key]);
                 }
-                return $keys;
-            } else return null;
-        } else {
-            Logger::notice("Link sanity check failed before webservice export");
-            return null;
-        }
+            }
+            return $keys;
+        } else return null;
     }
 
     /**
@@ -316,29 +326,6 @@ class Object_Class_Data_Link extends Object_Class_Data {
         } else {
             throw new Exception("cannot get values from web service import - invalid data");
         }
-
-    }
-
-
-    /**
-     * Checks if data for this field is valid and removes broken dependencies
-     *
-     * @param Object_Abstract $object
-     * @return bool
-     */
-    public function sanityCheck($object) {
-
-        $key = $this->getName();
-        $data = $object->$key;
-        $sane = true;
-        try {
-            $this->checkValidity($data,true);
-        } catch (Exception $e) {
-            Logger::notice("Detected insane relation, removing reference to non existent element with id [".$data->internal."]");
-            $object->$key = null;
-            $sane = false;
-        }
-        return $sane;
 
     }
 

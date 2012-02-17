@@ -99,8 +99,8 @@ class Object_Data_Link {
     }
     
     public function setInternal ($internal) {
+        $this->internal = $internal;
         if (!empty($internal)) {
-            $this->internal = $internal;
             $this->setObjectFromId();
         }
     }

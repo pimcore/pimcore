@@ -75,7 +75,7 @@ class Document_Tag_Date extends Document_Tag {
      * @return void
      */
     public function getDataForResource () {
-        $this->sanityCheck();
+        $this->checkValidity();
         if($this->date instanceof Zend_Date) {
             return $this->date->get(Zend_Date::TIMESTAMP);
         }

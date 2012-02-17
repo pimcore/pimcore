@@ -266,8 +266,7 @@ class Element_Service {
 
     }
 
-    public static function runSanityCheck($runDirtyCheck=true)
-    {
+    public static function runSanityCheck() {
 
         $sanityCheck = Element_Sanitycheck::getNext();
         while ($sanityCheck) {
@@ -275,7 +274,7 @@ class Element_Service {
             $element = self::getElementById($sanityCheck->getType(), $sanityCheck->getId());
             if ($element) {
                 try {
-                    self::performSanityCheck($element,$runDirtyCheck);
+                    self::performSanityCheck($element);
                 } catch (Exception $e) {
                     Logger::error("Element_Service: sanity check for element with id [ " . $element->getId() . " ] and type [ " . self::getType($element) . " ] failed");
                 }
@@ -293,59 +292,14 @@ class Element_Service {
      * @param  Element_Interface $element
      * @return void
      */
-    protected static function performSanityCheck($element, $runDirtyCheck = true)
+    protected static function performSanityCheck($element)
     {
+        $element->setUserModification(0);
+        $element->save();
 
-        if ($runDirtyCheck) {
-
-
-            $dirty = false;
-            if ($element instanceof Document_PageSnippet) {
-                $elements = $element->getElements();
-                if (is_array($elements)) {
-                    foreach ($elements as $el) {
-                        if (!$el->sanityCheck($element)) {
-                            $dirty = true;
-                        }
-                    }
-                }
-            } else if ($element instanceof Object_Abstract) {
-                $fieldDefintions = $element->getO_class()->getFieldDefinitions();
-                foreach ($fieldDefintions as $fd) {
-                    if (!$fd->sanityCheck($element)) {
-                        $dirty = true;
-                    }
-                }
-            }
-
-            $properties = $element->getProperties();
-
-            if (is_array($properties)) {
-                foreach ($properties as $p) {
-                    $relTypes = array("object", "asset", "document");
-                    if (in_array($p->getType(), $relTypes) and !$p->isInherited()) {
-                        $relId = $p->getResource()->getRawData();
-                        if ($relId) {
-                            $el = self::getElementById($p->getType(), $relId);
-                            if (!$el) {
-                                $p->setData(null);
-                                $dirty = true;
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            $dirty = true;
-        }
-        if ($dirty) {
-            $element->setUserModification(0);
-            $element->save();
-
-            if($version = $element->getLatestVersion()) {
-                $version->setNote("Sanitycheck");
-                $version->save();
-            }
+        if($version = $element->getLatestVersion(true)) {
+            $version->setNote("Sanitycheck");
+            $version->save();
         }
     }
 

@@ -389,14 +389,14 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
     }
 
     /**
-     * Get latest available version
-     *
+     * Get latest available version, using $force always returns a version no matter if it is the same as the published one
+     * @param bool $force
      * @return array
      */
-    public function getLatestVersion() {
+    public function getLatestVersion($force = false) {
         $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getO_Id());
 
-        if ($versionData["id"] && $versionData["date"] > $this->model->getO_modificationDate()) {
+        if(($versionData["id"] && $versionData["date"] > $this->model->getO_modificationDate()) || $force) {
             $version = Version::getById($versionData["id"]);
             return $version;
         }

@@ -358,16 +358,16 @@ class Asset_Resource extends Element_Resource {
     }
 
     /**
-     * Get latest available version
-     *
+     * Get latest available version, using $force always returns a version no matter if it is the same as the published one
+     * @param bool $force
      * @return array
      */
-    public function getLatestVersion() {
+    public function getLatestVersion($force = false) {
 
         if($this->model->getType() != "folder") {
             $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
-            if($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) {
+            if(($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
                 $version = Version::getById($versionData["id"]);
                 return $version;
             }

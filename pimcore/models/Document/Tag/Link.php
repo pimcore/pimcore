@@ -90,7 +90,7 @@ class Document_Tag_Link extends Document_Tag {
     /**
      * @return bool
      */
-    public function sanityCheck() {
+    public function checkValidity() {
         $sane = true;
         if ($this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
@@ -132,7 +132,6 @@ class Document_Tag_Link extends Document_Tag {
                 } else {
                     //detected broken link
                     $document = Document::getById($this->getDocumentId());
-                    Element_Service::scheduleForSanityCheck($document);
 
                 }
             }
@@ -142,7 +141,6 @@ class Document_Tag_Link extends Document_Tag {
                 } else {
                     //detected broken link
                     $document = Document::getById($this->getDocumentId());
-                    Element_Service::scheduleForSanityCheck($document);
                 }
             }
         }
@@ -377,14 +375,12 @@ class Document_Tag_Link extends Document_Tag {
                     if (!$referencedDocument instanceof Document) {
                         //detected broken link
                         $document = Document::getById($this->getDocumentId());
-                        Element_Service::scheduleForSanityCheck($document);
                     }
                 } else if ($this->data["internalType"] == "asset") {
                     $referencedAsset = Asset::getById($this->data["internalId"]);
                     if (!$referencedAsset instanceof Asset) {
                         //detected broken link
                         $document = Document::getById($this->getDocumentId());
-                        Element_Service::scheduleForSanityCheck($document);
                     }
                 }
             }

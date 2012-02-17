@@ -257,7 +257,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      * @return void
      */
     public function getDataForResource() {
-        $this->sanityCheck();
+        $this->checkValidity();
         return $this->getData();
     }
 
@@ -324,7 +324,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     /**
      * @return bool
      */
-    public function sanityCheck() {
+    public function checkValidity() {
         return true; 
     }
 

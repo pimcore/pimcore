@@ -25,6 +25,44 @@ class Object_Class_Data_User extends Object_Class_Data_Select {
     public $fieldtype = "user";
 
 
+    /**
+     * @see Object_Class_Data::getDataFromResource
+     * @param string $data
+     * @return string
+     */
+    public function getDataFromResource($data) {
+
+        if(!empty($data)) {
+            try {
+                $this->checkValidity($data, true);
+            } catch (Exception $e) {
+                $data = null;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param $data
+     * @param null $object
+     */
+    public function getDataForResource($data, $object = null) {
+        if(!empty($data)) {
+            try {
+                $this->checkValidity($data, true);
+            } catch (Exception $e) {
+                $data = null;
+            }
+        }
+
+        return $data;
+    }
+
+
+    /**
+     *
+     */
     public function configureOptions() {
 
         $list = new User_List();
@@ -73,27 +111,6 @@ class Object_Class_Data_User extends Object_Class_Data_Select {
             }
         }
     }
-
-
-    /**
-     * Checks if data for this field is valid and removes broken dependencies
-     *
-     * @param Object_Abstract $object
-     * @return bool
-     */
-    public function sanityCheck($object) {
-        $key = $this->getName();
-        $sane = true;
-        try{
-            $this->checkValidity($object->$key,true);
-        } catch (Exception $e){
-            Logger::notice("Detected insane relation, removing reference to non existent user with username [".$object->$key."]");
-            $object->$key = null;
-            $sane = false;
-        }
-        return $sane;
-    }
-
 
     public function __wakeup() {
         if(Pimcore::inAdmin()) {

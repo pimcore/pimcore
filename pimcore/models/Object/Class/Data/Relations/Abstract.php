@@ -179,42 +179,6 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
 
     }
 
-
-    /**
-     * Checks if data for this field is valid and removes broken dependencies
-     *
-     * @param Object_Abstract $object
-     * @return bool
-     */
-    public function sanityCheck($object) {
-        $sane = true;
-
-        $name = $this->getName();
-        $getter = "get".ucfirst($name);
-        $data = $object->$getter();
-        $objectRelationIds = array();
-        if (is_array($data)) {
-            foreach ($data as $o) {
-                if($o instanceof Element_Interface) {
-                    $objectRelationIds[] = $o->getId();
-                }
-            }
-        } else if ($data instanceof Element_Interface){
-            $objectRelationIds[] = $data->getId();
-        }
-
-        $resourceRelationIds = $object->getResource()->getRelationIds($this->getName());
-
-        $diff = array_diff($objectRelationIds, $resourceRelationIds);
-        if (count($diff) > 0) {
-            $sane = false;
-            Logger::notice("Detected insane relation(s), removing reference to non existent elements with ids [".implode(',',$diff)."]");
-        }
-
-        return $sane;
-    }
-
-
     /**
      * @param Object_Concrete|Object_Fieldcollection_Data_Abstract|Object_Localizedfield $object
      * @return void

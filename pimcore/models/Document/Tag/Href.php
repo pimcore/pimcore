@@ -288,8 +288,7 @@ class Document_Tag_Href extends Document_Tag {
     /**
      * @return bool
      */
-    public function sanityCheck() {
-
+    public function checkValidity() {
         $sane = true;
         if($this->id){
             $el = Element_Service::getElementById($this->type, $this->id);

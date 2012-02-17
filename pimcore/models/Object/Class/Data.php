@@ -186,7 +186,6 @@ abstract class Object_Class_Data {
      * @return string
      */
     public function getForCsvExport($object){
-        $this->sanityCheck($object);
         $key = $this->getName();
         $getter = "get".ucfirst($key);
         return $object->$getter() ;
@@ -202,18 +201,6 @@ abstract class Object_Class_Data {
     public function getFromCsvImport($importValue){
         return $importValue;
     }
-    
-
-    /**
-     * Checks if data for this field is valid and removes broken dependencies
-     *
-     * @param Object_Abstract $object
-     * @return bool
-     */
-    public function sanityCheck($object){
-        return true;
-    }
-
 
     /**
      * converts data to be exposed via webservices
@@ -221,7 +208,6 @@ abstract class Object_Class_Data {
      * @return mixed
      */
     public function getForWebserviceExport ($object) {
-        $this->sanityCheck($object);
         $key = $this->getName();
         $getter = "get".ucfirst($key);
         return $object->$getter();

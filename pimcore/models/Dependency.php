@@ -81,7 +81,7 @@ class Dependency extends Pimcore_Model_Abstract {
      * @return void
      */
     public function cleanAllForElement($element){
-        $this->getResource()->clearAllForElement($element);
+        $this->getResource()->cleanAllForElement($element);
     }
 
     /**

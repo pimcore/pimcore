@@ -76,7 +76,7 @@ class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
      * Clear all relations in the database
      * @param Element_Interface $element
      */
-    public function clearAllForElement($element) {
+    public function cleanAllForElement($element) {
         try {
 
             $id = $element->getId();

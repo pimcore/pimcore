@@ -520,6 +520,4 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     {
         return $this->maxItems;
     }
-
-    //TODO: sanity check
 }
