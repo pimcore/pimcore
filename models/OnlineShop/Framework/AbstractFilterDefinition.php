@@ -20,8 +20,12 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
    /**
    * @return string
    */
-   public abstract function getOrderBy();
+   public abstract function getOrderByAsc();
 
+    /**
+    * @return string
+    */
+    public abstract function getOrderByDesc();
 
    /**
    * @return Object_Fieldcollection

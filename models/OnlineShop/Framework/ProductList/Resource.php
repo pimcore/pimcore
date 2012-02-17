@@ -37,7 +37,11 @@ class OnlineShop_Framework_ProductList_Resource {
         }
 
         if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+            if($orderBy) {
+                $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY o_virtualProductId, priceSystemName" . $orderBy . " " . $limit;
+            } else {
+                $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " " . $limit;
+            }
         } else {
             $query = "SELECT o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
         }
