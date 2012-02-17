@@ -108,9 +108,8 @@ class Document_Tag_Video extends Document_Tag
     /**
      * @return bool
      */
-    public function sanityCheck()
+    public function checkValidity()
     {
-
         $sane = true;
         if ($this->type == "asset" && !empty($this->id)) {
             $el = Asset::getById($this->id);
@@ -122,7 +121,6 @@ class Document_Tag_Video extends Document_Tag
             }
         }
         return $sane;
-
     }
 
 

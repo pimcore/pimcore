@@ -96,7 +96,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
         }
         
-        this.tabpanel.doLayout();
+        pimcore.layout.refresh();
     },
     
     getControls: function (blockElement) {

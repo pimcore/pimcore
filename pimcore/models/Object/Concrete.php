@@ -141,9 +141,6 @@ class Object_Concrete extends Object_Abstract {
 
                 $value = $this->$getter();
 
-                // check the field if it is valid or not, the sanityCheck CAN modify data, like WYSIWYG, User, ...
-                $fd->sanityCheck($this);
-
                 if(is_array($value) and ($fd instanceof Object_Class_Data_Multihref or $fd instanceof Object_Class_Data_Objects)){
                     //don't save relations twice
                     $this->$setter(array_unique($value));

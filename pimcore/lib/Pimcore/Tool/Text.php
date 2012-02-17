@@ -126,60 +126,6 @@ class Pimcore_Tool_Text
     }
 
     /**
-     * cleans wysiwyg text of specified dependencies
-     *
-     * @static
-     * @param  string $text
-     * @param  array $validDependencies
-     * @return string
-     */
-    public static function cleanWysiwygTextOfDependencies($text, $validDependencies)
-    {
-        if (!empty($text)) {
-
-            $html = str_get_html($text);
-            if(!$html) {
-                return $text;
-            }
-
-            $s = $html->find("a[pimcore_id],img[pimcore_id]");
-
-            foreach ($s as $el) {
-
-                // image
-                if ($el->src) {
-
-                    $key = "asset_" . $el->pimcore_id;
-                    if (!in_array($key, array_keys($validDependencies))) {
-                        $text = str_replace($el->outertext(), $el->innertext(), $text);
-                    }
-                }
-
-                // link
-                if ($el->href) {
-                    if ($el->pimcore_type == "asset") {
-
-                        $key = "asset_" . $el->pimcore_id;
-                        if (!in_array($key, array_keys($validDependencies))) {
-                            $text = str_replace($el->outertext(), $el->innertext(), $text);
-                        }
-
-                    }
-                    else if ($el->pimcore_type == "document") {
-
-                        $key = "document_" . $el->pimcore_id;
-                        if (!in_array($key, array_keys($validDependencies))) {
-                            $text = str_replace($el->outertext(), $el->innertext(), $text);
-                        }
-                    }
-                }
-            }
-        }
-        return $text;
-
-    }
-
-    /**
      * @static
      * @param  array $idMapping e.g. array("asset"=>array(OLD_ID=>NEW_ID),"object"=>array(OLD_ID=>NEW_ID),"document"=>array(OLD_ID=>NEW_ID));
      * @param  string $text html text of wysiwyg field

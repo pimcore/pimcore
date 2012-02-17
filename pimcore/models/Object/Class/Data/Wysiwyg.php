@@ -93,7 +93,7 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      * @return string
      */
     public function getDataForResource($data, $object = null) {
-        return $data;
+        return Pimcore_Tool_Text::wysiwygText($data);
     }
 
     /**
@@ -112,6 +112,8 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      * @return string
      */
     public function getDataForQueryResource($data, $object = null) {
+
+        $data = $this->getDataForResource($data);
 
         $data = strip_tags($data, "<a><img>");
         $data = str_replace("\r\n", " ", $data);
@@ -192,27 +194,6 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
             }
         }
     }
-
-    /**
-     * Checks if data for this field is valid and removes broken dependencies
-     *
-     * @param Object_Abstract $object
-     * @return bool
-     */
-    public function sanityCheck($object) {
-        $key = $this->getName();
-        $originalText = $object->$key;
-        $sane = true;
-        $dependencies = Pimcore_Tool_Text::getDependenciesOfWysiwygText($object->$key);
-        $cleanedText = Pimcore_Tool_Text::cleanWysiwygTextOfDependencies($object->$key,$dependencies);
-        $object->$key = $cleanedText;
-        if($originalText!=$cleanedText){
-            $sane=false;
-            Logger::notice("Detected insane relation, removed invalid links in html");
-        }
-        return $sane;
-    }
-
 
     /**
      * @param Object_Concrete $object

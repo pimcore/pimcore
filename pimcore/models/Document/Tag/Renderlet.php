@@ -282,8 +282,7 @@ class Document_Tag_Renderlet extends Document_Tag {
     /**
      * @return bool
      */
-    public function sanityCheck() {
-
+    public function checkValidity() {
         $sane = true;
         if($this->id){
             $el = Element_Service::getElementById($this->type, $this->id);
@@ -296,8 +295,7 @@ class Document_Tag_Renderlet extends Document_Tag {
                 $this->subtype=null;
             }
         }
-        return $sane;     
-
+        return $sane;
     }
 
 
