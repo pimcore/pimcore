@@ -78,7 +78,7 @@ $manager->registerJob(new Schedule_Maintenance_Job("logmaintenance", new Pimcore
 $manager->registerJob(new Schedule_Maintenance_Job("sanitycheck", "Element_Service", "runSanityCheck",array(false)));
 $manager->registerJob(new Schedule_Maintenance_Job("cleanupoldpidfiles", "Schedule_Manager_Factory", "cleanupOldPidFiles"), true);
 $manager->registerJob(new Schedule_Maintenance_Job("versioncleanup", new Version(), "maintenanceCleanUp"));
-$manager->registerJob(new Schedule_Maintenance_Job("cleanupbrokenviews", new Element_Service(), "cleanupBrokenViews"));
+$manager->registerJob(new Schedule_Maintenance_Job("cleanupbrokenviews", "Pimcore_Resource", "cleanupBrokenViews"));
 
 // call plugins
 $plugins = Pimcore_API_Plugin_Broker::getInstance()->getPlugins();
