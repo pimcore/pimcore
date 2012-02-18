@@ -98,9 +98,9 @@ class Pimcore_Tool_Authentication {
 
         try {
             // register session
-            if (array_key_exists("pimcore_admin_sid", $_GET) && !empty($_GET["pimcore_admin_sid"])) {
+            if (array_key_exists(Zend_Session::getOptions("name"), $_REQUEST) && !empty($_REQUEST[Zend_Session::getOptions("name")])) {
                 // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                Zend_Session::setId($_GET["pimcore_admin_sid"]);
+                Zend_Session::setId($_REQUEST[Zend_Session::getOptions("name")]);
             }
 
             try {

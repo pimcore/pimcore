@@ -763,10 +763,14 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         if($this->_getParam("download")) {
             $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $image->getFilename() . '"');
         }
-        
-        readfile(PIMCORE_DOCUMENT_ROOT . $image->getThumbnail($thumbnail));
 
-        $this->removeViewRenderer();
+        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $image->getThumbnail($thumbnail);
+        $imageContent = file_get_contents($thumbnailFile);
+
+        header("Content-Type: " . $image->getMimetype());
+        header("Content-Length: " . strlen($imageContent));
+        echo $imageContent;
+        exit;
     }
 
     public function getVideoThumbnailAction() {
