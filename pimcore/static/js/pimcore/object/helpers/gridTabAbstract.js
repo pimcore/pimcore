@@ -177,7 +177,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var editor = new pimcore.object.tags[fieldInfo.layout.type](null, fieldInfo.layout.layout);
         this.batchWin = new Ext.Window({
-            modal: true,
+            modal: false,
             title: t("batch_edit_field") + " " + fieldInfo.header,
             items: [
                 {
