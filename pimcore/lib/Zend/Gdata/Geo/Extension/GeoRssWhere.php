@@ -24,17 +24,17 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Geo
  */
-require_once 'Zend/Gdata/Geo.php';
+// require_once 'Zend/Gdata/Geo.php';
 
 /**
  * @see Zend_Gdata_Geo_Extension_GmlPoint
  */
-require_once 'Zend/Gdata/Geo/Extension/GmlPoint.php';
+// require_once 'Zend/Gdata/Geo/Extension/GmlPoint.php';
 
 
 /**

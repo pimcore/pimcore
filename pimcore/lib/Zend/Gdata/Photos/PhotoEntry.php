@@ -24,82 +24,82 @@
 /**
  * @see Zend_Gdata_MediaEntry
  */
-require_once 'Zend/Gdata/Media/Entry.php';
+// require_once 'Zend/Gdata/Media/Entry.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_PhotoId
  */
-require_once 'Zend/Gdata/Photos/Extension/PhotoId.php';
+// require_once 'Zend/Gdata/Photos/Extension/PhotoId.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Version
  */
-require_once 'Zend/Gdata/Photos/Extension/Version.php';
+// require_once 'Zend/Gdata/Photos/Extension/Version.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_AlbumId
  */
-require_once 'Zend/Gdata/Photos/Extension/AlbumId.php';
+// require_once 'Zend/Gdata/Photos/Extension/AlbumId.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Id
  */
-require_once 'Zend/Gdata/Photos/Extension/Id.php';
+// require_once 'Zend/Gdata/Photos/Extension/Id.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Width
  */
-require_once 'Zend/Gdata/Photos/Extension/Width.php';
+// require_once 'Zend/Gdata/Photos/Extension/Width.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Height
  */
-require_once 'Zend/Gdata/Photos/Extension/Height.php';
+// require_once 'Zend/Gdata/Photos/Extension/Height.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Size
  */
-require_once 'Zend/Gdata/Photos/Extension/Size.php';
+// require_once 'Zend/Gdata/Photos/Extension/Size.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Client
  */
-require_once 'Zend/Gdata/Photos/Extension/Client.php';
+// require_once 'Zend/Gdata/Photos/Extension/Client.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Checksum
  */
-require_once 'Zend/Gdata/Photos/Extension/Checksum.php';
+// require_once 'Zend/Gdata/Photos/Extension/Checksum.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Timestamp
  */
-require_once 'Zend/Gdata/Photos/Extension/Timestamp.php';
+// require_once 'Zend/Gdata/Photos/Extension/Timestamp.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_CommentingEnabled
  */
-require_once 'Zend/Gdata/Photos/Extension/CommentingEnabled.php';
+// require_once 'Zend/Gdata/Photos/Extension/CommentingEnabled.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_CommentCount
  */
-require_once 'Zend/Gdata/Photos/Extension/CommentCount.php';
+// require_once 'Zend/Gdata/Photos/Extension/CommentCount.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Tags
  */
-require_once 'Zend/Gdata/Exif/Extension/Tags.php';
+// require_once 'Zend/Gdata/Exif/Extension/Tags.php';
 
 /**
  * @see Zend_Gdata_Geo_Extension_GeoRssWhere
  */
-require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
+// require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Category
  */
-require_once 'Zend/Gdata/App/Extension/Category.php';
+// require_once 'Zend/Gdata/App/Extension/Category.php';
 
 /**
  * Data model class for a Comment Entry.

@@ -24,12 +24,12 @@
 /**
  * @see Zend_Service_WindowsAzure_Exception
  */
-require_once 'Zend/Service/WindowsAzure/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Exception.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_TableEntity
  */
-require_once 'Zend/Service/WindowsAzure/Storage/TableEntity.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/TableEntity.php';
 
 
 /**

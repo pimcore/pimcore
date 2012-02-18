@@ -25,7 +25,7 @@
 /**
  * @see Zend_Service_Simpy_WatchlistFilterSet
  */
-require_once 'Zend/Service/Simpy/WatchlistFilterSet.php';
+// require_once 'Zend/Service/Simpy/WatchlistFilterSet.php';
 
 
 /**

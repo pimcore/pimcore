@@ -25,7 +25,7 @@
 /**
  * @see Zend_Service_Simpy_Tag
  */
-require_once 'Zend/Service/Simpy/Tag.php';
+// require_once 'Zend/Service/Simpy/Tag.php';
 
 
 /**

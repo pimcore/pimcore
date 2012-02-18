@@ -23,7 +23,7 @@
 /**
  * @see Zend_Soap_Client
  */
-require_once 'Zend/Soap/Client.php';
+// require_once 'Zend/Soap/Client.php';
 
 /**
  * @category   Zend

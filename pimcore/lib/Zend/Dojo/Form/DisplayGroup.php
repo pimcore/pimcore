@@ -20,7 +20,7 @@
  */
 
 /** Zend_Form_DisplayGroup */
-require_once 'Zend/Form/DisplayGroup.php';
+// require_once 'Zend/Form/DisplayGroup.php';
 
 /**
  * Dijit-enabled DisplayGroup

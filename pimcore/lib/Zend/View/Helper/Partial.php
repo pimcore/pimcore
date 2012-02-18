@@ -21,7 +21,7 @@
  */
 
 /** Zend_View_Helper_Abstract.php */
-require_once 'Zend/View/Helper/Abstract.php';
+// require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper for rendering a template fragment in its own variable scope.
@@ -72,10 +72,10 @@ class Zend_View_Helper_Partial extends Zend_View_Helper_Abstract
             $view->partialCounter = $this->partialCounter;
         }
         if ((null !== $module) && is_string($module)) {
-            require_once 'Zend/Controller/Front.php';
+            // require_once 'Zend/Controller/Front.php';
             $moduleDir = Zend_Controller_Front::getInstance()->getControllerDirectory($module);
             if (null === $moduleDir) {
-                require_once 'Zend/View/Helper/Partial/Exception.php';
+                // require_once 'Zend/View/Helper/Partial/Exception.php';
                 $e = new Zend_View_Helper_Partial_Exception('Cannot render partial; module does not exist');
                 $e->setView($this->view);
                 throw $e;

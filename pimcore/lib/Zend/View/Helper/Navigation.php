@@ -23,7 +23,7 @@
 /**
  * @see Zend_View_Helper_Navigation_HelperAbstract
  */
-require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
+// require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
 
 /**
  * Proxy helper for retrieving navigational helpers and forwarding calls
@@ -174,7 +174,7 @@ class Zend_View_Helper_Navigation
 
         if (!$helper instanceof Zend_View_Helper_Navigation_Helper) {
             if ($strict) {
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception(sprintf(
                         'Proxy helper "%s" is not an instance of ' .
                         'Zend_View_Helper_Navigation_Helper',

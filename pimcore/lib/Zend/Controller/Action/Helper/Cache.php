@@ -22,17 +22,17 @@
 /**
  * @see Zend_Controller_Action_Helper_Abstract
  */
-require_once 'Zend/Controller/Action/Helper/Abstract.php';
+// require_once 'Zend/Controller/Action/Helper/Abstract.php';
 
 /**
  * @see Zend_Controller_Action_Exception
  */
-require_once 'Zend/Controller/Action/Exception.php';
+// require_once 'Zend/Controller/Action/Exception.php';
 
 /**
  * @see Zend_Cache_Manager
  */
-require_once 'Zend/Cache/Manager.php';
+// require_once 'Zend/Cache/Manager.php';
 
 /**
  * @category   Zend

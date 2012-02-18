@@ -20,7 +20,7 @@
  */
 
 /** Zend_View_Helper_HtmlElement */
-require_once 'Zend/View/Helper/HtmlElement.php';
+// require_once 'Zend/View/Helper/HtmlElement.php';
 
 /**
  * Helper for generating urls and/or image tags for use with tinysrc.net
@@ -186,7 +186,7 @@ class Zend_View_Helper_TinySrc extends Zend_View_Helper_HtmlElement
 
         $format = strtolower($format);
         if (!in_array($format, array('png', 'jpeg'))) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             throw new Zend_View_Exception('Invalid format; must be one of "jpeg" or "png"');
         }
         $this->_format = "/$format";
@@ -213,7 +213,7 @@ class Zend_View_Helper_TinySrc extends Zend_View_Helper_HtmlElement
         }
 
         if (!$this->_validateDimension($width)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             throw new Zend_View_Exception('Invalid dimension; must be an integer, optionally preceded by "-" or "x"');
         }
 
@@ -223,7 +223,7 @@ class Zend_View_Helper_TinySrc extends Zend_View_Helper_HtmlElement
         }
 
         if (!$this->_validateDimension($height)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             throw new Zend_View_Exception('Invalid dimension; must be an integer, optionally preceded by "-" or "x"');
         }
         $this->_dimensions .= "/$height";

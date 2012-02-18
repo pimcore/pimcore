@@ -23,7 +23,7 @@
 /**
  * @see Zend_Controller_Action_Helper_Abstract
  */
-require_once 'Zend/Controller/Action/Helper/Abstract.php';
+// require_once 'Zend/Controller/Action/Helper/Abstract.php';
 
 /**
  * Simplify AJAX context switching based on requested format
@@ -67,7 +67,7 @@ class Zend_Controller_Action_Helper_Json extends Zend_Controller_Action_Helper_A
         /**
          * @see Zend_View_Helper_Json
          */
-        require_once 'Zend/View/Helper/Json.php';
+        // require_once 'Zend/View/Helper/Json.php';
         $jsonHelper = new Zend_View_Helper_Json();
         $data = $jsonHelper->json($data, $keepLayouts);
 
@@ -75,7 +75,7 @@ class Zend_Controller_Action_Helper_Json extends Zend_Controller_Action_Helper_A
             /**
              * @see Zend_Controller_Action_HelperBroker
              */
-            require_once 'Zend/Controller/Action/HelperBroker.php';
+            // require_once 'Zend/Controller/Action/HelperBroker.php';
             Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->setNoRender(true);
         }
 

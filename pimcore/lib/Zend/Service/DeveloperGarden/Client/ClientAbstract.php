@@ -23,17 +23,17 @@
 /**
  * @see Zend_Service_DeveloperGarden_Client_Soap
  */
-require_once 'Zend/Service/DeveloperGarden/Client/Soap.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/Soap.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Credential
  */
-require_once 'Zend/Service/DeveloperGarden/Credential.php';
+// require_once 'Zend/Service/DeveloperGarden/Credential.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_SecurityTokenServer
  */
-require_once 'Zend/Service/DeveloperGarden/SecurityTokenServer.php';
+// require_once 'Zend/Service/DeveloperGarden/SecurityTokenServer.php';
 
 /**
  * @category   Zend
@@ -152,7 +152,7 @@ abstract class Zend_Service_DeveloperGarden_Client_ClientAbstract
         }
 
         if (empty($this->_wsdlFile)) {
-            require_once 'Zend/Service/DeveloperGarden/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Exception.php';
             throw new Zend_Service_DeveloperGarden_Exception('_wsdlFile not set for this service.');
         }
 
@@ -161,7 +161,7 @@ abstract class Zend_Service_DeveloperGarden_Client_ClientAbstract
         }
 
         if (empty($this->_wsdlFileLocal) || $this->_wsdlFileLocal === false) {
-            require_once 'Zend/Service/DeveloperGarden/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Exception.php';
             throw new Zend_Service_DeveloperGarden_Exception('_wsdlFileLocal not set for this service.');
         }
     }
@@ -177,7 +177,7 @@ abstract class Zend_Service_DeveloperGarden_Client_ClientAbstract
     public function setOption($name, $value)
     {
         if (!is_string($name)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception('Incorrect option name: ' . $name);
         }
         $name = strtolower($name);
@@ -297,7 +297,7 @@ abstract class Zend_Service_DeveloperGarden_Client_ClientAbstract
     public function setWsdl($wsdlFile = null)
     {
         if (empty($wsdlFile)) {
-            require_once 'Zend/Service/DeveloperGarden/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Exception.php';
             throw new Zend_Service_DeveloperGarden_Exception('_wsdlFile not set for this service.');
         }
         $this->_wsdlFile = $wsdlFile;
@@ -313,7 +313,7 @@ abstract class Zend_Service_DeveloperGarden_Client_ClientAbstract
     public function setLocalWsdl($wsdlFile = null)
     {
         if (empty($wsdlFile)) {
-            require_once 'Zend/Service/DeveloperGarden/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Exception.php';
             throw new Zend_Service_DeveloperGarden_Exception('_wsdlFileLocal not set for this service.');
         }
         $this->_wsdlFileLocal = $wsdlFile;
@@ -390,7 +390,7 @@ abstract class Zend_Service_DeveloperGarden_Client_ClientAbstract
     static public function checkParticipantAction($action)
     {
         if (!array_key_exists($action, self::getParticipantActions())) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception(
                 'Wrong Participant Action ' . $action . ' supplied.'
             );
@@ -421,7 +421,7 @@ abstract class Zend_Service_DeveloperGarden_Client_ClientAbstract
     static public function checkEnvironment($environment)
     {
         if (!array_key_exists($environment, self::getEnvironments())) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception(
                 'Wrong environment ' . $environment . ' supplied.'
             );

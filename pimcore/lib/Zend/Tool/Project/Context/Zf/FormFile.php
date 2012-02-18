@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tool_Project_Context_Zf_AbstractClassFile
  */
-require_once 'Zend/Tool/Project/Context/Zf/AbstractClassFile.php';
+// require_once 'Zend/Tool/Project/Context/Zf/AbstractClassFile.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project

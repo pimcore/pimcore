@@ -23,37 +23,37 @@
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_Exception
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationObjectBaseAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationObjectBaseAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationObjectBaseAbstract.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationLogs
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationLogs.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationLogs.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationDiagnosticInfrastructureLogs
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDiagnosticInfrastructureLogs.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDiagnosticInfrastructureLogs.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationPerformanceCounters
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationPerformanceCounters.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationPerformanceCounters.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationWindowsEventLog
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationWindowsEventLog.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationWindowsEventLog.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationDirectories
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDirectories.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDirectories.php';
 
 /**
  * @category   Zend

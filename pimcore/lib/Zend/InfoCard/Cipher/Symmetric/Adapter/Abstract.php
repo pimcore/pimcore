@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Cipher_Symmetric_Interface
  */
-require_once 'Zend/InfoCard/Cipher/Symmetric/Interface.php';
+// require_once 'Zend/InfoCard/Cipher/Symmetric/Interface.php';
 
 /**
  * @category   Zend

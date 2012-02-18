@@ -24,27 +24,27 @@
 /**
  * @see Zend_Gdata
  */
-require_once 'Zend/Gdata.php';
+// require_once 'Zend/Gdata.php';
 
 /**
  * @see Zend_Gdata_Gbase_ItemFeed
  */
-require_once 'Zend/Gdata/Gbase/ItemFeed.php';
+// require_once 'Zend/Gdata/Gbase/ItemFeed.php';
 
 /**
  * @see Zend_Gdata_Gbase_ItemEntry
  */
-require_once 'Zend/Gdata/Gbase/ItemEntry.php';
+// require_once 'Zend/Gdata/Gbase/ItemEntry.php';
 
 /**
  * @see Zend_Gdata_Gbase_SnippetEntry
  */
-require_once 'Zend/Gdata/Gbase/SnippetEntry.php';
+// require_once 'Zend/Gdata/Gbase/SnippetEntry.php';
 
 /**
  * @see Zend_Gdata_Gbase_SnippetFeed
  */
-require_once 'Zend/Gdata/Gbase/SnippetFeed.php';
+// require_once 'Zend/Gdata/Gbase/SnippetFeed.php';
 
 /**
  * Service class for interacting with the Google Base data API
@@ -134,7 +134,7 @@ class Zend_Gdata_Gbase extends Zend_Gdata
     public function getGbaseItemEntry($location = null)
     {
         if ($location === null) {
-            require_once 'Zend/Gdata/App/InvalidArgumentException.php';
+            // require_once 'Zend/Gdata/App/InvalidArgumentException.php';
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'Location must not be null');
         } else if ($location instanceof Zend_Gdata_Query) {

@@ -23,12 +23,12 @@
 /**
  * @see Zend_Service_Ebay_Finding_Response_Abstract
  */
-require_once 'Zend/Service/Ebay/Finding/Response/Abstract.php';
+// require_once 'Zend/Service/Ebay/Finding/Response/Abstract.php';
 
 /**
  * @see Zend_Service_Ebay_Finding
  */
-require_once 'Zend/Service/Ebay/Finding.php';
+// require_once 'Zend/Service/Ebay/Finding.php';
 
 /**
  * @category   Zend

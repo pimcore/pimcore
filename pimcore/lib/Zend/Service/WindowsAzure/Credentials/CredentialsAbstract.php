@@ -22,12 +22,12 @@
 /**
  * @see Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Credentials_Exception
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/Exception.php';
 
 /**
  * @category   Zend

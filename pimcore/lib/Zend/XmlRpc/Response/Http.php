@@ -21,7 +21,7 @@
 /**
  * Zend_XmlRpc_Response
  */
-require_once 'Zend/XmlRpc/Response.php';
+// require_once 'Zend/XmlRpc/Response.php';
 
 /**
  * HTTP response

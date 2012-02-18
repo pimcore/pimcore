@@ -24,7 +24,7 @@
 /**
  * Zend_Service_Amazon/Exception
  */
-require_once 'Zend/Service/Amazon/Exception.php';
+// require_once 'Zend/Service/Amazon/Exception.php';
 
 
 /**

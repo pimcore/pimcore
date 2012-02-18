@@ -174,12 +174,12 @@ abstract class Zend_Pdf_FileParserDataSource
             return;    // Not moving; do nothing.
         }
         if ($offset < 0) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Attempt to move before start of data source',
                                          Zend_Pdf_Exception::MOVE_BEFORE_START_OF_FILE);
         }
         if ($offset >= $this->_size) {    // Offsets are zero-based.
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Attempt to move beyond end of data source',
                                          Zend_Pdf_Exception::MOVE_BEYOND_END_OF_FILE);
         }

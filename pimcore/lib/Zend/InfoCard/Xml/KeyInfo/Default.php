@@ -23,12 +23,12 @@
 /**
  * Zend_InfoCard_Xml_KeyInfo_Abstract
  */
-require_once 'Zend/InfoCard/Xml/KeyInfo/Abstract.php';
+// require_once 'Zend/InfoCard/Xml/KeyInfo/Abstract.php';
 
 /**
  * Zend_InfoCard_Xml_SecurityTokenReference
  */
-require_once 'Zend/InfoCard/Xml/SecurityTokenReference.php';
+// require_once 'Zend/InfoCard/Xml/SecurityTokenReference.php';
 
 /**
  * An object representation of a XML <KeyInfo> block which doesn't provide a namespace

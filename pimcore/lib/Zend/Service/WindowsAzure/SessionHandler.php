@@ -21,12 +21,12 @@
  */
 
 /** Zend_Service_WindowsAzure_Storage_Table */
-require_once 'Zend/Service/WindowsAzure/Storage/Table.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/Table.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Exception
  */
-require_once 'Zend/Service/WindowsAzure/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Exception.php';
 
 /**
  * @category   Zend

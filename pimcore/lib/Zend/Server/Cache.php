@@ -86,8 +86,8 @@ class Zend_Server_Cache
      *
      * <code>
      * if (!Zend_Server_Cache::get($filename, $server)) {
-     *     require_once 'Some/Service/Class.php';
-     *     require_once 'Another/Service/Class.php';
+     *     // require_once 'Some/Service/Class.php';
+     *     // require_once 'Another/Service/Class.php';
      *
      *     // Attach Some_Service_Class with namespace 'some'
      *     $server->attach('Some_Service_Class', 'some');

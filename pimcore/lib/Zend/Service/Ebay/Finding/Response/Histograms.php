@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_Ebay_Finding_Response_Abstract
  */
-require_once 'Zend/Service/Ebay/Finding/Response/Abstract.php';
+// require_once 'Zend/Service/Ebay/Finding/Response/Abstract.php';
 
 /**
  * @category   Zend
@@ -70,7 +70,7 @@ class Zend_Service_Ebay_Finding_Response_Histograms extends Zend_Service_Ebay_Fi
             /**
              * @see Zend_Service_Ebay_Finding_Aspect_Histogram_Container
              */
-            require_once 'Zend/Service/Ebay/Finding/Aspect/Histogram/Container.php';
+            // require_once 'Zend/Service/Ebay/Finding/Aspect/Histogram/Container.php';
             $this->aspectHistogramContainer = new Zend_Service_Ebay_Finding_Aspect_Histogram_Container($node);
         }
 
@@ -79,7 +79,7 @@ class Zend_Service_Ebay_Finding_Response_Histograms extends Zend_Service_Ebay_Fi
             /**
              * @see Zend_Service_Ebay_Finding_Category_Histogram_Container
              */
-            require_once 'Zend/Service/Ebay/Finding/Category/Histogram/Container.php';
+            // require_once 'Zend/Service/Ebay/Finding/Category/Histogram/Container.php';
             $this->categoryHistogramContainer = new Zend_Service_Ebay_Finding_Category_Histogram_Container($node);
         }
     }

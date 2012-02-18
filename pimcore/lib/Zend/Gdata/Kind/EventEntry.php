@@ -23,67 +23,67 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_App_Extension
  */
-require_once 'Zend/Gdata/App/Extension.php';
+// require_once 'Zend/Gdata/App/Extension.php';
 
 /**
  * @see Zend_Gdata_Extension_Where
  */
-require_once 'Zend/Gdata/Extension/Where.php';
+// require_once 'Zend/Gdata/Extension/Where.php';
 
 /**
  * @see Zend_Gdata_Extension_When
  */
-require_once 'Zend/Gdata/Extension/When.php';
+// require_once 'Zend/Gdata/Extension/When.php';
 
 /**
  * @see Zend_Gdata_Extension_Who
  */
-require_once 'Zend/Gdata/Extension/Who.php';
+// require_once 'Zend/Gdata/Extension/Who.php';
 
 /**
  * @see Zend_Gdata_Extension_Recurrence
  */
-require_once 'Zend/Gdata/Extension/Recurrence.php';
+// require_once 'Zend/Gdata/Extension/Recurrence.php';
 
 /**
  * @see Zend_Gdata_Extension_EventStatus
  */
-require_once 'Zend/Gdata/Extension/EventStatus.php';
+// require_once 'Zend/Gdata/Extension/EventStatus.php';
 
 /**
  * @see Zend_Gdata_Extension_Comments
  */
-require_once 'Zend/Gdata/Extension/Comments.php';
+// require_once 'Zend/Gdata/Extension/Comments.php';
 
 /**
  * @see Zend_Gdata_Extension_Transparency
  */
-require_once 'Zend/Gdata/Extension/Transparency.php';
+// require_once 'Zend/Gdata/Extension/Transparency.php';
 
 /**
  * @see Zend_Gdata_Extension_Visibility
  */
-require_once 'Zend/Gdata/Extension/Visibility.php';
+// require_once 'Zend/Gdata/Extension/Visibility.php';
 
 /**
  * @see Zend_Gdata_Extension_ExtendedProperty
  */
-require_once 'Zend/Gdata/Extension/ExtendedProperty.php';
+// require_once 'Zend/Gdata/Extension/ExtendedProperty.php';
 
 /**
  * @see Zend_Gdata_Extension_OriginalEvent
  */
-require_once 'Zend/Gdata/Extension/OriginalEvent.php';
+// require_once 'Zend/Gdata/Extension/OriginalEvent.php';
 
 /**
  * @see Zend_Gdata_Extension_EntryLink
  */
-require_once 'Zend/Gdata/Extension/EntryLink.php';
+// require_once 'Zend/Gdata/Extension/EntryLink.php';
 
 /**
  * Data model for the Gdata Event "Kind".  Google Calendar has a separate
@@ -210,7 +210,7 @@ class Zend_Gdata_Kind_EventEntry extends Zend_Gdata_Entry
             $this->_visibility = $visiblity;
             break;
         case $this->lookupNamespace('gd') . ':' . 'recurrenceException';
-            require_once 'Zend/Gdata/Extension/RecurrenceException.php';
+            // require_once 'Zend/Gdata/Extension/RecurrenceException.php';
             $recurrenceException = new Zend_Gdata_Extension_RecurrenceException();
             $recurrenceException ->transferFromDOM($child);
             $this->_recurrenceException[] = $recurrenceException;

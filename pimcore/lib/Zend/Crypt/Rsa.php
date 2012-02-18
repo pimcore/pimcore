@@ -23,12 +23,12 @@
 /**
  * @see Zend_Crypt_Rsa_Key_Private
  */
-require_once 'Zend/Crypt/Rsa/Key/Private.php';
+// require_once 'Zend/Crypt/Rsa/Key/Private.php';
 
 /**
  * @see Zend_Crypt_Rsa_Key_Public
  */
-require_once 'Zend/Crypt/Rsa/Key/Public.php';
+// require_once 'Zend/Crypt/Rsa/Key/Public.php';
 
 /**
  * @category   Zend
@@ -70,7 +70,7 @@ class Zend_Crypt_Rsa
     public function __construct(array $options = null)
     {
         if (!extension_loaded('openssl')) {
-            require_once 'Zend/Crypt/Rsa/Exception.php';
+            // require_once 'Zend/Crypt/Rsa/Exception.php';
             throw new Zend_Crypt_Rsa_Exception('Zend_Crypt_Rsa requires openssl extention to be loaded.');
         }
 

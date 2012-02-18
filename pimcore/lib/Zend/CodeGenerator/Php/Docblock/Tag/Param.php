@@ -23,7 +23,7 @@
 /**
  * @see Zend_CodeGenerator_Php_Docblock_Tag
  */
-require_once 'Zend/CodeGenerator/Php/Docblock/Tag.php';
+// require_once 'Zend/CodeGenerator/Php/Docblock/Tag.php';
 
 /**
  * @category   Zend

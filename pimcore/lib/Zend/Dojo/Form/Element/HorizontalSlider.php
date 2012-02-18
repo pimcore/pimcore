@@ -20,7 +20,7 @@
  */
 
 /** Zend_Dojo_Form_Element_Slider */
-require_once 'Zend/Dojo/Form/Element/Slider.php';
+// require_once 'Zend/Dojo/Form/Element/Slider.php';
 
 /**
  * HorizontalSlider dijit

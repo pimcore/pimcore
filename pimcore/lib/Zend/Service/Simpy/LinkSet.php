@@ -25,7 +25,7 @@
 /**
  * @see Zend_Service_Simpy_Link
  */
-require_once 'Zend/Service/Simpy/Link.php';
+// require_once 'Zend/Service/Simpy/Link.php';
 
 
 /**

@@ -23,17 +23,17 @@
 /**
  * @see Zend_Tool_Project_Context_Filesystem_Directory
  */
-require_once 'Zend/Tool/Project/Context/Filesystem/Directory.php';
+// require_once 'Zend/Tool/Project/Context/Filesystem/Directory.php';
 
 /**
  * @see Zend_Tool_Project_Context_System_Interface
  */
-require_once 'Zend/Tool/Project/Context/System/Interface.php';
+// require_once 'Zend/Tool/Project/Context/System/Interface.php';
 
 /**
  * @see Zend_Tool_Project_Context_System_NotOverwritable
  */
-require_once 'Zend/Tool/Project/Context/System/NotOverwritable.php';
+// require_once 'Zend/Tool/Project/Context/System/NotOverwritable.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project
