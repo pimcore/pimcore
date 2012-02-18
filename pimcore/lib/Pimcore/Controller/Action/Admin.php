@@ -65,6 +65,11 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             // init zend action helpers
             Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
+            // this is to make it possible to use the session id as a part of the route (ZF default route) used for pixlr.com editors, etc.
+            if($this->_getParam("pimcore_admin_sid")) {
+                $_REQUEST["pimcore_admin_sid"] = $this->_getParam("pimcore_admin_sid");
+            }
+
             // authenticate user, first try to authenticate with session information
             $user = Pimcore_Tool_Authentication::authenticateSession();
             if($user instanceof User) {
