@@ -677,15 +677,18 @@ class Pimcore {
         Pimcore_Resource::close();
 
         $protectedItems = array(
-            "pimcore_config_system",
             "Zend_Locale",
+            "Zend_View_Helper_Placeholder_Registry",
+            "Zend_View_Helper_Doctype",
+            "Zend_Translate",
+            "Zend_Navigation",
+            "Pimcore_API_Plugin_Broker",
             "pimcore_tag_block_current",
             "pimcore_tag_block_numeration",
             "pimcore_user",
-            "Zend_Translate",
+            "pimcore_config_system",
             "pimcore_admin_user",
             "pimcore_admin_initialized",
-            "Pimcore_API_Plugin_Broker",
             "pimcore_config_website",
             "pimcore_editmode",
             "pimcore_error_document",
