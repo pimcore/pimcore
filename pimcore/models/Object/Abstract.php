@@ -179,7 +179,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     /**
      * @var string
      */
-    public $o_locked = null;
+    public $o_locked;
 
 
     /**
@@ -423,9 +423,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_locked($o_locked){
-        if(empty($o_locked)) {
-            $o_locked = null;
-        }
         $this->o_locked = $o_locked;
     }
     
@@ -442,7 +439,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setLocked($o_locked){
-        $this->setO_locked($o_locked);
+        $this->o_locked = $o_locked;
     }
     
     /**
