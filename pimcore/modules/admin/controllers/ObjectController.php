@@ -700,6 +700,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $object->save();
                     $success = true;
                 } catch (Exception $e) {
+                    Logger::error($e);
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
             }
@@ -713,6 +714,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $object->save();
                     $success = true;
                 } catch (Exception $e) {
+                    Logger::error($e);
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
         } else {
