@@ -97,14 +97,15 @@ class Pimcore_Tool_Authentication {
         ));
 
         try {
-            // register session
-            if (array_key_exists(Zend_Session::getOptions("name"), $_REQUEST) && !empty($_REQUEST[Zend_Session::getOptions("name")])) {
-                // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                Zend_Session::setId($_REQUEST[Zend_Session::getOptions("name")]);
-            }
-
             try {
                 if(!Zend_Session::isStarted()) {
+
+                    if (array_key_exists(Zend_Session::getOptions("name"), $_REQUEST) && !empty($_REQUEST[Zend_Session::getOptions("name")])) {
+                        // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
+                        Zend_Session::setId($_REQUEST[Zend_Session::getOptions("name")]);
+                    }
+
+                    // register session
                     Zend_Session::start();
                 }
             }
