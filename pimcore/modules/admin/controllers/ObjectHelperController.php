@@ -345,9 +345,6 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
     public function importUploadAction()
     {
-
-        //copy($_FILES["Filedata"]["tmp_name"],PIMCORE_SYSTEM_TEMP_DIRECTORY."/import_".$this->_getParam("id"));
-
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
 
         $encoding = Pimcore_Tool_Text::detectEncoding($data);
@@ -453,8 +450,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
               "targetFields" => $availableFields,
               "mappingStore" => $mappingStore,
               "rows" => count(file($file)),
-              "cols" => $cols,
-              "type" => "csv"
+              "cols" => $cols
         ));
     }
 
@@ -463,7 +459,6 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         $success = true;
 
-        $type = $this->_getParam("type");
         $parentId = $this->_getParam("parentId");
         $job = $this->_getParam("job");
         $id = $this->_getParam("id");
@@ -474,33 +469,32 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $id;
 
-        if ($type == "csv") {
+        // currently only csv supported
+        // determine type
+        $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $id . "_original");
 
-            // determine type
-            $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $id . "_original");
-
-            $count = 0;
-            if (($handle = fopen($file, "r")) !== false) {
-                $data = fgetcsv($handle, 1000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
-            }
-            if ($skipFirstRow && $job == 1) {
-                //read the next row, we need to skip the head row
-                $data = fgetcsv($handle, 1000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
-            }
-
-            $tmpFile = $file . "_tmp";
-            $tmpHandle = fopen($tmpFile, "w+");
-            while (!feof($handle)) {
-                $buffer = fgets($handle);
-                fwrite($tmpHandle, $buffer);
-            }
-
-            fclose($handle);
-            fclose($tmpHandle);
-
-            unlink($file);
-            rename($tmpFile, $file);
+        $count = 0;
+        if (($handle = fopen($file, "r")) !== false) {
+            $data = fgetcsv($handle, 1000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         }
+        if ($skipFirstRow && $job == 1) {
+            //read the next row, we need to skip the head row
+            $data = fgetcsv($handle, 1000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+        }
+
+        $tmpFile = $file . "_tmp";
+        $tmpHandle = fopen($tmpFile, "w+");
+        while (!feof($handle)) {
+            $buffer = fgets($handle);
+            fwrite($tmpHandle, $buffer);
+        }
+
+        fclose($handle);
+        fclose($tmpHandle);
+
+        unlink($file);
+        rename($tmpFile, $file);
+
 
         // prepare mapping
         foreach ($mappingRaw as $map) {
