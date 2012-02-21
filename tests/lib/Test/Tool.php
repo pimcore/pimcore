@@ -127,7 +127,7 @@ class Test_Tool
      * @param  Asset $asset2
      * @return bool
      */
-    public static function assetsAreEqual($asset1, $asset2, $ignoreCopyDifferences = false)
+    public static function assetsAreEqual($asset1, $asset2, $ignoreCopyDifferences = false, $id = false)
     {
 
         if ($asset1 instanceof Asset and $asset2 instanceof Asset) {
@@ -136,8 +136,10 @@ class Test_Tool
             $a2Hash = self::createAssetComparisonString($asset2, $ignoreCopyDifferences);
 
 
-            $id = uniqid();
-            /*
+            if(!$id) {
+                $id = uniqid();
+            }
+
             $myFile = TESTS_PATH . "/output/asset1-" . $id . ".txt";
             $fh = fopen($myFile, 'w');
             fwrite($fh, $a1Hash);
@@ -147,7 +149,7 @@ class Test_Tool
             $fh = fopen($myFile, 'w');
             fwrite($fh, $a2Hash);
             fclose($fh);
-       */
+
 
             return $a1Hash === $a2Hash ? true : false;
 

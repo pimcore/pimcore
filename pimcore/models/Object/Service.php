@@ -277,7 +277,7 @@ class Object_Service extends Element_Service {
             if($fd instanceof Object_Class_Data_Objectbricks) {
                 if(in_array($bricktype, $fd->getAllowedTypes())) {
                     return $key;
-                } 
+                }
             }
         }
        return null;
