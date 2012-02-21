@@ -422,7 +422,7 @@ class Pimcore_Mail extends Zend_Mail
             $this->setDocumentSettings();
 
             $this->setSubject($this->getSubjectRendered());
-            //$this->setBodyHtml($this->getBodyHtmlRendered());
+            $this->setBodyHtml($this->getBodyHtmlRendered());
             $this->setBodyText($this->getBodyTextRendered());
         }
 
