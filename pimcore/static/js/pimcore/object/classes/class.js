@@ -134,7 +134,7 @@ pimcore.object.classes.klass = Class.create({
 
         this.uploadWindow = new Ext.Window({
             layout: 'fit',
-            title: t('import_class_defintion'),
+            title: t('import_class_definition'),
             closeAction: 'close',
             width:400,
             height:400,
