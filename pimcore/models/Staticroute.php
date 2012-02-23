@@ -387,7 +387,7 @@ class Staticroute extends Pimcore_Model_Abstract {
         // replace named variables
         foreach ($parametersInReversePattern as $key => $value) {
             $value = str_replace($forbiddenCharacters, "", $value);
-            if(!empty($value)) {
+            if(strlen($value) > 0) {
                 $url = str_replace("%".$key, str_replace("%",$urlEncodeEscapeCharacters,urlencode($value)), $url);
             }
         }
