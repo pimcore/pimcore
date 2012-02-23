@@ -74,7 +74,7 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
         if($html) {
             $head = $html->find("head",0);
             if($head) {
-                $head->innertext = $head->innertext . "\n" . '<script type="text/javascript" src="/pimcore/static/js/lib/less.js"></script>'."\n";
+                $head->innertext = $head->innertext . "\n" . '<script type="text/javascript">var less = {"env": "development"};</script><script type="text/javascript" src="/pimcore/static/js/lib/less.js"></script>'."\n";
 
                 $body = $html->save();
                 $this->getResponse()->setBody($body);
