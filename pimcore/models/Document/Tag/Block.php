@@ -99,22 +99,35 @@ class Document_Tag_Block extends Document_Tag {
      */
     public function enumerate() {
 
+        $manual = false;
+        if(array_key_exists("manual", $this->options) && $this->options["manual"] == true) {
+            $manual = true;
+        }
+
         $this->setDefault();
 
         if ($this->current > 0) {
-            $this->blockEnd();
+            if(!$manual) {
+                $this->blockEnd();
+            }
         }
         else {
-            $this->start();
+            if(!$manual) {
+                $this->start();
+            }
         }
 
         if ($this->current < count($this->indices) && $this->current < $this->options["limit"]) {
-            $this->blockStart();
+            if(!$manual) {
+                $this->blockStart();
+            }
             $this->current++;
             return true;
         }
         else {
-            $this->end();
+            if(!$manual) {
+                $this->end();
+            }
             return false;
         }
     }
