@@ -89,10 +89,10 @@ class Pimcore_Tool_Less {
         $compiledContent = "";
 
         // check if the file is already compiled in the cache
-        $cacheKey = "less_file_" . md5_file($path);
-        if($contents = Pimcore_Model_Cache::load($cacheKey)) {
-            return $contents;
-        }
+        //$cacheKey = "less_file_" . md5_file($path);
+        //if($contents = Pimcore_Model_Cache::load($cacheKey)) {
+        //    return $contents;
+        //}
 
         // use the original less compiler if configured
         if($conf->outputfilters->lesscpath) {
