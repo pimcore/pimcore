@@ -121,7 +121,6 @@ class Document_Tag_Block extends Document_Tag {
             if(!$manual) {
                 $this->blockStart();
             }
-            $this->current++;
             return true;
         }
         else {
@@ -221,6 +220,8 @@ class Document_Tag_Block extends Document_Tag {
         $this->outputEditmode('<div class="pimcore_block_down"></div>');
         $this->outputEditmode('<div class="pimcore_block_clear"></div>');
         $this->outputEditmode('</div>');
+
+        $this->current++;
     }
 
     /**
