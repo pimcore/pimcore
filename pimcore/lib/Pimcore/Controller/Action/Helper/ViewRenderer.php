@@ -2,6 +2,7 @@
 
 class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Action_Helper_ViewRenderer {
 
+    var $isInitialized = false;
 
     /**
      *
@@ -36,13 +37,27 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
 
         parent::initView($path, $prefix, $options);
 
-        // script pathes for layout path
-        foreach (array_reverse($this->view->getScriptPaths()) as $path) {
-            $path = str_replace("\\","/",$path);
-            $this->view->addScriptPath($path);
-            $this->view->addScriptPath(str_replace("/scripts", "/layouts", $path));
-        }
 
         $this->setViewSuffix(Pimcore_View::getViewScriptSuffix());
+
+        // this is very important, the initView could be called multiple times.
+        // if we add the path on every call, we have big performance issues.
+        if($this->isInitialized)
+            return;
+
+        $this->isInitialized = true;
+
+        $paths = $this->view->getScriptPaths();
+        // script pathes for layout path
+        foreach (array_reverse($paths) as $path) {
+            $path = str_replace("\\","/",$path);
+            if(!in_array($path, $paths))
+                $this->view->addScriptPath($path);
+
+            $path = str_replace("/scripts", "/layouts", $path);
+            if(!in_array($path, $paths))
+                $this->view->addScriptPath($path);
+        }
+
     }
 }
