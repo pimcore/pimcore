@@ -42,8 +42,9 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
 
         // this is very important, the initView could be called multiple times.
         // if we add the path on every call, we have big performance issues.
-        if($this->isInitialized)
+        if($this->isInitialized) {
             return;
+        }
 
         $this->isInitialized = true;
 
@@ -51,12 +52,14 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
         // script pathes for layout path
         foreach (array_reverse($paths) as $path) {
             $path = str_replace("\\","/",$path);
-            if(!in_array($path, $paths))
+            if(!in_array($path, $paths)) {
                 $this->view->addScriptPath($path);
+            }
 
             $path = str_replace("/scripts", "/layouts", $path);
-            if(!in_array($path, $paths))
+            if(!in_array($path, $paths)) {
                 $this->view->addScriptPath($path);
+            }
         }
 
     }
