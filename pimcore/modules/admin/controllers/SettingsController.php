@@ -217,15 +217,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         if ($this->getUser()->isAllowed("system_settings")) {
             $values = Zend_Json::decode($this->_getParam("data"));
 
+            // convert all special characters to their entities so the xml writer can put it into the file
+            $values = array_htmlspecialchars($values);
+
             $oldConfig = Pimcore_Config::getSystemConfig();
             $oldValues = $oldConfig->toArray();
             $smtpPassword = $values["email.smtp.auth.password"];
             if (empty($smtpPassword)) {
                 $smtpPassword = $oldValues['email']['smtp']['auth']['password'];
             }
-
-            // convert all special characters to their entities so the xml writer can put it into the file
-            $values = array_htmlspecialchars($values);
 
             $errorPages = array();
             foreach ($values as $key => $value) {
@@ -1466,9 +1466,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementAddAction () {
 
-
-        $alreadyExist = false;
-
         try {
             OutputFilter_Tag_Config::getByName($this->_getParam("name"));
             $alreadyExist = true;
@@ -1505,6 +1502,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $tag = OutputFilter_Tag_Config::getByName($this->_getParam("name"));
         $data = Zend_Json::decode($this->_getParam("configuration"));
+        $data = array_htmlspecialchars($data);
 
         $items = array();
         foreach ($data as $key => $value) {
@@ -1525,6 +1523,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         }
 
         $tag->save();
+
+        // clear cache tag
+        Pimcore_Model_Cache::clearTag("tagmanagement");
 
         $this->_helper->json(array("success" => true));
     }

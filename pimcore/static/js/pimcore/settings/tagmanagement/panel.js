@@ -150,7 +150,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_tag'), t('enter_the_name_of_the_new_tag'), this.addFieldComplete.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('add_tag'), t('enter_the_name_of_the_new_tag') + "(a-zA-Z-_)", this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
