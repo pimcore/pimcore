@@ -122,9 +122,18 @@ pimcore.layout.toolbar = Class.create({
 
         if (user.isAllowed("reports")) {
             extrasItems.push({
-                text: t("reports_and_marketing") + " (beta)",
+                text: t("reports_and_marketing"),
                 iconCls: "pimcore_icon_reports",
-                handler: this.showReports
+                hideOnClick: false,
+                menu: [{
+                    text: t("reports"),
+                    iconCls: "pimcore_icon_reports",
+                    handler: this.showReports
+                },{
+                    text: t("tag_snippet_management"),
+                    iconCls: "pimcore_icon_tag",
+                    handler: this.showTagManagement
+                }]
             });
         }
 
@@ -622,6 +631,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("reports", new pimcore.report.panel());
+        }
+    },
+
+    showTagManagement: function () {
+        try {
+            pimcore.globalmanager.get("tagmanagement").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("tagmanagement", new pimcore.settings.tagmanagement.panel());
         }
     },
 

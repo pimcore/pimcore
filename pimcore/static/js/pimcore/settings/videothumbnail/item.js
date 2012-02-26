@@ -168,7 +168,7 @@ pimcore.settings.videothumbnail.items = {
         return [{
             xtype: "tbtext",
             text: "<b>" + name + "</b>"
-        },"-",{
+        },"->",{
             iconCls: "pimcore_icon_delete",
             handler: function (index, parent) {
                 parent.itemContainer.remove(Ext.getCmp(index));

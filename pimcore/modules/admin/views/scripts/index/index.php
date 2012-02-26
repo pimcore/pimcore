@@ -374,6 +374,9 @@
             "pimcore/report/webmastertools/crawling.js",
             "pimcore/report/websiteoptimizer/abcreate.js",
 
+            "pimcore/settings/tagmanagement/panel.js",
+            "pimcore/settings/tagmanagement/item.js",
+
             // extension manager
             "pimcore/extensionmanager/settings.js",
             "pimcore/extensionmanager/admin.js",

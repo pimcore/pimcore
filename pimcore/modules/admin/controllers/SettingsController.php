@@ -1379,8 +1379,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function videoThumbnailGetAction () {
 
         $pipe = Asset_Video_Thumbnail_Config::getByName($this->_getParam("name"));
-        //$pipe->delete();
-
         $this->_helper->json($pipe);
     }
 
@@ -1443,5 +1441,91 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "onFileSystem" => file_exists(PIMCORE_DOCUMENT_ROOT . "/robots.txt")
             ));
         }
+    }
+
+
+
+    public function tagManagementTreeAction () {
+
+        $dir = OutputFilter_Tag_Config::getWorkingDir();
+
+        $tags = array();
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if(strpos($file, ".xml")) {
+                $name = str_replace(".xml", "", $file);
+                $tags[] = array(
+                    "id" => $name,
+                    "text" => $name
+                );
+            }
+        }
+
+        $this->_helper->json($tags);
+    }
+
+    public function tagManagementAddAction () {
+
+
+        $alreadyExist = false;
+
+        try {
+            OutputFilter_Tag_Config::getByName($this->_getParam("name"));
+            $alreadyExist = true;
+        } catch (Exception $e) {
+            $alreadyExist = false;
+        }
+
+        if(!$alreadyExist) {
+            $tag = new OutputFilter_Tag_Config();
+            $tag->setName($this->_getParam("name"));
+            $tag->save();
+        }
+
+        $this->_helper->json(array("success" => !$alreadyExist));
+    }
+
+    public function tagManagementDeleteAction () {
+
+        $tag = OutputFilter_Tag_Config::getByName($this->_getParam("name"));
+        $tag->delete();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+
+    public function tagManagementGetAction () {
+
+        $tag = OutputFilter_Tag_Config::getByName($this->_getParam("name"));
+        $this->_helper->json($tag);
+    }
+
+
+    public function tagManagementUpdateAction () {
+
+        $tag = OutputFilter_Tag_Config::getByName($this->_getParam("name"));
+        $data = Zend_Json::decode($this->_getParam("configuration"));
+
+        $items = array();
+        foreach ($data as $key => $value) {
+            $setter = "set" . ucfirst($key);
+            if(method_exists($tag, $setter)) {
+                $tag->$setter($value);
+            }
+
+            if(strpos($key,"item.") === 0) {
+                $cleanKeyParts = explode(".",$key);
+                $items[$cleanKeyParts[1]][$cleanKeyParts[2]] = $value;
+            }
+        }
+
+        $tag->resetItems();
+        foreach ($items as $item) {
+            $tag->addItem($item);
+        }
+
+        $tag->save();
+
+        $this->_helper->json(array("success" => true));
     }
 }
