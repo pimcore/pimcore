@@ -70,6 +70,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_CssMinify(), 800);
             $front->registerPlugin(new Pimcore_Controller_Plugin_JavascriptMinify(), 801);
             $front->registerPlugin(new Pimcore_Controller_Plugin_ImageDataUri(), 803);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
 
@@ -538,6 +539,7 @@ class Pimcore {
         $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');
+        $autoloader->registerNamespace('OutputFilter');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }
