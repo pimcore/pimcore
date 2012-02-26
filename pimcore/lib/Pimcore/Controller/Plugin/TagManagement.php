@@ -21,18 +21,20 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
             return;
         }
 
-        $dir = OutputFilter_Tag_Config::getWorkingDir();
+        $cacheKey = "outputfilter_tagmngt";
+        if(!$tags = Pimcore_Model_Cache::load($cacheKey)) {
+            $dir = OutputFilter_Tag_Config::getWorkingDir();
 
-        $tags = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if(strpos($file, ".xml")) {
-                $name = str_replace(".xml", "", $file);
-                $tags[] = OutputFilter_Tag_Config::getByName($name);
+            $tags = array();
+            $files = scandir($dir);
+            foreach ($files as $file) {
+                if(strpos($file, ".xml")) {
+                    $name = str_replace(".xml", "", $file);
+                    $tags[] = OutputFilter_Tag_Config::getByName($name);
+                }
             }
+            Pimcore_Model_Cache::save($tags, $cacheKey, array("tagmanagement"), null, 100);
         }
-
-
 
         include_once("simple_html_dom.php");
         $body = $this->getResponse()->getBody();
@@ -59,6 +61,10 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
                                         // beginning
                                         $element->innertext = "\n\n" . $item["code"] . "\n\n" . $element->innertext;
                                     }
+
+                                    // we havve to reinitialize the html object, otherwise it causes problems with nested child selectors
+                                    $body = $html->save();
+                                    $html = str_get_html($body);
                                 }
                             }
                         }
@@ -66,7 +72,6 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
                 }
             }
 
-            $body = $html->save();
             $this->getResponse()->setBody($body);
         }
 
