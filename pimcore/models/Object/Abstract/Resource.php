@@ -296,9 +296,9 @@ class Object_Abstract_Resource extends Element_Resource {
     public function isLocked () {
         
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_path LIKE ? AND o_locked IS NOT NULL AND o_locked != '';", $this->model->getFullpath()."%");
+        $belowLocks = $this->db->fetchOne("SELECT count(*) FROM objects WHERE o_path LIKE ? AND o_locked IS NOT NULL AND o_locked != '';", $this->model->getFullpath()."%");
         
-        if(is_array($belowLocks) && count($belowLocks) > 0) {
+        if($belowLocks > 0) {
             return true;
         }
         

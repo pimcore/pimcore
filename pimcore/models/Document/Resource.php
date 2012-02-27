@@ -339,9 +339,9 @@ class Document_Resource extends Element_Resource {
     public function isLocked () {
         
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchRow("SELECT id FROM documents WHERE path LIKE ? AND locked IS NOT NULL AND locked != '';", $this->model->getFullpath()."%");
+        $belowLocks = $this->db->fetchOne("SELECT id FROM documents WHERE path LIKE ? AND locked IS NOT NULL AND locked != '';", $this->model->getFullpath()."%");
         
-        if(is_array($belowLocks) && count($belowLocks) > 0) {
+        if($belowLocks > 0) {
             return true;
         }
         
