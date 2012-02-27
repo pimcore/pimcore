@@ -313,9 +313,9 @@ class Object_Abstract_Resource extends Element_Resource {
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
-        $inhertitedLocks = $this->db->fetchAll("SELECT o_id FROM objects WHERE (" . $pathCondition . ") AND o_locked = 'propagate';");
+        $inhertitedLocks = $this->db->fetchOne("SELECT o_id FROM objects WHERE (" . $pathCondition . ") AND o_locked = 'propagate' LIMIT 1");
         
-        if(is_array($inhertitedLocks) && count($inhertitedLocks) > 0) {
+        if($inhertitedLocks > 0) {
             return true;
         }
         

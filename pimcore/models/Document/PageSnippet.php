@@ -260,7 +260,7 @@ abstract class Document_PageSnippet extends Document {
             }
         }
         catch (Exception $e) {
-            Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getFullPath());
+            Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getRealFullPath());
         }
     }
 

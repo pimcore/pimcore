@@ -344,7 +344,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         if ($this->getId() != 1) { // not for the root node
             $parent = Document::getById($this->getParentId());
             if($parent) {
-                $this->setPath(str_replace("//", "/", $parent->getFullPath() . "/"));
+                $this->setPath(str_replace("//", "/", $parent->getRealFullPath() . "/"));
             } else {
                 // parent document doesn't exist anymore, so delete this document
                 //$this->delete();
@@ -355,10 +355,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             }
         }
 
-        if(Document_Service::pathExists($this->getFullPath())) {
-            $duplicate = Document::getByPath($this->getFullPath());
+        if(Document_Service::pathExists($this->getRealFullPath())) {
+            $duplicate = Document::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Document  and $duplicate->getId() != $this->getId()) {
-                throw new Exception("Duplicate full path [ " . $this->getFullPath() . " ] - cannot create document");
+                throw new Exception("Duplicate full path [ " . $this->getRealFullPath() . " ] - cannot create document");
             }
         }
 
@@ -389,7 +389,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 if (!$property->getInherited()) {
                     $property->setResource(null);
                     $property->setCid($this->getId());
-                    $property->setCpath($this->getFullPath());
+                    $property->setCpath($this->getRealFullPath());
                     $property->save();
                 }
             }
