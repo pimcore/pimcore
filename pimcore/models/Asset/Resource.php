@@ -347,9 +347,9 @@ class Asset_Resource extends Element_Resource {
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
-        $inhertitedLocks = $this->db->fetchAll("SELECT id FROM assets WHERE (" . $pathCondition . ") AND locked = 'propagate';");
+        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM assets WHERE (" . $pathCondition . ") AND locked = 'propagate' LIMIT 1");
         
-        if(is_array($inhertitedLocks) && count($inhertitedLocks) > 0) {
+        if($inhertitedLocks > 0) {
             return true;
         }
         

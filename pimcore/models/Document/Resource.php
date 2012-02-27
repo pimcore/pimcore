@@ -95,7 +95,7 @@ class Document_Resource extends Element_Resource {
 
         try {
             $this->db->insert("documents", array(
-                "path" => $this->model->getPath(),
+                "path" => $this->model->getRealPath(),
                 "parentId" => $this->model->getParentId()
             ));
 
@@ -178,13 +178,13 @@ class Document_Resource extends Element_Resource {
         $documents = $this->db->fetchAll("SELECT id,path FROM documents WHERE path LIKE ?", $oldPath . "%");
 
         //update documents child paths
-        $this->db->query("update documents set path = replace(path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where path like " . $this->db->quote($oldPath . "/%") . ";");
+        $this->db->query("update documents set path = replace(path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getRealFullPath()) . ") where path like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update documents child permission paths
-        $this->db->query("update users_workspaces_document set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") .";");
+        $this->db->query("update users_workspaces_document set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getRealFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") .";");
 
         //update documents child properties paths
-        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%" ) . ";");
+        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getRealFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%" ) . ";");
 
 
         foreach ($documents as $document) {
@@ -339,14 +339,14 @@ class Document_Resource extends Element_Resource {
     public function isLocked () {
         
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT id FROM documents WHERE path LIKE ? AND locked IS NOT NULL AND locked != '' LIMIT 1", $this->model->getFullpath()."%");
+        $belowLocks = $this->db->fetchOne("SELECT id FROM documents WHERE path LIKE ? AND locked IS NOT NULL AND locked != '' LIMIT 1", $this->model->getRealFullPath()."%");
         
         if($belowLocks > 0) {
             return true;
         }
         
         // check for an inherited lock
-        $pathParts = explode("/", $this->model->getFullPath());
+        $pathParts = explode("/", $this->model->getRealFullPath());
         unset($pathParts[0]);
         $tmpPathes = array();
         $pathConditionParts[] = "CONCAT(path,`key`) = '/'";
@@ -356,9 +356,9 @@ class Document_Resource extends Element_Resource {
         }
 
         $pathCondition = implode(" OR ", $pathConditionParts);
-        $inhertitedLocks = $this->db->fetchAll("SELECT id FROM documents WHERE (" . $pathCondition . ") AND locked = 'propagate';");
+        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM documents WHERE (" . $pathCondition . ") AND locked = 'propagate' LIMIT 1");
         
-        if(is_array($inhertitedLocks) && count($inhertitedLocks) > 0) {
+        if($inhertitedLocks > 0) {
             return true;
         }
         
@@ -393,7 +393,7 @@ class Document_Resource extends Element_Resource {
             // exception for list permission
             if(empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $this->model->getFullPath()."%");
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $this->model->getRealFullPath()."%");
                 if($permissionsChilds) {
                     return true;
                 }
