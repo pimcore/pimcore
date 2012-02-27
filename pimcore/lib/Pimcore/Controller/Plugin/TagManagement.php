@@ -22,7 +22,8 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
         }
 
         $cacheKey = "outputfilter_tagmngt";
-        if(!$tags = Pimcore_Model_Cache::load($cacheKey)) {
+        $tags = $tags = Pimcore_Model_Cache::load($cacheKey);
+        if(!is_array($tags)) {
             $dir = OutputFilter_Tag_Config::getWorkingDir();
 
             $tags = array();
