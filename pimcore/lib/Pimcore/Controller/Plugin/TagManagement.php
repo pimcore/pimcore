@@ -37,6 +37,10 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
             Pimcore_Model_Cache::save($tags, $cacheKey, array("tagmanagement"), null, 100);
         }
 
+        if(empty($tags)) {
+            return;
+        }
+
         include_once("simple_html_dom.php");
         $body = $this->getResponse()->getBody();
 
