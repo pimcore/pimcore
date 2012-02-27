@@ -108,6 +108,7 @@ class Document_Tag_Block extends Document_Tag {
 
         if ($this->current > 0) {
             if(!$manual) {
+                $this->blockDestruct();
                 $this->blockEnd();
             }
         }
@@ -119,6 +120,7 @@ class Document_Tag_Block extends Document_Tag {
 
         if ($this->current < count($this->indices) && $this->current < $this->options["limit"]) {
             if(!$manual) {
+                $this->blockConstruct();
                 $this->blockStart();
             }
             return true;
@@ -200,16 +202,31 @@ class Document_Tag_Block extends Document_Tag {
     }
 
     /**
-     * Is called evertime a new iteration starts (new entry of the block while looping)
      *
-     * @return void
      */
-    public function blockStart() {
+    public function blockConstruct () {
 
         // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
         $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
         $suffixes[] = $this->indices[$this->current];
         Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+    }
+
+    /**
+     *
+     */
+    public function blockDestruct () {
+        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        array_pop($suffixes);
+        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+    }
+
+    /**
+     * Is called evertime a new iteration starts (new entry of the block while looping)
+     *
+     * @return void
+     */
+    public function blockStart() {
 
         $this->outputEditmode('<div class="pimcore_block_entry ' . $this->getName() . '" key="' . $this->indices[$this->current] . '">');
         $this->outputEditmode('<div class="pimcore_block_buttons">');
@@ -230,11 +247,6 @@ class Document_Tag_Block extends Document_Tag {
      * @return void
      */
     public function blockEnd() {
-
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
-        array_pop($suffixes);
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
-
         $this->outputEditmode('</div>');
     }
 
