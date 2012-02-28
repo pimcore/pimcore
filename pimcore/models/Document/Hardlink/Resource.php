@@ -53,6 +53,7 @@ class Document_Hardlink_Resource extends Document_Resource {
 
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
+                $this->loadLocks();
             }
             else {
                 throw new Exception("Hardlink with the ID " . $this->model->getId() . " doesn't exists");
@@ -131,7 +132,9 @@ class Document_Hardlink_Resource extends Document_Resource {
             }
             catch (Exception $e) {
                 $this->db->update("documents_hardlink", $dataHardlink, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }            
+            }
+
+            $this->updateLocks();
         }
         catch (Exception $e) {
             throw $e;

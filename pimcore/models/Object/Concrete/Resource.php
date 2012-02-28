@@ -50,6 +50,8 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             if ($data["o_id"]) {
                 $this->assignVariablesToModel($data);
                 $this->getData();
+
+                $this->loadLocks();
             }
             else {
                 throw new Exception("Object with the ID " . $id . " doesn't exists");

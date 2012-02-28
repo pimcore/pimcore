@@ -48,6 +48,7 @@ class Document_Resource extends Element_Resource {
 
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
+            $this->loadLocks();
         }
         else {
             throw new Exception("Document with the ID " . $id . " doesn't exists");
@@ -153,6 +154,8 @@ class Document_Resource extends Element_Resource {
             catch (Exception $e) {
                 $this->db->update("documents", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
             }
+
+            $this->updateLocks();
         }
         catch (Exception $e) {
             throw $e;
@@ -224,20 +227,10 @@ class Document_Resource extends Element_Resource {
 
         $properties = array();
 
-        // collect properties via parent - ids
-        $parentIds = array(1);
-        $obj = $this->model->getParent();
-
-        if($obj) {
-            while($obj) {
-                $parentIds[] = $obj->getId();
-                $obj = $obj->getParent();
-            }
-        }
-
         if($onlyDirect) {
             $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE cid = ? AND ctype='document'", $this->model->getId());
         } else {
+            $parentIds = $this->getParentIds();
             $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='document'", $this->model->getId());
         }
 
@@ -337,33 +330,40 @@ class Document_Resource extends Element_Resource {
     }
     
     public function isLocked () {
-        
+
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT id FROM documents WHERE path LIKE ? AND locked IS NOT NULL AND locked != '' LIMIT 1", $this->model->getRealFullPath()."%");
-        
+        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN documents ON tree_locks.id = documents.id WHERE documents.path LIKE ? AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
+
         if($belowLocks > 0) {
             return true;
         }
-        
-        // check for an inherited lock
-        $pathParts = explode("/", $this->model->getRealFullPath());
-        unset($pathParts[0]);
-        $tmpPathes = array();
-        $pathConditionParts[] = "CONCAT(path,`key`) = '/'";
-        foreach ($pathParts as $pathPart) {
-            $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = $this->db->quoteInto("CONCAT(path,`key`) = ?", "/" . implode("/", $tmpPathes));
-        }
 
-        $pathCondition = implode(" OR ", $pathConditionParts);
-        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM documents WHERE (" . $pathCondition . ") AND locked = 'propagate' LIMIT 1");
-        
+        $parentIds = $this->getParentIds();
+        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM tree_locks WHERE id IN (".implode(",",$parentIds).") AND type='document' AND locked = 'propagate' LIMIT 1");
+
         if($inhertitedLocks > 0) {
             return true;
         }
-        
-        
+
+
         return false;
+    }
+
+    public function loadLocks() {
+        // add tree-lock
+        $this->model->setLocked($this->db->fetchOne("SELECT locked FROM tree_locks WHERE id = ? AND type = ?", array($this->model->getId(), "document")));
+    }
+
+    public function updateLocks() {
+        // tree_locks
+        $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'document'");
+        if($this->model->getLocked()) {
+            $this->db->insert("tree_locks", array(
+                "id" => $this->model->getId(),
+                "type" => "document",
+                "locked" => $this->model->getLocked()
+            ));
+        }
     }
 
     public function isAllowed($type, $user) {

@@ -54,6 +54,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
 
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
+                $this->loadLocks();
             }
             else {
                 throw new Exception("Page with the ID " . $this->model->getId() . " doesn't exists");
@@ -132,6 +133,8 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
             catch (Exception $e) {
                 $this->db->update("documents_page", $dataPage, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
+
+            $this->updateLocks();
         }
         catch (Exception $e) {
             throw $e;

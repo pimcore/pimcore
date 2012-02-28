@@ -43,6 +43,8 @@ class Object_Abstract_Resource extends Element_Resource {
         $data = $this->db->fetchRow("SELECT * FROM objects WHERE o_id = ?", $id);
         if ($data["o_id"]) {
             $this->assignVariablesToModel($data);
+
+            $this->loadLocks();
         }
         else {
             throw new Exception("Object with the ID " . $id . " doesn't exists");
@@ -116,6 +118,16 @@ class Object_Abstract_Resource extends Element_Resource {
         }
         catch (Exception $e) {
             $this->db->update("objects", $data, $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
+        }
+
+        // tree_locks
+        $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'object'");
+        if($this->model->getLocked()) {
+            $this->db->insert("tree_locks", array(
+                "id" => $this->model->getId(),
+                "type" => "object",
+                "locked" => $this->model->getLocked()
+            ));
         }
     }
 
@@ -193,16 +205,7 @@ class Object_Abstract_Resource extends Element_Resource {
         $properties = array();
 
         // collect properties via parent - ids
-        $parentIds = array(1);
-        $obj = $this->model->getParent();
-
-        if($obj) {
-            while($obj) {
-                $parentIds[] = $obj->getId();
-                $obj = $obj->getParent();
-            }
-        }
-        
+        $parentIds = $this->getParentIds();
         $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE ((cid IN (".implode(",",$parentIds).") AND inheritable = 1) OR cid = ? )  AND ctype='object'", $this->model->getId());
 
         // because this should be faster than mysql
@@ -294,33 +297,28 @@ class Object_Abstract_Resource extends Element_Resource {
     
     
     public function isLocked () {
-        
+
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_path LIKE ? AND o_locked IS NOT NULL AND o_locked != '' LIMIT 1", $this->model->getFullpath()."%");
-        
+        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN objects ON tree_locks.id = objects.o_id WHERE objects.o_path LIKE ? AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
+
         if($belowLocks > 0) {
             return true;
         }
-        
-        // check for an inherited lock
-        $pathParts = explode("/", $this->model->getFullPath());
-        unset($pathParts[0]);
-        $tmpPathes = array();
-        $pathConditionParts[] = "CONCAT(o_path,`o_key`) = '/'";
-        foreach ($pathParts as $pathPart) {
-            $tmpPathes[] = $pathPart;
-            $pathConditionParts[] = $this->db->quoteInto("CONCAT(o_path,`o_key`) = ?", "/" . implode("/", $tmpPathes));
-        }
 
-        $pathCondition = implode(" OR ", $pathConditionParts);
-        $inhertitedLocks = $this->db->fetchOne("SELECT o_id FROM objects WHERE (" . $pathCondition . ") AND o_locked = 'propagate' LIMIT 1");
-        
+        $parentIds = $this->getParentIds();
+        $inhertitedLocks = $this->db->fetchOne("SELECT id FROM tree_locks WHERE id IN (".implode(",",$parentIds).") AND type='object' AND locked = 'propagate' LIMIT 1");
+
         if($inhertitedLocks > 0) {
             return true;
         }
-        
-        
+
+
         return false;
+    }
+
+    public function loadLocks() {
+        // add tree-lock
+        $this->model->setO_locked($this->db->fetchOne("SELECT locked FROM tree_locks WHERE id = ? AND type = ?", array($this->model->getId(), "object")));
     }
 
     public function getClasses() {

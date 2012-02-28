@@ -12,12 +12,10 @@ CREATE TABLE `assets` (
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
   `customSettings` text,
-  `locked` enum('self','propagate') default NULL,
   PRIMARY KEY (`id`),
   KEY `parentId` (`parentId`),
   KEY `filename` (`filename`),
-  KEY `path` (`path`),
-  KEY `locked` (`locked`)
+  KEY `path` (`path`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `cache_tags`;
@@ -75,13 +73,11 @@ CREATE TABLE `documents` (
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
-  `locked` enum('self','propagate') default NULL,
   PRIMARY KEY (`id`),
   KEY `parentId` (`parentId`),
   KEY `key` (`key`),
   KEY `path` (`path`),
-  KEY `published` (`published`),
-  KEY `locked` (`locked`)
+  KEY `published` (`published`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `documents_doctypes`;
@@ -224,14 +220,12 @@ CREATE TABLE `objects` (
   `o_userModification` int(11) unsigned DEFAULT NULL,
   `o_classId` int(11) unsigned DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
-  `o_locked` enum('self','propagate') default NULL,
   PRIMARY KEY (`o_id`),
   KEY `key` (`o_key`),
   KEY `path` (`o_path`),
   KEY `type` (`o_type`),
   KEY `published` (`o_published`),
-  KEY `parentId` (`o_parentId`),
-  KEY `o_locked` (`o_locked`)
+  KEY `parentId` (`o_parentId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `properties`;
@@ -365,6 +359,16 @@ CREATE TABLE `staticroutes` (
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tree_locks` (
+  `id` int(11) NOT NULL DEFAULT '0',
+  `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
+  `locked` enum('self','propagate') default NULL,
+  PRIMARY KEY (`id`,`type`),
+  KEY `id` (`id`),
+  KEY `type` (`type`),
+  KEY `locked` (`locked`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `translations_admin`;
