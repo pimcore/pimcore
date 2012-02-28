@@ -56,6 +56,7 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
 
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
+                $this->loadLocks();
             }
             else {
                 throw new Exception("Snippet with the ID " . $this->model->getId() . " doesn't exists");
@@ -137,7 +138,9 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
             }
             catch (Exception $e) {
                 $this->db->update("documents_snippet", $dataSnippet, $this->db->quoteInto("id = ?", $this->model->getId() ));
-            }            
+            }
+
+            $this->updateLocks();
         }
         catch (Exception $e) {
             throw $e;

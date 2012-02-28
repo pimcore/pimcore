@@ -52,6 +52,7 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
             $data = $this->db->fetchRow("SELECT * FROM documents LEFT JOIN documents_email ON documents.id = documents_email.id WHERE documents.id = ?", $this->model->getId());
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
+                $this->loadLocks();
             }
             else {
                 throw new Exception("Email Document with the ID " . $this->model->getId() . " doesn't exists");
@@ -128,6 +129,8 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
             catch (Exception $e) {
                 $this->db->update("documents_email", $dataPage, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
+
+            $this->updateLocks();
         }
         catch (Exception $e) {
             throw $e;

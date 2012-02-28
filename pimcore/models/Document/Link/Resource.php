@@ -54,6 +54,8 @@ class Document_Link_Resource extends Document_Resource {
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
                 $this->model->getHref();
+
+                $this->loadLocks();
             }
             else {
                 throw new Exception("Link with the ID " . $this->model->getId() . " doesn't exists");
@@ -132,7 +134,9 @@ class Document_Link_Resource extends Document_Resource {
             }
             catch (Exception $e) {
                 $this->db->update("documents_link", $dataLink, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }            
+            }
+
+            $this->updateLocks();
         }
         catch (Exception $e) {
             throw $e;

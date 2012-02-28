@@ -18,5 +18,22 @@
 abstract class Element_Resource extends Pimcore_Model_Resource_Abstract {
 
 
+    /**
+     * @return array
+     */
+    public function getParentIds() {
+        // collect properties via parent - ids
+        $parentIds = array(1);
+        $obj = $this->model->getParent();
+
+        if($obj) {
+            while($obj) {
+                $parentIds[] = $obj->getId();
+                $obj = $obj->getParent();
+            }
+        }
+
+        return $parentIds;
+    }
 }
 
