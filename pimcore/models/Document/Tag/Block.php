@@ -94,10 +94,9 @@ class Document_Tag_Block extends Document_Tag {
 
     /**
      * Loops through the block
-     *
      * @return boolean
      */
-    public function enumerate() {
+    public function loop() {
 
         $manual = false;
         if(array_key_exists("manual", $this->options) && $this->options["manual"] == true) {
@@ -134,13 +133,13 @@ class Document_Tag_Block extends Document_Tag {
     }
     
     /**
-     * Alias for enumerate
-     *
-     * @see enumerate()
+     * Alias for loop
+     * @deprecated
+     * @see loop()
      * @return boolean
      */
-    public function loop() {
-        return $this->enumerate();
+    public function enumerate() {
+        return $this->loop();
     }
 
     /**
@@ -182,6 +181,8 @@ class Document_Tag_Block extends Document_Tag {
         Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="pimcore_editable pimcore_tag_' . $this->getType() . '" type="' . $this->getType() . '">');
+
+        return $this;
     }
 
     /**

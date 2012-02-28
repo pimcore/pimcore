@@ -31,6 +31,11 @@ class Document_Tag_Areablock extends Document_Tag {
      */
     public $current = 0;
 
+    /**
+     * @var array
+     */
+    public $currentIndex;
+
 
     /**
      * @see Document_Tag_Interface::getType
@@ -59,119 +64,152 @@ class Document_Tag_Areablock extends Document_Tag {
      * @see Document_Tag_Interface::frontend
      */
     public function frontend() {
-        $count = 0;
-        $this->start();
+        reset($this->indices);
+        while ($this->loop());
+    }
+
+    /**
+     *
+     */
+    public function loop () {
+
+        $disabled = false;
         $options = $this->getOptions();
-        foreach ($this->indices as $index) {
-            
-            $this->current = $count;
+        $manual = false;
+        if(array_key_exists("manual", $options) && $options["manual"] == true) {
+            $manual = true;
+        }
 
-            // don't show disabled bricks
-            if(!Pimcore_ExtensionManager::isEnabled("brick", $index["type"]) && $options['dontCheckEnabled'] != true) {
-                $count++;
-                continue;
-            }
-
-            if($count > 0) {
+        if ($this->current > 0) {
+            if(!$manual) {
+                $this->blockDestruct();
                 $this->blockEnd();
             }
+        }
+        else {
+            if(!$manual) {
+                $this->start();
+            }
+        }
 
-            // create info object and assign it to the view
+        if ($this->current < count($this->indices) && $this->current < $this->options["limit"]) {
+
+            $index = current($this->indices);
+            next($this->indices);
+
+            $this->currentIndex = $index;
+
+            if(!$manual && !$disabled) {
+                $this->blockConstruct();
+                $this->blockStart();
+
+                // don't show disabled bricks
+                if(Pimcore_ExtensionManager::isEnabled("brick", $index["type"]) && $options['dontCheckEnabled'] != true) {
+                    $this->content();
+                }
+            }
+            return true;
+        }
+        else {
+            if(!$manual) {
+                $this->end();
+            }
+            return false;
+        }
+    }
+
+    /**
+     *
+     */
+    public function content () {
+
+        // create info object and assign it to the view
+        $info = null;
+        try {
+            $info = new Document_Tag_Area_Info();
+            $info->setId($this->currentIndex["type"]);
+            $info->setIndex($this->current);
+            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($this->currentIndex["type"],"brick")));
+            $info->setConfig(Pimcore_ExtensionManager::getBrickConfig($this->currentIndex["type"]));
+        } catch (Exception $e) {
             $info = null;
-            try {
-                $info = new Document_Tag_Area_Info();
-                $info->setId($index["type"]);
-                $info->setIndex($count);
-                $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", Pimcore_ExtensionManager::getPathForExtension($index["type"],"brick")));
-                $info->setConfig(Pimcore_ExtensionManager::getBrickConfig($index["type"]));
-            } catch (Exception $e) {
-                $info = null;
+        }
+
+        if($this->getView() instanceof Zend_View) {
+
+            $this->getView()->brick = $info;
+            $areas = $this->getAreaDirs();
+
+            $view = $areas[$this->currentIndex["type"]] . "/view.php";
+            $action = $areas[$this->currentIndex["type"]] . "/action.php";
+            $edit = $areas[$this->currentIndex["type"]] . "/edit.php";
+            $options = $this->getOptions();
+            $params = array();
+            if(is_array($options["params"]) && array_key_exists($this->currentIndex["type"], $options["params"])) {
+                if(is_array($options["params"][$this->currentIndex["type"]])) {
+                    $params = $options["params"][$this->currentIndex["type"]];
+                }
             }
 
-            $this->blockStart();
-            
-            if($this->getView() instanceof Zend_View) {
+            // assign parameters to view
+            foreach ($params as $key => $value) {
+                $this->getView()->assign($key, $value);
+            }
 
-                $this->getView()->brick = $info;
-                $areas = $this->getAreaDirs();
-                
-                $view = $areas[$index["type"]] . "/view.php";
-                $action = $areas[$index["type"]] . "/action.php";
-                $edit = $areas[$index["type"]] . "/edit.php";
-                $options = $this->getOptions();
-                $params = array();
-                if(is_array($options["params"]) && array_key_exists($index["type"], $options["params"])) {
-                    if(is_array($options["params"][$index["type"]])) {
-                        $params = $options["params"][$index["type"]];
-                    }
-                }
+            // check for action file
+            if(is_file($action)) {
+                include_once($action);
 
-                // assign parameters to view
-                foreach ($params as $key => $value) {
-                    $this->getView()->assign($key, $value);
-                }
+                $actionClassname = "Document_Tag_Area_" . ucfirst($this->currentIndex["type"]);
+                if(Pimcore_Tool::classExists($actionClassname)) {
+                    $actionObj = new $actionClassname();
 
-                // check for action file
-                if(is_file($action)) {
-                    include_once($action);
-                    
-                    $actionClassname = "Document_Tag_Area_" . ucfirst($index["type"]);
-                    if(Pimcore_Tool::classExists($actionClassname)) {
-                        $actionObj = new $actionClassname();
-                        
-                        if($actionObj instanceof Document_Tag_Area_Abstract) {
-                            $actionObj->setView($this->getView());
-                            
-                            $areaConfig = new Zend_Config_Xml($areas[$index["type"]] . "/area.xml");
-                            $actionObj->setConfig($areaConfig);
+                    if($actionObj instanceof Document_Tag_Area_Abstract) {
+                        $actionObj->setView($this->getView());
 
-                            // params
-                            $params = array_merge($this->view->getAllParams(), $params);
-                            $actionObj->setParams($params);
+                        $areaConfig = new Zend_Config_Xml($areas[$this->currentIndex["type"]] . "/area.xml");
+                        $actionObj->setConfig($areaConfig);
 
-                            if($info) {
-                                $actionObj->setBrick($info);
-                            }
+                        // params
+                        $params = array_merge($this->view->getAllParams(), $params);
+                        $actionObj->setParams($params);
 
-                            if(method_exists($actionObj,"action")) {
-                                $actionObj->action();
-                            }
+                        if($info) {
+                            $actionObj->setBrick($info);
+                        }
+
+                        if(method_exists($actionObj,"action")) {
+                            $actionObj->action();
                         }
                     }
                 }
-                
-                if(is_file($view)) {
-                    $editmode = $this->getView()->editmode;
-                    
-                    echo '<div class="pimcore_area_' . $index["type"] . ' pimcore_area_content">';
+            }
 
-                    if(is_file($edit) && $editmode) {
-                        echo '<div class="pimcore_area_edit_button"></div>';
-                        $this->getView()->editmode = false;
-                    }
+            if(is_file($view)) {
+                $editmode = $this->getView()->editmode;
 
-                    $this->getView()->template($view);
+                echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
 
-                    if(is_file($edit) && $editmode) {
-                        $this->getView()->editmode = true; 
+                if(is_file($edit) && $editmode) {
+                    echo '<div class="pimcore_area_edit_button"></div>';
+                    $this->getView()->editmode = false;
+                }
 
-                        echo '<div class="pimcore_area_editmode">';
-                        $this->getView()->template($edit);
-                        echo '</div>';
-                    }
-                    
+                $this->getView()->template($view);
+
+                if(is_file($edit) && $editmode) {
+                    $this->getView()->editmode = true;
+
+                    echo '<div class="pimcore_area_editmode">';
+                    $this->getView()->template($edit);
                     echo '</div>';
                 }
-            }            
-            
-            $count++;
+
+                echo '</div>';
+            }
         }
-        
-        if(count($this->indices) > 0) {
-            $this->blockEnd();
-        }
-        
-        $this->end();
+
+        $this->current++;
     }
 
     /**
@@ -190,6 +228,25 @@ class Document_Tag_Areablock extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->indices = $data;
+    }
+
+    /**
+     *
+     */
+    public function blockConstruct() {
+        // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
+        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes[] = $this->indices[$this->current]["key"];
+        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+    }
+
+    /**
+     *
+     */
+    public function blockDestruct() {
+        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
+        array_pop($suffixes);
+        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
     /**
@@ -231,6 +288,8 @@ class Document_Tag_Areablock extends Document_Tag {
         Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="pimcore_editable pimcore_tag_' . $this->getType() . '" type="' . $this->getType() . '">');
+
+        return $this;
     }
 
     /**
@@ -256,12 +315,6 @@ class Document_Tag_Areablock extends Document_Tag {
      * @return void
      */
     public function blockStart() {
-
-        // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
-        $suffixes[] = $this->indices[$this->current]["key"];
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
-
         $this->outputEditmode('<div class="pimcore_area_entry pimcore_block_entry ' . $this->getName() . '" key="' . $this->indices[$this->current]["key"] . '" type="' . $this->indices[$this->current]["type"] . '">');
         $this->outputEditmode('<div class="pimcore_block_buttons">');
         $this->outputEditmode('<div class="pimcore_block_plus"></div>');
@@ -279,11 +332,6 @@ class Document_Tag_Areablock extends Document_Tag {
      * @return void
      */
     public function blockEnd() {
-
-        $suffixes = Zend_Registry::get("pimcore_tag_block_numeration");
-        array_pop($suffixes);
-        Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
-
         $this->outputEditmode('</div>');
     }
 
@@ -461,6 +509,7 @@ class Document_Tag_Areablock extends Document_Tag {
      */
     public function __wakeup() {
         $this->current = 0;
+        reset($this->indices);
     }
     
     /**
