@@ -233,7 +233,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         var index = this.getElementIndex(element);
 
-        if (Ext.get(element).next()) {
+        if (index < (this.elements.length-1)) {
             var x = this.elements[index];
             var y = this.elements[index + 1];
 
@@ -249,7 +249,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         var index = this.getElementIndex(element);
 
-        if (Ext.get(element).prev()) {
+        if (index > 0) {
             var x = this.elements[index];
             var y = this.elements[index - 1];
 
