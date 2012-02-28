@@ -83,29 +83,37 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      */
     protected function saveTags($id, $tags) {
 
-        while ($tag = array_shift($tags)) {
-            try {
-                $this->getDb()->insert("cache_tags", array(
-                    "id" => $id, 
-                    "tag" => $tag
-                ));
-            }
-            catch (Exception $e) {
-                if(strpos(strtolower($e->getMessage()), "is full") !== false) {
+        $this->getDb()->beginTransaction();
 
-                    Logger::warning($e);
+        try {
+            while ($tag = array_shift($tags)) {
+                try {
+                    $this->getDb()->insert("cache_tags", array(
+                        "id" => $id,
+                        "tag" => $tag
+                    ));
+                }
+                catch (Exception $e) {
+                    if(strpos(strtolower($e->getMessage()), "is full") !== false) {
 
-                    // it seems that the MEMORY table is on the limit an full
-                    // change the storage engine of the cache tags table to InnoDB
-                    $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+                        Logger::warning($e);
 
-                    // try it again
-                    $tags[] = $tag;
-                } else {
-                    // it seems that the item does already exist
-                    continue;
+                        // it seems that the MEMORY table is on the limit an full
+                        // change the storage engine of the cache tags table to InnoDB
+                        $this->getDb()->query("ALTER TABLE `cache_tags` ENGINE=InnoDB");
+
+                        // try it again
+                        $tags[] = $tag;
+                    } else {
+                        // it seems that the item does already exist
+                        continue;
+                    }
                 }
             }
+            $this->getDb()->commit();
+
+        } catch (Exception $e) {
+            Logger::error($e);
         }
     }
 

@@ -124,21 +124,28 @@ class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
      */
     public function save() {
 
-        foreach ($this->model->getRequires() as $r) {
+        $this->db->beginTransaction();
 
-            try {
-                if ($r["id"] && $r["type"]) {
-                    $this->db->insert("dependencies", array(
-                        "sourceid" => $this->model->getSourceId(),
-                        "sourcetype" => $this->model->getSourceType(),
-                        "targetid" => $r["id"],
-                        "targettype" => $r["type"]
-                    ));
+        try {
+            foreach ($this->model->getRequires() as $r) {
+
+                try {
+                    if ($r["id"] && $r["type"]) {
+                        $this->db->insert("dependencies", array(
+                            "sourceid" => $this->model->getSourceId(),
+                            "sourcetype" => $this->model->getSourceType(),
+                            "targetid" => $r["id"],
+                            "targettype" => $r["type"]
+                        ));
+                    }
+                }
+                catch (Exception $e) {
+                    Logger::error($e);
                 }
             }
-            catch (Exception $e) {
-                Logger::error($e);
-            }
+            $this->db->commit();
+        } catch (Exception $e) {
+            Logger::error($e);
         }
     }
 }
