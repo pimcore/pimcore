@@ -37,7 +37,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         $objects = array();
 
         try {
-            $objectsData = $this->db->fetchAll("SELECT DISTINCT " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $objectsData = $this->db->fetchAll("SELECT " . $this->getSelectPart() . " " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -59,7 +59,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
      */
     public function loadIdList() {
         try {
-            $objectsData = $this->db->fetchCol("SELECT DISTINCT " . $this->getTableName() . ".o_id AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $objectsData = $this->db->fetchCol("SELECT " . $this->getSelectPart() . " " . $this->getTableName() . ".o_id AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -73,7 +73,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(DISTINCT oo_id) as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+            $amount = $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
             return $amount;
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
@@ -89,7 +89,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         }
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(DISTINCT oo_id) as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $amount = $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
             return $amount;
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
@@ -186,6 +186,15 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         }
 
         return $join;
+    }
+
+    protected function getSelectPart($defaultString = "") {
+        $selectPart = $defaultString;
+        $fieldCollections = $this->model->getFieldCollections();
+        if(!empty($fieldCollections)) {
+            $selectPart = "DISTINCT oo_id";
+        }
+        return $selectPart;
     }
 
     /**
