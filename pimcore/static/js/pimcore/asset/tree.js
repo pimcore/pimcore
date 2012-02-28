@@ -45,9 +45,11 @@ pimcore.asset.tree = Class.create({
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
+                var callback = function () {};
                 if(res["id"]) {
-                    pimcore.layout.treepanelmanager.initPanel(this.config.treeId, this.init.bind(this, res));
+                    callback = this.init.bind(this, res);
                 }
+                pimcore.layout.treepanelmanager.initPanel(this.config.treeId, callback);
             }.bind(this) 
         });
     },
