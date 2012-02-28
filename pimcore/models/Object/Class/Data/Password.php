@@ -78,7 +78,16 @@ class Object_Class_Data_Password extends Object_Class_Data {
         if(strlen($data) == 32) {
             return $data;
         }
-        return md5($data);
+
+        $hashed = md5($data);
+
+        // set the hashed password back to the object, to be sure that is not plain-text after the first save
+        // this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406
+        if($object) {
+            $setter = "set" . ucfirst($this->getName());
+            $object->$setter($hashed);
+        }
+        return $hashed;
     }
 
     /**
