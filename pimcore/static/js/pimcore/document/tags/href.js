@@ -113,6 +113,8 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
+        var i;
+
         //only is legacy
         if (this.options.only && !this.options.types) {
             this.options.types = [this.options.only];
@@ -135,10 +137,13 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         //subtype check  (folder,page,snippet ... )
         if (this.options.subtypes) {
             var found = false;
-            for (i = 0; i < this.options.subtypes.length; i++) {
-                if (this.options.subtypes[i] == data.node.attributes.type) {
-                    found = true;
-                    break;
+            var typeKeys = Object.keys(this.options.subtypes);
+            for (var st = 0; st < typeKeys.length; st++) {
+                for (i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
+                    if (this.options.subtypes[typeKeys[st]][i] == data.node.attributes.type) {
+                        found = true;
+                        break;
+                    }
                 }
             }
             if (!found) {
@@ -214,13 +219,14 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
     openSearchEditor: function () {
 
-        var restrictedType;
-        if (this.options.only) {
-            restrictedType = [this.options.only];
+        //only is legacy
+        if (this.options.only && !this.options.types) {
+            this.options.types = [this.options.only];
         }
 
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-            type: restrictedType
+            type: this.options.types,
+            subtype: this.options.subtypes
         });
     },
 
