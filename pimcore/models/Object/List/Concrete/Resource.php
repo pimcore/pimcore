@@ -37,7 +37,8 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         $objects = array();
 
         try {
-            $objectsData = $this->db->fetchAll("SELECT " . $this->getSelectPart() . " " . $this->getTableName() . ".o_id AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $field = $this->getTableName() . ".o_id";
+            $objectsData = $this->db->fetchAll("SELECT " . $this->getSelectPart($field,$field) . " AS o_id,o_type FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -59,7 +60,8 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
      */
     public function loadIdList() {
         try {
-            $objectsData = $this->db->fetchCol("SELECT " . $this->getSelectPart() . " " . $this->getTableName() . ".o_id AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $field = $this->getTableName() . ".o_id";
+            $objectsData = $this->db->fetchCol("SELECT " . $this->getSelectPart($field,$field) . " AS o_id FROM `" . $this->getTableName() . "`" . $this->getJoins() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
         }
@@ -188,11 +190,11 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         return $join;
     }
 
-    protected function getSelectPart($defaultString = "") {
+    protected function getSelectPart($defaultString = "", $column = "oo_id") {
         $selectPart = $defaultString;
         $fieldCollections = $this->model->getFieldCollections();
         if(!empty($fieldCollections)) {
-            $selectPart = "DISTINCT oo_id";
+            $selectPart = "DISTINCT " . $column;
         }
         return $selectPart;
     }
