@@ -45,7 +45,7 @@ pimcore.layout.treepanelmanager = {
      * This method is called in the tree classes of the elements (document, asset, object, custom views, ...)
      */
     initPanel: function (id, callback) {
-        
+
         this.finished.push(id);
         this.callbacks[id] = callback;
         
