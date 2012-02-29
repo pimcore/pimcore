@@ -128,7 +128,10 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
             if(empty($relations) && !empty($parent)) {
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}();
                 if(!empty($parentItem)) {
-                    return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
+                    $parentItem = $parentItem->$getter();
+                    if($parentItem) {
+                        return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
+                    }
                 }
             }
             $data = array();
