@@ -147,28 +147,30 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return void
      */
     public function updateChildsPaths($oldPath) {
-        //get objects to empty their cache
-        $objects = $this->db->fetchAll("SELECT o_id,o_path FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
-        //update object child paths
-        $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where o_path like " . $this->db->quote($oldPath . "/%") .";");
+        if($this->hasChilds()) {
+            //get objects to empty their cache
+            $objects = $this->db->fetchAll("SELECT o_id,o_path FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
-        //update object child permission paths
-        $this->db->query("update users_workspaces_object set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+            //update object child paths
+            $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where o_path like " . $this->db->quote($oldPath . "/%") .";");
 
-        //update object child properties paths
-        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+            //update object child permission paths
+            $this->db->query("update users_workspaces_object set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+
+            //update object child properties paths
+            $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
-        foreach ($objects as $object) {
-            // empty object cache
-            try {
-                Pimcore_Model_Cache::clearTag("object_" . $object["o_id"]);
-            }
-            catch (Exception $e) {
+            foreach ($objects as $object) {
+                // empty object cache
+                try {
+                    Pimcore_Model_Cache::clearTag("object_" . $object["o_id"]);
+                }
+                catch (Exception $e) {
+                }
             }
         }
-
     }
 
 
@@ -266,10 +268,10 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return boolean
      */
     public function hasChilds($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
-        $c = $this->db->fetchRow("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
+        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
 
         $state = false;
-        if ($c["o_id"]) {
+        if ($c) {
             $state = true;
         }
 
