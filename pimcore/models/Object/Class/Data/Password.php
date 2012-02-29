@@ -77,6 +77,8 @@ class Object_Class_Data_Password extends Object_Class_Data {
         // is already a md5 string
         if(strlen($data) == 32) {
             return $data;
+        } else if (empty($data)) {
+            return null;
         }
 
         $hashed = md5($data);
