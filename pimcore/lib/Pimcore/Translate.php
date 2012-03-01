@@ -37,6 +37,12 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         ));
     }
 
+    /**
+     * @param null $data
+     * @param $locale
+     * @param array $options
+     * @return array
+     */
     protected function _loadTranslationData($data = null, $locale, array $options = array()) {
         
         $list = new Translation_Website_List();
@@ -45,7 +51,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         foreach ($list->getTranslations() as $translation) {
             if($translation instanceof Translation_Abstract) {
                 foreach ($translation->getTranslations() as $language => $text) {
-                    $this->_translate[$language][$translation->getKey()] = Pimcore_Tool_Text::removeLineBreaks($text);
+                    $this->_translate[$language][strtolower($translation->getKey())] = Pimcore_Tool_Text::removeLineBreaks($text);
                 }
             }
         }
@@ -68,6 +74,8 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
 
     public function translate($messageId, $locale = null) {
 
+
+        $messageId = strtolower($messageId);
 
         // the maximum length of message-id's is 255
         if(strlen($messageId) > 255) {
