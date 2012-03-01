@@ -130,7 +130,7 @@ class Pimcore_Model_Cache {
                 self::$instance = self::initializeCache($config);
             }
             catch (Exception $e) {
-                Logger::warning("can't initialize cache with the given configuration " . $e->getMessage());
+                Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
             }
         }
 
