@@ -123,7 +123,7 @@ class Pimcore_Tool_Less {
         }
 
         // put the compiled contents into the cache
-        Pimcore_Model_Cache::save($compiledContent, $cacheKey, array("less"));
+        //Pimcore_Model_Cache::save($compiledContent, $cacheKey, array("less"));
 
         return $compiledContent;
     }
