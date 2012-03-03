@@ -161,6 +161,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.tab.on("destroy", function () {
             pimcore.globalmanager.remove("object_" + this.id);
             pimcore.helpers.forgetOpenTab("object_" + this.id + "_object");
+            pimcore.helpers.forgetOpenTab("object_" + this.id + "_variant");
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {
