@@ -17,19 +17,8 @@
  
 class OutputFilter_Tag_Config {
 
+
     /**
-     * format of array:
-     * array(
-        array(
-            "method" => "myName",
-            "arguments" =>
-                array(
-                    "width" => 345,
-                    "height" => 200
-                )
-        )
-     * )
-     *
      * @var array
      */
     public $items = array();
@@ -52,7 +41,23 @@ class OutputFilter_Tag_Config {
     /**
      * @var string
      */
+    public $textPattern = "";
+
+    /**
+     * @var string
+     */
     public $httpMethod = "";
+
+    /**
+     * @var array
+     */
+    public $params = array(
+        array("name" => "", "value" => ""),
+        array("name" => "", "value" => ""),
+        array("name" => "", "value" => ""),
+        array("name" => "", "value" => ""),
+        array("name" => "", "value" => ""),
+    );
 
 
     /**
@@ -61,13 +66,13 @@ class OutputFilter_Tag_Config {
      * @return OutputFilter_Tag_Config
      */
     public static function getByName ($name) {
-        $pipe = new self();
-        $pipe->setName($name);
-        if(!$pipe->load()) {
+        $tag = new self();
+        $tag->setName($name);
+        if(!$tag->load()) {
             throw new Exception("tag definition : " . $name . " does not exist");
         }
 
-        return $pipe;
+        return $tag;
     }
 
     /**
@@ -92,6 +97,9 @@ class OutputFilter_Tag_Config {
         $arrayConfig = object2array($this);
         $items = $arrayConfig["items"];
         $arrayConfig["items"] = array("item" => $items);
+
+        $params = $arrayConfig["params"];
+        $arrayConfig["params"] = array("param" => $params);
         
         $config = new Zend_Config($arrayConfig);
         $writer = new Zend_Config_Writer_Xml(array(
@@ -120,6 +128,10 @@ class OutputFilter_Tag_Config {
             }
         } else {
             $configArray["items"] = array("item" => array());
+        }
+
+        if(array_key_exists("params",$configArray)) {
+            $configArray["params"] = $configArray["params"]["param"];
         }
 
         foreach ($configArray as $key => $value) {
@@ -257,5 +269,37 @@ class OutputFilter_Tag_Config {
     public function getUrlPattern()
     {
         return $this->urlPattern;
+    }
+
+    /**
+     * @param array $params
+     */
+    public function setParams($params)
+    {
+        $this->params = $params;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param string $textPattern
+     */
+    public function setTextPattern($textPattern)
+    {
+        $this->textPattern = $textPattern;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTextPattern()
+    {
+        return $this->textPattern;
     }
 }
