@@ -794,7 +794,14 @@ pimcore.helpers.rememberOpenTab = function (item) {
         openTabs.push(item);
     }
 
-    Ext.util.Cookies.set("pimcore_opentabs", "," + openTabs.join(",") + ",");
+    var cleanedOpenTabs = [];
+    for(var i=0; i<openTabs.length; i++) {
+        if(!empty(openTabs[i])) {
+            cleanedOpenTabs.push(openTabs[i]);
+        }
+    }
+
+    Ext.util.Cookies.set("pimcore_opentabs", "," + cleanedOpenTabs.join(",") + ",");
 }
 
 pimcore.helpers.forgetOpenTab = function (item) {
