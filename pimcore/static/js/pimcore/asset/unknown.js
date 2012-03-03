@@ -33,7 +33,6 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
     },
 
     getTabPanel: function () {
-        console.log("unknown get tab panel");
         var items = [];
 
         if (this.isAllowed("properties")) {
