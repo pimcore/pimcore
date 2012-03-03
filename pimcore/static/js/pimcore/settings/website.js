@@ -184,10 +184,17 @@ pimcore.settings.website = Class.create({
                 var menu = new Ext.menu.Menu();
 
                 menu.add(new Ext.menu.Item({
+                    text: t('empty'),
+                    iconCls: "pimcore_icon_flush_recyclebin",
+                    handler: function (grid, index) {
+                        grid.getStore().getAt(index).set("data","");
+                    }.bind(this, grid, rowIndex)
+                }));
+
+                menu.add(new Ext.menu.Item({
                     text: t('delete'),
                     iconCls: "pimcore_icon_delete",
                     handler: function (grid, index) {
-                        var name = grid.getStore().getAt(index).data.name;
                         grid.getStore().removeAt(index);
                     }.bind(this, grid, rowIndex)
                 }));
