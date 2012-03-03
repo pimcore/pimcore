@@ -100,6 +100,8 @@ class Pimcore_Tool_Authentication {
             try {
                 if(!Zend_Session::isStarted()) {
                     $sName = Zend_Session::getOptions("name");
+
+                    // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
                     if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
                         // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
                         Zend_Session::setId($_REQUEST[$sName]);
