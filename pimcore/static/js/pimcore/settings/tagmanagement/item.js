@@ -79,7 +79,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                 value: this.data.description,
                 fieldLabel: t("description"),
                 width: 300,
-                height: 100
+                height: 50
             },{
                 xtype: "textfield",
                 name: "urlPattern",
@@ -98,6 +98,82 @@ pimcore.settings.tagmanagement.item = Class.create({
                 mode: "local",
                 value: this.data.httpMethod,
                 width: 250
+            },{
+                xtype: "textfield",
+                name: "textPattern",
+                value: this.data.textPattern,
+                fieldLabel: t("matching_text"),
+                width: 400
+            }, {
+                xtype: "displayfield",
+                value: t("parameters") + " (GET &amp; POST)",
+                hideLabel: true,
+                style: "margin-top: 10px;"
+            }, {
+                xtype: "compositefield",
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t("name"),
+                    name: "params.name0",
+                    value: this.data.params[0]["name"]
+                },{
+                    xtype: "textfield",
+                    fieldLabel: t("value"),
+                    name: "params.value0",
+                    value: this.data.params[0]["value"]
+                }]
+            }, {
+                xtype: "compositefield",
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t("name"),
+                    name: "params.name1",
+                    value: this.data.params[1]["name"]
+                },{
+                    xtype: "textfield",
+                    fieldLabel: t("value"),
+                    name: "params.value1",
+                    value: this.data.params[1]["value"]
+                }]
+            }, {
+                xtype: "compositefield",
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t("name"),
+                    name: "params.name2",
+                    value: this.data.params[2]["name"]
+                },{
+                    xtype: "textfield",
+                    fieldLabel: t("value"),
+                    name: "params.value2",
+                    value: this.data.params[2]["value"]
+                }]
+            }, {
+                xtype: "compositefield",
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t("name"),
+                    name: "params.name3",
+                    value: this.data.params[3]["name"]
+                },{
+                    xtype: "textfield",
+                    fieldLabel: t("value"),
+                    name: "params.value3",
+                    value: this.data.params[3]["value"]
+                }]
+            }, {
+                xtype: "compositefield",
+                items: [{
+                    xtype: "textfield",
+                    fieldLabel: t("name"),
+                    name: "params.name4",
+                    value: this.data.params[4]["name"]
+                },{
+                    xtype: "textfield",
+                    fieldLabel: t("value"),
+                    name: "params.value4",
+                    value: this.data.params[4]["value"]
+                }]
             }, this.itemContainer],
             buttons: panelButtons
         });

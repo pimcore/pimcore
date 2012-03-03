@@ -1522,6 +1522,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $tag->addItem($item);
         }
 
+        // parameters get/post
+        $params = array();
+        for ($i=0; $i<5; $i++) {
+            $params[] = array(
+                "name" => $data["params.name" . $i],
+                "value" => $data["params.value" . $i]
+            );
+        }
+        $tag->setParams($params);
+
         $tag->save();
 
         // clear cache tag
