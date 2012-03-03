@@ -99,11 +99,10 @@ class Pimcore_Tool_Authentication {
         try {
             try {
                 if(!Zend_Session::isStarted()) {
-                    $params = array_merge($_GET, $_POST);
-                    if (array_key_exists(Zend_Session::getOptions("name"), $params)
-                        && !empty($params[Zend_Session::getOptions("name")])) {
+                    $sName = Zend_Session::getOptions("name");
+                    if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
                         // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                        Zend_Session::setId($params[Zend_Session::getOptions("name")]);
+                        Zend_Session::setId($_REQUEST[$sName]);
                     }
 
                     // register session
