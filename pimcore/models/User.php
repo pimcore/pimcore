@@ -67,6 +67,11 @@ class User extends User_UserRole {
      */
     public $welcomescreen = true;
 
+    /**
+     * @var bool
+     */
+    public $closeWarning = true;
+
 
     /**
      * @return string
@@ -285,5 +290,21 @@ class User extends User_UserRole {
     public function getWelcomescreen()
     {
         return $this->welcomescreen;
+    }
+
+    /**
+     * @param boolean $closeWarning
+     */
+    public function setCloseWarning($closeWarning)
+    {
+        $this->closeWarning = $closeWarning;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCloseWarning()
+    {
+        return $this->closeWarning;
     }
 }

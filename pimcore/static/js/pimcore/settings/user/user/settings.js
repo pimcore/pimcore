@@ -190,6 +190,13 @@ pimcore.settings.user.user.settings = Class.create({
             checked: this.currentUser.welcomescreen
         });
 
+        generalItems.push({
+            xtype: "checkbox",
+            fieldLabel: t("show_close_warning"),
+            name: "closeWarning",
+            checked: this.currentUser.closeWarning
+        });
+
         this.roleField = new Ext.ux.form.MultiSelect({
             name: "roles",
             triggerAction: "all",
