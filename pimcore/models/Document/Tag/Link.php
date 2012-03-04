@@ -79,8 +79,11 @@ class Document_Tag_Link extends Document_Tag {
                 }
             }
 
-
             $attribs = array_unique($attribs);
+
+            if(array_key_exists("attributes",$this->data) && !empty($this->data["attributes"])) {
+                $attribs[] = $this->data["attributes"];
+            }
 
             return '<a href="' . $url . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->data["text"]) . '</a>';
         }
