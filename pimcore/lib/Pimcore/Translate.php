@@ -74,9 +74,6 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
 
     public function translate($messageId, $locale = null) {
 
-
-        $messageId = strtolower($messageId);
-
         // the maximum length of message-id's is 255
         if(strlen($messageId) > 255) {
             throw new Exception("Pimcore_Translate: Message ID's longer than 255 characters are invalid!");
@@ -90,13 +87,13 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
             $this->_loadTranslationData(null,$locale);
         }
         
-        if (!empty($this->_translate[$locale][$messageId])) {
+        if (!empty($this->_translate[$locale][strtolower($messageId)])) {
             // return original translation
-            return $this->_translate[$locale][$messageId];
+            return $this->_translate[$locale][strtolower($messageId)];
         }
         else {
             // check if there is a translation in a lower step
-            $keyParts = explode(".", $messageId);
+            $keyParts = explode(".", strtolower($messageId));
 
             if (count($keyParts) > 1) {
                 krsort($keyParts);
