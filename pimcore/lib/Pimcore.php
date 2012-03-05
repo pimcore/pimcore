@@ -37,6 +37,12 @@ class Pimcore {
 
         // config is loaded now init the real logger
         self::initLogger();
+
+        // set locale data cache, this must be after self::initLogger() since Pimcore_Model_Cache requires the logger
+        // to log if there's something wrong with the cache configuration in cache.xml
+        Zend_Locale_Data::setCache(Pimcore_Model_Cache::getInstance());
+
+        // load plugins and modules (=core plugins)
         self::initModules();
         self::initPlugins();
 
@@ -631,9 +637,6 @@ class Pimcore {
         if(!$defaultTimezone) {
             date_default_timezone_set("Europe/Berlin");
         }
-
-        // set locale data cache
-        Zend_Locale_Data::setCache(Pimcore_Model_Cache::getInstance());
     }
 
     /**

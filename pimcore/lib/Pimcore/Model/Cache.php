@@ -118,8 +118,8 @@ class Pimcore_Model_Cache {
                     }
                 }
                 catch (Exception $e) {
-                    Logger::error($e);
-                    Logger::error("Error while reading cache configuration");
+                    Logger::crit($e);
+                    Logger::crit("Error while reading cache configuration, using the default file backend");
                 }
             }
 
