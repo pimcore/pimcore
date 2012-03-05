@@ -257,11 +257,13 @@ class OnlineShop_Framework_IndexService {
         return array("o_id", "o_classId", "o_parentId", "o_virtualProductId", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList");
     }
 
-    public function getIndexColumns() {
+    public function getIndexColumns($considerHideInFieldList = false) {
         if(empty($this->indexColumns)) {
             $this->indexColumns = array();
             foreach($this->columnConfig->column as $column) {
-                $this->indexColumns[$column->name] = $column->name;
+                if($considerHideInFieldList && $column->hideInFieldlistDatatype != "true") {
+                    $this->indexColumns[$column->name] = $column->name;
+                }
             }
             $this->indexColumns = array_values($this->indexColumns);
         }

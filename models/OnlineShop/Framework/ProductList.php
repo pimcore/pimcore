@@ -160,7 +160,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
     public function load() {
 
-        $objectIds = array();
+        $objectRaws = array();
 
         //First case: no price filtering and no price sorting
         if(!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
@@ -346,6 +346,18 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         return $this->resource->quote($value);
     }
 
+
+    /**
+     * returns order by statement for simularity calculations based on given fields and object ids
+     *
+     * @param $fields
+     * @param $objectId
+     */
+    public function buildSimularityOrderBy($fields, $objectId) {
+
+        return $this->resource->buildSimularityOrderBy($fields, $objectId);
+
+    }
 
 
     /**

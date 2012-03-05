@@ -139,5 +139,58 @@ class OnlineShop_Framework_ProductList_Resource {
         return $this->db->quote($value);
     }
 
+    /**
+     * returns order by statement for simularity calculations based on given fields and object ids
+     *
+     * @param $fields
+     * @param $objectId
+     */
+    public function buildSimularityOrderBy($fields, $objectId) {
+
+        try {
+            $fieldString = "";
+            foreach($fields as $f) {
+                if(!empty($fieldString)) {
+                    $fieldString .= ",";
+                }
+                $fieldString .= $this->db->quoteIdentifier($f);
+            }
+
+            $query = "SELECT " . $fieldString . " FROM " . OnlineShop_Framework_IndexService::TABLENAME . " WHERE o_id = ?;";
+            Logger::log("Query: " . $query, Zend_Log::INFO);
+            $objectValues = $this->db->fetchRow($query, $objectId);
+            Logger::log("Query done.", Zend_Log::INFO);
+
+
+            $subStatement = array();
+            foreach($fields as $f) {
+                $subStatement[] = $this->db->quoteIdentifier($f) . " * " . $objectValues[$f];
+            }
+
+            $firstPart = implode(" + ", $subStatement);
+
+
+            $subStatement = array();
+            foreach($fields as $f) {
+                $subStatement[] = "POW(" . $this->db->quoteIdentifier($f) . ",2)";
+            }
+            $secondPart = "POW(" . implode(" + ", $subStatement) . ", 0.5)";
+
+            $subStatement = array();
+            foreach($fields as $f) {
+                $subStatement[] = "POW(" . $objectValues[$f] . ",2)";
+            }
+
+            $secondPart .= " * POW(" . implode(" + ", $subStatement) . ", 0.5)";
+
+
+            $statement = "MAX ((" . $firstPart . ") / (" . $secondPart . "))";
+
+            return $statement;
+        } catch(Exception $e) {
+            Logger::err($e);
+            return "";
+        }
+    }
     
 }

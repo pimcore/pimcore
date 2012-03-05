@@ -32,7 +32,7 @@ class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Selec
     public function __construct() {
 
         $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
-        $indexColumns = $indexService->getIndexColumns();
+        $indexColumns = $indexService->getIndexColumns(true);
 
         $options = array();
 

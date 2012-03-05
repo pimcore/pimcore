@@ -54,7 +54,7 @@
                 <column name="supplierRemoteId"/>
             </generalSearchColumns>
             <columns>
-                <column name="name" type="varchar(255)"/>
+                <column name="name" type="varchar(255)" hideInFieldlistDatatype="true"/>
                 <column name="shortDescription" type="longtext"/>
                 <column name="supplierRemoteId" type="varchar(255)"/>
                 <column name="mainImage" type="int" interpreter="OnlineShop_Framework_IndexService_Interpreter_AssetId"/>
