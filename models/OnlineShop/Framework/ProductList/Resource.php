@@ -184,7 +184,7 @@ class OnlineShop_Framework_ProductList_Resource {
             $secondPart .= " * POW(" . implode(" + ", $subStatement) . ", 0.5)";
 
 
-            $statement = "MAX ((" . $firstPart . ") / (" . $secondPart . "))";
+            $statement = "(" . $firstPart . ") / (" . $secondPart . ")";
 
             return $statement;
         } catch(Exception $e) {

@@ -349,6 +349,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
     /**
      * returns order by statement for simularity calculations based on given fields and object ids
+     * returns cosine simularity calculation
      *
      * @param $fields
      * @param $objectId
