@@ -104,7 +104,7 @@ class Pimcore_Model_Cache {
                     if ($conf->frontend) {
                         $config["frontendType"] = (string) $conf->frontend->type;
                         $config["customFrontendNaming"] = (bool) $conf->frontend->custom;
-                        if ($conf->frontend->options) {
+                        if ($conf->frontend->options && method_exists($conf->backend->options,"toArray")) {
                             $config["frontendConfig"] = $conf->frontend->options->toArray();
                         }
                     }
@@ -112,7 +112,7 @@ class Pimcore_Model_Cache {
                     if ($conf->backend) {
                         $config["backendType"] = (string) $conf->backend->type;
                         $config["customBackendNaming"] = (bool) $conf->backend->custom;
-                        if ($conf->backend->options) {
+                        if ($conf->backend->options && method_exists($conf->backend->options,"toArray")) {
                             $config["backendConfig"] = $conf->backend->options->toArray();
                         }
                     }
