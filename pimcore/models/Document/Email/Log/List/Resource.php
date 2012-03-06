@@ -23,11 +23,11 @@ class Document_Email_Log_List_Resource extends Pimcore_Model_List_Resource_Abstr
      * @return array
      */
     public function load() {
-        $emailLogs = $this->db->fetchAll("SELECT id FROM email_log" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $emailLogs = $this->db->fetchCol("SELECT id FROM email_log" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $emailLogsArray = array();
         foreach ($emailLogs as $log) {
-            $emailLogsArray[] = Document_Email_Log::getById($log["id"]);
+            $emailLogsArray[] = Document_Email_Log::getById($log);
         }
         $this->model->setEmailLogs($emailLogsArray);
 
@@ -52,10 +52,10 @@ class Document_Email_Log_List_Resource extends Pimcore_Model_List_Resource_Abstr
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM email_log " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM email_log " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }
-        return $amount["amount"];
+        return $amount;
     }
 }

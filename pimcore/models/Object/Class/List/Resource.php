@@ -26,10 +26,10 @@ class Object_Class_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
         $classes = array();
 
-        $classesRaw = $this->db->fetchAll("SELECT id FROM classes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $classesRaw = $this->db->fetchCol("SELECT id FROM classes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($classesRaw as $classRaw) {
-            $classes[] = Object_Class::getById($classRaw["id"]);
+            $classes[] = Object_Class::getById($classRaw);
 
         }
 

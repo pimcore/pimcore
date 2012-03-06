@@ -378,11 +378,11 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      * @return array
      */
     public function getVersions() {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC", $this->model->getO_Id());
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC", $this->model->getO_Id());
 
         $versions = array();
         foreach ($versionIds as $versionId) {
-            $versions[] = Version::getById($versionId["id"]);
+            $versions[] = Version::getById($versionId);
         }
 
         $this->model->setO_Versions($versions);

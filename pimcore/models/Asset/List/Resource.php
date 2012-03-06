@@ -49,10 +49,15 @@ class Asset_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         $assetIds = $this->db->fetchCol("SELECT id FROM assets" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $assetIds;
     }
-    
-    public function getTotalCount() {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM assets" . $this->getCondition(), $this->model->getConditionVariables());
 
-        return $amount["amount"];
+    public function getCount() {
+        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM assets" . $this->getCondition() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $amount;
+    }
+
+    public function getTotalCount() {
+        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM assets" . $this->getCondition(), $this->model->getConditionVariables());
+
+        return $amount;
     }
 }

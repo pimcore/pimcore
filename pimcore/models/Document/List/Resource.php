@@ -60,10 +60,14 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         }
         return "";
     }
-    
-    public function getTotalCount() {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM documents" . $this->getCondition(), $this->model->getConditionVariables());
 
-        return $amount["amount"];
+    public function getCount() {
+        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM documents" . $this->getCondition() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $amount;
+    }
+
+    public function getTotalCount() {
+        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM documents" . $this->getCondition(), $this->model->getConditionVariables());
+        return $amount;
     }
 }

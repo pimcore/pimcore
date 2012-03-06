@@ -93,16 +93,10 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
      * @return array
      */
     public function getOutdatedVersionsDays($days) {
-        $versions = array();
         $deadline = time() - (intval($days) * 86400);
 
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", array($this->model->getCid(), $this->model->getCtype(), $deadline));
-
-        foreach ($versionIds as $versionId) {
-            $versions[] = $versionId["id"];
-        }
-
-        return $versions;
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", array($this->model->getCid(), $this->model->getCtype(), $deadline));
+        return $versionIds;
     }
 
     /**
@@ -110,25 +104,16 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
      * @return array
      */
     public function getOutdatedVersionsSteps($steps) {
-
-        $versions = array();
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",100000", array($this->model->getCid(), $this->model->getCtype()));
-
-        foreach ($versionIds as $versionId) {
-            $versions[] = $versionId["id"];
-        }
-
-        return $versions;
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",100000", array($this->model->getCid(), $this->model->getCtype()));
+        return $versionIds;
     }
-    
-    
-    
-    
-    
+
+    /**
+     * @param $types
+     * @return array
+     */
     public function maintenanceGetOutdatedVersions ($types) {
-        
-        $versions = array();
-        
+
         if(!empty($types)) {
             
             $conditions = array();
@@ -137,13 +122,8 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
                 $conditions[] = "(ctype='" . $type["type"] . "' AND date < '" . $deadline . "')";
             }
             
-            $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE ".implode(" OR ", $conditions));
-            
-            foreach ($versionIds as $versionId) {
-                $versions[] = $versionId["id"];
-            }
-            
-            return $versions;
+            $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE ".implode(" OR ", $conditions));
+            return $versionIds;
         }
     }
 }

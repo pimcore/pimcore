@@ -24,11 +24,11 @@ class Redirect_List_Resource extends Pimcore_Model_List_Resource_Abstract {
      */
     public function load() {
 
-        $redirectsData = $this->db->fetchAll("SELECT id FROM redirects" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $redirectsData = $this->db->fetchCol("SELECT id FROM redirects" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $redirects = array();
         foreach ($redirectsData as $redirectData) {
-            $redirects[] = Redirect::getById($redirectData["id"]);
+            $redirects[] = Redirect::getById($redirectData);
         }
 
         $this->model->setRedirects($redirects);
@@ -38,12 +38,12 @@ class Redirect_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM redirects " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM redirects " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }
 
-        return $amount["amount"];
+        return $amount;
     }
 
 }

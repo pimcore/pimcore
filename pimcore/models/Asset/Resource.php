@@ -291,14 +291,13 @@ class Asset_Resource extends Element_Resource {
      */
     public function getCurrentFullPath() {
         try {
-            $data = $this->db->fetchRow("SELECT CONCAT(path,filename) as path FROM assets WHERE id = ?", $this->model->getId());
+            $path = $this->db->fetchOne("SELECT CONCAT(path,filename) as path FROM assets WHERE id = ?", $this->model->getId());
         }
         catch (Exception $e) {
             Logger::error("could not get  current asset path from DB");
         }
 
-        return $data['path'];
-
+        return $path;
     }
 
 
@@ -308,16 +307,8 @@ class Asset_Resource extends Element_Resource {
      * @return boolean
      */
     public function hasChilds() {
-        $c = $this->db->fetchRow("SELECT id FROM assets WHERE parentId = ?", $this->model->getId());
-
-        $state = false;
-        if ($c["id"]) {
-            $state = true;
-        }
-
-        $this->model->hasChilds = $state;
-
-        return $state;
+        $c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ?", $this->model->getId());
+        return (bool) $c;
     }
 
     /**
@@ -326,8 +317,8 @@ class Asset_Resource extends Element_Resource {
      * @return integer
      */
     public function getChildAmount() {
-        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM assets WHERE parentId = ?", $this->model->getId());
-        return $c["count"];
+        $c = $this->db->fetchOne("SELECT COUNT(*) AS count FROM assets WHERE parentId = ?", $this->model->getId());
+        return $c;
     }
     
     

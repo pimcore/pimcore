@@ -42,14 +42,13 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
             return count($this->model->getObjects());
         }
 
-        $amount = $this->db->fetchAll("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-        return $amount["amount"];
+        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $amount;
     }
     
     public function getTotalCount() {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
-
-        return $amount["amount"];
+        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+        return $amount;
     }
 
     /**

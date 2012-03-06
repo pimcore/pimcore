@@ -188,12 +188,12 @@ class Object_Abstract_Resource extends Element_Resource {
      */
     public function getCurrentFullPath() {
         try {
-            $data = $this->db->fetchRow("SELECT CONCAT(o_path,`o_key`) as o_path FROM objects WHERE o_id = ?", $this->model->getId());
+            $path = $this->db->fetchOne("SELECT CONCAT(o_path,`o_key`) as o_path FROM objects WHERE o_id = ?", $this->model->getId());
         }
         catch (Exception $e) {
             Logger::error("could not get current object path from DB");
         }
-        return $data['o_path'];
+        return $path;
     }
 
 
@@ -269,15 +269,7 @@ class Object_Abstract_Resource extends Element_Resource {
      */
     public function hasChilds($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
-
-        $state = false;
-        if ($c) {
-            $state = true;
-        }
-
-        $this->model->o_hasChilds = $state;
-
-        return $state;
+        return (bool) $c;
     }
 
     /**
@@ -286,8 +278,8 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return integer
      */
     public function getChildAmount($objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER)) {
-        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
-        return $c["count"];
+        $c = $this->db->fetchOne("SELECT COUNT(*) AS count FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getO_id());
+        return $c;
     }
 
 
@@ -325,11 +317,11 @@ class Object_Abstract_Resource extends Element_Resource {
 
     public function getClasses() {
 
-        $classIds = $this->db->fetchAll("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->model->getFullPath() . "%");
+        $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->model->getFullPath() . "%");
 
         $classes = array();
         foreach ($classIds as $classId) {
-            $classes[] = Object_Class::getById($classId["o_classId"]);
+            $classes[] = Object_Class::getById($classId);
         }
 
         return $classes;
