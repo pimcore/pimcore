@@ -51,3 +51,8 @@ Object_Abstract::setGetInheritedValues(true);
 @ini_set("display_startup_errors", "On");
 error_reporting(E_ALL ^ E_NOTICE);
 
+
+// skip if maintenance mode is on
+if(Pimcore_Tool_Admin::isInMaintenanceMode()) {
+    die("in maintenance mode -> skip\n");
+}
