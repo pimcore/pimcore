@@ -76,5 +76,5 @@ if(@is_file($websiteStartup)) {
 }
 
 // on pimcore shutdown
-register_shutdown_function("Pimcore::shutdown");
+register_shutdown_function("Pimcore_Tool_ShutdownManager::run");
 
