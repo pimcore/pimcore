@@ -14,6 +14,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
     }
 
     protected function checkConfig($config) {
+        $tempCart = null;
         if(empty($config->cart->class)) {
             throw new OnlineShop_Framework_Exception_InvalidConfigException("No Cart class defined.");
         } else {
@@ -32,7 +33,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
         } else {
             if(class_exists($config->pricecalcualtor->class)) {
 
-                $tempCalc = new $config->pricecalcualtor->class($config->pricecalcualtor->config);
+                $tempCalc = new $config->pricecalcualtor->class($config->pricecalcualtor->config, $tempCart);
                 if(!($tempCalc instanceof OnlineShop_Framework_ICartPriceCalculator)) {
                     throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart class " . $config->pricecalcualtor->class . " does not implement OnlineShop_Framework_ICartPriceCalculator.");
                 }

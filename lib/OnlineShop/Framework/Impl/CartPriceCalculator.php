@@ -9,7 +9,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
      */
     private $cart; 
 
-    public function __construct($config, OnlineShop_Framework_ICart $cart = null) {
+    public function __construct($config, OnlineShop_Framework_ICart $cart) {
         $this->modificators = array();
         if(!empty($config->modificators) && is_object($config->modificators)) {
             foreach($config->modificators as $modificator) {
