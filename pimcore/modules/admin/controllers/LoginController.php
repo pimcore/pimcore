@@ -253,3 +253,4 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         chmod($logfile, 0766);
     }
 }
+
