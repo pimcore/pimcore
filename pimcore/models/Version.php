@@ -154,7 +154,8 @@ class Version extends Pimcore_Model_Abstract {
             file_put_contents($this->getFilePath(),$dataString);
         }
 
-        $this->cleanHistory();
+        // only do this in the maintenance job, to improve the speed of mass imports
+        //$this->cleanHistory();
     }
 
     /**
@@ -205,6 +206,8 @@ class Version extends Pimcore_Model_Abstract {
     }
 
     /**
+     * the cleanup is now done in the maintenance see self::maintenanceCleanUp()
+     * @deprecated
      * @return void
      */
     public function cleanHistory() {
@@ -404,28 +407,36 @@ class Version extends Pimcore_Model_Abstract {
         $this->public = (bool) $public;
     }
     
-    
-    
-    
-    
+
+    /**
+     *
+     */
     public function maintenanceCleanUp () {
         
         $conf["document"] = Pimcore_Config::getSystemConfig()->documents->versions;
         $conf["asset"] = Pimcore_Config::getSystemConfig()->assets->versions;
         $conf["object"] = Pimcore_Config::getSystemConfig()->objects->versions;
         
-        $types = array();
+        $elementTypes = array();
         
-        foreach ($conf as $type => $tConf) {
+        foreach ($conf as $elementType => $tConf) {
             if (intval($tConf->days) > 0) {
-                $types[] = array(
-                    "type" => $type,
-                    "days" => intval($tConf->days)
+                $versioningType = "days";
+                $value = intval($tConf->days);
+            } else {
+                $versioningType = "steps";
+                $value = intval($tConf->steps);
+            }
+
+            if($versioningType) {
+                $elementTypes[] = array(
+                    "elementType" => $elementType,
+                    $versioningType => $value
                 );
             }
         }        
         
-        $versions = $this->getResource()->maintenanceGetOutdatedVersions($types);
+        $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes);
 
         if(is_array($versions)) {
             foreach ($versions as $id) {

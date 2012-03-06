@@ -89,6 +89,7 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
+     * @deprecated
      * @param integer $days
      * @return array
      */
@@ -100,11 +101,12 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
+     * @deprecated
      * @param integer $days
      * @return array
      */
     public function getOutdatedVersionsSteps($steps) {
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",100000", array($this->model->getCid(), $this->model->getCtype()));
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",1000000", array($this->model->getCid(), $this->model->getCtype()));
         return $versionIds;
     }
 
@@ -112,18 +114,31 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
      * @param $types
      * @return array
      */
-    public function maintenanceGetOutdatedVersions ($types) {
+    public function maintenanceGetOutdatedVersions ($elementTypes) {
 
-        if(!empty($types)) {
+        if(!empty($elementTypes)) {
             
             $conditions = array();
-            foreach ($types as $type) {
-                $deadline = time() - (intval($type["days"]) * 86400);
-                $conditions[] = "(ctype='" . $type["type"] . "' AND date < '" . $deadline . "')";
+            foreach ($elementTypes as $elementType) {
+                if($elementType["days"] > 0) {
+                    // by days
+                    $deadline = time() - ($elementType["days"] * 86400);
+                    return $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?)", array($elementType["elementType"], $deadline));
+                } else {
+                    // by steps
+                    $versionIds = array();
+                    $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? GROUP BY cid HAVING amount > ?", array($elementType["elementType"], $elementType["steps"]));
+                    foreach ($elementIds as $elementId) {
+                        $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", array($elementId, $elementType["elementType"]));
+                        $versionIds = array_merge($versionIds, $elementVersions);
+                    }
+
+                    $versionIds = array_unique($versionIds);
+                    return $versionIds;
+                }
             }
             
-            $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE ".implode(" OR ", $conditions));
-            return $versionIds;
+            return array();
         }
     }
 }
