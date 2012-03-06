@@ -121,16 +121,8 @@ class User_Abstract_Resource extends Pimcore_Model_Resource_Abstract {
      * @return boolean
      */
     public function hasChilds() {
-        $c = $this->db->fetchRow("SELECT id FROM users WHERE parentId = ?",  $this->model->getId());
-
-        $state = false;
-        if ($c["id"]) {
-            $state = true;
-        }
-
-        $this->model->setHasChilds($state);
-
-        return $state;
+        $c = $this->db->fetchOne("SELECT id FROM users WHERE parentId = ?",  $this->model->getId());
+        return (bool) $c;
     }
 
 

@@ -24,11 +24,11 @@ class Element_Recyclebin_Item_List_Resource extends Pimcore_Model_List_Resource_
      */
     public function load() {
 
-        $itemsData = $this->db->fetchAll("SELECT id FROM recyclebin" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $itemsData = $this->db->fetchCol("SELECT id FROM recyclebin" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $items = array();
         foreach ($itemsData as $itemData) {
-            $items[] = Element_Recyclebin_Item::getById($itemData["id"]);
+            $items[] = Element_Recyclebin_Item::getById($itemData);
         }
 
         $this->model->setItems($items);
@@ -38,12 +38,12 @@ class Element_Recyclebin_Item_List_Resource extends Pimcore_Model_List_Resource_
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM recyclebin " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM recyclebin " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }
 
-        return $amount["amount"];
+        return $amount;
     }
 
 }

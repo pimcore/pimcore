@@ -270,18 +270,18 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
             $end = $startDate - ($i*86400);
             $start = $end - 86399;
             
-            $o = $db->fetchRow("SELECT COUNT(*) AS count FROM objects WHERE o_modificationDate > ".$start . " AND o_modificationDate < ".$end);
-            $a = $db->fetchRow("SELECT COUNT(*) AS count FROM assets WHERE modificationDate > ".$start . " AND modificationDate < ".$end);
-            $d = $db->fetchRow("SELECT COUNT(*) AS count FROM documents WHERE modificationDate > ".$start . " AND modificationDate < ".$end);
+            $o = $db->fetchOne("SELECT COUNT(*) AS count FROM objects WHERE o_modificationDate > ".$start . " AND o_modificationDate < ".$end);
+            $a = $db->fetchOne("SELECT COUNT(*) AS count FROM assets WHERE modificationDate > ".$start . " AND modificationDate < ".$end);
+            $d = $db->fetchOne("SELECT COUNT(*) AS count FROM documents WHERE modificationDate > ".$start . " AND modificationDate < ".$end);
             
             $date = new Zend_Date($start);
             
             $data[] = array(
                 "timestamp" => $start,
                 "datetext" => $date->get(Zend_Date::DATE_LONG),
-                "objects" => (int) $o["count"],
-                "documents" => (int) $d["count"],
-                "assets" => (int) $a["count"]
+                "objects" => (int) $o,
+                "documents" => (int) $d,
+                "assets" => (int) $a
             );
         }
         

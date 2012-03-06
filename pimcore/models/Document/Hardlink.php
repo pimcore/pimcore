@@ -190,6 +190,10 @@ class Document_Hardlink extends Document
         return $this->childs;
     }
 
+    /**
+     * hast to overwrite the resource implementation because there can be inherited childs
+     * @return bool
+     */
     public function hasChilds() {
         return count($this->getChilds()) > 0;
     }

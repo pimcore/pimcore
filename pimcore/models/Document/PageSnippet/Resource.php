@@ -55,11 +55,11 @@ abstract class Document_PageSnippet_Resource extends Document_Resource {
      * @return array
      */
     public function getVersions() {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC", $this->model->getId());
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC", $this->model->getId());
 
         $versions = array();
         foreach ($versionIds as $versionId) {
-            $versions[] = Version::getById($versionId["id"]);
+            $versions[] = Version::getById($versionId);
         }
 
         $this->model->setVersions($versions);

@@ -131,16 +131,8 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
     protected function getItemsByTag($tag) {
 
         $this->checkCacheConsistency();
-
-        $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE tag = ?", $tag);
-        $items = array();
-        
-        foreach ($itemIds as $item) {
-            $items[] = $item["id"];
-        }
-        
-        
-        return $items;
+        $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE tag = ?", $tag);
+        return $itemIds;
     }
 
     /**
@@ -244,14 +236,9 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                 $condParts[] = "tag != '" . $tag . "'";
             }
             
-            $itemIds = $this->getDb()->fetchAll("SELECT id FROM cache_tags WHERE ".implode(" AND ",$condParts));
-            
-            $items = array();
+            $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ",$condParts));
+
             foreach ($itemIds as $item) {
-                $items[] = $item["id"];
-            }
-            
-            foreach ($items as $item) {
                 $this->remove($item);
             }
         }
@@ -275,13 +262,8 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return array tags for given id
      */
     protected function getTagsById($id) {
-        $itemIds = $this->getDb()->fetchAll("SELECT tag FROM cache_tags WHERE id = ?", $id);
-        $items = array();
-
-        foreach ($itemIds as $item) {
-            $items[] = $item["tag"];
-        }
-        return $items;
+        $itemIds = $this->getDb()->fetchCol("SELECT tag FROM cache_tags WHERE id = ?", $id);
+        return $itemIds;
     }
 
     /**

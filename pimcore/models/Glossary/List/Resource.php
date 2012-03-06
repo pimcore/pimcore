@@ -24,11 +24,11 @@ class Glossary_List_Resource extends Pimcore_Model_List_Resource_Abstract {
      */
     public function load() {
 
-        $glossarysData = $this->db->fetchAll("SELECT id FROM glossary" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $glossarysData = $this->db->fetchCol("SELECT id FROM glossary" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $glossary = array();
         foreach ($glossarysData as $glossaryData) {
-            $glossary[] = Glossary::getById($glossaryData["id"]);
+            $glossary[] = Glossary::getById($glossaryData);
         }
 
         $this->model->setGlossary($glossary);
@@ -43,11 +43,11 @@ class Glossary_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM glossary " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM glossary " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }
 
-        return $amount["amount"];
+        return $amount;
     }
 }

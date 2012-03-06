@@ -206,15 +206,14 @@ class Document_Resource extends Element_Resource {
      */
     public function getCurrentFullPath() {
         try {
-            $data = $this->db->fetchRow("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
+            $path = $this->db->fetchOne("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
         }
         catch (Exception $e) {
             Logger::error("could not  get current document path from DB");
 
         }
 
-
-        return $data['path'];
+        return $path;
 
     }
 
@@ -307,16 +306,8 @@ class Document_Resource extends Element_Resource {
      * @return boolean
      */
     public function hasChilds() {
-        $c = $this->db->fetchRow("SELECT id FROM documents WHERE parentId = ? LIMIT 1", $this->model->getId());
-
-        $state = false;
-        if ($c["id"]) {
-            $state = true;
-        }
-
-        $this->model->hasChilds = $state;
-
-        return $state;
+        $c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? LIMIT 1", $this->model->getId());
+        return (bool) $c;
     }
 
     /**
@@ -325,8 +316,8 @@ class Document_Resource extends Element_Resource {
      * @return integer
      */
     public function getChildAmount() {
-        $c = $this->db->fetchRow("SELECT COUNT(*) AS count FROM documents WHERE parentId = ?", $this->model->getId());
-        return $c["count"];
+        $c = $this->db->fetchOne("SELECT COUNT(*) AS count FROM documents WHERE parentId = ?", $this->model->getId());
+        return $c;
     }
     
     public function isLocked () {

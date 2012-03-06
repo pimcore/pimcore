@@ -24,11 +24,11 @@ class Document_DocType_List_Resource extends Pimcore_Model_List_Resource_Abstrac
      */
     public function load() {
 
-        $docTypesData = $this->db->fetchAll("SELECT id FROM documents_doctypes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $docTypesData = $this->db->fetchCol("SELECT id FROM documents_doctypes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $docTypes = array();
         foreach ($docTypesData as $docTypeData) {
-            $docTypes[] = Document_DocType::getById($docTypeData["id"]);
+            $docTypes[] = Document_DocType::getById($docTypeData);
         }
 
         $this->model->setDocTypes($docTypes);

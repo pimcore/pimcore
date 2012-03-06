@@ -24,11 +24,11 @@ class Staticroute_List_Resource extends Pimcore_Model_List_Resource_Abstract {
      */
     public function load() {
 
-        $routesData = $this->db->fetchAll("SELECT id FROM staticroutes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $routesData = $this->db->fetchCol("SELECT id FROM staticroutes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $routes = array();
         foreach ($routesData as $routeData) {
-            $routes[] = Staticroute::getById($routeData["id"]);
+            $routes[] = Staticroute::getById($routeData);
         }
 
         $this->model->setRoutes($routes);
@@ -39,12 +39,12 @@ class Staticroute_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM staticroutes " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM staticroutes " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }
 
-        return $amount["amount"];
+        return $amount;
     }
 
 }
