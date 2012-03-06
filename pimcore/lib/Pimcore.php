@@ -752,9 +752,15 @@ class Pimcore {
         // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
         if(self::$inShutdown && !headers_sent()) {
             ignore_user_abort(true);
+
+            $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00";
+            $output .= substr(gzcompress($data, 2), 0, -4);
+
             header("Connection: close\r\n");
-            header("Content-Encoding: none\r\n");
-            header("Content-Length: " . strlen($data));
+            header("Content-Encoding: gzip\r\n");
+            header("Content-Length: " . strlen($output));
+
+            return $output;
         }
 
         // return the data unchanged
