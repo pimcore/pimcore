@@ -15,13 +15,26 @@
 
 class Pimcore {
 
+    /**
+     * @var bool
+     */
     public static $adminMode;
 
+    /**
+     * @var bool
+     */
     private static $inShutdown = false;
 
+    /**
+     * @static
+     * @throws Exception|Zend_Controller_Router_Exception
+     */
     public static function run() {
 
         self::setSystemRequirements();
+
+        // register shutdown function
+        Pimcore_Tool_ShutdownManager::register(array("Pimcore", "shutdown"), array(), 999);
 
         // detect frontend (website)
         $frontend = Pimcore_Tool::isFrontend();
@@ -756,6 +769,7 @@ class Pimcore {
             $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00";
             $output .= substr(gzcompress($data, 2), 0, -4);
 
+            header("X-Powered-By: pimcore");
             header("Connection: close\r\n");
             header("Content-Encoding: gzip\r\n");
             header("Content-Length: " . strlen($output));
