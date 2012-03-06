@@ -76,7 +76,7 @@ class Document_Tag_Areablock extends Document_Tag {
         $disabled = false;
         $options = $this->getOptions();
         $manual = false;
-        if(array_key_exists("manual", $options) && $options["manual"] == true) {
+        if(is_array($options) && array_key_exists("manual", $options) && $options["manual"] == true) {
             $manual = true;
         }
 
