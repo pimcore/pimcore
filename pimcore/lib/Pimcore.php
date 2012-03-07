@@ -34,15 +34,15 @@ class Pimcore {
         self::setSystemRequirements();
 
         // register shutdown function
-        Pimcore_Tool_ShutdownManager::register(array("Pimcore", "shutdown"), array(), 999);
+        Pimcore_Event::register("pimcore.shutdown", array("Pimcore", "shutdown"), array(), 999);
 
         // detect frontend (website)
         $frontend = Pimcore_Tool::isFrontend();
 
         // enable the output-buffer, why? see in self::outputBufferStart()
-        if($frontend) {
-            self::outputBufferStart();
-        }
+        //if($frontend) {
+        self::outputBufferStart();
+        //}
 
         self::initAutoloader();
         self::initConfiguration();
@@ -803,4 +803,14 @@ class Pimcore {
         // write collected items to cache backend       
         Pimcore_Model_Cache::write();
     }
+
+    /**
+     * @static
+     *
+     */
+    public static function shutdownHandler () {
+        Pimcore_Event::fire("pimcore.shutdown");
+    }
+
 }
+
