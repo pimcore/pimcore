@@ -40,9 +40,9 @@ class Pimcore {
         $frontend = Pimcore_Tool::isFrontend();
 
         // enable the output-buffer, why? see in self::outputBufferStart()
-        if($frontend) {
-            self::outputBufferStart();
-        }
+        //if($frontend) {
+        self::outputBufferStart();
+        //}
 
         self::initAutoloader();
         self::initConfiguration();
@@ -796,7 +796,8 @@ class Pimcore {
             header("Connection: close\r\n");
 
             // prepare the response to be sent (gzip or not)
-            $gzipContentTypes = array("@text/@i","@application/json@");
+            // do not add text/xml or a wildcard for text/* here because this causes problems with the SOAP server
+            $gzipContentTypes = array("@text/html@i","@application/json@");
             $gzipIt = false;
             foreach ($gzipContentTypes as $type) {
                 if(@preg_match($type, $contentType)) {
