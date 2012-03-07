@@ -62,7 +62,6 @@ class Pimcore {
         // init front controller
         $front = Zend_Controller_Front::getInstance();
 
-
         $conf = Pimcore_Config::getSystemConfig();
         if(!$conf) {
             // redirect to installer if configuration isn't present
@@ -772,28 +771,26 @@ class Pimcore {
             $b = array_merge(headers_list(), $front->getResponse()->getRawHeaders());
 
             $contentType = null;
-            foreach ($a as $header) {
-                if(strtolower(trim($header["name"])) == "content-type") {
-                    $contentType = $header["value"];
-                    break;
-                }
-            }
 
-            if(!$contentType) {
-                foreach ($b as $header) {
-                    if(stripos($header, "content-type") !== false) {
-                        $parts = explode(":", $header);
-                        if(strtolower(trim($parts[0])) == "content-type") {
-                            $contentType = trim($parts[1]);
-                            break;
-                        }
+            // first check headers in headers_list() because they overwrite all other headers => see SOAP controller
+            foreach ($b as $header) {
+                if(stripos($header, "content-type") !== false) {
+                    $parts = explode(":", $header);
+                    if(strtolower(trim($parts[0])) == "content-type") {
+                        $contentType = trim($parts[1]);
+                        break;
                     }
                 }
             }
 
-            // send headers & contents
-            header("X-Powered-By: pimcore");
-            header("Connection: close\r\n");
+            if(!$contentType) {
+                foreach ($a as $header) {
+                    if(strtolower(trim($header["name"])) == "content-type") {
+                        $contentType = $header["value"];
+                        break;
+                    }
+                }
+            }
 
             // prepare the response to be sent (gzip or not)
             // do not add text/xml or a wildcard for text/* here because this causes problems with the SOAP server
@@ -806,19 +803,20 @@ class Pimcore {
                 }
             }
 
+            // gzip the contents and send connection close to that the process can run in the background to finish
+            // some tasks like writing the cache ...
             if($gzipIt) {
                 $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00";
                 $output .= substr(gzcompress($data, 2), 0, -4);
                 $contentEncoding = "gzip";
-            } else {
-                $output = $data;
-                $contentEncoding = "none";
+
+                // send headers & contents
+                header("Connection: close\r\n");
+                header("Content-Encoding: $contentEncoding\r\n");
+                header("Content-Length: " . strlen($output));
+
+                return $output;
             }
-
-            header("Content-Encoding: $contentEncoding\r\n");
-            header("Content-Length: " . strlen($output));
-
-            return $output;
         }
 
         // return the data unchanged
@@ -855,6 +853,5 @@ class Pimcore {
     public static function shutdownHandler () {
         Pimcore_Event::fire("pimcore.shutdown");
     }
-
 }
 
