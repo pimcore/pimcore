@@ -814,7 +814,7 @@ class Pimcore {
                 header("Connection: close\r\n");
                 header("Content-Encoding: $contentEncoding\r\n");
                 header("Content-Length: " . strlen($output));
-                header("X-Pimcore-encoded: gzip");
+                header("X-Powered-By: pimcore");
 
                 return $output;
             }
