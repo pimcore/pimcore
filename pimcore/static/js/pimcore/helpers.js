@@ -117,13 +117,13 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
         var tree = pimcore.globalmanager.get("layout_" + type + "_tree");
         var node = tree.tree.getNodeById(id);
         if (node) {
-            
+
             node.originalIconSrc = Ext.get(node.getUI().getIconEl()).getAttribute("src");
             Ext.get(node.getUI().getIconEl()).dom.setAttribute("src", "/pimcore/static/img/panel-loader.gif");
-            
+
             /*node.originalIconClass = Ext.get(node.getUI().getIconEl()).getAttribute("class");
-            Ext.get(node.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
-            
+             Ext.get(node.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
+
             Ext.get(node.getUI().getIconEl()).repaint();
         }
     }
@@ -137,15 +137,15 @@ pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
     try {
         var tree = pimcore.globalmanager.get("layout_" + type + "_tree");
         var node = tree.tree.getNodeById(id);
-        
+
         if (node.originalIconSrc) {
             Ext.get(node.getUI().getIconEl()).dom.setAttribute("src", node.originalIconSrc);
         }
-        
+
         /*if (node.originalIconClass) {
-            Ext.get(node.getUI().getIconEl()).dom.setAttribute("class", node.originalIconClass);
-        }*/
-        
+         Ext.get(node.getUI().getIconEl()).dom.setAttribute("class", node.originalIconClass);
+         }*/
+
         Ext.get(node.getUI().getIconEl()).repaint();
     }
     catch (e) {
@@ -261,7 +261,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText) {
             autoDestroy: true,
             hideDelay:  1000
         });
-         notification.show(document);
+        notification.show(document);
     }
 
 };
@@ -311,7 +311,7 @@ pimcore.helpers.handleF5 = function () {
 };
 
 pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
-    
+
     var lockDate = new Date(data.editlock.date * 1000);
     var lockDetails = "<br /><br />";
     lockDetails += "<b>" + t("user") + ":</b> " + data.editlock.user.name + "<br />";
