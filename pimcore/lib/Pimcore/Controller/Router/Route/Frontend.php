@@ -379,7 +379,10 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         $url = str_replace("###URLENCODE_PLACEHOLDER###", "%", $url);
 
                         header($redirect->getHttpStatus());
-                        header("Location: " . $url);
+                        header("Location: " . $url, true, $redirect->getStatusCode());
+
+                        // log all redirects to the redirect log
+                        Pimcore_Log_Simple::log("redirect", Pimcore_Tool::getClientIp() . " \t Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
                         exit;
                     }
                 }
