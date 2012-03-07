@@ -766,17 +766,55 @@ class Pimcore {
         if(self::$inShutdown && !headers_sent()) {
             ignore_user_abort(true);
 
+            // find the content-type of the response
             $front = Zend_Controller_Front::getInstance();
             $a = $front->getResponse()->getHeaders();
-            $b = $front->getResponse()->getRawHeaders();
-            $c = headers_list();
+            $b = array_merge(headers_list(), $front->getResponse()->getRawHeaders());
 
-            $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00";
-            $output .= substr(gzcompress($data, 2), 0, -4);
+            $contentType = null;
+            foreach ($a as $header) {
+                if(strtolower(trim($header["name"])) == "content-type") {
+                    $contentType = $header["value"];
+                    break;
+                }
+            }
 
+            if(!$contentType) {
+                foreach ($b as $header) {
+                    if(stripos($header, "content-type") !== false) {
+                        $parts = explode(":", $header);
+                        if(strtolower(trim($parts[0])) == "content-type") {
+                            $contentType = trim($parts[1]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // send headers & contents
             header("X-Powered-By: pimcore");
             header("Connection: close\r\n");
-            header("Content-Encoding: gzip\r\n");
+
+            // prepare the response to be sent (gzip or not)
+            $gzipContentTypes = array("@text/@i","@application/json@");
+            $gzipIt = false;
+            foreach ($gzipContentTypes as $type) {
+                if(@preg_match($type, $contentType)) {
+                    $gzipIt = true;
+                    break;
+                }
+            }
+
+            if($gzipIt) {
+                $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00";
+                $output .= substr(gzcompress($data, 2), 0, -4);
+                $contentEncoding = "gzip";
+            } else {
+                $output = $data;
+                $contentEncoding = "none";
+            }
+
+            header("Content-Encoding: $contentEncoding\r\n");
             header("Content-Length: " . strlen($output));
 
             return $output;
