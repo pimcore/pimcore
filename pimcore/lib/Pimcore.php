@@ -40,9 +40,9 @@ class Pimcore {
         $frontend = Pimcore_Tool::isFrontend();
 
         // enable the output-buffer, why? see in self::outputBufferStart()
-        //if($frontend) {
-        self::outputBufferStart();
-        //}
+        if($frontend) {
+            self::outputBufferStart();
+        }
 
         self::initAutoloader();
         self::initConfiguration();
