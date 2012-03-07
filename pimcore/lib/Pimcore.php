@@ -766,6 +766,11 @@ class Pimcore {
         if(self::$inShutdown && !headers_sent()) {
             ignore_user_abort(true);
 
+            $front = Zend_Controller_Front::getInstance();
+            $a = $front->getResponse()->getHeaders();
+            $b = $front->getResponse()->getRawHeaders();
+            $c = headers_list();
+
             $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00";
             $output .= substr(gzcompress($data, 2), 0, -4);
 
