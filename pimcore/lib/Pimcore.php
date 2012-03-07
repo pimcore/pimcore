@@ -762,7 +762,7 @@ class Pimcore {
     public static function outputBufferEnd ($data) {
 
         // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
-        if(self::$inShutdown && !headers_sent()) {
+        if(self::$inShutdown && !headers_sent() && !empty($data)) {
             ignore_user_abort(true);
 
             // find the content-type of the response
@@ -814,6 +814,7 @@ class Pimcore {
                 header("Connection: close\r\n");
                 header("Content-Encoding: $contentEncoding\r\n");
                 header("Content-Length: " . strlen($output));
+                header("X-pimcore-encoded: gzip");
 
                 return $output;
             }
