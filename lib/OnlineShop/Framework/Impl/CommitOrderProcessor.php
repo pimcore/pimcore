@@ -51,7 +51,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
         $order = $this->getNewOrderObject();
 
         $order->setParent(Object_Folder::getById($this->parentFolderId));
-        $order->setCreationDate(Zend_Date::now());
+        $order->setCreationDate(Zend_Date::now()->get());
         $order->setKey($tempOrdernumber);
         $order->setPublished(true);
 

@@ -161,36 +161,41 @@ class OnlineShop_Framework_ProductList_Resource {
             $objectValues = $this->db->fetchRow($query, $objectId);
             Logger::log("Query done.", Zend_Log::INFO);
 
+            if(!empty($objectValues)) {
+                $subStatement = array();
+                foreach($fields as $f) {
+                    $subStatement[] = $this->db->quoteIdentifier($f) . " * " . $objectValues[$f];
+                }
 
-            $subStatement = array();
-            foreach($fields as $f) {
-                $subStatement[] = $this->db->quoteIdentifier($f) . " * " . $objectValues[$f];
+                $firstPart = implode(" + ", $subStatement);
+
+
+                $subStatement = array();
+                foreach($fields as $f) {
+                    $subStatement[] = "POW(" . $this->db->quoteIdentifier($f) . ",2)";
+                }
+                $secondPart = "POW(" . implode(" + ", $subStatement) . ", 0.5)";
+
+                $subStatement = array();
+                foreach($fields as $f) {
+                    $subStatement[] = "POW(" . $objectValues[$f] . ",2)";
+                }
+
+                $secondPart .= " * POW(" . implode(" + ", $subStatement) . ", 0.5)";
+
+
+                $statement = "(" . $firstPart . ") / (" . $secondPart . ")";
+
+                return $statement;
+            } else {
+                throw new Exception("Field array for given object id is empty");
             }
 
-            $firstPart = implode(" + ", $subStatement);
 
 
-            $subStatement = array();
-            foreach($fields as $f) {
-                $subStatement[] = "POW(" . $this->db->quoteIdentifier($f) . ",2)";
-            }
-            $secondPart = "POW(" . implode(" + ", $subStatement) . ", 0.5)";
-
-            $subStatement = array();
-            foreach($fields as $f) {
-                $subStatement[] = "POW(" . $objectValues[$f] . ",2)";
-            }
-
-            $secondPart .= " * POW(" . implode(" + ", $subStatement) . ", 0.5)";
-
-
-            $statement = "(" . $firstPart . ") / (" . $secondPart . ")";
-
-            return $statement;
         } catch(Exception $e) {
             Logger::err($e);
             return "";
         }
     }
-    
 }

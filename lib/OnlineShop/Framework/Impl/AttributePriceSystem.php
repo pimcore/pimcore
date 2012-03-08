@@ -22,7 +22,7 @@ class OnlineShop_Framework_Impl_AttributePriceSystem extends OnlineShop_Framewor
      * @return OnlineShop_Framework_AbstractPriceInfo
      */
     function createPriceInfoInstance($quantityScale, $product, $products) {
-        return OnlineShop_Framework_Impl_AttributePriceInfo::getInstance($product);
+        return OnlineShop_Framework_Impl_AttributePriceInfo::getInstance(array("quantityScale" => $quantityScale, "product" => $product, "products" => $products));
     }
 
 
