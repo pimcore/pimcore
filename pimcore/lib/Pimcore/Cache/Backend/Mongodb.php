@@ -471,7 +471,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
                 'd' => $data,
                 'created_at' => $now,
                 'l' => $lifetime,
-                'expire' => $lifetime ? $now + $lifetime : $now + 86400,
+                'expire' => $lifetime ? $now + $lifetime : $now + (86400*365),
                 't' => $tags
             )
         );
