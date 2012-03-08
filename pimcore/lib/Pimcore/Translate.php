@@ -107,13 +107,12 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
                     }
                 }
             }
-
-            $this->createEmptyTranslation($locale, $messageId);
-            return $messageId;
         }
 
-
-        $this->createEmptyTranslation($locale, $messageId);
+        // do not create a new translation if it is only empty, but do not return empty values
+        if(!array_key_exists(strtolower($messageId), $this->_translate[$locale])) {
+            $this->createEmptyTranslation($locale, $messageId);
+        }
 
         // no translation found, return original
         return $messageId;
