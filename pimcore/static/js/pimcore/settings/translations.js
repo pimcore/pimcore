@@ -58,7 +58,7 @@ pimcore.settings.translations = Class.create({
             {name: 'date', allowBlank: true}
         ];
         var typesColumns = [
-            {header: t("key"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})}
+            {header: t("key"), sortable: true, dataIndex: 'key', editable: false}
 
         ];
 
