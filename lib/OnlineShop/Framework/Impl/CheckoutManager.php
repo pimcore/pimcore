@@ -7,27 +7,27 @@ class OnlineShop_Framework_Impl_CheckoutManager implements OnlineShop_Framework_
     const COMMITTED = "checkout_committed";
     const TRACK_ECOMMERCE = "checkout_trackecommerce";
 
-    private $checkoutSteps;
-    private $checkoutStepOrder;
-    private $currentStep;
-    private $finished = false;
-    private $committed = false;
+    protected $checkoutSteps;
+    protected $checkoutStepOrder;
+    protected $currentStep;
+    protected $finished = false;
+    protected $committed = false;
 
-    private $parentFolderId = 1;
-    private $orderClassname;
-    private $orderItemClassname;
-    private $confirmationMail;
+    protected $parentFolderId = 1;
+    protected $orderClassname;
+    protected $orderItemClassname;
+    protected $confirmationMail;
 
     /**
      * @var OnlineShop_Framework_ICommitOrderProcessor
      */
-    private $commitOrderProcessor;
-    private $commitOrderProcessorClassname; 
+    protected $commitOrderProcessor;
+    protected $commitOrderProcessorClassname;
 
     /**
      * @var OnlineShop_Framework_ICart
      */
-    private $cart;
+    protected $cart;
 
     public function __construct(OnlineShop_Framework_ICart $cart, $config) {
         $this->cart = $cart;

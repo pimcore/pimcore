@@ -35,6 +35,10 @@ class OnlineShop_Framework_Factory {
         $this->initEnvironment();
     }
 
+    public function getConfig() {
+        return $this->config;
+    }
+
     private function initEnvironment() {
         $configPath = OnlineShop_Plugin::getConfig(true)->onlineshop_config_file;
         $config = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath);
