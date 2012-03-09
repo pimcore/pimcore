@@ -13,7 +13,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 // configure some constants needed by pimcore
 $pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..'); 

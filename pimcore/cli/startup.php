@@ -49,7 +49,7 @@ Object_Abstract::setGetInheritedValues(true);
 // Error reporting is enabled in CLI
 @ini_set("display_errors", "On");
 @ini_set("display_startup_errors", "On");
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 
 // skip if maintenance mode is on
