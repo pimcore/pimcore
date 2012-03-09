@@ -465,13 +465,18 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
     {
         $now = time();
 
+        // set the lifetime to 1 year if it is null
+        if(!$lifetime) {
+            $lifetime = (86400*365);
+        }
+
         return $this->_collection->save(
             array(
             	'_id' => $id,
                 'd' => $data,
                 'created_at' => $now,
                 'l' => $lifetime,
-                'expire' => $lifetime ? $now + $lifetime : $now + (86400*365),
+                'expire' =>  $now + $lifetime,
                 't' => $tags
             )
         );
