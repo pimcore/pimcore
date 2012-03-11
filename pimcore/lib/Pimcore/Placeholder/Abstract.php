@@ -236,7 +236,7 @@ abstract class Pimcore_Placeholder_Abstract
             $this->setLocale(($this->getParam('locale')) ? $this->getParam('locale') : $this->getParam('language'));
         } else {
             $document = $this->getDocument();
-            if ($document instanceof Document) {
+            if ($document instanceof Document && $document->getProperty("language")) {
                 $this->setLocale($document->getProperty("language"));
             }
 
