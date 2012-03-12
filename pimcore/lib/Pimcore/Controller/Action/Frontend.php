@@ -264,6 +264,17 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         }
     }
 
+    public function render($action = null, $name = null, $noController = false) {
+        parent::render($action, $name, $noController);
+        $this->viewRendered = true;
+    }
+
+
+    public function renderScript($script, $name = null) {
+        parent::renderScript($script, $name);
+        $this->viewRendered = true;
+    }
+
     public function preDispatch() {
 
         // initialize translation if required
