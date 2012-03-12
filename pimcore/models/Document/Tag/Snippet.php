@@ -75,7 +75,7 @@ class Document_Tag_Snippet extends Document_Tag {
                     $params["document"] = $this->snippet;
 
                     if ($this->snippet->isPublished()) {
-                        return $this->getView()->action($this->snippet->getAction(), $this->snippet->getController(), null, $params);
+                        return $this->getView()->action($this->snippet->getAction(), $this->snippet->getController(), $this->snippet->getModule(), $params);
                     }
                     return "";
                 }
