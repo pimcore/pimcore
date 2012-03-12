@@ -68,26 +68,6 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->view->translations = $translations;
     }
 
-    public function jsonTransliterationAction()
-    {
-        $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
-        $translitTable = Pimcore_Tool_Transliteration::getTransliterationTable();
-
-        $search = array();
-        $replace = array();
-
-        foreach ($translitTable as $s => $r) {
-            $search[] = $s;
-            $replace[] = $r;
-        }
-
-        $this->view->transliteration = array(
-            "search" => $search,
-            "replace" => $replace
-        );
-    }
-
-
     public function scriptProxyAction()
     {
         $this->removeViewRenderer();
@@ -162,6 +142,12 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->view->languages = $languageOptions;
+    }
+
+    public function getValidFilenameAction () {
+        $this->_helper->json(array(
+            "filename" => Pimcore_File::getValidFilename($this->_getParam("value"))
+        ));
     }
 
     /* FILEEXPLORER */
