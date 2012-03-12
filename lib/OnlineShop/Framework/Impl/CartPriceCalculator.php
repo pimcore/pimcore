@@ -53,8 +53,10 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
         $this->modifications = array();
         foreach($this->modificators as $modificator) {
             $modification = $modificator->modify($currentSubTotal, $this->cart);
-            $this->modifications[$modificator->getName()] = $modification;
-            $currentSubTotal->setAmount($currentSubTotal->getAmount() + $modification->getAmount());
+            if($modification !== null) {
+                $this->modifications[$modificator->getName()] = $modification;
+                $currentSubTotal->setAmount($currentSubTotal->getAmount() + $modification->getAmount());
+            }
         }
 
 
