@@ -162,7 +162,7 @@ class Pimcore_View extends Zend_View {
 
         if ($include instanceof Document_PageSnippet && $include->isPublished()) {
             if ($include->getAction() && $include->getController()) {
-                $content = $this->action($include->getAction(), $include->getController(), null, $params);
+                $content = $this->action($include->getAction(), $include->getController(), $include->getModule(), $params);
             } else if ($include->getTemplate()) {
                 $content = $this->action("default", "default", null, $params);
             }
