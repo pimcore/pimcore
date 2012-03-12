@@ -1,11 +1,4 @@
 
-if(Ext.isIE6) {
-    if(/msie 10/.test(navigator.userAgent.toLowerCase())) {
-        Ext.isIE6 = false;
-        Ext.isIE9 = true;
-    }
-}
-
 // fixes for composite field => getFieldValues() doesn't work
 // read more here http://www.sencha.com/forum/showthread.php?99021&mode=linear
 Ext.override(Ext.form.CompositeField, {
@@ -34,5 +27,4 @@ Ext.override(Ext.form.CompositeField, {
     get : Ext.Container.prototype.get,
     setValue : undefined
 });
-
 
