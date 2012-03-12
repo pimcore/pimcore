@@ -439,7 +439,6 @@
     <?php // 3rd party libraries ?>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $this->config->services->googlemaps->apikey ?>"></script>
     
-    <script type="text/javascript" src="/admin/misc/json-transliteration?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/user/get-current-user/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>

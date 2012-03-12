@@ -215,30 +215,30 @@ pimcore.helpers.isValidFilename = function (value) {
 };
 
 
-pimcore.helpers.getValidFilename = function (value) {
-    var validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~";
-    var filename = trim(str_replace(pimcore.transliteration.search, pimcore.transliteration.replace, value)).toLowerCase();
-    var filenameParts = [];
-    var tmpChar = "";
+pimcore.helpers.getValidFilenameCache = {};
 
-    for (var i = 0; i < filename.length; i++) {
-        tmpChar = filename.charAt(i);
-        if (validChars.indexOf(tmpChar) != -1) {
-            filenameParts.push(tmpChar);
-        }
-        else {
-            if (i > 0 && i < (filename.length - 1)) {
-                filenameParts.push("-");
-            }
-        }
+pimcore.helpers.getValidFilename = function (value) {
+
+    if(pimcore.helpers.getValidFilenameCache[value]) {
+        return pimcore.helpers.getValidFilenameCache[value];
     }
 
-    filename = filenameParts.join("");
-    filename = filename.replace(/\-+/g, '-');
+    // we use jQuery for the synchronous xhr request, because ExtJS doesn't provide this
+    var response = jQuery.ajax({
+        url: "/admin/misc/get-valid-filename",
+        data: {
+            value: value
+        },
+        async: false
+    });
 
-    return filename;
+    var res = Ext.decode(response.responseText);
+
+    pimcore.helpers.getValidFilenameCache[value] = res["filename"];
+
+    return res["filename"];
+
 };
-
 
 pimcore.helpers.showNotification = function (title, text, type, errorText) {
     // icon types: info,error,success
