@@ -47,6 +47,11 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         Element_Editlock::lock($this->_getParam("id"), "asset");
 
         $asset = Asset::getById(intval($this->_getParam("id")));
+
+        if(!$asset instanceof Asset) {
+            $this->_helper->json(array("success" => false, "message" => "asset doesn't exist"));
+        }
+
         $asset->setProperties(Element_Service::minimizePropertiesForEditmode($asset->getProperties()));
         $asset->getVersions();
         $asset->getScheduledTasks();
