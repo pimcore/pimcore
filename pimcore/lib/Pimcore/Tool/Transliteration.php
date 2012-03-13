@@ -37,7 +37,7 @@ class Pimcore_Tool_Transliteration {
         $value = self::_transliterationProcess($value,"~",$language);
         
         // then use iconv
-        $value = iconv("utf-8","ASCII//IGNORE//TRANSLIT",$value);
+        $value = trim(iconv("utf-8","ASCII//IGNORE//TRANSLIT",$value));
         
         return $value;
     }
