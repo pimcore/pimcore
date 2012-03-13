@@ -281,7 +281,7 @@ class User extends User_UserRole {
      */
     public function setWelcomescreen($welcomescreen)
     {
-        $this->welcomescreen = $welcomescreen;
+        $this->welcomescreen = (bool) $welcomescreen;
     }
 
     /**
@@ -297,7 +297,7 @@ class User extends User_UserRole {
      */
     public function setCloseWarning($closeWarning)
     {
-        $this->closeWarning = $closeWarning;
+        $this->closeWarning = (bool) $closeWarning;
     }
 
     /**
