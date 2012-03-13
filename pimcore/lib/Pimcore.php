@@ -761,8 +761,15 @@ class Pimcore {
      */
     public static function outputBufferEnd ($data) {
 
+        $contentEncoding = null;
+        if( strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'x-gzip') !== false ) {
+            $contentEncoding = 'x-gzip';
+        } else if( strpos($_SERVER["HTTP_ACCEPT_ENCODING"],'gzip') !== false ) {
+            $contentEncoding = 'gzip';
+        }
+
         // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
-        if(self::$inShutdown && !headers_sent() && !empty($data)) {
+        if(self::$inShutdown && !headers_sent() && !empty($data) && $contentEncoding) {
             ignore_user_abort(true);
 
             // find the content-type of the response
@@ -813,7 +820,7 @@ class Pimcore {
 
                 // send headers & contents
                 header("Connection: close\r\n");
-                header("Content-Encoding: gzip\r\n");
+                header("Content-Encoding: $contentEncoding\r\n");
                 header("Content-Length: " . strlen($output));
                 header("X-Powered-By: pimcore");
 
