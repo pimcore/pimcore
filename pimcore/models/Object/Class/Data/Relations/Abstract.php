@@ -251,23 +251,33 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
      */
     public function load($object, $params = array()) {
         $db = Pimcore_Resource::get();
+        $data = null;
 
         if($object instanceof Object_Concrete) {
             if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or $params["force"]) {
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object' ORDER BY `index` ASC", array($object->getO_id(), $this->getName()));
-                return $this->getDataFromResource($relations);
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", array($object->getO_id(), $this->getName()));
             } else {
                 return null;
             }
         } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));
-            return $this->getDataFromResource($relations);
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));
         } else if ($object instanceof Object_Localizedfield) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $params["language"]));
-            return $this->getDataFromResource($relations);
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", array($object->getObject()->getId(), $this->getName(), $params["language"]));
         } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? ORDER BY `index` ASC", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
-            return $this->getDataFromResource($relations);
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
         }
+
+        // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
+        // filesort in MySQL which is extremly slow especially when there are millions of relations in the database
+        usort($relations, function ($a, $b) {
+            if ($a["index"] == $b["index"]) {
+                return 0;
+            }
+            return ($a["index"] < $b["index"]) ? -1 : 1;
+        });
+
+        $data = $this->getDataFromResource($relations);
+
+        return $data;
     }
 }
