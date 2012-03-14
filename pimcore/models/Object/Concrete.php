@@ -244,33 +244,44 @@ class Object_Concrete extends Object_Abstract {
     }
 
     /**
-     * @return void
+     * $directCall is true when the method is called from outside (eg. directly in the controller "save only version")
+     * it is false when the method is called by $this->update()
+     * @param bool $setModificationDate
+     * @param bool $directCall
+     * @return Version
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true) {
+    public function saveVersion($setModificationDate = true, $directCall = true) {
 
         if ($setModificationDate) {
             $this->setO_modificationDate(time());
         }
 
         // hook should be also called if "save only new version" is selected
-        if($callPluginHook) {
+        if($directCall) {
             Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
         }
 
         // scheduled tasks are saved always, they are not versioned!
-        $this->saveScheduledTasks();
+        if($directCall) {
+            $this->saveScheduledTasks();
+        }
 
-        // create version
-        $version = new Version();
-        $version->setCid($this->getO_Id());
-        $version->setCtype("object");
-        $version->setDate($this->getO_modificationDate());
-        $version->setUserId($this->getO_userModification());
-        $version->setData($this);
-        $version->save();
+        $version = null;
+
+        // only create a new version if there is at least 1 allowed
+        if(Pimcore_Config::getSystemConfig()->objects->versions) {
+            // create version
+            $version = new Version();
+            $version->setCid($this->getO_Id());
+            $version->setCtype("object");
+            $version->setDate($this->getO_modificationDate());
+            $version->setUserId($this->getO_userModification());
+            $version->setData($this);
+            $version->save();
+        }
 
         // hook should be also called if "save only new version" is selected
-        if($callPluginHook) {
+        if($directCall) {
             Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
         }
 
