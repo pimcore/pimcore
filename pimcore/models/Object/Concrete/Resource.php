@@ -168,14 +168,13 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      *
      * @return boolean
      */
-    public function create() {
+    /*public function create() {
 
         parent::create();
 
-        $this->createDataRows();
-
+        //$this->createDataRows();
         //$this->model->save();
-    }
+    }*/
 
 
     /**
@@ -183,7 +182,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      *
      * @return void
      */
-    protected function createDataRows() {
+    /*protected function createDataRows() {
         try {
             $this->db->insert("object_store_" . $this->model->getO_classId(), array("oo_id" => $this->model->getO_id()));
         }
@@ -195,7 +194,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         }
         catch (Exception $e) {
         }
-    }
+    }*/
 
     /**
      * Save changes to database, it's an good idea to use save() instead
@@ -205,7 +204,7 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
     public function update() {
         parent::update();
 
-        $this->createDataRows();
+        //$this->createDataRows();
 
         // get fields which shouldn't be updated
         $fd = $this->model->geto_class()->getFieldDefinitions();
