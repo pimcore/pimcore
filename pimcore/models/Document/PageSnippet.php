@@ -111,18 +111,25 @@ abstract class Document_PageSnippet extends Document {
         $this->saveScheduledTasks();
         
         // create version
-        $version = new Version();
-        $version->setCid($this->getId());
-        $version->setCtype("document");
-        $version->setDate($this->getModificationDate());
-        $version->setUserId($this->getUserModification());
-        $version->setData($this);
-        $version->save();
+        $version = null;
+
+        // only create a new version if there is at least 1 allowed
+        if(Pimcore_Config::getSystemConfig()->documents->versions) {
+            $version = new Version();
+            $version->setCid($this->getId());
+            $version->setCtype("document");
+            $version->setDate($this->getModificationDate());
+            $version->setUserId($this->getUserModification());
+            $version->setData($this);
+            $version->save();
+        }
 
         // hook should be also called if "save only new version" is selected
         if($callPluginHook) {
             Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
         }
+
+        return $version;
     }
 
     /**
