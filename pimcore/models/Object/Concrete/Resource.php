@@ -202,6 +202,26 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      * @return void
      */
     public function update() {
+
+        // check if the rows must be inserted or updated in the query and store table
+        if($this->model->getId()) {
+            try {
+                $this->insertOrUpdate = $this->db->fetchRow("SELECT
+                  object_store_" . $this->model->getO_classId() . ".oo_id as store, object_query_" . $this->model->getO_classId() . ".oo_id as query, object.o_id as object
+                FROM
+                  (SELECT o_id FROM objects WHERE o_id = " . $this->model->getId() . ") as object LEFT JOIN
+                  object_store_" . $this->model->getO_classId() . " ON object.o_id = object_store_" . $this->model->getO_classId() . ".oo_id LEFT JOIN
+                  object_query_" . $this->model->getO_classId() . " ON object.o_id = object_query_" . $this->model->getO_classId() . ".oo_id;");
+            } catch (Exception $e) {
+                $this->insertOrUpdate = null;
+            }
+        }
+
+        if(empty($this->insertOrUpdate)) {
+            $this->insertOrUpdate = array("query" => null, "store" => null, "object" => null);
+        }
+
+
         parent::update();
 
         //$this->createDataRows();
@@ -253,19 +273,15 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
             }
         }
 
-        // first try to insert a new record, this is because of the recyclebin restore
-        try {
-            $this->db->insert("object_store_" . $this->model->getO_classId(), $data);
-        }
-        catch (Exception $e) {
+        if($this->insertOrUpdate["store"]) {
             $this->db->update("object_store_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
+        } else {
+            $this->db->insert("object_store_" . $this->model->getO_classId(), $data);
         }
 
 
         // get data for query table
         // this is special because we have to call each getter to get the inherited values from a possible parent object
-
-
         Object_Abstract::setGetInheritedValues(true);
 
         $object = get_object_vars($this->model);
@@ -332,15 +348,12 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         }
         $data["oo_id"] = $this->model->getO_id();
 
-        // first try to insert a new record, this is because of the recyclebin restore
-        try {
+        if($this->insertOrUpdate["query"]) {
+            $this->db->update("object_query_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
+        } else {
             $this->db->insert("object_query_" . $this->model->getO_classId(), $data);
         }
-        catch (Exception $e) {
-            $this->db->update("object_query_" . $this->model->getO_classId(), $data, $this->db->quoteInto("oo_id = ?", $this->model->getO_id()));
-        }
 
-        
         Object_Abstract::setGetInheritedValues($inheritedValues);
     }
 
