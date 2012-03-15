@@ -16,8 +16,19 @@
 // debug
 if (typeof console == "undefined") {
     console = {
-        log: function (v) {
-        }
+        log: function (v) {},
+        dir: function (v) {},
+        debug: function (v) {},
+        info: function (v) {},
+        warn: function (v) {},
+        error: function (v) {},
+        trace: function (v) {},
+        group: function (v) {},
+        groupEnd: function (v) {},
+        time: function (v) {},
+        timeEnd: function (v) {},
+        profile: function (v) {},
+        profileEnd: function (v) {}
     };
 }
 
