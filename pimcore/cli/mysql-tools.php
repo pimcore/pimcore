@@ -18,7 +18,8 @@ include_once("startup.php");
 try {
     $opts = new Zend_Console_Getopt(array(
         'verbose|v' => 'show detailed information (for debug, ...)',
-        'help|h' => 'display this help'
+        'help|h' => 'display this help',
+        "mode|m=s" => "optimize,warmup"
     ));
 } catch (Exception $e) {
     echo $e->getMessage();
@@ -33,6 +34,13 @@ try {
 
 // display help message
 if($opts->getOption("help")) {
+    echo $opts->getUsageMessage();
+    exit;
+}
+
+// display error message
+if(!$opts->getOption("mode")) {
+    echo "Please specify the mode! See: \n";
     echo $opts->getUsageMessage();
     exit;
 }
@@ -56,16 +64,30 @@ if($opts->getOption("verbose")) {
     ));
 }
 
-
 $db = Pimcore_Resource::get();
-$tables = $db->fetchAll("SHOW TABLES");
 
-foreach ($tables as $table) {
-    $t = current($table);
-    try {
-        Logger::debug("Running: OPTIMIZE TABLE " . $t);
-        $db->query("OPTIMIZE TABLE " . $t);
-    } catch (Exception $e) {
-        Logger::error($e);
+if($opts->getOption("mode") == "optimize") {
+    $tables = $db->fetchAll("SHOW TABLES");
+
+    foreach ($tables as $table) {
+        $t = current($table);
+        try {
+            Logger::debug("Running: OPTIMIZE TABLE " . $t);
+            $db->query("OPTIMIZE TABLE " . $t);
+        } catch (Exception $e) {
+            Logger::error($e);
+        }
+    }
+} else if ($opts->getOption("mode") == "warmup") {
+    $tables = $db->fetchAll("SHOW TABLES");
+
+    foreach ($tables as $table) {
+        $t = current($table);
+        try {
+            Logger::debug("Running: SELECT 1 FROM $t LIMIT 1 ");
+            $db->query("SELECT 1 FROM $t LIMIT 1");
+        } catch (Exception $e) {
+            Logger::error($e);
+        }
     }
 }
