@@ -84,8 +84,9 @@ if($opts->getOption("mode") == "optimize") {
     foreach ($tables as $table) {
         $t = current($table);
         try {
-            Logger::debug("Running: SELECT 1 FROM $t LIMIT 1 ");
-            $db->query("SELECT 1 FROM $t LIMIT 1");
+            Logger::debug("Running: SELECT COUNT(*) FROM $t");
+            $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
+            Logger::debug("Result: " . $res);
         } catch (Exception $e) {
             Logger::error($e);
         }
