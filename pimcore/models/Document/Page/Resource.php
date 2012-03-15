@@ -127,6 +127,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
             catch (Exception $e) {
                 $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
+
             try {
                 $this->db->insert("documents_page", $dataPage);
             }
