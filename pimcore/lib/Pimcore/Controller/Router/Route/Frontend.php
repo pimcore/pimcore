@@ -250,7 +250,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         }
 
                         // try to get nearest document to the route
-                        $document = $this->getNearestDocumentByPath($path);
+                        $document = $this->getNearestDocumentByPath($path, false, array("page", "snippet", "hardlink"));
                         if($document instanceof Document_Hardlink) {
                             $document = Document_Hardlink_Service::wrap($document);
                         }
@@ -287,10 +287,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
 
     /**
-     * @param string $path
-     * @return void
+     * @param $path
+     * @param bool $ignoreHardlinks
+     * @param array $types
+     * @return Document|Document_PageSnippet|null|string
      */
-    protected function getNearestDocumentByPath ($path, $ignoreHardlinks = false) {
+    protected function getNearestDocumentByPath ($path, $ignoreHardlinks = false, $types = array()) {
 
         if($this->nearestDocumentByPath instanceof Document) {
             $document = $this->nearestDocumentByPath;
@@ -313,8 +315,10 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
             foreach ($pathes as $p) {
                 if ($document = Document::getByPath($p)) {
-                    $this->nearestDocumentByPath = $document;
-                    break;
+                    if(empty($types) || in_array($document->getType(), $types)) {
+                        $this->nearestDocumentByPath = $document;
+                        break;
+                    }
                 }
             }
         }

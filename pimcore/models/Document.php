@@ -22,7 +22,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * possible types of a document
      * @var array
      */
-    public static $types = array("folder", "page", "snippet", "link","email");  //ck added "email"
+    public static $types = array("folder", "page", "snippet", "link", "hardlink", "email");  //ck added "email"
 
     
     private static $hidePublished = false;
