@@ -355,6 +355,9 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
         }
 
         Object_Abstract::setGetInheritedValues($inheritedValues);
+
+
+        unset($this->insertOrUpdate);
     }
 
     
