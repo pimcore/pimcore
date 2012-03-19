@@ -56,7 +56,7 @@ abstract class Pimcore_Model_Abstract {
 
         if (!$key) {
             // check for a resource in the cache
-            if(array_key_exists($myClass,self::$resourceClassCache)) {
+            if(array_key_exists($myClass, self::$resourceClassCache)) {
                 $resource = self::$resourceClassCache[$myClass];
             } else {
                 $classes = $this->getParentClasses($myClass);
@@ -84,7 +84,7 @@ abstract class Pimcore_Model_Abstract {
                     }
 
                     if($className) {
-                        Logger::debug("Find resource implementation " . $className . " for " . $myClass);
+                        Logger::debug("Found resource implementation " . $className . " for " . $myClass);
                         $resource = $className;
                         self::$resourceClassCache[$myClass] = $resource;
 
@@ -92,12 +92,19 @@ abstract class Pimcore_Model_Abstract {
                     }
                 }
             }
-        }
-        else {
-            // check for a specialized resource adapter for the current DBMS
-            $resourceClass = $key . "_Resource_" . ucfirst(Pimcore_Resource::getType());
-            if(!$resource = $this->determineResourceClass($resourceClass)) {
-                $resource = $key . "_Resource";
+        } else {
+            // check in cache
+            $cacheKey = $myClass . "-" . $key;
+            if(array_key_exists($cacheKey, self::$resourceClassCache)) {
+                $resource = self::$resourceClassCache[$cacheKey];
+            } else {
+                // check for a specialized resource adapter for the current DBMS
+                $resourceClass = $key . "_Resource_" . ucfirst(Pimcore_Resource::getType());
+                if(!$resource = $this->determineResourceClass($resourceClass)) {
+                    $resource = $key . "_Resource";
+                }
+
+                self::$resourceClassCache[$cacheKey] = $resource;
             }
         }
 
