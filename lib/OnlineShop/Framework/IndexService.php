@@ -38,6 +38,7 @@ class OnlineShop_Framework_IndexService {
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . self::TABLENAME . "` (
           `o_id` int(11) NOT NULL default '0',
           `o_virtualProductId` int(11) NOT NULL,
+          `o_virtualProductActive` TINYINT(1) NOT NULL,
           `o_classId` int(11) NOT NULL,
           `o_parentId` int(11) NOT NULL,
           `o_type` varchar(20) NOT NULL,
@@ -136,13 +137,21 @@ class OnlineShop_Framework_IndexService {
 
 
             $virtualProductId = $object->getId();
+            $virtualProductActive = $object->isActive();
             if($object->getOSIndexType() == "variant") {
                 $virtualProductId = $object->getOSParentId();
             }
+
+            $virtualProduct = Object_Abstract::getById($virtualProductId);
+            if($virtualProduct && method_exists($virtualProduct, "isActive")) {
+                $virtualProductActive = $virtualProduct->isActive();
+            }
+
             $data = array(
                 "o_id" => $object->getId(),
                 "o_classId" => $object->getClassId(),
                 "o_virtualProductId" => $virtualProductId,
+                "o_virtualProductActive" => $virtualProductActive,
                 "o_parentId" => $object->getOSParentId(),
                 "o_type" => $object->getOSIndexType(),
                 "categoryIds" => ',' . implode(",", $categoryIds) . ",",
@@ -211,6 +220,7 @@ class OnlineShop_Framework_IndexService {
             }
             Object_Abstract::setGetInheritedValues($b);
             try {
+                $this->db->update(self::TABLENAME, array("o_virtualProductActive" => $virtualProductActive), "o_virtualProductId = " . $virtualProductId);
                 $this->db->insert(self::TABLENAME, $data);
             } catch (Exception $e) {
                 try {
@@ -254,7 +264,7 @@ class OnlineShop_Framework_IndexService {
     }
 
     private function getSystemColumns() {
-        return array("o_id", "o_classId", "o_parentId", "o_virtualProductId", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList");
+        return array("o_id", "o_classId", "o_parentId", "o_virtualProductId", "o_virtualProductActive", "o_type", "categoryIds", "parentCategoryIds", "priceSystemName", "active", "inProductList");
     }
 
     public function getIndexColumns($considerHideInFieldList = false) {
