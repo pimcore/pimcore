@@ -66,14 +66,15 @@ class Pimcore_Tool_Console {
      * @static
      * @param string $cmd
      * @param null|string $outputFile
+     * @return int
      */
     public static function execInBackground($cmd, $outputFile = null) {
 
         // windows systems
         if(stripos(php_uname("s"), "windows") !== false) {
-            self::execInBackgroundWindows($cmd, $outputFile);
+            return self::execInBackgroundWindows($cmd, $outputFile);
         } else {
-            self::execInBackgroundUnix($cmd, $outputFile);
+            return self::execInBackgroundUnix($cmd, $outputFile);
         }
     }
 
@@ -81,6 +82,7 @@ class Pimcore_Tool_Console {
      * @static
      * @param string $cmd
      * @param string $outputFile
+     * @return int
      */
     protected static function execInBackgroundUnix ($cmd, $outputFile) {
 
@@ -98,12 +100,15 @@ class Pimcore_Tool_Console {
         $pid = shell_exec($commandWrapped);
 
         Logger::debug("Process started with PID " . $pid);
+
+        return $pid;
     }
 
     /**
      * @static
      * @param string $cmd
      * @param string $outputFile
+     * @return int
      */
     protected static function execInBackgroundWindows($cmd, $outputFile) {
 
@@ -116,6 +121,8 @@ class Pimcore_Tool_Console {
 
         $WshShell = new COM("WScript.Shell");
         $WshShell->Run($commandWrapped, 0, false);
-        Logger::debug("Process started");
+        Logger::debug("Process started - returning the PID is not supported on Windows Systems");
+
+        return 0;
     }
 }
