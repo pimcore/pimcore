@@ -15,6 +15,12 @@
 
 class Pimcore_Translate extends Zend_Translate_Adapter {
 
+    /**
+     * Translation_Website is default for backward compatibilty other options are: Translation_Admin
+     * see: Pimcore_Translate_Admin & Pimcore_Translate_Website
+     * @var string
+     */
+    protected static $backend = "Translation_Website";
 
     /**
      * Translation data
@@ -23,6 +29,9 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
     protected $_translate = array();
     
 
+    /**
+     * @param $locale
+     */
     public function __construct($locale) {
 
         if (!$locale instanceof Zend_Locale) {
@@ -43,9 +52,10 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
      * @param array $options
      * @return array
      */
-    protected function _loadTranslationData($data = null, $locale, array $options = array()) {
-        
-        $list = new Translation_Website_List();
+    protected function _loadTranslationData($data, $locale, array $options = array()) {
+
+        $listClass = self::getBackend() . "_List";
+        $list = new $listClass();
         $list->load();
 
         foreach ($list->getTranslations() as $translation) {
@@ -66,12 +76,21 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         return $this->_translate;
     }
 
+    /**
+     * @return string
+     */
     public function toString() {
         // pseudo is needed by the interface but not by the application
         return "Array";
     }
 
 
+    /**
+     * @param $messageId
+     * @param null $locale
+     * @return mixed
+     * @throws Exception
+     */
     public function translate($messageId, $locale = null) {
 
         // the maximum length of message-id's is 255
@@ -118,6 +137,11 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         return $messageId;
     }
 
+    /**
+     * @param $locale
+     * @param $messageId
+     * @return mixed
+     */
     private function createEmptyTranslation($locale, $messageId) {
 
         // don't create translation if it's just empty
@@ -125,18 +149,38 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
             return;
         }
 
+        $class = self::getBackend();
+
         // no translation found create key
         if (Pimcore_Tool::isValidLanguage($locale)) {
             try {
-                $t = Translation_Website::getByKey($messageId);
+                $t = $class::getByKey($messageId);
             }
             catch (Exception $e) {
-                $t = new Translation_Website();
+                $t = new $class();
                 $t->setKey($messageId);
             }
 
             $t->addTranslation($locale, "");
             $t->save();
         }
+    }
+
+    /**
+     * @static
+     * @param $backend
+     */
+    public static function setBackend($backend)
+    {
+        static::$backend = $backend;
+    }
+
+    /**
+     * @static
+     * @return string
+     */
+    public static function getBackend()
+    {
+        return static::$backend;
     }
 }
