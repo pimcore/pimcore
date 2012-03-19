@@ -15,18 +15,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Resource_Abstract {
+abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Resource_Abstract implements Translation_Abstract_List_Resource_Interface {
 
-    /**
-     * Loads a list of translations for the specicifies parameters, returns an array of Translation elements
-     *
-     * @return array
-     */
-
-    public static abstract function getTableName();
-
-    public static abstract function getItemClass();
-    
     public function getTotalCount() {
         $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a", $this->model->getConditionVariables());
         return $amount;

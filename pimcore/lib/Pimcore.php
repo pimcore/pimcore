@@ -602,6 +602,12 @@ class Pimcore {
 
         if (!defined("PIMCORE_DEBUG")) define("PIMCORE_DEBUG", true);
         if (!defined("PIMCORE_DEVMODE")) define("PIMCORE_DEVMODE", false);
+
+        // custom error logging in DEVMODE
+        if(PIMCORE_DEVMODE) {
+            error_reporting( (E_ALL ^ E_NOTICE) | E_STRICT);
+            ini_set('error_log', PIMCORE_LOG_DIRECTORY . '/php.log');
+        }
     }
 
     /**

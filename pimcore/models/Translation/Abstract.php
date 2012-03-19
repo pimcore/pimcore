@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Translation_Abstract extends Pimcore_Model_Abstract {
+abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Translation_Interface {
 
     /**
      * @var string
@@ -31,12 +31,6 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract {
      * @var integer
      */
     public $date;
-
-    /**
-     * @param string $key
-     * @return Translation
-     */
-    public static abstract function getByKey($id);
 
     /**
      * @return string
