@@ -123,6 +123,20 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         $list->setLimit($this->_getParam("limit"));
         $list->setOffset($this->_getParam("start"));
         $list->setOrderKey("sentDate");
+
+        if($this->_getParam('filter')){
+            if ($this->_getParam("filter")) {
+                $filterTerm = $list->quote("%".strtolower($this->_getParam("filter"))."%");
+                $list->setCondition("   `from` LIKE " . $filterTerm . " OR
+                                        `to` LIKE " . $filterTerm . " OR
+                                        `cc` LIKE " . $filterTerm . " OR
+                                        `bcc` LIKE " . $filterTerm . " OR
+                                        `subject` LIKE " . $filterTerm . " OR
+                                        `params` LIKE " . $filterTerm . "
+                                       ");
+            }
+        }
+
         $list->setOrder("DESC");
 
         $data = $list->load();
