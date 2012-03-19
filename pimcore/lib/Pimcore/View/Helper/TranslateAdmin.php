@@ -13,76 +13,30 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Abstract {
+class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate {
 
-    public static $_controller;
-
-    public static function getController() {
-        if (!self::$_controller) {
-            self::$_controller = new Pimcore_View_Helper_TranslateAdmin_Controller();
-        }
-
-        return self::$_controller;
-    }
 
     public function translateAdmin($key = "") {
-        if(empty($key)) {
-            return self::getController();
-        }
-
-        return self::getController()->translate($key);
-    }
-
-}
-
-
-class Pimcore_View_Helper_TranslateAdmin_Controller {
-
-
-    public function translate($key) {
-
-        $translated = $key;
-
         if ($key) {
             $locale = $_REQUEST["systemLocale"];
             if ($locale) {
-                try {
-                    $translation = Translation_Admin::getByKey($key);
-                } catch (Exception $e) {
 
+                $cacheKey = "translator_admin";
+                if (!$translate = Pimcore_Model_Cache::load($cacheKey)) {
+                    $translate = new Pimcore_Translate_Admin($locale);
+                    Pimcore_Model_Cache::save($translate, $cacheKey, array("translator","translator_admin","translate"), null, 804);
                 }
 
-                if ($translation instanceof Translation_Admin) {
-                    if($translation->getTranslation($locale)){
-                        $translated =  $translation->getTranslation($locale);
-                    } else {
-                        if(PIMCORE_DEBUG){
-                            $translated = "+".$key."+";
-                        } 
-                    }
-                } else {
-                    $t = new Translation_Admin();
-                    $availableLanguages = Pimcore_Tool_Admin::getLanguages();
-                    $t->setKey($key);
-                    $t->setDate(time());
+                $this->setTranslator($translate);
+                $this->setLocale($locale);
 
-                    foreach ($availableLanguages as $lang) {
-                        $t->addTranslation($lang, "");
-                    }
-                    try {
-                        $t->save();
-                    } catch (Exception $e) {
-                        Logger::debug(get_class($this), ": could not save new translation for key [ $key ]");
-                    }
-
-                }
+                return call_user_func_array(array($this, "translate"), func_get_args());
             }
 
         }
 
-        return $translated;
-
+        return $key;
     }
 
-
 }
+
