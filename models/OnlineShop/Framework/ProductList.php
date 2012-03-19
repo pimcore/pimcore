@@ -240,7 +240,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         if($variantMode == null) {
             $variantMode = $this->getVariantMode();
         }
-        $preCondition = "active = 1";
+        $preCondition = "active = 1 AND o_virtualProductActive = 1";
         if($this->inProductList) {
             $preCondition .= " AND inProductList = 1";
         }
