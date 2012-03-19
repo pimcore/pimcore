@@ -137,13 +137,25 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
     
     
     public static function getByKey ($key) {
-        $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
-        
-        $fieldFile = $fieldCollectionFolder . "/" . $key . ".psf";
-        if(is_file($fieldFile)) {
-            $fcData = file_get_contents($fieldFile);
-            $fc = Pimcore_Tool_Serialize::unserialize($fcData);
-            
+
+        $fc = null;
+        $cacheKey = "fieldcollection_" . $key;
+
+        try {
+            $fc = Zend_Registry::get($cacheKey);
+        } catch (Exception $e) {
+            $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
+
+            $fieldFile = $fieldCollectionFolder . "/" . $key . ".psf";
+            if(is_file($fieldFile)) {
+                $fcData = file_get_contents($fieldFile);
+                $fc = Pimcore_Tool_Serialize::unserialize($fcData);
+
+                Zend_Registry::set($cacheKey, $fc);
+            }
+        }
+
+        if($fc) {
             return $fc;
         }
         

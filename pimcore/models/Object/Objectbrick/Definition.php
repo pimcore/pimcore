@@ -27,7 +27,6 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
      */
     private $oldClassDefinitions = array();
 
-
     /**
      * @param $classDefinitions
      * @return void
@@ -50,14 +49,26 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
      * @return mixed
      */
     public static function getByKey ($key) {
-        $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-        
-        $fieldFile = $objectBrickFolder . "/" . $key . ".psf";
-        if(is_file($fieldFile)) {
-            $fcData = file_get_contents($fieldFile);
-            $fc = Pimcore_Tool_Serialize::unserialize($fcData);
-            
-            return $fc;
+
+        $brick = null;
+        $cacheKey = "objectbrick_" . $key;
+
+        try {
+            $brick = Zend_Registry::get($cacheKey);
+        } catch (Exception $e) {
+            $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
+
+            $fieldFile = $objectBrickFolder . "/" . $key . ".psf";
+            if(is_file($fieldFile)) {
+                $fcData = file_get_contents($fieldFile);
+                $brick = Pimcore_Tool_Serialize::unserialize($fcData);
+
+                Zend_Registry::set($cacheKey, $brick);
+            }
+        }
+
+        if($brick) {
+            return $brick;
         }
         
         throw new Exception("Object-Brick with key: " . $key . " does not exist.");
