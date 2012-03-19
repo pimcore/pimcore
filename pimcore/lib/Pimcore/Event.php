@@ -46,6 +46,8 @@ class Pimcore_Event {
             "function" => $function,
             "arguments" => $arguments
         );
+
+        ksort(self::$events[$name]);
     }
 
     /**
@@ -76,7 +78,6 @@ class Pimcore_Event {
             return;
         }
 
-        ksort(self::$events[$name]);
         foreach (self::$events[$name] as $item) {
 
             $function = $item["function"];
