@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Service {
+class Document_Service extends Element_Service {
 
     /**
      * @var User
@@ -285,7 +285,7 @@ class Document_Service {
      * @param $path
      * @return bool
      */
-    public static function pathExists($path) {
+    public static function pathExists($path, $type = null) {
 
         $path = Element_Service::correctPath($path);
 
