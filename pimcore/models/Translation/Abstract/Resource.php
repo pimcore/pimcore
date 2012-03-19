@@ -15,10 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abstract {
-
-    public static abstract function getTableName();
-
+abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abstract implements Translation_Abstract_Resource_Interface {
 
     /**
      * Get the data for the object from database for the given key

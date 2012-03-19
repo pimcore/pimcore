@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Service extends Element_Service {
+class Asset_Service {
 
     /**
      * @var User

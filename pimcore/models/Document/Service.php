@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Service extends Element_Service {
+class Document_Service {
 
     /**
      * @var User

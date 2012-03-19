@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Service extends Element_Service {
+class Object_Service {
 
     /**
      * @var array
