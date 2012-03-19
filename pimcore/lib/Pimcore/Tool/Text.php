@@ -202,7 +202,7 @@ class Pimcore_Tool_Text
 
             $html = str_get_html($text);
             if(!$html) {
-                return $text;
+                return array();
             }
 
             $s = $html->find("a[pimcore_id],img[pimcore_id]");
@@ -260,7 +260,7 @@ class Pimcore_Tool_Text
 
             $html = str_get_html($text);
             if(!$html) {
-                return $text;
+                return array();
             }
 
             $s = $html->find("a[pimcore_id],img[pimcore_id]");
