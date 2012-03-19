@@ -15,9 +15,28 @@
 pimcore.registerNS("pimcore.document.emails.logs");
 pimcore.document.emails.logs = Class.create({
 
+    filterField: null,
 
     initialize: function(document) {
         this.document = document;
+
+        this.filterField = new Ext.form.TextField({
+            xtype: "textfield",
+            width: 200,
+            style: "margin: 0 10px 0 0;",
+            enableKeyEvents: true,
+            value: this.preconfiguredFilter,
+            listeners: {
+                "keydown" : function (field, key) {
+                    if (key.getKey() == key.ENTER) {
+                        var input = field;
+                        this.store.baseParams.filter = input.getValue();
+                        this.store.load();
+                    }
+                }.bind(this)
+            }
+        });
+
     },
 
     load: function () {
@@ -319,8 +338,15 @@ pimcore.document.emails.logs = Class.create({
             trackMouseOver: true,
             loadMask: true,
             viewConfig: {
-                forceFit: false
+                forceFit: true
             },
+            tbar: [
+                    {
+                      text: t("filter") + "/" + t("search"),
+                      xtype: "tbtext",
+                      style: "margin: 0 10px 0 0; float:right; text-align:right;"
+                    },this.filterField
+                  ],
             bbar: [this.pagingtoolbar]
         });
 
