@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Object_Service {
+class Object_Service extends Element_Service {
 
     /**
      * @var array
@@ -499,7 +499,7 @@ class Object_Service {
      * @param $path
      * @return bool
      */
-    public static function pathExists ($path) {
+    public static function pathExists ($path, $type = null) {
 
         $path = Element_Service::correctPath($path);
 

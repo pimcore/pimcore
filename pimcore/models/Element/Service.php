@@ -170,7 +170,7 @@ class Element_Service {
      */
     public static function getSaveCopyName($type, $sourceKey, $target)
     {
-        if (self::pathExists($type, $target->getFullPath() . "/" . $sourceKey)) {
+        if (self::pathExists($target->getFullPath() . "/" . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if($type == "asset" && $fileExtension = Pimcore_File::getFileExtension($sourceKey)) {
                 $sourceKey = str_replace("." . $fileExtension, "_copy." . $fileExtension, $sourceKey);
@@ -189,7 +189,7 @@ class Element_Service {
      * @param $path
      * @return bool
      */
-    public static function pathExists ($type, $path) {
+    public static function pathExists ($path, $type = null) {
         if($type == "asset") {
             return Asset_Service::pathExists($path);
         } else if ($type == "document") {
@@ -197,6 +197,8 @@ class Element_Service {
         } else if ($type == "object") {
             return Object_Service::pathExists($path);
         }
+
+        return;
     }
 
 
