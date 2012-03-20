@@ -185,6 +185,46 @@ class Pimcore_Tool_Text
 
     }
 
+    /**
+     * @static
+     * @param $text
+     * @return array
+     */
+    public static function getElementsInWysiwyg ($text) {
+
+        $hash = "elements_wysiwyg_text_" . md5($text);
+        if(Zend_Registry::isRegistered($hash)) {
+            return Zend_Registry::get($hash);
+        }
+
+        $elements = array();
+        $text = Pimcore_Tool_Text::removeLineBreaks($text);
+        preg_match_all("@\<(a|img)[^>]*([pimcore_id|pimcore_type]+[ ]?+=[ ]?+\"[0-9]+\")[^>]*([pimcore_id|pimcore_type]+[ ]?+=[ ]?+\"[asset|document|object]+\")[^>]*\>@Ui", $text, $matches);
+
+        if(count($matches[2]) > 0) {
+            for($i=0; $i<count($matches[2]); $i++) {
+                preg_match("/[0-9]+/",$matches[2][$i], $idMatches);
+                preg_match("/asset|object|document/",$matches[3][$i], $typeMatches);
+
+                $id = $idMatches[0];
+                $type = $typeMatches[0];
+
+                $element = Element_Service::getElementById($type, $id);
+
+                if($id && $type && $element instanceof Element_Interface) {
+                    $elements[] = array(
+                        "id" => $id,
+                        "type" => $type,
+                        "element" => $element
+                    );
+                }
+            }
+        }
+
+        Zend_Registry::set($hash, $elements);
+
+        return $elements;
+    }
 
     /**
      * extracts all dependencies to other elements from wysiwyg text
@@ -200,7 +240,9 @@ class Pimcore_Tool_Text
 
         if (!empty($text)) {
 
-            $html = str_get_html($text);
+            // old legacy slow method parsing the dom
+
+            /*$html = str_get_html($text);
             if(!$html) {
                 return array();
             }
@@ -245,6 +287,15 @@ class Pimcore_Tool_Text
                         }
                     }
                 }
+            }*/
+
+            $elements = self::getElementsInWysiwyg($text);
+            foreach ($elements as $element) {
+                $key = $element["type"] . "_" . $element["id"];
+                $dependencies[$key] = array(
+                    "id" => $element["id"],
+                    "type" => $element["type"]
+                );
             }
         }
 
@@ -258,7 +309,9 @@ class Pimcore_Tool_Text
         
         if (!empty($text)) {
 
-            $html = str_get_html($text);
+            // old legacy slow method parsing the dom
+
+            /*$html = str_get_html($text);
             if(!$html) {
                 return array();
             }
@@ -293,6 +346,14 @@ class Pimcore_Tool_Text
                         }
                     }
                 }
+            }*/
+
+            $elements = self::getElementsInWysiwyg($text);
+            foreach ($elements as $element) {
+                $el = $element["element"];
+                if (!array_key_exists($el->getCacheTag(), $tags)) {
+                    $tags = $el->getCacheTags($tags);
+                }
             }
         }
 
@@ -304,55 +365,55 @@ class Pimcore_Tool_Text
 
         if (function_exists("mb_detect_encoding")) {
             $encoding = mb_detect_encoding($text, array(
-                                                       "UTF-32",
-                                                       "UTF-32BE",
-                                                       "UTF-32LE",
-                                                       "UTF-16",
-                                                       "UTF-16BE",
-                                                       "UTF-16LE",
-                                                       "UTF-8",
-                                                       "UTF-7",
-                                                       "UTF7-IMAP",
-                                                       "ASCII",
-                                                       "Windows-1252",
-                                                       "Windows-1254",
-                                                       "ISO-8859-1",
-                                                       "ISO-8859-2",
-                                                       "ISO-8859-3",
-                                                       "ISO-8859-4",
-                                                       "ISO-8859-5",
-                                                       "ISO-8859-6",
-                                                       "ISO-8859-7",
-                                                       "ISO-8859-8",
-                                                       "ISO-8859-9",
-                                                       "ISO-8859-10",
-                                                       "ISO-8859-13",
-                                                       "ISO-8859-14",
-                                                       "ISO-8859-15",
-                                                       "ISO-8859-16",
-                                                       "EUC-CN",
-                                                       "CP936",
-                                                       "HZ",
-                                                       "EUC-TW",
-                                                       "BIG-5",
-                                                       "EUC-KR",
-                                                       "UHC",
-                                                       "ISO-2022-KR",
-                                                       "Windows-1251",
-                                                       "CP866",
-                                                       "KOI8-R",
-                                                       "KOI8-U",
-                                                       "ArmSCII-8",
-                                                       "CP850",
-                                                       "EUC-JP",
-                                                       "SJIS",
-                                                       "eucJP-win",
-                                                       "SJIS-win",
-                                                       "CP51932",
-                                                       "JIS",
-                                                       "ISO-2022-JP",
-                                                       "ISO-2022-JP-MS"
-                                                  ));
+                "UTF-32",
+                "UTF-32BE",
+                "UTF-32LE",
+                "UTF-16",
+                "UTF-16BE",
+                "UTF-16LE",
+                "UTF-8",
+                "UTF-7",
+                "UTF7-IMAP",
+                "ASCII",
+                "Windows-1252",
+                "Windows-1254",
+                "ISO-8859-1",
+                "ISO-8859-2",
+                "ISO-8859-3",
+                "ISO-8859-4",
+                "ISO-8859-5",
+                "ISO-8859-6",
+                "ISO-8859-7",
+                "ISO-8859-8",
+                "ISO-8859-9",
+                "ISO-8859-10",
+                "ISO-8859-13",
+                "ISO-8859-14",
+                "ISO-8859-15",
+                "ISO-8859-16",
+                "EUC-CN",
+                "CP936",
+                "HZ",
+                "EUC-TW",
+                "BIG-5",
+                "EUC-KR",
+                "UHC",
+                "ISO-2022-KR",
+                "Windows-1251",
+                "CP866",
+                "KOI8-R",
+                "KOI8-U",
+                "ArmSCII-8",
+                "CP850",
+                "EUC-JP",
+                "SJIS",
+                "eucJP-win",
+                "SJIS-win",
+                "CP51932",
+                "JIS",
+                "ISO-2022-JP",
+                "ISO-2022-JP-MS"
+            ));
         }
 
         if (!$encoding) {
