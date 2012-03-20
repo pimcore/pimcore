@@ -115,6 +115,7 @@ class OnlineShop_Framework_IndexService {
             $b = Object_Abstract::doGetInheritedValues();
             Pimcore::unsetAdminMode();
             Object_Abstract::setGetInheritedValues(true);
+            Object_Abstract::setHideUnpublished(false);
             $categories = $object->getCategories();
             $categoryIds = array();
             $parentCategoryIds = array();
