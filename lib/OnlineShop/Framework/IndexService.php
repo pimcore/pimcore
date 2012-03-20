@@ -115,6 +115,7 @@ class OnlineShop_Framework_IndexService {
             $b = Object_Abstract::doGetInheritedValues();
             Pimcore::unsetAdminMode();
             Object_Abstract::setGetInheritedValues(true);
+            $hidePublishedMemory = Object_Abstract::doHideUnpublished();
             Object_Abstract::setHideUnpublished(false);
             $categories = $object->getCategories();
             $categoryIds = array();
@@ -220,6 +221,8 @@ class OnlineShop_Framework_IndexService {
                 Pimcore::setAdminMode();
             }
             Object_Abstract::setGetInheritedValues($b);
+            Object_Abstract::setHideUnpublished($hidePublishedMemory);
+            
             try {
                 $this->db->update(self::TABLENAME, array("o_virtualProductActive" => $virtualProductActive), "o_virtualProductId = " . $virtualProductId);
                 $this->db->insert(self::TABLENAME, $data);
@@ -239,6 +242,8 @@ class OnlineShop_Framework_IndexService {
             } catch (Exception $e) {
                 Logger::warn("Error during updating index relation table: " . $e->getMessage(), $e);
             }
+
+
 
         } else {
 
