@@ -29,103 +29,108 @@ class Pimcore_Tool_Text
     
     public static function wysiwygText($text)
     {
-
-        $html = str_get_html($text);
-        if(!$html) {
+        if(empty($text)) {
             return $text;
         }
 
-        $s = $html->find("a[pimcore_id],img[pimcore_id]");
+        $matches = self::getElementsTagsInWysiwyg($text);
 
-        foreach ($s as $el) {
+        if(count($matches[2]) > 0) {
+            for($i=0; $i<count($matches[2]); $i++) {
+                preg_match("/[0-9]+/",$matches[2][$i], $idMatches);
+                preg_match("/asset|object|document/",$matches[3][$i], $typeMatches);
 
-            // image
-            if ($el->src) {
-                if ($asset = Asset::getById($el->pimcore_id)) {
+                $id = $idMatches[0];
+                $type = $typeMatches[0];
+                $element = Element_Service::getElementById($type, $id);
 
-                    // only for images
-                    if(!$asset instanceof Asset_Image) {
-                        continue;
-                    }
-                    
-                    $el->src = $asset->getFullPath();
+                if($element instanceof Element_Interface) {
+                    $path = "";
+                    $oldTag = $matches[0][$i];
 
-                    // resize image to the given attributes
-                    $config = null;
-                    if ($el->width || $el->height) {
-                        $config = array(
-                            "width" => intval($el->width),
-                            "height" => intval($el->height)
-                        );
-                    }
-                    if ($el->style) {
-                        $cleanedStyle = preg_replace('#[ ]+#', '', $el->style);
-                        $styles = explode(";", $cleanedStyle);
-                        foreach ($styles as $style) {
-                            if (strpos($style, "width") !== false) {
-                                if (preg_match("/([0-9]+)(px)/i", $style, $match)) {
-                                    $config["width"] = $match[1];
-                                }
-                            }
-                            else if (strpos($style, "height") !== false) {
-                                if (preg_match("/([0-9]+)(px)/i", $style, $match)) {
-                                    $config["height"] = $match[1];
+                    if($matches[1][$i] == "a") {
+                        $linkAttr = "href";
+                        $path = $element->getFullPath();
+
+                        if($element instanceof Document) {
+                            // get parameters
+                            preg_match("/href=\"([^\"]+)*\"/", $oldTag, $oldHref);
+                            if($oldHref[1] && strpos($oldHref[1], "?") !== false) {
+                                $parameters = explode("?",$oldHref[1]);
+                                if(!empty($parameters[1])) {
+                                    $path .= "?" . $parameters[1];
                                 }
                             }
                         }
-                    }
+                    } else if ($matches[1][$i] == "img") {
+                        $linkAttr = "src";
 
-                    // only create a thumbnail if it is not disabled
-                    if(!$el->pimcore_disable_thumbnail) {
-                        if ($config) {
-                            $el->src = $asset->getThumbnail($config);
-                        } else {
-                            $el->src = $asset->getThumbnail(array(
-                                "width" => $asset->getWidth(),
-                                "height" => $asset->getHeight()
-                            ));
-                        }
-                    }
-                }
-                else {
-                    $el->outertext = "";
-                }
-            }
-
-            // link
-            if ($el->href) {
-                if ($el->pimcore_type == "asset") {
-                    if ($asset = Asset::getById($el->pimcore_id)) {
-                        $el->href = $asset->getFullPath();
-                    }
-                    else {
-                        $el->outertext = $el->innertext;
-                    }
-                }
-                else if ($el->pimcore_type == "document") {
-                    if ($doc = Document::getById($el->pimcore_id)) {
-
-                        $newHref = $doc->getFullPath();
-
-                        // get parameters
-                        $parameters = explode("?",$el->href);
-                        if(!empty($parameters[1])) {
-                            $newHref .= "?" . $parameters[1];
+                        // only for images
+                        if(!$element instanceof Asset_Image) {
+                            continue;
                         }
 
-                        $el->href = $newHref;
+                        $path = $element->getFullPath();
+
+                        // resize image to the given attributes
+                        $config = null;
+
+                        preg_match("/width=\"([^\"]+)*\"/", $oldTag, $widthAttr);
+                        preg_match("/height=\"([^\"]+)*\"/", $oldTag, $heightAttr);
+                        preg_match("/style=\"([^\"]+)*\"/", $oldTag, $styleAttr);
+
+                        if ($widthAttr[1] || $heightAttr[1]) {
+                            $config = array(
+                                "width" => intval($widthAttr[1]),
+                                "height" => intval($heightAttr[1])
+                            );
+                        }
+
+                        if ($styleAttr[1] && preg_match("/(width|height)/",$styleAttr[1])) {
+
+                            $config = array(); // reset the config if it was set already before (attributes)
+
+                            $cleanedStyle = preg_replace('#[ ]+#', '', $styleAttr[1]);
+                            $styles = explode(";", $cleanedStyle);
+                            foreach ($styles as $style) {
+                                if (strpos($style, "width") !== false) {
+                                    if (preg_match("/([0-9]+)(px)/i", $style, $match)) {
+                                        $config["width"] = $match[1];
+                                    }
+                                }
+                                else if (strpos($style, "height") !== false) {
+                                    if (preg_match("/([0-9]+)(px)/i", $style, $match)) {
+                                        $config["height"] = $match[1];
+                                    }
+                                }
+                            }
+                        }
+
+                        // only create a thumbnail if it is not disabled
+                        if(!preg_match("/pimcore_disable_thumbnail=\"([^\"]+)*\"/", $oldTag)) {
+                            if (!empty($config)) {
+                                $path = $element->getThumbnail($config);
+                            } else {
+                                $path = $element->getThumbnail(array(
+                                    "width" => $element->getWidth(),
+                                    "height" => $element->getHeight()
+                                ));
+                            }
+                        }
                     }
-                    else {
-                        $el->outertext = $el->innertext;
-                    }
+
+                    $newTag = preg_replace("/".$linkAttr."=\"[^\"]*\"/",$linkAttr . '="' . $path . '"', $oldTag);
+
+                    $text = str_replace($oldTag, $newTag, $text);
                 }
             }
         }
 
-        return $html->save();
+        return $text;
     }
 
     /**
+     * @deprecated
      * @static
      * @param  array $idMapping e.g. array("asset"=>array(OLD_ID=>NEW_ID),"object"=>array(OLD_ID=>NEW_ID),"document"=>array(OLD_ID=>NEW_ID));
      * @param  string $text html text of wysiwyg field
@@ -180,9 +185,27 @@ class Pimcore_Tool_Text
             }
             return $html->save();
         }
+    }
 
 
+    /**
+     * @static
+     * @param $text
+     * @return array
+     */
+    public static function getElementsTagsInWysiwyg($text) {
 
+        $hash = "elements_raw_wysiwyg_text_" . md5($text);
+        if(Zend_Registry::isRegistered($hash)) {
+            return Zend_Registry::get($hash);
+        }
+
+        //$text = Pimcore_Tool_Text::removeLineBreaks($text);
+        preg_match_all("@\<(a|img)[^>]*([pimcore_id|pimcore_type]+=\"[0-9]+\")[^>]*([pimcore_id|pimcore_type]+=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
+
+        Zend_Registry::set($hash, $matches);
+
+        return $matches;
     }
 
     /**
@@ -198,8 +221,7 @@ class Pimcore_Tool_Text
         }
 
         $elements = array();
-        $text = Pimcore_Tool_Text::removeLineBreaks($text);
-        preg_match_all("@\<(a|img)[^>]*([pimcore_id|pimcore_type]+[ ]?+=[ ]?+\"[0-9]+\")[^>]*([pimcore_id|pimcore_type]+[ ]?+=[ ]?+\"[asset|document|object]+\")[^>]*\>@Ui", $text, $matches);
+        $matches = self::getElementsTagsInWysiwyg($text);
 
         if(count($matches[2]) > 0) {
             for($i=0; $i<count($matches[2]); $i++) {
@@ -235,60 +257,9 @@ class Pimcore_Tool_Text
      */
     public static function getDependenciesOfWysiwygText($text)
     {
-
         $dependencies = array();
 
         if (!empty($text)) {
-
-            // old legacy slow method parsing the dom
-
-            /*$html = str_get_html($text);
-            if(!$html) {
-                return array();
-            }
-
-            $s = $html->find("a[pimcore_id],img[pimcore_id]");
-
-            foreach ($s as $el) {
-
-                // image
-                if ($el->src) {
-                    if ($asset = Asset::getById($el->pimcore_id)) {
-                        $key = "asset_" . $asset->getId();
-                        $dependencies[$key] = array(
-                            "id" => $asset->getId(),
-                            "type" => "asset"
-                        );
-                    }
-                }
-
-                // link
-                if ($el->href) {
-                    if ($el->pimcore_type == "asset") {
-                        if ($asset = Asset::getById($el->pimcore_id)) {
-
-                            $key = "asset_" . $asset->getId();
-                            $dependencies[$key] = array(
-                                "id" => $asset->getId(),
-                                "type" => "asset"
-                            );
-
-                        }
-                    }
-                    else if ($el->pimcore_type == "document") {
-                        if ($doc = Document::getById($el->pimcore_id)) {
-
-                            $key = "document_" . $doc->getId();
-                            $dependencies[$key] = array(
-                                "id" => $doc->getId(),
-                                "type" => "document"
-                            );
-
-                        }
-                    }
-                }
-            }*/
-
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {
                 $key = $element["type"] . "_" . $element["id"];
@@ -308,46 +279,6 @@ class Pimcore_Tool_Text
         $tags = is_array($tags) ? $tags : array();
         
         if (!empty($text)) {
-
-            // old legacy slow method parsing the dom
-
-            /*$html = str_get_html($text);
-            if(!$html) {
-                return array();
-            }
-
-            $s = $html->find("a[pimcore_id],img[pimcore_id]");
-
-            foreach ($s as $el) {
-
-                // image
-                if ($el->src) {
-                    if ($asset = Asset::getById($el->pimcore_id)) {
-                        if (!array_key_exists($asset->getCacheTag(), $tags)) {
-                            $tags = $asset->getCacheTags($tags);
-                        }
-                    }
-                }
-
-                // link
-                if ($el->href) {
-                    if ($el->pimcore_type == "asset") {
-                        if ($asset = Asset::getById($el->pimcore_id)) {
-                            if (!array_key_exists($asset->getCacheTag(), $tags)) {
-                                $tags = $asset->getCacheTags($tags);
-                            }
-                        }
-                    }
-                    else if ($el->pimcore_type == "document") {
-                        if ($doc = Document::getById($el->pimcore_id)) {
-                            if (!array_key_exists($doc->getCacheTag(), $tags)) {
-                                $tags = $doc->getCacheTags($tags);
-                            }
-                        }
-                    }
-                }
-            }*/
-
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {
                 $el = $element["element"];
