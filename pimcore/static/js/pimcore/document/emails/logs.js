@@ -251,26 +251,31 @@ pimcore.document.emails.logs = Class.create({
                     icon:"/pimcore/static/img/icon/email_start.png",
                     handler:function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
-                        Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'), function(btn){
-                            if (btn == 'yes'){
-                                Ext.Ajax.request({
-                                    url: '/admin/email/resend-email/',
-                                    success: function(response){
-                                        var data = Ext.decode( response.responseText );
-                                        if(data.success){
-                                            Ext.Msg.alert(t('email_log_resend_window_title'),t('email_log_resend_window_success_message'));
-                                        }else{
-                                            Ext.Msg.alert(t('email_log_resend_window_title'),t('email_log_resend_window_error_message'));
-                                        }
-                                    },
-                                    failure: function () {
-                                        alert("Could not resend email");
-                                    },
-                                    params: { id : rec.get('id') }
-                                });
-                            }
-                        });
-                    }.bind(this)
+                            Ext.Msg.confirm(t('email_log_resend_window_title'), t('email_log_resend_window_msg'), function(btn){
+                                if (btn == 'yes'){
+                                    Ext.Ajax.request({
+                                        url: '/admin/email/resend-email/',
+                                        success: function(response){
+                                            var data = Ext.decode( response.responseText );
+                                            if(data.success){
+                                                Ext.Msg.alert(t('email_log_resend_window_title'),t('email_log_resend_window_success_message'));
+                                            }else{
+                                                Ext.Msg.alert(t('email_log_resend_window_title'),t('email_log_resend_window_error_message'));
+                                            }
+                                        },
+                                        failure: function () {
+                                            alert("Could not resend email");
+                                        },
+                                        params: { id : rec.get('id') }
+                                    });
+                                }
+                            });
+                    }.bind(this),
+                    getClass: function(v, meta, rec) {
+                        if(!rec.get('emailLogExistsHtml') && !rec.get('emailLogExistsText') ){
+                            return "pimcore_hidden";
+                        }
+                    }
                 }
             ]
         },
@@ -341,10 +346,11 @@ pimcore.document.emails.logs = Class.create({
                 forceFit: true
             },
             tbar: [
+                    "->",
                     {
                       text: t("filter") + "/" + t("search"),
                       xtype: "tbtext",
-                      style: "margin: 0 10px 0 0; float:right; text-align:right;"
+                      style: "margin: 0 10px 0 0;"
                     },this.filterField
                   ],
             bbar: [this.pagingtoolbar]
