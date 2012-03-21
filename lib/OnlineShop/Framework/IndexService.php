@@ -137,6 +137,7 @@ class OnlineShop_Framework_IndexService {
                 }
             }
 
+            ksort($categoryIds);
 
             $virtualProductId = $object->getId();
             $virtualProductActive = $object->isActive();
@@ -222,7 +223,7 @@ class OnlineShop_Framework_IndexService {
             }
             Object_Abstract::setGetInheritedValues($b);
             Object_Abstract::setHideUnpublished($hidePublishedMemory);
-            
+
             try {
                 $this->db->update(self::TABLENAME, array("o_virtualProductActive" => $virtualProductActive), "o_virtualProductId = " . $virtualProductId);
                 $this->db->insert(self::TABLENAME, $data);
@@ -276,6 +277,9 @@ class OnlineShop_Framework_IndexService {
     public function getIndexColumns($considerHideInFieldList = false) {
         if(empty($this->indexColumns)) {
             $this->indexColumns = array();
+
+            $this->indexColumns["categoryIds"] = "categoryIds";
+
             foreach($this->columnConfig->column as $column) {
                 if($considerHideInFieldList && $column->hideInFieldlistDatatype != "true") {
                     $this->indexColumns[$column->name] = $column->name;
