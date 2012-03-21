@@ -202,6 +202,7 @@ pimcore.settings.user.user.settings = Class.create({
             triggerAction: "all",
             editable: false,
             fieldLabel: t("roles"),
+            width : 300,
             store: this.data.roles,
             value: this.currentUser.roles.join(",")
         });
