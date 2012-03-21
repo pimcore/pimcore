@@ -38,17 +38,21 @@ pimcore.edithelpers.frameElement = function (el, body) {
         pimcore.edithelpers.unFrameElement();
     }
 
-    var startDistance = 5;
-    var offsets = Ext.get(el).getOffsetsTo(Ext.getBody());
-    offsets[0] -= startDistance;
-    offsets[1] -= startDistance;
+    try {
+        var startDistance = 5;
+        var offsets = Ext.get(el).getOffsetsTo(Ext.getBody());
+        offsets[0] -= startDistance;
+        offsets[1] -= startDistance;
 
-    var width = Ext.get(el).getWidth() + (startDistance*2);
-    var height = Ext.get(el).getHeight() + (startDistance*2);
-    var borderWidth = 5;
+        var width = Ext.get(el).getWidth() + (startDistance*2);
+        var height = Ext.get(el).getHeight() + (startDistance*2);
+        var borderWidth = 5;
 
-    if(typeof body == "undefined") {
-        var body = document.body;
+        if(typeof body == "undefined") {
+            var body = document.body;
+        }
+    } catch (e) {
+        return;
     }
 
     var top = document.createElement("div");
