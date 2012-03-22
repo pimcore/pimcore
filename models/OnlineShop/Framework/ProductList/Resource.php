@@ -198,4 +198,18 @@ class OnlineShop_Framework_ProductList_Resource {
             return "";
         }
     }
+
+    /**
+     * returns where statement for fulltext search index
+     *
+     * @param $fields
+     * @param $searchstring
+     */
+    public function buildFulltextSearchWhere($fields, $searchstring) {
+        $columnNames = array();
+        foreach($fields as $c) {
+            $columnNames[] = $this->db->quoteIdentifier($c);
+        }
+        return 'MATCH (' . implode(",", $columnNames) . ') AGAINST (' . $this->db->quote($searchstring) . ')';
+    }
 }

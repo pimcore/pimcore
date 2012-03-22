@@ -362,6 +362,17 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
 
     /**
+     * returns where statement for fulltext search index
+     *
+     * @param $fields
+     * @param $searchstring
+     */
+    public function buildFulltextSearchWhere($fields, $searchstring) {
+        return $this->resource->buildFulltextSearchWhere($fields, $searchstring);
+    }
+
+
+    /**
      *  -----------------------------------------------------------------------------------------
      *   Methods for Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, Iterator
      *  -----------------------------------------------------------------------------------------

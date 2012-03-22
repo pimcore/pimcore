@@ -92,6 +92,24 @@ class OnlineShop_Framework_IndexService {
             $this->dbexec('ALTER TABLE `' . self::TABLENAME . '` ADD `' . $c . '` ' . $type . ';');
         }
 
+        $searchIndexColums = $this->getGeneralSearchColumns();
+        if(!empty($searchIndexColums)) {
+
+            try {
+                $this->dbexec('ALTER TABLE protouchng.plugin_onlineshop_productindex DROP INDEX search;');
+            } catch(Exception $e) {
+                Logger::info($e);
+            }
+
+            $this->dbexec('ALTER TABLE `' . self::TABLENAME . '` ENGINE = MyISAM;');
+            $columnNames = array();
+            foreach($searchIndexColums as $c) {
+                $columnNames[] = $this->db->quoteIdentifier($c);
+            }
+            $this->dbexec('ALTER TABLE `' . self::TABLENAME . '` ADD FULLTEXT INDEX search (' . implode(",", $columnNames) . ')');
+        }
+
+
         $this->dbexec("CREATE TABLE IF NOT EXISTS `" . self::RELATIONTABLENAME . "` (
           `src` int(11) NOT NULL,
           `src_virtualProductId` int(11) NOT NULL,
