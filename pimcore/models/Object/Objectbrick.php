@@ -51,15 +51,28 @@ class Object_Objectbrick extends Pimcore_Model_Abstract {
     /**
      * @return array
      */
-    public function getItems () {
-        if(empty($this->items)) {
-            foreach(get_object_vars($this) as $var) {
-                if($var instanceof Object_Objectbrick_Data_Abstract) {
-                    $this->items[] = $var;
+    public function getItems ($withInheritedValues = false) {
+        if($withInheritedValues) {
+            $getters = $this->getBrickGetters();
+            $values = array();
+            foreach($getters as $getter) {
+                $value = $this->$getter();
+                if(!empty($value)) {
+                    $values[] = $value;
                 }
             }
+
+            return $values;
+        } else {
+            if(empty($this->items)) {
+                foreach(get_object_vars($this) as $var) {
+                    if($var instanceof Object_Objectbrick_Data_Abstract) {
+                        $this->items[] = $var;
+                    }
+                }
+            }
+            return $this->items;
         }
-        return $this->items;
     }
 
     /**
