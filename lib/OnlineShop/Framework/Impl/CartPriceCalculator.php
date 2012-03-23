@@ -2,12 +2,12 @@
 
 class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framework_ICartPriceCalculator {
 
-    private $isCalculated = false;
+    protected $isCalculated = false;
 
     /**
      * @var OnlineShop_Framework_ICart
      */
-    private $cart; 
+    protected $cart;
 
     public function __construct($config, OnlineShop_Framework_ICart $cart) {
         $this->modificators = array();
