@@ -61,7 +61,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         }
 
         var inactiveContainerWidth = options.width + "px";
-        if (options.width.match(/%/)) {
+        if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
             inactiveContainerWidth = options.width;
         }
 
@@ -70,7 +70,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
 
         // if the width is a % value get the current width of the container in px for further processing
-        if (options.width.match(/%/)) {
+        if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
             this.options.width = Ext.get(this.textarea).getWidth();
             if (this.options.width < 1) {
                 this.options.width = 400;
