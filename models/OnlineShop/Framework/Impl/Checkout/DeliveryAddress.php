@@ -73,6 +73,10 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends OnlineShop_Fram
             $data->line9 = $this->cart->getCheckoutData(self::LINE8);
             $data->isSet = true;
         }
+        if($this->cart->getCheckoutData(self::IS_ALTERNATIVE)) {
+            $data->isAlternative = $this->cart->getCheckoutData(self::IS_ALTERNATIVE);
+            $data->isSet = $data->isAlternative;
+        }
         return $data;
     }
 }
