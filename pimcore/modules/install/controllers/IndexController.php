@@ -118,6 +118,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
                     "error_pages" => array(
                         "default" => "/"
                     ),
+                    "createredirectwhenmoved" => "",
                     "allowtrailingslash" => "no",
                     "allowcapitals" => "no"
                 ),

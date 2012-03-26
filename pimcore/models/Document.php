@@ -370,16 +370,14 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      *
      * @return void
      */
-    protected function update() {
+    public function update() {
 
         if (!$this->getKey() && $this->getId() != 1) {
             $this->delete();
             throw new Exception("Document requires key, document with id " . $this->getId() . " deleted");
         }
 
-
         Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
-
 
         // save properties
         $this->getProperties();
@@ -411,18 +409,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $d->save();
 
         $this->getResource()->update();
-
-        if ($this->_oldPath) {
-            // update childs path
-            $this->getResource()->updateChildsPaths($this->_oldPath);
-
-            // create redirect for old path
-            $redirect = new Redirect();
-            $redirect->setTarget($this->getId());
-            $redirect->setSource("@" . $this->_oldPath . "/?@");
-            $redirect->setStatusCode(301);
-            $redirect->save();
-        }
 
         // empty object cache
         $this->clearDependedCache();

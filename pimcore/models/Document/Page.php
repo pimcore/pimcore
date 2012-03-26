@@ -74,6 +74,27 @@ class Document_Page extends Document_PageSnippet {
     }
 
     /**
+     *
+     */
+    public function update() {
+
+        parent::update();
+
+        $config = Pimcore_Config::getSystemConfig();
+        if ($this->_oldPath && $config->documents->createredirectwhenmoved) {
+            // update childs path
+            $this->getResource()->updateChildsPaths($this->_oldPath);
+
+            // create redirect for old path
+            $redirect = new Redirect();
+            $redirect->setTarget($this->getId());
+            $redirect->setSource("@" . $this->_oldPath . "/?@");
+            $redirect->setStatusCode(301);
+            $redirect->save();
+        }
+    }
+
+    /**
      * getProperty method should be used instead
      *
      * @deprecated

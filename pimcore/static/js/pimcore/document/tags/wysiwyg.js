@@ -79,8 +79,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             Ext.get(this.textarea).applyStyles("width: " + this.options.width + "px");
         }
 
-        console.log(this.options.width);
-
         Ext.get(id).setStyle({
             width: options.width + "px"
         });
