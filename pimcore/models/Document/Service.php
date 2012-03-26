@@ -153,6 +153,10 @@ class Document_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        if(method_exists($new, "setPrettyUrl")) {
+            $new->setPrettyUrl(null);
+        }
+
         $new->save();
 
         // add to store
@@ -189,6 +193,10 @@ class Document_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        if(method_exists($new, "setPrettyUrl")) {
+            $new->setPrettyUrl(null);
+        }
+
         $new->save();
 
         $this->updateChilds($target,$new);
