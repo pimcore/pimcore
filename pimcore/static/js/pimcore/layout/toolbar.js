@@ -95,6 +95,10 @@ pimcore.layout.toolbar = Class.create({
                     text: "robots.txt",
                     iconCls: "pimcore_icon_robots",
                     handler: this.showRobotsTxt
+                }, {
+                    text: t("http_errors"),
+                    iconCls: "pimcore_icon_httperrorlog",
+                    handler: this.showHttpErrorLog
                 }]
             });
         }
@@ -734,6 +738,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
+        }
+    },
+
+    showHttpErrorLog: function () {
+        try {
+            pimcore.globalmanager.get("http_error_log").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
         }
     },
 

@@ -209,6 +209,7 @@
             "pimcore/settings/maintenance.js",
             "pimcore/settings/liveconnect.js",
             "pimcore/settings/robotstxt.js",
+            "pimcore/settings/httpErrorLog.js",
 
             // element
             "pimcore/element/abstract.js",

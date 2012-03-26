@@ -308,6 +308,38 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
                              ));
     }
 
+    public function httpErrorLogAction() {
+
+        $db = Pimcore_Resource::get();
+
+        $limit = $this->_getParam("limit");
+        $offset = $this->_getParam("start");
+        $sort = $this->_getParam("sort");
+        $dir = $this->_getParam("dir");
+        if(!$limit) {
+            $limit = 20;
+        }
+        if(!$offset) {
+            $offset = 0;
+        }
+        if(!$sort || !in_array($dir, array("id","code","path","date"))) {
+            $sort = "date";
+        }
+        if(!$dir || !in_array($dir, array("DESC","ASC"))) {
+            $dir = "DESC";
+        }
+
+
+        $logs = $db->fetchAll("SELECT id,code,path,date,count(*) as amount,concat(code,path) as `group` FROM http_error_log GROUP BY `group` ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
+        $total = $db->fetchOne("SELECT count(*) FROM (SELECT concat(code,path) as `group` FROM http_error_log GROUP BY `group`) as counting");
+
+        $this->_helper->json(array(
+            "items" => $logs,
+            "total" => $total,
+            "success" => true
+        ));
+    }
+
     public function phpinfoAction()
     {
         phpinfo();
