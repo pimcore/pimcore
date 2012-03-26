@@ -89,6 +89,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_JavascriptMinify(), 801);
             $front->registerPlugin(new Pimcore_Controller_Plugin_ImageDataUri(), 803);
             $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_HttpErrorLog(), 850);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
 
