@@ -33,7 +33,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         }
         this.data = data;
 
-        if (!options.width) {
+        if (!options.width || options.width.match(/%/)) {
             options.width = Ext.get(id).getWidth();
             if (options.width < 1) {
                 options.width = 400;
@@ -43,8 +43,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         if (options.resize_disabled) {
             options.resize_enabled = false;
         }
-        
-                
+
         this.options = options;
 
         var textareaId = id + "_textarea";
