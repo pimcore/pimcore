@@ -410,6 +410,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
         $this->getResource()->update();
 
+        if ($this->_oldPath) {
+            // update childs path
+            $this->getResource()->updateChildsPaths($this->_oldPath);
+        }
+
         // empty object cache
         $this->clearDependedCache();
 
