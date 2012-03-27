@@ -1117,3 +1117,7 @@
 .pimcore_icon_httperrorlog {
     background: url(/pimcore/static/img/icon/table_error.png) left center no-repeat !important;
 }
+
+.pimcore_icon_groupby {
+    background: url(/pimcore/static/img/icon/table_multiple.png) left center no-repeat !important;
+}
