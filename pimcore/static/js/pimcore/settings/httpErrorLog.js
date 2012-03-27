@@ -60,7 +60,7 @@ pimcore.settings.httpErrorLog = Class.create({
             restful: false,
             root: "items",
             remoteSort: true,
-            fields: ["id","path", "code", "date"]
+            fields: ["id","path", "code", "date","amount"]
         });
         this.store.load();
 
@@ -68,6 +68,7 @@ pimcore.settings.httpErrorLog = Class.create({
             {header: "ID", width: 50, sortable: true, hidden: true, dataIndex: 'id'},
             {header: "Code", width: 60, sortable: true, dataIndex: 'code'},
             {header: t("path"), id: "path", width: 400, sortable: true, dataIndex: 'path'},
+            {header: t("amount"), width: 60, sortable: true, dataIndex: 'amount'},
             {header: t("date"), id: "extension_description", width: 200, sortable: true, dataIndex: 'date', renderer: function(d) {
                 var date = new Date(d * 1000);
                 return date.format("Y-m-d H:i:s");
