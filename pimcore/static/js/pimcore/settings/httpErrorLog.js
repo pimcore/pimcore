@@ -76,7 +76,19 @@ pimcore.settings.httpErrorLog = Class.create({
             {header: t("date"), id: "extension_description", width: 200, sortable: true, dataIndex: 'date', renderer: function(d) {
                 var date = new Date(d * 1000);
                 return date.format("Y-m-d H:i:s");
-            }}
+            }},
+            {
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [{
+                    tooltip: t('open'),
+                    icon: "/pimcore/static/img/icon/world_go.png",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        window.open(data.get("path"));
+                    }.bind(this)
+                }]
+            }
         ];
 
 
