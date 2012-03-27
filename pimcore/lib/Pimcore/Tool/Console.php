@@ -23,7 +23,7 @@ class Pimcore_Tool_Console {
 
         if(Pimcore_Config::getSystemConfig()->general->php_cli) {
             if(is_executable(Pimcore_Config::getSystemConfig()->general->php_cli)) {
-                return Pimcore_Config::getSystemConfig()->general->php_cli;
+                return (string) Pimcore_Config::getSystemConfig()->general->php_cli;
             } else {
                 Logger::critical("PHP-CLI binary: " . Pimcore_Config::getSystemConfig()->general->php_cli . " is not executable");
             }
