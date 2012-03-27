@@ -82,9 +82,6 @@ class Document_Page extends Document_PageSnippet {
 
         $config = Pimcore_Config::getSystemConfig();
         if ($this->_oldPath && $config->documents->createredirectwhenmoved) {
-            // update childs path
-            $this->getResource()->updateChildsPaths($this->_oldPath);
-
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setTarget($this->getId());
