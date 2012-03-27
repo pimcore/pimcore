@@ -60,7 +60,11 @@ pimcore.settings.httpErrorLog = Class.create({
             restful: false,
             root: "items",
             remoteSort: true,
-            fields: ["id","path", "code", "date","amount"]
+            fields: ["id","path", "code", "date","amount"],
+            baseParams: {
+                limit: 20,
+                filter: ""
+            }
         });
         this.store.load();
 
@@ -75,6 +79,22 @@ pimcore.settings.httpErrorLog = Class.create({
             }}
         ];
 
+
+        this.filterField = new Ext.form.TextField({
+            xtype: "textfield",
+            width: 200,
+            style: "margin: 0 10px 0 0;",
+            enableKeyEvents: true,
+            listeners: {
+                "keydown" : function (field, key) {
+                    if (key.getKey() == key.ENTER) {
+                        var input = field;
+                        this.store.baseParams.filter = input.getValue();
+                        this.store.load();
+                    }
+                }.bind(this)
+            }
+        });
 
         this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: 20,
@@ -127,10 +147,15 @@ pimcore.settings.httpErrorLog = Class.create({
                 text: t("refresh"),
                 iconCls: "pimcore_icon_reload",
                 handler: this.reload.bind(this)
-            },"-",{
+            }, "-",{
                 text: t("errors_from_the_last_14_days"),
                 xtype: "tbtext"
-            }]
+            }, '-',"->",{
+              text: t("filter") + "/" + t("search"),
+              xtype: "tbtext",
+              style: "margin: 0 10px 0 0;"
+            },
+            this.filterField]
         });
 
         return this.grid;

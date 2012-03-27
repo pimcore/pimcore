@@ -316,6 +316,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $offset = $this->_getParam("start");
         $sort = $this->_getParam("sort");
         $dir = $this->_getParam("dir");
+        $filter = $this->_getParam("filter");
         if(!$limit) {
             $limit = 20;
         }
@@ -329,9 +330,13 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $dir = "DESC";
         }
 
+        $condition = "";
+        if($filter) {
+            $condition = " WHERE path LIKE " . $db->quote("%" . $filter . "%");
+        }
 
-        $logs = $db->fetchAll("SELECT id,code,path,date,count(*) as amount,concat(code,path) as `group` FROM http_error_log GROUP BY `group` ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
-        $total = $db->fetchOne("SELECT count(*) FROM (SELECT concat(code,path) as `group` FROM http_error_log GROUP BY `group`) as counting");
+        $logs = $db->fetchAll("SELECT id,code,path,date,count(*) as amount,concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group` ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
+        $total = $db->fetchOne("SELECT count(*) FROM (SELECT concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group`) as counting");
 
         $this->_helper->json(array(
             "items" => $logs,
