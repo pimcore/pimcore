@@ -148,6 +148,18 @@ pimcore.settings.httpErrorLog = Class.create({
                 iconCls: "pimcore_icon_reload",
                 handler: this.reload.bind(this)
             }, "-",{
+                text: t('flush'),
+                handler: function () {
+                    Ext.Ajax.request({
+                        url: "/admin/misc/http-error-log-flush",
+                        success: function () {
+                            this.store.reload();
+                            this.grid.getView().refresh();
+                        }.bind(this)
+                    });
+                }.bind(this),
+                iconCls: "pimcore_icon_flush_recyclebin"
+            }, "-", {
                 text: t("errors_from_the_last_14_days"),
                 xtype: "tbtext"
             }, '-',"->",{

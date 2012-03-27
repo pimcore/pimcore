@@ -345,6 +345,16 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         ));
     }
 
+    public function httpErrorLogFlushAction() {
+
+        $db = Pimcore_Resource::get();
+        $db->delete("http_error_log");
+
+        $this->_helper->json(array(
+            "success" => true
+        ));
+    }
+
     public function phpinfoAction()
     {
         phpinfo();
