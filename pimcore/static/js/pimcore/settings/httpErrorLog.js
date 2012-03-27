@@ -126,6 +126,9 @@ pimcore.settings.httpErrorLog = Class.create({
                 text: t("refresh"),
                 iconCls: "pimcore_icon_reload",
                 handler: this.reload.bind(this)
+            },"-",{
+                text: t("errors_from_the_last_14_days"),
+                xtype: "tbtext"
             }]
         });
 
