@@ -63,7 +63,8 @@ pimcore.settings.httpErrorLog = Class.create({
             fields: ["id","path", "code", "date","amount"],
             baseParams: {
                 limit: 20,
-                filter: ""
+                filter: "",
+                group: 1
             }
         });
         this.store.load();
@@ -101,7 +102,8 @@ pimcore.settings.httpErrorLog = Class.create({
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
-                        this.store.baseParams.filter = input.getValue();
+                        var val = input.getValue();
+                        this.store.baseParams.filter = val ? val : "";
                         this.store.load();
                     }
                 }.bind(this)
@@ -152,6 +154,21 @@ pimcore.settings.httpErrorLog = Class.create({
             bbar: this.pagingtoolbar,
             columnLines: true,
             stripeRows: true,
+            listeners: {
+                "rowdblclick": function (grid, rowIndex, ev) {
+                    var data = grid.getStore().getAt(rowIndex);
+                    var win = new Ext.Window({
+                        closable: true,
+                        width: 810,
+                        autoDestroy: true,
+                        height: 430,
+                        modal: true,
+                        bodyStyle: "background:#fff;",
+                        html: '<iframe src="http://pimcore.elements.at/admin/misc/http-error-log-detail?id=' + data.get("id") + '" frameborder="0" width="100%" height="390"></iframe>'
+                    });
+                    win.show();
+                }
+            },
             viewConfig: {
                 forceFit: true
             },
@@ -159,6 +176,15 @@ pimcore.settings.httpErrorLog = Class.create({
                 text: t("refresh"),
                 iconCls: "pimcore_icon_reload",
                 handler: this.reload.bind(this)
+            }, "-",{
+                text: t("group_by_path"),
+                pressed: true,
+                iconCls: "pimcore_icon_groupby",
+                enableToggle: true,
+                handler: function (button) {
+                    this.store.baseParams.group = button.pressed ? 1 : 0;
+                    this.store.load();
+                }.bind(this)
             }, "-",{
                 text: t('flush'),
                 handler: function () {

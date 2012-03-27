@@ -317,6 +317,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $sort = $this->_getParam("sort");
         $dir = $this->_getParam("dir");
         $filter = $this->_getParam("filter");
+        $group = $this->_getParam("group");
         if(!$limit) {
             $limit = 20;
         }
@@ -332,11 +333,22 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
         $condition = "";
         if($filter) {
-            $condition = " WHERE path LIKE " . $db->quote("%" . $filter . "%");
+            $filter = $db->quote("%" . $filter . "%");
+
+            $conditionParts = array();
+            foreach (array("path", "code", "parametersGet", "parametersPost", "serverVars", "cookies") as $field) {
+                $conditionParts[] = $field . " LIKE " . $filter;
+            }
+            $condition = " WHERE " . implode(" OR ", $conditionParts);
         }
 
-        $logs = $db->fetchAll("SELECT id,code,path,date,count(*) as amount,concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group` ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
-        $total = $db->fetchOne("SELECT count(*) FROM (SELECT concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group`) as counting");
+        if($group) {
+            $logs = $db->fetchAll("SELECT id,code,path,date,count(*) as amount,concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group` ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
+            $total = $db->fetchOne("SELECT count(*) FROM (SELECT concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group`) as counting");
+        } else {
+            $logs = $db->fetchAll("SELECT id,code,path,date FROM http_error_log " . $condition . " ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
+            $total = $db->fetchOne("SELECT count(*) FROM http_error_log " . $condition);
+        }
 
         $this->_helper->json(array(
             "items" => $logs,
@@ -353,6 +365,20 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array(
             "success" => true
         ));
+    }
+
+    public function httpErrorLogDetailAction() {
+
+        $db = Pimcore_Resource::get();
+        $data = $db->fetchRow("SELECT * FROM http_error_log WHERE id = ?", array($this->_getParam("id")));
+
+        foreach ($data as $key => &$value) {
+            if(in_array($key, array("parametersGet", "parametersPost", "serverVars", "cookies"))) {
+                $value = unserialize($value);
+            }
+        }
+
+        $this->view->data = $data;
     }
 
     public function phpinfoAction()

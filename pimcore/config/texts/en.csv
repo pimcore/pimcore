@@ -1,3 +1,8 @@
+"parameterPost","POST Parameters"
+"parameterGet","GET Parameters"
+"cookies","Cookies"
+"serverVars","Server Variables"
+"group_by_path","Group by path"
 "flush","Flush"
 "errors_from_the_last_14_days","Errors from the last 14 days"
 "http_errors","HTTP Errors"
