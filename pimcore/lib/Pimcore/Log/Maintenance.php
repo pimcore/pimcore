@@ -15,7 +15,10 @@
 
 class Pimcore_Log_Maintenance {
 
-    public function execute() {
+    /**
+     *
+     */
+    public function mail () {
 
         $conf = Pimcore_Config::getSystemConfig();
         if (!empty($conf->general->logrecipient)) {
@@ -53,7 +56,7 @@ class Pimcore_Log_Maintenance {
                         }
                      }
                 } else {
-                    Logger::err(get_class($this).": Cannot send mail to configured log user [".$user->getUsername()."] because email is empty");
+                    Logger::err(get_class($this).": Cannot send mail to configured log user [".$user->getName()."] because email is empty");
                 }
             } else {
                 Logger::err(get_class($this).": Cannot send mail to configured log user. User is either null or not an admin");
@@ -63,6 +66,18 @@ class Pimcore_Log_Maintenance {
         }
 
 
+    }
+
+    /**
+     *
+     */
+    public function httpErrorLogCleanup () {
+
+        // keep the history for 14 days
+        $limit = time() - (14 * 86400);
+
+        $db = Pimcore_Resource::get();
+        $db->delete("http_error_log", "date < " . $limit);
     }
 
 }
