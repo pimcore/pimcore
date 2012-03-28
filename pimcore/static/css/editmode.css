@@ -83,6 +83,21 @@
 	background: url(/pimcore/static/img/icon/pencil_go.png) !important;
 }
 
+
+.pimcore_block_button_type, .pimcore_block_button_type button {
+    cursor: move !important;
+}
+
+.pimcore_area_dropzone {
+    height: 20px;
+    background: #a3bae9;
+    border:2px dashed #fff;
+}
+
+.pimcore_area_dropzone_hover {
+    background: #6ec563;
+}
+
 .pimcore_wysiwyg_inactive {
 	border: 1px solid #d0d0d0;
 	cursor:pointer;
