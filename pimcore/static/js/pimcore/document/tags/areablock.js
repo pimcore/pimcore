@@ -22,16 +22,29 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.elements = [];
         this.options = options;
 
+        if(typeof this.options["toolbar"] == "undefined" || this.options["toolbar"] != false) {
+            this.createToolBar();
+        }
+
         var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv, typebuttontext, editDiv, editButton;
         this.elements = Ext.get(id).query("div." + name + "[key]");
 
+        // reload or not => default not
+        if(typeof this.options["reload"] == "undefined") {
+            this.options.reload = false;
+        }
+
         // type mapping
         var typeNameMappings = {};
+        this.allowedTypes = []; // this is for the toolbar to check if an brick can be dropped to this areablock
         for (var i=0; i<this.options.types.length; i++) {
             typeNameMappings[this.options.types[i].type] = {
                 name: this.options.types[i].name,
-                description: this.options.types[i].description
+                description: this.options.types[i].description,
+                icon: this.options.types[i].icon
             };
+
+            this.allowedTypes.push(this.options.types[i].type);
         }
 
         if (this.elements.length < 1) {
@@ -105,8 +118,47 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 typeButton = new Ext.Button({
                     cls: "pimcore_block_button_type",
                     text: typebuttontext,
-                    handleMouseEvents: false
+                    handleMouseEvents: false,
+                    icon: typeNameMappings[this.elements[i].type].icon,
+                    style: "cursor: move;"
                 });
+                typeButton.on("afterrender", function (index, v) {
+
+                    var element = this.elements[index];
+
+                    v.dragZone = new Ext.dd.DragZone(v.getEl(), {
+                        getDragData: function(e) {
+                            closeCKeditors();
+
+                            var sourceEl = element;
+                            var proxyEl = null;
+                            if(Ext.get(element).getHeight() > 300 || Ext.get(element).getWidth() > 900) {
+                                // use the button as proxy if the area itself is to big
+                                proxyEl = v.getEl().dom;
+                            } else {
+                                proxyEl = element;
+                            }
+
+                            if (sourceEl) {
+                                d = proxyEl.cloneNode(true);
+                                d.id = Ext.id();
+                                return v.dragData = {
+                                    sourceEl: sourceEl,
+                                    repairXY: Ext.fly(sourceEl).getXY(),
+                                    ddel: d
+                                }
+                            }
+                        },
+
+                        onStartDrag: this.createDropZones.bind(this),
+                        afterDragDrop: this.removeDropZones.bind(this),
+                        afterInvalidDrop: this.removeDropZones.bind(this),
+
+                        getRepairXY: function() {
+                            return this.dragData.repairXY;
+                        }
+                    });
+                }.bind(this, i));
                 typeButton.render(typeDiv);
                 
                 
@@ -114,6 +166,80 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                    Ext.get(id).addClass("pimcore_block_limitreached");
                 }
             }
+        }
+    },
+
+    createDropZones: function () {
+
+        if(this.elements.length > 0) {
+            for (var i = 0; i < this.elements.length; i++) {
+                if (this.elements[i]) {
+                    if(i == 0) {
+                        var b = Ext.DomHelper.insertBefore(this.elements[i], {
+                            tag: "div",
+                            index: i,
+                            class: "pimcore_area_dropzone"
+                        });
+                        this.addDropZoneToElement(b);
+                    }
+                    var a = Ext.DomHelper.insertAfter(this.elements[i], {
+                        tag: "div",
+                        index: i+1,
+                        class: "pimcore_area_dropzone"
+                    });
+
+                    this.addDropZoneToElement(a);
+                }
+            }
+        } else {
+            // this is only for inserting when no element is in the areablock
+            var c = Ext.DomHelper.append(Ext.get(this.id), {
+                tag: "div",
+                index: i+1,
+                class: "pimcore_area_dropzone"
+            });
+
+            this.addDropZoneToElement(c);
+        }
+    },
+
+    addDropZoneToElement: function (el) {
+        el.dropZone = new Ext.dd.DropZone(el, {
+
+            getTargetFromEvent: function(e) {
+                return el;
+            },
+
+            onNodeEnter : function(target, dd, e, data){
+                Ext.fly(target).addClass('pimcore_area_dropzone_hover');
+            },
+
+            onNodeOut : function(target, dd, e, data){
+                Ext.fly(target).removeClass('pimcore_area_dropzone_hover');
+            },
+
+            onNodeOver : function(target, dd, e, data){
+                return Ext.dd.DropZone.prototype.dropAllowed;
+            },
+
+            onNodeDrop : function(target, dd, e, data){
+
+                if(data.fromToolbar) {
+                    this.addBlockAt(data.brick.type, target.getAttribute("index"));
+                    return true;
+                } else {
+                    this.moveBlockTo(data.sourceEl, target.getAttribute("index"));
+                    return true;
+                }
+            }.bind(this)
+        });
+    },
+
+    removeDropZones: function () {
+        var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");
+        for(var i=0; i<dropZones.length; i++) {
+            dropZones[i].dropZone.unreg();
+            Ext.get(dropZones[i]).remove();
         }
     },
     
@@ -178,18 +304,26 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             }
         };
 
+        if(brick.icon) {
+            delete tmpEntry.iconCls;
+            tmpEntry.icon = brick.icon;
+        }
+
         return tmpEntry;
     },
 
     addBlock : function (element, type) {
         
         var index = this.getElementIndex(element) + 1;
-        var amount = 1;
-        
+        this.addBlockAt(type, index)
+    },
+
+    addBlockAt: function (type, index) {
 
         // get next heigher key
         var nextKey = 0;
         var currentKey;
+        var amount = 1;
 
         for (var i = 0; i < this.elements.length; i++) {
             currentKey = intval(this.elements[i].key);
@@ -197,7 +331,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 nextKey = currentKey;
             }
         }
-                
+
         var args = [index, 0];
 
         for (var p = 0; p < amount; p++) {
@@ -207,7 +341,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 type: type
             });
         }
-        
+
         this.elements.splice.apply(this.elements, args);
         this.reloadDocument();
     },
@@ -224,9 +358,43 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.createInitalControls();
         }
 
-        //Even though reload is not necessary after remove, some sites change their appearance
-        //according to the amount of block elements they contain and this arose the need for reload anyway
-        this.reloadDocument();
+        if(this.options.reload) {
+            this.reloadDocument();
+        }
+    },
+
+    moveBlockTo: function (block, toIndex) {
+
+        toIndex = intval(toIndex);
+
+        var currentIndex = this.getElementIndex(block);
+        var tmpElements = [];
+
+        for (var i = 0; i < this.elements.length; i++) {
+            if (this.elements[i] && this.elements[i] != block) {
+                tmpElements.push(this.elements[i]);
+            }
+        }
+
+        if(currentIndex < toIndex) {
+            toIndex--;
+        }
+
+        tmpElements.splice(toIndex,0,block);
+
+        var elementAfter = tmpElements[toIndex+1];
+        if(elementAfter) {
+            Ext.get(block).insertBefore(elementAfter);
+        } else {
+            // to the last position
+            Ext.get(block).insertAfter(this.elements[this.elements.length-1]);
+        }
+
+        this.elements = tmpElements;
+
+        if(this.options.reload) {
+            this.reloadDocument();
+        }
     },
 
     moveBlockDown: function (element) {
@@ -234,14 +402,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var index = this.getElementIndex(element);
 
         if (index < (this.elements.length-1)) {
-            var x = this.elements[index];
-            var y = this.elements[index + 1];
-
-            this.elements[index + 1] = x;
-            this.elements[index] = y;
-
-            this.reloadDocument();
-
+            this.moveBlockTo(element, index+2);
         }
     },
 
@@ -250,13 +411,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var index = this.getElementIndex(element);
 
         if (index > 0) {
-            var x = this.elements[index];
-            var y = this.elements[index - 1];
-
-            this.elements[index - 1] = x;
-            this.elements[index] = y;
-
-            this.reloadDocument();
+            this.moveBlockTo(element, index-1);
         }
     },
 
@@ -331,6 +486,121 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.reloadDocument();
     },
 
+    createToolBar: function () {
+
+        var buttons = [];
+        var bricksInThisArea = [];
+
+        for (var i=0; i<this.options.types.length; i++) {
+
+            var brick = this.options.types[i];
+
+            if(pimcore.document.tags.areablocktoolbar != false) {
+                if(!in_array(brick.type, pimcore.document.tags.areablocktoolbar.bricks)) {
+                    bricksInThisArea.push(brick.type);
+                } else {
+                    continue;
+                }
+            } else {
+                bricksInThisArea.push(brick.type);
+            }
+
+
+            if(!brick.icon) {
+                brick.icon = "/pimcore/static/img/icon/shape_square_add.png";
+            }
+
+            buttons.push({
+                xtype: "button",
+                tooltip: "<b>" + brick.name + "</b><br />" + brick.description,
+                icon: brick.icon,
+                listeners: {
+                    "afterrender": function (brick, v) {
+
+                        v.dragZone = new Ext.dd.DragZone(v.getEl(), {
+                            getDragData: function(e) {
+                                closeCKeditors();
+                                var sourceEl = v.getEl().dom;
+                                if (sourceEl) {
+                                    d = sourceEl.cloneNode(true);
+                                    d.id = Ext.id();
+                                    return v.dragData = {
+                                        sourceEl: sourceEl,
+                                        repairXY: Ext.fly(sourceEl).getXY(),
+                                        ddel: d,
+                                        fromToolbar: true,
+                                        brick: brick
+                                    }
+                                }
+                            },
+
+                            onStartDrag: function () {
+                                var areablocks = pimcore.document.tags.areablocktoolbar.areablocks;
+                                for(var i=0; i<areablocks.length; i++) {
+                                    if(in_array(brick.type, areablocks[i].allowedTypes)) {
+                                        areablocks[i].createDropZones();
+                                    }
+                                }
+                            },
+                            afterDragDrop: function () {
+                                var areablocks = pimcore.document.tags.areablocktoolbar.areablocks;
+                                for(var i=0; i<areablocks.length; i++) {
+                                    areablocks[i].removeDropZones();
+                                }
+                            },
+                            afterInvalidDrop: function () {
+                                var areablocks = pimcore.document.tags.areablocktoolbar.areablocks;
+                                for(var i=0; i<areablocks.length; i++) {
+                                    areablocks[i].removeDropZones();
+                                }
+                            },
+
+                            getRepairXY: function() {
+                                return this.dragData.repairXY;
+                            }
+                        });
+                    }.bind(this, brick)
+                }
+            });
+        }
+
+        // only initialize the toolbar once, even when there are more than one area on the page
+        if(pimcore.document.tags.areablocktoolbar == false) {
+            var toolbar = new Ext.Window({
+                width: 34,
+                border:false,
+                resizable: false,
+                autoHeight: true,
+                style: "position:fixed",
+                x: 20,
+                y: 50,
+                closable: false,
+                items: [buttons],
+                listeners: {
+                    move: function (win, x, y) {
+                        var scroll = Ext.getBody().getScroll();
+                        win.getEl().setStyle("top", y - scroll.top + "px");
+                        win.getEl().setStyle("left", x - scroll.left + "px");
+                    }
+                }
+            });
+
+            toolbar.show();
+
+            pimcore.document.tags.areablocktoolbar = {
+                toolbar: toolbar,
+                bricks: bricksInThisArea,
+                areablocks: [this]
+            };
+        } else {
+            pimcore.document.tags.areablocktoolbar.toolbar.add(buttons);
+            pimcore.document.tags.areablocktoolbar.bricks = array_merge(pimcore.document.tags.areablocktoolbar.bricks, bricksInThisArea);
+            pimcore.document.tags.areablocktoolbar.areablocks.push(this);
+            pimcore.document.tags.areablocktoolbar.toolbar.doLayout();
+        }
+
+    },
+
     getValue: function () {
         var data = [];
         for (var i = 0; i < this.elements.length; i++) {
@@ -351,3 +621,5 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         return "areablock";
     }
 });
+
+pimcore.document.tags.areablocktoolbar = false;

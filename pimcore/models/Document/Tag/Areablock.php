@@ -81,9 +81,11 @@ class Document_Tag_Areablock extends Document_Tag {
         }
 
         if ($this->current > 0) {
-            if(!$manual) {
+            if(!$manual && $this->blockStarted) {
                 $this->blockDestruct();
                 $this->blockEnd();
+
+                $this->blockStarted = false;
             }
         }
         else {
@@ -98,15 +100,24 @@ class Document_Tag_Areablock extends Document_Tag {
             next($this->indices);
 
             $this->currentIndex = $index;
+            if(!empty($options["allowed"]) && !in_array($index["type"],$options["allowed"])) {
+                $disabled = true;
+            }
+
+            if(!Pimcore_ExtensionManager::isEnabled("brick", $index["type"]) && $options['dontCheckEnabled'] != true) {
+                $disabled = true;
+            }
+
+            $this->blockStarted = false;
 
             if(!$manual && !$disabled) {
                 $this->blockConstruct();
                 $this->blockStart();
 
-                // don't show disabled bricks
-                if(Pimcore_ExtensionManager::isEnabled("brick", $index["type"]) && $options['dontCheckEnabled'] != true) {
-                    $this->content();
-                }
+                $this->blockStarted = true;
+                $this->content();
+            } else {
+                $this->current++;
             }
             return true;
         }
@@ -409,6 +420,16 @@ class Document_Tag_Areablock extends Document_Tag {
 
                 $n = (string) $areaConfig->name;
                 $d = (string) $areaConfig->description;
+                $icon = (string) $areaConfig->icon;
+
+                if(empty($icon)) {
+                    $path = Pimcore_ExtensionManager::getPathForExtension($areaName,"brick");
+                    $iconPath = $path . "/icon.png";
+                    if(file_exists($iconPath)) {
+                        $icon = str_replace(PIMCORE_DOCUMENT_ROOT, "", $iconPath);
+                    }
+                }
+
                 if($this->view){
                     $n = $this->view->translateAdmin((string) $areaConfig->name);
                     $d = $this->view->translateAdmin((string) $areaConfig->description);
@@ -417,7 +438,8 @@ class Document_Tag_Areablock extends Document_Tag {
                 $availableAreas[] = array(
                     "name" => $n,
                     "description" => $d,
-                    "type" => $areaName
+                    "type" => $areaName,
+                    "icon" => $icon
                 );
             }
         }
