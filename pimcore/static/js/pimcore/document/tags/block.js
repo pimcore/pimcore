@@ -46,7 +46,15 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                     value: 1,
                     mode: "local",
                     triggerAction: "all",
-                    width: 40
+                    width: 40,
+                    listeners: {
+                        "focus": function () {
+                            Ext.get(this).addClass("pimcore_tag_block_force_show_buttons");
+                        }.bind(this.elements[i]),
+                        "blur": function () {
+                            Ext.get(this).removeClass("pimcore_tag_block_force_show_buttons");
+                        }.bind(this.elements[i])
+                    }
                 });
                 amountBox.render(amountDiv);
 
@@ -93,6 +101,13 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                     }
                 });
                 downButton.render(downDiv);
+
+                Ext.get(this.elements[i]).on("mouseenter", function () {
+                    Ext.get(this.query(".pimcore_block_buttons")[0]).show();
+                });
+                Ext.get(this.elements[i]).on("mouseleave", function () {
+                    Ext.get(this.query(".pimcore_block_buttons")[0]).hide();
+                });
 
 
                 if(typeof options.limit != "undefined" && this.elements.length >= options.limit) {

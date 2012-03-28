@@ -21,7 +21,31 @@
 
 
 .pimcore_block_buttons {
-	padding: 0 0 5px 0;	
+    position: absolute;
+    top:-22px;
+    left:0;
+    z-index: 1000;
+    overflow: hidden;
+    padding: 0;
+    display:none;
+}
+
+
+.pimcore_area_entry .pimcore_area_edit_button, .pimcore_block_entry .pimcore_area_edit_button {
+    position:absolute;
+    width:25px;
+    height:25px;
+    right:5px;
+    top:5px;
+}
+
+.pimcore_tag_areablock_hide_buttons .pimcore_block_buttons, .x-dd-drag-proxy .pimcore_block_buttons {
+    display: none !important;
+}
+
+.pimcore_tag_areablock_force_show_buttons .pimcore_block_buttons, .pimcore_tag_block_force_show_buttons .pimcore_block_buttons {
+    display:block !important;
+    visibility: visible !important;
 }
 
 .pimcore_block_plus, .pimcore_block_minus, .pimcore_block_up, .pimcore_block_down, .pimcore_block_amount, .pimcore_block_type {
@@ -44,6 +68,7 @@
 
 .pimcore_block_entry {
 	clear:both;
+    position:relative;
 }
 
 .pimcore_block_limitreached .pimcore_block_button_plus, .pimcore_block_limitreached .pimcore_block_amount {
@@ -242,6 +267,10 @@
 .pimcore_droptarget_input  {
 	background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat #fff !important;
 	cursor: default;
+}
+
+.pimcore_area_entry {
+    position:relative;
 }
 
 .pimcore_area_content {
