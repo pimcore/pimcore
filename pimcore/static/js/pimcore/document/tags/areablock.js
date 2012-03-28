@@ -71,7 +71,15 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 plusButton = new Ext.Button({
                     cls: "pimcore_block_button_plus",
                     iconCls: "pimcore_icon_plus",
-                    menu: [this.getTypeMenu(this, this.elements[i])]
+                    menu: [this.getTypeMenu(this, this.elements[i])],
+                    listeners: {
+                        "menushow": function () {
+                            Ext.get(this).addClass("pimcore_tag_areablock_force_show_buttons");
+                        }.bind(this.elements[i]),
+                        "menuhide": function () {
+                            Ext.get(this).removeClass("pimcore_tag_areablock_force_show_buttons");
+                        }.bind(this.elements[i])
+                    }
                 });
                 plusButton.render(plusDiv);
 
@@ -119,7 +127,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     cls: "pimcore_block_button_type",
                     text: typebuttontext,
                     handleMouseEvents: false,
-                    icon: typeNameMappings[this.elements[i].type].icon,
+                    tooltip: t("drag_me"),
+                    icon: "/pimcore/static/img/icon/arrow_nw_ne_sw_se.png",
                     style: "cursor: move;"
                 });
                 typeButton.on("afterrender", function (index, v) {
@@ -160,8 +169,15 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     });
                 }.bind(this, i));
                 typeButton.render(typeDiv);
-                
-                
+
+                Ext.get(this.elements[i]).on("mouseenter", function () {
+                    Ext.get(this.query(".pimcore_block_buttons")[0]).show();
+                });
+                Ext.get(this.elements[i]).on("mouseleave", function () {
+                    Ext.get(this.query(".pimcore_block_buttons")[0]).hide();
+                });
+
+
                 if(this.elements.length >= options.limit) {
                    Ext.get(id).addClass("pimcore_block_limitreached");
                 }
@@ -170,6 +186,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     createDropZones: function () {
+
+        Ext.get(this.id).addClass("pimcore_tag_areablock_hide_buttons");
 
         if(this.elements.length > 0) {
             for (var i = 0; i < this.elements.length; i++) {
@@ -236,6 +254,9 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     removeDropZones: function () {
+
+        Ext.get(this.id).removeClass("pimcore_tag_areablock_hide_buttons");
+
         var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");
         for(var i=0; i<dropZones.length; i++) {
             dropZones[i].dropZone.unreg();
@@ -365,6 +386,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     moveBlockTo: function (block, toIndex) {
 
+        Ext.get(Ext.get(block).query(".pimcore_block_buttons")[0]).hide();
+
         toIndex = intval(toIndex);
 
         var currentIndex = this.getElementIndex(block);
@@ -490,6 +513,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         var buttons = [];
         var bricksInThisArea = [];
+        var itemCount = 0;
+
+        if(pimcore.document.tags.areablocktoolbar != false && pimcore.document.tags.areablocktoolbar.itemCount) {
+            itemCount = pimcore.document.tags.areablocktoolbar.itemCount;
+        }
 
         for (var i=0; i<this.options.types.length; i++) {
 
@@ -505,9 +533,15 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 bricksInThisArea.push(brick.type);
             }
 
+            itemCount++;
+
 
             if(!brick.icon) {
-                brick.icon = "/pimcore/static/img/icon/shape_square_add.png";
+                // this contains fallback-icons
+                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey","flag_orage","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
+                    "award_star_bronze_1","award_star_bronze_2","award_star_bronze_3","award_star_gold_1","award_star_gold_1","award_star_gold_1","award_star_silver_1","award_star_silver_2","award_star_silver_3",
+                    "medal_bronze_1","medal_bronze_2","medal_bronze_3","medal_gold_1","medal_gold_1","medal_gold_1","medal_silver_1","medal_silver_2","medal_silver_3"];
+                brick.icon = "/pimcore/static/img/icon/" + iconStore[itemCount] + ".png";
             }
 
             buttons.push({
@@ -590,11 +624,13 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             pimcore.document.tags.areablocktoolbar = {
                 toolbar: toolbar,
                 bricks: bricksInThisArea,
-                areablocks: [this]
+                areablocks: [this],
+                itemCount: buttons.length
             };
         } else {
             pimcore.document.tags.areablocktoolbar.toolbar.add(buttons);
             pimcore.document.tags.areablocktoolbar.bricks = array_merge(pimcore.document.tags.areablocktoolbar.bricks, bricksInThisArea);
+            pimcore.document.tags.areablocktoolbar.itemCount += buttons.length;
             pimcore.document.tags.areablocktoolbar.areablocks.push(this);
             pimcore.document.tags.areablocktoolbar.toolbar.doLayout();
         }
