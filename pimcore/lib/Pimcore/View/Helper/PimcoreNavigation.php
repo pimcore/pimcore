@@ -77,7 +77,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
         if (is_array($childs)) {
             foreach ($childs as $child) {
 
-                if (($child instanceof Document_Page or $child instanceof Document_Link or $child instanceof Document_Hardlink ) and $child->getProperty("navigation_name") and !$child->getProperty("navigation_exclude")) {
+                if (($child instanceof Document_Page or $child instanceof Document_Link or $child instanceof Document_Hardlink ) and $child->getProperty("navigation_name")) {
 
                     $active = false;
 
@@ -102,6 +102,10 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                     $page->setTabindex($child->getProperty("navigation_tabindex"));
                     $page->setRelation($child->getProperty("navigation_relation"));
                     $page->setDocument($child);
+
+                    if($child->getProperty("navigation_exclude")) {
+                        $page->setVisible(false);
+                    }
 
                     if($active and !$isRoot){
                         $page->setClass($page->getClass()." active");
