@@ -73,7 +73,7 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
 
         // remove all relations
         try {
-            $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "'");
+            $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')");
         } catch(Exception $e) {
             Logger::warning("Error during removing old relations: " . $e);
         }
@@ -197,7 +197,7 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
         $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()));
 
         //update data for relations table
-        $this->db->delete("object_relations_" . $object->getO_classId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "'");
+        $this->db->delete("object_relations_" . $object->getO_classId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND position = '" . $this->model->getType() . "'");
     }
 
 

@@ -231,6 +231,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
                     $relation["src_id"] = $object->getObject()->getId();
                     $relation["ownertype"] = "objectbrick";
                     $relation["ownername"] = $object->getFieldname();
+                    $relation["position"] = $object->getType();
 
                     $classId = $object->getObject()->getClassId();
                 }
@@ -264,7 +265,13 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         } else if ($object instanceof Object_Localizedfield) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", array($object->getObject()->getId(), $this->getName(), $params["language"]));
         } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()));
+
+            // THIS IS KIND A HACK: it's necessary because of this bug PIMCORE-1454 and therefore cannot be removed
+            if(count($relations) < 1) {
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
+            }
+            // HACK END
         }
 
         // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
