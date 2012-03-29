@@ -720,10 +720,12 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     public function downloadAction() {
         $asset = Asset::getById($this->_getParam("id"));
 
-        $this->getResponse()->setHeader("Content-Type", $asset->getMimetype(), true);
-        $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $asset->getFilename() . '"');
+        if ($asset->isAllowed("view")) {
+            $this->getResponse()->setHeader("Content-Type", $asset->getMimetype(), true);
+            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $asset->getFilename() . '"');
 
-        echo $asset->getData();
+            echo $asset->getData();
+        }
 
         $this->removeViewRenderer();
     }
@@ -1040,49 +1042,45 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         
         $asset = Asset::getById($this->_getParam("id"));
 
-        $archive_name = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/download.zip";
-        
-        if(is_file($archive_name)) {
+        if ($asset->isAllowed("view")) {
+            $archive_name = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/download.zip";
+
+            if(is_file($archive_name)) {
+                unlink($archive_name);
+            }
+
+            $archive_folder = $asset->getFileSystemPath();
+
+            $zip = new ZipArchive();
+            if ($zip -> open($archive_name, ZipArchive::CREATE) === TRUE) {
+
+                $assetList = new Asset_List();
+                $assetList->setCondition("path LIKE ?", $asset->getFullPath() . "/%");
+                $assetList->setOrderKey("LENGTH(path)", false);
+                $assetList->setOrder("ASC");
+
+                foreach ($assetList->load() as $a) {
+                    if($a->isAllowed("view")) {
+                        if (!$a instanceof Asset_Folder) {
+                            $zip->addFile($a->getFileSystemPath(), substr($a->getFullPath(), 1));
+                        }
+                    }
+                }
+
+                $zip->close();
+            }
+
+            $this->getResponse()->setHeader("Content-Type", "application/zip", true);
+            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $asset->getFilename() . '.zip"');
+
+            echo file_get_contents($archive_name);
+
+
+
             unlink($archive_name);
         }
-        
-        $archive_folder = $asset->getFileSystemPath();
-        
-        $zip = new ZipArchive(); 
-        if ($zip -> open($archive_name, ZipArchive::CREATE) === TRUE) { 
-            $dir = preg_replace('/[\/]{2,}/', '/', $archive_folder."/"); 
-            
-            $dirs = array($dir); 
-            while (count($dirs)) { 
-                $dir = current($dirs);
-                //$zip->addEmptyDir(str_replace(PIMCORE_ASSET_DIRECTORY,"",$dir)); 
-                
-                $dh = opendir($dir); 
-                while($file = readdir($dh)) { 
-                    if ($file != '.' && $file != '..') { 
-                        $fullFilePath = $dir.$file;
-                        if (is_file($fullFilePath)) {
-                            $zip->addFile($fullFilePath, str_replace(PIMCORE_ASSET_DIRECTORY."/","",$fullFilePath)); 
-                        } elseif (is_dir($fullFilePath)) {
-                            $dirs[] = $fullFilePath."/";
-                        } 
-                    } 
-                } 
-                closedir($dh); 
-                array_shift($dirs); 
-            } 
-            
-            $zip->close();
-        } 
-        
-        $this->getResponse()->setHeader("Content-Type", "application/zip", true);
-        $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $asset->getFilename() . '.zip"');
-        
-        echo file_get_contents($archive_name);
 
         $this->removeViewRenderer();
-        
-        unlink($archive_name);
     }
 
     public function importZipAction() {
