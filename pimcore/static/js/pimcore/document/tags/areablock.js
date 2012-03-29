@@ -136,6 +136,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     var element = this.elements[index];
 
                     v.dragZone = new Ext.dd.DragZone(v.getEl(), {
+                        hasOuterHandles: true,
                         getDragData: function(e) {
                             closeCKeditors();
 
@@ -196,14 +197,14 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         var b = Ext.DomHelper.insertBefore(this.elements[i], {
                             tag: "div",
                             index: i,
-                            class: "pimcore_area_dropzone"
+                            "class": "pimcore_area_dropzone"
                         });
                         this.addDropZoneToElement(b);
                     }
                     var a = Ext.DomHelper.insertAfter(this.elements[i], {
                         tag: "div",
                         index: i+1,
-                        class: "pimcore_area_dropzone"
+                        "class": "pimcore_area_dropzone"
                     });
 
                     this.addDropZoneToElement(a);
@@ -214,7 +215,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             var c = Ext.DomHelper.append(Ext.get(this.id), {
                 tag: "div",
                 index: i+1,
-                class: "pimcore_area_dropzone"
+                "class": "pimcore_area_dropzone"
             });
 
             this.addDropZoneToElement(c);
