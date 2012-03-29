@@ -432,3 +432,13 @@ function closeCKeditors() {
 CKEDITOR.config.toolbar_Full[0].items.unshift("close");
 CKEDITOR.config.toolbar_Basic[0].unshift("close");
 
+(function () {
+    var tmpToolBarFull = [];
+    for (var i=0; i<CKEDITOR.config.toolbar_Full.length; i++) {
+        if(CKEDITOR.config.toolbar_Full[i]["items"]) {
+            tmpToolBarFull.push(CKEDITOR.config.toolbar_Full[i]);
+        }
+    }
+
+    CKEDITOR.config.toolbar_Full = tmpToolBarFull;
+})();

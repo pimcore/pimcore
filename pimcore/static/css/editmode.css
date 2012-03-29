@@ -226,6 +226,22 @@
     width: 500px;
     height: auto;
     z-index: 99999;
+    -moz-opacity: 0.8;
+    -webkit-opacity: 0.8;
+    opacity: 0.8;
+    filter: Alpha(opacity=80);
+}
+
+#pimcore_wysiwyg_topbar:hover {
+    -moz-opacity: 1;
+    -webkit-opacity: 1;
+    opacity: 1;
+    filter: Alpha(opacity=100);
+}
+
+#pimcore_wysiwyg_topbar span.cke_skin_kama, #pimcore_wysiwyg_topbar .cke_skin_kama .cke_wrapper {
+    border-radius: 0 !important;
+    padding:0;
 }
 
 #pimcore_wysiwyg_bottombar {
