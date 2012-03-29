@@ -17,6 +17,8 @@ class Admin_IndexController extends Pimcore_Controller_Action_Admin {
 
     public function indexAction() {
 
+        // IE compatibility
+        $this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
 
         // check maintenance
         $maintenance_enabled = false;
