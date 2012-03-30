@@ -1,6 +1,10 @@
 <?php
 
+$workingDirectory = getcwd();
+chdir(__DIR__);
 include_once("../../../pimcore/cli/startup.php");
+chdir($workingDirectory);
+
 
 $page = 0;
 $pageSize = 100;
