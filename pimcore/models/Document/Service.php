@@ -138,7 +138,7 @@ class Document_Service extends Element_Service {
         }
 
 
-        if ($source instanceof Document_Page || $source instanceof Document_Snippet) {
+        if (method_exists($source, "getElements")) {
             $source->getElements();
         }
 
@@ -178,7 +178,7 @@ class Document_Service extends Element_Service {
      */
     public function copyAsChild($target, $source) {
 
-        if ($source instanceof Document_Page || $source instanceof Document_Snippet) {
+        if (method_exists($source, "getElements")) {
             $source->getElements();
         }
 
@@ -216,7 +216,7 @@ class Document_Service extends Element_Service {
             throw new Exception("Source and target have to be the same type");
         }
 
-        if ($source instanceof Document_Page || $source instanceof Document_Snippet) {
+        if ($source instanceof Document_PageSnippet) {
             $target->setElements($source->getElements());
 
             $target->setTemplate($source->getTemplate());
