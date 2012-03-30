@@ -202,13 +202,37 @@ class Document_Tag_Video extends Document_Tag
         if ($asset instanceof Asset_Video && $options["thumbnail"]) {
             $thumbnail = $asset->getThumbnail($options["thumbnail"]);
             if ($thumbnail) {
-                $image = $asset->getImageThumbnail(array(
-                    "width" => $this->getWidth(),
-                    "height" => $this->getHeight()
-                ));
+
+                // try to get the dimensions out ouf the video thumbnail
+                $imageThumbnailConf = array();
+                $thumbnailConf = $asset->getThumbnailConfig($options["thumbnail"]);
+                $transformations = $thumbnailConf->getItems();
+                if(is_array($transformations) && count($transformations) > 0) {
+                    foreach ($transformations as $transformation) {
+                        if(!empty($transformation)) {
+                            if(is_array($transformation["arguments"])) {
+                                foreach ($transformation["arguments"] as $key => $value) {
+                                    if($key == "width" || $key == "height") {
+                                        $imageThumbnailConf[$key] = $value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if(empty($imageThumbnailConf)) {
+                    $imageThumbnailConf["width"] = 800;
+                }
+
+                $image = $asset->getImageThumbnail($imageThumbnailConf);
 
                 if ($thumbnail["status"] == "finished") {
-                    return $this->getFlowplayerCode($thumbnail["formats"], $image);
+                    if($options["html5"]) {
+                        return $this->getHtml5Code($thumbnail["formats"], $image);
+                    } else {
+                        return $this->getFlowplayerCode($thumbnail["formats"], $image);
+                    }
                 } else if ($thumbnail["status"] == "inprogress") {
                     // disable the output-cache if enabled
                     $front = Zend_Controller_Front::getInstance();
@@ -217,13 +241,13 @@ class Document_Tag_Video extends Document_Tag
                     $progress = Asset_Video_Thumbnail_Processor::getProgress($thumbnail["processId"]);
                     return $this->getProgressCode($progress, $image);
                 } else {
-                    return $this->getErrorCode();
+                    return $this->getErrorCode("The video conversion failed, please see the debug.log for more details.");
                 }
             } else {
-                return $this->getErrorCode();
+                return $this->getErrorCode("The given thumbnail doesn't exist");
             }
         } else {
-            return $this->getErrorCode();
+            return $this->getErrorCode("Asset is not a video, or missing thumbnail configuration");
         }
     }
 
@@ -232,10 +256,23 @@ class Document_Tag_Video extends Document_Tag
         return $this->getFlowplayerCode($this->id);
     }
 
-    public function getErrorCode() {
+    public function getErrorCode($message = "") {
+
+        $width = $this->getWidth();
+        if(strpos($this->getWidth(), "%") === false) {
+            $width = ($this->getWidth()-1) . "px";
+        }
+
+        // only display error message in debug mode
+        if(!PIMCORE_DEBUG) {
+            $message = "";
+        }
+
         $code = '
         <div id="pimcore_video_' . $this->getName() . '">
-            <div class="pimcore_tag_video_error" style="width: ' . ($this->getWidth()-1) . 'px; height: ' . ($this->getHeight()-1) . 'px; border:1px solid #000; background: url(/pimcore/static/img/filetype-not-supported.png) no-repeat center center #fff;"></div>
+            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight()-1) . 'px; border:1px solid #000; background: url(/pimcore/static/img/filetype-not-supported.png) no-repeat center center #fff;">
+                ' . $message . '
+            </div>
         </div>';
 
         return $code;
@@ -391,7 +428,7 @@ class Document_Tag_Video extends Document_Tag
             <a id="' . $uid . '"
             	href="'.$urls["mp4"].'"
             	class="pimcore_video_flowplayer"
-            	style="background-image:url(' . $thumbnail . '); width:' . $this->getWidth() . 'px; height:' . $this->getHeight() . 'px;">
+            	style="background:url(' . $thumbnail . ') no-repeat center center; width:' . $this->getWidth() . 'px; height:' . $this->getHeight() . 'px;">
             	' . (Pimcore_Video::isAvailable() ? '<span class="play">' : "") .'</span>
             </a>
         </div>';
@@ -409,6 +446,17 @@ class Document_Tag_Video extends Document_Tag
             	},player_config_' . $uid . ');
             </script>
         ';
+
+        return $code;
+    }
+
+    public function getHtml5Code($urls = array(), $thumbnail = null)
+    {
+        $code = '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">';
+            foreach ($urls as $type => $url) {
+                $code .= '<source type="video/' . $type . '" src="' . $url . '" />';
+            }
+        $code .= '</video>';
 
         return $code;
     }
@@ -436,6 +484,7 @@ class Document_Tag_Video extends Document_Tag
                     text-align:center;
                     box-shadow: 2px 2px 5px #333;
                     border-radius:20px;
+                    margin: 0 20px 0 20px;
                     top: ' . (($this->getHeight()-106)/2) . 'px;
                     left: ' . (($this->getWidth()-106)/2) . 'px;
                     position:absolute;
