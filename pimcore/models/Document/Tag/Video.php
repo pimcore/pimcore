@@ -452,11 +452,13 @@ class Document_Tag_Video extends Document_Tag
 
     public function getHtml5Code($urls = array(), $thumbnail = null)
     {
-        $code = '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">';
+        $code = '<div id="pimcore_video_' . $this->getName() . '">';
+        $code .= '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">';
             foreach ($urls as $type => $url) {
                 $code .= '<source type="video/' . $type . '" src="' . $url . '" />';
             }
         $code .= '</video>';
+        $code .= '</div>';
 
         return $code;
     }
