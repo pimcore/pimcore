@@ -25,6 +25,7 @@ class OnlineShop_Framework_FilterService_Select extends OnlineShop_Framework_Fil
             $value = $filterDefinition->getPreSelect();
         }
 
+        $value = trim($value);
         $currentFilter[$filterDefinition->getField()] = $value;
 
 
