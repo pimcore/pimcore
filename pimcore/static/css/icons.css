@@ -1121,3 +1121,11 @@
 .pimcore_icon_groupby {
     background: url(/pimcore/static/img/icon/table_multiple.png) left center no-repeat !important;
 }
+
+.pimcore_icon_desktop {
+    background: url(/pimcore/static/img/icon/computer.png) left center no-repeat !important;
+}
+
+.pimcore_icon_mobile {
+    background: url(/pimcore/static/img/icon/phone.png) left center no-repeat !important;
+}
