@@ -58,7 +58,6 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             Object_Abstract::setGetInheritedValues(false);
             Pimcore::setAdminMode();
 
-
             // init translations
             self::initTranslations($this);
 
