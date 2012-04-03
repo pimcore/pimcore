@@ -59,9 +59,9 @@ class OnlineShop_Framework_ProductList_Resource {
 
         if($countValues) {
             if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                $query = "SELECT `$fieldname` as `value`, count(DISTINCT o_virtualProductId) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY `" . $fieldname . "`";
+                $query = "SELECT TRIM(`$fieldname`) as `value`, count(DISTINCT o_virtualProductId) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
             } else {
-                $query = "SELECT `$fieldname` as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY `" . $fieldname . "`";
+                $query = "SELECT TRIM(`$fieldname`) as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
             }
 
             Logger::log("Query: " . $query, Zend_Log::INFO);

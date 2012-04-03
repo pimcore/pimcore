@@ -31,11 +31,10 @@ class OnlineShop_Framework_FilterService_Select extends OnlineShop_Framework_Fil
 
         if(!empty($value)) {
             if($isPrecondition) {
-                $productList->addCondition($filterDefinition->getField() . " = " . $productList->quote($value), "PRECONDITION_" . $filterDefinition->getField());
+                $productList->addCondition("TRIM(`" . $filterDefinition->getField() . "`) = " . $productList->quote($value), "PRECONDITION_" . $filterDefinition->getField());
             } else {
-                $productList->addCondition($filterDefinition->getField() . " = " . $productList->quote($value), $filterDefinition->getField());
+                $productList->addCondition("TRIM(`" . $filterDefinition->getField() . "`) = " . $productList->quote($value), $filterDefinition->getField());
             }
-
         }
         return $currentFilter;
     }
