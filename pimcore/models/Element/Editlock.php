@@ -47,6 +47,11 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public $date;
 
+    /**
+     * @var
+     */
+    public $cpath;
+
 
     public static function isLocked($cid, $ctype) {
 
@@ -206,5 +211,21 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setDate($date) {
         $this->date = (int) $date;
+    }
+
+    /**
+     * @param  $cpath
+     */
+    public function setCpath($cpath)
+    {
+        $this->cpath = $cpath;
+    }
+
+    /**
+     * @return
+     */
+    public function getCpath()
+    {
+        return $this->cpath;
     }
 }

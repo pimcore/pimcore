@@ -314,6 +314,8 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
 
     var lockDate = new Date(data.editlock.date * 1000);
     var lockDetails = "<br /><br />";
+    lockDetails += "<b>" + t("path") + ": <i>" + data.editlock.cpath + "</i></b><br />";
+    lockDetails += "<b>" + t("type") + ": </b>" + t(ctype) + "<br />";
     lockDetails += "<b>" + t("user") + ":</b> " + data.editlock.user.name + "<br />";
     lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
     lockDetails += "<br /><br />" + t("element_lock_question");
