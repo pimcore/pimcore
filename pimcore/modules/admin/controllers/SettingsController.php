@@ -728,35 +728,30 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $admin = $this->_getParam("admin");
 
+        if ($admin) {
+            $class = new Translation_Admin();
+        } else {
+            $class = new Translation_Website();
+        }
+
         if ($this->getUser()->isAllowed("translations")) {
 
             // clear translation cache
             Pimcore_Model_Cache::clearTags(array("translator","translate"));
 
             if ($this->_getParam("data")) {
+
+                $data = Zend_Json::decode($this->_getParam("data"));
+
                 if ($this->_getParam("xaction") == "destroy") {
-
-                    $key = Zend_Json::decode($this->_getParam("data"));
-
-                    if ($admin) {
-                        $t = Translation_Admin::getByKey($key);
-                    } else {
-                        $t = Translation_Website::getByKey($key);
-                    }
-
+                    $data = Zend_Json::decode($this->_getParam("data"));
+                    $t = $class::getByKey($data);
                     $t->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
                 }
                 else if ($this->_getParam("xaction") == "update") {
-
-                    $data = Zend_Json::decode($this->_getParam("data"));
-
-                    if ($admin) {
-                        $t = Translation_Admin::getByKey($data["key"]);
-                    } else {
-                        $t = Translation_Website::getByKey($data["key"]);
-                    }
+                    $t = $class::getByKey($data["key"]);
 
                     foreach ($data as $key => $value) {
                         if ($key != "key") {
@@ -775,23 +770,22 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $this->_helper->json(array("data" => $return, "success" => true));
                 }
                 else if ($this->_getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->_getParam("data"));
 
-                    if ($admin) {
-                        $t = new Translation_Admin();
-                    } else {
-                        $t = new Translation_Website();
+                    try {
+                        $t = $class::getByKey($data["key"]);
                     }
+                    catch (Exception $e) {
 
-                    $t->setKey($data["key"]);
-                    $t->setDate(time());
+                        $t = new $class();
 
-                    foreach ($data as $key => $value) {
-                        if ($key != "key" && $key != "date") {
-                            $t->addTranslation($key, $value);
+                        $t->setKey($data["key"]);
+                        $t->setDate(time());
+
+                        foreach (Pimcore_Tool::getValidLanguages() as $lang) {
+                            $t->addTranslation($lang, "");
                         }
+                        $t->save();
                     }
-                    $t->save();
 
                     $return = array_merge(array(
                         "key" => $t->getKey(),
@@ -830,7 +824,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                 $translations = array();
                 foreach ($list->getTranslations() as $t) {
-                    $translations[] = array_merge(array("key" => $t->getKey(), "date" => $t->getDate()), $t->getTranslations());
+                    $translations[] = array_merge($t->getTranslations(), array("key" => $t->getKey(), "date" => $t->getDate()));
                 }
 
                 $this->_helper->json(array("data" => $translations, "success" => true, "total" => $list->getTotalCount()));
