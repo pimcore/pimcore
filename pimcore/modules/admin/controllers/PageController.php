@@ -147,6 +147,15 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
     }
 
+    public function mobilePreviewAction() {
+
+        $page = Document::getById($this->_getParam("id"));
+
+        if($page instanceof Document_Page) {
+            $this->view->previewUrl = $page->getFullPath() . "?pimcore_preview=true&time=" . time();
+        }
+    }
+
     protected function setValuesToDocument(Document $page) {
 
         $this->addSettingsToDocument($page);
