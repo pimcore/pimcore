@@ -549,6 +549,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 xtype: "button",
                 tooltip: "<b>" + brick.name + "</b><br />" + brick.description,
                 icon: brick.icon,
+                text: brick.name.length > 12 ? brick.name.substr(0,12) + "..." : brick.name,
+                width: 108,
                 listeners: {
                     "afterrender": function (brick, v) {
 
@@ -602,11 +604,13 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         // only initialize the toolbar once, even when there are more than one area on the page
         if(pimcore.document.tags.areablocktoolbar == false) {
             var toolbar = new Ext.Window({
-                width: 34,
+                width: 120,
                 border:false,
                 resizable: false,
                 autoHeight: true,
                 style: "position:fixed",
+                collapsible: true,
+                cls: "pimcore_areablock_toolbar",
                 x: 20,
                 y: 50,
                 closable: false,

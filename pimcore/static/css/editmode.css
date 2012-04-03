@@ -305,6 +305,10 @@
     top:5px;
 }
 
+.pimcore_areablock_toolbar .x-btn-mc {
+    text-align: left;
+}
+
 /*
     this fixes problem when the default background of the browser is not white
     http://www.pimcore.org/issues/browse/PIMCORE-1208
