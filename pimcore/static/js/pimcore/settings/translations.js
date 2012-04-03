@@ -168,12 +168,6 @@ pimcore.settings.translations = Class.create({
                 },
                 '-',
                 {
-                    text: t('delete'),
-                    handler: this.onDelete.bind(this),
-                    iconCls: "pimcore_icon_delete"
-                },
-                '-',
-                {
                     text: t('reload'),
                     handler: function () {
                         this.store.reload();
@@ -253,19 +247,18 @@ pimcore.settings.translations = Class.create({
     },
 
     onAdd: function (btn, ev) {
-        var u = new this.grid.store.recordType();
-        this.editor.stopEditing();
-        this.grid.store.insert(0, u);
-        this.editor.startEditing(0);
-    },
 
-    onDelete: function () {
-        var rec = this.grid.getSelectionModel().getSelected();
-        if (!rec) {
-            return false;
-        }
-        this.grid.store.remove(rec);
+        Ext.MessageBox.prompt("", t("please_enter_the_new_name"), function (button, value) {
+            if(button == "ok") {
+                var u = new this.grid.store.recordType();
+                u.set("key", value);
+                u.markDirty();
+                this.editor.stopEditing();
+                this.grid.store.insert(0, u);
+                this.editor.startEditing(0);
+            }
+
+        }.bind(this));
     }
-
 });
 
