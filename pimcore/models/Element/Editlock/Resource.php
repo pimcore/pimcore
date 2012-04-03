@@ -48,6 +48,12 @@ class Element_Editlock_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $this->assignVariablesToModel($data);
+
+        // add elements path
+        $element = Element_Service::getElementById($ctype, $cid);
+        if($element) {
+            $this->model->setCpath($element->getFullpath());
+        }
     }
 
     /**
