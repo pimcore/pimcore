@@ -35,6 +35,7 @@ pimcore.document.pages.preview = Class.create({
                     iconCls: "pimcore_icon_desktop",
                     toggleGroup: "preview-type-" + this.page.id,
                     pressed: true,
+                    allowDepress: false,
                     handler: function () {
                         this.setMode("desktop");
                     }.bind(this)
@@ -42,6 +43,7 @@ pimcore.document.pages.preview = Class.create({
                     text: t("mobile"),
                     iconCls: "pimcore_icon_mobile",
                     toggleGroup: "preview-type-" + this.page.id,
+                    allowDepress: false,
                     handler: function () {
                         this.setMode("mobile");
                     }.bind(this)
