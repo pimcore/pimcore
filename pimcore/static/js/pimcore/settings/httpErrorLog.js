@@ -164,7 +164,7 @@ pimcore.settings.httpErrorLog = Class.create({
                         height: 430,
                         modal: true,
                         bodyStyle: "background:#fff;",
-                        html: '<iframe src="http://pimcore.elements.at/admin/misc/http-error-log-detail?id=' + data.get("id") + '" frameborder="0" width="100%" height="390"></iframe>'
+                        html: '<iframe src="/admin/misc/http-error-log-detail?id=' + data.get("id") + '" frameborder="0" width="100%" height="390"></iframe>'
                     });
                     win.show();
                 }
