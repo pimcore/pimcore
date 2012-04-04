@@ -606,6 +606,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             var toolbar = new Ext.Window({
                 width: 120,
                 border:false,
+                shadow: false,
                 resizable: false,
                 autoHeight: true,
                 style: "position:fixed",
