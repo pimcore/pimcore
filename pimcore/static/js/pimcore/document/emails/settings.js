@@ -76,6 +76,12 @@ pimcore.document.emails.settings = Class.create({
                                 fieldLabel: t('email_bcc'),
                                 name: 'bcc',
                                 value: this.email.data.bcc
+                            },
+                            {
+                                xtype: "displayfield",
+                                width: 600,
+                                value: t("email_settings_receiver_description"),
+                                style: "font-size: 10px;"
                             }
                         ]
                     },
