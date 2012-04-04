@@ -126,11 +126,11 @@ class Document_Email extends Document_PageSnippet
      */
     protected function getAsArray($key)
     {
-        $emailAddresses = explode(',', $this->{'get' . ucfirst($key)}());
+        $emailAddresses = preg_split('/,|;/', $this->{'get' . ucfirst($key)}());
 
         foreach ($emailAddresses as $key => $emailAddress) {
-            if ($validAddress = self::validateEmailAddress($emailAddress)) {
-                $emailAddress[$key] = $validAddress;
+            if ($validAddress = self::validateEmailAddress(trim($emailAddress))) {
+                $emailAddresses[$key] = $validAddress;
             } else {
                 unset($emailAddresses[$key]);
             }
