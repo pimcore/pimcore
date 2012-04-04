@@ -80,7 +80,7 @@ class Document_Service extends Element_Service {
         }
 
         $params["document"] = $document;
-        $content = $view->action($document->getAction(), $document->getController(), null, $params);
+        $content = $view->action($document->getAction(), $document->getController(), $document->getModule(), $params);
 
         //has to be called after $view->action so we can determine if a layout is enabled in $view->action()
         if ($useLayout) {
