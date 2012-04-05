@@ -85,6 +85,7 @@ pimcore.settings.glossary = Class.create({
             {name: 'text', allowBlank: false},
             {name: 'language', allowBlank: true},
             {name: 'casesensitive', allowBlank: true},
+            {name: 'exactmatch', allowBlank: true},
             {name: 'link', allowBlank: true},
             {name: 'abbr', allowBlank: true},
             {name: 'acronym', allowBlank: true}
@@ -171,6 +172,12 @@ pimcore.settings.glossary = Class.create({
             width: 50
         });
 
+        var exactmatchCheck = new Ext.grid.CheckColumn({
+            header: t("exactmatch"),
+            dataIndex: "exactmatch",
+            width: 50
+        });
+
         var typesColumns = [
             {header: t("text"), width: 200, sortable: true, dataIndex: 'text', editor: new Ext.form.TextField({})},
             {header: t("language"), width: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
@@ -179,6 +186,7 @@ pimcore.settings.glossary = Class.create({
                 triggerAction: "all"
             })},
             casesensitiveCheck,
+            exactmatchCheck,
             {header: t("link"), width: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}), css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
             {header: t("abbr"), width: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
             {header: t("acronym"), width: 200, sortable: true, dataIndex: 'acronym', editor: new Ext.form.TextField({})},
@@ -204,7 +212,7 @@ pimcore.settings.glossary = Class.create({
             trackMouseOver: true,
             columnLines: true,
             bbar: this.pagingtoolbar,
-            plugins: [casesensitiveCheck],
+            plugins: [casesensitiveCheck,exactmatchCheck],
             stripeRows: true,
             tbar: [
                 {
