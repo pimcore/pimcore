@@ -53,6 +53,11 @@ class Glossary extends Pimcore_Model_Abstract {
     public $casesensitive;
 
     /**
+     * @var bool
+     */
+    public $exactmatch;
+
+    /**
      * @param integer $id
      * @return Glossary
      */
@@ -184,5 +189,21 @@ class Glossary extends Pimcore_Model_Abstract {
     public function getCasesensitive()
     {
         return $this->casesensitive;
+    }
+
+    /**
+     * @param boolean $exactmatch
+     */
+    public function setExactmatch($exactmatch)
+    {
+        $this->exactmatch = (bool) $exactmatch;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getExactmatch()
+    {
+        return $this->exactmatch;
     }
 }
