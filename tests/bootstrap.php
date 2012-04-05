@@ -244,6 +244,7 @@ Pimcore::initLogger();
 Pimcore::initModules();
 Pimcore::initPlugins();
 
+Pimcore_Model_Cache::clearAll();
 
 /*
  * Now the pimcore_phpunit instance is up and running. It is a clean pimcore instance with a fresh database setup and
