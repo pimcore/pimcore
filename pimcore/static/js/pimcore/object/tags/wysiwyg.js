@@ -156,7 +156,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             resize_enabled: false
         };
 
-        eConfig.extraPlugins = "close_object";
+        eConfig.extraPlugins = "close_object,pimcoreimage,pimcorelink";
         
         if (intval(this.fieldConfig.width) > 1) {
             eConfig.width = this.fieldConfig.width;

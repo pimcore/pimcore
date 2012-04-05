@@ -160,7 +160,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 removePluginsAdd = "," + eConfig.removePlugins;
             }
             eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates' + removePluginsAdd;
-            eConfig.extraPlugins = "close";
+            eConfig.extraPlugins = "close,pimcoreimage,pimcorelink";
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
@@ -401,7 +401,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 var ckeditor_closeplugin_command = {
     exec:function(editor){
         window.setTimeout(function () {
-           closeCKeditors(); 
+           closeCKeditors();
         },1000);
     }
 };
@@ -412,12 +412,13 @@ CKEDITOR.plugins.add(ckeditor_closeplugin_button,{
     init:function(editor){
         editor.addCommand(ckeditor_closeplugin_button,ckeditor_closeplugin_command);
         editor.ui.addButton("close",{
-            label:t('close'), 
+            label:t('close'),
             icon: "/pimcore/static/img/icon/cross.png",
             command:ckeditor_closeplugin_button
         });
     }
-}); 
+});
+
 
 function closeCKeditors() {
     for (var i = 0; i < editables.length; i++) {
@@ -442,3 +443,4 @@ CKEDITOR.config.toolbar_Basic[0].unshift("close");
 
     CKEDITOR.config.toolbar_Full = tmpToolBarFull;
 })();
+
