@@ -37,12 +37,15 @@ class Redirect extends Pimcore_Model_Abstract {
      */
     public $statusCode = 301;
 
-
     /**
      * @var string
      */
     public $priority = 1;
 
+    /**
+     * @var int
+     */
+    public $expiry;
 
     /**
      * StatusCodes
@@ -180,6 +183,39 @@ class Redirect extends Pimcore_Model_Abstract {
         }
         catch (Exception $e) {
             Logger::info($e);
+        }
+    }
+
+    /**
+     * @param int $expiry
+     */
+    public function setExpiry($expiry)
+    {
+        if(is_string($expiry)) {
+            $expiry = strtotime($expiry);
+        }
+        $this->expiry = $expiry;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExpiry()
+    {
+        return $this->expiry;
+    }
+
+    /**
+     *
+     */
+    public static function maintenanceCleanUp() {
+        $list = new Redirect_List();
+        $list->setCondition("expiry < " . time());
+        $list->load();
+
+        foreach ($list->getRedirects() as $redirect) {
+            echo $redirect->getSource() . "\n";
+            $redirect->delete();
         }
     }
 }

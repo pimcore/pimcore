@@ -87,6 +87,7 @@ class Document_Page extends Document_PageSnippet {
             $redirect->setTarget($this->getId());
             $redirect->setSource("@" . $this->_oldPath . "/?@");
             $redirect->setStatusCode(301);
+            $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
             $redirect->save();
         }
     }

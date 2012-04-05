@@ -69,8 +69,13 @@ pimcore.settings.redirects = Class.create({
             {name: 'source', allowBlank: false},
             {name: 'target', allowBlank: false},
             {name: 'statusCode', allowBlank: true},
-
-            {name: 'priority', type:'int' ,allowBlank: true}
+            {name: 'priority', type:'int' ,allowBlank: true},
+            {name: 'expiry', type: "date", convert: function (v, r) {
+                if(v) {
+                    var d = new Date(intval(v) * 1000);
+                    return d;
+                }
+            } ,allowBlank: true}
         ]);
         var writer = new Ext.data.JsonWriter();
 
@@ -183,6 +188,11 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
+            {header: t("expiry"), width: 60, sortable:true, dataIndex: "expiry", editor: new Ext.form.DateField(),renderer: function(d) {
+                if(d instanceof Date) {
+                    return d.format("Y-m-d");
+                }
+            }},
             {
                 xtype: 'actioncolumn',
                 width: 30,
