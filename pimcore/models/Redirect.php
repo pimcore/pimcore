@@ -210,7 +210,7 @@ class Redirect extends Pimcore_Model_Abstract {
      */
     public static function maintenanceCleanUp() {
         $list = new Redirect_List();
-        $list->setCondition("expiry < " . time());
+        $list->setCondition("expiry < " . time() . " AND expiry IS NOT NULL AND expiry != ''");
         $list->load();
 
         foreach ($list->getRedirects() as $redirect) {
