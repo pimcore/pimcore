@@ -250,7 +250,11 @@ class Document_Tag_Video extends Document_Tag
 
             // try to load the assigned asset into the flowplayer (backward compatibility only for f4v, flv, and mp4 files)
             if(preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
-                return $this->getFlowplayerCode(array("mp4" => (string) $asset));
+                // try to generate thumbnail with ffmpeg if installed
+                if(Pimcore_Video::isAvailable()) {
+                    $image = $asset->getImageThumbnail(array("width" => array_key_exists("width", $options) ? $options["width"] : 800));
+                }
+                return $this->getFlowplayerCode(array("mp4" => (string) $asset), $image);
             }
 
             return $this->getErrorCode("Asset is not a video, or missing thumbnail configuration");
