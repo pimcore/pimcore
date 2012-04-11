@@ -19,7 +19,6 @@ class Document_Tag_Video extends Document_Tag
 {
 
     public static $playerJsEmbedded = false;
-    public static $swfObjectEmbedded = false;
 
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
@@ -249,7 +248,7 @@ class Document_Tag_Video extends Document_Tag
         } else {
 
             // try to load the assigned asset into the flowplayer (backward compatibility only for f4v, flv, and mp4 files)
-            if(preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
+            if($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
                 // try to generate thumbnail with ffmpeg if installed
                 if(Pimcore_Video::isAvailable()) {
                     $image = $asset->getImageThumbnail(array("width" => array_key_exists("width", $options) ? $options["width"] : 800));
@@ -309,16 +308,27 @@ class Document_Tag_Video extends Document_Tag
             //return $this->getFlowplayerCode();
         }
 
-        $code .= $this->getSwfObject();
-
         $youtubeId = $vars["v"];
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '"><div id="' . $uid . '"></div></div>';
-        $code .= '
-            <script type="text/javascript">
-				swfobject.embedSWF("http://www.youtube.com/v/' . $youtubeId . '?fs=1&rel=0", "' . $uid . '", "' . $this->getWidth() . '", "' . $this->getHeight() . '", "10.0.0", "", ' . Zend_Json::encode($this->getOptions()) . ', {quality: "high",wmode: "transparent",scale: "noscale",allowfullscreen: "true",allowscriptaccess: "always"});
-			</script>
-        ';
+        $width = "100%";
+        if(array_key_exists("width", $options)) {
+            $width = $options["width"];
+        }
+
+
+        $width = "100%";
+        if(array_key_exists("width", $options)) {
+            $width = $options["width"];
+        }
+
+        $height = "300";
+        if(array_key_exists("height", $options)) {
+            $height = $options["height"];
+        }
+
+        $code .= '<div id="pimcore_video_' . $this->getName() . '">
+            <iframe width="' . $width . '" height="' . $height . '" src="http://www.youtube.com/embed/' . $youtubeId . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+        </div>';
 
         return $code;
     }
@@ -344,25 +354,20 @@ class Document_Tag_Video extends Document_Tag
             //return $this->getFlowplayerCode();
         }
 
-        $code .= $this->getSwfObject();
-
-        $code .= '<div id="pimcore_video_' . $this->getName() . '"><div id="' . $uid . '"></div></div>';
-        $code .= '
-            <script type="text/javascript">
-				swfobject.embedSWF("http://vimeo.com/moogaloop.swf?clip_id=' . $vimeoId . '&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=0&amp;color=&amp;fullscreen=1", "' . $uid . '", "' . $this->getWidth() . '", "' . $this->getHeight() . '", "10.0.0", "", ' . Zend_Json::encode($this->getOptions()) . ', {quality: "high",wmode: "transparent",scale: "noscale",allowfullscreen: "true",allowscriptaccess: "always"});
-			</script>
-        ';
-
-        return $code;
-    }
-
-    public function getSwfObject()
-    {
-        $code = "";
-        if (!Document_Tag_Video::$swfObjectEmbedded) {
-            $code = '<script type="text/javascript" src="/pimcore/static/js/lib/swfobject/swfobject.js"></script>';
-            Document_Tag_Video::$swfObjectEmbedded = true;
+        $width = "100%";
+        if(array_key_exists("width", $options)) {
+            $width = $options["width"];
         }
+
+        $height = "300";
+        if(array_key_exists("height", $options)) {
+            $height = $options["height"];
+        }
+
+        $code .= '<div id="pimcore_video_' . $this->getName() . '">
+            <iframe src="http://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+        </div>';
+
         return $code;
     }
 
