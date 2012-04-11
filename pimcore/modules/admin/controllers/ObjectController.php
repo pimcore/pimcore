@@ -459,8 +459,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData = array();
 
             $objectData["general"] = array();
+            $objectData["idPath"] = Pimcore_Tool::getIdPathForElement($object);
 
-            $allowedKeys = array("o_published", "o_key", "o_id");
+            $allowedKeys = array("o_published", "o_key", "o_id", "o_type");
             foreach (get_object_vars($object) as $key => $value) {
                 if (strstr($key, "o_") && in_array($key, $allowedKeys)) {
                     $objectData["general"][$key] = $value;
