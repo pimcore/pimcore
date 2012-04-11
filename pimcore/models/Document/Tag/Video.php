@@ -247,6 +247,12 @@ class Document_Tag_Video extends Document_Tag
                 return $this->getErrorCode("The given thumbnail doesn't exist");
             }
         } else {
+
+            // try to load the assigned asset into the flowplayer (backward compatibility only for f4v, flv, and mp4 files)
+            if(preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
+                return $this->getFlowplayerCode(array("mp4" => (string) $asset));
+            }
+
             return $this->getErrorCode("Asset is not a video, or missing thumbnail configuration");
         }
     }
