@@ -37,12 +37,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.init();
                 this.addTab();
 
-                try {
-                    Ext.getCmp("pimcore_panel_tree_documents").expand();
-                    var tree = pimcore.globalmanager.get("layout_document_tree");
-                    tree.tree.selectPath(this.data.idPath);
-                } catch (e) { }
-                
+                this.selectInTree();
+
                 this.startChangeDetector();
             }
             else {
@@ -54,6 +50,16 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             pimcore.helpers.closeDocument(this.id);
         }
 
+    },
+
+    selectInTree: function () {
+        try {
+            Ext.getCmp("pimcore_panel_tree_documents").expand();
+            var tree = pimcore.globalmanager.get("layout_document_tree");
+            pimcore.helpers.selectPathInTree(tree.tree, this.data.idPath);
+        } catch (e) {
+            console.log(e);
+        }
     },
 
     addLoadingPanel : function () {

@@ -845,42 +845,49 @@ pimcore.helpers.openMemorizedTabs = function () {
 }
 
 
-pimcore.helpers.startPong = function () {
+pimcore.helpers.selectPathInTreeActiveSelections = {};
 
-    var width = Ext.get("pimcore_body").getWidth();
-    var height = Ext.get("pimcore_body").getHeight();
+pimcore.helpers.selectPathInTree = function (tree, path, callback) {
+    try {
 
-    Ext.get("pimcore_body").slideOut();
+        var hash = tree.getId() + "~" + path;
+        if(typeof pimcore.helpers.selectPathInTreeActiveSelections[hash] != "undefined") {
+            console.log("Lookup of path " + hash + " canceled because there's already one lookup active for this path");
+            if(typeof callback == "function") {
+                callback(false);
+            }
+            return false;
+        }
+        pimcore.helpers.selectPathInTreeActiveSelections[hash] = hash;
 
-    // here is the game code (http://blog.benogle.com/2009/04/20/jquery-pong/)
-    (function(o){o.fn.pong=function(s,q){function m(b,c,f,g,e,h){b?c.playerScore++:c.compScore++;h.html("Browser: "+c.compScore+" | You: "+c.playerScore);c.playerScore==a.playTo||c.compScore==a.playTo?(e.css("visibility","hidden"),c.gameOver=true,c.playerScore==a.playTo?h.append("; you win!"):h.append("; you lose :(")):(c.x=b?a.width-a.paddleWidth-a.paddleBuffer-a.ballWidth-10:a.paddleWidth+a.paddleBuffer+10,c.y=Math.round(Math.random()*(a.height-e.height())),e.css("left",c.x),e.css("top",c.y),b!=0>Math.cos(a.ballAngle*Math.PI/180)>0&&(a.ballAngle+=180),e.css("visibility","visible"))}function p(b,c,f,g,e,h){if(b.gameOver)h.html("click to start!");else{h.html("press ESC to stop");var j=new Date,d=j.valueOf()-b.delay.valueOf()-a.target;b.speed+=d>5?-1:0;b.speed+=d<-5?1:0;b.speed=Math.abs(b.speed);b.delay=j;setTimeout(function(){p(b,c,f,g,e,h)},b.speed);var k=a.ballAngle*Math.PI/180;b.y+=Math.round(a.ballSpeed*Math.sin(k));b.x+=Math.round(a.ballSpeed*Math.cos(k));var j=180-a.ballAngle,l=0-a.ballAngle,d=parseInt(c.css("top")),i=a.paddleHeight/2+d,k=Math.cos(k)>0||b.x>a.width/(2-b.compAdj/(a.difficulty*10))?a.height/2:a.ballHeight/2+b.y,n=Math.abs(k-i);if(n>a.compSpeed)n=a.compSpeed;k>i?d+=n:d-=n;d<1&&(d=1);d+a.paddleHeight+1>a.height&&(d=a.height-a.paddleHeight-1);c.css("top",d+"px");i=parseInt(f.css("top"));b.up&&(i-=a.playerSpeed);b.down&&(i+=a.playerSpeed);i<1&&(i=1);i+a.paddleHeight+1>a.height&&(i=a.height-a.paddleHeight-1);f.css("top",i+"px");if(b.y<1)b.y=1,a.ballAngle=l;if(b.y>a.height-a.ballHeight)b.y=a.height-a.ballHeight,a.ballAngle=l;if(b.x<1)b.x=1,a.ballAngle=j,b.compAdj-=a.difficulty,m(true,b,c,f,g,e,h);if(b.x>a.width-a.ballWidth)b.x=a.width-a.ballWidth,a.ballAngle=j,m(false,b,c,f,g,e,h);l=a.paddleWidth+a.paddleBuffer;if(b.x<l&&b.y<a.paddleHeight+d&&b.y+a.ballHeight>d)b.x=l,a.ballAngle=j,b.compAdj++;d=a.width-a.ballWidth-a.paddleWidth-a.paddleBuffer;if(b.x>d&&b.y<a.paddleHeight+i&&b.y+a.ballHeight>i)b.x=d,a.ballAngle=j;g.css("top",b.y);g.css("left",b.x);if(b.compAdj<0)b.compAdj=0}}function r(a,c,f,g,e,h){if(a.gameOver)a.gameOver=false,a.playerScore=-1,a.compScore=-1,setTimeout(function(){p(a,c,f,g,e,h)},a.speed),m(false,a,c,f,g,e,h),m(true,a,c,f,g,e,h)}var a=o.extend({targetSpeed:30,ballAngle:45,ballSpeed:8,compSpeed:5,playerSpeed:5,difficulty:5,width:400,height:300,paddleWidth:10,paddleHeight:40,paddleBuffer:1,ballWidth:14,ballHeight:14,playTo:10},q);return this.each(function(){var b={up:false,down:false,x:0,y:0,compAdj:0,compScore:0,playerScore:0,speed:30,gameOver:true,delay:new Date},c=o(this);c.css("background","#000");c.css("position","relative");c.append('<textarea class="field" style="position:absolute;background:#000;border:0;top:-9999; left:-9999; width:0;height0;"></textarea>');c.append('<div class="score" style="position:relative;color:#ffffff; font-family: sans-serif; text-align: center; font-weight: bold;">Browser: 0 | You: 0</div>');c.append('<div class="leftPaddle" style="position:absolute;background-color:#ffffff;"></div>');c.append('<div class="rightPaddle" style="position:absolute;background-color:#ffffff;"></div>');c.append('<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAMAAAAoyzS7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RkE5OUI3MzAwODA0MTFFMUEwMkZENkVERDI1RTdDRjUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RkE5OUI3MzEwODA0MTFFMUEwMkZENkVERDI1RTdDRjUiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGQTk5QjcyRTA4MDQxMUUxQTAyRkQ2RUREMjVFN0NGNSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGQTk5QjcyRjA4MDQxMUUxQTAyRkQ2RUREMjVFN0NGNSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PtVy0SIAAAAGUExURf///wAAAFXC034AAAAMSURBVHjaYmAACDAAAAIAAU9tWeEAAAAASUVORK5CYII=" class="ball" style="position:absolute;visibility:hidden;">');c.append('<div class="msg" style="position:absolute; font-size: 16px; color:#fff; bottom: 10px; right: 10px;"></div>');var f=c.children(".leftPaddle"),g=c.children(".rightPaddle"),e=c.children(".ball"),h=c.children(".score"),j=c.children(".msg"),d=c.children(".field");d.keydown(function(a){switch(a.keyCode){case 38:b.up=true;break;case 40:b.down=true;break;case 27:c.children(".ball").css("visibility","hidden"),b.gameOver=true,pimcore.helpers.stopPong()}return false});d.keyup(function(a){switch(a.keyCode){case 38:b.up=false;break;case 40:b.down=false}return false});c.css("width",a.width);c.css("height",a.height);f.css("width",a.paddleWidth);f.css("height",a.paddleHeight);f.css("left",a.paddleBuffer);f.css("top",Math.round(1+Math.random()*(a.height-a.paddleHeight-2)));g.css("width",a.paddleWidth);g.css("height",a.paddleHeight);g.css("left",a.width-a.paddleWidth-a.paddleBuffer);g.css("top",Math.round(1+Math.random()*(a.height-a.paddleHeight-2)));e.css("width",a.ballWidth);e.css("height",a.ballHeight);b.speed=a.targetSpeed;p(b,f,g,e,h,j);c.click(function(){d.focus();r(b,f,g,e,h,j)})})}})(jQuery);
+        var initialData = {
+            tree: tree,
+            path: path,
+            callback: callback
+        };
 
-    window.setTimeout(function () {
-        Ext.getBody().insertHtml('afterBegin', '<div id="play_pong" style="width:' + width + 'px; height:' + height + 'px; top:0; left:0; position:absolute;background:#f60;z-index:1000; "></div>');
+        tree.selectPath(path, null, function (success, node) {
+            if(!success) {
+                /*Ext.Ajax.request({
+                    url: "/admin/object/get-id-path-paging-info",
+                    params: {
+                        path: path
+                    },
+                    success: function (transport) {
+                        var data = Ext.decode(transport.responseText);
 
-        $('#play_pong').pong('image is in the source as base64 data uri',{
-            ballAngle: 45,    //degrees
-            ballSpeed: Math.round(width/70),     //pixels per update
-            compSpeed: Math.round(height/50),     //speed of your opponent!!
-            playerSpeed: Math.round(height/50),  //pixels per update
-            difficulty: 10,
-            width: width,       //px
-            height: height,      //px
-            paddleWidth: 20,  //px
-            paddleHeight: Math.round(height/5), //px
-            paddleBuffer: 1,  //px from the edge of the play area
-            ballWidth: 25,    //px
-            ballHeight: 25,   //px
-            playTo: 10,        //points
-            targetSpeed: 30
+                    }
+                });*/
+            } else {
+                if(typeof initialData["callback"] == "function") {
+                    initialData["callback"]();
+                }
+                delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
+            }
         });
-    }, 1000);
 
+    } catch (e) {
+        delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
+        console.log(e);
+    }
 }
-
-pimcore.helpers.stopPong = function () {
-
-    Ext.get("play_pong").remove();
-    Ext.get("pimcore_body").slideIn();
-}
-

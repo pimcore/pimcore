@@ -57,6 +57,8 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
             this.init();
             this.addTab();
+
+            this.selectInTree("folder");
             
             this.startChangeDetector();
         }
@@ -109,6 +111,8 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.tab.on("activate", function () {
             this.tab.doLayout();
             pimcore.layout.refresh();
+
+            this.selectInTree("folder");
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {

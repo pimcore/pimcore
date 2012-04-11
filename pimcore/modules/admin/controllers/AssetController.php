@@ -486,7 +486,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
             }
         }
-        
+
         $tmpAsset["cls"] = "";
         if($asset->isLocked()) {
             $tmpAsset["cls"] .= "pimcore_treenode_locked ";

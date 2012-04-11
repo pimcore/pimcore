@@ -38,13 +38,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             this.addTab();
 
-            try {
-                Ext.getCmp("pimcore_panel_tree_assets").expand();
-                var tree = pimcore.globalmanager.get("layout_asset_tree");
-                tree.tree.selectPath(this.data.idPath);
-            } catch (e) {
-                console.log(e);
-            }
+            this.selectInTree();
             
             this.startChangeDetector();
         }
@@ -54,6 +48,15 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         }
     },
 
+    selectInTree: function () {
+        try {
+            Ext.getCmp("pimcore_panel_tree_assets").expand();
+            var tree = pimcore.globalmanager.get("layout_asset_tree");
+            pimcore.helpers.selectPathInTree(tree.tree, this.data.idPath);
+        } catch (e) {
+            console.log(e);
+        }
+    },
 
     addLoadingPanel : function () {
 
@@ -126,6 +129,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tab.on("activate", function () {
             this.tab.doLayout();
             pimcore.layout.refresh();
+
+            this.selectInTree();
         }.bind(this));
 
 

@@ -220,6 +220,50 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         return $tmpObject;
     }
 
+    public function getIdPathPagingInfoAction () {
+
+        $path = $this->_getParam("path");
+        $pathParts = explode("/", $path);
+        $id = array_pop($pathParts);
+
+        $limit = $this->_getParam("limit");
+
+        if(empty($limit)) {
+            $limit = 30;
+        }
+
+        $data = array();
+
+        $targetObject = Object_Abstract::getById($id);
+        $object = $targetObject;
+
+        while ($parent = $object->getParent()) {
+            $list = new Object_List();
+            $list->setCondition("o_parentId = ?", $parent->getId());
+            $list->setUnpublished(true);
+            $total = $list->getTotalCount();
+
+            $info = array(
+                "total" => $total
+            );
+
+            if($total > $limit) {
+                $idList = $list->loadIdList();
+                $position = array_search($object->getId(), $idList);
+                $info["position"] = $position+1;
+
+                $info["page"] = ceil($info["position"]/$limit);
+                $containsPaging = true;
+            }
+
+            $data[$parent->getId()] = $info;
+
+            $object = $parent;
+        }
+
+        $this->_helper->json($data);
+    }
+
     public function getAction()
     {
 
@@ -252,7 +296,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["metaData"] = $this->metaData;
 
             $objectData["general"] = array();
-            $allowedKeys = array("o_published", "o_key", "o_id", "o_modificationDate", "o_classId", "o_className", "o_locked");
+            $allowedKeys = array("o_published", "o_key", "o_id", "o_modificationDate", "o_classId", "o_className", "o_locked", "o_type");
 
             foreach (get_object_vars($object) as $key => $value) {
                 if (strstr($key, "o_") && in_array($key, $allowedKeys)) {
