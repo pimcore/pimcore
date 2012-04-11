@@ -90,6 +90,8 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         this.tab.on("activate", function () {
             this.tab.doLayout();
             pimcore.layout.refresh();
+
+            this.selectInTree();
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {

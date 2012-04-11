@@ -317,9 +317,14 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             iconCls: "pimcore_icon_show_in_tree",
             handler: function (data) {
                 try {
-                    Ext.getCmp("pimcore_panel_tree_objects").expand();
-                    var tree = pimcore.globalmanager.get("layout_object_tree");
-                    tree.tree.selectPath(data.data.idPath);
+                    try {
+                        Ext.getCmp("pimcore_panel_tree_objects").expand();
+                        var tree = pimcore.globalmanager.get("layout_object_tree");
+                        pimcore.helpers.selectPathInTree(tree.tree, data.data.idPath);
+                    } catch (e) {
+                        console.log(e);
+                    }
+
                 } catch (e) { console.log(e); }
             }.bind(grid, data)
         }));

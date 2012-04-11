@@ -242,7 +242,6 @@ Ext.ux.tree.PagingTreeToolbar = Ext.extend(Ext.Toolbar, {
 
     // private
 	onFirstLayout: function(ii) {
-        console.log("onFirstLayout");
 		this.mon(this.inputItem.el, "keydown", this.onPagingKeyDown, this);
 		this.mon(this.inputItem.el, "focus", function(){this.dom.select()});
         this.field = this.inputItem.el.dom;

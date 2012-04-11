@@ -55,12 +55,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             this.addTab();
 
-            try {
-                Ext.getCmp("pimcore_panel_tree_objects").expand();
-                var tree = pimcore.globalmanager.get("layout_object_tree");
-                tree.tree.selectPath(this.data.idPath);
-            } catch (e) {
-            }
+            this.selectInTree(this.data.general.o_type);
             
             this.startChangeDetector();
             this.setupInheritanceDetector();
@@ -145,6 +140,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.tab.on("activate", function () {
             this.tab.doLayout();
             pimcore.layout.refresh();
+
+            this.selectInTree(this.data.general.o_type);
         }.bind(this));
 
         this.tab.on("beforedestroy", function () {
