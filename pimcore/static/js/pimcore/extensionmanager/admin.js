@@ -186,7 +186,7 @@ pimcore.extensionmanager.admin = Class.create({
                         var rec = grid.getStore().getAt(rowIndex);
                         var id = rec.get("id");
                         var type = rec.get("type");
-                        var iframeSrc = rec.get("configuration");
+                        var iframeSrc = rec.get("configuration") + "?systemLocale=" + pimcore.globalmanager.get("user").language;
 
                         try {
                             pimcore.globalmanager.get("extension_settings_" + id + "_" + type).activate();
