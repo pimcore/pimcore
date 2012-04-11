@@ -92,8 +92,6 @@ pimcore.document.link = Class.create(pimcore.document.document, {
         this.tab.on("activate", function () {
             this.tab.doLayout();
             pimcore.layout.refresh();
-
-            this.selectInTree();
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {
@@ -147,18 +145,33 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                 buttons.push(this.toolbarButtons.unpublish);
             }
 
+            if(this.isAllowed("delete")) {
+                buttons.push(this.toolbarButtons.remove);
+            }
+
+            buttons.push("-");
+
             this.toolbarButtons.reload = new Ext.Button({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
                 scale: "medium",
                 handler: this.reload.bind(this)
             });
-            buttons.push("-");
             buttons.push(this.toolbarButtons.reload);
 
-            if(this.isAllowed("delete")) {
-                buttons.push(this.toolbarButtons.remove);
-            }
+            buttons.push({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_download_showintree",
+                scale: "medium",
+                handler: this.selectInTree.bind(this)
+            });
+
+            buttons.push("-");
+            buttons.push({
+                xtype: 'tbtext',
+                text: this.data.id,
+                scale: "medium"
+            });
 
             this.toolbar = new Ext.Toolbar({
                 id: "document_toolbar_" + this.id,

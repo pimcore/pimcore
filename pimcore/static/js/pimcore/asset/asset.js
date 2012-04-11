@@ -37,9 +37,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }
 
             this.addTab();
-
-            this.selectInTree();
-            
             this.startChangeDetector();
         }
         catch (e) {
@@ -129,8 +126,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tab.on("activate", function () {
             this.tab.doLayout();
             pimcore.layout.refresh();
-
-            this.selectInTree();
         }.bind(this));
 
 
@@ -226,6 +221,13 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 handler: this.reload.bind(this)
             });
 
+            buttons.push({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_download_showintree",
+                scale: "medium",
+                handler: this.selectInTree.bind(this)
+            });
+
             buttons.push("-");
 
             buttons.push({
@@ -239,8 +241,9 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             buttons.push("-");
             buttons.push({
+                xtype: 'tbtext',
                 text: this.data.id,
-                disabled: true
+                scale: "medium"
             });
 
 
