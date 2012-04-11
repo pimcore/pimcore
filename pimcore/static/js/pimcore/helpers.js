@@ -807,10 +807,14 @@ pimcore.helpers.rememberOpenTab = function (item) {
 }
 
 pimcore.helpers.forgetOpenTab = function (item) {
+
     var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
     if(openTabsCsv) {
-        openTabsCsv = str_replace("," + item + ",", "", openTabsCsv);
+        openTabsCsv = "," + str_replace("," + item + ",", ",", openTabsCsv) + ",";
     }
+
+    openTabsCsv = str_replace(",," , ",", openTabsCsv);
+
     Ext.util.Cookies.set("pimcore_opentabs", openTabsCsv);
 }
 
@@ -852,7 +856,6 @@ pimcore.helpers.selectPathInTree = function (tree, path, callback) {
 
         var hash = tree.getId() + "~" + path;
         if(typeof pimcore.helpers.selectPathInTreeActiveSelections[hash] != "undefined") {
-            console.log("Lookup of path " + hash + " canceled because there's already one lookup active for this path");
             if(typeof callback == "function") {
                 callback(false);
             }
@@ -878,6 +881,8 @@ pimcore.helpers.selectPathInTree = function (tree, path, callback) {
 
                     }
                 });*/
+                delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
+
             } else {
                 if(typeof initialData["callback"] == "function") {
                     initialData["callback"]();

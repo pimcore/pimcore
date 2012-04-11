@@ -37,8 +37,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 this.init();
                 this.addTab();
 
-                this.selectInTree();
-
                 this.startChangeDetector();
             }
             else {
