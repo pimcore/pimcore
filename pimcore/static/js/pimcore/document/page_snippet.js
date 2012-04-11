@@ -61,8 +61,6 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         this.tab.on("activate", function () {
             this.tab.doLayout();
             pimcore.layout.refresh();
-
-            this.selectInTree();
         }.bind(this));
 
         this.tab.on("afterrender", function (tabId) {
@@ -234,8 +232,17 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 buttons.push(this.toolbarButtons.remove);
             }
 
+            buttons.push("-");
 
             buttons.push(this.toolbarButtons.reload);
+
+            buttons.push({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_download_showintree",
+                scale: "medium",
+                handler: this.selectInTree.bind(this)
+            });
+
 
             if(typeof this.toolbarButtons.extras != "undefined") {
                 buttons.push("-");
@@ -261,10 +268,9 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             });
 
             // version notification
-            buttons.push("-");
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
-                text: '<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;' + t("this_is_a_newer_not_published_version"),
+                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;' + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });

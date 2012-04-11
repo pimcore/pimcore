@@ -157,6 +157,8 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             });
             buttons.push(this.toolbarButtons.download);
 
+            buttons.push("-");
+
             this.toolbarButtons.reload = new Ext.Button({
                 text: t('reload'),
                 iconCls: "pimcore_icon_reload_medium",
@@ -165,10 +167,18 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             });
             buttons.push(this.toolbarButtons.reload);
 
+            buttons.push({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_download_showintree",
+                scale: "medium",
+                handler: this.selectInTree.bind(this)
+            });
+
             buttons.push("-");
             buttons.push({
+                xtype: 'tbtext',
                 text: this.data.id,
-                disabled: true
+                scale: "medium"
             });
 
             this.toolbar = new Ext.Toolbar({

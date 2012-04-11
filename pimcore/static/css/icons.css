@@ -669,6 +669,10 @@
     background: url(/pimcore/static/img/icon/download-medium.png) left center no-repeat !important;
 }
 
+.pimcore_icon_download_showintree {
+    background: url(/pimcore/static/img/icon/system-file-manager.png) left center no-repeat !important;
+}
+
 
 .pimcore_icon_tab_dependencies {
 	background: url(/pimcore/static/img/icon/chart_organisation.png) left center no-repeat !important;
