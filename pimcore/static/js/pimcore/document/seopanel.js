@@ -81,9 +81,17 @@ pimcore.document.seopanel = Class.create({
             dataIndex: 'title',
             width: 230
         },{
+            header: t("length"),
+            dataIndex: 'title_length',
+            width: 50
+        },{
             header: t("description"),
             dataIndex: 'description',
             width: 400
+        },{
+            header: t("length"),
+            dataIndex: 'description_length',
+            width: 50
         },{
             header: "H1",
             dataIndex: 'h1',
@@ -195,16 +203,28 @@ pimcore.document.seopanel = Class.create({
             bodyStyle: "padding:10px;",
             items: [{
                 xtype: "textfield",
-                fieldLabel: t("title"),
+                fieldLabel: t("title") + " (" + node.attributes.title.length + ")",
                 name: "title",
                 value: node.attributes.title,
-                width: 350
+                width: 350,
+                enableKeyEvents: true,
+                listeners: {
+                    "keyup": function (el) {
+                        el.label.update(t("title") + " (" + el.getValue().length + "):");
+                    }
+                }
             }, {
                 xtype: "textarea",
-                fieldLabel: t("description"),
+                fieldLabel: t("description") + " (" + node.attributes.description.length + ")",
                 name: "description",
                 value: node.attributes.description,
-                width: 350
+                width: 350,
+                enableKeyEvents: true,
+                listeners: {
+                    "keyup": function (el) {
+                        el.label.update(t("description") + " (" + el.getValue().length + "):");
+                    }
+                }
             },{
                 xtype: "hidden",
                 name: "id",
