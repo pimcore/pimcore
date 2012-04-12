@@ -543,7 +543,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     objectAlreadyExists: function (id) {
 
         // check max amount in field
-        if(this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] > 1) {
+        if(this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1) {
             if(this.store.getCount() >= this.fieldConfig.maxItems) {
                 Ext.Msg.alert(t("error"),t("limit_reached"));
                 return true;
