@@ -149,6 +149,13 @@ pimcore.settings.properties.predefined = Class.create({
             }
         }));
 
+
+        var inheritableCheck = new Ext.grid.CheckColumn({
+            header: t("inheritable"),
+            dataIndex: "inheritable",
+            width: 50
+        });
+
         var propertiesColumns = [
             {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
             {header: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}), renderer: function (value, metaData, record, rowIndex, colIndex, store) {
@@ -172,7 +179,7 @@ pimcore.settings.properties.predefined = Class.create({
                 editable: false,
                 store: ["document","asset","object"]
             })},
-            {header: t("inheritable"), width: 50, sortable: true, dataIndex: 'inheritable', editor: new Ext.form.Checkbox({})},
+            inheritableCheck,
             {
                 xtype: 'actioncolumn',
                 width: 10,
@@ -202,16 +209,14 @@ pimcore.settings.properties.predefined = Class.create({
             }
         ];
 
-
-        this.editor = new Ext.ux.grid.RowEditor();
-
-        this.grid = new Ext.grid.GridPanel({
+        this.grid = new Ext.grid.EditorGridPanel({
             frame: false,
             autoScroll: true,
             store: this.store,
             columnLines: true,
             stripeRows: true,
-            plugins: [this.editor],
+            trackMouseOver: true,
+            plugins: [inheritableCheck],
             columns : propertiesColumns,
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             bbar: this.pagingtoolbar,
@@ -220,14 +225,7 @@ pimcore.settings.properties.predefined = Class.create({
                     text: t('add'),
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
-                },
-                '-',
-                {
-                    text: t('delete'),
-                    handler: this.onDelete.bind(this),
-                    iconCls: "pimcore_icon_delete"
-                },
-                '-',"->",{
+                },"->",{
                   text: t("filter") + "/" + t("search"),
                   xtype: "tbtext",
                   style: "margin: 0 10px 0 0;"
@@ -242,7 +240,6 @@ pimcore.settings.properties.predefined = Class.create({
         return this.grid;
     },
 
-
     onAdd: function (btn, ev) {
         var u = new this.grid.store.recordType({
             name: t('new_property'),
@@ -250,17 +247,7 @@ pimcore.settings.properties.predefined = Class.create({
             ctype: "document",
             type: "text"
         });
-        this.editor.stopEditing();
+
         this.grid.store.insert(0, u);
-        this.editor.startEditing(0);
-    },
-
-    onDelete: function () {
-        var rec = this.grid.getSelectionModel().getSelected();
-        if (!rec) {
-            return false;
-        }
-        this.grid.store.remove(rec);
     }
-
 });

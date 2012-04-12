@@ -121,8 +121,6 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
             this.stores[title].loadData(data);
         }
 
-        var editor = new Ext.ux.grid.RowEditor();
-
         var keyTextField = new Ext.form.TextField({
             //validationEvent: false,
             validator: function(value) {
@@ -178,20 +176,20 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
 
 
-        this.grids[title] = new Ext.grid.GridPanel({
+        this.grids[title] = new Ext.grid.EditorGridPanel({
             title: t(title),
             autoScroll: true,
             autoDestroy: false,
             store: this.stores[title],
             height: 200,
-            plugins: [editor],
             columns : typesColumns,
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
             name: title,
             tbar: [
                 {
                     text: t('add'),
-                    handler: this.onAdd.bind(this, this.stores[title], editor, hasType),
+                    handler: this.onAdd.bind(this, this.stores[title], hasType),
                     iconCls: "pimcore_icon_add"
                 },
                 '-',
@@ -211,16 +209,14 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
     },
 
 
-    onAdd: function (store, editor, hasType, btn, ev) {
+    onAdd: function (store, hasType, btn, ev) {
         var u = new store.recordType();
         if(hasType) {
             u.data.type = "text";
         }
         u.data.position = store.getCount() + 1;
         u.data.key = "name";
-        editor.stopEditing();
         store.add(u);
-        editor.startEditing(store.getCount()-1);
     },
 
     onDelete: function (store, title) {

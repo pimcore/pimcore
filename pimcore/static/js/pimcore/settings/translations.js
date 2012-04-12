@@ -112,8 +112,6 @@ pimcore.settings.translations = Class.create({
         });
         this.store.load();
 
-        this.editor = new Ext.ux.grid.RowEditor();
-
         this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: itemsPerPage,
             store: this.store,
@@ -150,14 +148,14 @@ pimcore.settings.translations = Class.create({
         }));        
         
         
-        this.grid = new Ext.grid.GridPanel({
+        this.grid = new Ext.grid.EditorGridPanel({
             frame: false,
             autoScroll: true,
             store: this.store,
-            plugins: [this.editor],
             columnLines: true,
             stripeRows: true,
             columns : typesColumns,
+            trackMouseOver: true,
             bbar: this.pagingtoolbar,
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             tbar: [
@@ -166,14 +164,7 @@ pimcore.settings.translations = Class.create({
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 },
-                '-',
-                {
-                    text: t('reload'),
-                    handler: function () {
-                        this.store.reload();
-                    }.bind(this),
-                    iconCls: "pimcore_icon_reload"
-                },'-',{
+                '-',{
                   text: this.getHint(),
                   xtype: "tbtext",
                   style: "margin: 0 10px 0 0;"
@@ -253,9 +244,8 @@ pimcore.settings.translations = Class.create({
                 var u = new this.grid.store.recordType();
                 u.set("key", value);
                 u.markDirty();
-                this.editor.stopEditing();
+
                 this.grid.store.insert(0, u);
-                this.editor.startEditing(0);
             }
 
         }.bind(this));
