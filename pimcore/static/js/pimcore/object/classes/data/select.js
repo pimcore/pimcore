@@ -48,6 +48,51 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
     getLayout: function ($super) {
 
+        this.valueStore = new Ext.data.JsonStore({
+            fields: ["key", "value"],
+            data: this.datax.options
+        });
+
+        this.valueGrid = new Ext.grid.EditorGridPanel({
+            tbar: [{
+                xtype: "tbtext",
+                text: t("selection_options")
+            }, "-", {
+                xtype: "button",
+                iconCls: "pimcore_icon_add",
+                handler: function () {
+                    var u = new this.valueStore.recordType({
+                        key: "",
+                        value: ""
+                    });
+                    this.valueStore.insert(0, u);
+                }.bind(this)
+            }],
+            style: "margin-top: 10px",
+            store: this.valueStore,
+            plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
+            selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
+            columnLines: true,
+            columns: [
+                {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}), width: 200},
+                {header: t("value"), sortable: false, dataIndex: 'value', editor: new Ext.form.TextField({}), width: 200},
+                {
+                    xtype: 'actioncolumn',
+                    width: 30,
+                    items: [
+                        {
+                            tooltip: t('remove'),
+                            icon: "/pimcore/static/img/icon/cross.png",
+                            handler: function (grid, rowIndex) {
+                                grid.getStore().removeAt(rowIndex);
+                            }.bind(this)
+                        }
+                    ]
+                }
+            ],
+            autoHeight: true
+        });
+
         $super();
 
         this.specificPanel.removeAll();
@@ -58,28 +103,26 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 name: "width",
                 value: this.datax.width
             },
-            new Ext.ux.form.SuperField({
-                allowEdit: true,
-                name: "options",
-                values:this.datax.options,
-                stripeRows:false,
-                items: [
-                    new Ext.form.TextField({
-                        fieldLabel: t("display_name"),
-                        name: "key",
-                        allowBlank:false,
-                        summaryDisplay:true
-                    }),
-                    new Ext.form.TextField({
-                        fieldLabel: t("value"),
-                        name: "value",
-                        allowBlank:false,
-                        summaryDisplay:true
-                    })
-                ]
-            })
+            this.valueGrid
         ]);
 
         return this.layout;
+    },
+
+    applyData: function ($super) {
+
+        $super();
+
+        var options = [];
+
+        this.valueStore.commitChanges();
+        this.valueStore.each(function (rec) {
+            options.push({
+                key: rec.get("key"),
+                value: rec.get("value")
+            });
+        });
+
+        this.datax.options = options;
     }
 });
