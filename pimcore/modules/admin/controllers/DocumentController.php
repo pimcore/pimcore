@@ -1002,6 +1002,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             $nodeConfig["title"] = $childDocument->getTitle();
                             $nodeConfig["description"] = $childDocument->getDescription();
 
+                            $nodeConfig["title_length"] = strlen($childDocument->getTitle());
+                            $nodeConfig["description_length"] = strlen($childDocument->getDescription());
+
                             // anaylze content
                             $nodeConfig["links"] = 0;
                             $nodeConfig["externallinks"] = 0;
