@@ -209,6 +209,7 @@ pimcore.settings.glossary = Class.create({
             autoScroll: true,
             store: this.store,
             columns : typesColumns,
+            selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
             trackMouseOver: true,
             columnLines: true,
             bbar: this.pagingtoolbar,
@@ -219,14 +220,7 @@ pimcore.settings.glossary = Class.create({
                     text: t('add'),
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
-                },
-                '-',
-                {
-                    text: t('delete'),
-                    handler: this.onDelete.bind(this),
-                    iconCls: "pimcore_icon_delete"
-                },
-                '-',"->",{
+                },"->",{
                   text: t("filter") + "/" + t("search"),
                   xtype: "tbtext",
                   style: "margin: 0 10px 0 0;"
@@ -285,17 +279,5 @@ pimcore.settings.glossary = Class.create({
         this.grid.store.insert(0, u);
 
         this.updateRows();
-    },
-
-    onDelete: function () {
-        var rec = this.grid.getSelectionModel().getSelectedCell();
-        if (!rec) {
-            return false;
-        }
-
-        this.grid.store.removeAt(rec[0]);
-
-        this.updateRows();
     }
-
 });

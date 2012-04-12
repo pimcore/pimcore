@@ -57,8 +57,6 @@ pimcore.settings.document.doctypes = Class.create({
 
         this.store = pimcore.globalmanager.get("document_types_store");
 
-        this.editor = new Ext.ux.grid.RowEditor();
-
         var typesColumns = [
             {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
             {header: t("module_optional"), width: 50, sortable: true, dataIndex: 'module', editor: new Ext.form.TextField({})},
@@ -104,13 +102,13 @@ pimcore.settings.document.doctypes = Class.create({
             }
         ];
 
-        this.grid = new Ext.grid.GridPanel({
+        this.grid = new Ext.grid.EditorGridPanel({
             frame: false,
             autoScroll: true,
             store: this.store,
-            plugins: [this.editor],
             columns : typesColumns,
             columnLines: true,
+            trackMouseOver: true,
             stripeRows: true,
             sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             tbar: [
@@ -118,14 +116,7 @@ pimcore.settings.document.doctypes = Class.create({
                     text: t('add'),
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
-                },
-                '-',
-                {
-                    text: t('delete'),
-                    handler: this.onDelete.bind(this),
-                    iconCls: "pimcore_icon_delete"
-                },
-                '-'
+                }
             ],
             viewConfig: {
                 forceFit: true
@@ -135,23 +126,11 @@ pimcore.settings.document.doctypes = Class.create({
         return this.grid;
     },
 
-
     onAdd: function (btn, ev) {
         var u = new this.grid.store.recordType({
             name: t('new_document_type'),
             type: "page"
         });
-        this.editor.stopEditing();
         this.grid.store.insert(0, u);
-        this.editor.startEditing(0);
-    },
-
-    onDelete: function () {
-        var rec = this.grid.getSelectionModel().getSelected();
-        if (!rec) {
-            return false;
-        }
-        this.grid.store.remove(rec);
     }
-
 });

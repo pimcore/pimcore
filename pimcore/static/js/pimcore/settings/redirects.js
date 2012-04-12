@@ -214,6 +214,7 @@ pimcore.settings.redirects = Class.create({
 			columns : typesColumns,
             trackMouseOver: true,
             columnLines: true,
+            selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
             stripeRows: true,
             bbar: this.pagingtoolbar,
             tbar: [
@@ -231,14 +232,7 @@ pimcore.settings.redirects = Class.create({
                         text: t("add_beginner_mode"),
                         handler: this.openWizard.bind(this)
                     }]
-                },
-                '-',
-                {
-                    text: t('delete'),
-                    handler: this.onDelete.bind(this),
-                    iconCls: "pimcore_icon_delete"
-                },
-                '-',"->",{
+                }, "->", {
                   text: t("filter") + "/" + t("search"),
                   xtype: "tbtext",
                   style: "margin: 0 10px 0 0;"
@@ -298,18 +292,6 @@ pimcore.settings.redirects = Class.create({
         this.grid.store.insert(0, u);
 
 		this.updateRows();
-    },
-
-    onDelete: function () {
-        var rec = this.grid.getSelectionModel().getSelectedCell();
-        if (!rec) {
-            return false;
-        }
-
-        this.grid.store.removeAt(rec[0]);
-
-
-        this.updateRows();
     },
 
     openWizard: function () {
