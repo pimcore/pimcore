@@ -52,6 +52,44 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
 
         this.specificPanel.removeAll();
 
+        this.uniqeFieldId = uniqid();
+
+        var allowedClasses = [];
+        for(var i=0; i<this.datax.classes.length; i++) {
+            allowedClasses.push(this.datax.classes[i]["classes"]);
+        }
+
+        var allowedDocuments = [];
+        for(var i=0; i<this.datax.documentTypes.length; i++) {
+            allowedDocuments.push(this.datax.documentTypes[i]["documentTypes"]);
+        }
+
+        var allowedAssets = [];
+        for(var i=0; i<this.datax.assetTypes.length; i++) {
+            allowedAssets.push(this.datax.assetTypes[i]["assetTypes"]);
+        }
+
+        var documentTypeStore = new Ext.data.JsonStore({
+            autoDestroy: true,
+            url: '/admin/class/get-document-types',
+            fields: ["text"]
+        });
+        documentTypeStore.load({
+            "callback": function (allowedDocuments) {
+                Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join(","));
+            }.bind(this, allowedDocuments)
+        });
+
+        var assetTypeStore = new Ext.data.JsonStore({
+            autoDestroy: true,
+            url: '/admin/class/get-asset-types',
+            fields: ["text"]
+        });
+        assetTypeStore.load({
+            "callback": function (allowedAssets) {
+                Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join(","));
+            }.bind(this, allowedAssets)
+        });
 
         this.specificPanel.add([
             {
@@ -96,37 +134,24 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         listeners:{
                             check:function(cbox, checked) {
                                 if (checked) {
-                                    Ext.getCmp('class_allowed_document_types').show();
+                                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).show();
                                 } else {
-                                    Ext.getCmp('class_allowed_document_types').hide();
+                                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).hide();
 
                                 }
-                            }
+                            }.bind(this)
                         }
                     },
-                    new Ext.ux.form.SuperField({
-                        allowEdit: this.datax.documentsAllowed,
-                        hidden: !this.datax.documentsAllowed,
-                        id: "class_allowed_document_types",
+                    new Ext.ux.form.MultiSelect({
+                        fieldLabel: t("allowed_document_types") + '<br />' + t('allowed_types_hint'),
                         name: "documentTypes",
-                        values:this.datax.documentTypes,
-                        stripeRows:false,
-                        items: [
-                            new Ext.form.ComboBox({
-                                fieldLabel: t("allowed_document_types") + ' ' + t('allowed_types_hint'),
-                                name: "documentTypes",
-                                triggerAction: 'all',
-                                editable: false,
-                                listWidth: 'auto',
-                                store: new Ext.data.JsonStore({
-                                    url: '/admin/class/get-document-types',
-                                    fields: ["text"]
-                                }),
-                                displayField: "text",
-                                valueField: "text",
-                                summaryDisplay:true
-                            })
-                        ]
+                        id: 'class_allowed_document_types_' + this.uniqeFieldId,
+                        hidden: !this.datax.documentsAllowed,
+                        allowEdit: this.datax.documentsAllowed,
+                        value: allowedDocuments.join(","),
+                        displayField: "text",
+                        valueField: "text",
+                        store: documentTypeStore
                     })
                 ]
             }, 
@@ -145,37 +170,24 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         listeners:{
                             check:function(cbox, checked) {
                                 if (checked) {
-                                    Ext.getCmp('class_allowed_asset_types').show();
+                                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
                                 } else {
-                                    Ext.getCmp('class_allowed_asset_types').hide();
+                                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).hide();
 
                                 }
-                            }
+                            }.bind(this)
                         }
                     },
-                    new Ext.ux.form.SuperField({
-                        allowEdit: this.datax.assetsAllowed,
-                        hidden: !this.datax.assetsAllowed,
-                        id: "class_allowed_asset_types",
+                    new Ext.ux.form.MultiSelect({
+                        fieldLabel: t("allowed_asset_types") + '<br />' + t('allowed_types_hint'),
                         name: "assetTypes",
-                        values:this.datax.assetTypes,
-                        stripeRows:false,
-                        items: [
-                            new Ext.form.ComboBox({
-                                fieldLabel: t("allowed_asset_types") + ' ' + t('allowed_types_hint'),
-                                name: "assetTypes",
-                                triggerAction: 'all',
-                                listWidth: 'auto',
-                                editable: false,
-                                store: new Ext.data.JsonStore({
-                                    url: '/admin/class/get-asset-types',
-                                    fields: ["text"]
-                                }),
-                                displayField: "text",
-                                valueField: "text",
-                                summaryDisplay:true
-                            })
-                        ]
+                        id: 'class_allowed_asset_types_' + this.uniqeFieldId,
+                        hidden: !this.datax.assetsAllowed,
+                        allowEdit: this.datax.assetsAllowed,
+                        value: allowedAssets.join(","),
+                        displayField: "text",
+                        valueField: "text",
+                        store: assetTypeStore
                     })
                 ]
             },
@@ -194,37 +206,24 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         listeners:{
                             check:function(cbox, checked) {
                                 if (checked) {
-                                    Ext.getCmp('class_allowed_object_classes').show();
+                                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).show();
                                 } else {
-                                    Ext.getCmp('class_allowed_object_classes').hide();
+                                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).hide();
 
                                 }
-                            }
+                            }.bind(this)
                         }
                     },
-                    new Ext.ux.form.SuperField({
-                        allowEdit: this.datax.objectsAllowed,
-                        hidden: !this.datax.objectsAllowed,
-                        id: "class_allowed_object_classes",
+                    new Ext.ux.form.MultiSelect({
+                        fieldLabel: t("allowed_classes") + '<br />' + t('allowed_types_hint'),
                         name: "classes",
-                        values:this.datax.classes,
-                        stripeRows:false,
-                        items: [
-                            new Ext.form.ComboBox({
-                                fieldLabel: t("allowed_classes") + ' ' + t('allowed_types_hint'),
-                                name: "classes",
-                                triggerAction: 'all',
-                                listWidth: 'auto',
-                                editable: false,
-                                store: new Ext.data.JsonStore({
-                                    url: '/admin/class/get-tree',
-                                    fields: ["text","id"]
-                                }),
-                                displayField: "text",
-                                valueField: "text",
-                                summaryDisplay:true
-                            })
-                        ]
+                        id: 'class_allowed_object_classes_' + this.uniqeFieldId,
+                        hidden: !this.datax.objectsAllowed,
+                        allowEdit: this.datax.objectsAllowed,
+                        value: allowedClasses.join(","),
+                        displayField: "text",
+                        valueField: "text",
+                        store: pimcore.globalmanager.get("object_types_store")
                     })
                 ]
             }
