@@ -225,10 +225,6 @@
             "pimcore/object/helpers/gridTabAbstract.js",
             "pimcore/element/selector/object.js",
 
-            //element importer, exporter
-            "pimcore/element/importer.js",
-            "pimcore/element/exporter.js",
-        
             // documents
             "pimcore/document/properties.js",
             "pimcore/document/document.js",

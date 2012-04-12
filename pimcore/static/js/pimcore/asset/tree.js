@@ -257,24 +257,7 @@ pimcore.asset.tree = Class.create({
                     handler: this.attributes.reference.addFolder.bind(this)
                 }));
 
-                menu.add(new Ext.menu.Item({
-                    text: t('import_archive'),
-                    iconCls: "pimcore_icon_archive_import",
-                    handler: function(){
-                        new pimcore.element.importer("asset",this.id);
-                    }.bind(this)
-                }));
             }
-
-            menu.add(new Ext.menu.Item({
-                text: t('export_archive'),
-                iconCls: "pimcore_icon_archive_export",
-                handler: function(){
-                       new pimcore.element.exporter("asset",this.id);
-                    }.bind(this)
-
-            }));
-
 
             menu.add(new Ext.menu.Item({
                 text: t('refresh'),

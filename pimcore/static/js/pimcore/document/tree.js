@@ -506,25 +506,6 @@ pimcore.document.tree = Class.create({
             }
         }
 
-        if(this.attributes.permissions.create){
-            menu.add(new Ext.menu.Item({
-                        text: t('import_archive'),
-                        iconCls: "pimcore_icon_archive_import",
-                        handler: function(){
-                            new pimcore.element.importer("document",this.id);
-                        }.bind(this)
-                    }));
-        }
-
-        menu.add(new Ext.menu.Item({
-                text: t('export_archive'),
-                iconCls: "pimcore_icon_archive_export",
-                handler: function(){
-                   new pimcore.element.exporter("document",this.id);
-                }.bind(this)
-
-        }));
-
         if (this.reload) {
             menu.add(new Ext.menu.Item({
                 text: t('refresh'),
