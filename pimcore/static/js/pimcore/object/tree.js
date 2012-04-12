@@ -274,34 +274,12 @@ pimcore.object.tree = Class.create({
                 }));
             //}
 
-
-            menu.add(new Ext.menu.Item({
-                text: t('import'),
-                iconCls: "pimcore_icon_object_import",
+            menu.add({
+                text: t('import_csv'),
                 hideOnClick: false,
-                menu: [{
-                    text: t('import_archive'),
-                    iconCls: "pimcore_icon_archive_import",
-                    handler: function(){
-                        new pimcore.element.importer("object",this.id);
-                    }.bind(this)
-                },{
-                    text: t('import_csv'),
-                    hideOnClick: false,
-                    iconCls: "pimcore_icon_object_csv_import",
-                    menu:objectMenu.importer
-                }]
-            }));
-
-            menu.add(new Ext.menu.Item({
-                text: t('export_archive'),
-                iconCls: "pimcore_icon_archive_export",
-                handler: function(){
-                       new pimcore.element.exporter("object",this.id);
-                    }.bind(this)
-
-            }));
-
+                iconCls: "pimcore_icon_object_csv_import",
+                menu:objectMenu.importer
+            });
 
             //paste
             var pasteMenu = [];
