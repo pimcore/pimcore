@@ -57,9 +57,25 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
      * @return array
      */
     protected function correctClasses ($classes) {
+
+        // this is the new method with Ext.form.MultiSelect
+        if(is_string($classes) && strpos($classes, ",") !== false) {
+            $classParts = explode(",", $classes);
+            $classes = array();
+            foreach ($classParts as $class) {
+                $classes[] = array("classes" => $class);
+            }
+        }
+
+        // this was the legacy method with Ext.SuperField
         if(is_array($classes) && array_key_exists("classes",$classes)) {
             $classes = array($classes);
         }
+
+        if(!is_array($classes)) {
+            $classes = array();
+        }
+
         return $classes;
     }
 

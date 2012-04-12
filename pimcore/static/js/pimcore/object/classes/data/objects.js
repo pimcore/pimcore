@@ -88,28 +88,19 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
             }
         ]);
 
-        this.specificPanel.add([new Ext.ux.form.SuperField({
-            allowEdit: true,
+        var classes = [];
+        for(var i=0; i<this.datax.classes.length; i++) {
+            classes.push(this.datax.classes[i]["classes"]);
+        }
+
+        this.specificPanel.add(new Ext.ux.form.MultiSelect({
+            fieldLabel: t("allowed_classes"),
             name: "classes",
-            values:this.datax.classes,
-            stripeRows:false,
-            items: [
-                new Ext.form.ComboBox({
-                    fieldLabel: t("allowed_classes"),
-                    name: "classes",
-                    listWidth: 'auto',
-                    triggerAction: 'all',
-                    editable: false,
-                    store: new Ext.data.JsonStore({
-                        url: '/admin/class/get-tree',
-                        fields: ["text","id"]
-                    }),
-                    displayField: "text",
-                    valueField: "text",
-                    summaryDisplay:true
-                })
-            ]
-        })]);
+            value: classes.join(","),
+            displayField: "text",
+            valueField: "text",
+            store: pimcore.globalmanager.get("object_types_store")
+        }));
 
         return this.layout;
     }
