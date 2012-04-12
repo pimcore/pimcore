@@ -127,6 +127,16 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @return void $documentTypes
      */
     public function setDocumentTypes($documentTypes) {
+
+        // this is the new method with Ext.form.MultiSelect
+        if(is_string($documentTypes) && strpos($documentTypes, ",") !== false) {
+            $parts = explode(",", $documentTypes);
+            $documentTypes = array();
+            foreach ($parts as $type) {
+                $documentTypes[] = array("documentTypes" => $type);
+            }
+        }
+
         $this->documentTypes = $documentTypes;
     }
 
@@ -159,6 +169,16 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @return void $assetTypes
      */
     public function setAssetTypes($assetTypes) {
+
+        // this is the new method with Ext.form.MultiSelect
+        if(is_string($assetTypes) && strpos($assetTypes, ",") !== false) {
+            $parts = explode(",", $assetTypes);
+            $assetTypes = array();
+            foreach ($parts as $type) {
+                $assetTypes[] = array("assetTypes" => $type);
+            }
+        }
+
         $this->assetTypes = $assetTypes;
     }
 
