@@ -109,6 +109,15 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 exit;
             }
 
+            // we're now authenticated so we can remove the default error handler so that we get just the normal PHP errors
+            if($this->_getParam("controller") != "login") {
+                $front = Zend_Controller_Front::getInstance();
+                $front->unregisterPlugin("Pimcore_Controller_Plugin_ErrorHandler");
+                $front->throwExceptions(true);
+                @ini_set("display_errors", "On");
+                @ini_set("display_startup_errors", "On");
+            }
+
             Zend_Registry::set("pimcore_admin_user", $this->getUser());
             Zend_Registry::set("pimcore_admin_initialized", true);
         }

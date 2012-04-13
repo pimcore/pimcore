@@ -71,12 +71,11 @@ class Pimcore {
             }
         }
 
+        $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
         $front->registerPlugin(new Pimcore_Controller_Plugin_Maintenance(), 2);
-
 
         // register general pimcore plugins for frontend
         if ($frontend) {
-            $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
         }
 
@@ -215,11 +214,14 @@ class Pimcore {
         // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
         $throwExceptions = false;
         if(array_key_exists("pimcore_editmode", $_REQUEST) || array_key_exists("pimcore_preview", $_REQUEST) || array_key_exists("pimcore_admin", $_REQUEST)) {
-            $throwExceptions = true;
+            $user = Pimcore_Tool_Authentication::authenticateSession();
+            if($user instanceof User) {
+                $throwExceptions = true;
+            }
         }
 
         // run dispatcher
-        if ($frontend && !(PIMCORE_DEBUG || $throwExceptions)) {
+        if (!PIMCORE_DEBUG && !$throwExceptions && !PIMCORE_DEVMODE) {
             @ini_set("display_errors", "Off");
             @ini_set("display_startup_errors", "Off");
 

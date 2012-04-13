@@ -308,7 +308,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         if ($error = $this->_getParam('error_handler')) {
             if ($error->exception) {
 
-                if ($error->exception instanceof Zend_Controller_Router_Exception) {
+                if ($error->exception instanceof Zend_Controller_Router_Exception || $error->exception instanceof Zend_Controller_Action_Exception) {
                     header('HTTP/1.1 404 Not Found');
                     //$this->getResponse()->setRawHeader('HTTP/1.1 404 Not Found');
                     $this->getResponse()->setHttpResponseCode(404);
@@ -319,6 +319,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     $this->getResponse()->setHttpResponseCode(503);
                 }
 
+                Logger::emergency("Unable to load URL: " . $_SERVER["REQUEST_URI"]);
                 Logger::emergency($error->exception);
 
                 try {
@@ -328,7 +329,6 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     $this->disableLayout();
                 }
                 catch (Exception $e) {
-                    p_r($error->exception);
                     exit;
                 }
             }
