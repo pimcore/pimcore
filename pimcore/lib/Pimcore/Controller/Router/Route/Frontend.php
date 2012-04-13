@@ -149,32 +149,34 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                             // check for a trailing slash in path, if exists, redirect to this page without the slash
                             // the only reason for this is: SEO, Analytics, ... there is no system specific reason, pimcore would work also with a trailing slash without problems
                             // use $originalPath because of the sites
-                            if($config->documents->allowtrailingslash) {
-                                if($config->documents->allowtrailingslash == "no") {
-                                    if(substr($originalPath, strlen($originalPath)-1,1) == "/" && $originalPath != "/") {
-                                        $redirectUrl = rtrim($originalPath,"/");
-                                        if($_SERVER["QUERY_STRING"]) {
-                                            $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
+                            // only do redirecting with GET requests
+                            if(strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
+                                if($config->documents->allowtrailingslash) {
+                                    if($config->documents->allowtrailingslash == "no") {
+                                        if(substr($originalPath, strlen($originalPath)-1,1) == "/" && $originalPath != "/") {
+                                            $redirectUrl = rtrim($originalPath,"/");
+                                            if($_SERVER["QUERY_STRING"]) {
+                                                $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
+                                            }
+                                            header("Location: " . $redirectUrl, true, 301);
+                                            exit;
                                         }
-                                        header("Location: " . $redirectUrl, true, 301);
-                                        exit;
+                                    }
+                                }
+
+                                if($config->documents->allowcapitals) {
+                                    if($config->documents->allowcapitals == "no") {
+                                        if(strtolower($originalPath) != $originalPath) {
+                                            $redirectUrl = strtolower($originalPath);
+                                            if($_SERVER["QUERY_STRING"]) {
+                                                $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
+                                            }
+                                            header("Location: " . $redirectUrl, true, 301);
+                                            exit;
+                                        }
                                     }
                                 }
                             }
-
-                            if($config->documents->allowcapitals) {
-                                if($config->documents->allowcapitals == "no") {
-                                    if(strtolower($originalPath) != $originalPath) {
-                                        $redirectUrl = strtolower($originalPath);
-                                        if($_SERVER["QUERY_STRING"]) {
-                                            $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
-                                        }
-                                        header("Location: " . $redirectUrl, true, 301);
-                                        exit;
-                                    }
-                                }
-                            }
-
 
                             $matchFound = true;
                         }
