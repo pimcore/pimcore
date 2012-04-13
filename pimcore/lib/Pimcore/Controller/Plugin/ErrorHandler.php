@@ -48,6 +48,9 @@ class Pimcore_Controller_Plugin_ErrorHandler extends Zend_Controller_Plugin_Erro
 
                     $params = Pimcore_Tool::getRoutingDefaults();
 
+                    if ($module = $document->getModule()) {
+                        $params["module"] = $module;
+                    }
                     if ($controller = $document->getController()) {
                         $params["controller"] = $controller;
                         $params["action"] = "index";
