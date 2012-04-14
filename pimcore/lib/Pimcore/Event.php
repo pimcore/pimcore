@@ -20,6 +20,10 @@ class Pimcore_Event {
      */
     private static $events = array();
 
+    function reset() {
+        self::$events = array();
+    }
+
     /**
      * @static
      * @param $name
@@ -29,20 +33,15 @@ class Pimcore_Event {
      */
     public static function register ($name, $function, $arguments = array(), $index = null) {
 
-        if(!array_key_exists($name, self::$events)) {
+        if (!isset(self::$events[$name])) {
             self::$events[$name] = array();
         }
 
-        if(!$index) {
-            for($i=0; $i<999; $i++) {
-                if(!array_key_exists($i, self::$events[$name])) {
-                    $index = $i;
-                    break;
-                }
-            }
+        if (!isset(self::$events[$name][$index])) {
+            self::$events[$name][$index] = array();
         }
 
-        self::$events[$name][$index] = array(
+        self::$events[$name][$index][] = array(
             "function" => $function,
             "arguments" => $arguments
         );
@@ -55,15 +54,25 @@ class Pimcore_Event {
      * @param $name
      * @param $function
      */
-    public static function unregister ($name, $function) {
+    public static function unregister ($name, $function=null) {
 
-        if(array_key_exists($name, self::$events) && is_array(self::$events[$name])) {
-            foreach (self::$events[$name] as $index => $event) {
-                if($event["function"] == $function) {
-                    unset(self::$events[$name][$index]);
-                }
+        if(!isset(self::$events[$name]))
+            return;
+
+        if($function === null) {
+            unset(self::$events[$name]);
+            return;
+        }
+
+        foreach (self::$events[$name] as $k => $priorityEvents) {
+            foreach($priorityEvents as $ik => $item) {
+                if($item['function'] == $function)
+                    unset(self::$events[$name][$k][$ik]);
             }
         }
+
+        if(empty(self::$events[$name]))
+            unset(self::$events[$name]);
     }
 
     /**
@@ -74,17 +83,13 @@ class Pimcore_Event {
      */
     public static function fire ($name, $arguments = array()) {
 
-        if(!array_key_exists($name, self::$events) || !is_array(self::$events[$name])) {
+        if(!isset(self::$events[$name])) {
             return;
         }
 
-        foreach (self::$events[$name] as $item) {
-
-            $function = $item["function"];
-            $arguments = array_merge($item["arguments"], $arguments);
-
-            if(is_string($function) || is_array($function) || is_callable($function)) {
-                call_user_func_array($function, $arguments);
+        foreach (self::$events[$name] as $priorityEvents) {
+            foreach($priorityEvents as $item) {
+                call_user_func_array($item["function"], array_merge($item["arguments"], $arguments));
             }
         }
     }
