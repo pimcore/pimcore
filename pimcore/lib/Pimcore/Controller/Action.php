@@ -47,9 +47,12 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
 
     protected function enableLayout() {
 
+        $viewRenderer = Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
+        $viewRenderer->setIsInitialized(false); // reset so that the view get's initialized again, because of error page from other modules
+        $viewRenderer->initView();
+
         Zend_Layout::startMvc();
         $layout = Zend_Layout::getMvcInstance();
-
         $layout->setViewSuffix(Pimcore_View::getViewScriptSuffix());
     }
 
