@@ -321,7 +321,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function save() {
 
         if (!Pimcore_Tool::isValidKey($this->getKey())) {
-            throw new Exception("invalid key for document with id [ " . $this->getId() . " ]");
+            throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
         }
 
         $this->correctPath();
