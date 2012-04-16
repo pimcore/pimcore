@@ -48,6 +48,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
     getLayout: function ($super) {
 
+        if(typeof this.datax.options != "object") {
+            this.datax.options = [];
+        }
+
         this.valueStore = new Ext.data.JsonStore({
             fields: ["key", "value"],
             data: this.datax.options
