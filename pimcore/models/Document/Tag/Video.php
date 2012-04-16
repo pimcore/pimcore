@@ -327,7 +327,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe width="' . $width . '" height="' . $height . '" src="http://www.youtube.com/embed/' . $youtubeId . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="http://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
