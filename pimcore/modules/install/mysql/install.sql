@@ -379,16 +379,6 @@ CREATE TABLE `staticroutes` (
   KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
-CREATE TABLE `tree_locks` (
-  `id` int(11) NOT NULL DEFAULT '0',
-  `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
-  `locked` enum('self','propagate') default NULL,
-  PRIMARY KEY (`id`,`type`),
-  KEY `id` (`id`),
-  KEY `type` (`type`),
-  KEY `locked` (`locked`)
-) DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
   `key` varchar(255) NOT NULL DEFAULT '',
@@ -409,6 +399,16 @@ CREATE TABLE `translations_website` (
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
   KEY `key` (`key`)
+) DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tree_locks` (
+  `id` int(11) NOT NULL DEFAULT '0',
+  `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
+  `locked` enum('self','propagate') default NULL,
+  PRIMARY KEY (`id`,`type`),
+  KEY `id` (`id`),
+  KEY `type` (`type`),
+  KEY `locked` (`locked`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `users`;
