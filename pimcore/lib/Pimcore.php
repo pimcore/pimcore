@@ -503,7 +503,7 @@ class Pimcore {
                             }
                         }
 
-                    } catch (Exeption $e) {
+                    } catch (Exception $e) {
                         Logger::err("Could not instantiate and register plugin [" . $p['plugin']['pluginClassName'] . "]");
                     }
 
