@@ -20,8 +20,8 @@ CREATE TABLE `assets` (
 
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
-  `id` varchar(100) NOT NULL DEFAULT '',
-  `tag` varchar(100) NULL DEFAULT NULL,
+  `id` varchar(255) NOT NULL DEFAULT '',
+  `tag` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`,`tag`),
   INDEX `id` (`id`),
   INDEX `tag` (`tag`)
