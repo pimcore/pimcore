@@ -55,6 +55,8 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
 
         this.specificPanel.removeAll();
 
+        this.uniqeFieldId = uniqid();
+
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
@@ -89,17 +91,36 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
         ]);
 
         var classes = [];
-        for(var i=0; i<this.datax.classes.length; i++) {
-            classes.push(this.datax.classes[i]["classes"]);
+        if(typeof this.datax.classes == "object") {
+            // this is when it comes from the server
+            for(var i=0; i<this.datax.classes.length; i++) {
+                classes.push(this.datax.classes[i]["classes"]);
+            }
+        } else if(typeof this.datax.classes == "string") {
+            // this is when it comes from the local store
+            classes = this.datax.classes.split(",");
         }
+
+        var classesStore = new Ext.data.JsonStore({
+            autoDestroy: true,
+            url: '/admin/class/get-tree',
+            fields: ["text"]
+        });
+        classesStore.load({
+            "callback": function (classes) {
+                Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(classes.join(","));
+            }.bind(this, classes)
+        });
+
 
         this.specificPanel.add(new Ext.ux.form.MultiSelect({
             fieldLabel: t("allowed_classes"),
+            id: "class_allowed_object_classes_" + this.uniqeFieldId,
             name: "classes",
             value: classes.join(","),
             displayField: "text",
             valueField: "text",
-            store: pimcore.globalmanager.get("object_types_store")
+            store: classesStore
         }));
 
         return this.layout;
