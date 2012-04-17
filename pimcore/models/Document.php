@@ -635,6 +635,21 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return string
      */
     public function getFullPath() {
+
+        // check if this document is also the site root, if so return /
+        try {
+            if(Zend_Registry::isRegistered("pimcore_site")) {
+                $site = Zend_Registry::get("pimcore_site");
+                if ($site instanceof Site) {
+                    if ($site->getRootDocument()->getId() == $this->getId()) {
+                        return "/";
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            Logger::error($e);
+        }
+
         $path = $this->getPath() . $this->getKey();
         return $path;
     }
@@ -682,19 +697,19 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         if(!Pimcore::inAdmin()) {
             // check for site
             try {
+                if(Zend_Registry::isRegistered("pimcore_site")) {
+                    $site = Zend_Registry::get("pimcore_site");
+                    if ($site instanceof Site) {
+                        if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
+                            $rootPath = $site->getRootPath();
+                            $rootPath = addcslashes($rootPath, "/");
 
-                $site = Zend_Registry::get("pimcore_site");
-                if ($site instanceof Site) {
-                    if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
-                        $rootPath = $site->getRootPath();
-                        $rootPath = addcslashes($rootPath, "/");
-
-                        return preg_replace("/^" . $rootPath . "/", "", $this->path);
+                            return preg_replace("/^" . $rootPath . "/", "", $this->path);
+                        }
                     }
                 }
-            }
-            catch (Exception $e) {
-
+            } catch (Exception $e) {
+                Logger::error($e);
             }
         }
 
