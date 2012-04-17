@@ -825,8 +825,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         // unlock the current session to access the version files
         session_write_close();
 
-        $fromSource = file_get_html($this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $docFrom->getPath() . $docFrom->getKey() . "?pimcore_version=" . $this->_getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
-        $toSource = file_get_html($this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $docTo->getPath() . $docTo->getKey() . "?pimcore_version=" . $this->_getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $request = $this->getRequest();
+
+        $fromSource = file_get_html($request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getFullPath() . "?pimcore_version=" . $this->_getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $toSource = file_get_html($request->getScheme() . "://" . $request->getHttpHost() . $docTo->getFullPath() . "?pimcore_version=" . $this->_getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
 
         if ($docFrom instanceof Document_Page) {
             $from = $fromSource->find("body", 0);
@@ -1018,7 +1020,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
                                 // cannot use the rendering service from Document_Service::render() because of singleton's ...
                                 // $content = Document_Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
-                                $contentUrl = $this->getRequest()->getScheme() . "://" . $_SERVER["HTTP_HOST"] . $childDocument->getFullPath();
+
+                                $request = $this->getRequest();
+
+                                $contentUrl = $request->getScheme() . "://" . $request->getHttpHost() . $childDocument->getFullPath();
                                 $content = Pimcore_Tool::getHttpData($contentUrl, array(
                                     "pimcore_preview" => true,
                                     "pimcore_admin" => true,

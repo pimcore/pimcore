@@ -173,7 +173,15 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             catch (Exception $e) {
             }
         }
-        
+
+        // check if document is a wrapped hardlink, if this is the case send a rel=canonical header to the source document
+        if($this->getDocument() instanceof Document_Hardlink_Wrapper_Interface) {
+            // get the cononical (source) document
+            $hardlinkCanonicalSourceDocument = Document::getById($this->getDocument()->getId());
+            $request = $this->getRequest();
+            $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath() . '>; rel="canonical"');
+        }
+
         // set some parameters
         $this->editmode = Zend_Registry::get("pimcore_editmode");
         $this->view->editmode = Zend_Registry::get("pimcore_editmode");
