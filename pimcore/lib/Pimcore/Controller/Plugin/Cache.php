@@ -96,7 +96,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
             }
         }
 
-        $this->cacheKey = "output_" . md5($_SERVER["HTTP_HOST"] . $requestUri) . $appendKey;
+        $this->cacheKey = "output_" . md5(Pimcore_Tool::getHostname() . $requestUri) . $appendKey;
 
         if ($cacheItem = Pimcore_Model_Cache::load($this->cacheKey, true)) {
             header("X-Pimcore-Cache-Tag: " . $this->cacheKey, true, 200);
