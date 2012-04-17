@@ -228,7 +228,6 @@
             "pimcore/document/document.js",
             "pimcore/document/page_snippet.js",
             "pimcore/document/edit.js",
-            "pimcore/document/editemail.js",
             "pimcore/document/versions.js",
             "pimcore/document/pages/settings.js",
             "pimcore/document/pages/preview.js",
