@@ -17,11 +17,11 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/DocumentService/Adapter/AbstractAdapter.php';
-require_once 'Zend/Cloud/DocumentService/Adapter/SimpleDb/Query.php';
-require_once 'Zend/Cloud/DocumentService/Exception.php';
-require_once 'Zend/Service/Amazon/SimpleDb.php';
-require_once 'Zend/Service/Amazon/SimpleDb/Attribute.php';
+// require_once 'Zend/Cloud/DocumentService/Adapter/AbstractAdapter.php';
+// require_once 'Zend/Cloud/DocumentService/Adapter/SimpleDb/Query.php';
+// require_once 'Zend/Cloud/DocumentService/Exception.php';
+// require_once 'Zend/Service/Amazon/SimpleDb.php';
+// require_once 'Zend/Service/Amazon/SimpleDb/Attribute.php';
 
 /**
  * SimpleDB adapter for document service.
@@ -356,7 +356,7 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDb
     {
         $queryClass = $this->getQueryClass();
         if (!class_exists($queryClass)) {
-            require_once 'Zend/Loader.php';
+            // require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($queryClass);
         }
 

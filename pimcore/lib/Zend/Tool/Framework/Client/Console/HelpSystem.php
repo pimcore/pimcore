@@ -159,7 +159,7 @@ class Zend_Tool_Framework_Client_Console_HelpSystem
         /**
          * @see Zend_Version
          */
-        require_once 'Zend/Version.php';
+        // require_once 'Zend/Version.php';
         $this->_response->appendContent('Zend Framework', array('color' => array('hiWhite'), 'separator' => false));
         $this->_response->appendContent(' Command Line Console Tool v' . Zend_Version::VERSION . '');
         return $this;

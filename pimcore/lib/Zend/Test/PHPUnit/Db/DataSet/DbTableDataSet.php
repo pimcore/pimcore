@@ -20,14 +20,14 @@
  * @version    $Id: DbTableDataSet.php 23775 2011-03-01 17:25:24Z ralph $
  */
 
-require_once "PHPUnit/Extensions/Database/DataSet/QueryDataSet.php";
+// require_once "PHPUnit/Extensions/Database/DataSet/QueryDataSet.php";
 
-require_once "PHPUnit/Extensions/Database/DB/IDatabaseConnection.php";
+// require_once "PHPUnit/Extensions/Database/DB/IDatabaseConnection.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_DataSet_DbTable
  */
-require_once "Zend/Test/PHPUnit/Db/DataSet/DbTable.php";
+// require_once "Zend/Test/PHPUnit/Db/DataSet/DbTable.php";
 
 /**
  * Aggregate several Zend_Db_Table instances into a dataset.

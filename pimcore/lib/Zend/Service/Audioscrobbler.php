@@ -25,7 +25,7 @@
 /**
  * @see Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 
 /**
@@ -164,19 +164,19 @@ class Zend_Service_Audioscrobbler
             /**
              * @see Zend_Http_Client_Exception
              */
-            require_once 'Zend/Http/Client/Exception.php';
+            // require_once 'Zend/Http/Client/Exception.php';
             throw new Zend_Http_Client_Exception('Could not find: ' . $this->_client->getUri());
         } elseif (preg_match('/No user exists with this name/', $responseBody)) {
             /**
              * @see Zend_Http_Client_Exception
              */
-            require_once 'Zend/Http/Client/Exception.php';
+            // require_once 'Zend/Http/Client/Exception.php';
             throw new Zend_Http_Client_Exception('No user exists with this name');
         } elseif (!$response->isSuccessful()) {
             /**
              * @see Zend_Http_Client_Exception
              */
-            require_once 'Zend/Http/Client/Exception.php';
+            // require_once 'Zend/Http/Client/Exception.php';
             throw new Zend_Http_Client_Exception('The web service ' . $this->_client->getUri() . ' returned the following status code: ' . $response->getStatus());
         }
 
@@ -187,7 +187,7 @@ class Zend_Service_Audioscrobbler
             /**
              * @see Zend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
+            // require_once 'Zend/Service/Exception.php';
             $exception = new Zend_Service_Exception('Response failed to load with SimpleXML');
             $exception->error    = $this->_error;
             $exception->response = $responseBody;
@@ -661,7 +661,7 @@ class Zend_Service_Audioscrobbler
     public function __call($method, $args)
     {
         if(substr($method, 0, 3) !== "set") {
-            require_once "Zend/Service/Exception.php";
+            // require_once "Zend/Service/Exception.php";
             throw new Zend_Service_Exception(
                 "Method ".$method." does not exist in class Zend_Service_Audioscrobbler."
             );
@@ -669,7 +669,7 @@ class Zend_Service_Audioscrobbler
         $field = strtolower(substr($method, 3));
 
         if(!is_array($args) || count($args) != 1) {
-            require_once "Zend/Service/Exception.php";
+            // require_once "Zend/Service/Exception.php";
             throw new Zend_Service_Exception(
                 "A value is required for setting a parameter field."
             );

@@ -23,7 +23,7 @@
 /**
  * @see Zend_View_Helper_HtmlElement
  */
-require_once 'Zend/View/Helper/HtmlElement.php';
+// require_once 'Zend/View/Helper/HtmlElement.php';
 
 /**
  * @category   Zend

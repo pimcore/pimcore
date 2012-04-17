@@ -23,12 +23,12 @@
 /**
  * @see Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /**
  * @see Zend_Service_Nirvanix_Response
  */
-require_once 'Zend/Service/Nirvanix/Response.php';
+// require_once 'Zend/Service/Nirvanix/Response.php';
 
 /**
  * The Nirvanix web services are split into namespaces.  This is a proxy class

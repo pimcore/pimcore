@@ -22,12 +22,12 @@
 /**
  * @see Zend_Service_Abstract
  */
-require_once 'Zend/Service/Abstract.php';
+// require_once 'Zend/Service/Abstract.php';
 
 /**
  * @see Zend_Service_ShortUrl_Shortener
  */
-require_once 'Zend/Service/ShortUrl/Shortener.php';
+// require_once 'Zend/Service/ShortUrl/Shortener.php';
 
 /**
  * @category   Zend
@@ -55,9 +55,9 @@ abstract class Zend_Service_ShortUrl_AbstractShortener
      */
     protected function _validateUri($url)
     {
-        require_once 'Zend/Uri.php';
+        // require_once 'Zend/Uri.php';
         if (!Zend_Uri::check($url)) {
-            require_once 'Zend/Service/ShortUrl/Exception.php';
+            // require_once 'Zend/Service/ShortUrl/Exception.php';
             throw new Zend_Service_ShortUrl_Exception(sprintf(
                 'The url "%s" is not valid and cannot be shortened', $url
             ));
@@ -73,7 +73,7 @@ abstract class Zend_Service_ShortUrl_AbstractShortener
     protected function _verifyBaseUri($shortenedUrl)
     {
         if (strpos($shortenedUrl, $this->_baseUri) !== 0) {
-            require_once 'Zend/Service/ShortUrl/Exception.php';
+            // require_once 'Zend/Service/ShortUrl/Exception.php';
             throw new Zend_Service_ShortUrl_Exception(sprintf(
                 'The url "%s" is not valid for this service and the target cannot be resolved',
                 $shortenedUrl

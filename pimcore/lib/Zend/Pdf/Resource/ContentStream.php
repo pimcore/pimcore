@@ -21,14 +21,14 @@
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Object.php';
-require_once 'Zend/Pdf/Element/Dictionary.php';
-require_once 'Zend/Pdf/Element/Name.php';
-require_once 'Zend/Pdf/Element/Numeric.php';
+// require_once 'Zend/Pdf/Element/Object.php';
+// require_once 'Zend/Pdf/Element/Dictionary.php';
+// require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Numeric.php';
 
 
 /** Zend_Pdf_Resource */
-require_once 'Zend/Pdf/Resource.php';
+// require_once 'Zend/Pdf/Resource.php';
 
 
 /**
@@ -59,7 +59,7 @@ class Zend_Pdf_Resource_ContentStream extends Zend_Pdf_Resource
             !$contentStreamObject instanceof Zend_Pdf_Element_Object_Stream &&
             !is_string($contentStreamObject)
         ) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Content stream parameter must be a string or stream object');
         }
 

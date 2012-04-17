@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Feed
  */
-require_once 'Zend/Gdata/Feed.php';
+// require_once 'Zend/Gdata/Feed.php';
 
 /**
  * @see Zend_Gdata_YouTube_ActivityEntry
  */
-require_once 'Zend/Gdata/YouTube/ActivityEntry.php';
+// require_once 'Zend/Gdata/YouTube/ActivityEntry.php';
 
 /**
  * A feed of user activity entries for YouTube

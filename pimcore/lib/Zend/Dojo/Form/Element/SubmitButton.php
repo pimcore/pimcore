@@ -20,7 +20,7 @@
  */
 
 /** Zend_Dojo_Form_Element_Button */
-require_once 'Zend/Dojo/Form/Element/Button.php';
+// require_once 'Zend/Dojo/Form/Element/Button.php';
 
 /**
  * Submit button dijit

@@ -23,12 +23,12 @@
 /**
  * @see Zend_Service_DeveloperGarden_Response_BaseType
  */
-require_once 'Zend/Service/DeveloperGarden/Response/BaseType.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/BaseType.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_LocalSearch_LocalSearchResponseType
  */
-require_once 'Zend/Service/DeveloperGarden/Response/LocalSearch/LocalSearchResponseType.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/LocalSearch/LocalSearchResponseType.php';
 
 /**
  * @category   Zend

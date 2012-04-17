@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Xml_Security_Transform_Interface
  */
-require_once 'Zend/InfoCard/Xml/Security/Transform/Interface.php';
+// require_once 'Zend/InfoCard/Xml/Security/Transform/Interface.php';
 
 /**
  * A object implementing the EnvelopedSignature XML Transform
@@ -49,7 +49,7 @@ class Zend_InfoCard_Xml_Security_Transform_EnvelopedSignature
         $sxe = simplexml_load_string($strXMLData);
 
         if(!$sxe->Signature) {
-            require_once 'Zend/InfoCard/Xml/Security/Transform/Exception.php';
+            // require_once 'Zend/InfoCard/Xml/Security/Transform/Exception.php';
             throw new Zend_InfoCard_Xml_Security_Transform_Exception("Unable to locate Signature Block for EnvelopedSignature Transform");
         }
 

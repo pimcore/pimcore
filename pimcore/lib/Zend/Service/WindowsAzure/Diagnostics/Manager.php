@@ -23,17 +23,17 @@
 /**
  * @see Zend_Service_WindowsAzure_Storage_Blob
  */
-require_once 'Zend/Service/WindowsAzure/Storage/Blob.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/Blob.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_Exception
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationInstance
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationInstance.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationInstance.php';
 
 /**
  * @category   Zend

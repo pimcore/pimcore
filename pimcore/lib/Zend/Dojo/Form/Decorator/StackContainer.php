@@ -19,7 +19,7 @@
  */
 
 /** Zend_Dojo_Form_Decorator_DijitContainer */
-require_once 'Zend/Dojo/Form/Decorator/DijitContainer.php';
+// require_once 'Zend/Dojo/Form/Decorator/DijitContainer.php';
 
 /**
  * StackContainer

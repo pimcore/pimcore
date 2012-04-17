@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Health_Extension_Ccr
  */
-require_once 'Zend/Gdata/Health/Extension/Ccr.php';
+// require_once 'Zend/Gdata/Health/Extension/Ccr.php';
 
 /**
  * Concrete class for working with Health profile entries.

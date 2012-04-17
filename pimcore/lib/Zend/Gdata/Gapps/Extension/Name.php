@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Gapps
  */
-require_once 'Zend/Gdata/Gapps.php';
+// require_once 'Zend/Gdata/Gapps.php';
 
 /**
  * Represents the apps:name element used by the Apps data API. This is used

@@ -107,16 +107,16 @@ abstract class Zend_Navigation_Container implements RecursiveIterator, Countable
     public function addPage($page)
     {
         if ($page === $this) {
-            require_once 'Zend/Navigation/Exception.php';
+            // require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                 'A page cannot have itself as a parent');
         }
 
         if (is_array($page) || $page instanceof Zend_Config) {
-            require_once 'Zend/Navigation/Page.php';
+            // require_once 'Zend/Navigation/Page.php';
             $page = Zend_Navigation_Page::factory($page);
         } elseif (!$page instanceof Zend_Navigation_Page) {
-            require_once 'Zend/Navigation/Exception.php';
+            // require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                     'Invalid argument: $page must be an instance of ' .
                     'Zend_Navigation_Page or Zend_Config, or an array');
@@ -154,7 +154,7 @@ abstract class Zend_Navigation_Container implements RecursiveIterator, Countable
         }
 
         if (!is_array($pages)) {
-            require_once 'Zend/Navigation/Exception.php';
+            // require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                     'Invalid argument: $pages must be an array or an ' .
                     'instance of Zend_Config');
@@ -354,7 +354,7 @@ abstract class Zend_Navigation_Container implements RecursiveIterator, Countable
             return $this->{$match[1]}($match[2], $arguments[0]);
         }
 
-        require_once 'Zend/Navigation/Exception.php';
+        // require_once 'Zend/Navigation/Exception.php';
         throw new Zend_Navigation_Exception(sprintf(
                 'Bad method call: Unknown method %s::%s',
                 get_class($this),
@@ -398,7 +398,7 @@ abstract class Zend_Navigation_Container implements RecursiveIterator, Countable
         if (isset($this->_pages[$hash])) {
             return $this->_pages[$hash];
         } else {
-            require_once 'Zend/Navigation/Exception.php';
+            // require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                     'Corruption detected in container; ' .
                     'invalid key found in internal iterator');

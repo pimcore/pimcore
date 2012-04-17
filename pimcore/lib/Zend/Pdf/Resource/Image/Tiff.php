@@ -20,13 +20,13 @@
  */
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Array.php';
-require_once 'Zend/Pdf/Element/Name.php';
-require_once 'Zend/Pdf/Element/Numeric.php';
+// require_once 'Zend/Pdf/Element/Array.php';
+// require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Numeric.php';
 
 
 /** Zend_Pdf_Resource_Image */
-require_once 'Zend/Pdf/Resource/Image.php';
+// require_once 'Zend/Pdf/Resource/Image.php';
 
 /**
  * TIFF image
@@ -104,7 +104,7 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
      */
     protected function unpackBytes($type, $bytes) {
         if(!isset($this->_endianType)) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("The unpackBytes function can only be used after the endianness of the file is known");
         }
         switch($type) {
@@ -140,7 +140,7 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
     public function __construct($imageFileName)
     {
         if (($imageFile = @fopen($imageFileName, 'rb')) === false ) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception( "Can not open '$imageFileName' file for reading." );
         }
 
@@ -150,14 +150,14 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
         } else if($byteOrderIndicator == 'MM') {
             $this->_endianType = Zend_Pdf_Resource_Image_Tiff::TIFF_ENDIAN_BIG;
         } else {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception( "Not a tiff file or Tiff corrupt. No byte order indication found" );
         }
 
         $version = $this->unpackBytes(Zend_Pdf_Resource_Image_Tiff::UNPACK_TYPE_SHORT, fread($imageFile, 2));
 
         if($version != 42) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception( "Not a tiff file or Tiff corrupt. Incorrect version number." );
         }
         $ifdOffset = $this->unpackBytes(Zend_Pdf_Resource_Image_Tiff::UNPACK_TYPE_LONG, fread($imageFile, 4));
@@ -173,7 +173,7 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
 
         while($ifdOffset > 0) {
             if(fseek($imageFile, $ifdOffset, SEEK_SET) == -1 || $ifdOffset+2 >= $this->_fileSize) {
-                require_once 'Zend/Pdf/Exception.php';
+                // require_once 'Zend/Pdf/Exception.php';
                 throw new Zend_Pdf_Exception("Could not seek to the image file directory as indexed by the file. Likely cause is TIFF corruption. Offset: ". $ifdOffset);
             }
 
@@ -268,24 +268,24 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
                                 //Fall through to next case
                             case Zend_Pdf_Resource_Image_Tiff::TIFF_COMPRESSION_GROUP_4_FAX:
                                 $this->_filter = 'CCITTFaxDecode';
-                                require_once 'Zend/Pdf/Exception.php';
+                                // require_once 'Zend/Pdf/Exception.php';
                                 throw new Zend_Pdf_Exception("CCITTFaxDecode Compression Mode Not Currently Supported");
                                 break;
                             case Zend_Pdf_Resource_Image_Tiff::TIFF_COMPRESSION_LZW:
                                 $this->_filter = 'LZWDecode';
-                                require_once 'Zend/Pdf/Exception.php';
+                                // require_once 'Zend/Pdf/Exception.php';
                                 throw new Zend_Pdf_Exception("LZWDecode Compression Mode Not Currently Supported");
                                 break;
                             case Zend_Pdf_Resource_Image_Tiff::TIFF_COMPRESSION_JPEG:
                                 $this->_filter = 'DCTDecode'; //Should work, doesnt...
-                                require_once 'Zend/Pdf/Exception.php';
+                                // require_once 'Zend/Pdf/Exception.php';
                                 throw new Zend_Pdf_Exception("JPEG Compression Mode Not Currently Supported");
                                 break;
                             case Zend_Pdf_Resource_Image_Tiff::TIFF_COMPRESSION_FLATE:
                                 //fall through to next case
                             case Zend_Pdf_Resource_Image_Tiff::TIFF_COMPRESSION_FLATE_OBSOLETE_CODE:
                                 $this->_filter = 'FlateDecode';
-                                require_once 'Zend/Pdf/Exception.php';
+                                // require_once 'Zend/Pdf/Exception.php';
                                 throw new Zend_Pdf_Exception("ZIP/Flate Compression Mode Not Currently Supported");
                                 break;
                             case Zend_Pdf_Resource_Image_Tiff::TIFF_COMPRESSION_PACKBITS:
@@ -321,7 +321,7 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
                                 $this->_colorSpace = 'Lab';
                                 break;
                             default:
-                                require_once 'Zend/Pdf/Exception.php';
+                                // require_once 'Zend/Pdf/Exception.php';
                                 throw new Zend_Pdf_Exception('TIFF: Unknown or Unsupported Color Type: '. $value);
                         }
                         break;
@@ -358,14 +358,14 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
         }
 
         if(!isset($this->_imageDataOffset) || !isset($this->_imageDataLength)) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("TIFF: The image processed did not contain image data as expected.");
         }
 
         $imageDataBytes = '';
         if(is_array($this->_imageDataOffset)) {
             if(!is_array($this->_imageDataLength)) {
-                require_once 'Zend/Pdf/Exception.php';
+                // require_once 'Zend/Pdf/Exception.php';
                 throw new Zend_Pdf_Exception("TIFF: The image contained multiple data offsets but not multiple data lengths. Tiff may be corrupt.");
             }
             foreach($this->_imageDataOffset as $idx => $offset) {
@@ -377,7 +377,7 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
             $imageDataBytes = fread($imageFile, $this->_imageDataLength);
         }
         if($imageDataBytes === '') {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("TIFF: No data. Image Corruption");
         }
 
@@ -387,7 +387,7 @@ class Zend_Pdf_Resource_Image_Tiff extends Zend_Pdf_Resource_Image
 
         $imageDictionary = $this->_resource->dictionary;
         if(!isset($this->_width) || !isset($this->_width)) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("Problem reading tiff file. Tiff is probably corrupt.");
         }
 

@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Gbase_Extension_BaseAttribute
  */
-require_once 'Zend/Gdata/Gbase/Extension/BaseAttribute.php';
+// require_once 'Zend/Gdata/Gbase/Extension/BaseAttribute.php';
 
 /**
  * Base class for working with Google Base entries.

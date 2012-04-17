@@ -22,7 +22,7 @@
 /**
  * @see Zend_File_Transfer_Adapter_Abstract
  */
-require_once 'Zend/File/Transfer/Adapter/Abstract.php';
+// require_once 'Zend/File/Transfer/Adapter/Abstract.php';
 
 /**
  * File transfer adapter class for the HTTP protocol
@@ -45,7 +45,7 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
     public function __construct($options = array())
     {
         if (ini_get('file_uploads') == false) {
-            require_once 'Zend/File/Transfer/Exception.php';
+            // require_once 'Zend/File/Transfer/Exception.php';
             throw new Zend_File_Transfer_Exception('File uploads are not allowed in your php config!');
         }
 
@@ -105,7 +105,7 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
      */
     public function send($options = null)
     {
-        require_once 'Zend/File/Transfer/Exception.php';
+        // require_once 'Zend/File/Transfer/Exception.php';
         throw new Zend_File_Transfer_Exception('Method not implemented');
     }
 
@@ -224,7 +224,7 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
      */
     public function isSent($files = null)
     {
-        require_once 'Zend/File/Transfer/Exception.php';
+        // require_once 'Zend/File/Transfer/Exception.php';
         throw new Zend_File_Transfer_Exception('Method not implemented');
     }
 
@@ -303,7 +303,7 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
     public static function getProgress($id = null)
     {
         if (!function_exists('apc_fetch') and !function_exists('uploadprogress_get_info')) {
-            require_once 'Zend/File/Transfer/Exception.php';
+            // require_once 'Zend/File/Transfer/Exception.php';
             throw new Zend_File_Transfer_Exception('Neither APC nor uploadprogress extension installed');
         }
 
@@ -381,12 +381,12 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
 
         if (isset($adapter) && isset($status['id'])) {
             if ($adapter instanceof Zend_ProgressBar_Adapter) {
-                require_once 'Zend/ProgressBar.php';
+                // require_once 'Zend/ProgressBar.php';
                 $adapter = new Zend_ProgressBar($adapter, 0, $status['total'], $session);
             }
 
             if (!($adapter instanceof Zend_ProgressBar)) {
-                require_once 'Zend/File/Transfer/Exception.php';
+                // require_once 'Zend/File/Transfer/Exception.php';
                 throw new Zend_File_Transfer_Exception('Unknown Adapter given');
             }
 

@@ -24,7 +24,7 @@
 /**
  * @see Zend_Gdata_Gbase_Entry
  */
-require_once 'Zend/Gdata/Gbase/Entry.php';
+// require_once 'Zend/Gdata/Gbase/Entry.php';
 
 /**
  * Concrete class for working with Item entries.
@@ -117,7 +117,7 @@ class Zend_Gdata_Gbase_ItemEntry extends Zend_Gdata_Gbase_Entry
                 $uri = $editLink->getHref() . '?dry-run=true';
             }
             if ($uri === null) {
-                require_once 'Zend/Gdata/App/InvalidArgumentException.php';
+                // require_once 'Zend/Gdata/App/InvalidArgumentException.php';
                 throw new Zend_Gdata_App_InvalidArgumentException('You must specify an URI which needs deleted.');
             }
             $service = new Zend_Gdata_App($this->getHttpClient());
@@ -149,7 +149,7 @@ class Zend_Gdata_Gbase_ItemEntry extends Zend_Gdata_Gbase_Entry
                 $uri = $editLink->getHref() . '?dry-run=true';
             }
             if ($uri === null) {
-                require_once 'Zend/Gdata/App/InvalidArgumentException.php';
+                // require_once 'Zend/Gdata/App/InvalidArgumentException.php';
                 throw new Zend_Gdata_App_InvalidArgumentException('You must specify an URI which needs deleted.');
             }
             parent::delete($uri);

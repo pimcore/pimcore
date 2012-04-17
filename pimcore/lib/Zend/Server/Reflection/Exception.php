@@ -21,7 +21,7 @@
 /**
  * @see Zend_Server_Exception
  */
-require_once 'Zend/Server/Exception.php';
+// require_once 'Zend/Server/Exception.php';
 
 /**
  * Zend_Server_Reflection exceptions

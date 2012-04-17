@@ -21,7 +21,7 @@
  */
 
 /** Zend_View_Helper_HtmlElement */
-require_once 'Zend/View/Helper/HtmlElement.php';
+// require_once 'Zend/View/Helper/HtmlElement.php';
 
 /**
  * Dojo dijit base class
@@ -234,7 +234,7 @@ abstract class Zend_Dojo_View_Helper_Dijit extends Zend_View_Helper_HtmlElement
         // Normalize constraints, if present
         foreach ($this->_jsonParams as $param) {
             if (array_key_exists($param, $params)) {
-                require_once 'Zend/Json.php';
+                // require_once 'Zend/Json.php';
 
                 if (is_array($params[$param])) {
                     $values = array();

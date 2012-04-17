@@ -23,12 +23,12 @@
 /**
  * @see Zend_Markup_TokenList
  */
-require_once 'Zend/Markup/TokenList.php';
+// require_once 'Zend/Markup/TokenList.php';
 
 /**
  * @see Zend_Markup_Parser_ParserInterface
  */
-require_once 'Zend/Markup/Parser/ParserInterface.php';
+// require_once 'Zend/Markup/Parser/ParserInterface.php';
 
 /**
  * @category   Zend
@@ -135,14 +135,14 @@ class Zend_Markup_Parser_Textile implements Zend_Markup_Parser_ParserInterface
             /**
              * @see Zend_Markup_Parser_Exception
              */
-            require_once 'Zend/Markup/Parser/Exception.php';
+            // require_once 'Zend/Markup/Parser/Exception.php';
             throw new Zend_Markup_Parser_Exception('Value to parse should be a string.');
         }
         if (empty($value)) {
             /**
              * @see Zend_Markup_Parser_Exception
              */
-            require_once 'Zend/Markup/Parser/Exception.php';
+            // require_once 'Zend/Markup/Parser/Exception.php';
             throw new Zend_Markup_Parser_Exception('Value to parse cannot be left empty.');
         }
 

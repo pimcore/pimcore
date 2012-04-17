@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Cipher_Pki_Interface
  */
-require_once 'Zend/InfoCard/Cipher/Pki/Interface.php';
+// require_once 'Zend/InfoCard/Cipher/Pki/Interface.php';
 
 /**
  * An abstract class for public-key ciphers
@@ -68,7 +68,7 @@ abstract class Zend_InfoCard_Cipher_Pki_Adapter_Abstract implements Zend_InfoCar
                 $this->_padding = $padding;
                 break;
             default:
-                require_once 'Zend/InfoCard/Cipher/Exception.php';
+                // require_once 'Zend/InfoCard/Cipher/Exception.php';
                 throw new Zend_InfoCard_Cipher_Exception("Invalid Padding Type Provided");
                 break;
         }

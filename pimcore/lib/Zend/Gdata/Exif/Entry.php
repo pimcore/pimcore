@@ -24,17 +24,17 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Exif
  */
-require_once 'Zend/Gdata/Exif.php';
+// require_once 'Zend/Gdata/Exif.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Tags
  */
-require_once 'Zend/Gdata/Exif/Extension/Tags.php';
+// require_once 'Zend/Gdata/Exif/Extension/Tags.php';
 
 /**
  * An Atom entry containing EXIF metadata.

@@ -21,7 +21,7 @@
  */
 
 /** @see Zend_Serializer_Adapter_AdapterAbstract */
-require_once 'Zend/Serializer/Adapter/AdapterAbstract.php';
+// require_once 'Zend/Serializer/Adapter/AdapterAbstract.php';
 
 /**
  * @link       http://www.python.org
@@ -192,7 +192,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
     {
         $int = (int) $number;
         if ($int < 0 || $int > 3) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Invalid or unknown protocol version "'.$number.'"');
         }
         return $int;
@@ -264,7 +264,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         } elseif (is_object($value)) {
             $this->_writeObject($value);
         } else {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception(
                 'PHP-Type "'.gettype($value).'" isn\'t serializable with '.get_class($this)
             );
@@ -613,7 +613,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         }
 
         if (!count($this->_stack)) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('No data found');
         }
 
@@ -757,7 +757,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
                 $this->_loadProto();
                 break;
             default:
-                require_once 'Zend/Serializer/Exception.php';
+                // require_once 'Zend/Serializer/Exception.php';
                 throw new Zend_Serializer_Exception('Invalid or unknown opcode "'.$op.'"');
         }
     }
@@ -774,7 +774,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
 
         $lastStack = count($this->_stack)-1;
         if (!isset($this->_stack[$lastStack])) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('No stack exist');
         }
         $this->_memo[$id] = & $this->_stack[$lastStack];
@@ -792,7 +792,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
 
         $lastStack = count($this->_stack)-1;
         if (!isset($this->_stack[$lastStack])) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('No stack exist');
         }
         $this->_memo[$id] = & $this->_stack[$lastStack];
@@ -814,7 +814,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
 
         $lastStack = count($this->_stack)-1;
         if (!isset($this->_stack[$lastStack])) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('No stack exist');
         }
         $this->_memo[$id] = & $this->_stack[$lastStack];
@@ -831,7 +831,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         $id = (int)$this->_readline();
 
         if (!array_key_exists($id, $this->_memo)) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Get id "' . $id . '" not found in momo');
         }
         $this->_stack[] = & $this->_memo[$id];
@@ -848,7 +848,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         $id = ord($this->_read(1));
 
         if (!array_key_exists($id, $this->_memo)) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Get id "' . $id . '" not found in momo');
         }
         $this->_stack[] = & $this->_memo[$id];
@@ -869,7 +869,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         list(, $id) = unpack('l', $bin);
 
         if (!array_key_exists($id, $this->_memo)) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Get id "' . $id . '" not found in momo');
         }
         $this->_stack[] = & $this->_memo[$id];
@@ -1150,7 +1150,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
                        . chr(0x80 | $uniCode >> 6 & 0x3F)
                        . chr(0x80 | $uniCode & 0x3F);
         } else {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Unsupported unicode character found "' . dechex($uniCode) . '"');
         }
 
@@ -1366,7 +1366,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
     {
         $proto = ord($this->_read(1));
         if ($proto < 2 || $proto > 3) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Invalid protocol version detected');
         }
         $this->_protocol = $proto;
@@ -1384,7 +1384,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
     protected function _read($len)
     {
         if (($this->_pos + $len) > $this->_pickleLen) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('End of data');
         }
 
@@ -1408,7 +1408,7 @@ class Zend_Serializer_Adapter_PythonPickle extends Zend_Serializer_Adapter_Adapt
         }
 
         if ($eolPos === false) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('No new line found');
         }
         $ret        = substr($this->_pickle, $this->_pos, $eolPos-$this->_pos);

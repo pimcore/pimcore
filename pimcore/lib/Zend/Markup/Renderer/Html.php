@@ -23,19 +23,19 @@
 /**
  * @see Zend_Filter_HtmlEntities
  */
-require_once 'Zend/Filter/HtmlEntities.php';
+// require_once 'Zend/Filter/HtmlEntities.php';
 /**
  * @see Zend_Filter_PregReplace
  */
-require_once 'Zend/Filter/PregReplace.php';
+// require_once 'Zend/Filter/PregReplace.php';
 /**
  * @see Zend_Filter_Callback
  */
-require_once 'Zend/Filter/Callback.php';
+// require_once 'Zend/Filter/Callback.php';
 /**
  * @see Zend_Markup_Renderer_RendererAbstract
  */
-require_once 'Zend/Markup/Renderer/RendererAbstract.php';
+// require_once 'Zend/Markup/Renderer/RendererAbstract.php';
 
 /**
  * HTML renderer

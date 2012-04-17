@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_YouTube_VideoEntry
  */
-require_once 'Zend/Gdata/YouTube/VideoEntry.php';
+// require_once 'Zend/Gdata/YouTube/VideoEntry.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Position
  */
-require_once 'Zend/Gdata/YouTube/Extension/Position.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Position.php';
 
 /**
  * Represents the YouTube video playlist flavor of an Atom entry

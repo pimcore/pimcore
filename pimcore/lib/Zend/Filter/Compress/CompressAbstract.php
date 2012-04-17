@@ -22,7 +22,7 @@
 /**
  * @see Zend_Filter_Compress_CompressInterface
  */
-require_once 'Zend/Filter/Compress/CompressInterface.php';
+// require_once 'Zend/Filter/Compress/CompressInterface.php';
 
 /**
  * Abstract compression adapter

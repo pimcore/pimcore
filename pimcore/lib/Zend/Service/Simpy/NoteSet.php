@@ -25,7 +25,7 @@
 /**
  * @see Zend_Service_Simpy_Note
  */
-require_once 'Zend/Service/Simpy/Note.php';
+// require_once 'Zend/Service/Simpy/Note.php';
 
 
 /**

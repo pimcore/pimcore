@@ -19,7 +19,7 @@
  * @version    $Id: Style.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
-require_once 'Zend/Pdf/Canvas/Abstract.php';
+// require_once 'Zend/Pdf/Canvas/Abstract.php';
 
 /**
  * Canvas is an abstract rectangle drawing area which can be dropped into

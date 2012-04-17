@@ -23,7 +23,7 @@
 /**
  * @see Zend_Ldap_Collection
  */
-require_once 'Zend/Ldap/Collection.php';
+// require_once 'Zend/Ldap/Collection.php';
 
 
 /**
@@ -48,7 +48,7 @@ class Zend_Ldap_Node_Collection extends Zend_Ldap_Collection
         /**
          * @see Zend_Ldap_Node
          */
-        require_once 'Zend/Ldap/Node.php';
+        // require_once 'Zend/Ldap/Node.php';
         $node = Zend_Ldap_Node::fromArray($data, true);
         $node->attachLdap($this->_iterator->getLdap());
         return $node;

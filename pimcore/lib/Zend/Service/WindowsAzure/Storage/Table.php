@@ -23,67 +23,67 @@
 /**
  * @see Zend_Service_WindowsAzure_Credentials_CredentialsAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/CredentialsAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/CredentialsAbstract.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Credentials_SharedKey
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/SharedKey.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/SharedKey.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Credentials_SharedKeyLite
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/SharedKeyLite.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/SharedKeyLite.php';
 
 /**
  * @see Zend_Service_WindowsAzure_RetryPolicy_RetryPolicyAbstract
  */
-require_once 'Zend/Service/WindowsAzure/RetryPolicy/RetryPolicyAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/RetryPolicy/RetryPolicyAbstract.php';
 
 /**
  * @see Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /**
  * @see Zend_Http_Response
  */
-require_once 'Zend/Http/Response.php';
+// require_once 'Zend/Http/Response.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage
  */
-require_once 'Zend/Service/WindowsAzure/Storage.php';
+// require_once 'Zend/Service/WindowsAzure/Storage.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_BatchStorageAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Storage/BatchStorageAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/BatchStorageAbstract.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_TableInstance
  */
-require_once 'Zend/Service/WindowsAzure/Storage/TableInstance.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/TableInstance.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_TableEntity
  */
-require_once 'Zend/Service/WindowsAzure/Storage/TableEntity.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/TableEntity.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_DynamicTableEntity
  */
-require_once 'Zend/Service/WindowsAzure/Storage/DynamicTableEntity.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/DynamicTableEntity.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_TableEntityQuery
  */
-require_once 'Zend/Service/WindowsAzure/Storage/TableEntityQuery.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/TableEntityQuery.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Exception
  */
-require_once 'Zend/Service/WindowsAzure/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Exception.php';
 
 
 /**

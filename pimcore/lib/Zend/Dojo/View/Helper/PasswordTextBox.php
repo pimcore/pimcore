@@ -21,7 +21,7 @@
  */
 
 /** Zend_Dojo_View_Helper_ValidationTextBox */
-require_once 'Zend/Dojo/View/Helper/ValidationTextBox.php';
+// require_once 'Zend/Dojo/View/Helper/ValidationTextBox.php';
 
 /**
  * Dojo ValidationTextBox dijit tied to password input

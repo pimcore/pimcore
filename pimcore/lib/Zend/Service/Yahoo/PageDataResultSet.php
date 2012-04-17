@@ -24,13 +24,13 @@
 /**
  * @see Zend_Service_Yahoo_ResultSet
  */
-require_once 'Zend/Service/Yahoo/ResultSet.php';
+// require_once 'Zend/Service/Yahoo/ResultSet.php';
 
 
 /**
  * @see Zend_Service_Yahoo_WebResult
  */
-require_once 'Zend/Service/Yahoo/PageDataResult.php';
+// require_once 'Zend/Service/Yahoo/PageDataResult.php';
 
 
 /**

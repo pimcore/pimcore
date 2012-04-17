@@ -21,7 +21,7 @@
  */
 
 /** Zend_Dojo_View_Helper_Dijit */
-require_once 'Zend/Dojo/View/Helper/Dijit.php';
+// require_once 'Zend/Dojo/View/Helper/Dijit.php';
 
 /**
  * Dojo Button dijit

@@ -120,14 +120,14 @@ abstract class Zend_Pdf_Image
          * use old implementation
          * @todo switch to new implementation
          */
-        require_once 'Zend/Pdf/Resource/ImageFactory.php';
+        // require_once 'Zend/Pdf/Resource/ImageFactory.php';
         return Zend_Pdf_Resource_ImageFactory::factory($filePath);
 
 
         /* Create a file parser data source object for this file. File path and
          * access permission checks are handled here.
          */
-        require_once 'Zend/Pdf/FileParserDataSource/File.php';
+        // require_once 'Zend/Pdf/FileParserDataSource/File.php';
         $dataSource = new Zend_Pdf_FileParserDataSource_File($filePath);
 
         /* Attempt to determine the type of image. We can't always trust file
@@ -155,7 +155,7 @@ abstract class Zend_Pdf_Image
                 $image = Zend_Pdf_Image::_extractJpegImage($dataSource);
                 break;
             default:
-                require_once 'Zend/Pdf/Exception.php';
+                // require_once 'Zend/Pdf/Exception.php';
                 throw new Zend_Pdf_Exception("Cannot create image resource. File extension not known or unsupported type.");
                 break;
         }
@@ -170,7 +170,7 @@ abstract class Zend_Pdf_Image
         } else {
             /* The type of image could not be determined. Give up.
              */
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("Cannot determine image type: $filePath",
                                          Zend_Pdf_Exception::CANT_DETERMINE_IMAGE_TYPE);
          }
@@ -193,12 +193,12 @@ abstract class Zend_Pdf_Image
      */
     protected static function _extractJpegImage($dataSource)
     {
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception('Jpeg image fileparser is not implemented. Old styly implementation has to be used.');
 
-        require_once 'Zend/Pdf/FileParser/Image/Jpeg.php';
+        // require_once 'Zend/Pdf/FileParser/Image/Jpeg.php';
         $imageParser = new Zend_Pdf_FileParser_Image_Jpeg($dataSource);
-        require_once 'Zend/Pdf/Resource/Image/Jpeg.php';
+        // require_once 'Zend/Pdf/Resource/Image/Jpeg.php';
         $image = new Zend_Pdf_Resource_Image_Jpeg($imageParser);
         unset($imageParser);
 
@@ -214,9 +214,9 @@ abstract class Zend_Pdf_Image
      */
     protected static function _extractPngImage($dataSource)
     {
-        require_once 'Zend/Pdf/FileParser/Image/Png.php';
+        // require_once 'Zend/Pdf/FileParser/Image/Png.php';
         $imageParser = new Zend_Pdf_FileParser_Image_Png($dataSource);
-        require_once 'Zend/Pdf/Resource/Image/Png.php';
+        // require_once 'Zend/Pdf/Resource/Image/Png.php';
         $image = new Zend_Pdf_Resource_Image_Png($imageParser);
         unset($imageParser);
 
@@ -233,12 +233,12 @@ abstract class Zend_Pdf_Image
      */
     protected static function _extractTiffImage($dataSource)
     {
-        require_once 'Zend/Pdf/Exception.php';
+        // require_once 'Zend/Pdf/Exception.php';
         throw new Zend_Pdf_Exception('Tiff image fileparser is not implemented. Old styly implementation has to be used.');
 
-        require_once 'Zend/Pdf/FileParser/Image/Tiff.php';
+        // require_once 'Zend/Pdf/FileParser/Image/Tiff.php';
         $imageParser = new Zend_Pdf_FileParser_Image_Tiff($dataSource);
-        require_once 'Zend/Pdf/Resource/Image/Tiff.php';
+        // require_once 'Zend/Pdf/Resource/Image/Tiff.php';
         $image = new Zend_Pdf_Resource_Image_Tiff($imageParser);
         unset($imageParser);
 

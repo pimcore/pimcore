@@ -126,7 +126,7 @@ class Zend_Service_Yahoo_ResultSet implements SeekableIterator
         /**
          * @see Zend_Service_Exception
          */
-        require_once 'Zend/Service/Exception.php';
+        // require_once 'Zend/Service/Exception.php';
         throw new Zend_Service_Exception('Zend_Service_Yahoo_ResultSet::current() must be implemented by child '
                                        . 'classes');
     }

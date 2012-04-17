@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_WindowsAzure_Exception
  */
-require_once 'Zend/Service/WindowsAzure/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Exception.php';
 
 
 /**

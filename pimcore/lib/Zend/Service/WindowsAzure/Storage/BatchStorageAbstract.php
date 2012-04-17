@@ -23,32 +23,32 @@
 /**
  * @see Zend_Service_WindowsAzure_Storage
  */
-require_once 'Zend/Service/WindowsAzure/Storage.php';
+// require_once 'Zend/Service/WindowsAzure/Storage.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Credentials_CredentialsAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/CredentialsAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/CredentialsAbstract.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Exception
  */
-require_once 'Zend/Service/WindowsAzure/Exception.php';
+// require_once 'Zend/Service/WindowsAzure/Exception.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_Batch
  */
-require_once 'Zend/Service/WindowsAzure/Storage/Batch.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/Batch.php';
 
 /**
  * @see Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /**
  * @see Zend_Http_Response
  */
-require_once 'Zend/Http/Response.php';
+// require_once 'Zend/Http/Response.php';
 
 /**
  * @category   Zend

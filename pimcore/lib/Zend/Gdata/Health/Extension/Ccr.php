@@ -23,7 +23,7 @@
 /**
  * @see Zend_Gdata_App_Extension_Element
  */
-require_once 'Zend/Gdata/App/Extension/Element.php';
+// require_once 'Zend/Gdata/App/Extension/Element.php';
 
 /**
  * Concrete class for working with CCR elements.

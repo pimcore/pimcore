@@ -101,7 +101,7 @@ abstract class Zend_Service_Technorati_Result
             /**
              * @see Zend_Service_Technorati_Weblog
              */
-            require_once 'Zend/Service/Technorati/Weblog.php';
+            // require_once 'Zend/Service/Technorati/Weblog.php';
             $this->_weblog = new Zend_Service_Technorati_Weblog($result->item(0));
         } else {
             $this->_weblog = null;

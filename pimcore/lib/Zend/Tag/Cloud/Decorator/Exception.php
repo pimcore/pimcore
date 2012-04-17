@@ -23,7 +23,7 @@
 /**
  * Zend_Tag_Cloud_Exception
  */
-require_once 'Zend/Tag/Cloud/Exception.php';
+// require_once 'Zend/Tag/Cloud/Exception.php';
 
 /**
  * Exception class for Zend_Tag_Cloud_Decorator
