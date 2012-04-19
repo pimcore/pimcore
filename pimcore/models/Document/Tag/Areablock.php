@@ -199,8 +199,6 @@ class Document_Tag_Areablock extends Document_Tag {
             if(is_file($view)) {
                 $editmode = $this->getView()->editmode;
 
-                echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
-
                 if(is_file($edit) && $editmode) {
                     echo '<div class="pimcore_area_edit_button"></div>';
                     $this->getView()->editmode = false;
@@ -215,8 +213,6 @@ class Document_Tag_Areablock extends Document_Tag {
                     $this->getView()->template($edit);
                     echo '</div>';
                 }
-
-                echo '</div>';
             }
         }
 
