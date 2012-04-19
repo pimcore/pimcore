@@ -75,7 +75,7 @@ class Webservice_AssetTest extends PHPUnit_Framework_TestCase {
         //copy the object retrieved from ws
         $new = clone $asset;
         $new->id = null;
-        $new->setFilename($asset->getFilename() . "_phpUnitTestCopy");
+        $new->setFilename($asset->getFilename() . "_php-unit-test-copy");
         $new->setResource(null);
 
         //send new asset back via ws
@@ -171,7 +171,7 @@ class Webservice_AssetTest extends PHPUnit_Framework_TestCase {
         //copy the object retrieved from ws
         $new = clone $asset;
         $new->id = null;
-        $new->setFilename("phpUnitTestCopy_" . $asset->getFilename());
+        $new->setFilename("php-unit-test-copy_" . $asset->getFilename());
         $new->setResource(null);
 
         //send new asset back via ws

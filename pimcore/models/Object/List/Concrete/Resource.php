@@ -105,7 +105,10 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     protected function exceptionHandler ($e) {
 
         // create view if it doesn't exist already // HACK
-        if(preg_match("/Base table or view not found/",$e->getMessage()) && $this->firstException) {
+        $pdoMySQL = preg_match("/Base table or view not found/",$e->getMessage());
+        $Mysqli = preg_match("/Table (.*) doesn't exist/",$e->getMessage());
+
+        if(($Mysqli || $pdoMySQL) && $this->firstException) {
             $this->firstException = false;
 
             $localizedFields = new Object_Localizedfield();
