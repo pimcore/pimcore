@@ -67,7 +67,7 @@ class Webservice_ObjectTest extends PHPUnit_Framework_TestCase {
         //copy the object retrieved from ws
         $new = clone $object;
         $new->id = null;
-        $new->setKey($object->getKey() . "_phpUnitTestCopy");
+        $new->setKey($object->getKey() . "_php-unit-test-copy");
         $new->setResource(null);
 
         //send new object back via ws
@@ -160,7 +160,7 @@ class Webservice_ObjectTest extends PHPUnit_Framework_TestCase {
         //copy the object retrieved from ws
         $new = clone $object;
         $new->id = null;
-        $new->setKey($object->getKey() . "_phpUnitTestCopy");
+        $new->setKey($object->getKey() . "_php-unit-test-copy");
         $new->setResource(null);
         //send new object back via ws
         $apiObject = Webservice_Data_Mapper::map($new, "Webservice_Data_Object_Concrete_In", "in");
