@@ -23,7 +23,7 @@ class Pimcore_Tool {
      */
     public static function isValidKey($key){
         $key = (string) $key;
-        $validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~";
+        $validChars = "abcdefghijklmnopqrstuvwxyz1234567890-_.~";
         for($i=0;$i<strlen($key);$i++){
             if(strpos($validChars,$key[$i])===FALSE){
                 Logger::error("Invalid character in filename: " . $key[$i] . " - complete filename is: " . $key);
