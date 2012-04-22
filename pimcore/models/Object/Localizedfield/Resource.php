@@ -141,10 +141,12 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $concats = array();
-        foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
-            // only add non-relational fields with one column to the group-concat
-            if(!$fd->isRelationType() && !is_array($fd->getColumnType())) {
-                $concats[] = "group_concat(" . $this->getTableName() . "." . $fd->getName() . ") AS `" . $fd->getName() . "`";
+        if($this->model->getClass()->getFielddefinition("localizedfields")) {
+            foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
+                // only add non-relational fields with one column to the group-concat
+                if(!$fd->isRelationType() && !is_array($fd->getColumnType())) {
+                    $concats[] = "group_concat(" . $this->getTableName() . "." . $fd->getName() . ") AS `" . $fd->getName() . "`";
+                }
             }
         }
 
