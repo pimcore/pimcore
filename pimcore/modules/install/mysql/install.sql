@@ -401,6 +401,7 @@ CREATE TABLE `translations_website` (
   KEY `key` (`key`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `tree_locks`;
 CREATE TABLE `tree_locks` (
   `id` int(11) NOT NULL DEFAULT '0',
   `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
