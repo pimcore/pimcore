@@ -116,7 +116,7 @@ class Document_Tag_Areablock extends Document_Tag {
 
                 $this->blockStarted = true;
                 $this->content();
-            } else {
+            } else if (!$manual) {
                 $this->current++;
             }
             return true;
