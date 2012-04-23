@@ -316,6 +316,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             return $0;
         });
 
+        var insertEl = null;
         var id = data.node.attributes.id;
         var uri = data.node.attributes.path;
         var browserPossibleExtensions = ["jpg","jpeg","gif","png"];
@@ -339,17 +340,20 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     }
                 }
 
-                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
+                this.ckeditor.insertElement(insertEl);
                 return true;
             }
             else {
-                this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
+                this.ckeditor.insertElement(insertEl);
                 return true;
             }
         }
 
         if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
-            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="' + id + '">' + wrappedText + '</a>');
+            insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="' + id + '">' + wrappedText + '</a>');
+            this.ckeditor.insertElement(insertEl);
             return true;
         }
 
