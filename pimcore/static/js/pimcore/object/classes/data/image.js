@@ -59,6 +59,36 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
+            }, {
+                fieldLabel: t("upload_path"),
+                name: "uploadPath",
+                cls: "input_drop_target",
+                value: this.datax.uploadPath,
+                width: 250,
+                xtype: "textfield",
+                listeners: {
+                    "render": function (el) {
+                        new Ext.dd.DropZone(el.getEl(), {
+                            reference: this,
+                            ddGroup: "element",
+                            getTargetFromEvent: function(e) {
+                                return this.getEl();
+                            }.bind(el),
+
+                            onNodeOver : function(target, dd, e, data) {
+                                return Ext.dd.DropZone.prototype.dropAllowed;
+                            },
+
+                            onNodeDrop : function (target, dd, e, data) {
+                                if (data.node.attributes.elementType == "asset") {
+                                    this.setValue(data.node.attributes.path);
+                                    return true;
+                                }
+                                return false;
+                            }.bind(el)
+                        });
+                    }
+                }
             }
         ]);
 

@@ -555,55 +555,13 @@ pimcore.asset.tree = Class.create({
     },
 
     addSingleAsset: function () {
-
-        this.uploadForm = new Ext.form.FormPanel({
-            layout: "pimcoreform",
-            fileUpload: true,
-            width: 400,
-            bodyStyle: 'padding: 10px;',
-            items: [{
-                xtype: 'fileuploadfield',
-                emptyText: t("select_a_file"),
-                fieldLabel: t("asset"),
-                width: 230,
-                name: 'Filedata',
-                buttonText: "",
-                buttonCfg: {
-                    iconCls: 'pimcore_icon_upload_single'
-                },
-                listeners: {
-                    fileselected: function () {
-                        this.uploadForm.getForm().submit({
-                            url: '/admin/asset/add-asset-compatibility/?parentId=' + this.attributes.id,
-                            waitMsg: t("please_wait"),
-                            success: function(fp, o){
-                                this.uploadWindowCompatible.hide();
-                                var f = this.attributes.reference.addAssetComplete.bind(this);
-                                f();
-                            }.bind(this),
-                            failure: function () {
-                                this.uploadWindowCompatible.hide();
-                                var f = this.attributes.reference.addAssetComplete.bind(this);
-                                f();
-                            }.bind(this)
-                        });
-                    }.bind(this)
-                }
-            }]
-        });
-
-        this.uploadWindowCompatible = new Ext.Window({
-            autoHeight: true,
-            title: t('add_assets'),
-            closeAction: 'close',
-            width:400,
-            modal: true,
-            items: [this.uploadForm]
-        });
-
-        this.uploadWindowCompatible.show();
-        this.uploadWindowCompatible.setWidth(401);
-        this.uploadWindowCompatible.doLayout();
+        pimcore.helpers.assetSingleUploadDialog(this.attributes.id, "id", function (res) {
+            var f = this.attributes.reference.addAssetComplete.bind(this);
+            f();
+        }.bind(this), function (res) {
+            var f = this.attributes.reference.addAssetComplete.bind(this);
+            f();
+        }.bind(this));
     },
 
     addAssets : function () {
