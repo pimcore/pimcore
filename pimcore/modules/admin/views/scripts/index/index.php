@@ -370,7 +370,6 @@
             "pimcore/report/webmastertools/keywords.js",
             "pimcore/report/webmastertools/crawling.js",
             "pimcore/report/websiteoptimizer/abcreate.js",
-            "pimcore/report/events/explorer.js",
 
             "pimcore/settings/tagmanagement/panel.js",
             "pimcore/settings/tagmanagement/item.js",
