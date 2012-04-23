@@ -37,6 +37,11 @@ class Object_Class_Data_Image extends Object_Class_Data {
     public $height;
 
     /**
+     * @var string
+     */
+    public $uploadPath;
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -259,6 +264,22 @@ class Object_Class_Data_Image extends Object_Class_Data {
         } else {
             throw new Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
         }
+    }
+
+    /**
+     * @param string $uploadPath
+     */
+    public function setUploadPath($uploadPath)
+    {
+        $this->uploadPath = $uploadPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploadPath()
+    {
+        return $this->uploadPath;
     }
 
 
