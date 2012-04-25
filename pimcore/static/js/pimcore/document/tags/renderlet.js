@@ -114,6 +114,9 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
 
     updateContent: function (path) {
 
+        this.getBody().removeClass("pimcore_tag_snippet_empty");
+        this.getBody().dom.innerHTML = '<br />&nbsp;&nbsp;Loading ...';
+
         var params = this.data;
         Ext.apply(params, this.options);
 
@@ -133,8 +136,6 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
         this.getBody().setStyle({
             height: "auto"
         });
-
-        this.getBody().removeClass("pimcore_tag_snippet_empty");
     },
 
     onContextMenu: function (e) {
