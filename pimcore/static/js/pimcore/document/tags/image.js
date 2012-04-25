@@ -156,13 +156,38 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             iconCls: "pimcore_icon_search",
             handler: function (item) {
                 item.parentMenu.destroy();
-                
                 this.openSearchEditor();
             }.bind(this) 
         }));
-        
+
+        menu.add(new Ext.menu.Item({
+            text: t('upload'),
+            iconCls: "pimcore_icon_upload_single",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                this.uploadDialog();
+            }.bind(this)
+        }));
+
         menu.showAt(e.getXY());
         e.stopEvent();
+    },
+
+    uploadDialog: function () {
+        pimcore.helpers.assetSingleUploadDialog(this.options["uploadPath"], "path", function (res) {
+            try {
+                var data = Ext.decode(res.response.responseText);
+                if(data["id"] && data["type"] == "image") {
+                    this.resetData();
+                    this.datax.id = data["id"];
+
+                    this.updateImage();
+                    this.reload();
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this));
     },
 
     onNodeOver: function(target, dd, e, data) {

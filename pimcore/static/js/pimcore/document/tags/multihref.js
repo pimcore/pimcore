@@ -104,6 +104,11 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                         xtype: "button",
                         iconCls: "pimcore_icon_search",
                         handler: this.openSearchEditor.bind(this)
+                    },
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_upload_single",
+                        handler: this.uploadDialog.bind(this)
                     }
                 ]
             }
@@ -145,6 +150,24 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         }.bind(this));
 
         this.element.render(id);
+    },
+
+    uploadDialog: function () {
+        pimcore.helpers.assetSingleUploadDialog(this.options["uploadPath"], "path", function (res) {
+            try {
+                var data = Ext.decode(res.response.responseText);
+                if(data["id"]) {
+                    this.store.add(new this.store.recordType({
+                        id: data["id"],
+                        path: data["fullpath"],
+                        type: "asset",
+                        subtype: data["type"]
+                    }, this.store.getCount() + 1));
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this));
     },
 
     onNodeOver: function(target, dd, e, data) {
@@ -213,6 +236,15 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
             handler: function (item) {
                 item.parentMenu.destroy();
                 this.openSearchEditor();
+            }.bind(this.reference)
+        }));
+
+        menu.add(new Ext.menu.Item({
+            text: t('upload'),
+            iconCls: "pimcore_icon_upload_single",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                this.uploadDialog();
             }.bind(this.reference)
         }));
 

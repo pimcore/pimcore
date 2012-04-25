@@ -208,7 +208,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         echo Zend_Json::encode(array(
             "success" => $res["success"],
             "msg" => "Success",
-            "id" => $res["asset"] ? $res["asset"]->getId() : null
+            "id" => $res["asset"] ? $res["asset"]->getId() : null,
+            "fullpath" => $res["asset"] ? $res["asset"]->getFullPath() : null,
+            "type" => $res["asset"] ? $res["asset"]->getType() : null
         ));
     }
 
@@ -219,6 +221,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $parent = Asset::getByPath($this->_getParam("parentPath"));
             if($parent instanceof Asset_Folder) {
                 $this->_setParam("parentId", $parent->getId());
+            } else {
+                $this->_setParam("parentId", 1);
             }
         } else if (!$this->_getParam("parentId")) {
             // set the parent to the root folder

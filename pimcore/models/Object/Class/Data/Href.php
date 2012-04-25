@@ -30,6 +30,11 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     public $width;
 
     /**
+     * @var string
+     */
+    public $assetUploadPath;
+
+    /**
      * @var bool
      */
     public $relationType = true;
@@ -517,5 +522,21 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         }
 
         return $data;
+    }
+
+    /**
+     * @param string $assetUploadPath
+     */
+    public function setAssetUploadPath($assetUploadPath)
+    {
+        $this->assetUploadPath = $assetUploadPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssetUploadPath()
+    {
+        return $this->assetUploadPath;
     }
 }

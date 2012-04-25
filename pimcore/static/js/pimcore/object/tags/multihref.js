@@ -76,6 +76,38 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         }
         var cls = 'object_field';
 
+        var toolbarItems = [
+            {
+                xtype: "tbspacer",
+                width: 20,
+                height: 16,
+                cls: "pimcore_icon_droptarget"
+            },
+            {
+                xtype: "tbtext",
+                text: "<b>" + this.fieldConfig.title + "</b>"
+            },
+            "->",
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                handler: this.empty.bind(this)
+            },
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                handler: this.openSearchEditor.bind(this)
+            }
+        ];
+
+        if (this.fieldConfig.assetsAllowed) {
+            toolbarItems.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_upload_single",
+                handler: this.uploadDialog.bind(this)
+            });
+        }
+
         this.component = new Ext.grid.GridPanel({
             plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
@@ -120,29 +152,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             cls: cls,
             autoExpandColumn: 'path',
             tbar: {
-                items: [
-                    {
-                        xtype: "tbspacer",
-                        width: 20,
-                        height: 16,
-                        cls: "pimcore_icon_droptarget"
-                    },
-                    {
-                        xtype: "tbtext",
-                        text: "<b>" + this.fieldConfig.title + "</b>"
-                    },
-                    "->",
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_delete",
-                        handler: this.empty.bind(this)
-                    },
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_search",
-                        handler: this.openSearchEditor.bind(this)
-                    }
-                ],
+                items: toolbarItems,
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"
             },
@@ -261,6 +271,24 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         });
 
         return this.component;
+    },
+
+    uploadDialog: function () {
+        pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.assetUploadPath, "path", function (res) {
+            try {
+                var data = Ext.decode(res.response.responseText);
+                if(data["id"]) {
+                    this.store.add(new this.store.recordType({
+                        id: data["id"],
+                        path: data["fullpath"],
+                        type: "asset",
+                        subtype: data["type"]
+                    }, this.store.getCount() + 1));
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this));
     },
 
     onRowContextmenu: function (grid, rowIndex, event) {
