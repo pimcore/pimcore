@@ -172,7 +172,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);
-                if(data["id"]) {
+                if(data["id"] && data["type"] == "image") {
                     this.data = data["id"];
                     this.dirty = true;
                 }
@@ -247,6 +247,15 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             handler: function (item) {
                 item.parentMenu.destroy();
                 this.openSearchEditor();
+            }.bind(this)
+        }));
+
+        menu.add(new Ext.menu.Item({
+            text: t('upload'),
+            iconCls: "pimcore_icon_upload_single",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                this.uploadDialog();
             }.bind(this)
         }));
         

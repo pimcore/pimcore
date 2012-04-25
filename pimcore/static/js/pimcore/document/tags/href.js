@@ -81,6 +81,40 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         this.element.render(id);
     },
 
+    uploadDialog: function () {
+        pimcore.helpers.assetSingleUploadDialog(this.options["uploadPath"], "path", function (res) {
+            try {
+                var data = Ext.decode(res.response.responseText);
+                if(data["id"]) {
+
+                    if (this.options["subtypes"]) {
+                        var found = false;
+                        var typeKeys = Object.keys(this.options.subtypes);
+                        for (var st = 0; st < typeKeys.length; st++) {
+                            for (i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
+                                if (this.options.subtypes[typeKeys[st]][i] == data["type"]) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!found) {
+                            return false;
+                        }
+                    }
+
+                    this.data.id = data["id"];
+                    this.data.subtype = data["type"];
+                    this.data.elementType = "asset";
+                    this.data.path = data["fullpath"];
+                    this.element.setValue(data["fullpath"]);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this));
+    },
+
     onNodeOver: function(target, dd, e, data) {
         if (this.dndAllowed(data)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
@@ -211,6 +245,17 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
                 this.openSearchEditor();
             }.bind(this)
         }));
+
+        if((this.options["types"] && in_array("asset",this.options.types)) || !this.options["types"]) {
+            menu.add(new Ext.menu.Item({
+                text: t('upload'),
+                iconCls: "pimcore_icon_upload_single",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.uploadDialog();
+                }.bind(this)
+            }));
+        }
 
         menu.showAt(e.getXY());
 

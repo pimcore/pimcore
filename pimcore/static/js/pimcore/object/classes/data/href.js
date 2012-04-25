@@ -200,8 +200,10 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                             check:function(cbox, checked) {
                                 if (checked) {
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
+                                    Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).show();
                                 } else {
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).hide();
+                                    Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).hide();
 
                                 }
                             }.bind(this)
@@ -217,7 +219,39 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         displayField: "text",
                         valueField: "text",
                         store: assetTypeStore
-                    })
+                    }), {
+                        fieldLabel: t("upload_path"),
+                        name: "assetUploadPath",
+                        hidden: !this.datax.assetsAllowed,
+                        id: 'class_asset_upload_path_' + this.uniqeFieldId,
+                        cls: "input_drop_target",
+                        value: this.datax.assetUploadPath,
+                        width: 250,
+                        xtype: "textfield",
+                        listeners: {
+                            "render": function (el) {
+                                new Ext.dd.DropZone(el.getEl(), {
+                                    reference: this,
+                                    ddGroup: "element",
+                                    getTargetFromEvent: function(e) {
+                                        return this.getEl();
+                                    }.bind(el),
+
+                                    onNodeOver : function(target, dd, e, data) {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    },
+
+                                    onNodeDrop : function (target, dd, e, data) {
+                                        if (data.node.attributes.elementType == "asset") {
+                                            this.setValue(data.node.attributes.path);
+                                            return true;
+                                        }
+                                        return false;
+                                    }.bind(el)
+                                });
+                            }
+                        }
+                    }
                 ]
             },
             {
