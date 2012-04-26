@@ -136,8 +136,8 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
                     $versionIds = array_unique($versionIds);
                 }
             }
-
-            return $versionIds;
         }
+
+        return $versionIds;
     }
 }
