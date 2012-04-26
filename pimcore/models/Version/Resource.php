@@ -116,17 +116,17 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
      */
     public function maintenanceGetOutdatedVersions ($elementTypes) {
 
+        $versionIds = array();
+
         if(!empty($elementTypes)) {
-            
-            $conditions = array();
             foreach ($elementTypes as $elementType) {
                 if($elementType["days"] > 0) {
                     // by days
                     $deadline = time() - ($elementType["days"] * 86400);
-                    return $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?)", array($elementType["elementType"], $deadline));
+                    $tmpVersionIds = $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?)", array($elementType["elementType"], $deadline));
+                    $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $versionIds = array();
                     $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? GROUP BY cid HAVING amount > ?", array($elementType["elementType"], $elementType["steps"]));
                     foreach ($elementIds as $elementId) {
                         $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", array($elementId, $elementType["elementType"]));
@@ -134,11 +134,10 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
                     }
 
                     $versionIds = array_unique($versionIds);
-                    return $versionIds;
                 }
             }
-            
-            return array();
+
+            return $versionIds;
         }
     }
 }
