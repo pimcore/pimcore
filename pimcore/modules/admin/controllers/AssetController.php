@@ -795,7 +795,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $image->getThumbnail($thumbnail);
         $imageContent = file_get_contents($thumbnailFile);
 
-        header("Content-Type: " . $image->getMimetype());
+        $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);
+        if(in_array($fileExtension, array("gif","jpeg","jpeg","png"))) {
+            header("Content-Type: image/".$fileExtension);
+        } else {
+            header("Content-Type: " . $image->getMimetype());
+        }
+
         header("Content-Length: " . strlen($imageContent));
         echo $imageContent;
         exit;
