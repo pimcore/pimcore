@@ -228,7 +228,8 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array(
             "sortinfo" => $gridConfig['sortinfo'],
             "language" => $language,
-            "availableFields" => $availableFields
+            "availableFields" => $availableFields,
+            "onlyDirectChildren" => $gridConfig['onlyDirectChildren']
         ));
     }
 
