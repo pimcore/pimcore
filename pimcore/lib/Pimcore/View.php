@@ -100,7 +100,7 @@ class Pimcore_View extends Zend_View {
      * @param array $params
      * @return void
      */
-    public function template($scriptPath, $params = array()) {
+    public function template($scriptPath, $params = array(), $resetPassedParams = false) {
 
         foreach ($params as $key => $value) {
             $this->assign($key, $value);
@@ -122,6 +122,12 @@ class Pimcore_View extends Zend_View {
             if(is_file($scriptPath)) {
                 $found = true;
                 include($scriptPath);
+            }
+        }
+
+        if($resetPassedParams){
+            foreach($params as $key => $value){
+                $this->$key = null;
             }
         }
     }
