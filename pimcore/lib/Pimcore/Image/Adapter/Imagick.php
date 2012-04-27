@@ -102,9 +102,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
             $this->resource->setResolution($width * $x_ratio, $height * $y_ratio);
             $this->resource->readImage($this->imagePath);
-        } else {
-            $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 1, false);
         }
+
+        $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 1, false);
 
         $this->setWidth($width);
         $this->setHeight($height);
