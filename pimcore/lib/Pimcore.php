@@ -740,6 +740,8 @@ class Pimcore {
         }
 
         Pimcore_Resource::reset();
+
+        Logger::debug("garbage collection finished");
     }
 
     /**

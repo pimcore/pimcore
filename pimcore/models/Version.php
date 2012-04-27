@@ -439,7 +439,7 @@ class Version extends Pimcore_Model_Abstract {
         $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes);
 
         if(is_array($versions)) {
-            foreach ($versions as $id) {
+            foreach ($versions as $index => $id) {
                 $version = Version::getById($id);
 
                 if ($version->getCtype() == "document") {
@@ -460,6 +460,11 @@ class Version extends Pimcore_Model_Abstract {
                 } else {
                     // delete version if the correspondening element doesn't exist anymore
                     $version->delete();
+                }
+
+                // call the garbage collector every 100 iterations, to avoid a out-of-memory
+                if($index % 100 == 0) {
+                    Pimcore::collectGarbage();
                 }
             }
         }
