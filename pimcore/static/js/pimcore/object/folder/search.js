@@ -25,7 +25,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     initialize: function(object) {
         this.object = object;
         this.element = object;
-        this.currentClass;
     },
 
     getLayout: function () {
@@ -111,6 +110,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             fields = response.availableFields;
             this.gridLanguage = response.language;
             this.sortinfo = response.sortinfo;
+            if(response.onlyDirectChildren) {
+                this.onlyDirectChildren = response.onlyDirectChildren;
+            }
         } else {
             fields = response;
         }
@@ -178,6 +180,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     this.store.baseparams = {};
                     this.store.setBaseParam("only_direct_children", checked);
 
+                    this.onlyDirectChildren = checked;
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)
             }
@@ -296,6 +299,11 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     },
 
+    getGridConfig: function($super) {
+        var config = $super();
+        config.onlyDirectChildren = this.onlyDirectChildren;
+        return config;
+    },
 
 
     onRowContextmenu: function (grid, rowIndex, event) {
