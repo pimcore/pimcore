@@ -539,7 +539,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
             if(!brick.icon) {
                 // this contains fallback-icons
-                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey","flag_orage","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
+                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey","flag_orange","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
                     "award_star_bronze_1","award_star_bronze_2","award_star_bronze_3","award_star_gold_1","award_star_gold_1","award_star_gold_1","award_star_silver_1","award_star_silver_2","award_star_silver_3",
                     "medal_bronze_1","medal_bronze_2","medal_bronze_3","medal_gold_1","medal_gold_1","medal_gold_1","medal_silver_1","medal_silver_2","medal_silver_3"];
                 brick.icon = "/pimcore/static/img/icon/" + iconStore[itemCount] + ".png";
