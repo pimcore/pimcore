@@ -290,7 +290,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "steps" => $values["assets.versions.steps"]
                     ),
                     "ffmpeg" => $values["assets.ffmpeg"],
-                    "qtfaststart" => $values["assets.qtfaststart"]
+                    "qtfaststart" => $values["assets.qtfaststart"],
+                    "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
+                    "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
                 ),
                 "services" => array(
                     "googlemaps" => array(

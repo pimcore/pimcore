@@ -122,6 +122,11 @@ class Pimcore_Tool_Text
                     $newTag = preg_replace("/".$linkAttr."=\"[^\"]*\"/",$linkAttr . '="' . $path . '"', $oldTag);
 
                     $text = str_replace($oldTag, $newTag, $text);
+                } else {
+                    // remove the img tag if there is an internal broken link
+                    if ($matches[1][$i] == "img") {
+                        $text = str_replace($matches[0][$i], "", $text);
+                    }
                 }
             }
         }
