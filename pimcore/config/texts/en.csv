@@ -1,3 +1,5 @@
+"absolute_path_to_icc_rgb_profile","Absolute path to ICC RGB profile"
+"absolute_path_to_icc_cmyk_profile","Absolute path to ICC CMYK profile"
 "upload_path","Upload Path"
 "inherited","Inherited"
 "length","Length"

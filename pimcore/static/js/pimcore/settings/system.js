@@ -826,6 +826,18 @@ pimcore.settings.system = Class.create({
                                 name: 'assets.qtfaststart',
                                 value: this.getValue("assets.qtfaststart"),
                                 width: 300
+                            },
+                            {
+                                fieldLabel: t('absolute_path_to_icc_rgb_profile'),
+                                name: 'assets.icc_rgb_profile',
+                                value: this.getValue("assets.icc_rgb_profile"),
+                                width: 300
+                            },
+                            {
+                                fieldLabel: t('absolute_path_to_icc_cmyk_profile'),
+                                name: 'assets.icc_cmyk_profile',
+                                value: this.getValue("assets.icc_cmyk_profile"),
+                                width: 300
                             }
                         ]
                     },

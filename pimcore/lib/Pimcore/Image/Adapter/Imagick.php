@@ -17,6 +17,16 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
 
     /**
+     * @var string
+     */
+    protected static $RGBColorProfile;
+
+    /**
+     * @var string
+     */
+    protected static $CMYKColorProfile;
+
+    /**
      * @var Imagick
      */
     protected $resource;
@@ -63,6 +73,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $format = "png";
         }
 
+        $this->applyColorProfiles();
+
         $this->resource->stripimage();
         $this->resource->setImageFormat($format);
 
@@ -81,6 +93,74 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     protected function destroy() {
         $this->resource->destroy();
+    }
+
+    /**
+     * this is to force RGB and to apply custom icc color profiles
+     */
+    protected function applyColorProfiles () {
+        if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_CMYK) {
+            if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
+                $profiles = $this->resource->getImageProfiles('*', false);
+                // we're only interested if ICC profile(s) exist
+                $has_icc_profile = (array_search('icc', $profiles) !== false);
+                // if it doesn't have a CMYK ICC profile, we add one
+                if ($has_icc_profile === false) {
+                    $this->resource->profileImage('icc', self::getCMYKColorProfile());
+                }
+                // then we add an RGB profile
+                $this->resource->profileImage('icc', self::getRGBColorProfile());
+                $this->resource->setImageColorspace(Imagick::COLORSPACE_RGB);
+            }
+        }
+    }
+
+    /**
+     * @param string $CMYKColorProfile
+     */
+    public static function setCMYKColorProfile($CMYKColorProfile)
+    {
+        self::$CMYKColorProfile = $CMYKColorProfile;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getCMYKColorProfile()
+    {
+        if(!self::$CMYKColorProfile) {
+            if($path = Pimcore_Config::getSystemConfig()->assets->icc_cmyk_profile) {
+                if(file_exists($path)) {
+                    self::$CMYKColorProfile = file_get_contents($path);
+                }
+            }
+        }
+
+        return self::$CMYKColorProfile;
+    }
+
+    /**
+     * @param string $RGBColorProfile
+     */
+    public static function setRGBColorProfile($RGBColorProfile)
+    {
+        self::$RGBColorProfile = $RGBColorProfile;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getRGBColorProfile()
+    {
+        if(!self::$RGBColorProfile) {
+            if($path = Pimcore_Config::getSystemConfig()->assets->icc_rgb_profile) {
+                if(file_exists($path)) {
+                    self::$RGBColorProfile = file_get_contents($path);
+                }
+            }
+        }
+
+        return self::$RGBColorProfile;
     }
 
     /**
