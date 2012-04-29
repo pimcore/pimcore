@@ -44,57 +44,71 @@ pimcore.settings.fileexplorer.file = Class.create({
                 });
             }
 
-            this.textarea = new Ext.form.TextArea({
-                value: response.content
-            })
+            this.editorId = "codeeditor_" + uniqid();
+            this.editorMode = "text";
+            if(response.path.match(/\.php$/)) {
+                this.editorMode = "php";
+            } else if (response.path.match(/\.js$/)) {
+                this.editorMode = "javascript";
+            } else if (response.path.match(/\.css$/)) {
+                this.editorMode = "css";
+            }  else if (response.path.match(/\.less$/)) {
+                this.editorMode = "less";
+            } else if (response.path.match(/\.scss$/)) {
+                this.editorMode = "scss";
+            } else if (response.path.match(/\.html$/)) {
+                this.editorMode = "html";
+            } else if (response.path.match(/\.coffee$/)) {
+                this.editorMode = "coffee";
+            } else if (response.path.match(/\.json$/)) {
+                this.editorMode = "json";
+            } else if (response.path.match(/\.sh$/)) {
+                this.editorMode = "sh";
+            } else if (response.path.match(/\.sql$/)) {
+                this.editorMode = "sql";
+            } else if (response.path.match(/\.svg$/)) {
+                this.editorMode = "svg";
+            } else if (response.path.match(/\.xml$/)) {
+                this.editorMode = "xml";
+            }
+
 
             this.editor = new Ext.Panel({
                 title: response.path,
                 closable: true,
                 layout: "fit",
                 tbar: toolbarItems,
-                items: [this.textarea]
+                bodyStyle: "position:relative;",
+                html: '<pre id="' + this.editorId + '"></pre>'
             });
 
             this.editor.on("beforedestroy", function () {
                 delete this.explorer.openfiles[this.path];
             }.bind(this));
 
+            this.editor.on("resize", function (el, width, height) {
+                if(this.aceEditor) {
+                    Ext.get(this.editorId).setWidth(width);
+                    Ext.get(this.editorId).setHeight(height-12);
+                    this.aceEditor.resize();
+                }
+            }.bind(this));
+
+            this.editor.on("afterrender", function () {
+                this.aceEditor = ace.edit(this.editorId);
+                this.aceEditor.setTheme("ace/theme/chrome");
+                this.aceEditor.getSession().setMode("ace/mode/" + this.editorMode);
+                this.aceEditor.getSession().setValue(response.content);
+            }.bind(this));
+
             this.explorer.editorPanel.add(this.editor);
             this.explorer.editorPanel.activate(this.editor);
             this.explorer.editorPanel.doLayout();
-
-            this.codeMirror = CodeMirror.fromTextArea(this.textarea.getEl().dom, {
-                parserfile: [
-                    "parsexml.js",
-                    "parsecss.js",
-                    "tokenizejavascript.js",
-                    "parsejavascript.js",
-                    "parsehtmlmixed.js",
-                    "../contrib/php/js/tokenizephp.js",
-                    "../contrib/php/js/parsephp.js",
-                    "../contrib/php/js/parsephphtmlmixed.js"
-                ],
-                stylesheet: [
-                    "/pimcore/static/js/lib/codemirror/css/xmlcolors.css",
-                    "/pimcore/static/js/lib/codemirror/css/jscolors.css",
-                    "/pimcore/static/js/lib/codemirror/css/csscolors.css",
-                    "/pimcore/static/js/lib/codemirror//contrib/php/css/phpcolors.css"
-                ],
-                path: "/pimcore/static/js/lib/codemirror/js/",
-                height: (this.editor.getInnerHeight() - 30) + "px",
-                width: (this.editor.getInnerWidth() - 40) + "px",
-                lineNumbers: true,
-                tabMode: "spaces"
-            });
-
         }
     },
 
     saveFile: function (path) {
-        this.codeMirror.save();
-
-        var content = this.textarea.getValue();
+        var content = this.aceEditor.getSession().getValue();
         Ext.Ajax.request({
             method: "post",
             url: "/admin/misc/fileexplorer-content-save",

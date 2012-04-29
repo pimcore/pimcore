@@ -140,7 +140,7 @@
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",
 
-            "lib/codemirror/js/codemirror.js"
+            "lib/ace/ace-noconflict.js"
         );
 
 
