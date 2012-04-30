@@ -86,6 +86,7 @@ pimcore.settings.glossary = Class.create({
             {name: 'language', allowBlank: true},
             {name: 'casesensitive', allowBlank: true},
             {name: 'exactmatch', allowBlank: true},
+            {name: 'site', allowBlank: true},
             {name: 'link', allowBlank: true},
             {name: 'abbr', allowBlank: true},
             {name: 'acronym', allowBlank: true}
@@ -180,6 +181,9 @@ pimcore.settings.glossary = Class.create({
 
         var typesColumns = [
             {header: t("text"), width: 200, sortable: true, dataIndex: 'text', editor: new Ext.form.TextField({})},
+            {header: t("link"), width: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}), css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
+            {header: t("abbr"), width: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
+            {header: t("acronym"), width: 200, sortable: true, dataIndex: 'acronym', editor: new Ext.form.TextField({})},
             {header: t("language"), width: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
                 store: this.languages,
                 mode: "local",
@@ -187,9 +191,18 @@ pimcore.settings.glossary = Class.create({
             })},
             casesensitiveCheck,
             exactmatchCheck,
-            {header: t("link"), width: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}), css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
-            {header: t("abbr"), width: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
-            {header: t("acronym"), width: 200, sortable: true, dataIndex: 'acronym', editor: new Ext.form.TextField({})},
+            {header: t("site"), width: 200, sortable:true, dataIndex: "site", editor: new Ext.form.ComboBox({
+                store: pimcore.globalmanager.get("sites"),
+                valueField: "id",
+                displayField: "domain",
+                triggerAction: "all"
+            }), renderer: function (siteId) {
+                var store = pimcore.globalmanager.get("sites");
+                var pos = store.findExact("id", siteId);
+                if(pos >= 0) {
+                    return store.getAt(pos).get("domain");
+                }
+            }},
             {
                 xtype: 'actioncolumn',
                 width: 30,
