@@ -96,7 +96,7 @@ class OnlineShop_Framework_IndexService {
         if(!empty($searchIndexColums)) {
 
             try {
-                $this->dbexec('ALTER TABLE protouchng.plugin_onlineshop_productindex DROP INDEX search;');
+                $this->dbexec('ALTER TABLE plugin_onlineshop_productindex DROP INDEX search;');
             } catch(Exception $e) {
                 Logger::info($e);
             }
