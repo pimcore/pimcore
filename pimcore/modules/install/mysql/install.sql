@@ -202,8 +202,10 @@ CREATE TABLE `glossary` (
   `link` varchar(255) DEFAULT NULL,
   `abbr` varchar(255) DEFAULT NULL,
   `acronym` varchar(255) DEFAULT NULL,
+  `site` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `language` (`language`)
+  KEY `language` (`language`),
+  KEY `site` (`site`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `http_error_log`;
