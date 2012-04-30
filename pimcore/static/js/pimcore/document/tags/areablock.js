@@ -150,16 +150,21 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                             var sourceEl = element;
                             var proxyEl = null;
-                            if(Ext.get(element).getHeight() > 300 || Ext.get(element).getWidth() > 900) {
+
+                            /*if(Ext.get(element).getHeight() > 300 || Ext.get(element).getWidth() > 900) {
                                 // use the button as proxy if the area itself is to big
                                 proxyEl = v.getEl().dom;
                             } else {
                                 proxyEl = element;
-                            }
+                            }*/
+
+                            // only use the button as proxy element
+                            proxyEl = v.getEl().dom;
 
                             if (sourceEl) {
                                 d = proxyEl.cloneNode(true);
                                 d.id = Ext.id();
+
                                 return v.dragData = {
                                     sourceEl: sourceEl,
                                     repairXY: Ext.fly(sourceEl).getXY(),
