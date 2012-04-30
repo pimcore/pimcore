@@ -35,6 +35,15 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
         this.element = new Ext.form.TextArea(options);
         this.element.render(id);
+
+        if(options["autoStyle"] !== false) {
+            var styles = Ext.get(id).parent().getStyles("font-size","font-family","font-style","font-weight","font-stretch","font-variant","font-kerning","color","line-height","text-shadow","text-align","text-decoration","text-transform","direction","white-space","word-spacing","");
+            styles["background"] = "none";
+            if(!options["height"]) {
+                styles["height"] = "auto";
+            }
+            this.element.getEl().applyStyles(styles);
+        }
     },
 
     getValue: function () {
