@@ -217,6 +217,9 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public function setSite($site)
     {
+        if($site instanceof Site) {
+            $site = $site->getId();
+        }
         $this->site = $site;
     }
 
