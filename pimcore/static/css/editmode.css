@@ -19,11 +19,12 @@
 	width: 100%;
 }
 
-
+/* THIS WAS FOR AUTOHIDING THE BUTTONS */
+/*
 .pimcore_block_buttons {
     position: absolute;
-    top:-22px;
-    left:0;
+    top:0;
+    right:0;
     z-index: 1000;
     overflow: hidden;
     padding: 0;
@@ -31,7 +32,8 @@
 }
 
 
-.pimcore_area_entry .pimcore_area_edit_button, .pimcore_block_entry .pimcore_area_edit_button {
+.pimcore_area_entry .pimcore_area_edit_button,
+.pimcore_block_entry .pimcore_area_edit_button {
     position:absolute;
     width:25px;
     height:25px;
@@ -39,16 +41,28 @@
     top:5px;
 }
 
-.pimcore_tag_areablock_hide_buttons .pimcore_block_buttons, .x-dd-drag-proxy .pimcore_block_buttons {
+.pimcore_tag_areablock_hide_buttons .pimcore_block_buttons,
+.x-dd-drag-proxy .pimcore_block_buttons {
     display: none !important;
 }
 
-.pimcore_tag_areablock_force_show_buttons .pimcore_block_buttons, .pimcore_tag_block_force_show_buttons .pimcore_block_buttons {
+.pimcore_tag_areablock_force_show_buttons .pimcore_block_buttons,
+.pimcore_tag_block_force_show_buttons .pimcore_block_buttons {
     display:block !important;
     visibility: visible !important;
 }
+*/
 
-.pimcore_block_plus, .pimcore_block_minus, .pimcore_block_up, .pimcore_block_down, .pimcore_block_amount, .pimcore_block_type {
+.pimcore_block_buttons {
+	padding: 10px 0 5px 0;
+}
+
+.pimcore_block_plus,
+.pimcore_block_minus,
+.pimcore_block_up,
+.pimcore_block_down,
+.pimcore_block_amount,
+.pimcore_block_type {
 	float: left;
 	padding: 0 2px 0 0;
 }
@@ -57,34 +71,46 @@
 	clear: both;
 }
 
-.pimcore_block_button_plus, .pimcore_block_button_minus, .pimcore_block_button_up, .pimcore_block_button_down, .pimcore_block_button_type {
+.pimcore_block_button_plus,
+.pimcore_block_button_minus,
+.pimcore_block_button_up,
+.pimcore_block_button_down,
+.pimcore_block_button_type {
 	display: inline-block !important;
 	margin: 0 3px 0 0;
 }
 
-.pimcore_block_button_plus button, .pimcore_block_button_minus button, .pimcore_block_button_up button, .pimcore_block_button_down button {
+.pimcore_block_button_plus button,
+.pimcore_block_button_minus button,
+.pimcore_block_button_up button,
+.pimcore_block_button_down button {
 	width: 16px;
 }
 
 .pimcore_block_entry {
 	clear:both;
-    position:relative;
+    /* THIS WAS FOR AUTOHIDING THE BUTTONS */
+    /*position:relative;*/
 }
 
-.pimcore_block_limitreached .pimcore_block_button_plus, .pimcore_block_limitreached .pimcore_block_amount {
-    display: none !important;
-}
-
-.pimcore_block_limitnotreached .pimcore_block_button_plus, .pimcore_block_limitnotreached .pimcore_block_amount {
+/*
+.pimcore_block_limitnotreached .pimcore_block_plus,
+.pimcore_block_limitnotreached .pimcore_block_amount {
     display: block !important;
 }
 
+.pimcore_block_limitreached .pimcore_block_plus,
+.pimcore_block_limitreached .pimcore_block_amount {
+    display: none !important;
+}
+*/
 
 .pimcore_block_amount {
     width: 40px;
 }
 
-.pimcore_block_type, .pimcore_block_type button {
+.pimcore_block_type,
+.pimcore_block_type button {
     cursor:default !important;
 }
 
@@ -109,7 +135,8 @@
 }
 
 
-.pimcore_block_button_type, .pimcore_block_button_type button {
+.pimcore_block_button_type,
+.pimcore_block_button_type button {
     cursor: move !important;
 }
 
@@ -240,7 +267,8 @@
     filter: Alpha(opacity=100);
 }
 
-#pimcore_wysiwyg_topbar span.cke_skin_kama, #pimcore_wysiwyg_topbar .cke_skin_kama .cke_wrapper {
+#pimcore_wysiwyg_topbar span.cke_skin_kama,
+#pimcore_wysiwyg_topbar .cke_skin_kama .cke_wrapper {
     border-radius: 0 !important;
     padding:0;
 }
@@ -287,7 +315,8 @@
 }
 
 .pimcore_area_entry {
-    position:relative;
+    /* THIS WAS FOR AUTOHIDING THE BUTTONS */
+    /*position:relative;*/
 }
 
 .pimcore_area_content {
@@ -298,7 +327,8 @@
     display:none;
 }
 
-.pimcore_area_entry .pimcore_area_edit_button, .pimcore_tag_area .pimcore_area_edit_button {
+.pimcore_area_entry .pimcore_area_edit_button,
+.pimcore_tag_area .pimcore_area_edit_button {
     position:absolute;
     width:25px;
     height:25px;
