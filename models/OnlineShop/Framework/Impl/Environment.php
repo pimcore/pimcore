@@ -71,4 +71,16 @@ class OnlineShop_Framework_Impl_Environment implements OnlineShop_Framework_IEnv
     public function removeCustomItem($key) {
         unset($this->customItems[$key]);
     }
+
+
+    public function clearEnvironment() {
+        $key = self::SESSION_KEY_CUSTOM_ITEMS;
+        unset($this->session->$key);
+        $this->customItems = null;
+
+        $key = self::SESSION_KEY_USERID;
+        unset($this->session->$key);
+        $this->userId = null;
+    }
+
 }

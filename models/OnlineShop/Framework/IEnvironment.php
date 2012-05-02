@@ -18,4 +18,6 @@ interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_ICompon
 
     public function getCustomItem($key);
     public function getAllCustomItems();
+
+    public function clearEnvironment();
 }
