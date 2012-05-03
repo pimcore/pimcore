@@ -305,16 +305,9 @@ class Document_Tag_Video extends Document_Tag
 
         if (!$vars["v"] || strpos($parts["host"], "youtube.com") === false) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
 
         $youtubeId = $vars["v"];
-
-        $width = "100%";
-        if(array_key_exists("width", $options)) {
-            $width = $options["width"];
-        }
-
 
         $width = "100%";
         if(array_key_exists("width", $options)) {
@@ -453,7 +446,7 @@ class Document_Tag_Video extends Document_Tag
         $code .= '
             <script type="text/javascript">
             	var player_config_' . $uid . ' = array_merge_recursive(' . $preConfig . ',' . Zend_Json::encode($config) . ');
-                
+
                 flowplayer("' . $uid . '", {
             		src: "' . $swfPath . '",
             		width: "' . $this->getWidth() . '",
