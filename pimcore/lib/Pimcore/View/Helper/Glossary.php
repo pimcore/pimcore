@@ -84,10 +84,27 @@ class Pimcore_View_Helper_Glossary_Controller {
                 "replace" => array(),
                 "placeholder" => array()
             );
+
+
+            // get initial document out of the front controller (requested document, if it was a "document" request)
+            $front = Zend_Controller_Front::getInstance();
+            $currentDocument = $front->getRequest()->getParam("document");
+            if(empty($currentDocument)) {
+                $currentDocument = $this->view->document;
+            }
+
             foreach ($data as $entry) {
-                if($this->view->document instanceof Document && $entry["linkType"] == "internal" && $this->view->document->getId() == $entry["linkTarget"]) {
+
+                // check if the current document is the target link (id check)
+                if($currentDocument instanceof Document && $entry["linkType"] == "internal" && $currentDocument->getId() == $entry["linkTarget"]) {
                     continue;
                 }
+
+                // check if the current document is the target link (path check)
+                if($currentDocument instanceof Document && $currentDocument->getFullPath() == rtrim($entry["linkTarget"], " /")) {
+                    continue;
+                }
+
 
                 $tmpData["search"][] = $entry["search"];
                 $tmpData["replace"][] = $entry["replace"];
