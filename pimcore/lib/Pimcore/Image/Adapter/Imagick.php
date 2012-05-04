@@ -113,6 +113,18 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 $this->resource->setImageColorspace(Imagick::COLORSPACE_RGB);
             }
         }
+
+        // this is a HACK to force grayscale images to be real RGB - truecolor, this is important if you want to use
+        // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
+        // problem is described here: http://imagemagick.org/Usage/basics/#type
+        // and here: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=6888#p31891
+        if($this->resource->getimagetype() == Imagick::IMGTYPE_GRAYSCALE) {
+            $draw = new ImagickDraw();
+            $draw->setFillColor("red");
+            $draw->setfillopacity(.001);
+            $draw->point(0,0);
+            $this->resource->drawImage($draw);
+        }
     }
 
     /**
