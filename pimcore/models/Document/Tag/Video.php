@@ -305,16 +305,9 @@ class Document_Tag_Video extends Document_Tag
 
         if (!$vars["v"] || strpos($parts["host"], "youtube.com") === false) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
 
         $youtubeId = $vars["v"];
-
-        $width = "100%";
-        if(array_key_exists("width", $options)) {
-            $width = $options["width"];
-        }
-
 
         $width = "100%";
         if(array_key_exists("width", $options)) {
@@ -326,8 +319,12 @@ class Document_Tag_Video extends Document_Tag
             $height = $options["height"];
         }
 
+        if (isset($_SERVER['HTTPS'])) {
+            $parts['scheme'] = 'https';
+        }
+
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe width="' . $width . '" height="' . $height . '" src="http://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="' . $parts['scheme'] . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
@@ -364,8 +361,12 @@ class Document_Tag_Video extends Document_Tag
             $height = $options["height"];
         }
 
+        if (isset($_SERVER['HTTPS'])) {
+            $parts['scheme'] = 'https';
+        }
+
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe src="http://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe src="' . $parts['scheme'] . '://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
@@ -453,7 +454,7 @@ class Document_Tag_Video extends Document_Tag
         $code .= '
             <script type="text/javascript">
             	var player_config_' . $uid . ' = array_merge_recursive(' . $preConfig . ',' . Zend_Json::encode($config) . ');
-                
+
                 flowplayer("' . $uid . '", {
             		src: "' . $swfPath . '",
             		width: "' . $this->getWidth() . '",
