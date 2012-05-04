@@ -909,12 +909,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
 };
 
 
-
-
-
-
 pimcore.helpers.selectPathInTreeActiveSelections = {};
-
 pimcore.helpers.selectPathInTree = function (tree, path, callback) {
     try {
 
@@ -935,24 +930,14 @@ pimcore.helpers.selectPathInTree = function (tree, path, callback) {
 
         tree.selectPath(path, null, function (success, node) {
             if(!success) {
-                /*Ext.Ajax.request({
-                    url: "/admin/object/get-id-path-paging-info",
-                    params: {
-                        path: path
-                    },
-                    success: function (transport) {
-                        var data = Ext.decode(transport.responseText);
-
-                    }
-                });*/
-                delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
-
+                Ext.MessageBox.alert(t("error"), t("not_possible_with_paging"));
             } else {
                 if(typeof initialData["callback"] == "function") {
                     initialData["callback"]();
                 }
-                delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
             }
+
+            delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
         });
 
     } catch (e) {
