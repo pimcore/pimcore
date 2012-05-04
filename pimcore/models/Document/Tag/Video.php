@@ -327,7 +327,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe width="' . $width . '" height="' . $height . '" src="http://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="' . $this->view->getRequest()->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
@@ -365,7 +365,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe src="http://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe src="' . $this->view->getRequest()->getScheme() . '://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
