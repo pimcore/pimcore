@@ -139,9 +139,18 @@
 
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",
-
-            "lib/ace/ace-noconflict.js"
         );
+
+        // browser specific lib includes
+        $browser = new Pimcore_Browser();
+        $browserVersion = (int) $browser->getVersion();
+        $platform = $browser->getPlatform();
+
+
+        // ace editor (code editor in server file explorer) is only for => IE9, FF, Chrome
+        if ( ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 9) || $browser->getBrowser() != Pimcore_Browser::BROWSER_IE) {
+            $scriptLibs[] = "lib/ace/ace-noconflict.js";
+        }
 
 
         // PIMCORE SCRIPTS
