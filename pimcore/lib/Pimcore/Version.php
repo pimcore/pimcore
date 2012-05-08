@@ -17,7 +17,7 @@ class Pimcore_Version {
 
     public static $version = "1.4.5";
 
-    public static $revision = 1994;
+    public static $revision = 2003;
 
     public static function getVersion() {
         return self::$version;
