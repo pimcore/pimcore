@@ -44,17 +44,18 @@
 $supported = false;
 $browser = new Pimcore_Browser();
 $browserVersion = (int) $browser->getVersion();
+$platform = $browser->getPlatform();
 
-if ($browser->getBrowser() == "Firefox" && $browserVersion >= 3) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_FIREFOX && $browserVersion >= 3) {
     $supported = true;
 }
-if ($browser->getBrowser() == "Internet Explorer" && $browserVersion >= 8) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 8) {
     $supported = true;
 }
-if ($browser->getBrowser() == "Chrome" && $browserVersion >= 5) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_CHROME && $browserVersion >= 5) {
     $supported = true;
 }
-if ($browser->getBrowser() == "Safari" && $browserVersion >= 4) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_SAFARI && $browserVersion >= 4 && $platform == Pimcore_Browser::PLATFORM_WINDOWS) {
     $supported = true;
 }
 
