@@ -174,14 +174,13 @@ class Pimcore_Placeholder
      * @param null | Document $document
      * @return string
      */
-    public function replacePlaceholders($mixed, $params = array(), $document = null)
+    public function replacePlaceholders($mixed, $params = array(), $document = null,$enableLayoutOnPlaceholderReplacement = true)
     {
         if (is_string($mixed)) {
             $contentString = $mixed;
         } elseif ($mixed instanceof Document) {
-            $contentString = Document_Service::render($mixed, $params, true);
+            $contentString = Document_Service::render($mixed, $params, $enableLayoutOnPlaceholderReplacement);
         }
-
         if ($document instanceof Document === false) {
             $document = null;
         }
