@@ -71,6 +71,12 @@ class Pimcore_Mail extends Zend_Mail
     protected $ignoreDebugMode = false;
 
     /**
+     * if true - the layout is enabled when document is rendered to a string
+     * @var bool
+     */
+    protected $enableLayoutOnPlaceholderRendering = true;
+
+    /**
      * Creates a new Pimcore_Mail object (extends Zend_Mail)
      *
      * @param array $options
@@ -161,6 +167,24 @@ class Pimcore_Mail extends Zend_Mail
      */
     public function getIgnoreDebugMode(){
         return $this->ignoreDebugMode;
+    }
+
+
+    /**
+     * activate / deactivate the layout when the document is rendered
+     * to a string when the placeholders are replaced
+     *
+     * @param $value bool
+     */
+    public function setEnableLayoutOnPlaceholderRendering($value){
+        $this->enableLayoutOnPlaceholderRendering = (bool)$value;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableLayoutOnPlaceholderRendering(){
+        return $this->enableLayoutOnPlaceholderRendering;
     }
 
     // overwriting Zend_Mail methods - necessary for logging... - start
@@ -520,7 +544,7 @@ class Pimcore_Mail extends Zend_Mail
         if (!$subject && $this->getDocument()) {
             $subject = $this->getDocument()->getSubject();
         }
-        return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument());
+        return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
     }
 
 
@@ -537,9 +561,9 @@ class Pimcore_Mail extends Zend_Mail
         //and not the content of the Document!
         if ($html instanceof Zend_Mime_Part) {
             $rawHtml = $html->getRawContent();
-            $content = $this->placeholderObject->replacePlaceholders($rawHtml, $this->getParams(), $this->getDocument());
+            $content = $this->placeholderObject->replacePlaceholders($rawHtml, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
         } elseif ($this->getDocument() instanceof Document) {
-            $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument());
+            $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
         } else {
             $content = null;
         }
@@ -565,7 +589,7 @@ class Pimcore_Mail extends Zend_Mail
         //if the content was manually set with $obj->setBodyText(); this content will be used
         if ($text instanceof Zend_Mime_Part) {
             $rawText = $text->getRawContent();
-            $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument());
+            $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
         } else {
             //creating text version from html email if html2text is installed
             try {
