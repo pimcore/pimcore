@@ -26,6 +26,7 @@ class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Selec
 
 
     public $specificPriceField = false;
+    public $showAllFields = false;
 
 
 
@@ -61,6 +62,14 @@ class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Selec
 
     public function getSpecificPriceField() {
         return $this->specificPriceField;
+    }
+
+    public function setShowAllFields($showAllFields) {
+        $this->showAllFields = $showAllFields;
+    }
+
+    public function getShowAllFields() {
+        return $this->showAllFields;
     }
 
 

@@ -10,7 +10,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,
-            baseParams: {class_id: fieldConfig.classId, specific_price_field: this.fieldConfig.specificPriceField },
+            baseParams: {class_id: fieldConfig.classId, specific_price_field: this.fieldConfig.specificPriceField, show_all_fields: this.fieldConfig.showAllFields },
             url: '/plugin/OnlineShop/index/get-fields',
             root: 'data',
             fields: ['key','name'],

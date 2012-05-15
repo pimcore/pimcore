@@ -299,7 +299,7 @@ class OnlineShop_Framework_IndexService {
             $this->indexColumns["categoryIds"] = "categoryIds";
 
             foreach($this->columnConfig->column as $column) {
-                if($considerHideInFieldList && $column->hideInFieldlistDatatype != "true") {
+                if(!$considerHideInFieldList || ($considerHideInFieldList && $column->hideInFieldlistDatatype != "true")) {
                     $this->indexColumns[$column->name] = $column->name;
                 }
             }

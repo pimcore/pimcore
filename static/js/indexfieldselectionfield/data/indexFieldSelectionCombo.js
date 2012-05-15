@@ -65,6 +65,12 @@ pimcore.object.classes.data.indexFieldSelectionCombo = Class.create(pimcore.obje
                 fieldLabel: t("specificPriceField"),
                 name: "specificPriceField",
                 checked: this.datax.specificPriceField
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("showAllFields"),
+                name: "showAllFields",
+                checked: this.datax.showAllFields
             }
         ]);
         

@@ -5,7 +5,12 @@ class OnlineShop_IndexController extends Pimcore_Controller_Action_Admin {
     public function getFieldsAction() {
 
         $indexService = OnlineShop_Framework_Factory::getInstance()->getIndexService();
-        $indexColumns = $indexService->getIndexColumns(true);
+
+        if($this->_getParam("show_all_fields") == "true") {
+            $indexColumns = $indexService->getIndexColumns(false);
+        } else {
+            $indexColumns = $indexService->getIndexColumns(true);
+        }
 
         $fields = array();
 

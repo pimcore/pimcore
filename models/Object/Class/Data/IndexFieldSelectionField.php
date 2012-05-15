@@ -11,6 +11,7 @@ class Object_Class_Data_IndexFieldSelectionField extends Object_Class_Data_Texta
 
 
     public $specificPriceField = false;
+    public $showAllFields = false;
 
     public function setSpecificPriceField($specificPriceField) {
         $this->specificPriceField = $specificPriceField;
@@ -19,4 +20,14 @@ class Object_Class_Data_IndexFieldSelectionField extends Object_Class_Data_Texta
     public function getSpecificPriceField() {
         return $this->specificPriceField;
     }
+
+    public function setShowAllFields($showAllFields) {
+        $this->showAllFields = $showAllFields;
+    }
+
+    public function getShowAllFields() {
+        return $this->showAllFields;
+    }
+
+
 }
