@@ -44,7 +44,7 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
             self::$_customViewInitialized = true;
         }
 
-        // set contenttype
+        // set content type
         if(!self::$skipSendingContentTypeHeader) {
             $this->getResponse()->setHeader("Content-Type", "text/html; charset=UTF-8", true);
         }
