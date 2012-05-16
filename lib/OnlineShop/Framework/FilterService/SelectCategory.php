@@ -11,10 +11,19 @@ class OnlineShop_Framework_FilterService_SelectCategory extends OnlineShop_Frame
 
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
         $values = array();
+
+        $availableRelations = array();
+        if($filterDefinition->getAvailableCategories()) {
+            foreach($filterDefinition->getAvailableCategories() as $rel) {
+                $availableRelations[$rel->getId()] = true;
+            }
+        }
+
+
         foreach($rawValues as $v) {
             $explode = explode(",", $v['value']);
             foreach($explode as $e) {
-                if(!empty($e)) {
+                if(!empty($e) && (empty($availableRelations) || $availableRelations[$e] === true)) {
                     $values[] = array('value' => $e, "count" => $v['count']);
                 }
             }

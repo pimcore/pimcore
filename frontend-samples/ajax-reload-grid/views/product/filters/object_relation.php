@@ -15,7 +15,7 @@
             <ul>
                 <?php foreach($this->values as $value) { ?>
                     <?php $object =$this->objects[$value['value']] ?>
-                    <?php if($object->isPublished()) { ?>
+                    <?php if($object && $object->isPublished()) { ?>
                         <li><span class="option js_optionfilter_option" rel="<?= $value['value'] ?>"><?= $object->getName() ?>  ( <?= $value['count'] ?> ) </span></li>
                     <?php } ?>
                 <?php } ?>
