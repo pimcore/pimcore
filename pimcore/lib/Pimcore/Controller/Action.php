@@ -23,6 +23,15 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
      */
     protected static $_customViewInitialized = false;
 
+    /**
+     * set this if headers are set manually somewhere else
+     * example: if you want to renader and send an e-mail in the shutdown hook,
+     * this is not possible because headers are already sent
+     *
+     * @var bool
+     */
+    public static $skipSendingContentTypeHeader = false;
+
     public function init() {
         parent::init();
 
@@ -36,7 +45,9 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         }
 
         // set contenttype
-        $this->getResponse()->setHeader("Content-Type", "text/html; charset=UTF-8", true);
+        if(!self::$skipSendingContentTypeHeader) {
+            $this->getResponse()->setHeader("Content-Type", "text/html; charset=UTF-8", true);
+        }
     }
 
     protected function removeViewRenderer() {
