@@ -9,7 +9,7 @@
 class OnlineShop_Framework_FilterService_Helper
 {
 
-    public static function setupProductList($filterDefinition, $productList, $params, $view, $filterService, $loadFullPage, $excludeLimitOfFirstpage = false) {
+    public static function setupProductList(Object_FilterDefinition $filterDefinition, $productList, $params, $view, $filterService, $loadFullPage, $excludeLimitOfFirstpage = false) {
         $orderByOptions = array();
         $orderKeysAsc = explode(",", $filterDefinition->getOrderByAsc());
         if(!empty($orderKeysAsc)) {
@@ -73,16 +73,15 @@ class OnlineShop_Framework_FilterService_Helper
             $productList->setOrderKey($orderByField);
             $productList->setOrder($orderByDirection);
         } else {
-            $orderByField = $filterDefinition->getDefaultOrderBy();
-            $orderByDirection = $filterDefinition->getDefaultOrderByDirection();
-            if(empty($orderByDirection)) {
-                $orderByDirection = "asc";
+            $orderByCollection = $filterDefinition->getDefaultOrderBy();
+            $orderByList = array();
+            if($orderByCollection) {
+                foreach($orderByCollection as $orderBy) {
+                    $orderByList[] = array($orderBy->getField(), $orderBy->getDirection());
+                }
             }
-
-            $view->currentOrderBy = htmlentities($orderByField . "#" . $orderByDirection);
-
-            $productList->setOrderKey($orderByField);
-            $productList->setOrder($orderByDirection);
+            $productList->setOrderKey($orderByList);
+            $productList->setOrder("ASC");
         }
 
         $view->currentFilter = $filterService->initFilterService($view->filterDefinitionObject, $productList, $params);
