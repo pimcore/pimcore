@@ -98,6 +98,9 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
     
 
     private $order;
+    /**
+     * @var string | array
+     */
     private $orderKey;
 
     private $orderByPrice = false;
@@ -110,6 +113,9 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         return $this->order;
     }
 
+    /**
+     * @param $orderKey string | array  - either single field name, or array of field names or array of arrays (field name, direction)
+     */
     public function setOrderKey($orderKey) {
         if($orderKey == self::ORDERKEY_PRICE) {
             $this->orderByPrice = true;
@@ -261,24 +267,6 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
                 }
             }
 
-//            $userspecific = $this->buildUserspecificConditions($excludedFieldname);
-//
-//            $condition .= " AND o_type != 'variant'";
-//            $condition .= " AND (";
-//            if($userspecific) {
-//                $condition .= "(" . $userspecific . ")";
-//                $condition .= " OR ";
-//            } else {
-//                $condition .= "(1=1)";
-//                $condition .= " OR ";
-//            }
-//            $condition .= "( o_id IN (SELECT DISTINCT o_parentId FROM " . OnlineShop_Framework_IndexService::TABLENAME . " WHERE " . $preCondition . " AND o_type = 'variant'";
-//            if($userspecific) {
-//                $condition .= " AND " . $this->buildUserspecificConditions($excludedFieldname);
-//            }
-//            $condition .= "))";
-//            $condition .= ")";
-
         } else {
             if($variantMode == self::VARIANT_MODE_HIDE) {
                 $condition .= " AND o_type != 'variant'";
@@ -328,15 +316,38 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
     private function buildOrderBy() {
         if(!empty($this->orderKey) && $this->orderKey !== self::ORDERKEY_PRICE) {
 
-            if($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                 if(strtoupper($this->order) == "DESC") {
-                     return "max(" . $this->orderKey . ") " . $this->order;
-                 } else {
-                     return "min(" . $this->orderKey . ") " . $this->order;
-                 }
-            } else {
-                return $this->orderKey . " " . $this->order;
+            $orderKeys = $this->orderKey;
+            if(!is_array($orderKeys)) {
+                $orderKeys = array($orderKeys);
             }
+
+            $directionOrderKeys = array();
+            foreach($orderKeys as $key) {
+                if(is_array($key)) {
+                    $directionOrderKeys[] = $key;
+                } else {
+                    $directionOrderKeys[] = array($key, $this->order);
+                }
+            }
+
+
+            $orderByStringArray = array();
+            foreach($directionOrderKeys as $keyDirection) {
+                $key = $keyDirection[0];
+                $direction = $keyDirection[1];
+
+                if($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                     if(strtoupper($this->order) == "DESC") {
+                         $orderByStringArray[] = "max(" . $key . ") " . $direction;
+                     } else {
+                         $orderByStringArray[] = "min(" . $key . ") " . $direction;
+                     }
+                } else {
+                    $orderByStringArray[] = $key . " " . $direction;
+                }
+            }
+
+            return implode(",", $orderByStringArray);
 
         }
         return null;
