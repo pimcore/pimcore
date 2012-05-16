@@ -85,7 +85,7 @@ class OnlineShop_Framework_ProductList_Resource {
 
         if($countValues) {
             if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                $query = "SELECT dest as `value`, count(DISTINCT o_virtualProductId) as `count` FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
+                $query = "SELECT dest as `value`, count(DISTINCT src_virtualProductId) as `count` FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
             } else {
                 $query = "SELECT dest as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
             }
