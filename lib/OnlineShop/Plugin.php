@@ -76,7 +76,50 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         ");
 
-		if(self::isInstalled()){
+        // Add FieldCollections
+        chdir(__DIR__);
+        $sourceFiles = scandir('../../install/fieldcollection_sources');
+        foreach ($sourceFiles as $filename) {
+            if (!is_dir($filename)) {
+                $data = file_get_contents('../../install/fieldcollection_sources/class_FilterInputfield_export.xml');
+                $conf = new Zend_Config_Xml($data);
+                $importData = $conf->toArray();
+
+                $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+
+                preg_match('/_(.*)_/', $filename, $matches);
+                $key = $matches[1];
+
+                $fieldCollection = new Object_Fieldcollection_Definition();
+                $fieldCollection->setKey($key);
+                $fieldCollection->setParentClass($importData['parentClass']);
+                $fieldCollection->setLayoutDefinitions($layout);
+                $fieldCollection->save();
+            }
+        }
+
+        // Add class
+        $data = file_get_contents('../../install/class_source/class_FilterDefinition_export.xml');
+        $conf = new Zend_Config_Xml($data);
+        $importData = $conf->toArray();
+
+        $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+
+        $class = new Object_Class();
+        $class->setLayoutDefinitions($layout);
+        $class->setModificationDate(time());
+        $class->setIcon($importData["icon"]);
+        $class->setAllowInherit($importData["allowInherit"]);
+        $class->setAllowVariants($importData["allowVariants"]);
+        $class->setParentClass($importData["parentClass"]);
+        $class->setPreviewUrl($importData["previewUrl"]);
+        $class->setPropertyVisibility($importData["propertyVisibility"]);
+        $class->setName('FilterDefinition');
+
+        $class->save();
+
+
+        if(self::isInstalled()){
 			$statusMessage = "installed"; // $translate->_("plugin_objectassetfolderrelation_installed_successfully");
 		} else {
 			$statusMessage = "not installed"; // $translate->_("plugin_objectassetfolderrelation_could_not_install");
@@ -114,6 +157,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cart`");
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartcheckoutdata`");
         Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_onlineshop_cartitem`");
+        Pimcore_API_Plugin_Abstract::getDb()->query("DROP TABLE IF EXISTS `plugin_customerdb_event_orderEvent`");
 
 		if(!self::isInstalled()){
 			$statusMessage = "uninstalled successfully"; //  $translate->_("plugin_objectassetfolderrelation_uninstalled_successfully");
