@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
-  <parentClass>OnlineShop_Framework_AbstractFilterDefinitionType</parentClass>
+  <parentClass></parentClass>
   <layoutDefinitions>
     <fieldtype>panel</fieldtype>
     <labelWidth>100</labelWidth>
@@ -56,6 +56,7 @@
       <childs>
         <fieldtype>indexFieldSelectionCombo</fieldtype>
         <specificPriceField></specificPriceField>
+        <showAllFields></showAllFields>
         <options>
           <key>name</key>
           <value>name</value>
@@ -285,6 +286,7 @@
     <field>
       <fieldtype>indexFieldSelectionCombo</fieldtype>
       <specificPriceField></specificPriceField>
+      <showAllFields></showAllFields>
       <options>
         <key>name</key>
         <value>name</value>

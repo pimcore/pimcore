@@ -65,9 +65,9 @@
         <phpdocType>Document_Page | Document_Snippet | Document | Asset | Object_Abstract</phpdocType>
         <objectsAllowed>1</objectsAllowed>
         <assetsAllowed></assetsAllowed>
-        <assetTypes/>
+        <assetTypes></assetTypes>
         <documentsAllowed></documentsAllowed>
-        <documentTypes/>
+        <documentTypes></documentTypes>
         <lazyLoading></lazyLoading>
         <classes>
           <classes>productCategory</classes>
@@ -130,6 +130,31 @@
         <visibleGridView></visibleGridView>
         <visibleSearch></visibleSearch>
       </childs>
+      <childs>
+        <fieldtype>objects</fieldtype>
+        <width>500</width>
+        <height>197</height>
+        <maxItems></maxItems>
+        <queryColumnType>text</queryColumnType>
+        <phpdocType>array</phpdocType>
+        <relationType>1</relationType>
+        <lazyLoading></lazyLoading>
+        <classes/>
+        <name>availableCategories</name>
+        <title>Available Categories</title>
+        <tooltip></tooltip>
+        <mandatory></mandatory>
+        <noteditable></noteditable>
+        <index></index>
+        <locked></locked>
+        <style></style>
+        <permissions></permissions>
+        <datatype>data</datatype>
+        <columnType></columnType>
+        <invisible></invisible>
+        <visibleGridView></visibleGridView>
+        <visibleSearch></visibleSearch>
+      </childs>
       <locked></locked>
     </childs>
     <locked></locked>
@@ -169,9 +194,9 @@
       <phpdocType>Document_Page | Document_Snippet | Document | Asset | Object_Abstract</phpdocType>
       <objectsAllowed>1</objectsAllowed>
       <assetsAllowed></assetsAllowed>
-      <assetTypes/>
+      <assetTypes></assetTypes>
       <documentsAllowed></documentsAllowed>
-      <documentTypes/>
+      <documentTypes></documentTypes>
       <lazyLoading></lazyLoading>
       <classes>
         <classes>productCategory</classes>
@@ -234,5 +259,30 @@
       <visibleGridView></visibleGridView>
       <visibleSearch></visibleSearch>
     </scriptPath>
+    <availableCategories>
+      <fieldtype>objects</fieldtype>
+      <width>500</width>
+      <height>197</height>
+      <maxItems></maxItems>
+      <queryColumnType>text</queryColumnType>
+      <phpdocType>array</phpdocType>
+      <relationType>1</relationType>
+      <lazyLoading></lazyLoading>
+      <classes/>
+      <name>availableCategories</name>
+      <title>Available Categories</title>
+      <tooltip></tooltip>
+      <mandatory></mandatory>
+      <noteditable></noteditable>
+      <index></index>
+      <locked></locked>
+      <style></style>
+      <permissions></permissions>
+      <datatype>data</datatype>
+      <columnType></columnType>
+      <invisible></invisible>
+      <visibleGridView></visibleGridView>
+      <visibleSearch></visibleSearch>
+    </availableCategories>
   </fieldDefinitions>
 </zend-config>

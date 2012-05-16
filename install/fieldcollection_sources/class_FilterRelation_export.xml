@@ -23,7 +23,7 @@
       <name>Layout</name>
       <type></type>
       <region></region>
-      <title></title>
+      <title>Relation</title>
       <width></width>
       <height></height>
       <collapsible></collapsible>
@@ -33,7 +33,7 @@
       <permissions></permissions>
       <childs>
         <fieldtype>input</fieldtype>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar</queryColumnType>
         <columnType>varchar</columnType>
         <columnLength>255</columnLength>
@@ -56,6 +56,7 @@
       <childs>
         <fieldtype>indexFieldSelectionCombo</fieldtype>
         <specificPriceField></specificPriceField>
+        <showAllFields></showAllFields>
         <options>
           <key>name</key>
           <value>name</value>
@@ -112,7 +113,7 @@
           <key>accessories</key>
           <value>accessories</value>
         </options>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar(255)</queryColumnType>
         <columnType>varchar(255)</columnType>
         <phpdocType>string</phpdocType>
@@ -133,7 +134,7 @@
       </childs>
       <childs>
         <fieldtype>href</fieldtype>
-        <width></width>
+        <width>300</width>
         <assetUploadPath></assetUploadPath>
         <relationType>1</relationType>
         <queryColumnType>
@@ -143,13 +144,13 @@
         <phpdocType>Document_Page | Document_Snippet | Document | Asset | Object_Abstract</phpdocType>
         <objectsAllowed></objectsAllowed>
         <assetsAllowed></assetsAllowed>
-        <assetTypes/>
+        <assetTypes></assetTypes>
         <documentsAllowed></documentsAllowed>
-        <documentTypes/>
+        <documentTypes></documentTypes>
         <lazyLoading></lazyLoading>
         <classes/>
         <name>preSelect</name>
-        <title>PreSelect</title>
+        <title>preSelect</title>
         <tooltip></tooltip>
         <mandatory></mandatory>
         <noteditable></noteditable>
@@ -165,7 +166,7 @@
       </childs>
       <childs>
         <fieldtype>input</fieldtype>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar</queryColumnType>
         <columnType>varchar</columnType>
         <columnLength>255</columnLength>
@@ -185,6 +186,31 @@
         <visibleGridView></visibleGridView>
         <visibleSearch></visibleSearch>
       </childs>
+      <childs>
+        <fieldtype>objects</fieldtype>
+        <width>500</width>
+        <height>200</height>
+        <maxItems></maxItems>
+        <queryColumnType>text</queryColumnType>
+        <phpdocType>array</phpdocType>
+        <relationType>1</relationType>
+        <lazyLoading></lazyLoading>
+        <classes/>
+        <name>availableRelations</name>
+        <title>Available Relations</title>
+        <tooltip></tooltip>
+        <mandatory></mandatory>
+        <noteditable></noteditable>
+        <index></index>
+        <locked></locked>
+        <style></style>
+        <permissions></permissions>
+        <datatype>data</datatype>
+        <columnType></columnType>
+        <invisible></invisible>
+        <visibleGridView></visibleGridView>
+        <visibleSearch></visibleSearch>
+      </childs>
       <locked></locked>
     </childs>
     <locked></locked>
@@ -192,7 +218,7 @@
   <fieldDefinitions>
     <label>
       <fieldtype>input</fieldtype>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar</queryColumnType>
       <columnType>varchar</columnType>
       <columnLength>255</columnLength>
@@ -215,6 +241,7 @@
     <field>
       <fieldtype>indexFieldSelectionCombo</fieldtype>
       <specificPriceField></specificPriceField>
+      <showAllFields></showAllFields>
       <options>
         <key>name</key>
         <value>name</value>
@@ -271,7 +298,7 @@
         <key>accessories</key>
         <value>accessories</value>
       </options>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar(255)</queryColumnType>
       <columnType>varchar(255)</columnType>
       <phpdocType>string</phpdocType>
@@ -292,7 +319,7 @@
     </field>
     <preSelect>
       <fieldtype>href</fieldtype>
-      <width></width>
+      <width>300</width>
       <assetUploadPath></assetUploadPath>
       <relationType>1</relationType>
       <queryColumnType>
@@ -302,13 +329,13 @@
       <phpdocType>Document_Page | Document_Snippet | Document | Asset | Object_Abstract</phpdocType>
       <objectsAllowed></objectsAllowed>
       <assetsAllowed></assetsAllowed>
-      <assetTypes/>
+      <assetTypes></assetTypes>
       <documentsAllowed></documentsAllowed>
-      <documentTypes/>
+      <documentTypes></documentTypes>
       <lazyLoading></lazyLoading>
       <classes/>
       <name>preSelect</name>
-      <title>PreSelect</title>
+      <title>preSelect</title>
       <tooltip></tooltip>
       <mandatory></mandatory>
       <noteditable></noteditable>
@@ -324,7 +351,7 @@
     </preSelect>
     <scriptPath>
       <fieldtype>input</fieldtype>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar</queryColumnType>
       <columnType>varchar</columnType>
       <columnLength>255</columnLength>
@@ -344,5 +371,30 @@
       <visibleGridView></visibleGridView>
       <visibleSearch></visibleSearch>
     </scriptPath>
+    <availableRelations>
+      <fieldtype>objects</fieldtype>
+      <width>500</width>
+      <height>200</height>
+      <maxItems></maxItems>
+      <queryColumnType>text</queryColumnType>
+      <phpdocType>array</phpdocType>
+      <relationType>1</relationType>
+      <lazyLoading></lazyLoading>
+      <classes/>
+      <name>availableRelations</name>
+      <title>Available Relations</title>
+      <tooltip></tooltip>
+      <mandatory></mandatory>
+      <noteditable></noteditable>
+      <index></index>
+      <locked></locked>
+      <style></style>
+      <permissions></permissions>
+      <datatype>data</datatype>
+      <columnType></columnType>
+      <invisible></invisible>
+      <visibleGridView></visibleGridView>
+      <visibleSearch></visibleSearch>
+    </availableRelations>
   </fieldDefinitions>
 </zend-config>

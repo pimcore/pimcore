@@ -23,7 +23,7 @@
       <name>Layout</name>
       <type></type>
       <region></region>
-      <title></title>
+      <title>Filter MultiRelation</title>
       <width></width>
       <height></height>
       <collapsible></collapsible>
@@ -33,7 +33,7 @@
       <permissions></permissions>
       <childs>
         <fieldtype>input</fieldtype>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar</queryColumnType>
         <columnType>varchar</columnType>
         <columnLength>255</columnLength>
@@ -56,6 +56,7 @@
       <childs>
         <fieldtype>indexFieldSelectionCombo</fieldtype>
         <specificPriceField></specificPriceField>
+        <showAllFields></showAllFields>
         <options>
           <key>name</key>
           <value>name</value>
@@ -112,7 +113,7 @@
           <key>accessories</key>
           <value>accessories</value>
         </options>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar(255)</queryColumnType>
         <columnType>varchar(255)</columnType>
         <phpdocType>string</phpdocType>
@@ -133,8 +134,8 @@
       </childs>
       <childs>
         <fieldtype>objects</fieldtype>
-        <width></width>
-        <height></height>
+        <width>300</width>
+        <height>100</height>
         <maxItems></maxItems>
         <queryColumnType>text</queryColumnType>
         <phpdocType>array</phpdocType>
@@ -158,7 +159,7 @@
       </childs>
       <childs>
         <fieldtype>input</fieldtype>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar</queryColumnType>
         <columnType>varchar</columnType>
         <columnLength>255</columnLength>
@@ -185,7 +186,7 @@
   <fieldDefinitions>
     <label>
       <fieldtype>input</fieldtype>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar</queryColumnType>
       <columnType>varchar</columnType>
       <columnLength>255</columnLength>
@@ -208,6 +209,7 @@
     <field>
       <fieldtype>indexFieldSelectionCombo</fieldtype>
       <specificPriceField></specificPriceField>
+      <showAllFields></showAllFields>
       <options>
         <key>name</key>
         <value>name</value>
@@ -264,7 +266,7 @@
         <key>accessories</key>
         <value>accessories</value>
       </options>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar(255)</queryColumnType>
       <columnType>varchar(255)</columnType>
       <phpdocType>string</phpdocType>
@@ -285,8 +287,8 @@
     </field>
     <preSelect>
       <fieldtype>objects</fieldtype>
-      <width></width>
-      <height></height>
+      <width>300</width>
+      <height>100</height>
       <maxItems></maxItems>
       <queryColumnType>text</queryColumnType>
       <phpdocType>array</phpdocType>
@@ -310,7 +312,7 @@
     </preSelect>
     <scriptPath>
       <fieldtype>input</fieldtype>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar</queryColumnType>
       <columnType>varchar</columnType>
       <columnLength>255</columnLength>

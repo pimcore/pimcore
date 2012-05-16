@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
-  <parentClass>OnlineShop_Framework_AbstractFilterDefinitionType</parentClass>
+  <parentClass></parentClass>
   <layoutDefinitions>
     <fieldtype>panel</fieldtype>
     <labelWidth>100</labelWidth>
@@ -23,7 +23,7 @@
       <name>Layout</name>
       <type></type>
       <region></region>
-      <title>Filter SelectFromMultiSelect</title>
+      <title></title>
       <width></width>
       <height></height>
       <collapsible></collapsible>
@@ -32,34 +32,32 @@
       <datatype>layout</datatype>
       <permissions></permissions>
       <childs>
-        <fieldtype>input</fieldtype>
-        <width>300</width>
-        <queryColumnType>varchar</queryColumnType>
-        <columnType>varchar</columnType>
-        <columnLength>255</columnLength>
-        <phpdocType>string</phpdocType>
-        <name>label</name>
-        <title>Label</title>
-        <tooltip></tooltip>
-        <mandatory></mandatory>
-        <noteditable></noteditable>
-        <index></index>
-        <locked></locked>
-        <style></style>
-        <permissions></permissions>
-        <datatype>data</datatype>
-        <relationType></relationType>
-        <invisible></invisible>
-        <visibleGridView></visibleGridView>
-        <visibleSearch></visibleSearch>
-      </childs>
-      <childs>
         <fieldtype>indexFieldSelectionCombo</fieldtype>
         <specificPriceField></specificPriceField>
-        <showAllFields></showAllFields>
+        <showAllFields>1</showAllFields>
+        <options>
+          <key>categoryIds</key>
+          <value>categoryIds</value>
+        </options>
         <options>
           <key>name</key>
           <value>name</value>
+        </options>
+        <options>
+          <key>seoname</key>
+          <value>seoname</value>
+        </options>
+        <options>
+          <key>description</key>
+          <value>description</value>
+        </options>
+        <options>
+          <key>ean</key>
+          <value>ean</value>
+        </options>
+        <options>
+          <key>artno</key>
+          <value>artno</value>
         </options>
         <options>
           <key>gender</key>
@@ -74,10 +72,46 @@
           <value>size</value>
         </options>
         <options>
+          <key>price</key>
+          <value>price</value>
+        </options>
+        <options>
+          <key>foottype</key>
+          <value>foottype</value>
+        </options>
+        <options>
+          <key>gaittype</key>
+          <value>gaittype</value>
+        </options>
+        <options>
+          <key>fittings</key>
+          <value>fittings</value>
+        </options>
+        <options>
+          <key>zips</key>
+          <value>zips</value>
+        </options>
+        <options>
+          <key>approvals</key>
+          <value>approvals</value>
+        </options>
+        <options>
+          <key>rating</key>
+          <value>rating</value>
+        </options>
+        <options>
           <key>features</key>
           <value>features</value>
         </options>
-        <width>300</width>
+        <options>
+          <key>attributes</key>
+          <value>attributes</value>
+        </options>
+        <options>
+          <key>technologies</key>
+          <value>technologies</value>
+        </options>
+        <width></width>
         <queryColumnType>varchar(255)</queryColumnType>
         <columnType>varchar(255)</columnType>
         <phpdocType>string</phpdocType>
@@ -97,36 +131,14 @@
         <visibleSearch></visibleSearch>
       </childs>
       <childs>
-        <fieldtype>input</fieldtype>
-        <width>300</width>
-        <queryColumnType>varchar</queryColumnType>
-        <columnType>varchar</columnType>
-        <columnLength>255</columnLength>
-        <phpdocType>string</phpdocType>
-        <name>preSelect</name>
-        <title>Pre Select</title>
-        <tooltip></tooltip>
-        <mandatory></mandatory>
-        <noteditable></noteditable>
-        <index></index>
-        <locked></locked>
-        <style></style>
-        <permissions></permissions>
-        <datatype>data</datatype>
-        <relationType></relationType>
-        <invisible></invisible>
-        <visibleGridView></visibleGridView>
-        <visibleSearch></visibleSearch>
-      </childs>
-      <childs>
-        <fieldtype>input</fieldtype>
-        <width>300</width>
-        <queryColumnType>varchar</queryColumnType>
-        <columnType>varchar</columnType>
-        <columnLength>255</columnLength>
-        <phpdocType>string</phpdocType>
-        <name>scriptPath</name>
-        <title>Script Path</title>
+        <fieldtype>numeric</fieldtype>
+        <width></width>
+        <defaultValue>1</defaultValue>
+        <queryColumnType>double</queryColumnType>
+        <columnType>double</columnType>
+        <phpdocType>float</phpdocType>
+        <name>weight</name>
+        <title>Weight</title>
         <tooltip></tooltip>
         <mandatory></mandatory>
         <noteditable></noteditable>
@@ -145,35 +157,33 @@
     <locked></locked>
   </layoutDefinitions>
   <fieldDefinitions>
-    <label>
-      <fieldtype>input</fieldtype>
-      <width>300</width>
-      <queryColumnType>varchar</queryColumnType>
-      <columnType>varchar</columnType>
-      <columnLength>255</columnLength>
-      <phpdocType>string</phpdocType>
-      <name>label</name>
-      <title>Label</title>
-      <tooltip></tooltip>
-      <mandatory></mandatory>
-      <noteditable></noteditable>
-      <index></index>
-      <locked></locked>
-      <style></style>
-      <permissions></permissions>
-      <datatype>data</datatype>
-      <relationType></relationType>
-      <invisible></invisible>
-      <visibleGridView></visibleGridView>
-      <visibleSearch></visibleSearch>
-    </label>
     <field>
       <fieldtype>indexFieldSelectionCombo</fieldtype>
       <specificPriceField></specificPriceField>
-      <showAllFields></showAllFields>
+      <showAllFields>1</showAllFields>
+      <options>
+        <key>categoryIds</key>
+        <value>categoryIds</value>
+      </options>
       <options>
         <key>name</key>
         <value>name</value>
+      </options>
+      <options>
+        <key>seoname</key>
+        <value>seoname</value>
+      </options>
+      <options>
+        <key>description</key>
+        <value>description</value>
+      </options>
+      <options>
+        <key>ean</key>
+        <value>ean</value>
+      </options>
+      <options>
+        <key>artno</key>
+        <value>artno</value>
       </options>
       <options>
         <key>gender</key>
@@ -188,10 +198,46 @@
         <value>size</value>
       </options>
       <options>
+        <key>price</key>
+        <value>price</value>
+      </options>
+      <options>
+        <key>foottype</key>
+        <value>foottype</value>
+      </options>
+      <options>
+        <key>gaittype</key>
+        <value>gaittype</value>
+      </options>
+      <options>
+        <key>fittings</key>
+        <value>fittings</value>
+      </options>
+      <options>
+        <key>zips</key>
+        <value>zips</value>
+      </options>
+      <options>
+        <key>approvals</key>
+        <value>approvals</value>
+      </options>
+      <options>
+        <key>rating</key>
+        <value>rating</value>
+      </options>
+      <options>
         <key>features</key>
         <value>features</value>
       </options>
-      <width>300</width>
+      <options>
+        <key>attributes</key>
+        <value>attributes</value>
+      </options>
+      <options>
+        <key>technologies</key>
+        <value>technologies</value>
+      </options>
+      <width></width>
       <queryColumnType>varchar(255)</queryColumnType>
       <columnType>varchar(255)</columnType>
       <phpdocType>string</phpdocType>
@@ -210,15 +256,15 @@
       <visibleGridView></visibleGridView>
       <visibleSearch></visibleSearch>
     </field>
-    <preSelect>
-      <fieldtype>input</fieldtype>
-      <width>300</width>
-      <queryColumnType>varchar</queryColumnType>
-      <columnType>varchar</columnType>
-      <columnLength>255</columnLength>
-      <phpdocType>string</phpdocType>
-      <name>preSelect</name>
-      <title>Pre Select</title>
+    <weight>
+      <fieldtype>numeric</fieldtype>
+      <width></width>
+      <defaultValue>1</defaultValue>
+      <queryColumnType>double</queryColumnType>
+      <columnType>double</columnType>
+      <phpdocType>float</phpdocType>
+      <name>weight</name>
+      <title>Weight</title>
       <tooltip></tooltip>
       <mandatory></mandatory>
       <noteditable></noteditable>
@@ -231,28 +277,6 @@
       <invisible></invisible>
       <visibleGridView></visibleGridView>
       <visibleSearch></visibleSearch>
-    </preSelect>
-    <scriptPath>
-      <fieldtype>input</fieldtype>
-      <width>300</width>
-      <queryColumnType>varchar</queryColumnType>
-      <columnType>varchar</columnType>
-      <columnLength>255</columnLength>
-      <phpdocType>string</phpdocType>
-      <name>scriptPath</name>
-      <title>Script Path</title>
-      <tooltip></tooltip>
-      <mandatory></mandatory>
-      <noteditable></noteditable>
-      <index></index>
-      <locked></locked>
-      <style></style>
-      <permissions></permissions>
-      <datatype>data</datatype>
-      <relationType></relationType>
-      <invisible></invisible>
-      <visibleGridView></visibleGridView>
-      <visibleSearch></visibleSearch>
-    </scriptPath>
+    </weight>
   </fieldDefinitions>
 </zend-config>

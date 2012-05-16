@@ -23,7 +23,7 @@
       <name>Layout</name>
       <type></type>
       <region></region>
-      <title></title>
+      <title>Select</title>
       <width></width>
       <height></height>
       <collapsible></collapsible>
@@ -33,7 +33,7 @@
       <permissions></permissions>
       <childs>
         <fieldtype>input</fieldtype>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar</queryColumnType>
         <columnType>varchar</columnType>
         <columnLength>255</columnLength>
@@ -56,6 +56,7 @@
       <childs>
         <fieldtype>indexFieldSelectionCombo</fieldtype>
         <specificPriceField></specificPriceField>
+        <showAllFields></showAllFields>
         <options>
           <key>name</key>
           <value>name</value>
@@ -112,7 +113,7 @@
           <key>accessories</key>
           <value>accessories</value>
         </options>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar(255)</queryColumnType>
         <columnType>varchar(255)</columnType>
         <phpdocType>string</phpdocType>
@@ -133,13 +134,13 @@
       </childs>
       <childs>
         <fieldtype>input</fieldtype>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar</queryColumnType>
         <columnType>varchar</columnType>
         <columnLength>255</columnLength>
         <phpdocType>string</phpdocType>
         <name>preSelect</name>
-        <title>Pre Select</title>
+        <title>PreSelect</title>
         <tooltip></tooltip>
         <mandatory></mandatory>
         <noteditable></noteditable>
@@ -155,7 +156,7 @@
       </childs>
       <childs>
         <fieldtype>input</fieldtype>
-        <width></width>
+        <width>300</width>
         <queryColumnType>varchar</queryColumnType>
         <columnType>varchar</columnType>
         <columnLength>255</columnLength>
@@ -182,7 +183,7 @@
   <fieldDefinitions>
     <label>
       <fieldtype>input</fieldtype>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar</queryColumnType>
       <columnType>varchar</columnType>
       <columnLength>255</columnLength>
@@ -205,6 +206,7 @@
     <field>
       <fieldtype>indexFieldSelectionCombo</fieldtype>
       <specificPriceField></specificPriceField>
+      <showAllFields></showAllFields>
       <options>
         <key>name</key>
         <value>name</value>
@@ -261,7 +263,7 @@
         <key>accessories</key>
         <value>accessories</value>
       </options>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar(255)</queryColumnType>
       <columnType>varchar(255)</columnType>
       <phpdocType>string</phpdocType>
@@ -282,13 +284,13 @@
     </field>
     <preSelect>
       <fieldtype>input</fieldtype>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar</queryColumnType>
       <columnType>varchar</columnType>
       <columnLength>255</columnLength>
       <phpdocType>string</phpdocType>
       <name>preSelect</name>
-      <title>Pre Select</title>
+      <title>PreSelect</title>
       <tooltip></tooltip>
       <mandatory></mandatory>
       <noteditable></noteditable>
@@ -304,7 +306,7 @@
     </preSelect>
     <scriptPath>
       <fieldtype>input</fieldtype>
-      <width></width>
+      <width>300</width>
       <queryColumnType>varchar</queryColumnType>
       <columnType>varchar</columnType>
       <columnLength>255</columnLength>

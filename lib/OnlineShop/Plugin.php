@@ -77,11 +77,11 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         ");
 
         // Add FieldCollections
-        chdir(__DIR__);
-        $sourceFiles = scandir('../../install/fieldcollection_sources');
+        //chdir(__DIR__);
+        $sourceFiles = scandir(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources');
         foreach ($sourceFiles as $filename) {
             if (!is_dir($filename)) {
-                $data = file_get_contents('../../install/fieldcollection_sources/class_FilterInputfield_export.xml');
+                $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/fieldcollection_sources/' . $filename);
                 $conf = new Zend_Config_Xml($data);
                 $importData = $conf->toArray();
 
@@ -90,33 +90,47 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
                 preg_match('/_(.*)_/', $filename, $matches);
                 $key = $matches[1];
 
-                $fieldCollection = new Object_Fieldcollection_Definition();
-                $fieldCollection->setKey($key);
-                $fieldCollection->setParentClass($importData['parentClass']);
-                $fieldCollection->setLayoutDefinitions($layout);
-                $fieldCollection->save();
+                try {
+                    $fieldCollection = Object_Fieldcollection_Definition::getByKey($key);
+                } catch(Exception $e) {
+                    $fieldCollection = new Object_Fieldcollection_Definition();
+                    $fieldCollection->setKey($key);
+                    $fieldCollection->setParentClass($importData['parentClass']);
+                    $fieldCollection->setLayoutDefinitions($layout);
+                    $fieldCollection->save();
+                }
             }
         }
 
         // Add class
-        $data = file_get_contents('../../install/class_source/class_FilterDefinition_export.xml');
+        $data = file_get_contents(PIMCORE_PLUGINS_PATH . '/OnlineShop/install/class_source/class_FilterDefinition_export.xml');
         $conf = new Zend_Config_Xml($data);
         $importData = $conf->toArray();
 
         $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
 
-        $class = new Object_Class();
-        $class->setLayoutDefinitions($layout);
-        $class->setModificationDate(time());
-        $class->setIcon($importData["icon"]);
-        $class->setAllowInherit($importData["allowInherit"]);
-        $class->setAllowVariants($importData["allowVariants"]);
-        $class->setParentClass($importData["parentClass"]);
-        $class->setPreviewUrl($importData["previewUrl"]);
-        $class->setPropertyVisibility($importData["propertyVisibility"]);
-        $class->setName('FilterDefinition');
+        $classname = "FilterDefinition";
+        $class = Object_Class::getByName($classname);
+        if(!$class) {
+            $class = new Object_Class();
+            $class->setLayoutDefinitions($layout);
+            $class->setModificationDate(time());
+            $class->setIcon($importData["icon"]);
+            $class->setAllowInherit($importData["allowInherit"]);
+            $class->setAllowVariants($importData["allowVariants"]);
+            $class->setParentClass($importData["parentClass"]);
+            $class->setPreviewUrl($importData["previewUrl"]);
+            $class->setPropertyVisibility($importData["propertyVisibility"]);
+            $class->setName($classname);
 
-        $class->save();
+            $class->save();
+        }
+
+        //copy config file
+        if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShopConfig.xml")) {
+            copy(PIMCORE_PLUGINS_PATH . "/OnlineShop/config/OnlineShopConfig_sample.xml", PIMCORE_WEBSITE_PATH . "/var/plugins/OnlineShopConfig.xml");
+        }
+        self::setConfig("/website/var/plugins/OnlineShopConfig.xml");
 
 
         if(self::isInstalled()){
@@ -188,7 +202,6 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         } else {
             return null;
         }
-        return null;
     }
 
     /**

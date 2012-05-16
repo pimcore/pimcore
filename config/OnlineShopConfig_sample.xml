@@ -7,19 +7,15 @@
             </config>
         </environment>
 
-        <!-- <user class="OnlineShop_Framework_AbstractUser">
-           <config>
-           </config>
-       </user> -->
-
         <cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
             <config>
                 <cart class="OnlineShop_Framework_Impl_Cart"/>
+                <!--<cart class="OnlineShop_Framework_Impl_Cart"/>-->
 
                 <pricecalcualtor class="OnlineShop_Framework_Impl_CartPriceCalculator">
                     <config>
                         <modificators>
-                            <shipping class="OnlineShop_Framework_Impl_CartPriceModificatorShipping"/>
+                            <!--<shipping class="OnlineShop_Framework_Impl_CartPriceModificatorShipping"/>-->
                         </modificators>
                     </config>
                 </pricecalcualtor>
@@ -28,12 +24,12 @@
 
         <pricesystems>
             <pricesystem name="default" class="OnlineShop_Framework_Impl_AttributePriceSystem"/>
+            <!--<pricesystem name="boeschSet" class="OnlineShop_Boesch_SetPriceSystem"/>-->
         </pricesystems>
         <availablitysystems>
             <availablitysystem name="default" class="OnlineShop_Framework_Impl_AttributeAvailabilitySystem"/>
+            <!--<pricesystem name="boeschSet" class="OnlineShop_Boesch_SetPriceSystem"/>-->
         </availablitysystems>
-
-
         <checkoutmanager class="OnlineShop_Framework_Impl_CheckoutManager">
             <config>
                 <steps>
@@ -42,67 +38,90 @@
                 </steps>
                 <commitorderprocessor class="OnlineShop_Framework_Impl_CommitOrderProcessor"/>
                 <orderstorage orderClass="Object_OnlineShopOrder" orderItemClass="Object_OnlineShopOrderItem"/>
-                <mails confirmation="/emails/order-confirmation"/>
-                <parentorderfolder>1</parentorderfolder>
+                <mails confirmation="/emails/order-confirmation" inquiry="/emails/inquiry-confirmation" activation="/emails/order-activation" dealer="/emails/order-dealer" printer="/emails/order-print"/>
+                <parentorderfolder>7707</parentorderfolder>
             </config>
         </checkoutmanager>
 
         <productindex>
+            <!-- add columns for general fulltext search index of productlist - they must be part of the column configuration below -->
             <generalSearchColumns>
                 <column name="name"/>
-                <column name="shortDescription"/>
-                <column name="supplierRemoteId"/>
+                <column name="seoname"/>
+                <column name="description"/>
+                <column name="ean"/>
+                <column name="artno"/>
             </generalSearchColumns>
+
+            <!-- column definition for product index -->
             <columns>
-                <column name="name" type="varchar(255)" hideInFieldlistDatatype="true"/>
-                <column name="shortDescription" type="longtext"/>
-                <column name="supplierRemoteId" type="varchar(255)"/>
-                <column name="mainImage" type="int" interpreter="OnlineShop_Framework_IndexService_Interpreter_AssetId"/>
-                <column name="weight" type="DOUBLE" getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
-                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
-                    <config brickfield="dimensionAndWeight" bricktype="Weight" fieldname="weight"/>
+                <column name="name" type="varchar(255)"/>
+                <column name="seoname" type="varchar(255)"/>
+                <column name="description" type="longtext"/>
+                <column name="ean" type="varchar(255)"/>
+                <column name="artno" type="varchar(255)"/>
+                <column name="gender" type="varchar(100)" />
+                <column name="color" type="varchar(255)" />
+                <column name="size" type="varchar(255)" />
+                <column name="price" type="DOUBLE" />
+                <column name="foottype" type="varchar(255)" getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence">
+                    <config>
+                        <source brickfield="specificAttributes" bricktype="shoe" fieldname="footTypes"/>
+                    </config>
                 </column>
-                <column name="bundledSoftware" type="longtext"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter">
-                    <config brickfield="generalFeatures" bricktype="AccessoriesAttributes" fieldname="bundledSoftware"/>
+                <column name="gaittype" type="varchar(255)" getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence">
+                    <config>
+                        <source brickfield="specificAttributes" bricktype="shoe" fieldname="gaitTypes"/>
+                    </config>
                 </column>
-                <column name="warranty" type="longtext"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter">
-                    <config brickfield="generalFeatures" bricktype="Features" fieldname="warranty"/>
+                <column name="fittings" type="varchar(255)" getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence">
+                    <config>
+                        <source brickfield="specificAttributes" bricktype="apparel" fieldname="fittings"/>
+                    </config>
                 </column>
-                <column name="totalStorageCapacity" type="DOUBLE"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
-                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
-                    <config brickfield="specialFeatures" bricktype="Memory" fieldname="totalStorageCapacity"/>
+                <column name="zips" type="varchar(255)" getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequence">
+                    <config>
+                        <source brickfield="specificAttributes" bricktype="apparel" fieldname="zips"/>
+                    </config>
                 </column>
-                <column name="processorClockSpeed" type="DOUBLE"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
-                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
-                    <config brickfield="specialFeatures" bricktype="Processor" fieldname="processorClockSpeed"/>
+
+                <column name="approvals" type="varchar(255)" getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMultiselect">
+                    <config>
+                        <source brickfield="specificAttributes" bricktype="approvals" fieldname="fifaApproved"/>
+                        <source brickfield="specificAttributes" bricktype="approvals" fieldname="fifaInspected"/>
+                        <source brickfield="specificAttributes" bricktype="approvals" fieldname="imsChecked"/>
+                        <source brickfield="specificAttributes" bricktype="approvals" fieldname="ihfApproved"/>
+                    </config>
                 </column>
-                <column name="compatibleOperatingSystems" type="longtext"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter">
-                    <config brickfield="generalFeatures" bricktype="Environment" fieldname="compatibleOperatingSystems"/>
-                </column>
-                <column name="hardDiskRotationalSpeed" type="DOUBLE"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
-                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
-                    <config brickfield="specialFeatures" bricktype="Memory" fieldname="hardDiskRotationalSpeed"/>
-                </column>
-                <column name="hardDiskDriveCapacity" type="DOUBLE"
-                        getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
-                        interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
-                    <config brickfield="specialFeatures" bricktype="Memory" fieldname="hardDiskDriveCapacity"/>
-                </column>
+
+                <column name="rating" type="DOUBLE" interpreter="OnlineShop_IndexService_Interpreter_Round"/>
+
+                <column name="features" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" />
+                <column name="attributes" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" />
+                <column name="technologies" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" />
+
+
+                <!-- columns only for similarity calculation - are not shown in default column selector fields -->
+                <column name="simularity_color" fieldname="color" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_Soundex" />
+                <column name="simularity_gender" fieldname="gender" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_Soundex" />
+                <column name="simularity_category" fieldname="categories" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
+                <column name="simularity_feature" fieldname="features" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
+                <column name="simularity_technolgy" fieldname="technologies" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
+                <column name="simularity_attributes" fieldname="attributes" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
             </columns>
 
         </productindex>
 
+        <!-- assign backend implementations and views to filter type field collections -->
         <filtertypes>
             <FilterNumberRange class="OnlineShop_Framework_FilterService_NumberRange" script="/sample/filters/range.php"/>
-            <FilterSelect class="OnlineShop_Framework_FilterService_Select" script="/sample/filters/select.php"/>
+            <FilterNumberRangeSelection class="OnlineShop_Framework_FilterService_NumberRangeSelection" script="/product/filters/price.php"/>
+            <FilterSelect class="OnlineShop_Framework_FilterService_Select" script="/product/filters/select.php"/>
             <FilterMultiSelect class="OnlineShop_Framework_FilterService_MultiSelect" script="/sample/filters/multiselect.php"/>
             <FilterMultiRelation class="OnlineShop_Framework_FilterService_MultiSelectRelation" script="/sample/filters/multiselect-relation.php"/>
+            <FilterCategory class="OnlineShop_Framework_FilterService_SelectCategory" script="/product/filters/select.php"/>
+            <FilterSelectFromMultiSelect class="OnlineShop_Framework_FilterService_SelectFromMultiSelect" script="/product/filters/select.php"/>
+            <FilterRelation class="OnlineShop_Framework_FilterService_SelectRelation" script="/product/filters/object_relation.php"/>
         </filtertypes>
 
     </onlineshop>
