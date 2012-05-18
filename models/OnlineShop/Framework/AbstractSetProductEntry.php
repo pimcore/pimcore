@@ -1,7 +1,13 @@
 <?php
 
+/**
+ * Class for product entry of a set product - container for product and quantity
+ */
 class OnlineShop_Framework_AbstractSetProductEntry {
 
+    /**
+     * @var int
+     */
     private $quantity;
 
     /**
@@ -45,7 +51,15 @@ class OnlineShop_Framework_AbstractSetProductEntry {
         return $this->quantity;
     }
 
+    /**
+     * returns id of set product
+     *
+     * @return int
+     */
     public function getId() {
-        return $this->getProduct()->getId();
+        if($this->getProduct()) {
+            return $this->getProduct()->getId();
+        }
+        return null;
     }
 }

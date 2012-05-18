@@ -1,17 +1,46 @@
 <?php
 
+/**
+ * Implementation of product list which works based on the product index of the online shop framework
+ */
 class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, Iterator {
 
     const ORDERKEY_PRICE = "orderkey_price";
 
+    /**
+     * does not consider variants in search results
+     */
     const VARIANT_MODE_HIDE = "hide";
+
+    /**
+     * considers variants in search results and returns objects and variants
+     */
     const VARIANT_MODE_INCLUDE = "include";
+
+    /**
+     * considers variants in search results but only returns corresponding objects in search results
+     */
     const VARIANT_MODE_INCLUDE_PARENT_OBJECT = "include_parent_object";
 
-    private $products = null;
-    private $indexService = null;
-    private $totalCount = null;
-    private $variantMode = self::VARIANT_MODE_INCLUDE;
+    /**
+     * @var null|OnlineShop_Framework_AbstractProduct[]
+     */
+    protected $products = null;
+
+    /**
+     * @var null|OnlineShop_Framework_IndexService
+     */
+    protected $indexService = null;
+
+    /**
+     * @var null|int
+     */
+    protected $totalCount = null;
+
+    /**
+     * @var string
+     */
+    protected $variantMode = self::VARIANT_MODE_INCLUDE;
 
     /**
      * @var integer
@@ -46,7 +75,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
 
 
     /**
-     * @return array
+     * @return OnlineShop_Framework_AbstractProduct[]
      */
     public function getProducts() {
         if ($this->products === null) {
@@ -56,19 +85,45 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
     }
 
 
-    private $conditions = array();
-    private $relationConditions = array();
-    private $conditionPriceFrom = null;
-    private $conditionPriceTo = null;
+    /**
+     * @var string[]
+     */
+    protected $conditions = array();
 
+    /**
+     * @var string[]
+     */
+    protected $relationConditions = array();
+
+    /**
+     * @var float
+     */
+    protected $conditionPriceFrom = null;
+
+    /**
+     * @var float
+     */
+    protected $conditionPriceTo = null;
+
+    /**
+     * @param string $condition
+     * @param string $fieldname
+     */
     public function addCondition($condition, $fieldname = "") {
         $this->conditions[$fieldname][] = $condition;
     }
 
+    /**
+     * @param string $fieldname
+     * @param string $condition
+     */
     public function addRelationCondition($fieldname, $condition) {
         $this->relationConditions[$fieldname][] = "`fieldname` = " . $this->quote($fieldname) . " AND "  . $condition;
     }
 
+    /**
+     * resets all conditions of product list
+     */
     public function resetConditions() {
         $this->conditions = array();
         $this->relationConditions = array();
@@ -76,6 +131,10 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         $this->conditionPriceTo = null;
     }
 
+    /**
+     * @param null|float $from
+     * @param null|float $to
+     */
     public function addPriceCondition($from = null, $to = null) {
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;

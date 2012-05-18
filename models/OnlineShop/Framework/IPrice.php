@@ -1,11 +1,20 @@
 <?php
 
+/**
+ * Interface for price implementations of online shop framework
+ */
 interface OnlineShop_Framework_IPrice {
 
-    /** @return double*/
+    /**
+     * @abstract
+     * @return float
+     */
     public function getAmount();
 
-    /** @return Zend_Currency*/
+    /**
+     * @abstract
+     * @return Zend_Currency
+     */
     public function getCurrency();
 
     /**
@@ -16,7 +25,7 @@ interface OnlineShop_Framework_IPrice {
 
     /**
      * @abstract
-     * @param $amount int
+     * @param float $amount
      * @return void
      */
     public function setAmount($amount);

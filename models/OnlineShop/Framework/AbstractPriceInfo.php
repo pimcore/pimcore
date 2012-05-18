@@ -1,14 +1,14 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: rtippler
- * Date: 10.01.12
- * Time: 15:32
- * To change this template use File | Settings | File Templates.
- */
 
+/**
+ * Abstract base class price info
+ */
  class OnlineShop_Framework_AbstractPriceInfo implements OnlineShop_Framework_IPriceInfo{
 
+     /**
+      * @static
+      * @return OnlineShop_Framework_AbstractPriceInfo
+      */
     public static function getInstance(){
         return new static(func_get_args());
     }
@@ -18,7 +18,6 @@
      * @var \OnlineShop_Framework_IPriceSystem
      */
     private $priceSystem;
-
 
 
     /** @var int | string */
@@ -65,6 +64,10 @@
         return $this->priceSystem;
     }
 
+     /**
+      * @throws OnlineShop_Framework_Exception_UnsupportedException
+      * @return OnlineShop_Framework_IPrice
+      */
      public function getPrice() {
          throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }

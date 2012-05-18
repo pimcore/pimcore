@@ -1,19 +1,27 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: rtippler
- * Date: 11.01.12
- * Time: 11:49
- * To change this template use File | Settings | File Templates.
- */
 
+/**
+ * Interface for PriceInfo implementations of online shop framework
+ */
 interface OnlineShop_Framework_IPriceInfo {
     const MIN_PRICE = "min";
 
+    /**
+     * @abstract
+     * @return OnlineShop_Framework_IPrice
+     */
     public function getPrice();
 
+    /**
+     * @abstract
+     * @return bool
+     */
     public function isMinPrice();
 
+    /**
+     * @abstract
+     * @return int
+     */
     public function getQuantity();
 
     /**
@@ -23,7 +31,9 @@ interface OnlineShop_Framework_IPriceInfo {
     public function setQuantity($quantity);
 
     /**
-     * @param \OnlineShop_Framework_IPriceSystem $priceSystem
+     * @abstract
+     * @param OnlineShop_Framework_IPriceSystem $priceSystem
+     * @return void
      */
     public function setPriceSystem($priceSystem);
 

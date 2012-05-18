@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
  
-class OnlineShop_Framework_Impl_Price implements OnlineShop_Framework_IPrice{
+class OnlineShop_Framework_Impl_Price implements OnlineShop_Framework_IPrice {
     private $currency;
     private $amount;
     private $minPrice;

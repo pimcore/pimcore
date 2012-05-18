@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Abstract base class for order pimcore objects
+ */
 class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
 
     /**
@@ -11,7 +14,7 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
     }
 
     /**
-     * @param strimg $ordernumber
+     * @param string $ordernumber
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function setOrdernumber($ordernumber) {
@@ -19,40 +22,40 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
     }
 
     /**
-     * @return double
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return float
      */
     public function getTotalPrice() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
     }
 
     /**
-     * @param double $totalPrice
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @param float $totalPrice
      */
     public function setTotalPrice($totalPrice) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
     }
 
     /**
-     * @return Zend_Date
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return Zend_Date
      */
     public function getOrderdate() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getOrderdate is not implemented for " . get_class($this));
     }
 
     /**
-     * @param Zend_Date $orderdate
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @param Zend_Date $orderdate
      */
     public function setOrderdate($orderdate) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setOrderdate is not implemented for " . get_class($this));
     }
 
     /**
-     * @return OnlineShop_Framework_AbstractOrderItem[]
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return OnlineShop_Framework_AbstractOrderItem[]
      */
     public function getItems() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getItems is not implemented for " . get_class($this));
@@ -67,20 +70,19 @@ class OnlineShop_Framework_AbstractOrder extends Object_Concrete {
     }
 
     /**
-     * @return CustomerDb_Customer
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return mixed
      */
     public function getCustomer() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getCustomer is not implemented for " . get_class($this));
     }
 
     /**
-     * @param CustomerDb_Customer $customer
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @param mixed $customer
      */
     public function setCustomer($customer) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setCustomer is not implemented for " . get_class($this));
     }
-
 
 }

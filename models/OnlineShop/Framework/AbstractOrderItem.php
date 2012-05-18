@@ -1,10 +1,13 @@
 <?php
 
+/**
+ * Abstract base class for order item pimcore objects
+ */
 class OnlineShop_Framework_AbstractOrderItem extends Object_Concrete {
 
     /**
-     * @return OnlineShop_Framework_AbstractProduct
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return OnlineShop_Framework_AbstractProduct
      */
     public function getProduct() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getProduct is not implemented for " . get_class($this));
@@ -20,8 +23,8 @@ class OnlineShop_Framework_AbstractOrderItem extends Object_Concrete {
 
 
     /**
-     * @return string
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return string
      */
     public function getProductNumber() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getProductNumber is not implemented for " . get_class($this));
@@ -37,8 +40,8 @@ class OnlineShop_Framework_AbstractOrderItem extends Object_Concrete {
 
 
     /**
-     * @return string
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return string
      */
     public function getProductName() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getProductName is not implemented for " . get_class($this));
@@ -53,15 +56,15 @@ class OnlineShop_Framework_AbstractOrderItem extends Object_Concrete {
     }
 
     /**
-     * @return double
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return float
      */
     public function getAmount() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getAmount is not implemented for " . get_class($this));
     }
 
     /**
-     * @param double $amount
+     * @param float $amount
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      */
     public function setAmount($amount) {
@@ -70,16 +73,16 @@ class OnlineShop_Framework_AbstractOrderItem extends Object_Concrete {
 
 
     /**
-     * @return double
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @return float
      */
     public function getTotalPrice() {
         throw new OnlineShop_Framework_Exception_UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
     }
 
     /**
-     * @param double $totalPrice
      * @throws OnlineShop_Framework_Exception_UnsupportedException
+     * @param float $totalPrice
      */
     public function setTotalPrice($totalPrice) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setTotalPrice is not implemented for " . get_class($this));

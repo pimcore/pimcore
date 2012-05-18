@@ -1,8 +1,12 @@
 <?php
-
+/**
+ * Abstract base class for pimcore objects who should be used as set products in the online shop framework
+ */
 class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_AbstractProduct {
 
     /**
+     * returns mandatory products for a set product
+     *
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @return OnlineShop_Framework_AbstractSetProductEntry[]
      */
@@ -11,6 +15,8 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     }
 
     /**
+     * returns optional products for a set product
+     *
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @return OnlineShop_Framework_AbstractSetProductEntry[]
      */
@@ -20,6 +26,11 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
 
 
     /**
+     * checks if product is bookable
+     * default implementation checks if set product is active, given products are bookable and set product has a valid price
+     * if no products given, mandatory products are used
+     *
+     * @param int $quantityScale
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
      * @return bool
      */
@@ -38,7 +49,6 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
                 }
             }
             //set is only bookable when price is valid!!! //
-            /** @var $priceInfo OnlineShop_Boesch_SetPriceInfo */
             $priceInfo =$this->getOSPriceInfo($quantityScale,$products);
             return $priceInfo!=null&&$priceInfo->isPriceValid();
         } else {
@@ -47,7 +57,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     }
 
     /**
-     * Delivers price of setproduct with given products
+     * Delivers price of set product with given products
      *
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param OnlineShop_Framework_AbstractSetProductEntry[] $products
@@ -57,7 +67,6 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
      */
     public function getCalculatedPrice($products, $quantityScale = 1) {
         return $this->getOSPrice($quantityScale, $products);
-        //return $this->getPriceSystemImplementation()->getPrice($this, $quantityScale, $products);
     }
 
     /**
@@ -76,7 +85,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
 
 
     /**
-    * Delivers min price for given products or with default mandatory products of setproduct
+    * Delivers min price for given products or with default mandatory products of set product
      *
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param null $quantityScale
@@ -91,7 +100,7 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
     }
 
     /**
-     * Delivers priceinfo with min price for given products or with  default mandatory products of setproduct
+     * Delivers priceinfo with min price for given products or with  default mandatory products of set product
      *
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param int $quantityScale
@@ -119,6 +128,8 @@ class OnlineShop_Framework_AbstractSetProduct extends OnlineShop_Framework_Abstr
 
 
     /**
+     * checks if all mandatory of set products are set in given product list
+     *
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param  OnlineShop_Framework_AbstractSetProductEntry[] $products
      * @return void

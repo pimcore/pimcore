@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * interface for cart item implementations of online shop framework
+ */
 interface OnlineShop_Framework_ICartItem {
 
     /**
@@ -34,7 +37,13 @@ interface OnlineShop_Framework_ICartItem {
      */
     public function setCount($count);
 
+    /**
+     * @abstract
+     * @param OnlineShop_Framework_ICart $cart
+     * @return void
+     */
     public function setCart(OnlineShop_Framework_ICart $cart);
+
     /**
      * @abstract
      * @return OnlineShop_Framework_ICart
@@ -43,13 +52,13 @@ interface OnlineShop_Framework_ICartItem {
 
     /**
      * @abstract
-     * @return array(OnlineShop_Framework_ICartItem)
+     * @return OnlineShop_Framework_ICartItem[]
      */
     public function getSubItems();
 
     /**
      * @abstract
-     * @param  $subItems array(OnlineShop_Framework_ICartItem)
+     * @param  OnlineShop_Framework_ICartItem[] $subItems
      * @return void
      */
     public function setSubItems($subItems);
@@ -62,7 +71,7 @@ interface OnlineShop_Framework_ICartItem {
 
     /**
      * @abstract
-     * @return stdClass
+     * @return OnlineShop_Framework_IPriceInfo
      */
     public function getPriceInfo();
 
@@ -84,8 +93,27 @@ interface OnlineShop_Framework_ICartItem {
     public function getAvailabilityInfo();
 
 
+    /**
+     * @static
+     * @abstract
+     * @param $cartId
+     * @param $itemKey
+     * @param string $parentKey
+     * @return OnlineShop_Framework_ICartItem
+     */
     public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "");
+
+    /**
+     * @static
+     * @abstract
+     * @param $cartId
+     * @return void
+     */
     public static function removeAllFromCart($cartId);
 
+    /**
+     * @abstract
+     * @return void
+     */
     public function save();
 }

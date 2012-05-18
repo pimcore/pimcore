@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Interface for checkout step implementations of online shop framework
+ */
 interface OnlineShop_Framework_ICheckoutStep {
 
     /**
@@ -15,7 +18,8 @@ interface OnlineShop_Framework_ICheckoutStep {
     public function getData();
 
     /**
-     * commits step and sets delivered data
+     * sets delivered data and commits step
+     *
      * @abstract
      * @param  $data
      * @return bool

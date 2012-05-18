@@ -1,7 +1,15 @@
 <?php
 
+/**
+ * Abstract base class for filter definition pimcore objects
+ */
 abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Concrete {
 
+    /**
+     * @static
+     * @param int $id
+     * @return null|Object_Abstract
+     */
     public static function getById($id) {
         $object = Object_Abstract::getById($id);
 
@@ -12,32 +20,52 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
     }
 
     /**
+     * returns page limit for product list
+     *
      * @abstract
      * @return float
      */
     public abstract function getPageLimit();
 
    /**
-   * @return string
-   */
+     * returns list of available fields for sorting ascending
+     *
+     * @abstract
+     * @return string
+     */
    public abstract function getOrderByAsc();
 
     /**
-    * @return string
+     * returns list of available fields for sorting descending
+     *
+     * @abstract
+     * @return string
     */
     public abstract function getOrderByDesc();
 
    /**
-   * @return Object_Fieldcollection
-   */
+    * return array of field collections for preconditions
+    *
+    * @abstract
+    * @return Object_Fieldcollection
+    */
    public abstract function getConditions();
 
-   /**
-   * @return Object_Fieldcollection
-   */
+    /**
+     * return array of field collections for filters
+     *
+     * @abstract
+     * @return Object_Fieldcollection
+     */
    public abstract function getFilters();
 
 
+    /**
+     * enables inheritance for field collections, if xxxInheritance field is available and set to string 'true'
+     *
+     * @param string $key
+     * @return mixed|Object_Fieldcollection
+     */
     public function preGetValue($key) {
 
         if ($this->getClass()->getAllowInherit()

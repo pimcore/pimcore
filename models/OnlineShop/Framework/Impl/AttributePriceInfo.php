@@ -33,6 +33,9 @@ class OnlineShop_Framework_Impl_AttributePriceInfo extends OnlineShop_Framework_
     }
 
 
+    /**
+     * @return OnlineShop_Framework_Impl_Price
+     */
     public function getPrice() {
         if(!empty($this->products)) {
             $sum = 0;
