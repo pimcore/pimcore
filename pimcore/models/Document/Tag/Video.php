@@ -326,8 +326,12 @@ class Document_Tag_Video extends Document_Tag
             $height = $options["height"];
         }
 
+        if($options["config"]["clip"]["autoPlay"]){
+            $autoPlayString = "&autoplay=1";
+        }
+
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe width="' . $width . '" height="' . $height . '" src="' . $this->view->getRequest()->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="' . $this->view->getRequest()->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent' . $autoPlayString .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
