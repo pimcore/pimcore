@@ -53,6 +53,7 @@
 "links","Links"
 "only_required_for_reporting_in_pimcore_but_not_for_code_integration","The following is only required if you want to use the reporting functionalities in pimcore, but this is not required for the code integration. "
 "analytics_additional_code","Additional tracking parameters, eg. _gaq.push(['_setDomainName', 'example.com']);"
+"analytics_additional_code_before_pageview","Additional tracking parameters, which need to be added before track page view, eg. _gaq.push (['_gat._anonymizeIp']);"
 "casesensitive","case-sensitive"
 "path_aliases","Path Aliases"
 "path_error_message","A path must start with / and should only contain the following characters: a-zA-Z0-9-_./"
