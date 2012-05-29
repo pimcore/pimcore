@@ -460,19 +460,19 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
             if ($this->getUser()->isAllowed("routes")) {
 
+                $data = Zend_Json::decode($this->_getParam("data"));
+
+                foreach ($data as &$value) {
+                    $value = trim($value);
+                }
+
                 if ($this->_getParam("xaction") == "destroy") {
-
-                    $id = Zend_Json::decode($this->_getParam("data"));
-
-                    $route = Staticroute::getById($id);
+                    $route = Staticroute::getById($data);
                     $route->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
                 }
                 else if ($this->_getParam("xaction") == "update") {
-
-                    $data = Zend_Json::decode($this->_getParam("data"));
-
                     // save routes
                     $route = Staticroute::getById($data["id"]);
                     $route->setValues($data);
@@ -482,7 +482,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     $this->_helper->json(array("data" => $route, "success" => true));
                 }
                 else if ($this->_getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->_getParam("data"));
+
                     unset($data["id"]);
 
                     // save route
