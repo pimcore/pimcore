@@ -384,7 +384,12 @@ class Document_Resource extends Element_Resource {
             // exception for list permission
             if(empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $this->model->getRealFullPath()."/%");
+                $path = $this->model->getFullPath() . "/";
+                if($this->model->getId() == 1) {
+                    $path = "/";
+                }
+
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $path."%");
                 if($permissionsChilds) {
                     return true;
                 }
