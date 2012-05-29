@@ -823,16 +823,17 @@ class Pimcore {
 
             // gzip the contents and send connection close to that the process can run in the background to finish
             // some tasks like writing the cache ...
+            // using mb_strlen() because of PIMCORE-1509
             if($gzipIt) {
                 $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00".
                     substr(gzcompress($data, 2), 0, -4).
                     pack('V', crc32($data)). // packing the CRC and the strlen is still required
-                    pack('V', strlen($data)); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
+                    pack('V', mb_strlen($data, "latin1")); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
 
                 // send headers & contents
                 header("Connection: close\r\n");
                 header("Content-Encoding: $contentEncoding\r\n");
-                header("Content-Length: " . strlen($output));
+                header("Content-Length: " . mb_strlen($output, "latin1"));
                 header("X-Powered-By: pimcore");
 
                 return $output;
