@@ -260,6 +260,14 @@ class Document_Tag_Video extends Document_Tag
         }
     }
 
+    protected function getScheme () {
+        if($this->view instanceof Zend_View && $this->view->getRequest()) {
+            return $this->view->getRequest()->getScheme();
+        } else {
+            return "https";
+        }
+    }
+
     public function getUrlCode()
     {
         return $this->getFlowplayerCode($this->id);
@@ -331,7 +339,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe width="' . $width . '" height="' . $height . '" src="' . $this->view->getRequest()->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent' . $autoPlayString .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="' . $this->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent' . $autoPlayString .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
@@ -369,7 +377,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe src="' . $this->view->getRequest()->getScheme() . '://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe src="' . $this->getScheme() . '://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
