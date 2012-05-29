@@ -364,7 +364,12 @@ class Object_Abstract_Resource extends Element_Resource {
             // exception for list permission
             if(empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_object WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $this->model->getFullPath()."/%");
+                $path = $this->model->getFullPath() . "/";
+                if($this->model->getId() == 1) {
+                    $path = "/";
+                }
+
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_object WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $path."%");
                 if($permissionsChilds) {
                     return true;
                 }
