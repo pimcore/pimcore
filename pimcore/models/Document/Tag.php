@@ -153,7 +153,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      * @return array
      */
     public function getOptions() {
-        return $this->options;
+        return is_array($this->options) ? $this->options : array();
     }
 
     /**
