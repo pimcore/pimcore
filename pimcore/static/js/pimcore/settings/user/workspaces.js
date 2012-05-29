@@ -32,7 +32,7 @@ pimcore.settings.user.workspaces = Class.create({
             title: t("workspaces"),
             bodyStyle: "padding:10px;",
             autoScroll: true,
-            items: [this.asset.getPanel(),this.document.getPanel(),this.object.getPanel()]
+            items: [this.document.getPanel(), this.asset.getPanel(), this.object.getPanel()]
         });
 
         return this.panel;
