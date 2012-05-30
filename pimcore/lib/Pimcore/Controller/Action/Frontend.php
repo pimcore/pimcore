@@ -59,6 +59,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         if ($this->_getParam("pimcore_editmode") || $this->_getParam("pimcore_version") || $this->_getParam("pimcore_preview") || $this->_getParam("pimcore_admin") || $this->_getParam("pimcore_object_preview") ) {
 
             $specialAdminRequest = true;
+            $this->disableBrowserCache();
 
             Pimcore_Tool_Authentication::initSession();
             // start admin session
