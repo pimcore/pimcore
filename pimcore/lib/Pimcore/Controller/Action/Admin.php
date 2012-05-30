@@ -64,6 +64,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         } else {
             // the following code is only called once, even when there are some subcalls (eg. with $this->action, ... )
 
+            $this->disableBrowserCache();
+
             // general definitions
             Document::setHideUnpublished(false);
             Object_Abstract::setHideUnpublished(false);

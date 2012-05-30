@@ -23,15 +23,6 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
      */
     protected static $_customViewInitialized = false;
 
-    /**
-     * set this if headers are set manually somewhere else
-     * example: if you want to renader and send an e-mail in the shutdown hook,
-     * this is not possible because headers are already sent
-     *
-     * @var bool
-     */
-    public static $skipSendingContentTypeHeader = false;
-
     public function init() {
         parent::init();
 
@@ -45,8 +36,17 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
         }
 
         // set content type
-        if(!self::$skipSendingContentTypeHeader) {
+        if($this->getResponse()->canSendHeaders()) {
             $this->getResponse()->setHeader("Content-Type", "text/html; charset=UTF-8", true);
+        }
+    }
+
+    protected function disableBrowserCache () {
+        // set this headers to avoid problems with proxies, ...
+        if($this->getResponse()->canSendHeaders()) {
+            $this->getResponse()->setHeader("Cache-Control","no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0, max-age=0", true);
+            $this->getResponse()->setHeader("Pragma","no-cache", true);
+            $this->getResponse()->setHeader("Expires", "Tue, 01 Jan 1980 00:00:00 GMT", true);
         }
     }
 
