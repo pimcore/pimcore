@@ -16,6 +16,12 @@
 class Pimcore_Tool_Authentication {
 
     /**
+     * contains the session namespace object
+     * @var Zend_Session_Namespace
+     */
+    private static $session;
+
+    /**
      * @static
      * @throws Exception
      * @return User
@@ -26,7 +32,7 @@ class Pimcore_Tool_Authentication {
         self::initSession();
 
         // get session namespace
-        $adminSession = new Zend_Session_Namespace("pimcore_admin");
+        $adminSession = self::getSession();
 
         $user = $adminSession->user;
         if ($user instanceof User) {
@@ -120,6 +126,18 @@ class Pimcore_Tool_Authentication {
             Logger::emergency("there is a problem with admin session");
             die();
         }
+    }
+
+    public static function getSession () {
+        if(!Zend_Session::isStarted()) {
+            self::initSession();
+        }
+
+        if(!self::$session) {
+            self::$session = new Zend_Session_Namespace("pimcore_admin");
+        }
+
+        return self::$session;
     }
 
 
@@ -230,10 +248,14 @@ class Pimcore_Tool_Authentication {
 
             if (!$user instanceof User) {
                 throw new Exception("invalid username");
-            } else if (!$user->isActive()) {
-                throw new Exception("user inactive");
-            } else if ($adminRequired and !$user->isAdmin()) {
-                throw new Exception("no permission");
+            } else {
+                if (!$user->isActive()) {
+                    throw new Exception("user inactive");
+                } else {
+                    if ($adminRequired and !$user->isAdmin()) {
+                        throw new Exception("no permission");
+                    }
+                }
             }
 
         $passwordHash = $user->getPassword();

@@ -172,8 +172,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             $editmodeHeadHtml .= '<script type="text/javascript" src="' . Pimcore_Tool_Admin::getMinimizedScriptPath($scriptContents) . '?_dc=' . Pimcore_Version::$revision . '"></script>'."\n";
         }
 
-        $ns = new Zend_Session_Namespace("pimcore_admin");
-        $user = User::getById($ns->user->getId());
+        $user = Pimcore_Tool_Authentication::authenticateSession();
         $lang = $user->getLanguage();
 
         $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/'.$lang.'/?_dc=' . Pimcore_Version::$revision . '"></script>'."\n";
