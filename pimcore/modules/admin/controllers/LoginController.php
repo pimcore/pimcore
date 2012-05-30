@@ -160,7 +160,9 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         }
 
         Zend_Session::destroy();
-        Zend_Session::regenerateId();
+
+        // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
+        setcookie("pimcore_opentabs", false, 315554400, "/");
 
         $this->_redirect("/admin/login/");
     }
