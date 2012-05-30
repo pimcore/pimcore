@@ -104,8 +104,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 $this->getResponse()->setHeader("X-Pimcore-Auth","required");
                 // redirect to login page
                 $this->_redirect("/admin/login");
-                // send immetiatley the response and exit the execution
-                $this->getResponse()->sendResponse();
+                // exit the execution -> just to be sure
                 exit;
             }
 
