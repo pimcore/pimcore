@@ -714,7 +714,6 @@ class Pimcore {
             "pimcore_user",
             "pimcore_config_system",
             "pimcore_admin_user",
-            "pimcore_admin_initialized",
             "pimcore_config_website",
             "pimcore_editmode",
             "pimcore_error_document",
