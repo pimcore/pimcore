@@ -54,6 +54,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         }
 
         if(self::$adminInitialized) {
+            // this will be executed on every call to this init() method
             try {
                 $this->setUser(Zend_Registry::get("pimcore_admin_user"));
             } catch (Exception $e) {
@@ -61,6 +62,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 exit;
             }
         } else {
+            // the following code is only called once, even when there are some subcalls (eg. with $this->action, ... )
+
             // general definitions
             Document::setHideUnpublished(false);
             Object_Abstract::setHideUnpublished(false);
