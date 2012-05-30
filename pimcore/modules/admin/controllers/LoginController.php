@@ -70,8 +70,6 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     public function indexAction() {
 
-        Zend_Session::regenerateId();
-
         if ($this->getUser() instanceof User) {
             $this->_redirect("/admin/?_dc=" . time());
         }
@@ -119,6 +117,8 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                     if ($authenticated) {
                         $adminSession = new Zend_Session_Namespace("pimcore_admin");
                         $adminSession->user = $user;
+
+                        Zend_Session::regenerateId();
                     }
 
                 } else {
@@ -133,7 +133,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             }
         } catch (Exception $e) {
 
-            //see if module ore plugin authenticates user
+            //see if module or plugin authenticates user
             $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->_getParam("username"),$this->_getParam("password"));
             if($user instanceof User){
                 $adminSession = new Zend_Session_Namespace("pimcore_admin");
@@ -144,7 +144,6 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                 Logger::info("Login Exception" . $e);
 
                 $this->_redirect("/admin/login/?auth_failed=true&inactive=" . $userInactive);
-                $this->getResponse()->sendResponse();
                 exit;
             }
         }
@@ -170,7 +169,6 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
     /**
      * Protection against bruteforce
      */
-
     protected function getLogFile() {
 
         $logfile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/loginerror.log";
