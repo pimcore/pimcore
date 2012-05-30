@@ -188,15 +188,19 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         if($this->_getParam("mysql_adapter")) {
             // this is before installing
-            $db = Zend_Db::factory($this->_getParam("mysql_adapter"),array(
-                'host' => $this->_getParam("mysql_host"),
-                'username' => $this->_getParam("mysql_username"),
-                'password' => $this->_getParam("mysql_password"),
-                'dbname' => $this->_getParam("mysql_database"),
-                "port" => $this->_getParam("mysql_port")
-            ));
+            try {
+                $db = Zend_Db::factory($this->_getParam("mysql_adapter"),array(
+                    'host' => $this->_getParam("mysql_host"),
+                    'username' => $this->_getParam("mysql_username"),
+                    'password' => $this->_getParam("mysql_password"),
+                    'dbname' => $this->_getParam("mysql_database"),
+                    "port" => $this->_getParam("mysql_port")
+                ));
 
-            $db->getConnection();
+                $db->getConnection();
+            } catch (Exception $e) {
+                $db = null;
+            }
         } else {
             // this is after installing, eg. after a migration, ...
             $db = Pimcore_Resource::get();
@@ -430,16 +434,37 @@ class Install_CheckController extends Pimcore_Controller_Action {
                 "state" => $queryCheck ? "ok" : "error"
             );
 
+        } else {
+            die("Not possible... no or wrong database settings given.<br />Please fill out the MySQL Settings in the install form an click again on `Check Requirements´");
         }
 
 
         // filesystem checks
 
         // website/var writable
+        $websiteVarWritable = true;
+        $files = rscandir(PIMCORE_WEBSITE_PATH . "/var");
 
+        foreach ($files as $file) {
+            if (!is_writable($file)) {
+                $websiteVarWritable = false;
+            }
+        }
+
+        $checksFS[] = array(
+            "name" => "/website/var/ writeable",
+            "state" => $websiteVarWritable ? "ok" : "error"
+        );
+
+        // pimcore writeable
+        $checksFS[] = array(
+            "name" => "/pimcore/ writeable",
+            "state" => Pimcore_Update::isWriteable() ? "ok" : "warning"
+        );
 
 
         $this->view->checksPHP = $checksPHP;
         $this->view->checksMySQL = $checksMySQL;
+        $this->view->checksFS = $checksFS;
     }
 }
