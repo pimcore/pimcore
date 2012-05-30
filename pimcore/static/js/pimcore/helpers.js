@@ -245,7 +245,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText) {
     if(type == "error"){
 
         if(errorText != null && errorText != undefined){
-            text = text + " - " + errorText;
+            text = text + '<br /><br /><textarea style="width:300px; height:100px; font-size:11px;">' + strip_tags(errorText) + "</textarea>";
         }
         Ext.MessageBox.show({
             title:title,

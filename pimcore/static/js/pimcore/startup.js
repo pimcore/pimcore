@@ -76,7 +76,7 @@ Ext.onReady(function() {
 
         } else {
             //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot be saved due to HTTP 500 Response)
-            pimcore.helpers.showNotification(t("error"), t("error_general"), "error","");
+            pimcore.helpers.showNotification(t("error"), t("error_general"), "error", response.responseText);
         }
         
         xhrActive--;
