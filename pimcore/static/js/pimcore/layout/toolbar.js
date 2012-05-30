@@ -189,6 +189,10 @@ pimcore.layout.toolbar = Class.create({
                     iconCls: "pimcore_icon_php",
                     handler: this.showPhpInfo
                 },{
+                    text: "System-Requirements Check",
+                    iconCls: "pimcore_icon_systemrequirements",
+                    handler: this.showSystemRequirementsCheck
+                },{
                     text: "Server Info",
                     iconCls: "pimcore_icon_server_info",
                     handler: this.showServerInfo
@@ -842,6 +846,19 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/linfo/index.php", "pimcore_icon_server_info", "Server Info"));
+        }
+
+    },
+
+    showSystemRequirementsCheck: function () {
+
+        var id = "systemrequirementscheck";
+
+        try {
+            pimcore.globalmanager.get(id).activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/install/check/", "pimcore_icon_systemrequirements", "System-Requirements Check"));
         }
 
     },

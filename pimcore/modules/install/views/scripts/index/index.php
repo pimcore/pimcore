@@ -148,11 +148,16 @@ $scripts = array(
                     ]
                 }
             ],
-            bbar: [
+            bbar: [{
+                    text: "Check Requirements",
+                    icon: "/pimcore/static/img/icon/laptop_magnify.png",
+                    handler: function () {
+                        window.open("/install/check/?" + Ext.urlEncode(Ext.getCmp("install_form").getForm().getFieldValues()));
+                    }
+                },"->",
                 {
-                    text: "Install",
-                    scale: "large",
-                    width: 280,
+                    text: "<b>Install Now!</b>",
+                    icon: "/pimcore/static/img/icon/accept.png",
                     disabled: installdisabled,
                     handler: function () {
 
