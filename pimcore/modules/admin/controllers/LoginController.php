@@ -115,7 +115,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                     }
 
                     if ($authenticated) {
-                        $adminSession = new Zend_Session_Namespace("pimcore_admin");
+                        $adminSession = Pimcore_Tool_Authentication::getSession();
                         $adminSession->user = $user;
 
                         Zend_Session::regenerateId();
@@ -136,7 +136,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             //see if module or plugin authenticates user
             $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->_getParam("username"),$this->_getParam("password"));
             if($user instanceof User){
-                $adminSession = new Zend_Session_Namespace("pimcore_admin");
+                $adminSession = Pimcore_Tool_Authentication::getSession();
                 $adminSession->user = $user;
                 $this->_redirect("/admin/?_dc=" . time());
             } else {
@@ -152,7 +152,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
     }
 
     public function logoutAction() {
-        $adminSession = new Zend_Session_Namespace("pimcore_admin");
+        $adminSession = Pimcore_Tool_Authentication::getSession();
 
         if ($adminSession->user instanceof User) {
             Pimcore_API_Plugin_Broker::getInstance()->preLogoutUser($adminSession->user);

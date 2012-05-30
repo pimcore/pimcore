@@ -31,8 +31,9 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         Document::setHideUnpublished(true);
         Object_Abstract::setHideUnpublished(true);
         Object_Abstract::setGetInheritedValues(true);
-        
-        $adminSession = null;
+
+        // contains the logged in user if necessary
+        $user = null;
 
         // assign variables
         $this->view->controller = $this; 
@@ -57,19 +58,17 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
 
         if ($this->_getParam("pimcore_editmode") || $this->_getParam("pimcore_version") || $this->_getParam("pimcore_preview") || $this->_getParam("pimcore_admin") || $this->_getParam("pimcore_object_preview") ) {
-
             $specialAdminRequest = true;
             $this->disableBrowserCache();
 
-            Pimcore_Tool_Authentication::initSession();
-            // start admin session
-            $adminSession = new Zend_Session_Namespace("pimcore_admin");
+            // start admin session & get logged in user
+            $user = Pimcore_Tool_Authentication::authenticateSession();
         }
 
 
         if (!$this->document->isPublished()) {
             if ($specialAdminRequest) {
-                if (!$adminSession->user instanceof User) {
+                if (!$user) {
                     throw new Exception("access denied for " . $this->document->getFullPath());
                 }
             }
@@ -87,7 +86,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
 
         // for editmode
-        if ($adminSession && $adminSession->user instanceof User) {
+        if ($user) {
             if ($this->_getParam("pimcore_editmode") and !Zend_Registry::isRegistered("pimcore_editmode")) {
                 Zend_Registry::set("pimcore_editmode", true);
                 
@@ -122,7 +121,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         }
 
         // for preview
-        if ($adminSession && $adminSession->user instanceof User) {
+        if ($user) {
             // document preview
             if ($this->_getParam("pimcore_preview")) {
                 // get document from session
@@ -148,7 +147,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
         // for version preview
         if ($this->_getParam("pimcore_version")) {
-            if ($adminSession && $adminSession->user instanceof User) {
+            if ($user) {
 
                 // only get version data at the first call || because of embedded Snippets ...
                 try {
