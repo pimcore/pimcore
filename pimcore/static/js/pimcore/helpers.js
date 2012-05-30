@@ -803,6 +803,11 @@ pimcore.helpers.rememberOpenTab = function (item) {
         }
     }
 
+    // limit to the latest 10
+    cleanedOpenTabs.reverse();
+    cleanedOpenTabs.splice(10, 1000);
+    cleanedOpenTabs.reverse();
+
     Ext.util.Cookies.set("pimcore_opentabs", "," + cleanedOpenTabs.join(",") + ",");
 }
 
