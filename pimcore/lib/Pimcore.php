@@ -350,6 +350,7 @@ class Pimcore {
                         $email = $user->getEmail();
                         if(!empty($email)){
                             $mail = Pimcore_Tool::getMail(array($email),"pimcore log notification");
+                            $mail->setIgnoreDebugMode(true);
                             if(!is_dir(PIMCORE_LOG_MAIL_TEMP)){
                                 mkdir(PIMCORE_LOG_MAIL_TEMP,0755,true);
                             }

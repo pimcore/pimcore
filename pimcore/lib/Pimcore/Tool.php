@@ -294,7 +294,7 @@ class Pimcore_Tool {
      * @param  $sender
      * @param  $recipients
      * @param  $subject
-     * @return Zend_Mail
+     * @return Pimcore_Mail
      */
     public static function getMail($recipients = null, $subject = null) {
 

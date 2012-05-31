@@ -43,6 +43,7 @@ class Pimcore_Log_Maintenance {
                                     Logger::debug(get_class($this).": file is writeable and was last modified: ".$fileModified);
                                     if($fileModified!==FALSE and $fileModified<($now-$threshold)){
                                         $mail = Pimcore_Tool::getMail(array($email),"pimcore log notification - ".$file);
+                                        $mail->setIgnoreDebugMode(true);
                                         $mail->setBodyText(file_get_contents(PIMCORE_LOG_MAIL_TEMP."/".$file));
                                         $mail->send();
                                         @unlink(PIMCORE_LOG_MAIL_TEMP."/".$file);
