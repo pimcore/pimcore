@@ -20,6 +20,7 @@ try {
     $opts = new Zend_Console_Getopt(array(
         'job|j=s' => 'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, logmaintenance, sanitycheck, cleanupoldpidfiles, versioncleanup, redirectcleanup, cleanupbrokenviews, and plugin classes if you want to call a plugin maintenance)',
         'manager|m=s' => 'force a specific manager (valid options: procedural, daemon)',
+        'ignore-maintenance-mode' => 'forces the script execution even when the maintenance mode is activated',
         'verbose|v' => 'show detailed information during the maintenance (for debug, ...)',
         'help|h' => 'display this help'
     ));
