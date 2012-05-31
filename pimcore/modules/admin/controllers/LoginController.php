@@ -47,6 +47,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                         try {
                             
                             $mail = Pimcore_Tool::getMail(array($user->getEmail()), "Pimcore lost password service");
+                            $mail->setIgnoreDebugMode(true);
                             $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
                             $mail->send();
                             $this->view->success = true;

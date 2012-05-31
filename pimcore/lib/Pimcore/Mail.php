@@ -81,18 +81,24 @@ class Pimcore_Mail extends Zend_Mail
      *
      * @param array $options
      */
-    public function __construct(Array $options = array())
+    public function __construct($charset = null)
     {
-        parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
+        // using $charset as param to be compatible with Zend_Mail
+        if(is_array($charset)) {
+            $options = $charset;
+            parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
 
-        if ($options["document"]) {
-            $this->setDocument($options["document"]);
-        }
-        if ($options['params']) {
-            $this->setParams($options['params']);
-        }
-        if ($options['subject']) {
-            $this->setSubject($options['subject']);
+            if ($options["document"]) {
+                $this->setDocument($options["document"]);
+            }
+            if ($options['params']) {
+                $this->setParams($options['params']);
+            }
+            if ($options['subject']) {
+                $this->setSubject($options['subject']);
+            }
+        } else {
+            parent::__construct($charset);
         }
 
         $this->init();
