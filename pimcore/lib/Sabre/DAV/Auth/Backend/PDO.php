@@ -4,75 +4,61 @@
  * This is an authentication backend that uses a file to manage passwords.
  *
  * The backend file must conform to Apache's htdigest format
- * 
+ *
  * @package Sabre
  * @subpackage DAV
- * @copyright Copyright (C) 2007-2010 Rooftop Solutions. All rights reserved.
+ * @copyright Copyright (C) 2007-2012 Rooftop Solutions. All rights reserved.
  * @author Evert Pot (http://www.rooftopsolutions.nl/) 
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
 class Sabre_DAV_Auth_Backend_PDO extends Sabre_DAV_Auth_Backend_AbstractDigest {
 
-    private $pdo;
+    /**
+     * Reference to PDO connection
+     *
+     * @var PDO
+     */
+    protected $pdo;
 
     /**
-     * Creates the backend object. 
+     * PDO table name we'll be using
+     *
+     * @var string
+     */
+    protected $tableName;
+
+
+    /**
+     * Creates the backend object.
      *
      * If the filename argument is passed in, it will parse out the specified file fist.
-     * 
-     * @param string $filename 
-     * @return void
+     *
+     * @param PDO $pdo
+     * @param string $tableName The PDO table name to use
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo, $tableName = 'users') {
 
         $this->pdo = $pdo;
+        $this->tableName = $tableName;
 
     }
 
     /**
-     * Returns a users' information 
-     * 
-     * @param string $realm 
-     * @param string $username 
-     * @return string 
+     * Returns the digest hash for a user.
+     *
+     * @param string $realm
+     * @param string $username
+     * @return string|null
      */
-    public function getUserInfo($realm,$username) {
+    public function getDigestHash($realm,$username) {
 
-        $stmt = $this->pdo->prepare('SELECT username, digesta1, email FROM users WHERE username = ?');
+        $stmt = $this->pdo->prepare('SELECT username, digesta1 FROM '.$this->tableName.' WHERE username = ?');
         $stmt->execute(array($username));
         $result = $stmt->fetchAll();
 
-        if (!count($result)) return false;
-        $user = array(
-            'uri' => 'principals/' . $result[0]['username'],
-            'digestHash' => $result[0]['digesta1'],
-        );
-        if ($result[0]['email']) $user['{http://sabredav.org/ns}email-address'] = $result[0]['email'];
-        return $user;
+        if (!count($result)) return;
 
-    }
-
-    /**
-     * Returns a list of all users
-     *
-     * @return array
-     */
-    public function getUsers() {
-
-        $result = $this->pdo->query('SELECT username, email FROM users')->fetchAll();
-        
-        $rv = array();
-        foreach($result as $user) {
-
-            $r = array(
-                'uri' => 'principals/' . $user['username'],
-            );
-            if ($user['email']) $r['{http://sabredav.org/ns}email-address'] = $user['email'];
-            $rv[] = $r;
-
-        }
-
-        return $rv;
+        return $result[0]['digesta1'];
 
     }
 
