@@ -304,6 +304,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 }
             }
 
+            $objectData["general"]["o_locked"] = $object->isLocked();
+
             $objectData["properties"] = Element_Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
             $objectData["versions"] = $object->getVersions();
@@ -467,6 +469,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $objectData["general"][$key] = $value;
                 }
             }
+
+            $objectData["general"]["o_locked"] = $object->isLocked();
 
             $objectData["properties"] = Element_Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();

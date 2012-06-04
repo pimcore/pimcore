@@ -393,8 +393,8 @@ pimcore.document.tree = Class.create({
         }
 
         //publish
-        if (this.attributes.permissions.publish && this.attributes.type != "folder" && !this.attributes.locked) {
-            if (this.attributes.published) {
+        if (this.attributes.permissions.publish && this.attributes.type != "folder") {
+            if (this.attributes.published && !this.attributes.locked) {
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
                     iconCls: "pimcore_icon_tree_unpublish",
@@ -407,7 +407,6 @@ pimcore.document.tree = Class.create({
                     handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type, this.attributes.id, 'publish')
                 }));
             }
-
         }
 
 

@@ -34,6 +34,7 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
         $snippet->getScheduledTasks();
         $snippet->idPath = Pimcore_Tool::getIdPathForElement($snippet);
         $snippet->userPermissions = $snippet->getUserPermissions();
+        $snippet->setLocked($snippet->isLocked());
 
         $this->minimizeProperties($snippet);
 

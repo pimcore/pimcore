@@ -132,7 +132,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 buttons.push(this.toolbarButtons.publish);
             }
 
-            if(this.isAllowed("delete")) {
+            if(this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
 
