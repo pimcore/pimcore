@@ -802,7 +802,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             header("Content-Type: " . $image->getMimetype());
         }
 
-        header("Content-Length: " . mb_strlen($imageContent, "latin1"));
+        header("Content-Length: " . filesize($thumbnailFile));
         echo $imageContent;
         exit;
     }
