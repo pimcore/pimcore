@@ -294,11 +294,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             if (this.isAllowed("publish")) {
                 buttons.push(this.toolbarButtons.publish);
             }
-            if (this.isAllowed("unpublish")) {
+            if (this.isAllowed("unpublish") && !this.data.general.o_locked) {
                 buttons.push(this.toolbarButtons.unpublish);
             }
 
-            if(this.isAllowed("delete")) {
+            if(this.isAllowed("delete") && !this.data.general.o_locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
 

@@ -145,7 +145,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                  scale: "medium",
                  handler: this.remove.bind(this)
             });
-            if (this.isAllowed("delete")) {
+            if (this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
             

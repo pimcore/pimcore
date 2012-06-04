@@ -141,12 +141,12 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
             if (this.isAllowed("publish")) {
                 buttons.push(this.toolbarButtons.publish);
             }
-            if (this.isAllowed("unpublish")) {
+            if (this.isAllowed("unpublish") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.unpublish);
             }
 
 
-            if(this.isAllowed("delete")) {
+            if(this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
 

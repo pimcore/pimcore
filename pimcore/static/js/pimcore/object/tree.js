@@ -346,21 +346,20 @@ pimcore.object.tree = Class.create({
         }
 
         //publish
-        if (this.attributes.permissions.publish && this.attributes.type != "folder" && !this.attributes.locked) {
-            if (this.attributes.published && this.attributes.permissions.unpublish) {
+        if (this.attributes.permissions.publish && this.attributes.type != "folder") {
+            if (this.attributes.published && this.attributes.permissions.unpublish && !this.attributes.locked) {
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
                     iconCls: "pimcore_icon_tree_unpublish",
                     handler: this.attributes.reference.publishObject.bind(this, this.attributes.id, 'unpublish')
                 }));
-            } else if (this.attributes.permissions.publish) {
+            } else if (!this.attributes.published && this.attributes.permissions.publish) {
                 menu.add(new Ext.menu.Item({
                     text: t('publish'),
                     iconCls: "pimcore_icon_tree_publish",
                     handler: this.attributes.reference.publishObject.bind(this, this.attributes.id, 'publish')
                 }));
             }
-
         }
 
 

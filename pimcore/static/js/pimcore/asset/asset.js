@@ -190,7 +190,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 buttons.push(this.toolbarButtons.publish);
             }
 
-            if (this.isAllowed("delete")) {
+            if (this.isAllowed("delete") && !this.data.locked) {
                 this.toolbarButtons.remove = new Ext.Button({
                      text: t('delete'),
                      iconCls: "pimcore_icon_delete_medium",

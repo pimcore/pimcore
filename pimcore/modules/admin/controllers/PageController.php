@@ -32,6 +32,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $page->getScheduledTasks();
         $page->idPath = Pimcore_Tool::getIdPathForElement($page);
         $page->userPermissions = $page->getUserPermissions();
+        $page->setLocked($page->isLocked());
 
         // get depending redirects
         $redirectList = new Redirect_List();

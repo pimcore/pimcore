@@ -28,6 +28,7 @@ class Admin_FolderController extends Pimcore_Controller_Action_Admin_Document {
         $folder = Document_Folder::getById($this->_getParam("id"));
         $folder->idPath = Pimcore_Tool::getIdPathForElement($folder);
         $folder->userPermissions = $folder->getUserPermissions();
+        $folder->setLocked($folder->isLocked());
         
         $this->minimizeProperties($folder);
 
