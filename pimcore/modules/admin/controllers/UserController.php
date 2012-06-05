@@ -278,8 +278,24 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
                 unset($values["active"]);
 
                 if (!empty($values["new_password"])) {
-                    $oldPassword = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["old_password"]);
-                    if($oldPassword == $user->getPassword() && $values["new_password"] == $values["retype_password"]) {
+                    $oldPasswordCheck = false;
+
+
+                    if(empty($values["old_password"])) {
+                        // if the user want to reset the password, the old password isn't required
+                        $adminSession = Pimcore_Tool_Authentication::getSession();
+                        if($adminSession->password_reset) {
+                            $oldPasswordCheck = true;
+                        }
+                    } else {
+                        // the password have to match
+                        $oldPassword = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["old_password"]);
+                        if($oldPassword == $user->getPassword()) {
+                            $oldPasswordCheck = true;
+                        }
+                    }
+
+                    if($oldPasswordCheck && $values["new_password"] == $values["retype_password"]) {
                         $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["new_password"]);
                     } else {
                         $this->_helper->json(array("success" => false, "message" => "password_cannot_be_changed"));

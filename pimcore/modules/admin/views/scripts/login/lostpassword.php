@@ -89,7 +89,9 @@
 
 
 <script type="text/javascript">
-    document.getElementById("username").focus();
+    if(document.getElementById("username")) {
+        document.getElementById("username").focus();
+    }
 </script>
 
 </body>
