@@ -37,12 +37,8 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                 if ($user->isActive()) {
                     if ($user->getEmail()) {
                         $token = Pimcore_Tool_Authentication::generateToken($username, $user->getPassword(), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB);
-                        $protocol = "http://";
-                        if(strpos(strtolower($_SERVER["SERVER_PROTOCOL"]),"https")===0){
-                            $protocol = "https://";
-                        }
-                        $uri = $protocol.$_SERVER['SERVER_NAME'];
-                        $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token;
+                        $uri = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() ;
+                        $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token . "&reset=true";
                         
                         try {
                             
@@ -110,6 +106,13 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
                     } else if ($this->_getParam("token") and Pimcore_Tool_Authentication::tokenAuthentication($this->_getParam("username"), $this->_getParam("token"), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB, false)) {
                         $authenticated = true;
+
+                        // save the information to session when the user want's to reset the password
+                        // this is because otherwise the old password is required => see also PIMCORE-1468
+                        if($this->_getParam("reset")) {
+                            $adminSession = Pimcore_Tool_Authentication::getSession();
+                            $adminSession->password_reset = true;
+                        }
                     }
                     else {
                         throw new Exception("User and Password doesn't match");
