@@ -54,7 +54,7 @@ class Pimcore_Google_Api {
         $key = file_get_contents(self::getPrivateKeyPath());
         $client->setAssertionCredentials(new apiAssertionCredentials(
             $config->email,
-            array('https://www.googleapis.com/auth/analytics.readonly'),
+            array('https://www.googleapis.com/auth/analytics.readonly',"https://www.google.com/webmasters/tools/feeds/"),
             $key)
         );
 
@@ -63,8 +63,14 @@ class Pimcore_Google_Api {
         // token cache
         $tokenFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/google-api.token";
         if(file_exists($tokenFile)) {
-            $token = file_get_contents($tokenFile);
-        } else {
+            $tokenData = file_get_contents($tokenFile);
+            $tokenInfo = Zend_Json::decode($tokenData);
+            if( ($tokenInfo["created"] + $tokenInfo["expires_in"]) > (time()-900) )  {
+                $token = $tokenData;
+            }
+        }
+
+        if(!$token) {
             $client->getAuth()->refreshTokenWithAssertion();
             $token = $client->getAuth()->getAccessToken();
             file_put_contents($tokenFile, $token);
