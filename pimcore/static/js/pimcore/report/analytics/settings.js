@@ -43,23 +43,8 @@ pimcore.report.analytics.settings = Class.create({
                     xtype: "displayfield",
                     width: 300,
                     hideLabel: true,
-                    value: "&nbsp;<br />" + t("analytics_settings_username_description") + "<br /><br />" + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
+                    value: "&nbsp;<br />" + t("analytics_settings_description") + "<br /><br />" + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
                     cls: "pimcore_extra_label"
-                },
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("username"),
-                    name: "username",
-                    value: this.parent.getValue("analytics.username"),
-                    width: 200
-                },
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("password"),
-                    name: "password",
-                    inputType: "password",
-                    value: this.parent.getValue("analytics.password"),
-                    width: 200
                 },
                 {
                     xtype: "panel",
@@ -134,22 +119,12 @@ pimcore.report.analytics.settings = Class.create({
                     displayField: 'name',
                     store: new Ext.data.JsonStore({
                         autoDestroy: true,
-                        url: "/admin/reports/settings/get-analytics-profiles",
+                        url: "/admin/reports/analytics/get-profiles",
                         root: "data",
                         idProperty: "id",
                         fields: ["name", "id", "trackid","accountid"]
                     }),
                     listeners: {
-                        "focus": function (el) {
-                            var values = this.panel.getForm().getFieldValues();
-
-                            el.getStore().reload({
-                                params: {
-                                    username: values["username"],
-                                    password: values["password"]
-                                }
-                            });
-                        }.bind(this),
                         "select": function (id, el, record, index) {
                             Ext.getCmp("report_settings_analytics_trackid_" + id).setValue(record.data.trackid);
                             Ext.getCmp("report_settings_analytics_accountid_" + id).setValue(record.data.accountid);
@@ -209,8 +184,6 @@ pimcore.report.analytics.settings = Class.create({
         }, this);
 
         var values = {
-            username: formData.username,
-            password: formData.password,
             sites: sitesData
         };
 

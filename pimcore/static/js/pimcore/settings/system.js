@@ -855,20 +855,26 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: t("google_account_description"),
+                                value: t("google_api_access_description"),
                                 cls: "pimcore_extra_label"
                             },
                             {
-                                fieldLabel: t('username'),
-                                name: 'services.google.username',
-                                value: this.getValue("services.google.username"),
-                                width: 300
+                                fieldLabel: t('client_id'),
+                                name: 'services.google.client_id',
+                                value: this.getValue("services.google.client_id"),
+                                width: 600
                             },
                             {
-                                fieldLabel: t('password'),
-                                name: 'services.google.password',
-                                value: this.getValue("services.google.password"),
-                                inputType: "password"
+                                fieldLabel: t('email'),
+                                name: 'services.google.email',
+                                value: this.getValue("services.google.email"),
+                                width: 600
+                            },{
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: this.data.config.google_private_key_exists ? t("google_api_private_key_installed") : ('<span style="color:red;">' + t("google_api_key_missing") + " <br />" + this.data.config.google_private_key_path + '</span>'),
+                                cls: "pimcore_extra_label"
                             },{
                                 xtype: "displayfield",
                                 hideLabel: true,

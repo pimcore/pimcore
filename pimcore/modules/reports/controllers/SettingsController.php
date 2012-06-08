@@ -48,47 +48,7 @@ class Reports_SettingsController extends Pimcore_Controller_Action_Admin_Reports
         } 
         $this->_helper->json(false);
     }
-    
-    public function getAnalyticsProfilesAction () {
-        
-        $credentials = $this->getAnalyticsCredentials();
-        if($credentials) {
-            $username = $credentials["username"];
-            $password = $credentials["password"];
-        }
-        
-        if($this->_getParam("username") && $this->_getParam("password")) {
-            $username = $this->_getParam("username");
-            $password = $this->_getParam("password");
-        }
-        
-        try {
-            $client = Zend_Gdata_ClientLogin::getHttpClient($username, $password, Zend_Gdata_Analytics::AUTH_SERVICE_NAME, Pimcore_Tool::getHttpClient("Zend_Gdata_HttpClient"));
-    		$service = new Zend_Gdata_Analytics($client);
-    	
-    		$result = $service->getAccountFeed();
-         
-            
-            $data = array(
-                "data" => array()
-            );
-            
-            foreach ($result as $entry) {
-                $data["data"][] = array(
-                    "id" => (string) $entry->profileId, 
-                    "name" => (string) $entry->accountName . " | " . $entry->title,
-                    "trackid" => (string) $entry->webPropertyId,
-                    "accountid" => (string) $entry->accountId
-                );
-            }
-            
-            $this->_helper->json($data);
-        }
-        catch (Exception $e) {
-           $this->_helper->json(false); 
-        }
-    }
- 
+
     public function getWebmastertoolsSitesAction () {
         
         $credentials = $this->getWebmastertoolsCredentials();

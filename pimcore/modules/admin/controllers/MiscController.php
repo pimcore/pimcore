@@ -29,25 +29,22 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $client->setApplicationName("pimcore");
 
 
-        $key = file_get_contents(PIMCORE_TEMPORARY_DIRECTORY . "/25d733be870eeb7673d7b0ce269dc351c3057b3b-privatekey.p12");
+        $key = file_get_contents(PIMCORE_TEMPORARY_DIRECTORY . "/google-key.p12");
         $client->setAssertionCredentials(new apiAssertionCredentials(
-          "280333452468@developer.gserviceaccount.com",
-          array('https://www.googleapis.com/auth/analytics'),
+          "655439141282@developer.gserviceaccount.com",
+          array('https://www.googleapis.com/auth/analytics.readonly','https://www.googleapis.com/auth/prediction'),
           $key)
         );
 
         //$client->setAccessToken('{"access_token":"ya29.AHES6ZTS1ogO7s1o_n_-4p7DVHlpa6D2HqqI8Solxmxz-HA","token_type":"Bearer","expires_in":3600,"refresh_token":"1\/2U4O8MjwbjwkeDPPUaARNxFuF7unAklC1c5QVObWaN4","created":1339163743}');
 
-        $client->setClientId("280333452468.apps.googleusercontent.com");
+        $client->setClientId("655439141282.apps.googleusercontent.com");
+
         $service = new apiAnalyticsService($client);
 
         $optParams = array();
 
-        // examples
-        /*
-         * http://code.google.com/p/google-api-php-client/source/browse/trunk/examples/analytics/
-         */
-
+        // http://code.google.com/p/google-api-php-client/source/browse/trunk/examples/analytics/
         $bla = $service->data_ga->get(
                 "ga:25219282",
                 '2012-01-01',
@@ -56,6 +53,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
                 $optParams);
 
 
+        echo $client->getAccessToken();
         p_r($bla);
 
         exit;
