@@ -53,7 +53,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
      * @return array|bool
      */
     public function match($path, $partial = false) {
-                
+
         $matchFound = false;
         $config = Pimcore_Config::getSystemConfig();
 
@@ -61,10 +61,10 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
         $params = array_merge($_GET, $_POST);
         $params = array_merge($routeingDefaults, $params);
-        
+
         // set the original path
         $originalPath = $path;
-        
+
         // check for a registered site
         try {
             if ($config->general->domain != Pimcore_Tool::getHostname()) {
@@ -84,7 +84,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             $matchFound = true;
             //$params["document"] = $this->getNearestDocumentByPath($path);
         }
-        
+
         // you can also call a page by it's ID /?pimcore_document=XXXX
         if (!$matchFound) {
             if(!empty($params["pimcore_document"]) || !empty($params["pdid"])) {
@@ -193,80 +193,80 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         }
 
         // test if there is a suitable static route
-            try {
-                
-                $cacheKey = "system_route_staticroute";
-                if (!$routes = Pimcore_Model_Cache::load($cacheKey)) {
-                
-                    $list = new Staticroute_List();
-                    $list->setOrderKey("priority");
-                    $list->setOrder("DESC");
-                    $routes = $list->load();
-                    
-                    Pimcore_Model_Cache::save($routes, $cacheKey, array("system","staticroute","route"), null, 998);
-                }
-                
-                foreach ($routes as $route) {
+        try {
 
-                    if (@preg_match($route->getPattern(), $originalPath)) {
-                        $params = array_merge($route->getDefaultsArray(), $params);
+            $cacheKey = "system_route_staticroute";
+            if (!$routes = Pimcore_Model_Cache::load($cacheKey)) {
 
-                        $variables = explode(",", $route->getVariables());
+                $list = new Staticroute_List();
+                $list->setOrderKey("priority");
+                $list->setOrder("DESC");
+                $routes = $list->load();
 
-                        preg_match_all($route->getPattern(), $originalPath, $matches);
+                Pimcore_Model_Cache::save($routes, $cacheKey, array("system","staticroute","route"), null, 998);
+            }
 
-                        if (is_array($matches) && count($matches) > 1) {
-                            foreach ($matches as $index => $match) {
-                                if ($variables[$index - 1] && $match[0]) {
-                                    $params[$variables[$index - 1]] = $match[0];
-                                }
+            foreach ($routes as $route) {
+
+                if (@preg_match($route->getPattern(), $originalPath)) {
+                    $params = array_merge($route->getDefaultsArray(), $params);
+
+                    $variables = explode(",", $route->getVariables());
+
+                    preg_match_all($route->getPattern(), $originalPath, $matches);
+
+                    if (is_array($matches) && count($matches) > 1) {
+                        foreach ($matches as $index => $match) {
+                            if ($variables[$index - 1] && $match[0]) {
+                                $params[$variables[$index - 1]] = $match[0];
                             }
                         }
-
-                        $controller = $route->getController();
-                        $action = $route->getAction();
-                        $module = trim($route->getModule());
-
-                        // check for dynamic controller / action / module
-                        $dynamicRouteReplace = function ($item, $params) {
-                            if(strpos($item, "%") !== false) {
-                                foreach ($params as $key => $value) {
-                                    $dynKey = "%" . $key;
-                                    if(strpos($item, $dynKey) !== false) {
-                                        return str_replace($dynKey, $value, $item);
-                                    }
-                                }
-                            }
-                            return $item;
-                        };
-
-                        $controller = $dynamicRouteReplace($controller, $params);
-                        $action = $dynamicRouteReplace($action, $params);
-                        $module = $dynamicRouteReplace($module, $params);
-
-                        $params["controller"] = $controller;
-                        $params["action"] = $action;
-                        if(!empty($module)){
-                            $params["module"] = $module;
-                        }
-
-                        // try to get nearest document to the route
-                        $document = $this->getNearestDocumentByPath($path, false, array("page", "snippet", "hardlink"));
-                        if($document instanceof Document_Hardlink) {
-                            $document = Document_Hardlink_Service::wrap($document);
-                        }
-                        $params["document"] = $document;
-
-                        $matchFound = true;
-                        Staticroute::setCurrentRoute($route);
-
-                        break;
                     }
+
+                    $controller = $route->getController();
+                    $action = $route->getAction();
+                    $module = trim($route->getModule());
+
+                    // check for dynamic controller / action / module
+                    $dynamicRouteReplace = function ($item, $params) {
+                        if(strpos($item, "%") !== false) {
+                            foreach ($params as $key => $value) {
+                                $dynKey = "%" . $key;
+                                if(strpos($item, $dynKey) !== false) {
+                                    return str_replace($dynKey, $value, $item);
+                                }
+                            }
+                        }
+                        return $item;
+                    };
+
+                    $controller = $dynamicRouteReplace($controller, $params);
+                    $action = $dynamicRouteReplace($action, $params);
+                    $module = $dynamicRouteReplace($module, $params);
+
+                    $params["controller"] = $controller;
+                    $params["action"] = $action;
+                    if(!empty($module)){
+                        $params["module"] = $module;
+                    }
+
+                    // try to get nearest document to the route
+                    $document = $this->getNearestDocumentByPath($path, false, array("page", "snippet", "hardlink"));
+                    if($document instanceof Document_Hardlink) {
+                        $document = Document_Hardlink_Service::wrap($document);
+                    }
+                    $params["document"] = $document;
+
+                    $matchFound = true;
+                    Staticroute::setCurrentRoute($route);
+
+                    break;
                 }
             }
-            catch (Exception $e) {
-                // no suitable route found
-            }
+        }
+        catch (Exception $e) {
+            // no suitable route found
+        }
 
         // test if there is a suitable redirect
         if (!$matchFound) {
@@ -276,12 +276,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         if (!$matchFound) {
             return false;
         }
-        
+
         // remove pimcore magic parameters
-        unset($params["pimcore_outputfilters_disabled"]); 
+        unset($params["pimcore_outputfilters_disabled"]);
         unset($params["pimcore_document"]);
         unset($params["nocache"]);
-        
+
         return $params;
     }
 
