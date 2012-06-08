@@ -193,7 +193,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         }
 
         // test if there is a suitable static route
-        if (!$matchFound) {
             try {
                 
                 $cacheKey = "system_route_staticroute";
@@ -209,7 +208,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 
                 foreach ($routes as $route) {
 
-                    if (@preg_match($route->getPattern(), $originalPath) && !$matchFound) {
+                    if (@preg_match($route->getPattern(), $originalPath)) {
                         $params = array_merge($route->getDefaultsArray(), $params);
 
                         $variables = explode(",", $route->getVariables());
@@ -218,7 +217,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
                         if (is_array($matches) && count($matches) > 1) {
                             foreach ($matches as $index => $match) {
-                                if ($variables[$index - 1]) {
+                                if ($variables[$index - 1] && $match[0]) {
                                     $params[$variables[$index - 1]] = $match[0];
                                 }
                             }
@@ -268,8 +267,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             catch (Exception $e) {
                 // no suitable route found
             }
-        }
-        
+
         // test if there is a suitable redirect
         if (!$matchFound) {
             $this->checkForRedirect(false);
