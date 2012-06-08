@@ -197,7 +197,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 "config" => array(
                     "timezones" => $timezones,
                     "languages" => $languageOptions,
-                    "client_ip" => Pimcore_Tool::getClientIp()
+                    "client_ip" => Pimcore_Tool::getClientIp(),
+                    "google_private_key_exists" => file_exists(Pimcore_Google_Api::getPrivateKeyPath()),
+                    "google_private_key_path" => Pimcore_Google_Api::getPrivateKeyPath()
                 )
             );
 
@@ -302,8 +304,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "apikey" => $values["services.translate.apikey"]
                     ),
                     "google" => array(
-                        "username" => $values["services.google.username"],
-                        "password" => $values["services.google.password"]
+                        "client_id" => $values["services.google.client_id"],
+                        "email" => $values["services.google.email"]
                     )
                 ),
                 "cache" => array(

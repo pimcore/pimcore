@@ -35,23 +35,8 @@ pimcore.report.webmastertools.settings = Class.create({
                     xtype: "displayfield",
                     width: 300,
                     hideLabel: true,
-                    value: "&nbsp;<br />" + t("webastertools_settings_username_description"),
+                    value: "&nbsp;<br />" + t("webastertools_settings_description"),
                     cls: "pimcore_extra_label"
-                },
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("username"),
-                    name: "username",
-                    width: 200,
-                    value: this.parent.getValue("webmastertools.username")
-                },
-                {
-                    xtype: "textfield",
-                    fieldLabel: t("password"),
-                    name: "password",
-                    inputType: "password",
-                    width: 200,
-                    value: this.parent.getValue("webmastertools.password")
                 },
                 {
                     xtype: "panel",
