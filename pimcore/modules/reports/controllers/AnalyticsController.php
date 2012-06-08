@@ -29,9 +29,6 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         }
 
         $this->service = new apiAnalyticsService($client);
-
-        //$config = Pimcore_Google_Analytics::getSiteConfig($site);
-        //$config->profile;
     }
 
     public function getProfilesAction () {

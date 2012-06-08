@@ -29,7 +29,7 @@ class Pimcore_Google_Webmastertools {
         
         $siteKey = Pimcore_Tool_Frontend::getSiteKey($site);
         
-        if(Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey->profile) {
+        if(Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey->verification) {
             return Pimcore_Config::getReportConfig()->webmastertools->sites->$siteKey;
         }
         return false;

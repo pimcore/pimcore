@@ -48,48 +48,4 @@ class Reports_SettingsController extends Pimcore_Controller_Action_Admin_Reports
         } 
         $this->_helper->json(false);
     }
-
-    public function getWebmastertoolsSitesAction () {
-        
-        $credentials = $this->getWebmastertoolsCredentials();
-        if($credentials) {
-            $username = $credentials["username"];
-            $password = $credentials["password"];
-        }
-        
-        if($this->_getParam("username") && $this->_getParam("password")) {
-            $username = $this->_getParam("username");
-            $password = $this->_getParam("password");
-        }
-        
-        try {
-            $client = Zend_Gdata_ClientLogin::getHttpClient($username, $password, "sitemaps", Pimcore_Tool::getHttpClient("Zend_Gdata_HttpClient"));
-    		$service = new Zend_Gdata($client);
-            
-            $data = $service->getFeed("https://www.google.com/webmasters/tools/feeds/sites/");
-            
-
-            foreach ($data->getEntry() as $e) {
-                
-                $verification = "";
-                // get verification filename
-                foreach ($e->getExtensionElements() as $d) {
-                    $a = $d->getExtensionAttributes();
-                    if($a["type"]["value"] == "htmlpage") {
-                        $verification = $d->getText();
-                        break;
-                    }
-                }
-     
-                $sites[] = array(
-                    "profile" => (string) $e->getTitle(),
-                    "verification" => $verification
-                );
-            }
-            $this->_helper->json(array("data" => $sites));
-        }
-        catch (Exception $e) {
-            $this->_helper->json(false);
-        }
-    }
 }

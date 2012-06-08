@@ -53,38 +53,7 @@ class Pimcore_Controller_Plugin_Analytics extends Zend_Controller_Plugin_Abstrac
                 $body = substr_replace($body, $code."</head>", $headEndPosition, 7);
             }
 
-            // website optimizer
-            if($this->document) {
-                $top = Pimcore_Google_Analytics::getOptimizerTop($this->document);
-                $bottom = Pimcore_Google_Analytics::getOptimizerBottom($this->document);
-                $conversion = Pimcore_Google_Analytics::getOptimizerConversion($this->document);
-
-                if($top || $bottom || $conversion) {
-                    $html = str_get_html($body);
-
-                    if($html) {
-                        $body = $html->find("body",0);
-
-                        if($top && $bottom) {
-                            $body->innertext = $top . $body->innertext . $bottom;
-                        }
-                        else if ($conversion) {
-                            $body->innertext = $body->innertext . $conversion;
-                        }
-                        else if($bottom) {
-                            $body->innertext = $body->innertext . $bottom;
-                        }
-
-                        $body = $html->save();
-                    }
-                }
-            }
-
-
-
             $this->getResponse()->setBody($body);
-
-
         }
     }
 }
