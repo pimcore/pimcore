@@ -29,6 +29,7 @@ class Asset_Image_Thumbnail_Processor {
         "crop" => array("x","y","width","height"),
         "setBackgroundColor" => array("color"),
         "roundCorners" => array("width","height"),
+        "unsharpMask" => array("amount","radius","threshold"),
         "setBackgroundImage" => array("path"),
         "addOverlay" => array("path", "x", "y", "alpha", "composite"),
         "applyMask" => array("path"),
@@ -52,7 +53,7 @@ class Asset_Image_Thumbnail_Processor {
         }
 
         // simple detection for source type if SOURCE is selected
-        if($format == "source" || empty($format)) {
+        if($format == "source") {
             $typeMapping = array(
                 "gif" => "gif",
                 "jpeg" => "jpeg",
