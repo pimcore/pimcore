@@ -183,6 +183,14 @@ class Install_CheckController extends Pimcore_Controller_Action {
             "state" => class_exists("SoapClient") ? "ok" : "warning"
         );
 
+        // curl for google api sdk
+        $checksPHP[] = array(
+            "name" => "curl",
+            "link" => "http://www.php.net/curl",
+            "state" => function_exists("curl_init") ? "ok" : "warning"
+        );
+
+
 
         $db = null;
 
