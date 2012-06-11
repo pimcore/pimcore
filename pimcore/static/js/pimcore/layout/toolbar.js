@@ -143,9 +143,9 @@ pimcore.layout.toolbar = Class.create({
 
         if (user.isAllowed("system_settings")) {
             extrasItems.push({
-                text: t('events') + " & " + t("notes"),
-                iconCls: "pimcore_icon_tab_events",
-                handler: this.events
+                text: t('notes') + " & " + t("events"),
+                iconCls: "pimcore_icon_tab_notes",
+                handler: this.notes
             });
         }
 
@@ -659,12 +659,12 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    events: function () {
+    notes: function () {
         try {
-            pimcore.globalmanager.get("events").activate();
+            pimcore.globalmanager.get("notes").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("events", new pimcore.element.events());
+            pimcore.globalmanager.add("notes", new pimcore.element.notes());
         }
     },
 

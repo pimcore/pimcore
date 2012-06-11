@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Event_Resource extends Pimcore_Model_Resource_Abstract {
+class Element_Note_Resource extends Pimcore_Model_Resource_Abstract {
 
     /**
      * Contains all valid columns in the database table
@@ -35,8 +35,8 @@ class Element_Event_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function init() {
-        $this->validColumns = $this->getValidTableColumns("events");
-        $this->validColumnsData = $this->getValidTableColumns("events_data");
+        $this->validColumns = $this->getValidTableColumns("notes");
+        $this->validColumnsData = $this->getValidTableColumns("notes_data");
     }
 
     /**
@@ -45,15 +45,15 @@ class Element_Event_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function getById($id) {
-        $data = $this->db->fetchRow("SELECT * FROM events WHERE id = ?", $id);
+        $data = $this->db->fetchRow("SELECT * FROM notes WHERE id = ?", $id);
 
         if (!$data["id"]) {
-            throw new Exception("Event item with id " . $id . " not found");
+            throw new Exception("Note item with id " . $id . " not found");
         }
         $this->assignVariablesToModel($data);
 
         // get key-value data
-        $keyValues = $this->db->fetchAll("SELECT * FROM events_data WHERE id = ?", $id);
+        $keyValues = $this->db->fetchAll("SELECT * FROM notes_data WHERE id = ?", $id);
         $preparedData = array();
 
         foreach ($keyValues as $keyValue) {
@@ -108,11 +108,11 @@ class Element_Event_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         try {
-            $this->db->insert("events", $data);
+            $this->db->insert("notes", $data);
             $this->model->setId($this->db->lastInsertId());
         }
         catch (Exception $e) {
-            $this->db->update("events", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
+            $this->db->update("notes", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
         }
 
         // save data table
@@ -142,7 +142,7 @@ class Element_Event_Resource extends Pimcore_Model_Resource_Abstract {
                 $data = (bool) $data;
             }
 
-            $this->db->insert("events_data", array(
+            $this->db->insert("notes_data", array(
                 "id" => $this->model->getId(),
                 "name" => $name,
                 "type" => $type,
@@ -159,12 +159,12 @@ class Element_Event_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("events", $this->db->quoteInto("id = ?", $this->model->getId() ));
+        $this->db->delete("notes", $this->db->quoteInto("id = ?", $this->model->getId() ));
         $this->deleteData();
     }
 
     protected function deleteData () {
-        $this->db->delete("events_data", $this->db->quoteInto("id = ?", $this->model->getId() ));
+        $this->db->delete("notes_data", $this->db->quoteInto("id = ?", $this->model->getId() ));
     }
 
 }

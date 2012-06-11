@@ -29,7 +29,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.versions = new pimcore.object.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "object");
         this.dependencies = new pimcore.element.dependencies(this, "object");
-        this.events = new pimcore.element.events(this, "object");
+        this.notes = new pimcore.element.notes(this, "object");
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
         this.getData();
@@ -199,7 +199,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
 
         if (this.isAllowed("settings")) {
-            items.push(this.events.getLayout());
+            items.push(this.notes.getLayout());
         }
 
         if(this.data.childdata.data.classes.length > 0) {

@@ -192,8 +192,8 @@ CREATE TABLE `email_log` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `events`;
-CREATE TABLE `events` (
+DROP TABLE IF EXISTS `notes`;
+CREATE TABLE `notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT NULL,
   `cid` int(11) DEFAULT NULL,
@@ -208,8 +208,8 @@ CREATE TABLE `events` (
   KEY `date` (`date`)
 ) DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `events_data`;
-CREATE TABLE `events_data` (
+DROP TABLE IF EXISTS `notes_data`;
+CREATE TABLE `notes_data` (
   `id` int(11) NOT NULL DEFAULT '0',
   `name` varchar(255) DEFAULT NULL,
   `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,

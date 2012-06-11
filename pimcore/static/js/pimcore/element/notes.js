@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.element.events");
-pimcore.element.events = Class.create({
+pimcore.registerNS("pimcore.element.notes");
+pimcore.element.notes = Class.create({
 
     initialize: function(element, type) {
 
@@ -31,7 +31,7 @@ pimcore.element.events = Class.create({
             tabPanel.activate(this.getLayout());
 
             this.getLayout().on("destroy", function () {
-                pimcore.globalmanager.remove("events");
+                pimcore.globalmanager.remove("notes");
             });
 
             pimcore.layout.refresh();
@@ -60,7 +60,7 @@ pimcore.element.events = Class.create({
 
             this.store = new Ext.data.JsonStore({
                 autoDestroy: true,
-                url: "/admin/element/events-list",
+                url: "/admin/element/note-list",
                 remoteSort: true,
                 baseParams: baseParams,
                 root: 'data',
@@ -183,9 +183,9 @@ pimcore.element.events = Class.create({
             });
 
             this.layout = new Ext.Panel({
-                title: t('events') + " & " + t("notes"),
+                title: t('notes') + " & " + t("events"),
                 border: true,
-                iconCls: "pimcore_icon_tab_events",
+                iconCls: "pimcore_icon_tab_notes",
                 items: [this.grid, this.detailView],
                 layout: "border",
                 closable: !this.inElementContext
@@ -313,7 +313,7 @@ pimcore.element.events = Class.create({
                     var values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
-                        url: "/admin/element/events-add/",
+                        url: "/admin/element/note-add/",
                         method: "post",
                         params: values
                     });

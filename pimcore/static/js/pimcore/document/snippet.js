@@ -33,7 +33,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.snippets.settings(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
-            this.events = new pimcore.element.events(this, "document");
+            this.notes = new pimcore.element.notes(this, "document");
         }
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
@@ -73,7 +73,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         }
 
         if (this.isAllowed("settings")) {
-            items.push(this.events.getLayout());
+            items.push(this.notes.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({
