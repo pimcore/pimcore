@@ -187,7 +187,8 @@ pimcore.element.events = Class.create({
                 border: true,
                 iconCls: "pimcore_icon_tab_events",
                 items: [this.grid, this.detailView],
-                layout: "border"
+                layout: "border",
+                closable: !this.inElementContext
             });
 
             this.layout.on("activate", function () {
