@@ -93,6 +93,29 @@ class Element_Event extends Pimcore_Model_Abstract {
     }
 
     /**
+     * @param Element_Interface $element
+     */
+    public function setElement(Element_Interface $element) {
+        $this->setCid($element->getId());
+        $this->setCtype(Element_Service::getType($element));
+    }
+
+    public function save() {
+
+        // check if there's a valid user
+        if(!$this->getUser()) {
+            // try to use the logged in user
+            if(Pimcore::inAdmin()) {
+                if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+                    $this->setUser($user->getId());
+                }
+            }
+        }
+
+        $this->getResource()->save();
+    }
+
+    /**
      * @param int $cid
      */
     public function setCid($cid)
