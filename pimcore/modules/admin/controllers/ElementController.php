@@ -43,22 +43,38 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
             $list->setOrder("DESC");
         }
 
-        $filterCondition = "";
+        $conditions = array();
         if($this->_getParam("filter")) {
-            $filterCondition = " AND (`title` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `type` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . ")";
+            $conditions[] = "(`title` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `type` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . ")";
         }
 
-        $list->setCondition("cid = ? AND ctype = ?" . $filterCondition, array($this->_getParam("cid"), $this->_getParam("ctype")));
+        if($this->_getParam("cid") && $this->_getParam("ctype")) {
+            $conditions[] = "(cid = " . $list->quote($this->_getParam("cid")) . " AND ctype = " . $list->quote($this->_getParam("ctype")) . ")";
+        }
+
+        if(!empty($conditions)) {
+            $list->setCondition(implode(" AND ", $conditions));
+        }
+
         $list->load();
 
         $events = array();
 
         foreach ($list->getEvents() as $event) {
+
+            $cpath = "";
+            if($event->getCid() && $event->getCtype()) {
+                if($element = Element_Service::getElementById($event->getCtype(), $event->getCid())) {
+                    $cpath = $element->getFullpath();
+                }
+            }
+
             $e = array(
                 "id" => $event->getId(),
                 "type" => $event->getType(),
                 "cid" => $event->getCid(),
                 "ctype" => $event->getCtype(),
+                "cpath" => $cpath,
                 "date" => $event->getDate(),
                 "title" => $event->getTitle(),
                 "description" => $event->getDescription()
