@@ -16,8 +16,31 @@ pimcore.registerNS("pimcore.element.events");
 pimcore.element.events = Class.create({
 
     initialize: function(element, type) {
-        this.element = element;
-        this.type = type;
+
+        this.inElementContext = false;
+
+        if(element && type) {
+            // in element context
+            this.element = element;
+            this.type = type;
+            this.inElementContext = true;
+        } else {
+            // standalone version
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.add(this.getLayout());
+            tabPanel.activate(this.getLayout());
+
+            this.getLayout().on("destroy", function () {
+                pimcore.globalmanager.remove("events");
+            });
+
+            pimcore.layout.refresh();
+        }
+    },
+
+    activate: function () {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.activate(this.getLayout());
     },
 
     getLayout: function () {
@@ -25,18 +48,23 @@ pimcore.element.events = Class.create({
         if (this.layout == null) {
 
             var itemsPerPage = 20;
+            var baseParams = {
+                limit: itemsPerPage
+            };
+
+            // only when used in element context
+            if(this.inElementContext) {
+                baseParams["cid"] = this.element.id;
+                baseParams["ctype"] = this.type;
+            }
 
             this.store = new Ext.data.JsonStore({
                 autoDestroy: true,
                 url: "/admin/element/events-list",
                 remoteSort: true,
-                baseParams: {
-                    cid: this.element.id,
-                    ctype: this.type,
-                    limit: itemsPerPage
-                },
+                baseParams: baseParams,
                 root: 'data',
-                fields: ['id', 'type', 'title', 'description',"user","date","data"]
+                fields: ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"]
             });
 
             this.filterField = new Ext.form.TextField({
@@ -90,12 +118,33 @@ pimcore.element.events = Class.create({
                 }
             }));
 
+            var tbar = ["->", {
+              text: t("filter") + "/" + t("search"),
+              xtype: "tbtext",
+              style: "margin: 0 10px 0 0;"
+            }, this.filterField];
+
+            // only when used in element context
+            if(this.inElementContext) {
+                tbar.unshift({
+                    text: t('add'),
+                    handler: this.onAdd.bind(this),
+                    iconCls: "pimcore_icon_add"
+                });
+            }
+
             this.grid = new Ext.grid.GridPanel({
                 store: this.store,
                 region: "center",
                 columns: [
                     {header: "ID", sortable: true, dataIndex: 'id', hidden: true, width: 60},
                     {header: t("type"), sortable: true, dataIndex: 'type', width: 60},
+                    {header: t("element"), sortable: true, dataIndex: 'cpath', width: 200, hidden: this.inElementContext, renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                        if(record.get("cid")) {
+                            return t(record.get("ctype")) + ": " + record.get("cpath");
+                        }
+                        return "";
+                    }},
                     {header: t("title"), sortable: true, dataIndex: 'title', width: 200},
                     {header: t("description"), id: "description", sortable: true, dataIndex: 'description'},
                     {header: t("fields"), sortable: true, dataIndex: 'data', renderer: function(v) {
@@ -117,15 +166,7 @@ pimcore.element.events = Class.create({
                 ],
                 columnLines: true,
                 bbar: this.pagingtoolbar,
-                tbar: [{
-                    text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
-                }, "->", {
-                  text: t("filter") + "/" + t("search"),
-                  xtype: "tbtext",
-                  style: "margin: 0 10px 0 0;"
-                }, this.filterField],
+                tbar: tbar,
                 autoExpandColumn: "description",
                 stripeRows: true,
                 autoScroll: true,

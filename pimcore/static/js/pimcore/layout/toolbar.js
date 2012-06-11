@@ -141,6 +141,14 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("system_settings")) {
+            extrasItems.push({
+                text: t('events') + " & " + t("notes"),
+                iconCls: "pimcore_icon_tab_events",
+                handler: this.events
+            });
+        }
+
         extrasItems.push("-");
 
         if (user.isAllowed("system_settings")) {
@@ -648,6 +656,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("tagmanagement", new pimcore.settings.tagmanagement.panel());
+        }
+    },
+
+    events: function () {
+        try {
+            pimcore.globalmanager.get("events").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("events", new pimcore.element.events());
         }
     },
 
