@@ -34,7 +34,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             this.properties = new pimcore.element.properties(this, "object");
         }
         if (this.isAllowed("settings")) {
-            this.events = new pimcore.element.events(this, "object");
+            this.notes = new pimcore.element.notes(this, "object");
         }
 
         this.dependencies = new pimcore.element.dependencies(this, "object");
@@ -211,7 +211,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         items.push(this.dependencies.getLayout());
 
         if (this.isAllowed("settings")) {
-            items.push(this.events.getLayout());
+            items.push(this.notes.getLayout());
         }
 
         var tabbar = new Ext.TabPanel({

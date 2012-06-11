@@ -15,14 +15,14 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Event_List extends Pimcore_Model_List_Abstract {
+class Element_Note_List extends Pimcore_Model_List_Abstract {
 
     /**
      * Contains the results of the list. They are all an instance of Staticroute
      *
      * @var array
      */
-    public $events = array();
+    public $notes = array();
 
     /**
      * Tests if the given key is an valid order key to sort the results
@@ -35,19 +35,19 @@ class Element_Event_List extends Pimcore_Model_List_Abstract {
     }
 
     /**
-     * @param array $events
+     * @param array $notes
      */
-    public function setEvents($events)
+    public function setNotes($notes)
     {
-        $this->events = $events;
+        $this->notes = $notes;
     }
 
     /**
      * @return array
      */
-    public function getEvents()
+    public function getNotes()
     {
-        return $this->events;
+        return $this->notes;
     }
 
 }

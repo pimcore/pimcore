@@ -29,7 +29,7 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
         this.versions = new pimcore.asset.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "asset");
         this.dependencies = new pimcore.element.dependencies(this, "asset");
-        this.events = new pimcore.element.events(this, "asset");
+        this.notes = new pimcore.element.notes(this, "asset");
 
         this.getData();
     },
@@ -53,7 +53,7 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
         items.push(this.dependencies.getLayout());
 
         if (this.isAllowed("settings")) {
-            items.push(this.events.getLayout());
+            items.push(this.notes.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({

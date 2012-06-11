@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
-class Element_Event extends Pimcore_Model_Abstract {
+class Element_Note extends Pimcore_Model_Abstract {
 
     /**
      * @var int
@@ -65,15 +65,15 @@ class Element_Event extends Pimcore_Model_Abstract {
     /**
      * @static
      * @param $id
-     * @return Element_Event
+     * @return Element_Note
      */
     public static function getById ($id) {
 
         try {
-            $event = new self();
-            $event->getResource()->getById($id);
+            $note = new self();
+            $note->getResource()->getById($id);
 
-            return $event;
+            return $note;
         } catch (Exception $e) {
             return null;
         }

@@ -28,9 +28,9 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
     }
 
 
-    public function eventsListAction () {
+    public function noteListAction () {
 
-        $list = new Element_Event_List();
+        $list = new Element_Note_List();
 
         $list->setLimit($this->_getParam("limit"));
         $list->setOffset($this->_getParam("start"));
@@ -58,32 +58,32 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
         $list->load();
 
-        $events = array();
+        $notes = array();
 
-        foreach ($list->getEvents() as $event) {
+        foreach ($list->getNotes() as $note) {
 
             $cpath = "";
-            if($event->getCid() && $event->getCtype()) {
-                if($element = Element_Service::getElementById($event->getCtype(), $event->getCid())) {
+            if($note->getCid() && $note->getCtype()) {
+                if($element = Element_Service::getElementById($note->getCtype(), $note->getCid())) {
                     $cpath = $element->getFullpath();
                 }
             }
 
             $e = array(
-                "id" => $event->getId(),
-                "type" => $event->getType(),
-                "cid" => $event->getCid(),
-                "ctype" => $event->getCtype(),
+                "id" => $note->getId(),
+                "type" => $note->getType(),
+                "cid" => $note->getCid(),
+                "ctype" => $note->getCtype(),
                 "cpath" => $cpath,
-                "date" => $event->getDate(),
-                "title" => $event->getTitle(),
-                "description" => $event->getDescription()
+                "date" => $note->getDate(),
+                "title" => $note->getTitle(),
+                "description" => $note->getDescription()
             );
 
             // prepare key-values
             $keyValues = array();
-            if(is_array($event->getData())) {
-                foreach ($event->getData() as $name => $d) {
+            if(is_array($note->getData())) {
+                foreach ($note->getData() as $name => $d) {
 
                     $type = $d["type"];
                     $data = $d["data"];
@@ -116,8 +116,8 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
 
             // prepare user data
-            if($event->getUser()) {
-                $user = User::getById($event->getUser());
+            if($note->getUser()) {
+                $user = User::getById($note->getUser());
                 if($user) {
                     $e["user"] = array(
                         "id" => $user->getId(),
@@ -128,26 +128,26 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
                 }
             }
 
-            $events[] = $e;
+            $notes[] = $e;
         }
 
         $this->_helper->json(array(
-            "data" => $events,
+            "data" => $notes,
             "success" => true,
             "total" => $list->getTotalCount()
         ));
     }
 
-    public function eventsAddAction() {
+    public function noteAddAction() {
 
-        $event = new Element_Event();
-        $event->setCid((int) $this->_getParam("cid"));
-        $event->setCtype($this->_getParam("ctype"));
-        $event->setDate(time());
-        $event->setTitle($this->_getParam("title"));
-        $event->setDescription($this->_getParam("description"));
-        $event->setType($this->_getParam("type"));
-        $event->save();
+        $note = new Element_Note();
+        $note->setCid((int) $this->_getParam("cid"));
+        $note->setCtype($this->_getParam("ctype"));
+        $note->setDate(time());
+        $note->setTitle($this->_getParam("title"));
+        $note->setDescription($this->_getParam("description"));
+        $note->setType($this->_getParam("type"));
+        $note->save();
 
         $this->_helper->json(array(
             "success" => true
