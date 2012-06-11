@@ -122,5 +122,21 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
         ));
     }
 
+    public function eventsAddAction() {
+
+        $event = new Element_Event();
+        $event->setCid((int) $this->_getParam("cid"));
+        $event->setCtype($this->_getParam("ctype"));
+        $event->setDate(time());
+        $event->setTitle($this->_getParam("title"));
+        $event->setDescription($this->_getParam("description"));
+        $event->setType($this->_getParam("type"));
+        $event->save();
+
+        $this->_helper->json(array(
+            "success" => true
+        ));
+    }
+
 
 }

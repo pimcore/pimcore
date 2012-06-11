@@ -117,7 +117,11 @@ pimcore.element.events = Class.create({
                 ],
                 columnLines: true,
                 bbar: this.pagingtoolbar,
-                tbar: ["->", {
+                tbar: [{
+                    text: t('add'),
+                    handler: this.onAdd.bind(this),
+                    iconCls: "pimcore_icon_add"
+                }, "->", {
                   text: t("filter") + "/" + t("search"),
                   xtype: "tbtext",
                   style: "margin: 0 10px 0 0;"
@@ -138,7 +142,7 @@ pimcore.element.events = Class.create({
             });
 
             this.layout = new Ext.Panel({
-                title: t('events'),
+                title: t('events') + " & " + t("notes"),
                 border: true,
                 iconCls: "pimcore_icon_tab_events",
                 items: [this.grid, this.detailView],
@@ -218,6 +222,67 @@ pimcore.element.events = Class.create({
         this.detailView.removeAll();
         this.detailView.add(keyValueGrid);
         this.detailView.doLayout();
+    },
+
+    onAdd: function () {
+
+        var formPanel = new Ext.form.FormPanel({
+            bodyStyle: "padding:10px;",
+            items: [{
+                xtype: "combo",
+                fieldLabel: t('type'),
+                name: "type",
+                store: ["","content","seo","warning","notice"],
+                editable: true,
+                mode: "local",
+                width: 150
+            },{
+                xtype: "textfield",
+                fieldLabel: t("title"),
+                name: "title",
+                width: 350
+            }, {
+                xtype: "textarea",
+                fieldLabel: t("description"),
+                name: "description",
+                width: 350
+            },{
+                xtype: "hidden",
+                name: "cid",
+                value: this.element.id
+            },{
+                xtype: "hidden",
+                name: "ctype",
+                value: this.type
+            }]
+        });
+
+        var addWin = new Ext.Window({
+            modal: true,
+            width: 500,
+            height: 210,
+            closable: true,
+            items: [formPanel],
+            buttons: [{
+                text: t("save"),
+                iconCls: "pimcore_icon_accept",
+                handler: function () {
+
+                    var values = formPanel.getForm().getFieldValues();
+
+                    Ext.Ajax.request({
+                        url: "/admin/element/events-add/",
+                        method: "post",
+                        params: values
+                    });
+
+                    addWin.close();
+                    this.store.reload();
+                }.bind(this)
+            }]
+        });
+
+        addWin.show();
     }
 
 });
