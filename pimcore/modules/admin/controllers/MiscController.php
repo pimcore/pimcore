@@ -16,51 +16,6 @@
 class Admin_MiscController extends Pimcore_Controller_Action_Admin
 {
 
-
-    public function analyticsAction() {
-
-        // just a test ...
-
-        include_once("googleApiClient/apiClient.php");
-        include_once("googleApiClient/contrib/apiAnalyticsService.php");
-        include_once("googleApiClient/contrib/apiPredictionService.php");
-
-        $client = new apiClient();
-        $client->setApplicationName("pimcore");
-
-
-        $key = file_get_contents(PIMCORE_TEMPORARY_DIRECTORY . "/google-key.p12");
-        $client->setAssertionCredentials(new apiAssertionCredentials(
-          "655439141282@developer.gserviceaccount.com",
-          array('https://www.googleapis.com/auth/analytics.readonly','https://www.googleapis.com/auth/prediction'),
-          $key)
-        );
-
-        //$client->setAccessToken('{"access_token":"ya29.AHES6ZTS1ogO7s1o_n_-4p7DVHlpa6D2HqqI8Solxmxz-HA","token_type":"Bearer","expires_in":3600,"refresh_token":"1\/2U4O8MjwbjwkeDPPUaARNxFuF7unAklC1c5QVObWaN4","created":1339163743}');
-
-        $client->setClientId("655439141282.apps.googleusercontent.com");
-
-        $service = new apiAnalyticsService($client);
-
-        $optParams = array();
-
-        // http://code.google.com/p/google-api-php-client/source/browse/trunk/examples/analytics/
-        $bla = $service->data_ga->get(
-                "ga:25219282",
-                '2012-01-01',
-                '2012-01-15',
-                'ga:visits',
-                $optParams);
-
-
-        echo $client->getAccessToken();
-        p_r($bla);
-
-        exit;
-
-    }
-
-
     public function liveconnectAction()
     {
 
@@ -155,18 +110,6 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
 
         $this->_helper->json($response);
-    }
-
-    public function lockElementAction()
-    {
-        Element_Editlock::lock($this->_getParam("id"), $this->_getParam("type"));
-        exit;
-    }
-
-    public function unlockElementAction()
-    {
-        Element_Editlock::unlock($this->_getParam("id"), $this->_getParam("type"));
-        exit;
     }
 
     public function availableLanguagesAction()

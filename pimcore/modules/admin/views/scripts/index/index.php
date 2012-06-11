@@ -227,6 +227,7 @@
             "pimcore/element/properties.js",
             "pimcore/element/scheduler.js",
             "pimcore/element/dependencies.js",
+            "pimcore/element/events.js",
             "pimcore/object/helpers/grid.js",
             "pimcore/object/helpers/gridConfigDialog.js",
             "pimcore/object/helpers/gridTabAbstract.js",
@@ -254,7 +255,6 @@
             
             // assets
             "pimcore/asset/asset.js",
-            "pimcore/asset/metadata.js",
             "pimcore/asset/unknown.js",
             "pimcore/asset/image.js",
             "pimcore/asset/document.js",

@@ -31,6 +31,10 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
             this.properties = new pimcore.document.properties(this, "document");
         }
 
+        if (this.isAllowed("settings")) {
+            this.events = new pimcore.element.events(this, "document");
+        }
+
         this.dependencies = new pimcore.element.dependencies(this, "document");
     },
 
@@ -75,7 +79,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: this.data.id,
                     type: "document"
@@ -210,7 +214,11 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         }
 
         items.push(this.dependencies.getLayout());
-        
+
+        if (this.isAllowed("settings")) {
+            items.push(this.events.getLayout());
+        }
+
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',

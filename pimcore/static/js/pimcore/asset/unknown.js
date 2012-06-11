@@ -28,6 +28,7 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
         this.versions = new pimcore.asset.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "asset");
         this.dependencies = new pimcore.element.dependencies(this, "asset");
+        this.events = new pimcore.element.events(this, "asset");
 
         this.getData();
     },
@@ -46,6 +47,10 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
         }
 
         items.push(this.dependencies.getLayout());
+
+        if (this.isAllowed("settings")) {
+            items.push(this.events.getLayout());
+        }
 
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",

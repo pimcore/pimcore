@@ -75,7 +75,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
             return $lock;
         }
         catch (Exception $e) {
-            return false;
+            return null;
         }
     }
 
