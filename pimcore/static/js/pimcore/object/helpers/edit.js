@@ -34,7 +34,6 @@ pimcore.object.helpers.edit = {
             },
             fieldset: {
                 xtype: "fieldset",
-                bodyStyle:"padding:10px;",
                 autoScroll: true,
                 forceLayout: true,
                 hideMode: "offsets",
