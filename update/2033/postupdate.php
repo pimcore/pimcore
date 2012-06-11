@@ -11,5 +11,5 @@ function sendQuery ($sql) {
     }
 }
 
-sendQuery("RENAME TABLE `events` TO `pimcore`.`notes`;");
-sendQuery("RENAME TABLE `events_data` TO `pimcore`.`notes_data`;");
+sendQuery("RENAME TABLE `events` TO `notes`;");
+sendQuery("RENAME TABLE `events_data` TO `notes_data`;");
