@@ -131,7 +131,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: this.data.id,
                     type: "asset"

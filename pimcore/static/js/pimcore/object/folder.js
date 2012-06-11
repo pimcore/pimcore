@@ -33,6 +33,9 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.element.properties(this, "object");
         }
+        if (this.isAllowed("settings")) {
+            this.events = new pimcore.element.events(this, "object");
+        }
 
         this.dependencies = new pimcore.element.dependencies(this, "object");
     },
@@ -90,7 +93,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: this.id,
                     type: "object"
@@ -206,6 +209,10 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             items.push(this.properties.getLayout());
         }
         items.push(this.dependencies.getLayout());
+
+        if (this.isAllowed("settings")) {
+            items.push(this.events.getLayout());
+        }
 
         var tabbar = new Ext.TabPanel({
             tabPosition: "top",

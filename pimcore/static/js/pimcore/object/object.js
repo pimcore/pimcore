@@ -29,6 +29,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.versions = new pimcore.object.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "object");
         this.dependencies = new pimcore.element.dependencies(this, "object");
+        this.events = new pimcore.element.events(this, "object");
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
         this.getData();
@@ -142,7 +143,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: this.id,
                     type: "object"
@@ -195,6 +196,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var reportLayout = this.reports.getLayout();
         if(reportLayout) {
             items.push(reportLayout);
+        }
+
+        if (this.isAllowed("settings")) {
+            items.push(this.events.getLayout());
         }
 
         if(this.data.childdata.data.classes.length > 0) {

@@ -42,7 +42,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         // remove this instance when the panel is closed
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: this.data.id,
                     type: "document"

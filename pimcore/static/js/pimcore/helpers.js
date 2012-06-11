@@ -323,7 +323,7 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
     Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails, function (lock, buttonValue) {
         if (buttonValue == "yes") {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: lock[0],
                     type:  lock[1]
