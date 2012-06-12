@@ -22,8 +22,10 @@ function array_htmlspecialchars ($array) {
     foreach ($array as $key => $value) {
         if(is_string($value) || is_numeric($value)) {
             $array[$key] = htmlspecialchars($value,ENT_COMPAT,"UTF-8");
-        } else if (is_array($value)) {
-            $array[$key] = array_htmlspecialchars($value);
+        } else {
+            if (is_array($value)) {
+                $array[$key] = array_htmlspecialchars($value);
+            }
         }
     }
 
@@ -45,7 +47,9 @@ function object2array($node) {
  * @return bool|string
  */
 function array_urlencode ($args) {
-  if(!is_array($args)) return false;
+    if (!is_array($args)) {
+        return false;
+    }
   $out = '';
   foreach($args as $name => $value)
   {
@@ -62,6 +66,45 @@ function array_urlencode ($args) {
     }
   }
   return substr($out,0,-1); //trim the last & }
+}
+
+/**
+ * same as  array_urlencode but no urlencode()
+ * @param  $args
+ * @return bool|string
+ */
+function array_toquerystring ($args) {
+    if (!is_array($args)) {
+        return false;
+    }
+    $out = '';
+    foreach($args as $name => $value)
+    {
+        if(is_array($value))
+        {
+            foreach($value as $key => $val) {
+                $out .= $name.'['.$key.']'.'=';
+                $out .= $val.'&';
+
+            }
+        }else{
+            $out .= $name.'=';
+            $out .= $value.'&';
+        }
+    }
+    return substr($out,0,-1); //trim the last & }
+}
+
+/**
+ * @param string $var
+ */
+function urlencode_ignore_slash($var) {
+    $placeholder = "x-X-x-ignore-" . md5(microtime()) . "-slash-x-X-x";
+    $var = str_replace("/", $placeholder, $var);
+    $var = urlencode($var);
+    $var = str_replace($placeholder, "/", $var);
+
+    return $var;
 }
 
 /**
