@@ -366,7 +366,7 @@ class Staticroute extends Pimcore_Model_Abstract {
         $parametersGet = array();
         $parametersNotNamed = array();
         $url = $this->getReverse();
-        $forbiddenCharacters = array("#","/",":","?");
+        $forbiddenCharacters = array("#",":","?");
 
         // check for named variables
         foreach ($urlParams as $key => $param) {
