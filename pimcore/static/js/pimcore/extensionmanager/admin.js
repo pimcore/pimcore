@@ -117,7 +117,7 @@ pimcore.extensionmanager.admin = Class.create({
                 items: [{
                     tooltip: t('install') + "/" + t("uninstall"),
                     getClass: function (v, meta, rec) {
-                        var klass = "pimcore_action_column ";
+                        var klass = "";
 
                         // bricks don't have an install state
                         if(rec.get("type") == "brick") {
@@ -127,9 +127,9 @@ pimcore.extensionmanager.admin = Class.create({
                         if(rec.get("installed") == null) {
                             return "";
                         } else if(rec.get("installed")) {
-                            klass += "pimcore_icon_disable ";
+                            klass += "pimcore_action_column pimcore_icon_disable ";
                         } else {
-                            klass += "pimcore_icon_add ";
+                            klass += "pimcore_action_column pimcore_icon_add ";
                         }
                         return klass;
                     },
@@ -224,14 +224,14 @@ pimcore.extensionmanager.admin = Class.create({
                 items: [{
                     tooltip: t('delete'),
                     getClass: function (v, meta, rec) {
-                        var klass = "pimcore_action_column ";
+                        var klass = "";
 
                         if(rec.get("active") != true && rec.get("type") == "brick") {
-                            klass += "pimcore_icon_delete ";
+                            klass += "pimcore_action_column pimcore_icon_delete ";
                         }
 
                         if(rec.get("active") != true && rec.get("installed") != true && rec.get("type") == "plugin") {
-                            klass += "pimcore_icon_delete ";
+                            klass += "pimcore_action_column pimcore_icon_delete ";
                         }
 
                         return klass;
