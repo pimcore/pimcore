@@ -388,7 +388,11 @@ class Staticroute extends Pimcore_Model_Abstract {
         foreach ($parametersInReversePattern as $key => $value) {
             $value = str_replace($forbiddenCharacters, "", $value);
             if(strlen($value) > 0) {
-                $url = str_replace("%".$key, str_replace("%",$urlEncodeEscapeCharacters,urlencode($value)), $url);
+                $url = str_replace(
+                    "%" . $key,
+                    str_replace("%", $urlEncodeEscapeCharacters, ($encode) ? urlencode($value) : $value),
+                    $url
+                );
             }
         }
 
@@ -397,7 +401,7 @@ class Staticroute extends Pimcore_Model_Abstract {
         $o = array();
         foreach ($parametersNotNamed as $option) {
             $option = str_replace($forbiddenCharacters, "", $option);
-            $o[] = str_replace("%",$urlEncodeEscapeCharacters,urlencode($option));
+            $o[] = str_replace("%", $urlEncodeEscapeCharacters, ($encode) ? urlencode($option) : $option);
         }
 
         // remove optional parts
