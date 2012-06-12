@@ -206,7 +206,7 @@ class Pimcore_Tool_Text
         }
 
         //$text = Pimcore_Tool_Text::removeLineBreaks($text);
-        preg_match_all("@\<(a|img)[^>]*([pimcore_id|pimcore_type]+=\"[0-9]+\")[^>]*([pimcore_id|pimcore_type]+=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
+        preg_match_all("@\<(a|img)[^>]*((?:pimcore_id|pimcore_type)+=\"[0-9]+\")[^>]*((?:pimcore_id|pimcore_type)+=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
 
         Zend_Registry::set($hash, $matches);
 
