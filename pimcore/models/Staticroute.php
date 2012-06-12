@@ -381,7 +381,7 @@ class Staticroute extends Pimcore_Model_Abstract {
             }
         }
 
-        $urlEncodeEscapeCharacters = "~|urlencode|~";
+        $urlEncodeEscapeCharacters = "~|urlen" . md5(microtime()) . "code|~";
 
         // replace named variables
         foreach ($parametersInReversePattern as $key => $value) {
