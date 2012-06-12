@@ -678,6 +678,54 @@ pimcore.settings.thumbnail.items = {
 
         return item;
     },
+	
+	itemUnsharpMask: function (panel, data, getName) {
+
+        var niceName = t("unsharp_mask");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+				xtype: 'spinnerfield',
+				name: "amount",
+				fieldLabel: t("amount") + ' (20~200)',
+				width: 50,
+				value: data.amount
+			},
+			{
+				xtype: 'spinnerfield',
+				name: "radius",
+				fieldLabel: t("radius") + ' (0.5~2)',
+				width: 50,
+				value: data.radius
+			},
+			{
+				xtype: 'spinnerfield',
+				name: "threshold",
+				fieldLabel: t("threshold") + ' (0~5)',
+				width: 50,
+				value: data.threshold
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "unsharpMask"
+            }]
+        });
+
+        return item;
+    },
 
     itemSetBackgroundImage: function (panel, data, getName) {
 

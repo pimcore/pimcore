@@ -114,7 +114,8 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
 
         $newImg = $this->createImage($width, $height);
         ImageCopyResampled($newImg, $this->resource, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
-        $this->resource = $newImg;
+		
+		$this->resource = $newImg;
 
         $this->setWidth($width);
         $this->setHeight($height);
@@ -176,6 +177,18 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
         $this->reinitializeImage();
 
         return $this;
+    }
+
+    /**
+     * @param  $amount
+     * @param  $radius
+     * @param  $threshold
+     * @return Pimcore_Image_Adapter
+     */
+    public function unsharpMask ($amount, $radius, $threshold)
+	{
+		$this->resource = Pimcore_Image_Adapter_GD_UnsharpMask::process($this->resource, $amount, $radius, $threshold);
+		return $this;
     }
 
     /**
