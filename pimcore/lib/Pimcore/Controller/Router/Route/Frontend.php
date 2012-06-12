@@ -219,7 +219,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         if (is_array($matches) && count($matches) > 1) {
                             foreach ($matches as $index => $match) {
                                 if ($variables[$index - 1]) {
-                                    $params[$variables[$index - 1]] = $match[0];
+                                    $params[$variables[$index - 1]] = urldecode($match[0]);
                                 }
                             }
                         }

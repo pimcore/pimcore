@@ -347,33 +347,32 @@ class Staticroute extends Pimcore_Model_Abstract {
         // get request parameters
         $blockedRequestParams = array("controller","action","module","document");
         $front = Zend_Controller_Front::getInstance();
-        $requestParameters = $front->getRequest()->getParams();
-        // remove blocked parameters from request
-        foreach ($blockedRequestParams as $key) {
-            if(array_key_exists($key, $requestParameters)) {
-                unset($requestParameters[$key]);
-            }
-        }
 
-        // reset request parameters
         if($reset) {
             $requestParameters = array();
+        } else {
+            $requestParameters = $front->getRequest()->getParams();
+            // remove blocked parameters from request
+            foreach ($blockedRequestParams as $key) {
+                if(array_key_exists($key, $requestParameters)) {
+                    unset($requestParameters[$key]);
+                }
+            }
         }
-
 
         $urlParams = array_merge($requestParameters, $urlOptions);
         $parametersInReversePattern = array();
         $parametersGet = array();
         $parametersNotNamed = array();
         $url = $this->getReverse();
-        $forbiddenCharacters = array("#","/",":","?");
+        $forbiddenCharacters = array("#",":","?");
 
         // check for named variables
         foreach ($urlParams as $key => $param) {
             if(strpos($this->getReverse(), "%" . $key) !== false) {
-                $parametersInReversePattern[$key] = urldecode($param);
+                $parametersInReversePattern[$key] = $param;
             } else if (is_numeric($key)) {
-                $parametersNotNamed[$key] = urldecode($param);
+                $parametersNotNamed[$key] = $param;
             } else {
                 // only append the get parameters if there are defined in $urlOptions
                 if(array_key_exists($key,$urlOptions)) {
@@ -390,7 +389,7 @@ class Staticroute extends Pimcore_Model_Abstract {
             if(strlen($value) > 0) {
                 $url = str_replace(
                     "%" . $key,
-                    str_replace("%", $urlEncodeEscapeCharacters, ($encode) ? urlencode($value) : $value),
+                    str_replace("%", $urlEncodeEscapeCharacters, ($encode) ? urlencode_ignore_slash($value) : $value),
                     $url
                 );
             }
@@ -401,7 +400,7 @@ class Staticroute extends Pimcore_Model_Abstract {
         $o = array();
         foreach ($parametersNotNamed as $option) {
             $option = str_replace($forbiddenCharacters, "", $option);
-            $o[] = str_replace("%", $urlEncodeEscapeCharacters, ($encode) ? urlencode($option) : $option);
+            $o[] = str_replace("%", $urlEncodeEscapeCharacters, ($encode) ? urlencode_ignore_slash($option) : $option);
         }
 
         // remove optional parts
@@ -415,8 +414,12 @@ class Staticroute extends Pimcore_Model_Abstract {
         }
 
         // optional get parameters
-        $getParams = array_urlencode($parametersGet);
-        if(!empty($getParams)) {
+        if(!empty($parametersGet)) {
+            if($encode) {
+                $getParams = array_urlencode($parametersGet);
+            } else {
+                $getParams = array_toquerystring($parametersGet);
+            }
             $url .= "?" . $getParams;
         }
 
