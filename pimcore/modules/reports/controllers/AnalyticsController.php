@@ -223,7 +223,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $outputData[$order[$key]] = array(
                 "label" => str_replace("ga:","",$key),
                 "value" => round($value,2),
-                "chart" => Pimcore_Report_ImageChart::lineSmall($dailyDataGrouped[$key]),
+                "chart" => Pimcore_Helper_ImageChart::lineSmall($dailyDataGrouped[$key]),
                 "metric" => str_replace("ga:","",$key)
             );
         }

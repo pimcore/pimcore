@@ -13,10 +13,10 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Pimcore_Report_ImageChart {
+class Pimcore_Helper_ImageChart {
     
-    public static $serviceUrl = "http://chart.apis.google.com/chart";
-    
+    public static $serviceUrl = "https://chart.googleapis.com/chart";
+
     public static function lineSmall($data, $parameters="") {
         
         return self::$serviceUrl . "?cht=lc&chs=150x40&chd=t:" . implode(",",$data) . "&chds=" . min($data) . "," . max($data) . "&" . $parameters;
