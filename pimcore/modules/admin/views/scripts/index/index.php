@@ -380,6 +380,9 @@
             "pimcore/settings/tagmanagement/panel.js",
             "pimcore/settings/tagmanagement/item.js",
 
+            "pimcore/report/qrcode/panel.js",
+            "pimcore/report/qrcode/item.js",
+
             // extension manager
             "pimcore/extensionmanager/settings.js",
             "pimcore/extensionmanager/admin.js",

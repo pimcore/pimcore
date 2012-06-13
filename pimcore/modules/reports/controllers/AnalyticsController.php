@@ -114,12 +114,16 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             }
         }
 
+        if($this->_getParam("filters")) {
+            $filters[] = $this->_getParam("filters");
+        }
+
         $opts = array(
             "dimensions" => "ga:date"
         );
 
         if(!empty($filters)) {
-            $opts["filters"] = implode(",", $filters);
+            $opts["filters"] = implode(";", $filters);
         }
 
         $result = $this->service->data_ga->get(
@@ -186,7 +190,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         );
 
         if(!empty($filters)) {
-            $opts["filters"] = implode(",", $filters);
+            $opts["filters"] = implode(";", $filters);
         }
 
         $result = $this->service->data_ga->get(
@@ -266,7 +270,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         );
 
         if(!empty($filters)) {
-            $opts["filters"] = implode(",", $filters);
+            $opts["filters"] = implode(";", $filters);
         }
 
         $result = $this->service->data_ga->get(
@@ -339,7 +343,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         );
 
         if(!empty($filters)) {
-            $opts["filters"] = implode(",", $filters);
+            $opts["filters"] = implode(";", $filters);
         }
 
         $result = $this->service->data_ga->get(
@@ -394,7 +398,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         );
 
         if(!empty($filters)) {
-            $opts["filters"] = implode(",", $filters);
+            $opts["filters"] = implode(";", $filters);
         }
 
         $result0 = $this->service->data_ga->get(
@@ -416,7 +420,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         );
 
         if(!empty($filters)) {
-            $opts["filters"] = implode(",", $filters);
+            $opts["filters"] = implode(";", $filters);
         }
 
         $result1 = $this->service->data_ga->get(
@@ -460,7 +464,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         );
 
         if(!empty($filters)) {
-            $opts["filters"] = implode(",", $filters);
+            $opts["filters"] = implode(";", $filters);
         }
 
         $result2 = $this->service->data_ga->get(

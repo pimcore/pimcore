@@ -10,12 +10,12 @@
  * http://www.pimcore.org/license
  *
  * @category   Pimcore
- * @package    OutputFilter
+ * @package    Tool
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
  
-class OutputFilter_Tag_Config {
+class Tool_Tag_Config {
 
 
     /**
@@ -63,7 +63,7 @@ class OutputFilter_Tag_Config {
     /**
      * @static
      * @param  $name
-     * @return OutputFilter_Tag_Config
+     * @return Tool_Tag_Config
      */
     public static function getByName ($name) {
         $tag = new self();

@@ -1446,7 +1446,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementTreeAction () {
 
-        $dir = OutputFilter_Tag_Config::getWorkingDir();
+        $dir = Tool_Tag_Config::getWorkingDir();
 
         $tags = array();
         $files = scandir($dir);
@@ -1466,14 +1466,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function tagManagementAddAction () {
 
         try {
-            OutputFilter_Tag_Config::getByName($this->_getParam("name"));
+            Tool_Tag_Config::getByName($this->_getParam("name"));
             $alreadyExist = true;
         } catch (Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $tag = new OutputFilter_Tag_Config();
+            $tag = new Tool_Tag_Config();
             $tag->setName($this->_getParam("name"));
             $tag->save();
         }
@@ -1483,7 +1483,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementDeleteAction () {
 
-        $tag = OutputFilter_Tag_Config::getByName($this->_getParam("name"));
+        $tag = Tool_Tag_Config::getByName($this->_getParam("name"));
         $tag->delete();
 
         $this->_helper->json(array("success" => true));
@@ -1492,14 +1492,14 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementGetAction () {
 
-        $tag = OutputFilter_Tag_Config::getByName($this->_getParam("name"));
+        $tag = Tool_Tag_Config::getByName($this->_getParam("name"));
         $this->_helper->json($tag);
     }
 
 
     public function tagManagementUpdateAction () {
 
-        $tag = OutputFilter_Tag_Config::getByName($this->_getParam("name"));
+        $tag = Tool_Tag_Config::getByName($this->_getParam("name"));
         $data = Zend_Json::decode($this->_getParam("configuration"));
         $data = array_htmlspecialchars($data);
 

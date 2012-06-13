@@ -137,6 +137,10 @@ pimcore.layout.toolbar = Class.create({
                     text: t("tag_snippet_management"),
                     iconCls: "pimcore_icon_tag",
                     handler: this.showTagManagement
+                },{
+                    text: t("qr_codes"),
+                    iconCls: "pimcore_icon_qrcode",
+                    handler: this.showQRCode
                 }]
             });
         }
@@ -656,6 +660,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("tagmanagement", new pimcore.settings.tagmanagement.panel());
+        }
+    },
+
+    showQRCode: function () {
+        try {
+            pimcore.globalmanager.get("qrcode").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("qrcode", new pimcore.report.qrcode.panel());
         }
     },
 
