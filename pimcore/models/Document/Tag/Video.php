@@ -270,7 +270,7 @@ class Document_Tag_Video extends Document_Tag
 
     public function getUrlCode()
     {
-        return $this->getFlowplayerCode($this->id);
+        return $this->getFlowplayerCode(array("mp4" => (string) $this->id));
     }
 
     public function getErrorCode($message = "") {
