@@ -122,12 +122,13 @@ pimcore.report.analytics.settings = Class.create({
                         url: "/admin/reports/analytics/get-profiles",
                         root: "data",
                         idProperty: "id",
-                        fields: ["name", "id", "trackid","accountid"]
+                        fields: ["name","id","trackid","accountid","internalid"]
                     }),
                     listeners: {
                         "select": function (id, el, record, index) {
-                            Ext.getCmp("report_settings_analytics_trackid_" + id).setValue(record.data.trackid);
-                            Ext.getCmp("report_settings_analytics_accountid_" + id).setValue(record.data.accountid);
+                            Ext.getCmp("report_settings_analytics_trackid_" + id).setValue(record.get("trackid"));
+                            Ext.getCmp("report_settings_analytics_accountid_" + id).setValue(record.get("accountid"));
+                            Ext.getCmp("report_settings_analytics_internalid_" + id).setValue(record.get("internalid"));
                         }.bind(this, id)
                     },
                     valueField: 'id',
@@ -143,6 +144,12 @@ pimcore.report.analytics.settings = Class.create({
                     name: "accountid_" + id,
                     id: "report_settings_analytics_accountid_" + id,
                     value: this.parent.getValue("analytics.sites." + key + ".accountid")
+                },{
+                    xtype: "textfield",
+                    fieldLabel: t("analytics_internalid"),
+                    name: "internalid_" + id,
+                    id: "report_settings_analytics_internalid_" + id,
+                    value: this.parent.getValue("analytics.sites." + key + ".internalid")
                 },{
                     xtype: "checkbox",
                     fieldLabel: t("analytics_advanced_mode"),
@@ -169,6 +176,7 @@ pimcore.report.analytics.settings = Class.create({
             additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_default").getValue(),
             additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_default").getValue(),
             accountid: Ext.getCmp("report_settings_analytics_accountid_default").getValue(),
+            internalid: Ext.getCmp("report_settings_analytics_internalid_default").getValue(),
             advanced: Ext.getCmp("report_settings_analytics_advanced_default").getValue()
         };
 
@@ -179,6 +187,7 @@ pimcore.report.analytics.settings = Class.create({
                 additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + record.data.id).getValue(),
                 additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + record.data.id).getValue(),
                 accountid: Ext.getCmp("report_settings_analytics_accountid_" + record.data.id).getValue(),
+                internalid: Ext.getCmp("report_settings_analytics_internalid_" + record.data.id).getValue(),
                 advanced: Ext.getCmp("report_settings_analytics_advanced_" + record.data.id).getValue()
             };
         }, this);
