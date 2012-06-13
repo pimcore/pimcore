@@ -24,14 +24,14 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
         $cacheKey = "outputfilter_tagmngt";
         $tags = Pimcore_Model_Cache::load($cacheKey);
         if(!is_array($tags)) {
-            $dir = OutputFilter_Tag_Config::getWorkingDir();
+            $dir = Tool_Tag_Config::getWorkingDir();
 
             $tags = array();
             $files = scandir($dir);
             foreach ($files as $file) {
                 if(strpos($file, ".xml")) {
                     $name = str_replace(".xml", "", $file);
-                    $tags[] = OutputFilter_Tag_Config::getByName($name);
+                    $tags[] = Tool_Tag_Config::getByName($name);
                 }
             }
             Pimcore_Model_Cache::save($tags, $cacheKey, array("tagmanagement"), null, 100);

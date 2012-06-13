@@ -561,7 +561,7 @@ class Pimcore {
         $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');
-        $autoloader->registerNamespace('OutputFilter');
+        $autoloader->registerNamespace('Tool');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }

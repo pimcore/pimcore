@@ -62,7 +62,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
                 animate:true,
                 containerScroll: true,
                 border: true,
-                width: 200,
+                width: 250,
                 split: true,
                 root: {
                     nodeType: 'async',
