@@ -31,6 +31,17 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         $this->service = new apiAnalyticsService($client);
     }
 
+    public function deeplinkAction () {
+
+        $config = Pimcore_Google_Analytics::getSiteConfig();
+
+        $url = $this->_getParam("url");
+        $url = str_replace(array("{accountId}", "{internalWebPropertyId}", "{id}"), array($config->accountid, $config->internalid, $config->profile), $url);
+        $url = "https://www.google.com/analytics/web/" . $url;
+
+        $this->_redirect($url);
+    }
+
     public function getProfilesAction () {
 
         try {
@@ -47,6 +58,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
                         "id" => $detail["id"],
                         "name" => $detail["name"],
                         "trackid" => $detail["webPropertyId"],
+                        "internalid" => $detail["internalWebPropertyId"],
                         "accountid" => $detail["accountId"]
                     );
                 }
