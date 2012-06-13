@@ -71,21 +71,21 @@
             <div class="columns2">
                 <div class="smallchart">
                     <div class="chart">
-                        <img src="<?php echo Pimcore_Report_ImageChart::lineSmall($this->dailyDataGrouped["visits"]); ?>" />
+                        <img src="<?php echo Pimcore_Helper_ImageChart::lineSmall($this->dailyDataGrouped["visits"]); ?>" />
                     </div>
                     <div class="value"><?php echo $this->data["visits"] ?></div>
                     <div class="label"><?php echo $this->translate("visits"); ?></div>
                 </div> 
                 <div class="smallchart">
                     <div class="chart">
-                        <img src="<?php echo Pimcore_Report_ImageChart::lineSmall($this->dailyDataGrouped["pageviews"]); ?>" />
+                        <img src="<?php echo Pimcore_Helper_ImageChart::lineSmall($this->dailyDataGrouped["pageviews"]); ?>" />
                     </div>
                     <div class="value"><?php echo $this->data["pageviews"] ?></div>
                     <div class="label"><?php echo $this->translate("pageviews"); ?></div>
                 </div> 
                 <div class="smallchart">
                     <div class="chart">
-                        <img src="<?php echo Pimcore_Report_ImageChart::lineSmall($this->dailyDataGrouped["uniquepageviews"]); ?>" />
+                        <img src="<?php echo Pimcore_Helper_ImageChart::lineSmall($this->dailyDataGrouped["uniquepageviews"]); ?>" />
                     </div>
                     <div class="value"><?php echo $this->data["uniquepageviews"] ?></div>
                     <div class="label"><?php echo $this->translate("unique_pageviews"); ?></div>
@@ -95,21 +95,21 @@
             <div class="columns2">
                 <div class="smallchart">
                     <div class="chart">
-                        <img src="<?php echo Pimcore_Report_ImageChart::lineSmall($this->dailyDataGrouped["pagespervisit"]); ?>" />
+                        <img src="<?php echo Pimcore_Helper_ImageChart::lineSmall($this->dailyDataGrouped["pagespervisit"]); ?>" />
                     </div>
                     <div class="value"><?php echo round($this->data["pagespervisit"],2) ?></div>
                     <div class="label"><?php echo $this->translate("pagespervisit"); ?></div>
                 </div>
                 <div class="smallchart">
                     <div class="chart">
-                        <img src="<?php echo Pimcore_Report_ImageChart::lineSmall($this->dailyDataGrouped["timeonsite"]); ?>" />
+                        <img src="<?php echo Pimcore_Helper_ImageChart::lineSmall($this->dailyDataGrouped["timeonsite"]); ?>" />
                     </div>
                     <div class="value"><?php echo $this->data["timeonsite"]; ?></div>
                     <div class="label"><?php echo $this->translate("average_timeonsite"); ?></div>
                 </div>
                 <div class="smallchart">
                     <div class="chart">
-                        <img src="<?php echo Pimcore_Report_ImageChart::lineSmall($this->dailyDataGrouped["bouncerate"]); ?>" />
+                        <img src="<?php echo Pimcore_Helper_ImageChart::lineSmall($this->dailyDataGrouped["bouncerate"]); ?>" />
                     </div>
                     <div class="value"><?php echo round($this->data["bouncerate"],2) ?></div>
                     <div class="label"><?php echo $this->translate("bouncerate"); ?></div>
