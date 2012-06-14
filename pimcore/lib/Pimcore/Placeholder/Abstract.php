@@ -241,9 +241,9 @@ abstract class Pimcore_Placeholder_Abstract
             }
 
             if (is_null($this->locale)) { //last chance -> get it from registry or use the first Language defined in the system settings
-                try {
+                if(Zend_Registry::isRegistered("Zend_Locale")) {
                     $this->locale = Zend_Registry::get("Zend_Locale");
-                } catch (Exception $e) {
+                } else {
                     list($language) = Pimcore_Tool::getValidLanguages();
                     $this->locale = new Zend_Locale($language);
                 }

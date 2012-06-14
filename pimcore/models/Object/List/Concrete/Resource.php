@@ -142,12 +142,12 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                         }
                     }
 
-                    try {
+                    if(Zend_Registry::isRegistered("Zend_Locale")) {
                         $locale = Zend_Registry::get("Zend_Locale");
                         if(Pimcore_Tool::isValidLanguage((string) $locale) && $language == "default") {
                             $language = (string) $locale;
                         }
-                    } catch (Exception $e) {}
+                    }
                 }
 
                 $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;

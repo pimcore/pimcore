@@ -55,6 +55,9 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
         try {
             $brick = Zend_Registry::get($cacheKey);
+            if(!$brick) {
+                throw new Exception("ObjectBrick in Registry is not valid");
+            }
         } catch (Exception $e) {
             $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
 

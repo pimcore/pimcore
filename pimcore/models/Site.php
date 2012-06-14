@@ -110,14 +110,12 @@ class Site extends Pimcore_Model_Abstract {
      * @return bool
      */
     public static function isSiteRequest () {
-        try {
-            $site = Zend_Registry::get("pimcore_site");
-            $inSubSite = true;
-        } catch (Exception $e) {
-            $inSubSite = false;
+
+        if(Zend_Registry::isRegistered("pimcore_site")) {
+            return true;
         }
 
-        return $inSubSite;
+        return false;
     }
 
     /**
@@ -127,10 +125,10 @@ class Site extends Pimcore_Model_Abstract {
      * @throw Exception
      */
     public static function getCurrentSite() {
-        try {
+        if(Zend_Registry::isRegistered("pimcore_site")) {
             $site = Zend_Registry::get("pimcore_site");
             return $site;
-        } catch (Exception $e) {
+        } else {
             throw new Exception("This request/process is not inside a subsite");
         }
     }

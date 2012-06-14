@@ -143,6 +143,9 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
 
         try {
             $fc = Zend_Registry::get($cacheKey);
+            if(!$fc) {
+                throw new Exception("FieldCollection in registry is not valid");
+            }
         } catch (Exception $e) {
             $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
 

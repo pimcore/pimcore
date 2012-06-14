@@ -120,6 +120,9 @@ class Object_Class extends Pimcore_Model_Abstract {
 
         try {
             $class = Zend_Registry::get($cacheKey);
+            if(!$class){
+                throw new Exception("Class in registry is null");
+            }
         }
         catch (Exception $e) {
 

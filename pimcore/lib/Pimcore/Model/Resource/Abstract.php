@@ -59,9 +59,9 @@ abstract class Pimcore_Model_Resource_Abstract implements Pimcore_Model_Resource
         
         $cacheKey = "system_resource_columns_" . $table;
         
-        try {
+        if(Zend_Registry::isRegistered($cacheKey)) {
             $columns = Zend_Registry::get($cacheKey);
-        } catch (Exception $e) {
+        } else {
             $columns = Pimcore_Model_Cache::load($cacheKey);
             
             if (!$columns || !$cache) {    

@@ -62,6 +62,9 @@ class Schedule_Task extends Pimcore_Model_Abstract {
 
         try {
             $task = Zend_Registry::get($cacheKey);
+            if(!$task) {
+                throw new Exception("Scheduled Task in Registry is not valid");
+            }
         }
         catch (Exception $e) {
             $task = new self();
