@@ -36,11 +36,10 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         parent::init();
 
         // set language
-        try {
+        if(Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = Zend_Registry::get("Zend_Locale");
             $this->setLanguage($locale->getLanguage());
-        }
-        catch (Exception $e) {
+        } else {
             if ($this->_getParam("language")) {
                 $this->setLanguage($this->_getParam("language"));
             }
@@ -176,13 +175,11 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
         Zend_Registry::set("Zend_Locale", $locale);
 
-        try {
+        if(Zend_Registry::isRegistered("Zend_Translate")) {
             $t = Zend_Registry::get("Zend_Translate");
             $t->setLocale($locale);
         }
-        catch (Exception $e) {
-            // translator not available yet
-        }
+
     }
 
     /**
@@ -209,10 +206,10 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             }
         }
         
-        try {
+        if(Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = Zend_Registry::get("Zend_Locale");
             @$translator->setLocale($locale->getLanguage());
-        } catch (Exception $e) {}
+        }
         
         Zend_Registry::set("Zend_Translate", $translator);
 

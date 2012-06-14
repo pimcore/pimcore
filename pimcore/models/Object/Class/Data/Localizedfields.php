@@ -177,9 +177,9 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
             return array();
         }
 
-        try {
+        if(Zend_Registry::isRegistered("Zend_Locale")) {
             $localeBak = Zend_Registry::get("Zend_Locale");
-        } catch (Exception $e) {
+        } else {
             $localeBak = null;
         }
 

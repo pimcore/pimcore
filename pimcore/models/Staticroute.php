@@ -109,6 +109,9 @@ class Staticroute extends Pimcore_Model_Abstract {
 
         try {
             $route = Zend_Registry::get($cacheKey);
+            if(!$route){
+                throw new Exception("Route in registry is null");
+            }
         }
         catch (Exception $e) {
 

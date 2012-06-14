@@ -144,10 +144,9 @@ class Pimcore_View_Helper_Glossary_Controller {
 
     protected function getData() {
 
-        try {
+        if(Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = Zend_Registry::get("Zend_Locale");
-        }
-        catch (Exception $e) {
+        } else {
             return array();
         }
 

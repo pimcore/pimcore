@@ -191,12 +191,11 @@ class Pimcore_Tool_Admin {
      */
     public static function getCurrentUser () {
 
-        try {
+        if(Zend_Registry::isRegistered("pimcore_admin_user")) {
             $user = Zend_Registry::get("pimcore_admin_user");
             return $user;
-        } catch (Exception $e) {
-
         }
+
         return null;
     }
 }

@@ -24,11 +24,10 @@ class Pimcore_Tool_Transliteration {
     public static function toASCII ($value, $language = null) {
 
         if(!$language) {
-            try {
+            if(Zend_Registry::isRegistered("Zend_Locale")) {
                 $locale = Zend_Registry::get("Zend_Locale");
                 $language = $locale->getLanguage();
-            }
-            catch (Exception $e) {
+            } else {
                 // there is no locale use default
                 $language = "en";
             }

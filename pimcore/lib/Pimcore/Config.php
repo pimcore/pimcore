@@ -23,10 +23,9 @@ class Pimcore_Config {
 
         $config = null;
 
-        try {
+        if(Zend_Registry::isRegistered("pimcore_config_system")) {
             $config = Zend_Registry::get("pimcore_config_system");
-        } catch (Exception $e) {
-
+        } else  {
             try {
                 $config = new Zend_Config_Xml(PIMCORE_CONFIGURATION_SYSTEM);
                 self::setSystemConfig($config);
@@ -56,9 +55,10 @@ class Pimcore_Config {
      * @return mixed|Zend_Config
      */
     public static function getWebsiteConfig () {
-        try {
+
+        if(Zend_Registry::isRegistered("pimcore_config_website")) {
             $config = Zend_Registry::get("pimcore_config_website");
-        } catch (Exception $e) {
+        } else {
             $cacheKey = "website_config";
             if (!$config = Pimcore_Model_Cache::load($cacheKey)) {
 
@@ -119,9 +119,10 @@ class Pimcore_Config {
      * @return Zend_Config
      */
     public static function getReportConfig () {
-        try {
+
+        if(Zend_Registry::isRegistered("pimcore_config_report")) {
             $config = Zend_Registry::get("pimcore_config_report");
-        } catch (Exception $e) {
+        } else {
             try {
                 $config = new Zend_Config_Xml(PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml");
             }
@@ -152,9 +153,9 @@ class Pimcore_Config {
 
         $config = null;
         
-        try {
+        if(Zend_Registry::isRegistered("pimcore_config_model_classmapping")) {
             $config = Zend_Registry::get("pimcore_config_model_classmapping");
-        } catch (Exception $e) {
+        } else {
             $mappingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/classmap.xml";
 
             if(is_file($mappingFile) && is_readable($mappingFile)) {
