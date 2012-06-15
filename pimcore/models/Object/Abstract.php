@@ -261,7 +261,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         
         // check for type
         if ($selfType != $staticType) {
-            if (get_class($object) != $staticType) {
+            if (!$object instanceof $staticType) {
                 if(!($object instanceof Object_Concrete && $staticType == "Object_Concrete")) {
                     return null;
                 }
