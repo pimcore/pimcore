@@ -247,7 +247,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         if ($this->document instanceof Document && $template = $this->document->getTemplate()) {
             return $template;
         }
-            // try to get the template over the params
+            // try to get the template out of the params
         else if ($this->_getParam("template")) {
             return $this->_getParam("template");
         }
