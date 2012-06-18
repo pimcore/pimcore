@@ -252,9 +252,10 @@ class Object_Class_Data_Image extends Object_Class_Data {
     /**
      * converts data to be imported via webservices
      * @param mixed $value
+     * @param mixed $object
      * @return mixed
      */
-    public function getFromWebserviceImport($value) {
+    public function getFromWebserviceImport($value, $object = null) {
         
         $asset = Asset::getById($value);
         if(empty($value)){
