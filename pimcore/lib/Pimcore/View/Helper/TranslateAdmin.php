@@ -21,9 +21,9 @@ class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate {
             $locale = $_REQUEST["systemLocale"];
 
             if(!$locale){
-                try {
+                if(Zend_Registry::isRegistered("Zend_Locale")) {
                     $locale = Zend_Registry::get("Zend_Locale");
-                } catch (Exception $e) {
+                } else {
                     $locale = new Zend_Locale("en");
                 }
             }
