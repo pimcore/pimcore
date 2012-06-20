@@ -300,7 +300,7 @@ class Object_Service extends Element_Service {
         }
 
 
-        if(empty($value) || (method_exists($value, "isEmpty") && $value->isEmpty())) {
+        if(empty($value) || (is_object($value) && method_exists($value, "isEmpty") && $value->isEmpty())) {
             $parent = self::hasInheritableParentObject($object);
             if(!empty($parent)) {
                 return self::getValueForObject($parent, $getter, $brickType, $brickGetter);
