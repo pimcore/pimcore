@@ -142,9 +142,6 @@ class Asset_Video extends Asset {
      */
     public function getImageThumbnail($thumbnailName, $timeOffset = null) {
 
-        $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
-        $thumbnail->setName($thumbnail->getName()."-".$timeOffset);
-
         $cs = $this->getCustomSetting("image_thumbnail_time");
         if(!$timeOffset && $cs) {
             $timeOffset = $cs;
@@ -152,6 +149,9 @@ class Asset_Video extends Asset {
         if(!$timeOffset) {
             $timeOffset = 5;
         }
+
+        $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
+        $thumbnail->setName($thumbnail->getName()."-".$timeOffset);
 
         $converter = Pimcore_Video::getInstance();
         $converter->load($this->getFileSystemPath());
