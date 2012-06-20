@@ -246,6 +246,13 @@ class Document_Tag_Image extends Document_Tag {
         return "";
     }
 
+    /**
+     * @return Asset_Image
+     */
+    public function getImage() {
+        return $this->image;
+    }
+
     /*
       * @return string
       */
