@@ -92,23 +92,65 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 bodyStyle: "display:none;",
                 items: [{
                     xtype: "panel",
-                    id: "pimcore_asset_video_imagepreview_" + this.id,
                     title: t("select_image_preview"),
-                    bodyStyle: "text-align:center; padding:10px;min-height:150px;",
-                    html: '<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/250/aspectratio/true/?_dc=' + date.getTime() + '" />',
-                    bbar: [{
+                    bodyStyle: "padding:10px",
+                    items: [{
+                        xtype: "panel",
+                        border: false,
+                        style: "margin: 10px 0 10px 0;",
+                        id: "pimcore_asset_video_imagepreview_" + this.id,
+                        bodyStyle: "min-height:150px;",
+                        html: '<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/265/aspectratio/true/?_dc=' + date.getTime() + '" />'
+                    },{
                         xtype: "button",
                         text: t("use_current_player_position_as_preview"),
                         iconCls: "pimcore_icon_videoedit",
+                        width: 265,
                         handler: function () {
                             try {
                                 var time = window[this.previewFrameId].player.getTime();
                                 var date = new Date();
-                                Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id).update('<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/250/aspectratio/true/time/' + time  + '/settime/true/?_dc=' + date.getTime() + '" />');
+                                Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id).update('<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/265/aspectratio/true/time/' + time  + '/settime/true/?_dc=' + date.getTime() + '" />');
                             } catch (e) {
                                 console.log(e);
                             }
                         }.bind(this)
+                    },{
+                        xtype: "panel",
+                        border:false,
+                        bodyStyle: "padding: 10px 0 10px 0;",
+                        html: t("or_specify_an_asset_image_below") + ":"
+                    },{
+                        xtype: "textfield",
+                        cls: "input_drop_target",
+                        width: 265,
+                        listeners: {
+                            "render": function (el) {
+                                new Ext.dd.DropZone(el.getEl(), {
+                                    reference: el,
+                                    ddGroup: "element",
+                                    getTargetFromEvent: function(e) {
+                                        return this.getEl();
+                                    }.bind(el),
+
+                                    onNodeOver : function(target, dd, e, data) {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    },
+
+                                    onNodeDrop : function (el, target, dd, e, data) {
+                                        if (data.node.attributes.elementType == "asset") {
+                                            el.setValue(data.node.attributes.path);
+
+                                            var date = new Date();
+                                            Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id).update('<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/265/aspectratio/true/image/' + data.node.attributes.id  + '/setimage/true/?_dc=' + date.getTime() + '" />');
+
+                                            return true;
+                                        }
+                                        return false;
+                                    }.bind(this, el)
+                                });
+                            }.bind(this)
+                        }
                     }]
                 }]
             });

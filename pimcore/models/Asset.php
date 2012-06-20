@@ -1061,6 +1061,13 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     }
 
     /**
+     * @param string $name
+     */
+    public function removeCustomSetting($key) {
+        unset($this->customSettings[$key]);
+    }
+
+    /**
      * @return array
      */
     public function getCustomSettings() {

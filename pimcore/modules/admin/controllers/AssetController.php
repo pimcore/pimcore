@@ -825,12 +825,24 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         if($this->_getParam("settime")) {
+            $video->removeCustomSetting("image_thumbnail_asset");
             $video->setCustomSetting("image_thumbnail_time", $time);
             $video->save();
         }
 
+        $image = null;
+        if($this->_getParam("image")) {
+            $image = Asset::getById(intval($this->_getParam("image")));
+        }
+
+        if($this->_getParam("setimage") && $image) {
+            $video->removeCustomSetting("image_thumbnail_time");
+            $video->setCustomSetting("image_thumbnail_asset", $image->getId());
+            $video->save();
+        }
+
         $this->getResponse()->setHeader("Content-Type", "image/png", true);
-        readfile(PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time));
+        readfile(PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time, $image));
         $this->removeViewRenderer();
     }
 
