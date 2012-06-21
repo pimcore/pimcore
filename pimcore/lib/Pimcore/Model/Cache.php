@@ -233,7 +233,7 @@ class Pimcore_Model_Cache {
         if(self::getForceImmendiateWrite()) {
             self::storeToCache($data, $key, $tags, $lifetime, $priority);
         } else {
-            self::addToSaveStack(func_get_args());
+            self::addToSaveStack(array($data, $key, $tags, $lifetime, $priority));
         }
     }
     
