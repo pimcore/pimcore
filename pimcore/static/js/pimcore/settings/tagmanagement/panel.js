@@ -156,7 +156,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
     addFieldComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z0-9_\-]+/);
-        if (button == "ok" && value.length > 2 && regresult == value) {
+        if (button == "ok" && value.length > 0 && regresult == value) {
             Ext.Ajax.request({
                 url: "/admin/settings/tag-management-add",
                 params: {
