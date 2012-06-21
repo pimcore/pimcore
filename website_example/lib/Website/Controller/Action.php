@@ -6,9 +6,9 @@ class Website_Controller_Action extends Pimcore_Controller_Action_Frontend {
 		
         parent::init();
         
-		try {
+		if(Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = Zend_Registry::get("Zend_Locale");
-        } catch (Exception $e) {
+        } else {
             $locale = new Zend_Locale("en");
         }
 
