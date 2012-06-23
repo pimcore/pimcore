@@ -53,6 +53,8 @@ Ext.onReady(function () {
         editWindow = pimcore.globalmanager.get("document_" + pimcore_document_id).edit;
         editWindow.reloadInProgress = false;
         editWindow.frame = window;
+
+        window.onbeforeunload = editWindow.iframeOnbeforeunload.bind(editWindow);
     }
     
     
