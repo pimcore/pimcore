@@ -64,7 +64,7 @@ class Document_Resource extends Element_Resource {
     public function getByPath($path) {
 
         // check for root node
-        $_path = $path != "/" ? $_path = dirname($path) : $path;
+        $_path = $path != "/" ? dirname($path) : $path;
         $_path = str_replace("\\", "/", $_path); // windows patch
         $_key = basename($path);
         $_path .= $_path != "/" ? "/" : "";
