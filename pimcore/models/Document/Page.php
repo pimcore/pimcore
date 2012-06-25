@@ -180,7 +180,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setPrettyUrl($prettyUrl)
     {
-        $this->prettyUrl = $prettyUrl;
+        $this->prettyUrl = rtrim($prettyUrl, " /");
     }
 
     /**
