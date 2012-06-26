@@ -221,29 +221,41 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
     }
 
     /**
+     *
+     */
+    public function load () {
+        $this->setElements();
+    }
+
+    /**
      * Methods for Iterator
      */
 
     public function rewind() {
+        $this->setElements();
         reset($this->elements);
     }
 
     public function current() {
+        $this->setElements();
         $var = current($this->elements);
         return $var;
     }
 
     public function key() {
+        $this->setElements();
         $var = key($this->elements);
         return $var;
     }
 
     public function next() {
+        $this->setElements();
         $var = next($this->elements);
         return $var;
     }
 
     public function valid() {
+        $this->setElements();
         $var = $this->current() !== false;
         return $var;
     }
