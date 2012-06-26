@@ -323,7 +323,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
             } else if ($element instanceof Document_PageSnippet){
                 $this->published = $element->isPublished();
                 $elements = $element->getElements();
-                if(is_array($elements)){
+                if(is_array($elements) && !empty($elements)) {
                     foreach($elements as $tag){
                         if($tag instanceof Document_Tag_Interface){
                             ob_start();
