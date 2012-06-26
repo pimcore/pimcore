@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pimcore
  *
@@ -12,10 +13,8 @@
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-
 class Pimcore_View_Helper_PimcoreNavigation extends Zend_View_Helper_Abstract
 {
-
     public static $_controller;
 
     public static function getController()
@@ -32,20 +31,16 @@ class Pimcore_View_Helper_PimcoreNavigation extends Zend_View_Helper_Abstract
         return self::getController();
     }
 
-
 }
-
 
 class Pimcore_View_Helper_PimcoreNavigation_Controller
 {
-
     protected $_activeDocument;
-
     protected $_navigationContainer;
-
     protected $_htmlMenuIdPrefix;
+    protected $_pageClass = 'Pimcore_Navigation_Page_Uri';
 
-    public function getNavigation($activeDocument,$navigationRootDocument = null, $htmlMenuIdPrefix = null)
+    public function getNavigation($activeDocument, $navigationRootDocument = null, $htmlMenuIdPrefix = null)
     {
 
         $this->_activeDocument = $activeDocument;
@@ -58,9 +53,31 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
         }
 
         if ($navigationRootDocument->hasChilds()) {
-            $this->buildNextLevel($navigationRootDocument, null,true);
+            $this->buildNextLevel($navigationRootDocument, null, true);
         }
         return $this->_navigationContainer;
+    }
+
+    /**
+     * sets the name of the pageclass (class must extend Zend_Navigation_Page)
+     * 
+     * @param type $pageClass
+     * @return Pimcore_View_Helper_PimcoreNavigation_Controller fluent interface, returns self
+     */
+    public function setPageClass($pageClass)
+    {
+        $this->_pageClass = $pageClass;
+        return $this;
+    }
+
+    /**
+     * Returns the name of the pageclass
+     * 
+     * @return String
+     */
+    public function getPageClass()
+    {
+        return $this->_pageClass;
     }
 
     /**
@@ -68,9 +85,8 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
      * @param  Pimcore_Navigation_Page_Uri $parentPage
      * @return void
      */
-    protected function buildNextLevel($parentDocument, $parentPage = null, $isRoot=false)
+    protected function buildNextLevel($parentDocument, $parentPage = null, $isRoot = false)
     {
-
         $pages = array();
 
         $childs = $parentDocument->getChilds();
@@ -81,20 +97,20 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
 
                     $active = false;
 
-                    if(strpos($this->_activeDocument->getFullPath(), $child->getFullPath()."/")===0 or $this->_activeDocument->getFullPath()== $child->getFullPath()){
-                                           $active=true;
+                    if (strpos($this->_activeDocument->getFullPath(), $child->getFullPath() . "/") === 0 || $this->_activeDocument->getFullPath() == $child->getFullPath()) {
+                        $active = true;
                     }
 
                     $path = $child->getFullPath();
-                    if($child instanceof Document_Link){
+                    if ($child instanceof Document_Link) {
                         $path = $child->getHref();
                     }
-
-                    $page = new Pimcore_Navigation_Page_Uri();
-                    $page->setUri($path.$child->getProperty("navigation_parameters").$child->getProperty("navigation_anchor"));
+                    
+                    $page = new $this->_pageClass();
+                    $page->setUri($path . $child->getProperty("navigation_parameters") . $child->getProperty("navigation_anchor"));
                     $page->setLabel($child->getProperty("navigation_name"));
                     $page->setActive($active);
-                    $page->setId($this->_htmlMenuIdPrefix.$child->getId());
+                    $page->setId($this->_htmlMenuIdPrefix . $child->getId());
                     $page->setClass($child->getProperty("navigation_class"));
                     $page->setTarget($child->getProperty("navigation_target"));
                     $page->setTitle($child->getProperty("navigation_title"));
@@ -103,36 +119,33 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                     $page->setRelation($child->getProperty("navigation_relation"));
                     $page->setDocument($child);
 
-                    if($child->getProperty("navigation_exclude")) {
+                    if ($child->getProperty("navigation_exclude")) {
                         $page->setVisible(false);
                     }
 
-                    if($active and !$isRoot){
-                        $page->setClass($page->getClass()." active");
-                    } else if($active and $isRoot){
-                        $page->setClass($page->getClass()." main mainactive");
-                    } else if ($isRoot){
-                        $page->setClass($page->getClass()." main");
+                    if ($active and !$isRoot) {
+                        $page->setClass($page->getClass() . " active");
+                    } else if ($active and $isRoot) {
+                        $page->setClass($page->getClass() . " main mainactive");
+                    } else if ($isRoot) {
+                        $page->setClass($page->getClass() . " main");
                     }
 
                     if ($child->hasChilds()) {
-                        $childPages = $this->buildNextLevel($child, $page,false);
+                        $childPages = $this->buildNextLevel($child, $page, false);
                         $page->setPages($childPages);
                     }
 
-
                     $pages[] = $page;
 
-                    if($isRoot){
+                    if ($isRoot) {
                         $this->_navigationContainer->addPage($page);
                     }
-
                 }
-
             }
         }
+        
         return $pages;
-
     }
 
 }
