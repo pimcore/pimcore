@@ -113,26 +113,29 @@ pimcore.settings.tagmanagement.panel = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'click' : this.onTreeNodeClick,
+            'click' : this.onTreeNodeClick.bind(this),
             "contextmenu": this.onTreeNodeContextmenu
         };
 
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function () {
+    onTreeNodeClick: function (node) {
+        this.openTag(node.id);
+    },
 
+    openTag: function (id) {
         Ext.Ajax.request({
             url: "/admin/settings/tag-management-get",
             params: {
-                name: this.id
+                name: id
             },
             success: function (response) {
                 var data = Ext.decode(response.responseText);
 
                 var fieldPanel = new pimcore.settings.tagmanagement.item(data, this);
                 pimcore.layout.refresh();
-            }.bind(this.attributes.reference)
+            }.bind(this)
         });
     },
 
@@ -169,6 +172,8 @@ pimcore.settings.tagmanagement.panel = Class.create({
 
                     if(!data || !data.success) {
                         Ext.Msg.alert(t('add_tag'), t('problem_creating_new_tag'));
+                    } else {
+                        this.openTag(data.id);
                     }
                 }.bind(this)
             });

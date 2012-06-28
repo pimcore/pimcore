@@ -113,26 +113,29 @@ pimcore.report.qrcode.panel = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'click' : this.onTreeNodeClick,
+            'click' : this.onTreeNodeClick.bind(this),
             "contextmenu": this.onTreeNodeContextmenu
         };
 
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function () {
+    onTreeNodeClick: function (node) {
+        this.openCode(node.id);
+    },
 
+    openCode: function (id) {
         Ext.Ajax.request({
             url: "/admin/reports/qrcode/get",
             params: {
-                name: this.id
+                name: id
             },
             success: function (response) {
                 var data = Ext.decode(response.responseText);
 
                 var fieldPanel = new pimcore.report.qrcode.item(data, this);
                 pimcore.layout.refresh();
-            }.bind(this.attributes.reference)
+            }.bind(this)
         });
     },
 
@@ -169,6 +172,8 @@ pimcore.report.qrcode.panel = Class.create({
 
                     if(!data || !data.success) {
                         Ext.Msg.alert(t('add_qr_code'), t('problem_creating_new_qrcode'));
+                    } else {
+                        this.openCode(data.id);
                     }
                 }.bind(this)
             });
