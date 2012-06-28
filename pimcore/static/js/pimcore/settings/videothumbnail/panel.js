@@ -113,26 +113,29 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'click' : this.onTreeNodeClick,
+            'click' : this.onTreeNodeClick.bind(this),
             "contextmenu": this.onTreeNodeContextmenu
         };
 
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function () {
+    onTreeNodeClick: function (node) {
+        this.openThumbnail(node.id);
+    },
 
+    openThumbnail: function (id) {
         Ext.Ajax.request({
             url: "/admin/settings/video-thumbnail-get",
             params: {
-                name: this.id
+                name: id
             },
             success: function (response) {
                 var data = Ext.decode(response.responseText);
 
                 var fieldPanel = new pimcore.settings.videothumbnail.item(data, this);
                 pimcore.layout.refresh();
-            }.bind(this.attributes.reference)
+            }.bind(this)
         });
     },
 
@@ -169,6 +172,8 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
                     if(!data || !data.success) {
                         Ext.Msg.alert(t('add_thumbnail'), t('problem_creating_new_thumbnail'));
+                    } else {
+                        this.openThumbnail(data.id);
                     }
                 }.bind(this)
             });

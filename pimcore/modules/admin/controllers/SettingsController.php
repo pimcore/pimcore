@@ -1262,7 +1262,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $pipe->save();
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist));
+        $this->_helper->json(array("success" => !$alreadyExist, "id" => $pipe->getName()));
     }
 
     public function thumbnailDeleteAction () {
@@ -1363,7 +1363,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $pipe->save();
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist));
+        $this->_helper->json(array("success" => !$alreadyExist, "id" => $pipe->getName()));
     }
 
     public function videoThumbnailDeleteAction () {
