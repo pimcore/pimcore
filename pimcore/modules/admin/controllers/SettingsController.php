@@ -1478,7 +1478,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $tag->save();
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist));
+        $this->_helper->json(array("success" => !$alreadyExist, "id" => $tag->getName()));
     }
 
     public function tagManagementDeleteAction () {

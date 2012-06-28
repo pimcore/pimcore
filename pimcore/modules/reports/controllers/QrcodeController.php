@@ -49,7 +49,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
             $code->save();
         }
 
-        $this->_helper->json(array("success" => !$alreadyExist));
+        $this->_helper->json(array("success" => !$alreadyExist, "id" => $code->getName()));
     }
 
     public function deleteAction () {
