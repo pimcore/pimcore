@@ -229,6 +229,8 @@ pimcore.document.tree = Class.create({
                 ref: this
             };
 
+            document_types.sort([ { field : 'priority', direction: 'DESC' }, { field : 'name', direction: 'ASC' } ],'DESC');
+
             document_types.each(function(record) {
                 if (record.get("type") == "page") {
                     this.page.push({

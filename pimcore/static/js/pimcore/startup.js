@@ -131,14 +131,10 @@ Ext.onReady(function() {
         proxy: proxy,
         reader: reader,
         writer: writer,
-        remoteSort: true,
+        remoteSort: false,
         listeners: {
-            write : function(store, action, result, response, rs) {
-            },
-            save: function(store,batch,data){
-                store.sort([ { field : 'priority', direction: 'DESC' }, { field : 'name', direction: 'ASC' } ],'DESC');
-                pimcore.layout.refresh();
-            }
+            write : function(store, action, result, response, rs) {},
+            save: function(store,batch,data){}
         }
     });
     store.load();
