@@ -90,7 +90,8 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $class->setName($this->correctClassname($this->_getParam("name")));
         $class->setUserOwner($this->user->getId());
         $class->save();
-        $this->removeViewRenderer();
+
+        $this->_helper->json(array("success" => true, "id" => $class->getId()));
     }
 
     public function deleteAction() {
@@ -259,7 +260,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $fc->save();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(array("success" => true, "id" => $fc->getKey()));
     }
 
     public function importFieldcollectionAction() {
@@ -423,7 +424,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $fc->save();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(array("success" => true, "id" => $fc->getKey()));
     }
 
     public function importObjectbrickAction() {
