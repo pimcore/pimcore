@@ -109,21 +109,24 @@ pimcore.object.fieldcollection = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'click' : this.onTreeNodeClick,
+            'click' : this.onTreeNodeClick.bind(this),
             "contextmenu": this.onTreeNodeContextmenu
         };
 
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function () {
-        
+    onTreeNodeClick: function (node) {
+        this.openFieldcollection(node.id);
+    },
+
+    openFieldcollection: function (id) {
         Ext.Ajax.request({
             url: "/admin/class/fieldcollection-get",
             params: {
-                id: this.id
+                id: id
             },
-            success: this.attributes.reference.addFieldPanel.bind(this.attributes.reference)
+            success: this.addFieldPanel.bind(this)
         });
     },
 
@@ -169,8 +172,13 @@ pimcore.object.fieldcollection = Class.create({
                 params: {
                     key: value
                 },
-                success: function () {
+                success: function (response) {
                     this.tree.getRootNode().reload();
+
+                    var data = Ext.decode(response.responseText);
+                    if(data && data.success) {
+                        this.openFieldcollection(data.id);
+                    }
                 }.bind(this)
             });
         }

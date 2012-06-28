@@ -109,27 +109,30 @@ pimcore.object.klass = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'click' : this.onTreeNodeClick,
+            'click' : this.onTreeNodeClick.bind(this),
             "contextmenu": this.onTreeNodeContextmenu
         };
 
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function () {
+    onTreeNodeClick: function (node) {
+        this.openClass(node.id);
+    },
 
-        if(Ext.getCmp("pimcore_class_editor_panel_" + this.id)) {
-            this.attributes.reference.getEditPanel().activate(Ext.getCmp("pimcore_class_editor_panel_" + this.id));
+    openClass: function (id) {
+        if(Ext.getCmp("pimcore_class_editor_panel_" + id)) {
+            this.getEditPanel().activate(Ext.getCmp("pimcore_class_editor_panel_" + id));
             return;
         }
 
-        if (this.id > 0) {
+        if (id > 0) {
             Ext.Ajax.request({
                 url: "/admin/class/get",
                 params: {
-                    id: this.id
+                    id: id
                 },
-                success: this.attributes.reference.addClassPanel.bind(this.attributes.reference)
+                success: this.addClassPanel.bind(this)
             });
         }
     },
@@ -175,11 +178,17 @@ pimcore.object.klass = Class.create({
                 params: {
                     name: value
                 },
-                success: function () {
+                success: function (response) {
+
                     this.tree.getRootNode().reload();
 
                     // update object type store
                     pimcore.globalmanager.get("object_types_store").reload();
+
+                    var data = Ext.decode(response.responseText);
+                    if(data && data.success) {
+                        this.openClass(data.id);
+                    }
                 }.bind(this)
             });
         }

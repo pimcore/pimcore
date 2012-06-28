@@ -20,7 +20,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
     /**
      * @var array()
      */
-    public $classDefinitions;
+    public $classDefinitions = array();
 
      /**
      * @var array

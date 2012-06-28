@@ -92,14 +92,17 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         return this.tree;
     },
 
-    onTreeNodeClick: function () {
-        
+    onTreeNodeClick: function (node) {
+        this.openBrick(node.id);
+    },
+
+    openBrick: function (id) {
         Ext.Ajax.request({
             url: "/admin/class/objectbrick-get",
             params: {
-                id: this.id
+                id: id
             },
-            success: this.attributes.reference.addFieldPanel.bind(this.attributes.reference)
+            success: this.addFieldPanel.bind(this)
         });
     },
 
@@ -133,8 +136,13 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                 params: {
                     key: value
                 },
-                success: function () {
+                success: function (response) {
                     this.tree.getRootNode().reload();
+
+                    var data = Ext.decode(response.responseText);
+                    if(data && data.success) {
+                        this.openBrick(data.id);
+                    }
                 }.bind(this)
             });
         }
