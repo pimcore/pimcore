@@ -16,6 +16,7 @@
 include_once("googleApiClient/apiClient.php");
 include_once("googleApiClient/contrib/apiAnalyticsService.php");
 include_once("googleApiClient/contrib/apiSiteVerificationService.php");
+include_once("googleApiClient/contrib/apiCustomsearchService.php");
 
 class Pimcore_Google_Api {
 
@@ -27,20 +28,43 @@ class Pimcore_Google_Api {
         return Pimcore_Config::getSystemConfig()->services->google;
     }
 
-    public static function isConfigured() {
+    public static function isConfigured($type = "service") {
+        if($type == "simple") {
+            return self::isSimpleConfigured();
+        }
 
+        return self::isServiceConfigured();
+    }
+
+    public static function isServiceConfigured() {
         $config = self::getConfig();
 
         if($config->client_id && $config->email && file_exists(self::getPrivateKeyPath())) {
             return true;
         }
-
         return false;
     }
 
-    public static function getClient() {
+    public static function isSimpleConfigured() {
+        $config = self::getConfig();
 
-        if(!self::isConfigured()) {
+        if($config->simpleapikey) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function getClient($type = "service") {
+        if($type == "simple") {
+            return self::getSimpleClient();
+        }
+
+        return self::getServiceClient();
+    }
+
+    public static function getServiceClient () {
+
+        if(!self::isServiceConfigured()) {
             return false;
         }
 
@@ -77,6 +101,21 @@ class Pimcore_Google_Api {
         }
 
         $client->setAccessToken($token);
+        return $client;
+    }
+
+    public static function getSimpleClient() {
+
+        if(!self::isSimpleConfigured()) {
+            return false;
+        }
+
+        $client = new apiClient(array(
+            "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
+        ));
+        $client->setApplicationName("pimcore CMF");
+        $client->setDeveloperKey(Pimcore_Config::getSystemConfig()->services->google->simpleapikey);
+
         return $client;
     }
 }

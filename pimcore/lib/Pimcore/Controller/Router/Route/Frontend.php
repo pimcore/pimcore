@@ -406,6 +406,16 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
     }
 
     public function assemble($data = array(), $reset = false, $encode = true, $partial = false) {
+
+        // this is only to append parameters to an existing document
+        if(!$reset) {
+            $data = array_merge($_GET, $data);
+        }
+
+        if(!empty($data)) {
+            return "?" . array_urlencode($data);
+        }
+
         return "~NOT~SUPPORTED~";
     }
 

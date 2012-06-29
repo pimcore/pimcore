@@ -23,7 +23,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
     public function init () {
         parent::init();
         
-        $client = Pimcore_Google_Api::getClient();
+        $client = Pimcore_Google_Api::getServiceClient();
         if(!$client) {
             die("Google Analytics is not configured");
         }
