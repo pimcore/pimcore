@@ -31,7 +31,11 @@ class OnlineShop_Framework_FilterService_Helper
 
 
         $offset = 0;
-        $pageLimit = $filterDefinition->getPageLimit();
+
+        $pageLimit = $params["perPage"];
+        if (!$pageLimit) {
+            $pageLimit = $filterDefinition->getPageLimit();
+        }
         if(!$pageLimit) {
             $pageLimit = 50;
         }

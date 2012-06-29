@@ -27,7 +27,7 @@ class OnlineShop_Framework_FilterService_NumberRangeSelection extends OnlineShop
                     $value = 0;
                 }
                 foreach($ranges->getData() as $row) {
-                    if($row['from'] <= $value && $row['to'] >= $value) {
+                    if((empty($row['from']) || ($row['from'] <= $value)) && (empty($row['to']) || $row['to'] >= $value)) {
                         $counts[$row['from'] . "_" . $row['to']] += $groupByValue['count'];
                         break;
                     }
