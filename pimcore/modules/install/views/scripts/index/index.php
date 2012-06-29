@@ -11,7 +11,7 @@
 
 <!-- libraries and stylesheets -->
 <link rel="stylesheet" type="text/css" href="/pimcore/static/js/lib/ext/resources/css/ext-all.css"/>
-<link rel="stylesheet" type="text/css" href="/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css"/>
+<link rel="stylesheet" type="text/css" href="/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css"/>
 
 <script type="text/javascript">
     var pimcore_version = "<?php echo Pimcore_Version::getVersion() ?>";
