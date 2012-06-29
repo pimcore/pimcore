@@ -278,6 +278,7 @@ Ext.onReady(function() {
                     layout: "border",
                     border: false,
                     tbar: {
+                        ctCls: "pimcore_panel_toolbar_container",
                         id: "pimcore_panel_toolbar",
                         xtype: "toolbar",
                         border: false
