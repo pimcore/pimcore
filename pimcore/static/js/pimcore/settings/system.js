@@ -855,6 +855,12 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
+                                value: "<b>" + t('google_api_key_service') + "</b>",
+                                cls: "pimcore_extra_label"
+                            },{
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
                                 value: t("google_api_access_description"),
                                 cls: "pimcore_extra_label"
                             },
@@ -886,13 +892,13 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: "<b>" + t('google_maps_api_v3_key'),
+                                value: "<b>" + t('google_api_key_simple') + "</b>",
                                 cls: "pimcore_extra_label"
                             },
                             {
                                 fieldLabel: t('api_key'),
-                                name: 'services.googlemaps.apikey',
-                                value: this.getValue("services.googlemaps.apikey"),
+                                name: 'services.google.simpleapikey',
+                                value: this.getValue("services.google.simpleapikey"),
                                 width: 650
                             },{
                                 xtype: "displayfield",

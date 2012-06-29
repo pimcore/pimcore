@@ -297,15 +297,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
                 ),
                 "services" => array(
-                    "googlemaps" => array(
-                        "apikey" => $values["services.googlemaps.apikey"]
-                    ),
                     "translate" => array(
                         "apikey" => $values["services.translate.apikey"]
                     ),
                     "google" => array(
                         "client_id" => $values["services.google.client_id"],
-                        "email" => $values["services.google.email"]
+                        "email" => $values["services.google.email"],
+                        "simpleapikey" => $values["services.google.simpleapikey"]
                     )
                 ),
                 "cache" => array(
