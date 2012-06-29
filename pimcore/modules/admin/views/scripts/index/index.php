@@ -432,7 +432,7 @@
             language: '<?php echo $this->language; ?>',
             websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
             google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
-            google_maps_api_key: "<?php echo $this->config->services->googlemaps->apikey ?>",
+            google_maps_api_key: "<?php echo $this->config->services->google->simpleapikey ?>",
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
             showCloseConfirmation: true
         };
@@ -440,7 +440,7 @@
     
     
     <?php // 3rd party libraries ?>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $this->config->services->googlemaps->apikey ?>"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $this->config->services->google->simpleapikey ?>"></script>
 
     <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
