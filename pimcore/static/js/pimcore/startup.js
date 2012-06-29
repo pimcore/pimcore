@@ -218,7 +218,7 @@ Ext.onReady(function() {
     
     // STATUSBAR
     var statusbar = new Ext.ux.StatusBar({
-        id: 'statusbar',
+        id: 'pimcore_statusbar',
         statusAlign: 'right'
     });
     
@@ -246,7 +246,7 @@ Ext.onReady(function() {
     }
     
     statusbar.add("->");
-    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#000;">pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
+    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
     if (!empty(pimcore.settings.liveconnectToken)) {
         pimcore.settings.liveconnect.setToken(pimcore.settings.liveconnectToken);

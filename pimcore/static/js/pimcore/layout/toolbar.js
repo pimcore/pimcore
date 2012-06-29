@@ -499,9 +499,7 @@ pimcore.layout.toolbar = Class.create({
             handler: this.logout
         });
         
-        
-        this.toolbar.add("-");
-        
+
         this.toolbar.add(new Ext.Toolbar.Spacer({
             width: "150"
         }));

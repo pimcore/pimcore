@@ -33,18 +33,11 @@
     
     <?php // define stylesheets ?>
     <?php
-        $conf = Pimcore_Config::getSystemConfig();
-
-        $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css";
-        if ($conf->general->theme) {
-            $themeUrl = $conf->general->theme;
-        }
-
         $styles = array(
             "/admin/misc/admin-css",
             "/pimcore/static/css/icons.css",
             "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
-            $themeUrl,
+            "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
             "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.css",
             "/pimcore/static/js/lib/ext-plugins/Notification/notification.css",
             "/pimcore/static/js/lib/ext-plugins/SuperBoxSelect/superboxselect.css",
