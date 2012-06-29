@@ -15,13 +15,19 @@
 
 class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, Iterator {
 
+    /**
+     * @param string $query
+     * @param int $offset
+     * @param int $perPage
+     * @param array $config
+     * @return Pimcore_Google_Cse
+     */
     public function search ($query, $offset = 0, $perPage = 10, $config = array()) {
         $list = new self();
         $list->setConfig($config);
         $list->setOffset($offset);
         $list->setPerPage($perPage);
         $list->setQuery($query);
-        $list->load();
 
         return $list;
     }
@@ -131,6 +137,37 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
         $items = array();
         if(array_key_exists("items", $googleResponse) && is_array($googleResponse["items"])) {
             foreach ($googleResponse["items"] as $item) {
+
+                // check for relation to document or asset
+                // first check for an image
+                if(array_key_exists("pagemap", $item) && is_array($item["pagemap"])) {
+                    if(array_key_exists("cse_image", $item["pagemap"]) && is_array($item["pagemap"]["cse_image"])) {
+                        if($item["pagemap"]["cse_image"][0]) {
+                            // try to get the asset id
+                            if(preg_match("/thumb_([0-9]+)__/", $item["pagemap"]["cse_image"][0]["src"], $matches)) {
+                                $test = $matches;
+                                if($matches[1]) {
+                                    if($image = Asset::getById($matches[1])) {
+                                        if($image instanceof Asset_Image) {
+                                            $item["image"] = $image;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (!array_key_exists("image", $item)) {
+                                $item["image"] = $item["pagemap"]["cse_image"][0]["src"];
+                            }
+                        }
+                    }
+                }
+
+                // now a document
+                $urlParts = parse_url($item["link"]);
+                if($document = Document::getByPath($urlParts["path"])) {
+                    $item["document"] = $document;
+                }
+
                 $items[] = new Pimcore_Google_Cse_Item($item);
             }
         }
