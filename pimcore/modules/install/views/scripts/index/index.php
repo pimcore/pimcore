@@ -5,13 +5,26 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title><?php echo htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
 
+
+    <!-- libraries and stylesheets -->
+    <link rel="stylesheet" type="text/css" href="/pimcore/static/js/lib/ext/resources/css/ext-all.css"/>
+    <link rel="stylesheet" type="text/css" href="/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css"/>
+
+    <style type="text/css">
+        body {
+            background: #323232; /* Old browsers */
+            background: -moz-linear-gradient(top, #323232 0%, #3f3f3f 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#323232), color-stop(100%,#3f3f3f)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #323232 0%,#3f3f3f 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #323232 0%,#3f3f3f 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #323232 0%,#3f3f3f 100%); /* IE10+ */
+            background: linear-gradient(to bottom, #323232 0%,#3f3f3f 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#323232', endColorstr='#3f3f3f',GradientType=0 ); /* IE6-9 */
+        }
+    </style>
 </head>
 
 <body>
-
-<!-- libraries and stylesheets -->
-<link rel="stylesheet" type="text/css" href="/pimcore/static/js/lib/ext/resources/css/ext-all.css"/>
-<link rel="stylesheet" type="text/css" href="/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css"/>
 
 <script type="text/javascript">
     var pimcore_version = "<?php echo Pimcore_Version::getVersion() ?>";

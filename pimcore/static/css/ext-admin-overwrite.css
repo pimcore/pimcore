@@ -25,6 +25,10 @@
     border-bottom: 1px solid #606060;
 }
 
+.pimcore_panel_toolbar_container {
+    border-bottom: 1px solid #000;
+}
+
 .pimcore_main_menu button {
 	font-weight: bold !important;
 	font-size: 12px;
