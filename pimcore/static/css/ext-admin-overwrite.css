@@ -23,6 +23,10 @@
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#323232', endColorstr='#3f3f3f',GradientType=0 ); /* IE6-9 */
 
     border-bottom: 1px solid #606060;
+
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 
 .pimcore_panel_toolbar_container {
