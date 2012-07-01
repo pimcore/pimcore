@@ -286,6 +286,7 @@ Ext.onReady(function() {
                     items: [
                         {
                             region:'west',
+                            ctCls: "pimcore_body_inner",
                             id:'pimcore_panel_tree_left',
                             split:true,
                             width: 250,
