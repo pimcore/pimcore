@@ -838,6 +838,20 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(false);
     }
 
+    public function translationsCleanupAction() {
+
+        $listClass = "Translation_" . ucfirst($this->_getParam("type")) . "_List";
+        if(class_exists($listClass)) {
+
+            $list = new $listClass();
+            $list->cleanup();
+
+            $this->_helper->json(array("success" => true));
+        }
+
+        $this->_helper->json(array("success" => false));
+    }
+
     public function getAvailableLanguagesAction() {
 
         if ($languages = Pimcore_Tool::getValidLanguages()) {

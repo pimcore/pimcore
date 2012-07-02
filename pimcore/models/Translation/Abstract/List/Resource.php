@@ -73,4 +73,19 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
         $this->model->setTranslations($translations);
         return $translations;
     }
+
+    public function cleanup() {
+        $keysToDelete = $this->db->fetchCol("SELECT `key` FROM " . static::getTableName() . " as tbl1 WHERE
+               (SELECT count(*) FROM " . static::getTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
+               = (SELECT count(*) FROM " . static::getTableName() . " WHERE `key` = tbl1.`key`) GROUP BY `key`;");
+
+        if(is_array($keysToDelete) && !empty($keysToDelete)) {
+            $preparedKeys = array();
+            foreach ($keysToDelete as $value) {
+                $preparedKeys[] = $this->db->quote($value);
+            }
+
+            $this->db->delete(static::getTableName(), "`key` IN (" . implode(",", $preparedKeys) . ")");
+        }
+    }
 }
