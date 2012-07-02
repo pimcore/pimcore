@@ -142,16 +142,18 @@ class OnlineShop_Framework_IndexService {
                 foreach($categories as $c) {
                     $parent = $c;
 
-                    if($parent->getOSProductsInParentCategoryVisible()) {
-                        while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory) {
+                    if ($parent != null) {
+                        if($parent->getOSProductsInParentCategoryVisible()) {
+                            while($parent && $parent instanceof OnlineShop_Framework_AbstractCategory) {
+                                $parentCategoryIds[$parent->getId()] = $parent->getId();
+                                $parent = $parent->getParent();
+                            }
+                        } else {
                             $parentCategoryIds[$parent->getId()] = $parent->getId();
-                            $parent = $parent->getParent();
                         }
-                    } else {
-                        $parentCategoryIds[$parent->getId()] = $parent->getId();
-                    }
 
-                    $categoryIds[$c->getId()] = $c->getId();
+                        $categoryIds[$c->getId()] = $c->getId();
+                    }
                 }
             }
 

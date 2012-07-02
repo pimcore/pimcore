@@ -29,7 +29,6 @@ while($count > 0) {
     foreach($products as $p) {
 
         echo "Updating product " . $p->getId() . "\n";
-
         $updater->updateIndex($p);
     }
     $page++;
