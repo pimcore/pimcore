@@ -117,7 +117,11 @@ class Document_Tag_Renderlet extends Document_Tag {
                 "id" => $this->id,
                 "type" => $this->type,
                 "subtype" => $this->subtype,
-                "disableBlockClearing" => true
+
+                // removed this option, because this causes problems when using $this->inc() in the template of the renderlet
+                // I'm not sure why this option is here, passing this setting as an option (config) is still working and is recognized in
+                // Pimcore_Controller_Action_Frontend::preDispatch() / ::postDispatch()
+                //"disableBlockClearing" => true
             );
 
             foreach ($this->options as $key => $value) {
