@@ -171,6 +171,10 @@ pimcore.settings.translations = Class.create({
                 },
                 "->",
                 {
+                    text: t('cleanup'),
+                    handler: this.cleanup.bind(this),
+                    iconCls: "pimcore_icon_cleanup"
+                },{
                     text: t('import_csv'),
                     handler: this.doImport.bind(this),
                     iconCls: "pimcore_icon_import"
@@ -249,6 +253,15 @@ pimcore.settings.translations = Class.create({
             }
 
         }.bind(this));
+    },
+
+    cleanup: function () {
+        Ext.Ajax.request({
+            url: this.cleanupUrl,
+            success: function (response) {
+                this.store.reload();
+            }.bind(this)
+        });
     }
 });
 

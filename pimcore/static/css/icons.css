@@ -1153,3 +1153,8 @@
 .pimcore_icon_qrcode {
     background: url(/pimcore/static/img/icon/qr-code.png) left center no-repeat !important;
 }
+
+.pimcore_icon_cleanup {
+    background: url(/pimcore/static/img/icon/bin.png) left center no-repeat !important;
+}
+

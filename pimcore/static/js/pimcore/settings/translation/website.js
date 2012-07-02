@@ -18,7 +18,7 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
     dataUrl: '/admin/settings/translations',
     exportUrl: '/admin/settings/translations-export',
     importUrl:'/admin/settings/translations-import/?pimcore_admin_sid=' + pimcore.settings.sessionId,
- 
+    cleanupUrl: "/admin/settings/translations-cleanup/type/website",
 
 
    activate: function (filter) {
