@@ -846,6 +846,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $list = new $listClass();
             $list->cleanup();
 
+            Pimcore_Model_Cache::clearTags(array("translator","translate"));
+
             $this->_helper->json(array("success" => true));
         }
 
