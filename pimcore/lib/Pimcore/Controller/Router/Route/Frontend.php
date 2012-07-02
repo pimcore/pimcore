@@ -265,7 +265,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         // Pimcore_Controller_Action_Frontend::getRenderScript()
                         // to determine if a call to an action was made through a staticroute or not
                         // more on that infos see Pimcore_Controller_Action_Frontend::getRenderScript()
-                        $params["staticroute"] = $route;
+                        $params["pimcore_request_source"] = "staticroute";
 
                         break;
                     }
