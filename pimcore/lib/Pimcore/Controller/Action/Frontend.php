@@ -285,7 +285,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
         // initialize translation if required
         $this->initTranslation();
-        // this is for $this->action in templates when they are inside a block element
+
+        // this is for $this->action() in templates when they are inside a block element
         try {
             if (!$this->_getParam("disableBlockClearing")) {
                 $this->parentBlockCurrent = Zend_Registry::get("pimcore_tag_block_current");
@@ -296,6 +297,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             }
         }
         catch (Exception $e) {
+            Logger::debug($e);
         }
     }
 
