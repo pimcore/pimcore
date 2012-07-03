@@ -31,11 +31,12 @@ class Pimcore_Placeholder
     protected static $placeholderSuffix = ';';
 
     /**
-     * Prefix for the Placeholder Classes in the Website directory
+     * Prefixes for the Placeholder Classes
      *
      * @var string
      */
-    protected static $websiteClassPrefix = 'Website_Placeholder_';
+    protected static $placeholderClassPrefixes = array('Pimcore_Placeholder_',
+                                                       'Website_Placeholder_');
 
     /**
      * Contains the document object
@@ -45,14 +46,63 @@ class Pimcore_Placeholder
     protected $document;
 
     /**
+     * Adds a Placeholder class prefix
+     *
+     * @static
+     * @param $classPrefix string
+     * @throws Exception
+     * @return null
+     */
+    public static function addPlaceholderClassPrefix($classPrefix){
+        if(!is_string($classPrefix) || $classPrefix == ''){
+            throw new Exception('$classPrefix has to be a valid string and mustn\'t be empty');
+        }
+
+        self::$placeholderClassPrefixes[] = $classPrefix;
+    }
+
+    /**
+     * Removes a Placeholder class prefix
+     *
+     * @static
+     * @param $classPrefix string
+     * @return bool
+     * @throws Exception
+     */
+    public static function removePlaceholderClassPrefix($classPrefix){
+        if(!is_string($classPrefix) || $classPrefix == ''){
+            throw new Exception('$classPrefix has to be a valid string and mustn\'t be empty');
+        }
+
+        $arrayIndex = array_search($classPrefix,self::$placeholderClassPrefixes);
+
+        if($arrayIndex === false){
+            return false;
+        }else{
+            unset(self::$placeholderClassPrefixes[$arrayIndex]);
+            return true;
+        }
+    }
+
+    /**
+     * Returns the Placeholder class prefixes
+     * @static
+     * @return array
+     */
+    public static function getPlaceholderClassPrefixes(){
+        return array_reverse(self::$placeholderClassPrefixes);
+    }
+
+    /**
      * Sets a custom website class prefix for the Placeholder Classes
      *
      * @static
      * @param $string
+     * @deprecated deprecated since version 1.4.6
      */
     public static function setWebsiteClassPrefix($string)
     {
-        self::$websiteClassPrefix = $string;
+        self::addPlaceholderClassPrefix($string);
     }
 
     /**
@@ -60,10 +110,11 @@ class Pimcore_Placeholder
      *
      * @static
      * @return string
+     * @deprecated deprecated since version 1.4.6
      */
     public static function getWebsiteClassPrefix()
     {
-        return self::$websiteClassPrefix;
+        return self::$placeholderClassPrefixes[1];
     }
 
     /**
@@ -72,13 +123,11 @@ class Pimcore_Placeholder
      * @throws Exception
      * @param string $prefix
      * @return void
+     * @deprecated deprecated since version 1.4.6
      */
     public static function setPlaceholderPrefix($prefix)
     {
-        if (!is_string($prefix)) {
-            throw new Exception("\$prefix mustn'n be empty");
-        }
-        self::$placeholderPrefix = $prefix;
+        self::addPlaceholderClassPrefix($prefix);
     }
 
     /**
@@ -211,18 +260,20 @@ class Pimcore_Placeholder
 
             foreach ($placeholderStack as $placeholder) {
                 $placeholderObject = null;
-                $websiteClass = self::getWebsiteClassPrefix() . $placeholder['placeholderClass'];
-                $pimcoreClass = 'Pimcore_Placeholder_' . $placeholder['placeholderClass'];
+                $placeholderClassPrefixes = self::getPlaceholderClassPrefixes();
+
+                $placeholderObject = null;
+
+                foreach($placeholderClassPrefixes as $classPrefix){
+                    $className = $classPrefix . $placeholder['placeholderClass'];
+                    if(Pimcore_Tool::classExists($className)){
+                        $placeholderObject = new $className();
+                        break;
+                    }
+                }
 
                 if (is_null($stringReplaced)) {
                     $stringReplaced = $placeholder['contentString'];
-                }
-
-                //first try to init the website class -> then the pimcore class
-                if (Pimcore_Tool::classExists($websiteClass)) {
-                    $placeholderObject = new $websiteClass();
-                } elseif (Pimcore_Tool::classExists($pimcoreClass)) {
-                    $placeholderObject = new $pimcoreClass();
                 }
 
                 if ($placeholderObject instanceof Pimcore_Placeholder_Abstract) {
