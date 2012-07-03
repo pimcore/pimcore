@@ -300,6 +300,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
      */
 
     public function count() {
+        $this->getResults();
         return $this->getTotal();
     }
 
