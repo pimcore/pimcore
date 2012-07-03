@@ -121,7 +121,7 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
      */
 
     public function count() {
-        return parent::getTotalCount();
+        return $this->getTotalCount();
     }
 
     public function getItems($offset, $itemCountPerPage) {
