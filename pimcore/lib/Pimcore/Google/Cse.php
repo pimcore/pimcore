@@ -29,8 +29,6 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
         $list->setPerPage($perPage);
         $list->setQuery($query);
 
-        $list->load();
-
         return $list;
     }
 
@@ -126,7 +124,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
 
     public function __construct ($googleResponse = null) {
         if($googleResponse) {
-                $this->readGoogleResponse($googleResponse);
+            $this->readGoogleResponse($googleResponse);
         }
     }
 
@@ -308,7 +306,10 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function getItems($offset, $itemCountPerPage) {
         $this->setOffset($offset);
         $this->setPerPage($itemCountPerPage);
-        return $this->load();
+
+        $items = $this->load();
+
+        return $items;
     }
 
     public function getPaginatorAdapter() {
