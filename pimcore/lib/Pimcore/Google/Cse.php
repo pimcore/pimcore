@@ -29,6 +29,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
         $list->setPerPage($perPage);
         $list->setQuery($query);
 
+        $list->load();
+
         return $list;
     }
 
