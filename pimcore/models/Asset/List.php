@@ -84,9 +84,9 @@ class Asset_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_A
     }
 
     public function getItems($offset, $itemCountPerPage) {
-        parent::setOffset($offset);
-        parent::setLimit($itemCountPerPage);
-        return parent::load();
+        $this->setOffset($offset);
+        $this->setLimit($itemCountPerPage);
+        return $this->load();
     }
 
     public function getPaginatorAdapter() {
