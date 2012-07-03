@@ -100,7 +100,7 @@ class Document_List extends Pimcore_Model_List_Abstract implements Zend_Paginato
      */
 
     public function count() {
-        return parent::getTotalCount();
+        return $this->getTotalCount();
     }
 
     public function getItems($offset, $itemCountPerPage) {
