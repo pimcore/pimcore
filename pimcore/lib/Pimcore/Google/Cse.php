@@ -32,7 +32,6 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
         return $list;
     }
 
-
     /**
      *
      */
@@ -132,7 +131,11 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function readGoogleResponse($googleResponse) {
         $this->setRaw($googleResponse);
 
-        $this->setTotal(intval($googleResponse["searchInformation"]["totalResults"]));
+        $total = intval($googleResponse["searchInformation"]["totalResults"]);
+        if($total > 100) {
+            $total = 100;
+        }
+        $this->setTotal($total);
 
         $items = array();
         if(array_key_exists("items", $googleResponse) && is_array($googleResponse["items"])) {
