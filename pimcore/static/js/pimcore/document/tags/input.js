@@ -42,6 +42,11 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
                 styles["height"] = "auto";
             }
             this.element.getEl().applyStyles(styles);
+
+            // necessary for IE9
+            window.setTimeout(function () {
+                this.element.getEl().repaint();
+            }.bind(this), 300);
         }
     },
 
