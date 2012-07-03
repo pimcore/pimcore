@@ -75,10 +75,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
         $conf = Pimcore_Config::getSystemConfig();
 
-        $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css";
-        if ($conf->general->theme) {
-            $themeUrl = $conf->general->theme;
-        }
+        $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css";
 
         $editmodeStylesheets = array(
             "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
