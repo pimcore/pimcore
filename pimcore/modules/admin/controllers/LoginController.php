@@ -201,7 +201,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         $matches = 0;
 
         foreach ($data as $login) {
-            if ($login[1] == Pimcore_Tool::getClientIp()) {
+            if ($login[1] == Pimcore_Tool::getAnonymizedClientIp()) {
                 if ($login[0] > (time() - 300)) {
                     $matches++;
                 }
@@ -235,7 +235,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         $logfile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/loginerror.log";
         $data = $this->readLogFile();
 
-        $remoteHost = Pimcore_Tool::getClientIp();
+        $remoteHost = Pimcore_Tool::getAnonymizedClientIp();
 
         $data[] = array(
             time(),

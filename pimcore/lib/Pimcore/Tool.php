@@ -459,6 +459,13 @@ class Pimcore_Tool {
         return $ip;
     }
 
+    public static function getAnonymizedClientIp() {
+        $ip = self::getClientIp();
+        $aip = substr($ip, 0, strrpos($ip, ".")+1);
+        $aip .= "255";
+        return $aip;
+    }
+
     /**
      * @static
      * @param $class
