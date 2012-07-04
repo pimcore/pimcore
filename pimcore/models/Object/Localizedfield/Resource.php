@@ -129,14 +129,11 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $defaultView = 'object_' . $this->model->getClass()->getId();
-
-        $mySqlUser = Pimcore_Config::getSystemConfig()->database->params->username;
-        $mySqlHost = Pimcore_Config::getSystemConfig()->database->params->host;
-
+        
         foreach ($languages as $language) {
             try {
 
-                $this->db->query('CREATE OR REPLACE DEFINER=`' . $mySqlUser . '`@`' . $mySqlHost . '` SQL SECURITY DEFINER VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` AND `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
+                $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_' . $language . '` AS SELECT * FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` AND `' . $this->getTableName() . '`.`language` = \'' . $language . '\';');
             }
             catch (Exception $e) {
                 Logger::error($e);
@@ -160,7 +157,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             $furtherSelects = "," . $furtherSelects;
         }
 
-        $this->db->query('CREATE OR REPLACE DEFINER=`' . $mySqlUser . '`@`' . $mySqlHost . '` SQL SECURITY DEFINER VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.* ' . $furtherSelects . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
+        $this->db->query('CREATE OR REPLACE VIEW `object_localized_' . $this->model->getClass()->getId() . '_default` AS SELECT `' . $defaultView . '`.* ' . $furtherSelects . ' FROM `' . $defaultView . '` left JOIN `' . $this->getTableName() . '` ON `' . $defaultView . '`.`o_id` = `' . $this->getTableName() . '`.`ooo_id` GROUP BY `' . $defaultView . '`.`o_id`;');
     }
 
     public function createUpdateTable () {
