@@ -74,8 +74,9 @@ class Pimcore_Log_Maintenance {
      */
     public function httpErrorLogCleanup () {
 
-        // keep the history for 14 days
-        $limit = time() - (14 * 86400);
+        // keep the history for max. 7 days (=> exactly 144h), according to the privacy policy (EU/German Law)
+        // it's allowed to store the IP for 7 days for security reasons (DoS, ...)
+        $limit = time() - (6 * 86400);
 
         $db = Pimcore_Resource::get();
         $db->delete("http_error_log", "date < " . $limit);
