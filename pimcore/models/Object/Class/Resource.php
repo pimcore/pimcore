@@ -240,9 +240,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         // create view
         try {
             //$this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`o_classId` = ' . $this->model->getId() . ';');
-            $mySqlUser = Pimcore_Config::getSystemConfig()->database->params->username;
-            $mySqlHost = Pimcore_Config::getSystemConfig()->database->params->host;
-            $this->db->query('CREATE OR REPLACE DEFINER=`' . $mySqlUser . '`@`' . $mySqlHost . '` SQL SECURITY DEFINER VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
+            $this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
         }
         catch (Exception $e) {
             Logger::debug($e);
