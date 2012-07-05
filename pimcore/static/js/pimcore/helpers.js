@@ -913,6 +913,67 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     uploadWindowCompatible.doLayout();
 };
 
+pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
+
+    if(typeof success != "function") {
+        var success = function () {};
+    }
+
+    if(typeof failure != "function") {
+        var failure = function () {};
+    }
+
+    if(typeof filename != "function") {
+        var filename = "file";
+    }
+
+    var uploadWindowCompatible = new Ext.Window({
+        autoHeight: true,
+        title: t('upload'),
+        closeAction: 'close',
+        width:400,
+        modal: true
+    });
+
+    var uploadForm = new Ext.form.FormPanel({
+        layout: "pimcoreform",
+        fileUpload: true,
+        width: 400,
+        bodyStyle: 'padding: 10px;',
+        items: [{
+            xtype: 'fileuploadfield',
+            emptyText: t("select_a_file"),
+            fieldLabel: t("file"),
+            width: 230,
+            name: 'Filedata',
+            buttonText: "",
+            buttonCfg: {
+                iconCls: 'pimcore_icon_upload_single'
+            },
+            listeners: {
+                fileselected: function () {
+                    uploadForm.getForm().submit({
+                        url: url,
+                        waitMsg: t("please_wait"),
+                        success: function (el, res) {
+                            success(res);
+                            uploadWindowCompatible.close();
+                        },
+                        failure: function (el, res) {
+                            failure(res);
+                            uploadWindowCompatible.close();
+                        }
+                    });
+                }
+            }
+        }]
+    });
+
+    uploadWindowCompatible.add(uploadForm);
+    uploadWindowCompatible.show();
+    uploadWindowCompatible.setWidth(401);
+    uploadWindowCompatible.doLayout();
+};
 
 pimcore.helpers.selectPathInTreeActiveSelections = {};
 pimcore.helpers.selectPathInTree = function (tree, path, callback) {

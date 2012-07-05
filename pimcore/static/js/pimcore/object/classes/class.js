@@ -131,61 +131,23 @@ pimcore.object.classes.klass = Class.create({
 
     upload: function() {
 
-
-        this.uploadWindow = new Ext.Window({
-            layout: 'fit',
-            title: t('import_class_definition'),
-            closeAction: 'close',
-            width:400,
-            height:400,
-            modal: true
+        pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function() {
+            Ext.Ajax.request({
+                url: "/admin/class/get",
+                params: {
+                    id: this.data.id
+                },
+                success: function(response) {
+                    this.data = Ext.decode(response.responseText);
+                    this.parentPanel.getEditPanel().removeAll();
+                    this.addLayout();
+                    this.initLayoutFields();
+                    pimcore.layout.refresh();
+                }.bind(this)
+            });
+        }.bind(this), function () {
+            Ext.MessageBox.alert(t("error"), t("error"));
         });
-
-        var uploadPanel = new Ext.ux.SwfUploadPanel({ 
-            border: false,
-            upload_url: this.getUploadUrl(),
-            debug: false,
-            post_params: {
-                id: this.data.id
-            },
-            flash_url: "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/swfupload.swf",
-            single_select: false,
-            file_queue_limit: 1,
-            file_types: "*.xml",
-            single_file_select: true,
-            confirm_delete: false,
-            remove_completed: true,
-            listeners: {
-                "fileUploadComplete": function (win) {
-
-                    Ext.Ajax.request({
-                        url: "/admin/class/get",
-                        params: {
-                            id: this.data.id
-                        },
-                        success: function(win, response) {
-                            this.data = Ext.decode(response.responseText);
-                            this.parentPanel.getEditPanel().removeAll();
-                            this.addLayout();
-                            this.initLayoutFields();
-                            pimcore.layout.refresh();
-                            win.hide();
-                        }.bind(this, win)
-                    });
-
-
-                }.bind(this, this.uploadWindow)
-            }
-        });
-
-        this.uploadWindow.add(uploadPanel);
-
-
-        this.uploadWindow.show();
-        this.uploadWindow.setWidth(401);
-        this.uploadWindow.doLayout();
-
-
     },
 
     reload: function(response) {

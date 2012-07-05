@@ -533,90 +533,87 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if ($this->getUser()->isAllowed("translations")) {
             $languages = Pimcore_Tool::getValidLanguages();
-            try {
-                //read import data
-                $tmpData = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-                //convert to utf-8 if needed
-                $encoding = Pimcore_Tool_Text::detectEncoding($tmpData);
-                if ($encoding) {
-                    $tmpData = iconv($encoding, "UTF-8", $tmpData);
-                }
-                //store data for further usage
-                $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations";
-                file_put_contents($importFile, $tmpData);
-                chmod($importFile, 0766);
 
-                $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original";
-                file_put_contents($importFileOriginal, $tmpData);
-                chmod($importFileOriginal, 0766);
-
-                // determine csv type
-                $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original");
-                //read data
-                if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations", "r")) !== FALSE) {
-                    while (($rowData = fgetcsv($handle, 10000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                        $data[] = $rowData;
-                    }
-                    fclose($handle);
-                }
-                //process translations
-                if (is_array($data) and count($data) > 1) {
-                    $keys = $data[0];
-                    $data = array_slice($data, 1);
-                    foreach ($data as $row) {
-
-                        $keyValueArray = array();
-                        for ($counter = 0; $counter < count($row); $counter++) {
-                            $rd = str_replace("&quot;", '"', $row[$counter]);
-                            $keyValueArray[$keys[$counter]] = $rd;
-                        }
-
-                        $t = null;
-                        if ($keyValueArray["key"]) {
-                            try {
-                                if ($admin) {
-                                    $t = Translation_Admin::getByKey($keyValueArray["key"]);
-                                } else {
-                                    $t = Translation_Website::getByKey($keyValueArray["key"]);
-                                }
-
-                            }
-                            catch (Exception $e) {
-                                Logger::debug("Unable to find translation with key: " . $keyValueArray["key"]);
-                            }
-                        }
-
-
-                        if (!$t instanceof Translation_Abstract) {
-                            if ($admin) {
-                                $t = new Translation_Admin();
-                            } else {
-                                $t = new Translation_Website();
-                            }
-
-                        }
-
-                        $t->setDate(time());
-                        foreach ($keyValueArray as $key => $value) {
-                            if ($key != "key" && $key != "date" && in_array($key, $languages)) {
-                                $t->addTranslation($key, $value);
-                            }
-                        }
-                        if ($keyValueArray["key"]) {
-                            $t->setKey($keyValueArray["key"]);
-                        }
-                        $t->save();
-                    }
-                    $this->_helper->json(array(
-                        "success" => true
-                    ));
-                } else {
-                    throw new Exception("less than 2 rows of data - nothing to import");
-                }
-            } catch (Exception $e) {
-                Logger::error($e);
-                $this->_helper->json(false);
+            //read import data
+            $tmpData = file_get_contents($_FILES["Filedata"]["tmp_name"]);
+            //convert to utf-8 if needed
+            $encoding = Pimcore_Tool_Text::detectEncoding($tmpData);
+            if ($encoding) {
+                $tmpData = iconv($encoding, "UTF-8", $tmpData);
             }
+            //store data for further usage
+            $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations";
+            file_put_contents($importFile, $tmpData);
+            chmod($importFile, 0766);
+
+            $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original";
+            file_put_contents($importFileOriginal, $tmpData);
+            chmod($importFileOriginal, 0766);
+
+            // determine csv type
+            $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original");
+            //read data
+            if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations", "r")) !== FALSE) {
+                while (($rowData = fgetcsv($handle, 10000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                    $data[] = $rowData;
+                }
+                fclose($handle);
+            }
+            //process translations
+            if (is_array($data) and count($data) > 1) {
+                $keys = $data[0];
+                $data = array_slice($data, 1);
+                foreach ($data as $row) {
+
+                    $keyValueArray = array();
+                    for ($counter = 0; $counter < count($row); $counter++) {
+                        $rd = str_replace("&quot;", '"', $row[$counter]);
+                        $keyValueArray[$keys[$counter]] = $rd;
+                    }
+
+                    $t = null;
+                    if ($keyValueArray["key"]) {
+                        try {
+                            if ($admin) {
+                                $t = Translation_Admin::getByKey($keyValueArray["key"]);
+                            } else {
+                                $t = Translation_Website::getByKey($keyValueArray["key"]);
+                            }
+
+                        }
+                        catch (Exception $e) {
+                            Logger::debug("Unable to find translation with key: " . $keyValueArray["key"]);
+                        }
+                    }
+
+
+                    if (!$t instanceof Translation_Abstract) {
+                        if ($admin) {
+                            $t = new Translation_Admin();
+                        } else {
+                            $t = new Translation_Website();
+                        }
+
+                    }
+
+                    $t->setDate(time());
+                    foreach ($keyValueArray as $key => $value) {
+                        if ($key != "key" && $key != "date" && in_array($key, $languages)) {
+                            $t->addTranslation($key, $value);
+                        }
+                    }
+                    if ($keyValueArray["key"]) {
+                        $t->setKey($keyValueArray["key"]);
+                    }
+                    $t->save();
+                }
+                $this->_helper->json(array(
+                    "success" => true
+                ));
+            } else {
+                throw new Exception("less than 2 rows of data - nothing to import");
+            }
+
 
         } else {
             Logger::err("user [" . $this->getUser()->getId() . "] attempted to import translations csv, but has no permission to do so.");
