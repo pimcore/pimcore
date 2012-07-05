@@ -88,7 +88,9 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             } else*/
             if($this->getFormat() == "mp4") {
                 // `-coder 0 -bf 0 -flags2 -wpred-dct8x8 -wpredp 0´ is the same as to -vpre baseline, using this to avid problems with missing preset files
-                $arguments = "-strict experimental -f mp4 -vcodec libx264 -coder 0 -bf 0 -flags2 -wpred-dct8x8 -wpredp 0 -acodec aac -g 100 " . $arguments;
+                // Some flags used were deprecated already
+                // todo set the -x264opts flag correctly and get profiles working as they should.
+                $arguments = "-strict experimental -f mp4 -vcodec libx264 baseline -acodec aac -g 100 " . $arguments;
             } else if($this->getFormat() == "webm") {
                 $arguments = "-f webm -vcodec libvpx -acodec libvorbis -ar 44000 -g 100 " . $arguments;
             } else {
