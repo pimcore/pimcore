@@ -286,23 +286,16 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset->setCustomSetting("thumbnails",null);
 
         if ($asset->isAllowed("publish")) {
+            $asset->save();
 
-            try {
-                $asset->save();
-
-                $this->_helper->json(array(
-                    "id" => $asset->getId(),
-                    "path" => $asset->getPath() . $asset->getFilename(),
-                    "success" => true
-                ));
-            } catch (Exception $e) {
-                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
-            }
-
-
+            $this->_helper->json(array(
+                "id" => $asset->getId(),
+                "path" => $asset->getPath() . $asset->getFilename(),
+                "success" => true
+            ));
+        } else {
+            throw new Exception("missing permission");
         }
-
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
     public function addFolderAction() {

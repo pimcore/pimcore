@@ -199,42 +199,11 @@ pimcore.settings.translations = Class.create({
     },
 
     doImport:function(){
-
-        if (!this.uploadWindow) {
-            this.uploadWindow = new Ext.Window({
-                layout: 'fit',
-                title: 'Upload',
-                closeAction: 'hide',
-                width:400,
-                height:170,
-                modal: true
-            });
-
-            var uploadPanel = new Ext.ux.SwfUploadPanel({
-                border: false,
-                upload_url: this.importUrl,
-                debug: true,
-                flash_url: "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/swfupload.swf",
-                single_select: false,
-                file_queue_limit: 1,
-                file_types: "*.csv",
-                single_file_select: true,
-                confirm_delete: false,
-                remove_completed: true,
-                listeners: {
-                    "fileUploadComplete": function (translations,grid,upload) {
-                        this.hide();
-                        translations.store.reload();
-                    }.bind(this.uploadWindow, this)
-                }
-            });
-
-            this.uploadWindow.add(uploadPanel);
-        }
-
-        this.uploadWindow.show();
-        this.uploadWindow.setWidth(401);
-        this.uploadWindow.doLayout();
+        pimcore.helpers.uploadDialog(this.importUrl, "Filedata", function() {
+            this.store.reload();
+        }.bind(this), function () {
+            Ext.MessageBox.alert(t("error"), t("error"));
+        });
     },
 
     doExport:function(){

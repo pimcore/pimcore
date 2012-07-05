@@ -346,44 +346,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     upload: function () {
 
-        var extension = "*." + pimcore.helpers.getFileExtension(this.data.filename);
-
-        if (!this.uploadWindow) {
-            this.uploadWindow = new Ext.Window({
-                layout: 'fit',
-                title: 'Upload',
-                closeAction: 'hide',
-                width:400,
-                height:170,
-                modal: true
-            });
-
-            var uploadPanel = new Ext.ux.SwfUploadPanel({
-                border: false,
-                upload_url: '/admin/asset/replace-asset/?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.data.id,
-                post_params: { parentId: this.id },
-                debug: false,
-                flash_url: "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/swfupload.swf",
-                single_select: false,
-                file_queue_limit: 1,
-                file_types: extension,
-                single_file_select: true,
-                confirm_delete: false,
-                remove_completed: true,
-                listeners: {
-                    "fileUploadComplete": function (asset) {
-                        this.hide();
-                        asset.reload();
-                    }.bind(this.uploadWindow, this)
-                }
-            });
-
-            this.uploadWindow.add(uploadPanel);
-        }
-
-        this.uploadWindow.show();
-        this.uploadWindow.setWidth(401);
-        this.uploadWindow.doLayout();
+        pimcore.helpers.uploadDialog('/admin/asset/replace-asset/?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.data.id, "Filedata", function() {
+            this.reload();
+        }.bind(this), function () {
+            Ext.MessageBox.alert(t("error"), t("error"));
+        });
     },
 
     isAllowed : function (key) {
