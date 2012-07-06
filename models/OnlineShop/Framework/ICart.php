@@ -60,6 +60,16 @@ interface OnlineShop_Framework_ICart {
     public function clear();
 
     /**
+     * calculates amount of items in cart
+     *
+     * @abstract
+     * @param bool $countSubItems
+     *
+     * @return int
+     */
+    public function getItemAmount($countSubItems = false);
+
+    /**
      * returns price calculator of cart
      *
      * @abstract

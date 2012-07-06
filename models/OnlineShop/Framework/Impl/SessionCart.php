@@ -1,6 +1,6 @@
 <?php
 
-class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements OnlineShop_Framework_ICart {
+class OnlineShop_Framework_Impl_SessionCart extends Pimcore_Model_Abstract implements OnlineShop_Framework_ICart {
 
     protected $items = array();
     public $checkoutData = array();
@@ -19,7 +19,6 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     protected $priceCalcuator;
 
     public function addItem(OnlineShop_Framework_AbstractProduct $product, $count, $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
-
         if(empty($itemKey)) {
             $itemKey = $product->getId();
 
@@ -35,9 +34,10 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
+
         $item = $this->items[$itemKey];
         if (empty($item)) {
-            $item = new OnlineShop_Framework_Impl_CartItem();
+            $item = new OnlineShop_Framework_Impl_SessionCartItem();
             $item->setCart($this);
         }
 
@@ -76,7 +76,6 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
     public function clear() {
         $this->itemAmount = null;
         $this->subItemAmount = null;
-
         $this->items = array();
     }
 
@@ -183,8 +182,6 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         }
     }
 
-
-
     public function setCreationDateTimestamp($creationDateTimestamp) {
         $this->creationDateTimestamp = $creationDateTimestamp;
         $this->creationDate = null;
@@ -202,12 +199,13 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
 
     public function save() {
         $this->getResource()->save();
-        OnlineShop_Framework_Impl_CartItem::removeAllFromCart($this->getId());
+        OnlineShop_Framework_Impl_SessionCartItem::removeAllFromCart($this->getId());
         foreach ($this->items as $item) {
             $item->save();
         }
 
-        OnlineShop_Framework_Impl_CartCheckoutData::removeAllFromCart($this->getId());
+
+        OnlineShop_Framework_Impl_SessionCartCheckoutData::removeAllFromCart($this->getId());
         foreach ($this->checkoutData as $data) {
             $data->save();
         }
@@ -217,11 +215,11 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      * @return void
      */
     public function delete() {
-        $cacheKey = OnlineShop_Framework_Impl_Cart_Resource::TABLE_NAME . "_" . $this->getId();
+        $cacheKey = "SessionCart_" . $this->getId();
         Zend_Registry::set($cacheKey, null);
 
-        OnlineShop_Framework_Impl_CartItem::removeAllFromCart($this->getId());
-        OnlineShop_Framework_Impl_CartCheckoutData::removeAllFromCart($this->getId());
+        OnlineShop_Framework_Impl_SessionCartItem::removeAllFromCart($this->getId());
+        OnlineShop_Framework_Impl_SessionCartCheckoutData::removeAllFromCart($this->getId());
         
         $this->getResource()->delete();
     }
@@ -246,7 +244,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      * @return void
      */
     public function setCheckoutData($key, $data) {
-        $value = new OnlineShop_Framework_Impl_CartCheckoutData();
+        $value = new OnlineShop_Framework_Impl_SessionCartCheckoutData();
         $value->setCart($this);
         $value->setKey($key);
         $value->setData($data);
@@ -259,20 +257,18 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      * @return OnlineShop_Framework_Impl_Cart
      */
     public static function getById($id) {
-        $cacheKey = OnlineShop_Framework_Impl_Cart_Resource::TABLE_NAME . "_" . $id;
+        $cacheKey = "SessionCart_" . $id;
         try {
             $cart = Zend_Registry::get($cacheKey);
         }
         catch (Exception $e) {
 
             try {
-                $cart = new self();
+                $cart = new static();
                 $cart->getResource()->getById($id);
 
-
-                $itemList = new OnlineShop_Framework_Impl_CartItem_List();
-                $db = Pimcore_Resource::get();
-                $itemList->setCondition("cartId = " . $db->quote($cart->getId()) . " AND parentItemKey = ''");
+                $itemList = new OnlineShop_Framework_Impl_SessionCartItem_List();
+                $itemList->setCondition("cartId=" . $cart->getId() . "||parentItemKey=''");
                 $items = array();
                 foreach ($itemList->getCartItems() as $item) {
                     if ($item->getProduct() != null) {
@@ -284,17 +280,14 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
                 }
                 $cart->setItems($items);
 
-                $dataList = new OnlineShop_Framework_Impl_CartCheckoutData_List();
-                $dataList->setCondition("cartId = " . $db->quote($cart->getId()));
-
-
-                foreach ($dataList->getCartCheckoutDataItems() as $data) {
-                    $cart->setCheckoutData($data->getKey(), $data->getData());
+                $dataList = new OnlineShop_Framework_Impl_SessionCartCheckoutData_List();
+                $dataList->setCondition("cartId=" . $cart->getId());
+                foreach ($dataList->getCartCheckoutDataItems() as $checkoutDataItem) {
+                    $cart->setCheckoutData($checkoutDataItem->getKey(), $checkoutDataItem->getData());
                 }
 
                 Zend_Registry::set($cacheKey, $cart);
             } catch (Exception $ex) {
-                echo $ex;
                 Logger::debug($ex->getMessage());
                 return null;
             }
@@ -310,10 +303,11 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
      * @return array
      */
     public static function getAllCartsForUser($userId) {
-        $list = new OnlineShop_Framework_Impl_Cart_List();
-        $db = Pimcore_Resource::get();
-        $list->setCondition("userid = " . $db->quote($userId));
-        return $list->getCarts();
+        $carts = new Zend_Session_Namespace('carts');
+        foreach ($carts as $cart) {
+            $cartList[] = self::getById($cart->id);
+        }
+        return $cartList;
     }
 
     /**
@@ -326,5 +320,13 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         }
 
         return $this->priceCalcuator;
+    }
+
+    public function setValues($data) {
+        if ($data instanceof stdClass && count($data) > 0) {
+            foreach ($data as $key => $value) {
+                $this->setValue($key,$value);
+            }
+        }
     }
 }
