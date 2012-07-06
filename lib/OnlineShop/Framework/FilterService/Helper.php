@@ -88,8 +88,9 @@ class OnlineShop_Framework_FilterService_Helper
             $productList->setOrder("ASC");
         }
 
-        $view->currentFilter = $filterService->initFilterService($view->filterDefinitionObject, $productList, $params);
-
+        if($filterService) {
+            $view->currentFilter = $filterService->initFilterService($view->filterDefinitionObject, $productList, $params);
+        }
 
 
 
