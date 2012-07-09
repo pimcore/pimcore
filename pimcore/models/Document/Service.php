@@ -46,8 +46,8 @@ class Document_Service extends Element_Service {
      */
     public static function render(Document $document, $params = array(), $useLayout = false)
     {
-        $layoutEnabledInCurrentAction = (Zend_Layout::getMvcInstance() instanceof Zend_Layout) ? true : false;
-
+        $layoutInCurrentAction = (Zend_Layout::getMvcInstance() instanceof Zend_Layout) ? Zend_Layout::getMvcInstance()->getLayout() : false;
+        
         $viewHelper = Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
         if($viewHelper) {
             if($viewHelper->view === null) {
@@ -109,11 +109,12 @@ class Document_Service extends Element_Service {
                 //deactivate the layout if it was not activated in the called action
                 //otherwise we would activate the layout in the called action
                 Zend_Layout::resetMvcInstance();
-                if (!$layoutEnabledInCurrentAction) {
+                if (!$layoutInCurrentAction) {
                     $layout->disableLayout();
                 } else {
                     $layout = Zend_Layout::startMvc();
                     $layout->setViewSuffix(Pimcore_View::getViewScriptSuffix()); // set pimcore specifiy view suffix
+                    $layout->setLayout($layoutInCurrentAction);
                     $view->getHelper("Layout")->setLayout($layout);
                 }
                 $layout->{$layout->getContentKey()} = null; //reset content
