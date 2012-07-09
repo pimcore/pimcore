@@ -55,7 +55,7 @@ if ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 
 if ($browser->getBrowser() == Pimcore_Browser::BROWSER_CHROME && $browserVersion >= 5) {
     $supported = true;
 }
-if ($browser->getBrowser() == Pimcore_Browser::BROWSER_SAFARI && $browserVersion >= 4 && $platform == Pimcore_Browser::PLATFORM_WINDOWS) {
+if ($browser->getBrowser() == Pimcore_Browser::BROWSER_SAFARI && $browserVersion >= 4) {
     $supported = true;
 }
 
