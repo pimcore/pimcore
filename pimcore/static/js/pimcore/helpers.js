@@ -956,6 +956,8 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
                         url: url,
                         waitMsg: t("please_wait"),
                         success: function (el, res) {
+                            // content-type in response has to be text/html, otherwise (when application/json is sent) chrome will complain in
+                            // Ext.form.Action.Submit and mark the submission as failed
                             success(res);
                             uploadWindowCompatible.close();
                         },

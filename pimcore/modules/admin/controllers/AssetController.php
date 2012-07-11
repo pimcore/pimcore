@@ -292,7 +292,12 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 "id" => $asset->getId(),
                 "path" => $asset->getPath() . $asset->getFilename(),
                 "success" => true
-            ));
+            ), false);
+
+            // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+            // Ext.form.Action.Submit and mark the submission as failed
+            $this->getResponse()->setHeader("Content-Type", "text/html");
+
         } else {
             throw new Exception("missing permission");
         }

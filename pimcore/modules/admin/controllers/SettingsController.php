@@ -609,7 +609,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 }
                 $this->_helper->json(array(
                     "success" => true
-                ));
+                ), false);
+
+                // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+                // Ext.form.Action.Submit and mark the submission as failed
+                $this->getResponse()->setHeader("Content-Type", "text/html");
+
             } else {
                 throw new Exception("less than 2 rows of data - nothing to import");
             }
