@@ -132,7 +132,11 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json(array(
             "success" => true
-        ));
+        ), false);
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
     }
 
 
@@ -279,8 +283,11 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json(array(
             "success" => true
-        ));
+        ), false);
 
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
     }
 
     public function exportFieldcollectionAction() {
@@ -443,8 +450,11 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json(array(
             "success" => true
-        ));
+        ), false);
 
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
     }
 
     public function exportObjectbrickAction() {
