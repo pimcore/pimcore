@@ -156,6 +156,11 @@
 	cursor:pointer;
 }
 
+/* all ext windows have to be above the dnd masks (wysiwyg, iframe) */
+.x-window {
+    z-index: 10003 !important;
+}
+
 .pimcore_wysiwyg_mask {
 	position: absolute;
 	z-index: 10001;
