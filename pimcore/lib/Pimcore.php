@@ -773,10 +773,8 @@ class Pimcore {
     public static function outputBufferEnd ($data) {
 
         $contentEncoding = null;
-        if( strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'x-gzip') !== false ) {
-            $contentEncoding = 'x-gzip';
-        } else if( strpos($_SERVER["HTTP_ACCEPT_ENCODING"],'gzip') !== false ) {
-            $contentEncoding = 'gzip';
+        if( preg_match('@(?:^|,)\\s*((?:x-)?gzip)\\s*(?:$|,|;\\s*q=(?:0\\.|1))@' ,$_SERVER["HTTP_ACCEPT_ENCODING"] ,$m) ) {
+            $contentEncoding = $m[1];
         }
 
         // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
