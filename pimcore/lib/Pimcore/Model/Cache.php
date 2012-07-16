@@ -142,6 +142,9 @@ class Pimcore_Model_Cache {
         // reset default lifetime
         self::$instance->setLifetime(self::$defaultLifetime);
 
+        // turn of automatic serialization this is handled directly in this wrapper (self)
+        self::$instance->setOption("automatic_serialization", false);
+
         return self::$instance;
     }
 
