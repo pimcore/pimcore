@@ -141,7 +141,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             width: 'auto',
             value: this.datax.visibleFields,
             displayField: "key",
-            valueField: "key"
+            valueField: "key",
+            width: 300
         });
         this.specificPanel.add(this.fieldSelect);
 

@@ -120,7 +120,8 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
             value: classes.join(","),
             displayField: "text",
             valueField: "text",
-            store: classesStore
+            store: classesStore,
+            width: 300
         }));
 
         return this.layout;
