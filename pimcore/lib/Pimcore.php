@@ -55,8 +55,6 @@ class Pimcore {
         // to log if there's something wrong with the cache configuration in cache.xml
         Zend_Locale_Data::setCache(Pimcore_Model_Cache::getInstance());
         Zend_Locale::setCache(Pimcore_Model_Cache::getInstance());
-        Zend_Paginator::setCache(Pimcore_Model_Cache::getInstance());
-        Zend_Translate::setCache(Pimcore_Model_Cache::getInstance());
 
         // load plugins and modules (=core plugins)
         self::initModules();

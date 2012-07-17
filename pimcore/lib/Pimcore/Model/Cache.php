@@ -142,8 +142,8 @@ class Pimcore_Model_Cache {
         // reset default lifetime
         self::$instance->setLifetime(self::$defaultLifetime);
 
-        // turn of automatic serialization this is handled directly in this wrapper (self)
-        self::$instance->setOption("automatic_serialization", false);
+        // always enable the automatic_serialization in this case Pimcore_Tool_Serialize is not used
+        self::$instance->setOption("automatic_serialization", true);
 
         return self::$instance;
     }
@@ -206,9 +206,6 @@ class Pimcore_Model_Cache {
 
             $key = self::$cachePrefix . $key;
             $data = $cache->load($key, $doNotTestCacheValidity);
-
-            // unserialize data, use custom serializer
-            $data = Pimcore_Tool_Serialize::unserialize($data);
 
             if(is_object($data)) {
                 $data->____pimcore_cache_item__ = $key;
@@ -303,9 +300,6 @@ class Pimcore_Model_Cache {
             if(is_object($data) && isset($data->____pimcore_cache_item__)) {
                 unset($data->____pimcore_cache_item__);
             }
-
-            // serialize data, use custom serializer
-            $data = Pimcore_Tool_Serialize::serialize($data);
 
             $key = self::$cachePrefix . $key;
             $success = $cache->save($data, $key, $tags);
