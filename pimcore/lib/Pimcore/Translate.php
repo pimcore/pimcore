@@ -93,6 +93,9 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
      */
     public function translate($messageId, $locale = null) {
 
+        $messageIdOriginal = $messageId;
+        $messageId = strtolower($messageId);
+
         // the maximum length of message-id's is 255
         if(strlen($messageId) > 255) {
             throw new Exception("Pimcore_Translate: Message ID's longer than 255 characters are invalid!");
@@ -106,13 +109,13 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
             $this->_loadTranslationData(null,$locale);
         }
         
-        if (!empty($this->_translate[$locale][strtolower($messageId)])) {
+        if (!empty($this->_translate[$locale][$messageId])) {
             // return original translation
-            return $this->_translate[$locale][strtolower($messageId)];
+            return $this->_translate[$locale][$messageId];
         }
         else {
             // check if there is a translation in a lower step
-            $keyParts = explode(".", strtolower($messageId));
+            $keyParts = explode(".", $messageId);
 
             if (count($keyParts) > 1) {
                 krsort($keyParts);
@@ -129,12 +132,12 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         }
 
         // do not create a new translation if it is only empty, but do not return empty values
-        if(!array_key_exists(strtolower($messageId), $this->_translate[$locale])) {
+        if(!array_key_exists($messageId, $this->_translate[$locale])) {
             $this->createEmptyTranslation($locale, $messageId);
         }
 
         // no translation found, return original
-        return $messageId;
+        return $messageIdOriginal;
     }
 
     /**
@@ -155,15 +158,25 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         if (Pimcore_Tool::isValidLanguage($locale)) {
             try {
                 $t = $class::getByKey($messageId);
+                $t->addTranslation($locale, "");
             }
             catch (Exception $e) {
                 $t = new $class();
                 $t->setKey($messageId);
+
+                // add all available languages
+                $availableLanguages = (array) Pimcore_Tool::getValidLanguages();
+                foreach ($availableLanguages as $language) {
+                    $t->addTranslation($language, "");
+                }
             }
 
-            $t->addTranslation($locale, "");
             $t->save();
         }
+
+        // put it into the store, otherwise when there are more calls to the same key during one process
+        // the key would be inserted/updated several times, what would be redundant
+        $this->_translate[$locale][$messageId] = $messageId;
     }
 
     /**
