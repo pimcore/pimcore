@@ -195,7 +195,8 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         value: allowedDocuments.join(","),
                         displayField: "text",
                         valueField: "text",
-                        store: documentTypeStore
+                        store: documentTypeStore,
+                        width: 300
                     })
                 ]
             },
@@ -233,7 +234,8 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         value: allowedAssets.join(","),
                         displayField: "text",
                         valueField: "text",
-                        store: assetTypeStore
+                        store: assetTypeStore,
+                        width: 300
                     }), {
                         fieldLabel: t("upload_path"),
                         name: "assetUploadPath",
@@ -301,7 +303,8 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         value: allowedClasses.join(","),
                         displayField: "text",
                         valueField: "text",
-                        store: classesStore
+                        store: classesStore,
+                        width: 300
                     })
                 ]
             }
