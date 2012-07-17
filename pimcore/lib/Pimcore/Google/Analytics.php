@@ -34,9 +34,11 @@ class Pimcore_Google_Analytics {
         return false;
     }
     
-    public static function getCode () {
+    public static function getCode ($config = null) {
                 
-        $config = self::getSiteConfig();
+        if(is_null($config)){
+            $config = self::getSiteConfig();
+        }
         
         // do nothing if not configured
         if(!$config || !$config->trackid) {
