@@ -641,7 +641,11 @@ class Pimcore_API_Plugin_Broker {
                             $pluginTranslations[$data[0]] = $data[1];
                         }
                         fclose($handle);
-                        $translations = array_merge($translations, $pluginTranslations);
+
+                        if(is_array($pluginTranslations)){
+                            $translations = array_merge($translations, $pluginTranslations);
+                        }
+
                     }
                 }
             } catch (Exception $e) {
