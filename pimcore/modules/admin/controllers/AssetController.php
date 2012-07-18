@@ -1195,6 +1195,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $parts = array_slice($parts, 1);
             $parentPath = "/";
             foreach ($parts as $part) {
+                if($part == ''){
+                    continue;
+                }
+
                 $parent = Asset_Folder::getByPath($parentPath);
                 if ($parent instanceof Asset_Folder) {
 
