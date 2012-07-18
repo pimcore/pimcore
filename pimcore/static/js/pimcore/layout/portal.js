@@ -88,6 +88,7 @@ pimcore.layout.portal = Class.create({
                 border: false,
                 iconCls: "pimcore_icon_welcome",
                 closable:true,
+                autoScroll: true,
                 tbar: {
                     items: ["->",{
                         text: t("add_portlet"),
