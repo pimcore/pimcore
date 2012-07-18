@@ -65,15 +65,23 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
                 if($offset) {
                     $config["start"] = $offset + 1;
                 }
-                if($perPage) {
-                    $config["num"] = $perPage;
+                if(empty($perPage)) {
+                    $perPage = 10;
                 }
+
+                $config["num"] = $perPage;
 
                 $cacheKey = "google_cse_" . md5($query . serialize($config));
 
-                if(!$result = Pimcore_Model_Cache::load($cacheKey)) {
-                    $result = $search->cse->listCse($query, $config);
-                    Pimcore_Model_Cache::save($result, $cacheKey, array("google_cse"), 3600, 999);
+                // this is just a protection so that no query get's sent twice in a request (loops, ...)
+                if(Zend_Registry::isRegistered($cacheKey)) {
+                    $result = Zend_Registry::get($cacheKey);
+                } else {
+                    if(!$result = Pimcore_Model_Cache::load($cacheKey)) {
+                        $result = $search->cse->listCse($query, $config);
+                        Pimcore_Model_Cache::save($result, $cacheKey, array("google_cse"), 3600, 999);
+                        Zend_Registry::set($cacheKey, $result);
+                    }
                 }
 
                 $this->readGoogleResponse($result);
