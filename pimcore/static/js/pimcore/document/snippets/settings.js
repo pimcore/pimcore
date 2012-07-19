@@ -26,7 +26,7 @@ pimcore.document.snippets.settings = Class.create({
 
             var docTypeStore = new Ext.data.JsonStore({
                 url: '/admin/document/get-doc-types?type=snippet',
-                fields: ["id","name","controller","action","template"],
+                fields: ["id","name","module","controller","action","template"],
                 root: "docTypes"
             });
 
@@ -186,7 +186,7 @@ pimcore.document.snippets.settings = Class.create({
     },
 
     setDocumentType: function (field, newValue, oldValue) {
-        var allowedFields = ["controller","action","template"];
+        var allowedFields = ["module","controller","action","template"];
         var form = this.getLayout().getForm();
         var element = null;
 
@@ -206,7 +206,7 @@ pimcore.document.snippets.settings = Class.create({
             throw "settings not available";
         }
 
-        var fields = ["controller","action","template"];
+        var fields = ["module","controller","action","template"];
         var form = this.getLayout().getForm();
         var element = null;
 
