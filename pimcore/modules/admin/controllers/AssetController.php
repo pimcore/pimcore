@@ -81,7 +81,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                         $imageInfo["exif"] = array();
                         foreach($exif as $name => $value) {
                             if((is_string($value) && strlen($value) < 50) || is_numeric($value)) {
-                                $imageInfo["exif"][$name] = $value;
+                                // this is to ensure that the data can be converted to json (must be utf8)
+                                if(mb_check_encoding($value, "UTF-8")) {
+                                    $imageInfo["exif"][$name] = $value;
+                                }
                             }
                         }
                     }
