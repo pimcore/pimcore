@@ -218,9 +218,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
         $this->_helper->json(array(
             "success" => true,
-            "response" => $response->getBody(),
-            "checksum" => md5_file(str_replace("/",DIRECTORY_SEPARATOR,$this->_getParam("path"))),
-            "content" => file_get_contents(str_replace("/",DIRECTORY_SEPARATOR,$this->_getParam("path")))
+            "response" => $response->getBody()
         ));
     }
 
