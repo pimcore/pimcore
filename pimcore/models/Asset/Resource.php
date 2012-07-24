@@ -41,14 +41,13 @@ class Asset_Resource extends Element_Resource {
      * @return void
      */
     public function getById($id) {
-        $data = $this->db->fetchRow("SELECT * FROM assets WHERE id = ?", $id);
+        $data = $this->db->fetchRow("SELECT assets.*, tree_locks.locked FROM assets
+            LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
+                WHERE assets.id = ?", $id);
+
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
-
-            // add tree-lock
-            $this->model->setLocked($this->db->fetchOne("SELECT locked FROM tree_locks WHERE id = ? AND type = ?", array($this->model->getId(), "asset")));
-        }
-        else {
+        } else {
             throw new Exception("Asset with ID " . $id . " doesn't exists");
         }
     }
