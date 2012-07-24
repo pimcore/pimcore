@@ -40,11 +40,12 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return void
      */
     public function getById($id) {
-        $data = $this->db->fetchRow("SELECT * FROM objects WHERE o_id = ?", $id);
+        $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
+            LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
+                WHERE o_id = ?", $id);
+
         if ($data["o_id"]) {
             $this->assignVariablesToModel($data);
-
-            $this->loadLocks();
         }
         else {
             throw new Exception("Object with the ID " . $id . " doesn't exists");
@@ -313,11 +314,6 @@ class Object_Abstract_Resource extends Element_Resource {
 
 
         return false;
-    }
-
-    public function loadLocks() {
-        // add tree-lock
-        $this->model->setO_locked($this->db->fetchOne("SELECT locked FROM tree_locks WHERE id = ? AND type = ?", array($this->model->getId(), "object")));
     }
 
     public function getClasses() {

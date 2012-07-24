@@ -45,13 +45,13 @@ class Object_Concrete_Resource extends Object_Abstract_Resource {
      */
     public function getById($id) {
         try {
-            $data = $this->db->fetchRow("SELECT * FROM objects WHERE o_id = ?", $id);
+            $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
+                LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
+                    WHERE o_id = ?", $id);
 
             if ($data["o_id"]) {
                 $this->assignVariablesToModel($data);
                 $this->getData();
-
-                $this->loadLocks();
             }
             else {
                 throw new Exception("Object with the ID " . $id . " doesn't exists");
