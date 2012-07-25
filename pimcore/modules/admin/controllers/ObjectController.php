@@ -398,11 +398,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                     $this->metaData[$key]['inherited'] = false;
                     $this->metaData[$key]['hasParentValue'] = true;
                 } else {
-                    $parentValue = $this->getParentValue($object, $key);
-                    $this->metaData[$key]['hasParentValue'] = !empty($parentValue->value);
-                    if(!empty($parentValue->value)) {
-                        $this->metaData[$key]['objectid'] = $parentValue->id;
-                    }
+                    // CF: I don't think this code is necessary at all - fact is, that it is buggy
+//                    $parentValue = $this->getParentValue($object, $key);
+//                    $this->metaData[$key]['hasParentValue'] = !empty($parentValue->value);
+//                    if(!empty($parentValue->value)) {
+//                        $this->metaData[$key]['objectid'] = $parentValue->id;
+//                    }
                 }
 
             }
