@@ -86,7 +86,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
 
                 $this->readGoogleResponse($result);
 
-                return $this->getResults();
+                return $this->getResults(false);
             }
 
             return array();
@@ -293,9 +293,9 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     /**
      * @return array
      */
-    public function getResults()
+    public function getResults($retry=true)
     {
-        if(empty($this->results)) {
+        if(empty($this->results) && $retry) {
             $this->load();
         }
         return $this->results;
