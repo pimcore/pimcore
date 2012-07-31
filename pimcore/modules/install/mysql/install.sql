@@ -324,7 +324,10 @@ DROP TABLE IF EXISTS `redirects`;
 CREATE TABLE `redirects` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `source` varchar(255) DEFAULT NULL,
+  `sourceEntireUrl` tinyint(1) DEFAULT NULL,
+  `sourceSite` int(11) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,
+  `targetSite` int(11) DEFAULT NULL,
   `statusCode` varchar(3) DEFAULT NULL,
   `priority` int(2) DEFAULT '0',
   `expiry` bigint(20) DEFAULT NULL,

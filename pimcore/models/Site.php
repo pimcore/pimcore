@@ -148,6 +148,15 @@ class Site extends Pimcore_Model_Abstract {
     }
 
     /**
+     * returns the main domain of the site (first domain in list)
+     * @return string
+     */
+    public function getMainDomain() {
+        $domains = $this->getDomains();
+        return trim((string) $domains[0]);
+    }
+
+    /**
      * @return integer
      */
     public function getRootId() {
