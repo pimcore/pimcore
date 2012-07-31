@@ -374,6 +374,10 @@ class Pimcore {
         // try to set system-internal variables
 
         $maxExecutionTime = 240;
+        if(php_sapi_name() == "cli") {
+            $maxExecutionTime = 0;
+        }
+
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
         @ini_set("memory_limit", "1024M");
         @ini_set("max_execution_time", $maxExecutionTime);
