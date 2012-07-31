@@ -413,6 +413,9 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         $url = vsprintf($target, $matches);
                         $url = str_replace("###URLENCODE_PLACEHOLDER###", "%", $url);
 
+                        // support for pcre backreferences
+                        $url = replace_pcre_backreferences($url, $matches);
+
                         if($redirect->getTargetSite() && !preg_match("@http(s)?://@i", $url)) {
                             try {
                                 $targetSite = Site::getById($redirect->getTargetSite());

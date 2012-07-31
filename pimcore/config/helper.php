@@ -14,6 +14,21 @@
  */
 
 
+
+function replace_pcre_backreferences($string, $values) {
+
+    array_unshift($values,"");
+    $string = str_replace("\\$","###PCRE_PLACEHOLDER###", $string);
+
+    foreach ($values as $key => $value) {
+        $string = str_replace("$".$key, $value, $string);
+    }
+
+    $string = str_replace("###URLENCODE_PLACEHOLDER###", "$", $string);
+
+    return $string;
+}
+
 /**
  * @param  $array
  * @return array
