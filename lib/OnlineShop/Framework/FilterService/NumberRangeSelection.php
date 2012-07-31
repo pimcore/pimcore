@@ -70,12 +70,12 @@ class OnlineShop_Framework_FilterService_NumberRangeSelection extends OnlineShop
     public function addCondition(OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition, OnlineShop_Framework_ProductList $productList, $currentFilter, $params, $isPrecondition = false) {
         $rawValue = $params[$filterDefinition->getField()];
 
-
-
-        if(!empty($rawValue)) {
+        if(!empty($rawValue) && $rawValue != OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING) {
             $values = explode("-", $rawValue);
             $value['from'] = trim($values[0]);
             $value['to'] = trim($values[1]);
+        } else if($rawValue == OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING) {
+            $value = null;
         } else {
             $value['from'] = $filterDefinition->getPreSelectFrom();
             $value['to'] = $filterDefinition->getPreSelectTo();
