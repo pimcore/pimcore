@@ -356,6 +356,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
     protected function checkForRedirect ($override = false) {
         try {
 
+            // get current site if available
+            $sourceSite = null;
+            try {
+                $sourceSite = Site::getCurrentSite();
+            } catch (Exception $e) { }
+
             $cacheKey = "system_route_redirect";
             if (empty($this->redirects) && !$this->redirects = Pimcore_Model_Cache::load($cacheKey)) {
 
@@ -367,11 +373,27 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 Pimcore_Model_Cache::save($this->redirects, $cacheKey, array("system","redirect","route"), null, 998);
             }
 
+            $requestScheme = ($_SERVER['HTTPS'] == 'on') ? Zend_Controller_Request_Http::SCHEME_HTTPS : Zend_Controller_Request_Http::SCHEME_HTTP;
+            $matchRequestUri = $_SERVER["REQUEST_URI"];
+            $matchUrl = $requestScheme . "://" . $_SERVER["HTTP_HOST"] . $matchRequestUri;
+
             foreach ($this->redirects as $redirect) {
+
+                $matchAgainst = $matchRequestUri;
+                if($redirect->getSourceEntireUrl()) {
+                    $matchAgainst = $matchUrl;
+                }
 
                 // if override is true the priority has to be 99 which means that overriding is ok
                 if(!$override || ($override && $redirect->getPriority() == 99)) {
-                    if (@preg_match($redirect->getSource(), $_SERVER["REQUEST_URI"], $matches)) {
+                    if (@preg_match($redirect->getSource(), $matchAgainst, $matches)) {
+
+                        // check for a site
+                        if($redirect->getSourceSite()) {
+                            if(!$sourceSite || $sourceSite->getId() != $redirect->getSourceSite()) {
+                                continue;
+                            }
+                        }
 
                         array_shift($matches);
 
@@ -381,7 +403,8 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                             if($d instanceof Document_Page){
                                 $target = $d->getFullPath();
                             } else {
-                                throw new Exception("Target of redirect no found!");
+                                Logger::error("Target of redirect no found (Document-ID: " . $target . ")!");
+                                continue;
                             }
                         }
 
@@ -389,6 +412,20 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         $target = str_replace("\\%","###URLENCODE_PLACEHOLDER###", $target);
                         $url = vsprintf($target, $matches);
                         $url = str_replace("###URLENCODE_PLACEHOLDER###", "%", $url);
+
+                        if($redirect->getTargetSite() && !preg_match("@http(s)?://@i", $url)) {
+                            try {
+                                $targetSite = Site::getById($redirect->getTargetSite());
+
+                                // if the target site is specified and and the target-path is starting at root (not absolute to site)
+                                // the root-path will be replaced so that the page can be shown
+                                $url = preg_replace("@^" . $targetSite->getRootDocument()->getFullPath() . "/@", "/", $url);
+                                $url = $requestScheme . "://" . $targetSite->getMainDomain() . $url;
+                            } catch (Exception $e){
+                                Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
+                                continue;
+                            }
+                        }
 
                         header($redirect->getHttpStatus());
                         header("Location: " . $url, true, $redirect->getStatusCode());
