@@ -221,7 +221,10 @@ pimcore.document.versions = Class.create({
         Ext.Ajax.request({
             url: "/admin/document/publish-version",
             params: {id: versionId},
-            success: this.reloadEdit.bind(this)
+            success: function () {
+                // reload document
+                this.document.reload();
+            }.bind(this)
         });
     },
 
