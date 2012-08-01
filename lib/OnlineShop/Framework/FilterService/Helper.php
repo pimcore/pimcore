@@ -32,7 +32,7 @@ class OnlineShop_Framework_FilterService_Helper
 
         $offset = 0;
 
-        $pageLimit = $params["perPage"];
+        $pageLimit = intval($params["perPage"]);
         if (!$pageLimit) {
             $pageLimit = $filterDefinition->getPageLimit();
         }
@@ -91,7 +91,6 @@ class OnlineShop_Framework_FilterService_Helper
         if($filterService) {
             $view->currentFilter = $filterService->initFilterService($view->filterDefinitionObject, $productList, $params);
         }
-
 
 
         $view->orderByOptions = $orderByOptions;

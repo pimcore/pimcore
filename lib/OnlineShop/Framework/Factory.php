@@ -183,23 +183,14 @@ class OnlineShop_Framework_Factory {
     /**
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      * @param OnlineShop_Framework_ICart $cart
-     * @param string $name optional name of checkout manager, in case there are more than one configured
      * @return OnlineShop_Framework_ICheckoutManager
      */
-    public function getCheckoutManager(OnlineShop_Framework_ICart $cart, $name = null) {
+    public function getCheckoutManager(OnlineShop_Framework_ICart $cart) {
 
         if(empty($this->checkoutManagers[$cart->getId()])) {
-            if($name) {
-                $managerConfigName = "checkoutmanager_" . $name;
-                $manager = new $this->config->onlineshop->$managerConfigName->class($cart, $this->config->onlineshop->$managerConfigName->config);
-                if (!($manager instanceof OnlineShop_Framework_ICheckoutManager)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->$managerConfigName->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
-                }
-            } else {
-                $manager = new $this->config->onlineshop->checkoutmanager->class($cart, $this->config->onlineshop->checkoutmanager->config);
-                if (!($manager instanceof OnlineShop_Framework_ICheckoutManager)) {
-                    throw new OnlineShop_Framework_Exception_InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->checkoutmanager->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
-                }
+            $manager = new $this->config->onlineshop->checkoutmanager->class($cart, $this->config->onlineshop->checkoutmanager->config);
+            if (!($manager instanceof OnlineShop_Framework_ICheckoutManager)) {
+                throw new OnlineShop_Framework_Exception_InvalidConfigException("Checkoutmanager class " . $this->config->onlineshop->checkoutmanager->class . " does not implement OnlineShop_Framework_ICheckoutManager.");
             }
 
             $this->checkoutManagers[$cart->getId()] = $manager; 

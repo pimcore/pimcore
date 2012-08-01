@@ -37,30 +37,37 @@ class OnlineShop_Framework_FilterService_NumberRangeSelection extends OnlineShop
         $values = array();
         foreach($ranges->getData() as $row) {
             if($counts[$row['from'] . "_" . $row['to']]) {
-                $values[] = array("from" => $row['from'], "to" => $row['to'], "label" => $this->createLabel($row, $filterDefinition->getUnit()), "count" => $counts[$row['from'] . "_" . $row['to']], "unit" => $filterDefinition->getUnit());
+                $values[] = array("from" => $row['from'], "to" => $row['to'], "label" => $this->createLabel($row), "count" => $counts[$row['from'] . "_" . $row['to']], "unit" => $filterDefinition->getUnit());
             }
+        }
+
+        $currentValue = "";
+        if($currentFilter[$filterDefinition->getField()]['from'] || $currentFilter[$filterDefinition->getField()]['to']) {
+            $currentValue = implode($currentFilter[$filterDefinition->getField()], "-");
         }
 
 
         return $this->view->partial($script, array(
             "label" => $filterDefinition->getLabel(),
-            "currentValue" => $this->createLabel($currentFilter[$filterDefinition->getField()], $filterDefinition->getUnit()),
+            "currentValue" => $currentValue,
+            "currentNiceValue" => $this->createLabel($currentFilter[$filterDefinition->getField()]),
+            "unit" => $filterDefinition->getUnit(),
             "values" => $values,
             "definition" => $filterDefinition,
             "fieldname" => $filterDefinition->getField()
         ));
     }
 
-    private function createLabel($data, $unit) {
+    private function createLabel($data) {
         if(is_array($data)) {
             if(!empty($data['from'])) {
                 if(!empty($data['to'])) {
-                    return $this->view->translate($unit) . " " . $data['from'] . " - " . $data['to'];
+                    return $data['from'] . " - " . $data['to'];
                 } else {
-                    return $this->view->translate("more than " . $unit) . " " . $data['from'];
+                    return $this->view->translate("more than") . " " . $data['from'];
                 }
             } else if(!empty($data['to'])) {
-                return $this->view->translate("less than " . $unit) . " " . $data['to'];
+                return $this->view->translate("less than") . " " . $data['to'];
             }
         } else {
             return "";
