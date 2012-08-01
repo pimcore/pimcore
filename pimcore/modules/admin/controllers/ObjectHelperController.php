@@ -785,6 +785,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                 try {
                     // don't check for mandatory fields here
                     $object->setOmitMandatoryCheck(true);
+                    $object->setUserModification($this->getUser()->getId());
                     $object->save();
                     $success = true;
                 } catch (Exception $e) {

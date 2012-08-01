@@ -991,6 +991,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $currentObject = Object_Abstract::getById($object->getId());
         if ($currentObject->isAllowed("publish")) {
             $object->setPublished(true);
+            $object->setUserModification($this->getUser()->getId());
             try {
                 $object->save();
                 $this->_helper->json(array("success" => true));
@@ -1359,6 +1360,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                         if ($currentData[$i]->getId() == $object->getId()) {
                             unset($currentData[$i]);
                             $owner->$setter($currentData);
+                            $owner->setUserModification($this->getUser()->getId());
                             $owner->save();
                             Logger::debug("Saved object id [ " . $owner->getId() . " ] by remote modification through [" . $object->getId() . "], Action: deleted [ " . $object->getId() . " ] from [ $ownerFieldName]");
                             break;
@@ -1377,6 +1379,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $currentData[] = $object;
 
                 $owner->$setter($currentData);
+                $owner->setUserModification($this->getUser()->getId());
                 $owner->save();
                 Logger::debug("Saved object id [ " . $owner->getId() . " ] by remote modification through [" . $object->getId() . "], Action: added [ " . $object->getId() . " ] to [ $ownerFieldName ]");
             }
