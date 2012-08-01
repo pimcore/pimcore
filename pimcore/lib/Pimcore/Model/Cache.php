@@ -211,10 +211,9 @@ class Pimcore_Model_Cache {
                 $data->____pimcore_cache_item__ = $key;
             }
     
-            if ($data) {
+            if ($data !== false) {
                 Logger::debug("Successfully get data for key " . $key . " from cache");
-            }
-            else {
+            } else {
                 Logger::debug("Key " . $key . " doesn't exist in cache");
             }
     
