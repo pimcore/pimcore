@@ -212,7 +212,7 @@ class Pimcore_Model_Cache {
             }
     
             if ($data !== false) {
-                Logger::debug("Successfully get data for key " . $key . " from cache");
+                Logger::debug("Successfully got data for key " . $key . " from cache");
             } else {
                 Logger::debug("Key " . $key . " doesn't exist in cache");
             }
