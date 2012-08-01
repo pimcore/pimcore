@@ -399,6 +399,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             $count++;
                         }
                         $child->setIndex($count);
+                        $child->setUserModification($this->getUser()->getId());
                         $child->save();
                         $count++;
                     }
@@ -419,6 +420,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             //just rename
             try {
                     $document->setKey($this->_getParam("key") );
+                    $document->setUserModification($this->getUser()->getId());
                     $document->save();
                     $success = true;
                 } catch (Exception $e) {
@@ -566,6 +568,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 
                 $document->setKey($currentDocument->getKey());
                 $document->setPath($currentDocument->getPath());
+                $document->setUserModification($this->getUser()->getId());
                 
                 $document->save();
             } catch (Exception $e) {
@@ -739,7 +742,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             }
         }
         $document->setProperties($properties);
-
+        $document->setUserModification($this->getUser()->getId());
         
         $document->save();
         

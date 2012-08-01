@@ -250,6 +250,7 @@ class Document_Service extends Element_Service {
             $target->setTabindex($source->getTabindex());
         }
 
+        $target->setUserModification($this->_user->getId());
         $target->setProperties($source->getProperties());
         $target->save();
 
