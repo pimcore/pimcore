@@ -158,9 +158,9 @@ pimcore.extensionmanager.admin = Class.create({
 
                                 if(res.reload) {
                                     window.location.reload();
+                                } else {
+                                    this.reload();
                                 }
-
-                                this.reload();
                             }.bind(this)
                         });
                     }.bind(this)
