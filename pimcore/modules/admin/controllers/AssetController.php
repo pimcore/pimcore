@@ -287,6 +287,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset = Asset::getById($this->_getParam("id"));
         $asset->setData(file_get_contents($_FILES["Filedata"]["tmp_name"]));
         $asset->setCustomSetting("thumbnails",null);
+        $asset->setUserModification($this->getUser()->getId());
 
         if ($asset->isAllowed("publish")) {
             $asset->save();
@@ -531,6 +532,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset = Asset::getById($this->_getParam("id"));
         if ($asset->isAllowed("settings")) {
 
+            $asset->setUserModification($this->getUser()->getId());
+
             // if the position is changed the path must be changed || also from the childs
             if ($this->_getParam("parentId")) {
                 $parentAsset = Asset::getById($this->_getParam("parentId"));
@@ -709,6 +712,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $currentAsset = Asset::getById($asset->getId());
         if ($currentAsset->isAllowed("publish")) {
             try {
+                $asset->setUserModification($this->getUser()->getId());
                 $asset->save();
                 $this->_helper->json(array("success" => true));
             } catch (Exception $e) {

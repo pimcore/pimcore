@@ -134,6 +134,7 @@ class Asset_Service extends Element_Service {
             $target->setCustomSettings($source->getCustomSettings());
         }
 
+        $target->setUserModification($this->_user->getId());
         $target->setProperties($source->getProperties());
         $target->save();
 
