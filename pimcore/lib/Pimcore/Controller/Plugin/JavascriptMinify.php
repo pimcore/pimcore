@@ -81,14 +81,18 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
 
                     $source = $script->src;
                     $path = "";
-                    if (is_file("file://".PIMCORE_ASSET_DIRECTORY . $source)) {
-                        $path = "file://".PIMCORE_ASSET_DIRECTORY . $source;
-                    }
-                    else if (is_file("file://".PIMCORE_DOCUMENT_ROOT . $source)) {
-                        $path = "file://".PIMCORE_DOCUMENT_ROOT . $source;
+
+                    if(!preg_match("@http(s)?://@i", $source)) {
+                        if (@is_file("file://".PIMCORE_ASSET_DIRECTORY . $source)) {
+                            $path = "file://".PIMCORE_ASSET_DIRECTORY . $source;
+                        }
+                        else if (@is_file("file://".PIMCORE_DOCUMENT_ROOT . $source)) {
+                            $path = "file://".PIMCORE_DOCUMENT_ROOT . $source;
+                        }
                     }
 
-                    if (is_file($path)) {
+
+                    if ($path && @is_file($path)) {
                         $scriptContent .= file_get_contents($path)."\n\n";
 
                         if($script->next_sibling()->tag != "script" || !$script->next_sibling()->src) {
