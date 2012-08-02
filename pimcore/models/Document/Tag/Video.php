@@ -333,13 +333,49 @@ class Document_Tag_Video extends Document_Tag
         if(array_key_exists("height", $options)) {
             $height = $options["height"];
         }
+        /*
+       if($options["config"]["clip"]["autoPlay"]){
+           $autoPlayString = "&autoplay=1";
+       } */
 
-        if($options["config"]["clip"]["autoPlay"]){
-            $autoPlayString = "&autoplay=1";
+        $valid_youtube_prams=array( "autohide",
+            "autoplay",
+            "cc_load_policy",
+            "color",
+            "controls",
+            "disablekb",
+            "enablejsapi",
+            "end",
+            "fs",
+            "iv_load_policy",
+            "list",
+            "listType",
+            "loop",
+            "modestbranding",
+            "origin",
+            "playerapiid",
+            "playlist",
+            "rel",
+            "showinfo",
+            "start",
+            "theme");
+        $additional_params="";
+        foreach($options["config"]["clip"] as $key=>$value){
+            if(in_array($key, $valid_youtube_prams)){
+                if(is_bool($value)){
+                    if($value){
+                        $additional_params.="&".$key."=1";
+                    }else{
+                        $additional_params.="&".$key."=0";
+                    }
+                }else{
+                    $additional_params.="&".$key."=".$value;
+                }
+            }
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe width="' . $width . '" height="' . $height . '" src="' . $this->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent' . $autoPlayString .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="' . $this->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent' . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
