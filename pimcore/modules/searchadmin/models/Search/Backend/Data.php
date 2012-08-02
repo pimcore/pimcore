@@ -334,7 +334,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                 }
                 if($element instanceof Document_Page){
                     $this->published = $element->isPublished();
-                    $this->data.=" ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords();
+                    $this->data .= " ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords() . " " . $element->getPrettyUrl();
                 }
             }
         } else if($element instanceof Asset) {
