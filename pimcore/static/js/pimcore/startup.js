@@ -282,7 +282,7 @@ Ext.onReady(function() {
                     id: "pimcore_body",
                     cls: "pimcore_body",
                     layout: "border",
-                    border: false,
+                    border: true,
                     tbar: {
                         ctCls: "pimcore_panel_toolbar_container",
                         id: "pimcore_panel_toolbar",
