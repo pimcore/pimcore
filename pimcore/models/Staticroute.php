@@ -244,7 +244,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -301,14 +301,14 @@ class Staticroute extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setPriority($priority) {
-        $this->priority = intval($priority);
+        $this->priority = (int) $priority;
     }
 
     /**
      * @return integer
      */
     public function getPriority() {
-        return intval($this->priority);
+        return $this->priority;
     }
     
     /**

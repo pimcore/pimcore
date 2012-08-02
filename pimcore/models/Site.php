@@ -175,7 +175,7 @@ class Site extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -194,7 +194,7 @@ class Site extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setRootId($rootId) {
-        $this->rootId = $rootId;
+        $this->rootId = (int) $rootId;
 
         $rd = Document::getById($this->rootId);
         $this->setRootDocument($rd);

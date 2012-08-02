@@ -139,7 +139,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      * @return void
      */
     public function setDocumentId($id) {
-        $this->documentId = $id;
+        $this->documentId = (int) $id;
     }
 
     /**

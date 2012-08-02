@@ -858,7 +858,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_id($o_id) {
-        $this->o_id = $o_id;
+        $this->o_id = (int) $o_id;
     }
 
     /**
@@ -878,7 +878,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         if($this->o_parentId!=null and $o_parentId!=null and $this->o_parentId!=$o_parentId){
             $this->_oldPath=$this->getResource()->getCurrentFullPath();
         }
-        $this->o_parentId = $o_parentId;
+        $this->o_parentId = (int) $o_parentId;
 
         try {
             $this->o_parent = Object_Abstract::getById($o_parentId);
@@ -953,7 +953,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_index($o_index) {
-        $this->o_index = $o_index;
+        $this->o_index = (int) $o_index;
     }
 
     /**
@@ -969,7 +969,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_creationDate($o_creationDate) {
-        $this->o_creationDate = $o_creationDate;
+        $this->o_creationDate = (int) $o_creationDate;
     }
 
     /**
@@ -985,7 +985,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_modificationDate($o_modificationDate) {
-        $this->o_modificationDate = $o_modificationDate;
+        $this->o_modificationDate = (int) $o_modificationDate;
     }
 
     /**
@@ -1001,7 +1001,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_userOwner($o_userOwner) {
-        $this->o_userOwner = $o_userOwner;
+        $this->o_userOwner = (int) $o_userOwner;
     }
 
     /**
@@ -1017,7 +1017,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_userModification($o_userModification) {
-        $this->o_userModification = $o_userModification;
+        $this->o_userModification = (int) $o_userModification;
     }
 
     /**

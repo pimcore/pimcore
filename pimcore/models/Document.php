@@ -576,7 +576,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setLocked($locked){
-        $this->locked = $locked;
+        $this->locked = (bool) $locked;
     }
 
     /**
@@ -736,7 +736,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setCreationDate($creationDate) {
-        $this->creationDate = $creationDate;
+        $this->creationDate = (int) $creationDate;
     }
 
     /**
@@ -746,7 +746,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function setId($id) {
         //TODO: why can't I set a document ID null through setter?
         if ($id) {
-            $this->id = $id;
+            $this->id = (int) $id;
         }
     }
 
@@ -769,7 +769,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setModificationDate($modificationDate) {
-        $this->modificationDate = $modificationDate;
+        $this->modificationDate = (int) $modificationDate;
     }
 
 
@@ -782,7 +782,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         if ($this->parentId != null and $parentId != null and $this->parentId != $parentId) {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
-        $this->parentId = $parentId;
+        $this->parentId = (int) $parentId;
     }
 
     /**
@@ -805,7 +805,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setIndex($index) {
-        $this->index = $index;
+        $this->index = (int) $index;
     }
 
     /**
@@ -842,7 +842,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setUserModification($userModification) {
-        $this->userModification = $userModification;
+        $this->userModification = (int) $userModification;
     }
 
     /**
@@ -850,7 +850,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setUserOwner($userOwner) {
-        $this->userOwner = $userOwner;
+        $this->userOwner = (int) $userOwner;
     }
 
     /**

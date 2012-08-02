@@ -236,7 +236,7 @@ class Asset_Video_Thumbnail_Config {
      */
     public function setAudioBitrate($audioBitrate)
     {
-        $this->audioBitrate = $audioBitrate;
+        $this->audioBitrate = (int) $audioBitrate;
     }
 
     /**
@@ -252,7 +252,7 @@ class Asset_Video_Thumbnail_Config {
      */
     public function setVideoBitrate($videoBitrate)
     {
-        $this->videoBitrate = $videoBitrate;
+        $this->videoBitrate = (int) $videoBitrate;
     }
 
     /**

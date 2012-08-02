@@ -120,7 +120,7 @@ class Dependency extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setSourceId($sourceId) {
-        $this->sourceId = $sourceId;
+        $this->sourceId = (int) $sourceId;
     }
 
     /**

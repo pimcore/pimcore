@@ -316,7 +316,7 @@ class Version extends Pimcore_Model_Abstract {
 
         if (is_numeric($userId)) {
             if ($user = User::getById($userId)) {
-                $this->userId = $userId;
+                $this->userId = (int) $userId;
                 $this->setUser($user);
             }
         }
