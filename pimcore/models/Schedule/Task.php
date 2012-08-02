@@ -140,14 +140,14 @@ class Schedule_Task extends Pimcore_Model_Abstract {
      * @param integer $id
      */
     public function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
      * @param integer $cid
      */
     public function setCid($cid) {
-        $this->cid = $cid;
+        $this->cid = (int) $cid;
     }
 
     /**
@@ -161,7 +161,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
      * @param intger $date
      */
     public function setDate($date) {
-        $this->date = $date;
+        $this->date = (int) $date;
     }
 
     /**
@@ -192,7 +192,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
         if (empty($active)) {
             $active = false;
         }
-        $this->active = $active;
+        $this->active = (bool) $active;
     }
 
 }

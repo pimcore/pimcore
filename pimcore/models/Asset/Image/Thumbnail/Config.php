@@ -254,7 +254,7 @@ class Asset_Image_Thumbnail_Config {
     public function setQuality($quality)
     {
         if($quality) {
-            $this->quality = $quality;
+            $this->quality = (int) $quality;
         }
     }
 

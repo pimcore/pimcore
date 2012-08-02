@@ -120,7 +120,7 @@ class Element_Note extends Pimcore_Model_Abstract {
      */
     public function setCid($cid)
     {
-        $this->cid = $cid;
+        $this->cid = (int) $cid;
     }
 
     /**
@@ -168,7 +168,7 @@ class Element_Note extends Pimcore_Model_Abstract {
      */
     public function setDate($date)
     {
-        $this->date = $date;
+        $this->date = (int) $date;
     }
 
     /**
@@ -200,7 +200,7 @@ class Element_Note extends Pimcore_Model_Abstract {
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
