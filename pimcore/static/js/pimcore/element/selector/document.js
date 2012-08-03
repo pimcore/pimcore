@@ -173,14 +173,13 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
     getResultPanel: function () {
         if (!this.resultPanel) {
         
-            /*this.pagingtoolbar = new Ext.PagingToolbar({
-                pageSize: 15,
+            this.pagingtoolbar = new Ext.PagingToolbar({
+                pageSize: 50,
                 store: this.store,
                 displayInfo: true,
                 displayMsg: '{0} - {1} / {2}',
                 emptyMsg: t("no_documents_found")
             });
-            */
 
             this.resultPanel = new Ext.grid.GridPanel({
                 region: "center",
@@ -204,7 +203,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 columnLines: true,
                 stripeRows: true,
                 sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
-                //bbar: this.pagingtoolbar,
+                bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, rowIndex, ev) {
                         
@@ -235,8 +234,8 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         this.store.setBaseParam("type", "document");
         this.store.setBaseParam("query", formValues.query);
         this.store.setBaseParam("subtype", formValues.subtype);
-        this.store.load();
+        //this.store.load();
 
-        //this.pagingtoolbar.moveFirst();
+        this.pagingtoolbar.moveFirst();
     }
 });
