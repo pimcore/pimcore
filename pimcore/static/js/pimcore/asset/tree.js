@@ -248,6 +248,10 @@ pimcore.asset.tree = Class.create({
                         text: t("import_from_server"),
                         handler: this.attributes.reference.importFromServer.bind(this),
                         iconCls: "pimcore_icon_import_server"
+                    },{
+                        text: t("import_from_url"),
+                        handler: this.attributes.reference.importFromUrl.bind(this),
+                        iconCls: "pimcore_icon_import_url"
                     }]
                 }));
 
@@ -845,6 +849,34 @@ pimcore.asset.tree = Class.create({
         });
 
         this.uploadWindow.show();
+    },
+
+    importFromUrl: function () {
+
+        Ext.MessageBox.prompt(t("import_from_url"), t("url_incl_http"), function (button, value, object) {
+            if (button == "ok") {
+                var win = new Ext.Window({
+                    html: t("please_wait"),
+                    closable: false,
+                    bodyStyle: "padding: 10px;",
+                    modal: true
+                });
+                win.show();
+
+                Ext.Ajax.request({
+                    url: "/admin/asset/import-url/",
+                    method: "get",
+                    params: {
+                        id: this.attributes.id,
+                        url: value
+                    },
+                    success: function () {
+                        win.close();
+                        this.reload();
+                    }.bind(this)
+                });
+            }
+        }.bind(this));
     },
 
     addAssetComplete: function (config, file, response) {
