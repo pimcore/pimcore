@@ -507,6 +507,16 @@ pimcore.document.tree = Class.create({
             }
         }
 
+        if (this.attributes.type == "page") {
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_openpage",
+                handler: function () {
+                    window.open(this.attributes.path);
+                }.bind(this)
+            }));
+        }
+
         if (this.reload) {
             menu.add(new Ext.menu.Item({
                 text: t('refresh'),
