@@ -1158,3 +1158,6 @@
     background: url(/pimcore/static/img/icon/bin.png) left center no-repeat !important;
 }
 
+.pimcore_icon_openpage {
+    background: url(/pimcore/static/img/icon/world_go.png) left center no-repeat !important;
+}
