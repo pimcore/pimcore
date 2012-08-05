@@ -1159,6 +1159,37 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => $success));
     }
 
+    public function importUrlAction() {
+        $success = true;
+
+        $data = Pimcore_Tool::getHttpData($this->_getParam("url"));
+        $filename = basename($this->_getParam("url"));
+        $parentId = $this->_getParam("id");
+        $parentAsset = Asset::getById(intval($parentId));
+
+        $filename = Pimcore_File::getValidFilename($filename);
+        if(empty($filename)) {
+            throw new Exception("The filename of the asset is empty");
+        }
+
+        // check for dublicate filename
+        $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
+
+        if ($parentAsset->isAllowed("create")) {
+            $asset = Asset::create($parentId, array(
+                "filename" => $filename,
+                "data" => $data,
+                "userOwner" => $this->user->getId(),
+                "userModification" => $this->user->getId()
+            ));
+            $success = true;
+        } else {
+            Logger::debug("prevented creating asset because of missing permissions");
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
     protected function importFromFileSystem ($path, $parentId) {
 
         $assetFolder = Asset::getById($parentId);
