@@ -119,7 +119,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
                     $page->setRelation($child->getProperty("navigation_relation"));
                     $page->setDocument($child);
 
-                    if ($child->getProperty("navigation_exclude")) {
+                    if ($child->getProperty("navigation_exclude") || !$child->getPublished()) {
                         $page->setVisible(false);
                     }
 
