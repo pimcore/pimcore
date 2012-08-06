@@ -847,6 +847,11 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $object->setPublished(true);
         }
 
+        // unpublish and save version is possible without checking mandatory fields
+        if($this->_getParam("task") == "unpublish" || $this->_getParam("task") == "version") {
+            $object->setOmitMandatoryCheck(true);
+        }
+
 
         if (($this->_getParam("task") == "publish" && $object->isAllowed("publish")) or ($this->_getParam("task") == "unpublish" && $object->isAllowed("unpublish"))) {
 

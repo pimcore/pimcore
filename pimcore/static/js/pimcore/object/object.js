@@ -261,7 +261,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     {
                         text: t('save_only_new_version'),
                         iconCls: "pimcore_icon_save",
-                        handler: this.save.bind(this)
+                        handler: this.save.bind(this, "version")
                     },
                     {
                         text: t('save_only_scheduled_tasks'),
@@ -383,7 +383,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
     },
 
-    getSaveData : function (only) {
+    getSaveData : function (only, omitMandatoryCheck) {
         var data = {};
 
         data.id = this.id;
@@ -402,7 +402,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         // data
         try {
-            data.data = Ext.encode(this.edit.getValues());
+            data.data = Ext.encode(this.edit.getValues(omitMandatoryCheck));
         }
         catch (e) {
             //console.log(e)
@@ -436,22 +436,25 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     saveClose: function(only){
-        this.save();
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
+        if(this.save()) {
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.remove(this.tab);
+        }
     },
 
     publishClose: function(){
-        this.publish();
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.remove(this.tab);
+        if(this.publish()) {
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.remove(this.tab);
+        }
     },
 
 
     publish: function (only) {
         this.data.general.o_published = true;
+        var state = this.save("publish", only);
 
-        if(this.save("publish", only)) {
+        if(state) {
             // toogle buttons
             this.toolbarButtons.unpublish.show();
             this.toolbarButtons.save.hide();
@@ -461,6 +464,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI().removeClass("pimcore_unpublished");
             } catch (e) { };
         }
+
+        return state;
     },
 
     unpublish: function () {
@@ -490,10 +495,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     save : function (task, only, callback) {
 
-        var callback = callback;
-        var saveData = this.getSaveData(only);
+        var omitMandatoryCheck = false;
 
-        if (saveData.data != "false") {
+        // unpublish and save version is possible without checking mandatory fields
+        if(task == "version" || task == "unpublish") {
+            omitMandatoryCheck = true;
+        }
+
+        var callback = callback;
+        var saveData = this.getSaveData(only, omitMandatoryCheck);
+
+        if (saveData.data != false && saveData.data != "false") {
 
             // check for version notification
             if(this.newerVersionNotification) {
