@@ -72,7 +72,7 @@ class Asset_Resource extends Element_Resource {
             $this->assignVariablesToModel($data);
         }
         else {
-            throw new Exception("asset doesn't exist");
+            throw new Exception("asset with path: " . $path . " doesn't exist");
         }
     }
 
