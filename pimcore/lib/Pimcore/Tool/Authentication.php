@@ -82,7 +82,7 @@ class Pimcore_Tool_Authentication {
         }
         catch (Exception $e) {
             $auth->requireLogin();
-            Logger::error($e);
+            Logger::error("Authentication Digest (WebDAV) required");
             echo "Authentication required\n";
             die();
         }
