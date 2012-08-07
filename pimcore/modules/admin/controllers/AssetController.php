@@ -610,6 +610,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $objectTree = new Asset_WebDAV_Tree($publicDir);
             $server = new Sabre_DAV_Server($objectTree);
 
+            $lockBackend = new Sabre_DAV_Locks_Backend_File(PIMCORE_WEBDAV_TEMP . '/locks.dat');
+            $lockPlugin = new Sabre_DAV_Locks_Plugin($lockBackend);
+            $server->addPlugin($lockPlugin);
+
             $server->exec();
         } catch (Exception $e) {
             Logger::error($e);
