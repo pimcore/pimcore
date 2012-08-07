@@ -26,8 +26,6 @@ class Asset_WebDAV_Tree extends Sabre_DAV_ObjectTree {
      */
     public function move($sourcePath, $destinationPath) {
 
-        Logger::emerg($sourcePath . " | " . $destinationPath);
-
         $nameParts = explode("/",$sourcePath);
         $nameParts[count($nameParts)-1] = Pimcore_File::getValidFilename($nameParts[count($nameParts)-1]);
         $sourcePath = implode("/",$nameParts);
@@ -42,10 +40,21 @@ class Asset_WebDAV_Tree extends Sabre_DAV_ObjectTree {
                 $asset = null;
 
                 if($asset = Asset::getByPath("/" . $destinationPath)) {
-                    // If we got here, it means the destination exists, and needs to be overwritten
+                    // If we got here, this means the destination exists, and needs to be overwritten
                     $sourceAsset = Asset::getByPath("/" . $sourcePath);
                     $asset->setData($sourceAsset->getData());
                     $sourceAsset->delete();
+                }
+
+                // see: Asset_WebDAV_File::delete() why this is necessary
+                $log = Asset_WebDAV_Service::getDeleteLog();
+                if(!$asset && array_key_exists("/" .$destinationPath, $log)) {
+                    $asset = Pimcore_Tool_Serialize::unserialize($log["/" .$destinationPath]["data"]);
+                    if($asset) {
+                        $sourceAsset = Asset::getByPath("/" . $sourcePath);
+                        $asset->setData($sourceAsset->getData());
+                        $sourceAsset->delete();
+                    }
                 }
 
                 if(!$asset) {

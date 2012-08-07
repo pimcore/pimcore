@@ -55,7 +55,24 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      * @return void
      */
     function delete() {
+
+        Asset_Service::loadAllFields($this->asset);
         $this->asset->delete();
+
+        // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
+        // for details see Asset_WebDAV_Tree::move()
+        $log = Asset_WebDAV_Service::getDeleteLog();
+
+        $this->asset->_fulldump = true;
+        $log[$this->asset->getFullpath()] = array(
+            "id" => $this->asset->getId(),
+            "timestamp" => time(),
+            "data" => Pimcore_Tool_Serialize::serialize($this->asset)
+        );
+
+        unset($this->asset->_fulldump);
+
+        Asset_WebDAV_Service::saveDeleteLog($log);
     }
 
     /**
