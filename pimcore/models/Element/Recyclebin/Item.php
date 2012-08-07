@@ -163,20 +163,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         
         $this->amount++;
         
-        if($element instanceof Document) {
-            if($element instanceof Document_PageSnippet) {
-                $element->getElements();
-            }
-        }
-        else if ($element instanceof Asset) {
-            if(!$element instanceof Asset_Folder) {
-                $element->setData(null);
-                $element->getData();
-            }
-        }
-        else if ($element instanceof Object_Abstract) {
-
-        }
+        Element_Service::loadAllFields($element);
         
         // for all
         $element->getProperties();
