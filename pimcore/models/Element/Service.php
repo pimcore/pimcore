@@ -529,6 +529,8 @@ class Element_Service {
             Document_Service::loadAllDocumentFields($element);
         } else if ($element instanceof Object_Concrete) {
             Object_Service::loadAllObjectFields($element);
+        } else if ($element instanceof Asset) {
+            Asset_Service::loadAllFields($element);
         }
 
         return $element;

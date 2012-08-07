@@ -176,4 +176,17 @@ class Asset_Service extends Element_Service {
 
         return false;
     }
+
+    /**
+     * @static
+     * @param Element_Interface $element
+     * @return Element_Interface
+     */
+    public static function loadAllFields (Element_Interface $element) {
+        if($element instanceof Asset && method_exists($element, "getData")) {
+            $element->getData();
+        }
+
+        return $element;
+    }
 }
