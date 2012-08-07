@@ -95,7 +95,10 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                     $user = Pimcore_Tool_Authentication::authenticateDigest();
                     if($user instanceof User) {
                         $this->setUser($user);
+
+                        Zend_Registry::set("pimcore_admin_user", $this->getUser());
                         self::$adminInitialized = true;
+
                         return;
                     }
                 }
