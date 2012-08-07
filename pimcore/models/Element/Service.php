@@ -285,6 +285,10 @@ class Element_Service {
                 $sanityCheck->delete();
             }
             $sanityCheck = Element_Sanitycheck::getNext();
+
+            // reduce load on server
+            Logger::debug("Now timeout for 3 seconds");
+            sleep(3);
         }
 
     }
