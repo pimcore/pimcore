@@ -108,11 +108,7 @@ class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
      */
     function createFile($name, $data = null) {
 
-        $tmpFile = PIMCORE_WEBDAV_TEMP . "/" . md5($this->asset->getId() . $name . microtime());
-        file_put_contents($tmpFile, $data);
-        $data = file_get_contents($tmpFile);
-        unlink($tmpFile);
-
+        $data = stream_get_contents($data);
         $user = Pimcore_Tool_Admin::getCurrentUser();
 
         $asset = Asset::create($this->asset->getId(), array(
@@ -130,7 +126,6 @@ class Asset_WebDAV_Folder extends Sabre_DAV_Directory {
      * @return string
      */
     function createDirectory($name) {
-
         $user = Pimcore_Tool_Admin::getCurrentUser();
 
         $asset = Asset::create($this->asset->getId(), array(

@@ -66,7 +66,6 @@ class Pimcore_Tool_Authentication {
 
         // only digest auth is supported anymore
         try {
-
             $auth = new Sabre_HTTP_DigestAuth();
             $auth->setRealm("pimcore");
             $auth->init();
@@ -83,6 +82,7 @@ class Pimcore_Tool_Authentication {
         }
         catch (Exception $e) {
             $auth->requireLogin();
+            Logger::error($e);
             echo "Authentication required\n";
             die();
         }

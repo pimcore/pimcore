@@ -73,10 +73,8 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      */
     function put($data) {
 
-        $tmpFile = PIMCORE_WEBDAV_TEMP . "/" . md5($this->asset->getId() . microtime());
-        file_put_contents($tmpFile, $data);
-        $data = file_get_contents($tmpFile);
-        unlink($tmpFile);
+        // read from resource -> default for SabreDAV
+        $data = stream_get_contents($data);
 
         $user = Pimcore_Tool_Admin::getCurrentUser();
         $this->asset->setUserModification($user->getId());

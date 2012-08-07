@@ -358,7 +358,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function loadData() {
-        if ($this->getType() != "folder") {
+        if ($this->getType() != "folder" && file_exists($this->getFileSystemPath())) {
             $this->setData(file_get_contents($this->getFileSystemPath()));
             $this->_dataChanged = false;
         }
