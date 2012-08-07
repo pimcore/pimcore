@@ -43,6 +43,10 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      * @return string
      */
     function setName($name) {
+
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+        $this->asset->setUserModification($user->getId());
+
         $this->asset->setFilename(Pimcore_File::getValidFilename($name));
         $this->asset->save();
     }
@@ -73,6 +77,9 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
         file_put_contents($tmpFile, $data);
         $data = file_get_contents($tmpFile);
         unlink($tmpFile);
+
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+        $this->asset->setUserModification($user->getId());
 
         $this->asset->setData($data);
         $this->asset->save();
