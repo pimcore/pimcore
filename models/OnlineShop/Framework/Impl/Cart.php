@@ -266,9 +266,9 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         catch (Exception $e) {
 
             try {
-                $cart = new self();
+                $cartClass = get_called_class();
+                $cart = new $cartClass;
                 $cart->getResource()->getById($id);
-
 
                 $itemList = new OnlineShop_Framework_Impl_CartItem_List();
                 $db = Pimcore_Resource::get();

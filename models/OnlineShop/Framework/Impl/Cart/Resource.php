@@ -91,4 +91,11 @@ class OnlineShop_Framework_Impl_Cart_Resource extends Pimcore_Model_Resource_Abs
         $this->db->delete(self::TABLE_NAME, "id=" . $this->db->quote($this->model->getId()));
     }
 
+    /**
+     * @param array $fields
+     */
+    public function setFieldsToSave(array $fields) {
+        $this->fieldsToSave = $fields;
+    }
+
 }
