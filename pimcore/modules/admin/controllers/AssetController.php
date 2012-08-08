@@ -489,6 +489,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     $asset->save();
                 }
 
+                // we need the dimensions for the wysiwyg editors, so that they can resize the image immediately
                 if($asset->getCustomSetting("imageWidth") && $asset->getCustomSetting("imageHeight")) {
                     $tmpAsset["imageWidth"] = $asset->getCustomSetting("imageWidth");
                     $tmpAsset["imageHeight"] = $asset->getCustomSetting("imageHeight");

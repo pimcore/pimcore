@@ -46,6 +46,17 @@ class Asset_Image extends Asset {
         parent::update();
 
         $this->clearThumbnails();
+
+        // now directly create "system" thumbnails (eg. for the tree, ...)
+        try {
+            $this->getThumbnail($this->getThumbnailConfig(array(
+                "width" => 130,
+                "aspectratio" => true
+            )));
+        } catch (Exception $e) {
+            Logger::error("Problem while creating system-thumbnails for image " . $this->getFullPath());
+            Logger::error($e);
+        }
     }
 
     /**
