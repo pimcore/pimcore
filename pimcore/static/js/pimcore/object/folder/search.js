@@ -398,6 +398,13 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     this.addChildWindow = null;
 
                     this.store.reload();
+
+                    try {
+                        var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.object.id);
+                        node.reload();
+                    } catch (e) {
+                        // node is not present
+                    }
                 }.bind(this),
                 update: function (currentStep, steps, percent) {
                     if(this.addChildProgressBar) {
