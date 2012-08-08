@@ -312,7 +312,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         if(!$offset) {
             $offset = 0;
         }
-        if(!$sort || !in_array($dir, array("id","code","path","date"))) {
+        if(!$sort || !in_array($sort, array("id","code","path","date","amount"))) {
             $sort = "date";
         }
         if(!$dir || !in_array($dir, array("DESC","ASC"))) {
@@ -334,6 +334,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $logs = $db->fetchAll("SELECT id,code,path,date,count(*) as amount,concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group` ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
             $total = $db->fetchOne("SELECT count(*) FROM (SELECT concat(code,path) as `group` FROM http_error_log " . $condition . " GROUP BY `group`) as counting");
         } else {
+            $sort = ($sort == "amount") ? "date" : $sort;
             $logs = $db->fetchAll("SELECT id,code,path,date FROM http_error_log " . $condition . " ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
             $total = $db->fetchOne("SELECT count(*) FROM http_error_log " . $condition);
         }
