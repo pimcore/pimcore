@@ -24,6 +24,11 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
     public function routeStartup(Zend_Controller_Request_Abstract $request) {
 
         $this->conf = Pimcore_Config::getSystemConfig();
+
+        if($request->getParam('disable_less_compiler') || $_COOKIE["disable_less_compiler"]){
+            return $this->disable();
+        }
+
         if (!$this->conf->outputfilters) {
             return $this->disable();
         }
