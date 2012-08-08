@@ -296,9 +296,9 @@ class Pimcore_Tool {
      * @param  $subject
      * @return Pimcore_Mail
      */
-    public static function getMail($recipients = null, $subject = null) {
+    public static function getMail($recipients = null, $subject = null, $charset = null) {
 
-        $mail = new Pimcore_Mail();
+        $mail = new Pimcore_Mail($charset);
 
         if($recipients) {
             if(is_string($recipients)) {
