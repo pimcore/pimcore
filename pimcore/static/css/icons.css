@@ -1166,3 +1166,6 @@
     background: url(/pimcore/static/img/icon/world_add.png) left center no-repeat !important;
 }
 
+.pimcore_icon_add_child {
+    background: url(/pimcore/static/img/icon/folder_add.png) left center no-repeat !important;
+}
