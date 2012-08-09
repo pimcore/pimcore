@@ -204,7 +204,7 @@ class OnlineShop_Framework_IndexService {
                         }
 
                         if(method_exists($object, $getter)) {
-                            $value = $object->$getter();
+                            $value = $object->$getter($column->locale);
                         }
                     }
 

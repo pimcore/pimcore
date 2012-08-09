@@ -55,7 +55,7 @@
 
             <!-- column definition for product index -->
             <columns>
-                <column name="name" type="varchar(255)"/>
+                <column name="name" type="varchar(255)" locale="de"/>
                 <column name="seoname" type="varchar(255)"/>
                 <column name="description" type="longtext"/>
                 <column name="ean" type="varchar(255)"/>
