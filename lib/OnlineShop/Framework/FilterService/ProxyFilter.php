@@ -6,7 +6,7 @@
  * Time: 15:12
  * To change this template use File | Settings | File Templates.
  */
-class OnlineShop_Framework_FilterService_SelectProxy extends OnlineShop_Framework_FilterService_AbstractFilterType
+class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framework_FilterService_AbstractFilterType
 {
     /** @var $proxy OnlineShop_Framework_FilterService_AbstractFilterType*/
     private $proxy;
