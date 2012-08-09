@@ -4,9 +4,10 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
 
     const EMPTY_STRING = '$$EMPTY$$';
 
+
     protected $view;
     protected $script;
-
+    protected $config;
     /**
      * @param $view view to render the filter frontend into
      * @param $script script for rendering the filter frontend
@@ -15,7 +16,9 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
     public function __construct($view, $script,$config=null) {
         $this->view = $view;
         $this->script = $script;
+        $this->config = $config;
     }
+
     /**
      * @abstract
      * @param OnlineShop_Framework_AbstractFilterDefinitionType $filterDefinition
