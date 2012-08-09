@@ -29,7 +29,7 @@ class OnlineShop_Framework_FilterService {
      */
     public function getFilterDefinitionClass($name) {
         if($this->config->$name) {
-            return new $this->config->$name->class($this->view, $this->config->$name->script);
+            return new $this->config->$name->class($this->view, $this->config->$name->script,$this->config->$name);
         } else {
             return $name; //throw new OnlineShop_Framework_Exception_UnsupportedException($name . " not as filter type configured.");
         }
