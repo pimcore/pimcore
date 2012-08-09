@@ -19,12 +19,13 @@ while($count > 0) {
     echo "Page: " . $page ."\n";
     echo "=========================\n";
 
-    $products = Object_Product::getList(array(
-        "unpublished" => true,
-        "offset" => $page * $pageSize,
-        "limit" => $pageSize,
-        "objectTypes" => array("object", "folder", "variant")
-    ));
+    $products = new Object_Product_List();
+    $products->setUnpublished(true);
+    $products->setOffset($page * $pageSize);
+    $products->setLimit($pageSize);
+    $products->setObjectTypes(array("object", "folder", "variant"));
+    $products->setIgnoreLocalizedFields(true);
+
 
     foreach($products as $p) {
 
