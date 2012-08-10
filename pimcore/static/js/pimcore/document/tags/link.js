@@ -135,6 +135,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
                                             name: 'target',
                                             triggerAction: 'all',
                                             editable: true,
+                                            mode: "local",
                                             store: ["","_blank","_self","_top","_parent"],
                                             value: this.data.target
                                         },

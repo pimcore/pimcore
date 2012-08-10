@@ -161,6 +161,11 @@
     z-index: 10003 !important;
 }
 
+.x-combo-list {
+    z-index: 10004 !important;
+}
+
+
 .pimcore_wysiwyg_mask {
 	position: absolute;
 	z-index: 10001;
