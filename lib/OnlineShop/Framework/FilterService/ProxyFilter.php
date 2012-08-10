@@ -32,7 +32,8 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
     )
     {
         $filterDefinition->field=$this->field;
-        $this->proxy->getFilterFrontend($filterDefinition,$productList,$currentFilter);
+        return $this->proxy->getFilterFrontend($filterDefinition,$productList,$currentFilter);
+
     }
 
     public function addCondition(
