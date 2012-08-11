@@ -111,6 +111,8 @@ Ext.onReady(function () {
             key: "s",
             fn: parent.pimcore.helpers.handleCtrlS,
             ctrl:true,
+            alt: false,
+            shift:false,
             stopEvent: true
         });
     
