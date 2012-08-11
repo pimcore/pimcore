@@ -267,6 +267,7 @@ class Document_Tag_Areablock extends Document_Tag {
      */
     public function start() {
 
+        reset($this->indices);
         $this->setupStaticEnvironment();
         
         // get configuration data for admin
