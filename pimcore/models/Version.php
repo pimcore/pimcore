@@ -473,6 +473,7 @@ class Version extends Pimcore_Model_Abstract {
                 break;
             }
 
+            Logger::debug("cycle completed, now waiting for 10 secs");
             sleep(10);
         }
 
