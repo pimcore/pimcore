@@ -1144,4 +1144,23 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             "data" => $templates
         ));
     }
+
+    public function openByUrlAction () {
+
+        $urlParts = parse_url($this->_getParam("url"));
+        if($urlParts["path"]) {
+            $document = Document::getByPath($urlParts["path"]);
+            if($document) {
+                $this->_helper->json(array(
+                    "success" => true,
+                    "id" => $document->getId(),
+                    "type" => $document->getType()
+                ));
+            }
+        }
+
+        $this->_helper->json(array(
+            "success" => false
+        ));
+    }
 }
