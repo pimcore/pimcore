@@ -131,6 +131,13 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
                     foreach ($elementIds as $elementId) {
                         $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", array($elementId, $elementType["elementType"]));
                         $versionIds = array_merge($versionIds, $elementVersions);
+
+                        // skip if there're already more than 10000 versions in the queue to avoid out of memory
+                        // all remaining will be deleted in the next cycle
+                        if(count($versionIds) > 10000) {
+                            $versionIds = array_unique($versionIds);
+                            return $versionIds;
+                        }
                     }
 
                     $versionIds = array_unique($versionIds);

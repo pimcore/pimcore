@@ -436,37 +436,45 @@ class Version extends Pimcore_Model_Abstract {
             }
         }        
         
-        $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes);
 
-        if(is_array($versions)) {
-            foreach ($versions as $index => $id) {
-                $version = Version::getById($id);
+        while(true) {
+            $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes);
 
-                if ($version->getCtype() == "document") {
-                    $element = Document::getById($version->getCid());
-                }
-                else if ($version->getCtype() == "asset") {
-                    $element = Asset::getById($version->getCid());
-                }
-                else if ($version->getCtype() == "object") {
-                    $element = Object_Abstract::getById($version->getCid());
-                }
+            if(is_array($versions) && !empty($versions)) {
+                foreach ($versions as $index => $id) {
+                    $version = Version::getById($id);
 
-                if($element instanceof Element_Interface) {
-                    if($element->getModificationDate() > $version->getDate()) {
-                        // delete version if it is outdated
+                    if ($version->getCtype() == "document") {
+                        $element = Document::getById($version->getCid());
+                    }
+                    else if ($version->getCtype() == "asset") {
+                        $element = Asset::getById($version->getCid());
+                    }
+                    else if ($version->getCtype() == "object") {
+                        $element = Object_Abstract::getById($version->getCid());
+                    }
+
+                    if($element instanceof Element_Interface) {
+                        if($element->getModificationDate() > $version->getDate()) {
+                            // delete version if it is outdated
+                            $version->delete();
+                        }
+                    } else {
+                        // delete version if the correspondening element doesn't exist anymore
                         $version->delete();
                     }
-                } else {
-                    // delete version if the correspondening element doesn't exist anymore
-                    $version->delete();
-                }
 
-                // call the garbage collector every 100 iterations, to avoid a out-of-memory
-                if($index % 100 == 0) {
-                    Pimcore::collectGarbage();
+                    // call the garbage collector if memory consumption is > 100MB
+                    if(memory_get_usage() > 100000000) {
+                        Pimcore::collectGarbage();
+                    }
                 }
+            } else {
+                break;
             }
+
+            sleep(10);
         }
+
     }
 }
