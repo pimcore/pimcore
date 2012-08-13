@@ -403,6 +403,12 @@
             "lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.js"
         );
 
+        // google maps API key
+        $googleMapsApiKey = $this->config->services->google->simpleapikey;
+        if($this->config->services->google->browserapikey) {
+            $googleMapsApiKey = $this->config->services->google->browserapikey;
+        }
+
     ?>
     
     <!-- some javascript -->
@@ -425,7 +431,7 @@
             language: '<?php echo $this->language; ?>',
             websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
             google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
-            google_maps_api_key: "<?php echo $this->config->services->google->simpleapikey ?>",
+            google_maps_api_key: "<?php echo $googleMapsApiKey ?>",
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
             showCloseConfirmation: true
         };
@@ -433,7 +439,7 @@
     
     
     <?php // 3rd party libraries ?>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $this->config->services->google->simpleapikey ?>"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $googleMapsApiKey ?>"></script>
 
     <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>

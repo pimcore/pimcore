@@ -303,7 +303,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "google" => array(
                         "client_id" => $values["services.google.client_id"],
                         "email" => $values["services.google.email"],
-                        "simpleapikey" => $values["services.google.simpleapikey"]
+                        "simpleapikey" => $values["services.google.simpleapikey"],
+                        "browserapikey" => $values["services.google.browserapikey"]
                     )
                 ),
                 "cache" => array(
