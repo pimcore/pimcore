@@ -1169,3 +1169,7 @@
 .pimcore_icon_add_child {
     background: url(/pimcore/static/img/icon/folder_add.png) left center no-repeat !important;
 }
+
+.pimcore_icon_open_document_by_url {
+    background: url(/pimcore/static/img/icon/page_find.png) left center no-repeat !important;
+}

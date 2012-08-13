@@ -35,6 +35,34 @@ pimcore.layout.toolbar = Class.create({
             }
         });
 
+        if (user.isAllowed("documents")) {
+            fileItems.push({
+                text: t("open_document_by_url"),
+                iconCls: "pimcore_icon_open_document_by_url",
+                handler: function () {
+                    Ext.MessageBox.prompt(t("open_document_by_url"), t("url_incl_http"), function (button, value, object) {
+                        if (button == "ok") {
+                            Ext.Ajax.request({
+                                url: "/admin/document/open-by-url/",
+                                method: "get",
+                                params: {
+                                    url: value
+                                },
+                                success: function (response) {
+                                    var res = Ext.decode(response.responseText);
+                                    if(res.success) {
+                                        pimcore.helpers.openDocument(res.id, res.type);
+                                    } else {
+                                        Ext.MessageBox.alert(t("error"), t("no_matching_document_found_for") + ": " + value);
+                                    }
+                                }.bind(this)
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
         fileItems.push({
             text: t("close_all_tabs"),
             iconCls: "pimcore_icon_menu_close_tabs",
