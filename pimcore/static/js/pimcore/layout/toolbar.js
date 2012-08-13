@@ -40,7 +40,7 @@ pimcore.layout.toolbar = Class.create({
                 text: t("open_document_by_url"),
                 iconCls: "pimcore_icon_open_document_by_url",
                 handler: function () {
-                    Ext.MessageBox.prompt(t("open_document_by_url"), t("url_incl_http"), function (button, value, object) {
+                    Ext.MessageBox.prompt(t("open_document_by_url"), t("path_or_url_incl_http"), function (button, value, object) {
                         if (button == "ok") {
                             Ext.Ajax.request({
                                 url: "/admin/document/open-by-url/",
