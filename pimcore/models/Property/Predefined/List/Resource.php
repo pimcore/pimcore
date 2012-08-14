@@ -38,7 +38,7 @@ class Property_Predefined_List_Resource extends Pimcore_Model_List_Resource_Abst
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM properties_predefined " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM properties_predefined " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }
