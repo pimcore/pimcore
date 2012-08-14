@@ -149,9 +149,17 @@ abstract class Object_List_Concrete extends Object_List {
     }
 
 
-    //field collection queries
+    /**
+     * field collection queries
+     * @var array
+     */
     private $fieldCollectionConfigs = array();
 
+    /**
+     * @param $type
+     * @param null $fieldname
+     * @throws Exception
+     */
     public function addFieldCollection($type, $fieldname = null) {
 
         if(empty($type)) {
@@ -162,20 +170,33 @@ abstract class Object_List_Concrete extends Object_List {
         $this->fieldCollectionConfigs[] = array("type" => $type, "fieldname" => $fieldname);  ;
     }
 
+    /**
+     * @param $fieldCollections
+     */
     public function setFieldCollections($fieldCollections) {
         foreach($fieldCollections as $fc) {
             $this->addFieldCollection($fc['type'], $fc['fieldname']);
         }
     }
 
+    /**
+     * @return array
+     */
     public function getFieldCollections() {
         return $this->fieldCollectionConfigs;
     }
 
 
-    //object brick queries
+    /**
+     * object brick queries
+     * @var array
+     */
     private $objectBrickConfigs = array();
 
+    /**
+     * @param $type
+     * @throws Exception
+     */
     public function addObjectbrick($type) {
 
         if(empty($type)) {
@@ -186,12 +207,18 @@ abstract class Object_List_Concrete extends Object_List {
         $this->objectBrickConfigs[] = $type;  ;
     }
 
+    /**
+     * @param $objectbricks
+     */
     public function setObjectbricks($objectbricks) {
         foreach($objectbricks as $ob) {
             $this->addObjectbrick($ob);
         }
     }
 
+    /**
+     * @return array
+     */
     public function getObjectbricks() {
         return $this->objectBrickConfigs;
     }

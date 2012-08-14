@@ -36,7 +36,10 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         $this->model->setObjects($objects);
         return $objects;
     }
-    
+
+    /**
+     * @return int
+     */
     public function getCount() {
         if (count($this->model->getObjects()) > 0) {
             return count($this->model->getObjects());
@@ -45,7 +48,10 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $amount;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getTotalCount() {
         $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM objects" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
         return $amount;
@@ -61,12 +67,25 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         return $objectIds;
     }
 
+    /**
+     * @return string
+     */
     protected function getCondition() {
-        if ($cond = $this->model->getCondition()) {
-            if (Object_Abstract::doHideUnpublished() && !$this->model->getUnpublished()) {
-                return " WHERE (" . $cond . ") AND o_published = 1";
+
+        $condition = $this->model->getCondition();
+        $objectTypes = $this->model->getObjectTypes();
+        if(!empty($objectTypes)) {
+            if(!empty($condition)) {
+                $condition .= " AND ";
             }
-            return " WHERE " . $cond . " ";
+            $condition .= " o_type IN ('" . implode("','", $this->objectTypes) . "')";
+        }
+
+        if ($condition) {
+            if (Object_Abstract::doHideUnpublished() && !$this->model->getUnpublished()) {
+                return " WHERE (" . $condition . ") AND o_published = 1";
+            }
+            return " WHERE " . $condition . " ";
         }
         else if (Object_Abstract::doHideUnpublished() && !$this->model->getUnpublished()) {
             return " WHERE o_published = 1";
