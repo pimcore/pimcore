@@ -28,7 +28,10 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
     public $unpublished = false;
 
 
-    public $objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER);
+    /**
+     * @var array
+     */
+    public $objectTypes = array();
     
     /**
      * @var array
@@ -52,19 +55,6 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
               return true;
           }
           return false;*/
-    }
-
-    public function getCondition() {
-        $condition = parent::getCondition();
-
-        if(!empty($this->objectTypes)) {
-            if(!empty($condition)) {
-                $condition .= " AND ";
-            }
-            $condition .= " o_type IN ('" . implode("','", $this->objectTypes) . "')";
-        }
-
-        return $condition;
     }
 
     /**
@@ -120,16 +110,27 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
      * Methods for Zend_Paginator_Adapter_Interface
      */
 
+    /**
+     * @return int
+     */
     public function count() {
         return $this->getTotalCount();
     }
 
+    /**
+     * @param int $offset
+     * @param int $itemCountPerPage
+     * @return array
+     */
     public function getItems($offset, $itemCountPerPage) {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
         return $this->load();
     }
 
+    /**
+     * @return Object_List|Zend_Paginator_Adapter_Interface
+     */
     public function getPaginatorAdapter() {
         return $this;
     }
@@ -138,29 +139,44 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
      * Methods for Iterator
      */
 
+    /**
+     *
+     */
     public function rewind() {
         $this->getObjects();
         reset($this->objects);
     }
 
+    /**
+     * @return mixed
+     */
     public function current() {
         $this->getObjects();
         $var = current($this->objects);
         return $var;
     }
 
+    /**
+     * @return mixed
+     */
     public function key() {
         $this->getObjects();
         $var = key($this->objects);
         return $var;
     }
 
+    /**
+     * @return mixed|void
+     */
     public function next() {
         $this->getObjects();
         $var = next($this->objects);
         return $var;
     }
 
+    /**
+     * @return bool
+     */
     public function valid() {
         $this->getObjects();
         $var = $this->current() !== false;
