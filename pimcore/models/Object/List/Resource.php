@@ -78,7 +78,7 @@ class Object_List_Resource extends Pimcore_Model_List_Resource_Abstract {
             if(!empty($condition)) {
                 $condition .= " AND ";
             }
-            $condition .= " o_type IN ('" . implode("','", $this->objectTypes) . "')";
+            $condition .= " o_type IN ('" . implode("','", $objectTypes) . "')";
         }
 
         if ($condition) {
