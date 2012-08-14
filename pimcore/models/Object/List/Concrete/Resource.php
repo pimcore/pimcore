@@ -75,7 +75,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
             return $amount;
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
@@ -91,7 +91,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         }
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
             return $amount;
         } catch (Exception $e) {
             return $this->exceptionHandler($e);

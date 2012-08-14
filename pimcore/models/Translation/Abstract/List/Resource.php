@@ -18,7 +18,7 @@
 abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Resource_Abstract implements Translation_Abstract_List_Resource_Interface {
 
     public function getTotalCount() {
-        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a", $this->model->getConditionVariables());
+        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a", $this->model->getConditionVariables());
         return $amount;
     }
 
@@ -27,7 +27,7 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
             return count($this->model->getObjects());
         }
 
-        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit() . ") AS a", $this->model->getConditionVariables());
+        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit() . ") AS a", $this->model->getConditionVariables());
         return $amount;
     }
 
