@@ -450,11 +450,11 @@ class Pimcore_Mail extends Zend_Mail
     {
         if ($this->getDocument()) {
             $this->setDocumentSettings();
-
-            $this->setSubject($this->getSubjectRendered());
-            $this->setBodyHtml($this->getBodyHtmlRendered());
-            $this->setBodyText($this->getBodyTextRendered());
         }
+
+        $this->setSubject($this->getSubjectRendered());
+        $this->setBodyHtml($this->getBodyHtmlRendered());
+        $this->setBodyText($this->getBodyTextRendered());
 
         if($this->ignoreDebugMode == false){
             $this->checkDebugMode();
