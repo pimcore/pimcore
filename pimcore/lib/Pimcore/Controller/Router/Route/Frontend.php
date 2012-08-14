@@ -64,7 +64,17 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         
         // set the original path
         $originalPath = $path;
-        
+
+        // do not allow requests including /index.php/ => SEO
+        if(preg_match("@^/index.php(.*)@", $_SERVER["REQUEST_URI"], $matches) && strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
+            $redirectUrl = $matches[1];
+            if(empty($redirectUrl)) {
+                $redirectUrl = "/";
+            }
+            header("Location: " . $redirectUrl, true, 301);
+            exit;
+        }
+
         // check for a registered site
         try {
             if ($config->general->domain != Pimcore_Tool::getHostname()) {
