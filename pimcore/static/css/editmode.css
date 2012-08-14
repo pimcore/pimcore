@@ -165,6 +165,7 @@
     z-index: 10004 !important;
 }
 
+/* because this causes problems with the fixed z-index of combo and window above */
 .x-shadow {
     display: none !important;
 }
