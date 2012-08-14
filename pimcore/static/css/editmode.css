@@ -165,6 +165,10 @@
     z-index: 10004 !important;
 }
 
+.x-shadow {
+    display: none !important;
+}
+
 
 .pimcore_wysiwyg_mask {
 	position: absolute;
