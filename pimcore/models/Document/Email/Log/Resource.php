@@ -159,12 +159,15 @@ class Document_Email_Log_Resource extends Pimcore_Model_Resource_Abstract {
         $class->key = $key.' '; //dirty hack - key has to be a string otherwise the treeGrid won't work
 
         if(is_string($value) || is_int($value) || is_null($value)){
-           $class->data = array('type' => 'simple',
-                                 'value' => $value);
-        }elseif(is_object($value)){
+            $class->data = array('type' => 'simple',
+                'value' => $value);
+        }elseif($value instanceof Zend_Date){
+            $class->data = array('type' => 'simple',
+                'value' => $value->get(Zend_Date::DATETIME));
+        }elseif(is_object($value) && method_exists($value,'getId')){
             $class->data = array('type' => 'object',
-                                 'objectId' => $value->getId(),
-                                 'objectClass' => get_class($value));
+                'objectId' => $value->getId(),
+                'objectClass' => get_class($value));
         }elseif(is_array($value)){
             foreach($value as $entryKey => $entryValue){
                 $class->children[] = self::prepareLoggingData($entryKey,$entryValue);
