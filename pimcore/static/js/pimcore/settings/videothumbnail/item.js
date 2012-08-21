@@ -214,6 +214,10 @@ pimcore.settings.videothumbnail.items = {
                 xtype: "hidden",
                 name: "item." + myId  + ".type",
                 value: "resize"
+            }, {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: "<small style='color: red;'>" + t("width_and_height_must_be_an_even_number") + "</small>"
             }]
         });
 
