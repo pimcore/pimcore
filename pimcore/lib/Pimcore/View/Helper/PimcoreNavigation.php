@@ -97,7 +97,7 @@ class Pimcore_View_Helper_PimcoreNavigation_Controller
 
                     $active = false;
 
-                    if (strpos($this->_activeDocument->getFullPath(), $child->getFullPath() . "/") === 0 || $this->_activeDocument->getFullPath() == $child->getFullPath()) {
+                    if (strpos($this->_activeDocument->getRealFullPath(), $child->getRealFullPath() . "/") === 0 || $this->_activeDocument->getRealFullPath() == $child->getRealFullPath()) {
                         $active = true;
                     }
 
