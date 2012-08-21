@@ -436,46 +436,54 @@ class Version extends Pimcore_Model_Abstract {
             }
         }        
         
+        $counter = 0;
+        $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes);
 
-        while(true) {
-            $versions = $this->getResource()->maintenanceGetOutdatedVersions($elementTypes);
+        Logger::debug("versions to check: " . count($versions) . " memory using: " . formatBytes(memory_get_usage()));
 
-            if(is_array($versions) && !empty($versions)) {
-                foreach ($versions as $index => $id) {
-                    $version = Version::getById($id);
+        if(is_array($versions) && !empty($versions)) {
+            foreach ($versions as $index => $id) {
+                $version = Version::getById($id);
+                $counter++;
 
-                    if ($version->getCtype() == "document") {
-                        $element = Document::getById($version->getCid());
-                    }
-                    else if ($version->getCtype() == "asset") {
-                        $element = Asset::getById($version->getCid());
-                    }
-                    else if ($version->getCtype() == "object") {
-                        $element = Object_Abstract::getById($version->getCid());
-                    }
-
-                    if($element instanceof Element_Interface) {
-                        if($element->getModificationDate() > $version->getDate()) {
-                            // delete version if it is outdated
-                            $version->delete();
-                        }
-                    } else {
-                        // delete version if the correspondening element doesn't exist anymore
-                        $version->delete();
-                    }
-
-                    // call the garbage collector if memory consumption is > 100MB
-                    if(memory_get_usage() > 100000000) {
-                        Pimcore::collectGarbage();
-                    }
+                if ($version->getCtype() == "document") {
+                    $element = Document::getById($version->getCid());
                 }
-            } else {
-                break;
+                else if ($version->getCtype() == "asset") {
+                    $element = Asset::getById($version->getCid());
+                }
+                else if ($version->getCtype() == "object") {
+                    $element = Object_Abstract::getById($version->getCid());
+                }
+
+                if($element instanceof Element_Interface) {
+
+                    Logger::debug("currently checking Element-ID: " . $element->getId() . " Element-Type: " . Element_Service::getElementType($element) . " in cycle: " . $counter);
+
+                    if($element->getModificationDate() > $version->getDate()) {
+                        // delete version if it is outdated
+                        Logger::debug("delete version: " . $version->getId() . " because it is outdated");
+                        $version->delete();
+                    } else {
+                        Logger::debug("do not delete version (" . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . " Element-Type: " . Element_Service::getElementType($element));
+                    }
+                } else {
+                    // delete version if the corresponding element doesn't exist anymore
+                    Logger::debug("delete version (" . $version->getId() . ") because the corresponding element doesn't exist anymore");
+                    $version->delete();
+                }
+
+                // call the garbage collector if memory consumption is > 100MB
+                if(memory_get_usage() > 100000000) {
+                    Pimcore::collectGarbage();
+                }
+
+                if($counter > 20) {
+                    Logger::debug("cycle of 20 completed, now waiting for 10 secs");
+                    sleep(10);
+                    $counter=0;
+                }
             }
-
-            Logger::debug("cycle completed, now waiting for 10 secs");
-            sleep(10);
         }
-
     }
 }
