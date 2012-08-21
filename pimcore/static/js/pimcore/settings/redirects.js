@@ -379,16 +379,16 @@ pimcore.settings.redirects = Class.create({
         var source = "";
         var values = this.wizardForm.getForm().getFieldValues();
         var pattern = preg_quote(values.pattern);
-        pattern = str_replace("/","\\/",pattern);
+        pattern = str_replace("@","\\@",pattern);
 
         if(values.mode == "begin") {
-            source = "/^" + pattern + "/";
+            source = "@^" + pattern + "@";
         } else if (values.mode == "exact") {
-            source = "/^" + pattern + "$/";
+            source = "@^" + pattern + "$@";
         } else if (values.mode == "contain") {
-            source = "/" + pattern + "/";
+            source = "@" + pattern + "@";
         } else if (values.mode == "begin_end_slash") {
-            source = "/^" + pattern + "[\\/]?$/";
+            source = "@^" + pattern + "[\\/]?$@";
         }
 
         var u = new this.grid.store.recordType({
