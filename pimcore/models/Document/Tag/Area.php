@@ -168,7 +168,11 @@ class Document_Tag_Area extends Document_Tag {
 
                 if(is_file($edit) && $editmode) {
                     echo '<div class="pimcore_area_edit_button"></div>';
-                    $this->getView()->editmode = false;
+
+                    // forces the editmode in view.php independent if there's an edit.php or not
+                    if(!array_key_exists("forceEditInView",$params) || !$params["forceEditInView"]) {
+                        $this->getView()->editmode = false;
+                    }
                 }
 
                 $this->getView()->template($view);
