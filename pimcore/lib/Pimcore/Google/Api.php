@@ -13,11 +13,6 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-include_once("googleApiClient/apiClient.php");
-include_once("googleApiClient/contrib/apiAnalyticsService.php");
-include_once("googleApiClient/contrib/apiSiteVerificationService.php");
-include_once("googleApiClient/contrib/apiCustomsearchService.php");
-
 class Pimcore_Google_Api {
 
     public static function getPrivateKeyPath() {
@@ -69,6 +64,7 @@ class Pimcore_Google_Api {
         }
 
         $config = self::getConfig();
+        self::loadClientLibrary();
 
         $client = new apiClient(array(
             "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
@@ -110,6 +106,8 @@ class Pimcore_Google_Api {
             return false;
         }
 
+        self::loadClientLibrary();
+
         $client = new apiClient(array(
             "ioFileCache_directory" => PIMCORE_CACHE_DIRECTORY
         ));
@@ -117,5 +115,17 @@ class Pimcore_Google_Api {
         $client->setDeveloperKey(Pimcore_Config::getSystemConfig()->services->google->simpleapikey);
 
         return $client;
+    }
+
+    /**
+     * load the client libs dynamically, otherwise just the initialization will raise an exception
+     * see: http://www.pimcore.org/issues/browse/PIMCORE-1641
+     * @static
+     */
+    private static function loadClientLibrary() {
+        include_once("googleApiClient/apiClient.php");
+        include_once("googleApiClient/contrib/apiAnalyticsService.php");
+        include_once("googleApiClient/contrib/apiSiteVerificationService.php");
+        include_once("googleApiClient/contrib/apiCustomsearchService.php");
     }
 }
