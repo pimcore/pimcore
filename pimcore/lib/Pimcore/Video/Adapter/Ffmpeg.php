@@ -280,14 +280,21 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     public function resize ($width, $height) {
+        // ensure $width & $height are even (mp4 requires this)
+        $width = ceil($width/2) * 2;
+        $height = ceil($height/2) * 2;
         $this->addArgument("resize", "-s ".$width."x".$height);
     }
 
     public function scaleByWidth ($width) {
+        // ensure $width is even (mp4 requires this)
+        $width = ceil($width/2) * 2;
         $this->addArgument("scaleByWidth", '-vf "scale='.$width.':trunc(ow/a/vsub)*vsub"');
     }
 
     public function scaleByHeight ($height) {
+        // ensure $height is even (mp4 requires this)
+        $height = ceil($height/2) * 2;
         $this->addArgument("scaleByHeight", '-vf "scale=trunc(oh/(ih/iw)/hsub)*hsub:'.$height.'"');
     }
 
