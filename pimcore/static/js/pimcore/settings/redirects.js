@@ -342,7 +342,7 @@ pimcore.settings.redirects = Class.create({
                         ["begin", t("beginning_with")],
                         ["exact", t("matching_exact")],
                         ["contain", t("contain")],
-                        ["begin_end_slash", t("beginning_with_ending_with_optional_slash")]
+                        ["begin_end_slash", t("short_url")]
                     ],
                     mode: "local",
                     typeAhead: false,
@@ -388,6 +388,9 @@ pimcore.settings.redirects = Class.create({
         } else if (values.mode == "contain") {
             source = "@" + pattern + "@";
         } else if (values.mode == "begin_end_slash") {
+            if(pattern.charAt(0) != "/") {
+                pattern = "/" + pattern;
+            }
             source = "@^" + pattern + "[\\/]?$@";
         }
 
