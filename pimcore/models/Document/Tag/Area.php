@@ -187,6 +187,9 @@ class Document_Tag_Area extends Document_Tag {
 
                 echo '</div>';
 
+                if(is_object($actionObj) && method_exists($actionObj,"postRenderAction")) {
+                    $actionObj->postRenderAction();
+                }
             }
         }
 

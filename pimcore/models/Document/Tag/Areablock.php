@@ -221,6 +221,10 @@ class Document_Tag_Areablock extends Document_Tag {
                 }
 
                 echo '</div>';
+
+                if(is_object($actionObj) && method_exists($actionObj,"postRenderAction")) {
+                    $actionObj->postRenderAction();
+                }
             }
         }
 
