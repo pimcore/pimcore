@@ -1013,3 +1013,21 @@ pimcore.helpers.selectPathInTree = function (tree, path, callback) {
         console.log(e);
     }
 }
+
+pimcore.helpers.getClassForIcon = function (icon) {
+
+    var styleContainerId = "pimcore_dynamic_class_for_icon";
+    var styleContainer = Ext.get(styleContainerId);
+    if(!styleContainer) {
+        styleContainer = Ext.getBody().insertHtml("beforeEnd", '<style type="text/css" id="' + styleContainerId + '"></style>', true);
+    }
+
+    var content = styleContainer.dom.innerHTML;
+    var classname = "pimcore_dynamic_class_for_icon_" + uniqid();
+    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; }\n");
+    styleContainer.dom.innerHTML = content;
+
+    console.log(content);
+
+    return classname;
+}

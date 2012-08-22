@@ -310,7 +310,16 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["userPermissions"] = $object->getUserPermissions();
             $objectData["versions"] = $object->getVersions();
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
-            $objectData["allowedClasses"] = $object->getClass();
+            $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
+
+            if($object->getElementAdminStyle()->getElementIcon()) {
+                $objectData["general"]["icon"] = $object->getO_elementAdminStyle()->getElementIcon();
+            }
+            if($object->getElementAdminStyle()->getElementIconClass()) {
+                $objectData["general"]["iconCls"] = $object->getO_elementAdminStyle()->getElementIconClass();
+            }
+
+
             if ($object instanceof Object_Concrete) {
                 $objectData["lazyLoadedFields"] = $object->getLazyLoadedFields();
             }

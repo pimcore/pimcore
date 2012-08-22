@@ -123,6 +123,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     addTab: function () {
 
+        // icon class
+        var iconClass = "pimcore_icon_object";
+        if(this.data.general["iconCls"]) {
+            iconClass = this.data.general["iconCls"];
+        } else if (this.data.general["icon"]) {
+            iconClass = pimcore.helpers.getClassForIcon(this.data.general["icon"]);
+        }
+
 
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + this.id;
@@ -133,7 +141,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             layout: "border",
             items: [this.getLayoutToolbar(),this.getTabPanel()],
             object: this,
-            iconCls: "pimcore_icon_object"
+            iconCls: iconClass
         });
 
         this.tab.on("activate", function () {
@@ -209,7 +217,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             items.push(this.search.getLayout());
         }
 
-        if(this.data.allowedClasses.allowVariants) {
+        if(this.data.general.allowVariants) {
             items.push(this.variants.getLayout());
         }
 
