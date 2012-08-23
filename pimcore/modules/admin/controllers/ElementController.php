@@ -27,6 +27,33 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
         exit;
     }
 
+    public function getSubtypeAction () {
+
+        $id = (int) $this->_getParam("id");
+        $type = $this->_getParam("type");
+        $el = Element_Service::getElementById($type, $id);
+
+        if($el) {
+            if($el instanceof Asset || $el instanceof Document) {
+                $subtype = $el->getType();
+            } else if($el instanceof Object_Concrete) {
+                $subtype = $el->geto_className();
+            } else if ($el instanceof Object_Folder) {
+                $subtype = "folder";
+            }
+
+            $this->_helper->json(array(
+                "subtype" => $subtype,
+                "id" => $id,
+                "type" => $type,
+                "success" => true
+            ));
+        } else {
+            $this->_helper->json(array(
+                "success" => false
+            ));
+        }
+    }
 
     public function noteListAction () {
 

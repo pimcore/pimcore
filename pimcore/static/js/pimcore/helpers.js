@@ -99,14 +99,32 @@ pimcore.helpers.closeObject = function (id) {
 
 
 pimcore.helpers.openElement = function (id, type, subtype) {
-    if (type == "document") {
-        pimcore.helpers.openDocument(id, subtype);
-    }
-    else if (type == "asset") {
-        pimcore.helpers.openAsset(id, subtype);
-    }
-    else if (type == "object") {
-        pimcore.helpers.openObject(id, subtype);
+    if(typeof subtype != "undefined") {
+        if (type == "document") {
+            pimcore.helpers.openDocument(id, subtype);
+        }
+        else if (type == "asset") {
+            pimcore.helpers.openAsset(id, subtype);
+        }
+        else if (type == "object") {
+            pimcore.helpers.openObject(id, subtype);
+        }
+    } else {
+        Ext.Ajax.request({
+            url: "/admin/element/get-subtype",
+            params: {
+                id: id,
+                type:  type
+            },
+            success: function (response) {
+                var res = Ext.decode(response.responseText);
+                if(res.success) {
+                    pimcore.helpers.openElement(res.id, res.type, res.subtype);
+                } else {
+                    Ext.MessageBox.alert(t("error"), t("element_not_found"))
+                }
+            }
+        });
     }
 };
 
@@ -1030,4 +1048,13 @@ pimcore.helpers.getClassForIcon = function (icon) {
     console.log(content);
 
     return classname;
+}
+
+
+pimcore.helpers.openElementByIdDialog = function (type) {
+    Ext.MessageBox.prompt(t('open_' + type + '_by_id'), t('please_enter_the_id_of_the_' + type), function (button, value, object) {
+        if(button == "ok") {
+            pimcore.helpers.openElement(value, type);
+        }
+    });
 }
