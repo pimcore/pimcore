@@ -64,6 +64,7 @@ class Pimcore_Config {
 
                 $websiteSettingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/website.xml";
                 $settingsArray = array();
+                $cacheTags = array("website_config","system","config");
 
                 if(is_file($websiteSettingFile)) {
                     $rawConfig = new Zend_Config_Xml($websiteSettingFile);
@@ -87,6 +88,9 @@ class Pimcore_Config {
                             $s = (string) $value["data"];
                         }
 
+                        if($s instanceof Element_Interface) {
+                            $cacheTags = $s->getCacheTags($cacheTags);
+                        }
 
                         if($s) {
                             $settingsArray[$key] = $s;
@@ -95,7 +99,7 @@ class Pimcore_Config {
                 }
                 $config = new Zend_Config($settingsArray, true);
 
-                Pimcore_Model_Cache::save($config, $cacheKey, array("website_config","system","config"), null, 998);
+                Pimcore_Model_Cache::save($config, $cacheKey, $cacheTags, null, 998);
             }
 
             self::setWebsiteConfig($config);
