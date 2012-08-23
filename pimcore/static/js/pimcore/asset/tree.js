@@ -121,115 +121,115 @@ pimcore.asset.tree = Class.create({
             this.tree.loadMask.enable();
 
             // html5 upload
-            this.tree.getEl().dom.addEventListener("drop", function (e) {
+            if (window["FileList"]) {
+                this.tree.getEl().dom.addEventListener("drop", function (e) {
 
-                e.stopPropagation();
-                e.preventDefault();
+                    e.stopPropagation();
+                    e.preventDefault();
 
-                try {
-                    if(!this.tree.getSelectionModel().getSelectedNode()) {
+                    try {
+                        if(!this.tree.getSelectionModel().getSelectedNode()) {
+                            return true;
+                        }
+                    }catch (e) {
                         return true;
                     }
-                }catch (e) {
-                    return true;
-                }
 
-                var node = this.tree.getSelectionModel().getSelectedNode();
+                    var node = this.tree.getSelectionModel().getSelectedNode();
 
-                var dt = e.dataTransfer;
-                var files = dt.files;
-                var file;
-                this.activeUploads = 0;
+                    var dt = e.dataTransfer;
+                    var files = dt.files;
+                    var file;
+                    this.activeUploads = 0;
 
-                if(files.length < 1) {
-                    return;
-                }
-
-                var pbar = new Ext.ProgressBar({
-                    id:'pbar3',
-                    width:500
-                });
-                var win = new Ext.Window({
-                    items: [pbar],
-                    modal: true,
-                    closable: false,
-                    bodyStyle: "padding:10px;"
-                });
-                pbar.wait({
-                    interval:2000,
-                    duration:3600000,
-                    increment:5
-                });
-                win.show();
-
-                for (var i=0; i<files.length; i++) {
-                    file = files[i];
-
-                    if (window.FileList && file.type && file.name) {
-
-                        this.activeUploads++;
-
-                        var reader = new FileReader();
-                        reader.onload = function(file, node, win, e) {
-
-                            var boundary = '------multipartformboundary' + (new Date).getTime();
-                            var dashdash = '--';
-                            var crlf     = '\r\n';
-
-                            var builder = '';
-
-                            builder += dashdash;
-                            builder += boundary;
-                            builder += crlf;
-
-                            var xhr = new XMLHttpRequest();
-
-                            builder += 'Content-Disposition: form-data; name="Filedata"';
-                            if (file.name) {
-                                builder += '; filename="' + file.name + '"';
-                            }
-                            builder += crlf;
-
-                            builder += 'Content-Type: ' + file.type;
-                            builder += crlf;
-                            builder += crlf;
-
-
-
-                            builder += e.target.result;
-                            builder += crlf;
-
-                            builder += dashdash;
-                            builder += boundary;
-                            builder += crlf;
-
-                            builder += dashdash;
-                            builder += boundary;
-                            builder += dashdash;
-                            builder += crlf;
-
-                            xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid=" + pimcore.settings.sessionId + "&parentId=" + node.id, true);
-                            xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
-                                + boundary);
-                            xhr.sendAsBinary(builder);
-
-                            xhr.onload = function () {
-                                this.activeUploads--;
-                                if(this.activeUploads < 1) {
-                                    win.close();
-                                    node.reload();
-                                }
-                            }.bind(this,node,win);
-
-                        }.bind(this, file, node, win);
-
-                        reader.readAsBinaryString(file);
+                    if(files.length < 1) {
+                        return;
                     }
-                }
-            }.bind(this), true);
 
+                    var pbar = new Ext.ProgressBar({
+                        id:'pbar3',
+                        width:500
+                    });
+                    var win = new Ext.Window({
+                        items: [pbar],
+                        modal: true,
+                        closable: false,
+                        bodyStyle: "padding:10px;"
+                    });
+                    pbar.wait({
+                        interval:2000,
+                        duration:3600000,
+                        increment:5
+                    });
+                    win.show();
+
+                    for (var i=0; i<files.length; i++) {
+                        file = files[i];
+
+                        if (window.FileList && file.type && file.name) {
+
+                            this.activeUploads++;
+
+                            var reader = new FileReader();
+                            reader.onload = function(file, node, win, e) {
+
+                                var boundary = '------multipartformboundary' + (new Date).getTime();
+                                var dashdash = '--';
+                                var crlf     = '\r\n';
+
+                                var builder = '';
+
+                                builder += dashdash;
+                                builder += boundary;
+                                builder += crlf;
+
+                                var xhr = new XMLHttpRequest();
+
+                                builder += 'Content-Disposition: form-data; name="Filedata"';
+                                if (file.name) {
+                                    builder += '; filename="' + file.name + '"';
+                                }
+                                builder += crlf;
+
+                                builder += 'Content-Type: ' + file.type;
+                                builder += crlf;
+                                builder += crlf;
+
+
+
+                                builder += e.target.result;
+                                builder += crlf;
+
+                                builder += dashdash;
+                                builder += boundary;
+                                builder += crlf;
+
+                                builder += dashdash;
+                                builder += boundary;
+                                builder += dashdash;
+                                builder += crlf;
+
+                                xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid=" + pimcore.settings.sessionId + "&parentId=" + node.id, true);
+                                xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
+                                    + boundary);
+                                xhr.sendAsBinary(builder);
+
+                                xhr.onload = function () {
+                                    this.activeUploads--;
+                                    if(this.activeUploads < 1) {
+                                        win.close();
+                                        node.reload();
+                                    }
+                                }.bind(this,node,win);
+
+                            }.bind(this, file, node, win);
+
+                            reader.readAsBinaryString(file);
+                        }
+                    }
+                }.bind(this), true);
+            }
         }.bind(this));
-        
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.doLayout();
@@ -755,7 +755,7 @@ pimcore.asset.tree = Class.create({
     
     enableHtml5Upload: function (tree, parent, node, index) {
 
-        if (!window.FileList) {
+        if (!window["FileList"]) {
             return;
         }
         
