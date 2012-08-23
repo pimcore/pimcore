@@ -61,7 +61,30 @@ pimcore.layout.toolbar = Class.create({
                     });
                 }
             });
+
+            fileItems.push({
+                text: t("open_document_by_id"),
+                iconCls: "pimcore_icon_open_document_by_id",
+                handler: pimcore.helpers.openElementByIdDialog.bind(this, "document")
+            });
         }
+
+        if (user.isAllowed("assets")) {
+            fileItems.push({
+                text: t("open_asset_by_id"),
+                iconCls: "pimcore_icon_open_asset_by_id",
+                handler: pimcore.helpers.openElementByIdDialog.bind(this, "asset")
+            });
+        }
+
+        if (user.isAllowed("objects")) {
+            fileItems.push({
+                text: t("open_object_by_id"),
+                iconCls: "pimcore_icon_open_object_by_id",
+                handler: pimcore.helpers.openElementByIdDialog.bind(this, "object")
+            });
+        }
+
 
         fileItems.push({
             text: t("close_all_tabs"),

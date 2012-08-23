@@ -438,6 +438,33 @@ Ext.onReady(function() {
         stopEvent: true
     });
 
+    var openAssetById = new Ext.KeyMap(document, {
+        key: "a",
+        fn: pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
+        ctrl:true,
+        alt: false,
+        shift:true,
+        stopEvent: true
+    });
+
+    var openObjectById = new Ext.KeyMap(document, {
+        key: "o",
+        fn: pimcore.helpers.openElementByIdDialog.bind(this, "object"),
+        ctrl:true,
+        alt: false,
+        shift:true,
+        stopEvent: true
+    });
+
+    var openDocumentById = new Ext.KeyMap(document, {
+        key: "d",
+        fn: pimcore.helpers.openElementByIdDialog.bind(this, "document"),
+        ctrl:true,
+        alt: false,
+        shift:true,
+        stopEvent: true
+    });
+
 
 
 });
