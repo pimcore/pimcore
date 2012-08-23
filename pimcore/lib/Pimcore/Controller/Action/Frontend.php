@@ -243,6 +243,11 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
     public function getRenderScript() {
 
+        // try to get the template out of the params
+        if ($this->_getParam("template")) {
+            return $this->_getParam("template");
+        }
+
         // try to get template out of the document object, but only if the parameter `staticroute´ is not set, which indicates
         // if a request comes through a static/custom route (contains the route Object => Staticroute)
         // see PIMCORE-1545
@@ -251,10 +256,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                 return $this->document->getTemplate();
             }
         }
-            // try to get the template out of the params
-        else if ($this->_getParam("template")) {
-            return $this->_getParam("template");
-        }
+
         return null;
     }
 
