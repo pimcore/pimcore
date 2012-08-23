@@ -1190,7 +1190,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $writer->write();
 
         // clear cache
-        Pimcore_Model_Cache::clearTags(array("output", "system"));
+        Pimcore_Model_Cache::clearTags(array("output", "system","website_config"));
 
 
         $this->_helper->json(array("success" => true));
