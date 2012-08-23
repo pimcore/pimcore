@@ -281,7 +281,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         // only display error message in debug mode
-        if(!PIMCORE_DEBUG) {
+        if(!Pimcore::inDebugMode()) {
             $message = "";
         }
 
