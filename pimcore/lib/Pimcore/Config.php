@@ -95,7 +95,7 @@ class Pimcore_Config {
                 }
                 $config = new Zend_Config($settingsArray, true);
 
-                Pimcore_Model_Cache::save($config, $cacheKey, array("websiteconfig","system","config"), null, 998);
+                Pimcore_Model_Cache::save($config, $cacheKey, array("website_config","system","config"), null, 998);
             }
 
             self::setWebsiteConfig($config);
