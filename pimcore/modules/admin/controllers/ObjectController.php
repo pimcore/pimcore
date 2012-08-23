@@ -1183,7 +1183,6 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $list->setOffset($start);
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
-            $list->setIgnoreLocale(true);
 
             $list->load();
 

@@ -222,6 +222,13 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         });
 
         $language = $this->getLanguage();
+
+        if(!Pimcore_Tool::isValidLanguage($language)) {
+            $validLanguages = Pimcore_Tool::getValidLanguages();
+            $language = $validLanguages[0];
+        }
+
+
         if(!empty($gridConfig) && !empty($gridConfig['language'])) {
             $language = $gridConfig['language'];
         }
