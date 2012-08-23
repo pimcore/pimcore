@@ -131,11 +131,12 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
             // default
             $this->tableName = "object_" . $this->model->getClassId();
 
-            // check for a localized field and if they should be used for this list
-            if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields") && !$this->model->getIgnoreLocalizedFields()) {
-                $language = "default";
+            if(!$this->model->getIgnoreLocale()) {
 
-                if(!$this->model->getIgnoreLocale()) {
+                // check for a localized field and if they should be used for this list
+                if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields") && !$this->model->getIgnoreLocalizedFields()) {
+
+                    $language = "default";
                     if($this->model->getLocale()) {
                         if(Pimcore_Tool::isValidLanguage((string) $this->model->getLocale())) {
                             $language = (string) $this->model->getLocale();
@@ -148,9 +149,9 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
                             $language = (string) $locale;
                         }
                     }
+                    $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
                 }
 
-                $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
             }
         }
         return $this->tableName;
