@@ -79,9 +79,11 @@ class Document_Tag_Snippet extends Document_Tag {
                     }
                     return "";
                 }
-            }
-            catch (Exception $e) {
-                Logger::warning($e);
+            } catch (Exception $e) {
+                if(Pimcore::inDebugMode()) {
+                    return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
+                }
+                Logger::error($e);
             }
         } else {
             return null;

@@ -128,7 +128,14 @@ class Document_Tag_Renderlet extends Document_Tag {
             }
 
             if ($this->getView() != null) {
-                return $this->getView()->action($this->options["action"], $this->options["controller"], $this->options["module"], $params);
+                try {
+                    return $this->getView()->action($this->options["action"], $this->options["controller"], $this->options["module"], $params);
+                } catch (Exception $e) {
+                    if(Pimcore::inDebugMode()) {
+                        return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
+                    }
+                    Logger::error($e);
+                }
             }
         }
     }
