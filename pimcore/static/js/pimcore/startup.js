@@ -466,7 +466,7 @@ Ext.onReady(function() {
     });
 
     var openDocumentByPath = new Ext.KeyMap(document, {
-        key: "p",
+        key: "f",
         fn: pimcore.helpers.openDocumentByPathDialog,
         ctrl:true,
         alt: false,
