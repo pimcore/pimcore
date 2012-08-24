@@ -1058,3 +1058,25 @@ pimcore.helpers.openElementByIdDialog = function (type) {
         }
     });
 }
+
+pimcore.helpers.openDocumentByPathDialog = function () {
+    Ext.MessageBox.prompt(t("open_document_by_url"), t("path_or_url_incl_http"), function (button, value, object) {
+        if (button == "ok") {
+            Ext.Ajax.request({
+                url: "/admin/document/open-by-url/",
+                method: "get",
+                params: {
+                    url: value
+                },
+                success: function (response) {
+                    var res = Ext.decode(response.responseText);
+                    if(res.success) {
+                        pimcore.helpers.openDocument(res.id, res.type);
+                    } else {
+                        Ext.MessageBox.alert(t("error"), t("no_matching_document_found_for") + ": " + value);
+                    }
+                }.bind(this)
+            });
+        }
+    });
+}
