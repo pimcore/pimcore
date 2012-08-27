@@ -173,26 +173,30 @@ class Document_Tag_Areablock extends Document_Tag {
 
                 $actionClassname = "Document_Tag_Area_" . ucfirst($this->currentIndex["type"]);
                 if(Pimcore_Tool::classExists($actionClassname)) {
-                    $actionObj = new $actionClassname();
+                    $actionObject = new $actionClassname();
 
-                    if($actionObj instanceof Document_Tag_Area_Abstract) {
-                        $actionObj->setView($this->getView());
+                    if($actionObject instanceof Document_Tag_Area_Abstract) {
+                        $actionObject->setView($this->getView());
 
                         $areaConfig = new Zend_Config_Xml($areas[$this->currentIndex["type"]] . "/area.xml");
-                        $actionObj->setConfig($areaConfig);
+                        $actionObject->setConfig($areaConfig);
 
                         // params
                         $params = array_merge($this->view->getAllParams(), $params);
-                        $actionObj->setParams($params);
+                        $actionObject->setParams($params);
 
                         if($info) {
-                            $actionObj->setBrick($info);
+                            $actionObject->setBrick($info);
                         }
 
-                        if(method_exists($actionObj,"action")) {
-                            $actionObj->action();
+                        if(method_exists($actionObject,"action")) {
+                            $actionObject->action();
                         }
+
+                        $this->getView()->assign('actionObject',$actionObject);
                     }
+                }else{
+                    $this->getView()->assign('actionObject',null);
                 }
             }
 
@@ -222,8 +226,8 @@ class Document_Tag_Areablock extends Document_Tag {
 
                 echo '</div>';
 
-                if(is_object($actionObj) && method_exists($actionObj,"postRenderAction")) {
-                    $actionObj->postRenderAction();
+                if(is_object($actionObject) && method_exists($actionObject,"postRenderAction")) {
+                    $actionObject->postRenderAction();
                 }
             }
         }
