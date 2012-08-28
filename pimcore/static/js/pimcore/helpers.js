@@ -1045,8 +1045,6 @@ pimcore.helpers.getClassForIcon = function (icon) {
     content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; }\n");
     styleContainer.dom.innerHTML = content;
 
-    console.log(content);
-
     return classname;
 }
 
