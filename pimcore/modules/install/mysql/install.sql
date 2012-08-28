@@ -149,6 +149,7 @@ CREATE TABLE `documents_page` (
   `description` varchar(255) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
   `prettyUrl` varchar(255) DEFAULT NULL,
+  `contentMasterDocumentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8;
@@ -160,6 +161,7 @@ CREATE TABLE `documents_snippet` (
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
+  `contentMasterDocumentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
