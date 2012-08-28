@@ -1185,3 +1185,7 @@
 .pimcore_icon_open_object_by_id {
     background: url(/pimcore/static/img/icon/database_go.png) left center no-repeat !important;
 }
+
+.pimcore_icon_overwrite {
+    background: url(/pimcore/static/img/icon/shape_square_select.png) left center no-repeat !important;
+}

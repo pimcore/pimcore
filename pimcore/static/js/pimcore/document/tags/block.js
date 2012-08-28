@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.block");
 pimcore.document.tags.block = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
 
         if (!options) {
             options = {};
@@ -120,6 +120,15 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                     });
                 }
                 */
+            }
+        }
+    },
+
+    setInherited: function ($super, inherited) {
+        var elements = Ext.get(this.id).query(".pimcore_block_buttons");
+        if(elements.length > 0) {
+            for(var i=0; i<elements.length; i++) {
+                $super(inherited, Ext.get(elements[i]));
             }
         }
     },

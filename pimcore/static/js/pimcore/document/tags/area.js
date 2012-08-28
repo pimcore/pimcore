@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.area");
 pimcore.document.tags.area = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
 
         this.id = id;
         this.name = name;
@@ -35,6 +35,11 @@ pimcore.document.tags.area = Class.create(pimcore.document.tag, {
             console.log(e);
         }
 
+    },
+
+    setInherited: function ($super, inherited) {
+        // disable masking for this datatype (overwrite), because it's actually not needed, otherwise call $super()
+        this.inherited = inherited;
     },
 
     editmodeOpen: function (element) {

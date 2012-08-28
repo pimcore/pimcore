@@ -50,7 +50,8 @@ class Document_Tag_Area extends Document_Tag {
             "data" => $data,
             "name" => $this->getName(),
             "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType()
+            "type" => $this->getType(),
+            "inherited" => $this->getInherited()
         );
         $options = @Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
 
@@ -76,8 +77,6 @@ class Document_Tag_Area extends Document_Tag {
      * @see Document_Tag_Interface::frontend
      */
     public function frontend() {
-
-
 
         $count = 0;
 

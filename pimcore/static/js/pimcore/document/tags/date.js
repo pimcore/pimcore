@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.date");
 pimcore.document.tags.date = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
 
         this.id = id;
         this.name = name;

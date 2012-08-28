@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.textarea");
 pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
         this.id = id;
         this.name = name;
         this.setupWrapper();

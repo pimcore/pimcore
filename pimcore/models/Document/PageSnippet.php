@@ -59,6 +59,12 @@ abstract class Document_PageSnippet extends Document {
     public $scheduledTasks = null;
 
     /**
+     * @var null|int
+     */
+    public $contentMasterDocumentId;
+
+
+    /**
      * @see Document::update
      * @return void
      */
@@ -70,9 +76,11 @@ abstract class Document_PageSnippet extends Document {
 
         if (is_array($this->getElements()) and count($this->getElements()) > 0) {
             foreach ($this->getElements() as $name => $element) {
-                $element->setResource(null);
-                $element->setDocumentId($this->getId());
-                $element->save();
+                if(!$element->getInherited()) {
+                    $element->setResource(null);
+                    $element->setDocumentId($this->getId());
+                    $element->save();
+                }
             }
         }
 
@@ -176,6 +184,14 @@ abstract class Document_PageSnippet extends Document {
 
         foreach ($this->getElements() as $element) {
             $dependencies = array_merge($dependencies, $element->resolveDependencies());
+        }
+
+        if($this->getContentMasterDocument() instanceof Document) {
+            $key = "document_" . $this->getContentMasterDocument()->getId();
+            $dependencies[$key] = array(
+                "id" => $this->getContentMasterDocument()->getId(),
+                "type" => "document"
+            );
         }
 
         return $dependencies;
@@ -293,8 +309,65 @@ abstract class Document_PageSnippet extends Document {
         $elements = $this->getElements();
         if($this->hasElement($name)) {
             return $elements[$name];
+        } else {
+            // check for content master document (inherit data)
+            if($contentMasterDocument = $this->getContentMasterDocument()) {
+                if($contentMasterDocument instanceof Document_PageSnippet) {
+                    $inheritedElement = $contentMasterDocument->getElement($name);
+                    if($inheritedElement) {
+                        $inheritedElement->setInherited(true);
+                        return $inheritedElement;
+                    }
+                }
+            }
         }
         return null;
+    }
+
+    /**
+     * @param int|null $contentMasterDocumentId
+     */
+    public function setContentMasterDocumentId($contentMasterDocumentId)
+    {
+        // this is that the path is automatically converted to ID => when setting directly from admin UI
+        if (!is_numeric($contentMasterDocumentId) && !empty($contentMasterDocumentId)) {
+            $contentMasterDocument = Document::getByPath($contentMasterDocumentId);
+            if($contentMasterDocument instanceof Document_PageSnippet) {
+                $contentMasterDocumentId = $contentMasterDocument->getId();
+            }
+        }
+
+        if(empty($contentMasterDocumentId)) {
+            $contentMasterDocument = null;
+        }
+
+        $this->contentMasterDocumentId = $contentMasterDocumentId;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getContentMasterDocumentId()
+    {
+        return $this->contentMasterDocumentId;
+    }
+
+    /**
+     * @return Document
+     */
+    public function getContentMasterDocument() {
+        return Document::getById($this->getContentMasterDocumentId());
+    }
+
+    /**
+     * @param Document_PageSnippet $document
+     */
+    public function setContentMasterDocument($document) {
+        if($document instanceof Document_PageSnippet) {
+            $this->setContentMasterDocumentId($document->getId());
+        } else {
+            $this->setContentMasterDocumentId(null);
+        }
     }
 
     /**
