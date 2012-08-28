@@ -215,6 +215,7 @@ pimcore.document.tree = Class.create({
         this.select();
 
         var pasteMenu = [];
+        var pasteInheritanceMenu = [];
 
         var menu = new Ext.menu.Menu();
         //ckogler added "email"
@@ -334,6 +335,22 @@ pimcore.document.tree = Class.create({
                     iconCls: "pimcore_icon_paste",
                     handler: this.attributes.reference.pasteInfo.bind(this, "child")
                 });
+
+                pasteInheritanceMenu.push({
+                    text: t("paste_recursive_as_childs"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.attributes.reference.pasteInfo.bind(this, "recursive", true)
+                });
+                pasteInheritanceMenu.push({
+                    text: t("paste_recursive_updating_references"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.attributes.reference.pasteInfo.bind(this, "recursive-update-references", true)
+                });
+                pasteInheritanceMenu.push({
+                    text: t("paste_as_child"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.attributes.reference.pasteInfo.bind(this, "child", true)
+                });
             }
         }
 
@@ -367,6 +384,15 @@ pimcore.document.tree = Class.create({
                 iconCls: "pimcore_icon_paste",
                 hideOnClick: false,
                 menu: pasteMenu
+            }));
+        }
+
+        if(pasteInheritanceMenu.length > 0) {
+            menu.add(new Ext.menu.Item({
+                text: t('paste_inheritance'),
+                iconCls: "pimcore_icon_paste",
+                hideOnClick: false,
+                menu: pasteInheritanceMenu
             }));
         }
 
@@ -568,17 +594,22 @@ pimcore.document.tree = Class.create({
 
     },
 
-    pasteInfo: function (type) {
+    pasteInfo: function (type, enableInheritance) {
         //this.attributes.reference.tree.loadMask.show();
 
         pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
+
+        if(enableInheritance !== true) {
+            enableInheritance = false;
+        }
 
         Ext.Ajax.request({
             url: "/admin/document/copy-info/",
             params: {
                 targetId: this.id,
                 sourceId: this.attributes.reference.cacheDocumentId,
-                type: type
+                type: type,
+                enableInheritance: enableInheritance
             },
             success: this.attributes.reference.paste.bind(this)
         });

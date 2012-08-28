@@ -633,6 +633,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     "sourceId" => $this->_getParam("sourceId"),
                     "targetId" => $this->_getParam("targetId"),
                     "type" => "child",
+                    "enableInheritance" => $this->_getParam("enableInheritance"),
                     "transactionId" => $transactionId,
                     "saveParentId" => true
                 )
@@ -657,6 +658,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                 "targetParentId" => $this->_getParam("targetId"),
                                 "sourceParentId" => $this->_getParam("sourceId"),
                                 "type" => "child",
+                                "enableInheritance" => $this->_getParam("enableInheritance"),
                                 "transactionId" => $transactionId
                             )
                         ));
@@ -672,6 +674,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         "url" => "/admin/document/copy-rewrite-ids",
                         "params" => array(
                             "transactionId" => $transactionId,
+                            "enableInheritance" => $this->_getParam("enableInheritance"),
                             "_dc" => uniqid()
                         )
                     ));
@@ -686,6 +689,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     "sourceId" => $this->_getParam("sourceId"),
                     "targetId" => $this->_getParam("targetId"),
                     "type" => $this->_getParam("type"),
+                    "enableInheritance" => $this->_getParam("enableInheritance"),
                     "transactionId" => $transactionId
                 )
             ));
@@ -711,12 +715,36 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         // rewriting elements only for snippets and pages
         if($document instanceof Document_PageSnippet) {
-            $elements = $document->getElements();
-            foreach ($elements as &$element) {
-                if(method_exists($element, "rewriteIds")) {
-                    $element->rewriteIds($idStore["idMapping"]);
+            if($this->_getParam("enableInheritance") == "true") {
+                $elements = $document->getElements();
+                $changedElements = array();
+                $contentMaster = $document->getContentMasterDocument();
+                if($contentMaster instanceof Document_PageSnippet) {
+                    $contentMasterElements = $contentMaster->getElements();
+                    foreach ($contentMasterElements as $contentMasterElement) {
+                        if(method_exists($contentMasterElement, "rewriteIds")) {
+                            $element = clone $contentMasterElement;
+                            $element->rewriteIds($idStore["idMapping"]);
+
+                            if(serialize($element) != serialize($contentMasterElement)) {
+                                $changedElements[] = $element;
+                            }
+                        }
+                    }
+                }
+
+                if(count($changedElements) > 0) {
+                    $elements = $changedElements;
+                }
+            } else {
+                $elements = $document->getElements();
+                foreach ($elements as &$element) {
+                    if(method_exists($element, "rewriteIds")) {
+                        $element->rewriteIds($idStore["idMapping"]);
+                    }
                 }
             }
+
             $document->setElements($elements);
         } else if ($document instanceof Document_Hardlink) {
             if($document->getSourceId() && array_key_exists((int) $document->getSourceId(), $idStore["idMapping"])) {
@@ -784,7 +812,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             if ($target->isAllowed("create")) {
                 if ($source != null) {
                     if ($this->_getParam("type") == "child") {
-                        $newDocument = $this->_documentService->copyAsChild($target, $source);
+                        $enableInheritance = ($this->_getParam("enableInheritance") == "true") ? true : false;
+                        $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance);
                         $session->{$this->_getParam("transactionId")}["idMapping"][(int) $source->getId()] = (int) $newDocument->getId();
 
                         // this is because the key can get the prefix "_copy" if the target does already exists

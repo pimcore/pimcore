@@ -184,7 +184,7 @@ class Document_Service extends Element_Service {
      * @param  Document $source
      * @return Document copied document
      */
-    public function copyAsChild($target, $source) {
+    public function copyAsChild($target, $source, $enableInheritance = false) {
 
         if (method_exists($source, "getElements")) {
             $source->getElements();
@@ -203,6 +203,11 @@ class Document_Service extends Element_Service {
         $new->setLocked(false);
         if(method_exists($new, "setPrettyUrl")) {
             $new->setPrettyUrl(null);
+        }
+
+        if($enableInheritance && ($new instanceof Document_PageSnippet)) {
+            $new->setElements(array());
+            $new->setContentMasterDocumentId($source->getId());
         }
 
         $new->save();
