@@ -823,10 +823,18 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
 
         // general settings
+        // @TODO: IS THIS STILL NECESSARY?
         if ($this->_getParam("general")) {
             $general = Zend_Json::decode($this->_getParam("general"));
-            $object->setValues($general);
 
+            // do not allow all values to be set, will cause problems (eg. icon)
+            if (is_array($general) && count($general) > 0) {
+                foreach ($general as $key => $value) {
+                    if(!in_array($key, array("o_id", "o_classId", "o_className", "o_type", "icon"))) {
+                        $object->setValue($key,$value);
+                    }
+                }
+            }
         }
 
         $object = $this->assignPropertiesFromEditmode($object);
