@@ -17,7 +17,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
     type: "wysiwyg",
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
 
         this.id = id;
         this.name = name;

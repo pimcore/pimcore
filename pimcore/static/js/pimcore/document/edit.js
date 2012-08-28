@@ -221,7 +221,7 @@ pimcore.document.edit = Class.create({
 
             for (var i = 0; i < editables.length; i++) {
                 try {
-                    if (editables[i].getName()) {
+                    if (editables[i].getName() && !editables[i].getInherited()) {
                         editableName = editables[i].getName();
                         values[editableName] = {};
                         values[editableName].data = editables[i].getValue();

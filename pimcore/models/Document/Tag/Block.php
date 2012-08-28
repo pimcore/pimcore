@@ -164,7 +164,8 @@ class Document_Tag_Block extends Document_Tag {
             "data" => $data,
             "name" => $this->getName(),
             "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType()
+            "type" => $this->getType(),
+            "inherited" => $this->getInherited()
         );
         $options = @Zend_Json::encode($options);
         //$options = base64_encode($options);

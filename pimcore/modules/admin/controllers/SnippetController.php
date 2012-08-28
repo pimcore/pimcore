@@ -36,6 +36,10 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
         $snippet->userPermissions = $snippet->getUserPermissions();
         $snippet->setLocked($snippet->isLocked());
 
+        if($snippet->getContentMasterDocument()) {
+            $snippet->contentMasterDocumentPath = $snippet->getContentMasterDocument()->getRealFullPath();
+        }
+
         $this->minimizeProperties($snippet);
 
         // unset useless data

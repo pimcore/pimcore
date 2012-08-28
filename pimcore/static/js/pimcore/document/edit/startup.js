@@ -64,13 +64,20 @@ Ext.onReady(function () {
         var name = config.name;
         var options = config.options;
         var data = config.data;
+        var inherited = false;
+        if(typeof config["inherited"] != "undefined") {
+            inherited = config["inherited"];
+        }
         
         if(in_array(name,editableNames)) {
             Ext.MessageBox.alert("ERROR","Dublicate editable name: " + name);
         }
         editableNames.push(name);
-        
-        return new pimcore.document.tags[type](id, name, options, data);
+
+        var tag = new pimcore.document.tags[type](id, name, options, data, inherited);
+        tag.setInherited(inherited);
+
+        return tag;
     }
     
     if (typeof Ext == "object" && typeof pimcore == "object") {
@@ -149,7 +156,6 @@ Ext.onReady(function () {
                         pimcore.edithelpers.unFrameElement();
                     });
                 }
-
             }
         }
 

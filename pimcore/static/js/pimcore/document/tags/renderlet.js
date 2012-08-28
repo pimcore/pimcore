@@ -17,7 +17,7 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
 
     defaultHeight: 100,
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
         this.id = id;
         this.name = name;
         this.options = options;

@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.areablock");
 pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
 
         this.id = id;
         this.name = name;
@@ -192,6 +192,15 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     Ext.get(this.query(".pimcore_block_buttons")[0]).hide();
                 });
                 */
+            }
+        }
+    },
+
+    setInherited: function ($super, inherited) {
+        var elements = Ext.get(this.id).query(".pimcore_block_buttons");
+        if(elements.length > 0) {
+            for(var i=0; i<elements.length; i++) {
+                $super(inherited, Ext.get(elements[i]));
             }
         }
     },

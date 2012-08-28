@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.link");
 pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
 
         if (!data) {
             data = {};

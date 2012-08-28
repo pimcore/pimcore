@@ -34,6 +34,10 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $page->userPermissions = $page->getUserPermissions();
         $page->setLocked($page->isLocked());
 
+        if($page->getContentMasterDocument()) {
+            $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
+        }
+
         // get depending redirects
         $redirectList = new Redirect_List();
         $redirectList->setCondition("target = ?", $page->getId());

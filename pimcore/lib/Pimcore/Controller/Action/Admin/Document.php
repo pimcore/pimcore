@@ -198,4 +198,19 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         return $document;
     }
 
+    /**
+     * this is used for pages and snippets to change the master document (which is not saved with the normal save button)
+     */
+    public function changeMasterDocumentAction() {
+
+        $doc = Document::getById($this->_getParam("id"));
+        if($doc instanceof Document_PageSnippet) {
+            $doc->setElements(array());
+            $doc->setContentMasterDocumentId($this->_getParam("contentMasterDocumentPath"));
+            $doc->saveVersion();
+        }
+
+        $this->_helper->json(array("success" => true));
+    }
+
 }
