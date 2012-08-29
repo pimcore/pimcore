@@ -1437,7 +1437,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots.txt";
 
-        if($this->_getParam("data")) {
+        if($this->_getParam("data") !== null) {
             // save data
             file_put_contents($robotsPath, $this->_getParam("data"));
 
