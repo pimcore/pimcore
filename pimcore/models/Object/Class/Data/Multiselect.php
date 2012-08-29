@@ -46,14 +46,14 @@ class Object_Class_Data_Multiselect extends Object_Class_Data {
      *
      * @var string
      */
-    public $queryColumnType = "varchar(2000)";
+    public $queryColumnType = "varchar(255)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(2000)";
+    public $columnType = "varchar(255)";
 
     /**
      * Type for the generated phpdoc
