@@ -33,8 +33,10 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
         if(empty($value)) {
             $objects = $filterDefinition->getPreSelect();
             $value = array();
-            foreach($objects as $o) {
-                $value[] = $o->getId();
+            if (is_array($objects)){
+                foreach($objects as $o) {
+                    $value[] = $o->getId();
+                }
             }
 
         } else if(in_array(OnlineShop_Framework_FilterService_AbstractFilterType::EMPTY_STRING, $value)) {
