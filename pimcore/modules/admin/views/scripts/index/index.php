@@ -433,7 +433,8 @@
             google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
             google_maps_api_key: "<?php echo $googleMapsApiKey ?>",
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
-            showCloseConfirmation: true
+            showCloseConfirmation: true,
+            debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>
         };
     </script>
     
