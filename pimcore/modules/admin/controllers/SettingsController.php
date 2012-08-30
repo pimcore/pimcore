@@ -260,6 +260,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "alert" => $oldValues["general"]["loglevel"]["alert"],
                         "emergency" => $oldValues["general"]["loglevel"]["emergency"],
                     ),
+                    "debug_admin_translations" => $values["general.debug_admin_translations"],
                     "devmode" => $values["general.devmode"],
                     "logrecipient" => $values["general.logrecipient"],
                     "viewSuffix" => $values["general.viewSuffix"]

@@ -402,6 +402,12 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {
+                                fieldLabel: t("debug_admin_translations"),
+                                xtype: "checkbox",
+                                name: "general.debug_admin_translations",
+                                checked: this.getValue("general.debug_admin_translations")
+                            },
+                            {
                                 fieldLabel: 'DEV-Mode (<span style="color:red;font-weight:bold;">DON`T ACTIVATE IT!</span>)',
                                 xtype: "checkbox",
                                 name: "general.devmode",

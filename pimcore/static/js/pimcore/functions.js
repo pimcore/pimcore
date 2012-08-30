@@ -51,7 +51,7 @@ function ts(key) {
              pimcore.globalmanager.add("translations_admin_missing", missingTranslations);
         }
     }
-    if(pimcore.settings.debug){
+    if(pimcore.settings.debug_admin_translations){
         return "+" + key + "+";
     } else {
         return key;
