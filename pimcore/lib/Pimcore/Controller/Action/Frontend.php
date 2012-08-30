@@ -202,7 +202,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
     public function initTranslation() {
         
         if(Zend_Registry::isRegistered("Zend_Translate")) {
-            $translator = Zend_Registry::get("Zend_Translate");
+            $translate = Zend_Registry::get("Zend_Translate");
         } else {
             // setup Zend_Translate
             try {
@@ -238,7 +238,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             }
         }
 
-        return $translator;
+        return $translate;
     }
 
     public function getRenderScript() {
