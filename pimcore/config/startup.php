@@ -67,8 +67,22 @@ require_once "Zend/Loader.php";
 require_once "Zend/Loader/Autoloader.php";
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
-$autoloader->registerNamespace('Pimcore');
 $autoloader->suppressNotFoundWarnings(false);
+$autoloader->setFallbackAutoloader(true);
+
+// register class map loader => speed
+$autoloaderClassMapFiles = array(
+    PIMCORE_PATH . "/config/autoload-classmap.php",
+    PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php"
+);
+
+foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
+    if(file_exists($autoloaderClassMapFile)) {
+        $classMapAutoLoader = new Zend_Loader_ClassMapAutoloader(array($autoloaderClassMapFile));
+        $classMapAutoLoader->register();
+    }
+}
+
 
 // do some general stuff
 $websiteStartup = PIMCORE_CONFIGURATION_DIRECTORY . "/startup.php";

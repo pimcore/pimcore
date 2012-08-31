@@ -44,7 +44,6 @@ class Pimcore {
         self::outputBufferStart();
         //}
 
-        self::initAutoloader();
         self::initConfiguration();
         self::setupFramework();
 
@@ -416,8 +415,6 @@ class Pimcore {
     public static function initPlugins() {
         // add plugin include paths
 
-        $autoloader = Zend_Loader_Autoloader::getInstance();
-
         try {
 
             $pluginConfigs = Pimcore_ExtensionManager::getPluginConfigs();
@@ -442,14 +439,6 @@ class Pimcore {
                         }
                         else if ($p['plugin']['pluginIncludePaths']['path'] != null) {
                             $includePaths[] = PIMCORE_PLUGINS_PATH . $p['plugin']['pluginIncludePaths']['path'];
-                        }
-                        if (is_array($p['plugin']['pluginNamespaces']['namespace'])) {
-                            foreach ($p['plugin']['pluginNamespaces']['namespace'] as $namespace) {
-                                $autoloader->registerNamespace($namespace);
-                            }
-                        }
-                        else if ($p['plugin']['pluginNamespaces']['namespace'] != null) {
-                            $autoloader->registerNamespace($p['plugin']['pluginNamespaces']['namespace']);
                         }
                     }
 
@@ -525,50 +514,11 @@ class Pimcore {
     }
 
     /**
+     * @deprecated
      * @static
-     *
      */
     public static function initAutoloader() {
 
-        $autoloader = Zend_Loader_Autoloader::getInstance();
-
-        $autoloader->registerNamespace('Logger');
-        $autoloader->registerNamespace('Pimcore');
-        $autoloader->registerNamespace('Document');
-        $autoloader->registerNamespace('Object');
-        $autoloader->registerNamespace('Asset');
-        $autoloader->registerNamespace('User');
-        $autoloader->registerNamespace('Property');
-        $autoloader->registerNamespace('Version');
-        $autoloader->registerNamespace('Sabre_');
-        $autoloader->registerNamespace('Site');
-        $autoloader->registerNamespace('Services_');
-        $autoloader->registerNamespace('HTTP_');
-        $autoloader->registerNamespace('Net_');
-        $autoloader->registerNamespace('MIME_');
-        $autoloader->registerNamespace('File_');
-        $autoloader->registerNamespace('System_');
-        $autoloader->registerNamespace('PEAR_');
-        $autoloader->registerNamespace('Thumbnail');
-        $autoloader->registerNamespace('Staticroute');
-        $autoloader->registerNamespace('Redirect');
-        $autoloader->registerNamespace('Dependency');
-        $autoloader->registerNamespace('Schedule');
-        $autoloader->registerNamespace('Translation');
-        $autoloader->registerNamespace('Glossary');
-        $autoloader->registerNamespace('Website');
-        $autoloader->registerNamespace('Element');
-        $autoloader->registerNamespace('API');
-        $autoloader->registerNamespace('Minify');
-        $autoloader->registerNamespace('Archive');
-        $autoloader->registerNamespace('JSMin');
-        $autoloader->registerNamespace('JSMinPlus');
-        $autoloader->registerNamespace('Csv');
-        $autoloader->registerNamespace('Webservice');
-        $autoloader->registerNamespace('Search');
-        $autoloader->registerNamespace('Tool');
-
-        Pimcore_Tool::registerClassModelMappingNamespaces();
     }
 
     /**

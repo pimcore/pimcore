@@ -183,7 +183,7 @@ class Pimcore_Model_Cache {
         $config["backendType"] = "File";
         $config["backendConfig"] = array(
             "cache_dir" => PIMCORE_CACHE_DIRECTORY,
-            "cache_file_umask" => 0755
+            "cache_file_perm" => 0755
         );
         $config["customBackendNaming"] = false;
 
