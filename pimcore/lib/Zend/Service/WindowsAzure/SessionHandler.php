@@ -80,13 +80,13 @@ class Zend_Service_WindowsAzure_SessionHandler
 	{
 		// Validate $storage
 		if (!($storage instanceof Zend_Service_WindowsAzure_Storage_Table || $storage instanceof Zend_Service_WindowsAzure_Storage_Blob)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Invalid storage back-end given. Storage back-end should be of type Zend_Service_WindowsAzure_Storage_Table or Zend_Service_WindowsAzure_Storage_Blob.');
 		}
 		
 		// Validate other parameters
 		if ($sessionContainer == '' || $sessionContainerPartition == '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Session container and session partition should be specified.');
 		}
 		

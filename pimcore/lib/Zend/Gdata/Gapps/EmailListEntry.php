@@ -24,17 +24,17 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Extension_FeedLink
  */
-require_once 'Zend/Gdata/Extension/FeedLink.php';
+// require_once 'Zend/Gdata/Extension/FeedLink.php';
 
 /**
  * @see Zend_Gdata_Gapps_Extension_EmailList
  */
-require_once 'Zend/Gdata/Gapps/Extension/EmailList.php';
+// require_once 'Zend/Gdata/Gapps/Extension/EmailList.php';
 
 /**
  * Data model class for a Google Apps Email List Entry.

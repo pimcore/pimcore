@@ -22,7 +22,7 @@
 /**
  * @see Zend_Filter_Encrypt_Interface
  */
-require_once 'Zend/Filter/Encrypt/Interface.php';
+// require_once 'Zend/Filter/Encrypt/Interface.php';
 
 /**
  * Encryption adapter for openssl
@@ -84,7 +84,7 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
     public function __construct($options = array())
     {
         if (!extension_loaded('openssl')) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('This filter needs the openssl extension');
         }
 
@@ -123,7 +123,7 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
     protected function _setKeys($keys)
     {
         if (!is_array($keys)) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Invalid options argument provided to filter');
         }
 
@@ -141,7 +141,7 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
                 case 'public':
                     $test = openssl_pkey_get_public($cert);
                     if ($test === false) {
-                        require_once 'Zend/Filter/Exception.php';
+                        // require_once 'Zend/Filter/Exception.php';
                         throw new Zend_Filter_Exception("Public key '{$cert}' not valid");
                     }
 
@@ -151,7 +151,7 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
                 case 'private':
                     $test = openssl_pkey_get_private($cert, $this->_passphrase);
                     if ($test === false) {
-                        require_once 'Zend/Filter/Exception.php';
+                        // require_once 'Zend/Filter/Exception.php';
                         throw new Zend_Filter_Exception("Private key '{$cert}' not valid");
                     }
 
@@ -357,7 +357,7 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
         $encryptedkeys = array();
 
         if (count($this->_keys['public']) == 0) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Openssl can not encrypt without public keys');
         }
 
@@ -379,7 +379,7 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
 
         // compress prior to encryption
         if (!empty($this->_compression)) {
-            require_once 'Zend/Filter/Compress.php';
+            // require_once 'Zend/Filter/Compress.php';
             $compress = new Zend_Filter_Compress($this->_compression);
             $value    = $compress->filter($value);
         }
@@ -390,7 +390,7 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
         }
 
         if ($crypt === false) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Openssl was not able to encrypt your content with the given options');
         }
 
@@ -424,12 +424,12 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
         $envelope  = current($this->getEnvelopeKey());
 
         if (count($this->_keys['private']) !== 1) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Please give a private key for decryption with Openssl');
         }
 
         if (!$this->_package && empty($envelope)) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Please give a envelope key for decryption with Openssl');
         }
 
@@ -466,13 +466,13 @@ class Zend_Filter_Encrypt_Openssl implements Zend_Filter_Encrypt_Interface
         openssl_free_key($keys);
 
         if ($crypt === false) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Openssl was not able to decrypt you content with the given options');
         }
 
         // decompress after decryption
         if (!empty($this->_compression)) {
-            require_once 'Zend/Filter/Decompress.php';
+            // require_once 'Zend/Filter/Decompress.php';
             $decompress = new Zend_Filter_Decompress($this->_compression);
             $decrypted  = $decompress->filter($decrypted);
         }

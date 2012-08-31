@@ -21,7 +21,7 @@
  */
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element.php';
+// require_once 'Zend/Pdf/Element.php';
 
 
 /**
@@ -51,7 +51,7 @@ class Zend_Pdf_NameTree implements ArrayAccess, Iterator, Countable
     public function __construct(Zend_Pdf_Element $rootDictionary)
     {
         if ($rootDictionary->getType() != Zend_Pdf_Element::TYPE_DICTIONARY) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Name tree root must be a dictionary.');
         }
 

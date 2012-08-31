@@ -23,7 +23,7 @@
 /**
  * Zend_InfoCard_Cipher_PKI_Adapter_Abstract
  */
-require_once 'Zend/InfoCard/Cipher/Pki/Adapter/Abstract.php';
+// require_once 'Zend/InfoCard/Cipher/Pki/Adapter/Abstract.php';
 
 /**
  * The interface which defines the RSA Public-key encryption object

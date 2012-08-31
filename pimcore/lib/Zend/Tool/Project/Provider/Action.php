@@ -23,12 +23,12 @@
 /**
  * @see Zend_Tool_Project_Provider_Abstract
  */
-require_once 'Zend/Tool/Project/Provider/Abstract.php';
+// require_once 'Zend/Tool/Project/Provider/Abstract.php';
 
 /**
  * @see Zend_Tool_Framework_Provider_Pretendable
  */
-require_once 'Zend/Tool/Framework/Provider/Pretendable.php';
+// require_once 'Zend/Tool/Framework/Provider/Pretendable.php';
 
 /**
  * @category   Zend
@@ -136,7 +136,7 @@ class Zend_Tool_Project_Provider_Action
         $response = $this->_registry->getResponse();
 
         // determine if testing is enabled in the project
-        require_once 'Zend/Tool/Project/Provider/Test.php';
+        // require_once 'Zend/Tool/Project/Provider/Test.php';
         $testingEnabled = Zend_Tool_Project_Provider_Test::isTestingEnabled($this->_loadedProfile);
 
         if ($testingEnabled && !Zend_Tool_Project_Provider_Test::isPHPUnitAvailable()) {

@@ -25,12 +25,12 @@
 /**
  * @see Zend_Date
  */
-require_once 'Zend/Date.php';
+// require_once 'Zend/Date.php';
 
 /**
  * @see Zend_Service_Delicious_SimplePost
  */
-require_once 'Zend/Service/Delicious/SimplePost.php';
+// require_once 'Zend/Service/Delicious/SimplePost.php';
 
 
 /**
@@ -91,7 +91,7 @@ class Zend_Service_Delicious_Post extends Zend_Service_Delicious_SimplePost
             /**
              * @see Zend_Service_Delicious_Exception
              */
-            require_once 'Zend/Service/Delicious/Exception.php';
+            // require_once 'Zend/Service/Delicious/Exception.php';
             throw new Zend_Service_Delicious_Exception("Second argument must be array with at least 2 keys ('url' and"
                                                      . " 'title')");
         }
@@ -100,7 +100,7 @@ class Zend_Service_Delicious_Post extends Zend_Service_Delicious_SimplePost
             /**
              * @see Zend_Service_Delicious_Exception
              */
-            require_once 'Zend/Service/Delicious/Exception.php';
+            // require_once 'Zend/Service/Delicious/Exception.php';
             throw new Zend_Service_Delicious_Exception("Date has to be an instance of Zend_Date");
         }
 

@@ -21,12 +21,12 @@
 /**
  * Zend_XmlRpc_Value
  */
-require_once 'Zend/XmlRpc/Value.php';
+// require_once 'Zend/XmlRpc/Value.php';
 
 /**
  * Zend_XmlRpc_Fault
  */
-require_once 'Zend/XmlRpc/Fault.php';
+// require_once 'Zend/XmlRpc/Fault.php';
 
 /**
  * XmlRpc Request object
@@ -310,7 +310,7 @@ class Zend_XmlRpc_Request
             $dom->loadXML($request);
             foreach ($dom->childNodes as $child) {
                 if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
-                    require_once 'Zend/XmlRpc/Exception.php';
+                    // require_once 'Zend/XmlRpc/Exception.php';
                     throw new Zend_XmlRpc_Exception(
                         'Invalid XML: Detected use of illegal DOCTYPE'
                     );

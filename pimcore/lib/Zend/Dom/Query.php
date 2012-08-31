@@ -22,12 +22,12 @@
 /**
  * @see Zend_Dom_Query_Css2Xpath
  */
-require_once 'Zend/Dom/Query/Css2Xpath.php';
+// require_once 'Zend/Dom/Query/Css2Xpath.php';
 
 /**
  * @see Zend_Dom_Query_Result
  */
-require_once 'Zend/Dom/Query/Result.php';
+// require_once 'Zend/Dom/Query/Result.php';
 
 /**
  * Query DOM structures based on CSS selectors and/or XPath
@@ -239,7 +239,7 @@ class Zend_Dom_Query
     public function queryXpath($xpathQuery, $query = null)
     {
         if (null === ($document = $this->getDocument())) {
-            require_once 'Zend/Dom/Exception.php';
+            // require_once 'Zend/Dom/Exception.php';
             throw new Zend_Dom_Exception('Cannot query; no document registered');
         }
 
@@ -257,7 +257,7 @@ class Zend_Dom_Query
                 $success = $domDoc->loadXML($document);
                 foreach ($domDoc->childNodes as $child) {
                     if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
-                        require_once 'Zend/Dom/Exception.php';
+                        // require_once 'Zend/Dom/Exception.php';
                         throw new Zend_Dom_Exception(
                             'Invalid XML: Detected use of illegal DOCTYPE'
                         );
@@ -279,7 +279,7 @@ class Zend_Dom_Query
         libxml_use_internal_errors(false);
 
         if (!$success) {
-            require_once 'Zend/Dom/Exception.php';
+            // require_once 'Zend/Dom/Exception.php';
             throw new Zend_Dom_Exception(sprintf('Error parsing document (type == %s)', $type));
         }
 

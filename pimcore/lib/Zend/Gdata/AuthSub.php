@@ -24,12 +24,12 @@
 /**
  * Zend_Gdata_HttpClient
  */
-require_once 'Zend/Gdata/HttpClient.php';
+// require_once 'Zend/Gdata/HttpClient.php';
 
 /**
  * Zend_Version
  */
-require_once 'Zend/Version.php';
+// require_once 'Zend/Version.php';
 
 /**
  * Wrapper around Zend_Http_Client to facilitate Google's "Account Authentication
@@ -118,7 +118,7 @@ class Zend_Gdata_AuthSub
         try {
             $response = $client->request('GET');
         } catch (Zend_Http_Client_Exception $e) {
-            require_once 'Zend/Gdata/App/HttpException.php';
+            // require_once 'Zend/Gdata/App/HttpException.php';
             throw new Zend_Gdata_App_HttpException($e->getMessage(), $e);
         }
 
@@ -134,7 +134,7 @@ class Zend_Gdata_AuthSub
             }
             return $goog_resp['Token'];
         } else {
-            require_once 'Zend/Gdata/App/AuthException.php';
+            // require_once 'Zend/Gdata/App/AuthException.php';
             throw new Zend_Gdata_App_AuthException(
                     'Token upgrade failed. Reason: ' . $response->getBody());
         }
@@ -170,7 +170,7 @@ class Zend_Gdata_AuthSub
             $response = $client->request('GET');
         } catch (Zend_Http_Client_Exception $e) {
             ob_end_clean();
-            require_once 'Zend/Gdata/App/HttpException.php';
+            // require_once 'Zend/Gdata/App/HttpException.php';
             throw new Zend_Gdata_App_HttpException($e->getMessage(), $e);
         }
         ob_end_clean();
@@ -212,7 +212,7 @@ class Zend_Gdata_AuthSub
             $response = $client->request('GET');
         } catch (Zend_Http_Client_Exception $e) {
             ob_end_clean();
-            require_once 'Zend/Gdata/App/HttpException.php';
+            // require_once 'Zend/Gdata/App/HttpException.php';
             throw new Zend_Gdata_App_HttpException($e->getMessage(), $e);
         }
         ob_end_clean();
@@ -232,7 +232,7 @@ class Zend_Gdata_AuthSub
             $client = new Zend_Gdata_HttpClient();
         }
         if (!$client instanceof Zend_Gdata_HttpClient) {
-            require_once 'Zend/Gdata/App/HttpException.php';
+            // require_once 'Zend/Gdata/App/HttpException.php';
             throw new Zend_Gdata_App_HttpException('Client is not an instance of Zend_Gdata_HttpClient.');
         }
         $useragent = 'Zend_Framework_Gdata/' . Zend_Version::VERSION;

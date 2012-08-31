@@ -23,12 +23,12 @@
 /**
  * Zend_InfoCard_Cipher_Pki_Adapter_Abstract
  */
-require_once 'Zend/InfoCard/Cipher/Pki/Adapter/Abstract.php';
+// require_once 'Zend/InfoCard/Cipher/Pki/Adapter/Abstract.php';
 
 /**
  * Zend_InfoCard_Cipher_Pki_Rsa_Interface
  */
-require_once 'Zend/InfoCard/Cipher/Pki/Rsa/Interface.php';
+// require_once 'Zend/InfoCard/Cipher/Pki/Rsa/Interface.php';
 
 /**
  * RSA Public Key Encryption Cipher Object for the InfoCard component. Relies on OpenSSL
@@ -55,7 +55,7 @@ class Zend_InfoCard_Cipher_Pki_Adapter_Rsa
         // Can't test this..
         // @codeCoverageIgnoreStart
         if(!extension_loaded('openssl')) {
-            require_once 'Zend/InfoCard/Cipher/Exception.php';
+            // require_once 'Zend/InfoCard/Cipher/Exception.php';
             throw new Zend_InfoCard_Cipher_Exception("Use of this PKI RSA Adapter requires the openssl extension loaded");
         }
         // @codeCoverageIgnoreEnd
@@ -78,7 +78,7 @@ class Zend_InfoCard_Cipher_Pki_Adapter_Rsa
         $private_key = openssl_pkey_get_private(array($privateKey, $password));
 
         if(!$private_key) {
-            require_once 'Zend/InfoCard/Cipher/Exception.php';
+            // require_once 'Zend/InfoCard/Cipher/Exception.php';
             throw new Zend_InfoCard_Cipher_Exception("Failed to load private key");
         }
 
@@ -105,7 +105,7 @@ class Zend_InfoCard_Cipher_Pki_Adapter_Rsa
         openssl_free_key($private_key);
 
         if(!$result) {
-            require_once 'Zend/InfoCard/Cipher/Exception.php';
+            // require_once 'Zend/InfoCard/Cipher/Exception.php';
             throw new Zend_InfoCard_Cipher_Exception("Unable to Decrypt Value using provided private key");
         }
 

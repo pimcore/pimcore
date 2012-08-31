@@ -21,7 +21,7 @@
  */
 
 /** Zend_Log_Formatter_Abstract */
-require_once 'Zend/Log/Formatter/Abstract.php';
+// require_once 'Zend/Log/Formatter/Abstract.php';
 
 /**
  * @category   Zend
@@ -54,7 +54,7 @@ class Zend_Log_Formatter_Simple extends Zend_Log_Formatter_Abstract
         }
 
         if (!is_string($format)) {
-            require_once 'Zend/Log/Exception.php';
+            // require_once 'Zend/Log/Exception.php';
             throw new Zend_Log_Exception('Format must be a string');
         }
 

@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Gapps_Extension_Property
  */
-require_once 'Zend/Gdata/Gapps/Extension/Property.php';
+// require_once 'Zend/Gdata/Gapps/Extension/Property.php';
 
 /**
  * Data model class for a Google Apps Member Entry.

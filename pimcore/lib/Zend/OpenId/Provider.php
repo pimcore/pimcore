@@ -24,12 +24,12 @@
 /**
  * @see Zend_OpenId
  */
-require_once "Zend/OpenId.php";
+// require_once "Zend/OpenId.php";
 
 /**
  * @see Zend_OpenId_Extension
  */
-require_once "Zend/OpenId/Extension.php";
+// require_once "Zend/OpenId/Extension.php";
 
 /**
  * OpenID provider (server) implementation
@@ -123,13 +123,13 @@ class Zend_OpenId_Provider
         }
         $this->_trustUrl = $trustUrl;
         if ($user === null) {
-            require_once "Zend/OpenId/Provider/User/Session.php";
+            // require_once "Zend/OpenId/Provider/User/Session.php";
             $this->_user = new Zend_OpenId_Provider_User_Session();
         } else {
             $this->_user = $user;
         }
         if ($storage === null) {
-            require_once "Zend/OpenId/Provider/Storage/File.php";
+            // require_once "Zend/OpenId/Provider/Storage/File.php";
             $this->_storage = new Zend_OpenId_Provider_Storage_File();
         } else {
             $this->_storage = $storage;

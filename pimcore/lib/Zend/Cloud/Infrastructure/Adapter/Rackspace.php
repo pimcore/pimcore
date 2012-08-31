@@ -7,12 +7,12 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/Rackspace/Servers.php';
-require_once 'Zend/Cloud/Infrastructure/Instance.php';
-require_once 'Zend/Cloud/Infrastructure/InstanceList.php';
-require_once 'Zend/Cloud/Infrastructure/Image.php';
-require_once 'Zend/Cloud/Infrastructure/ImageList.php';
-require_once 'Zend/Cloud/Infrastructure/Adapter/AbstractAdapter.php';
+// require_once 'Zend/Service/Rackspace/Servers.php';
+// require_once 'Zend/Cloud/Infrastructure/Instance.php';
+// require_once 'Zend/Cloud/Infrastructure/InstanceList.php';
+// require_once 'Zend/Cloud/Infrastructure/Image.php';
+// require_once 'Zend/Cloud/Infrastructure/ImageList.php';
+// require_once 'Zend/Cloud/Infrastructure/Adapter/AbstractAdapter.php';
 
 /**
  * Rackspace servers adapter for infrastructure service
@@ -104,17 +104,17 @@ class Zend_Cloud_Infrastructure_Adapter_Rackspace extends Zend_Cloud_Infrastruct
         }
         
         if (empty($options) || !is_array($options)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Invalid options provided');
         }
         
         if (!isset($options[self::RACKSPACE_USER])) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Rackspace access user not specified!');
         }
 
         if (!isset($options[self::RACKSPACE_KEY])) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Rackspace access key not specified!');
         }
         
@@ -130,7 +130,7 @@ class Zend_Cloud_Infrastructure_Adapter_Rackspace extends Zend_Cloud_Infrastruct
                     $this->region = Zend_Service_Rackspace_Servers::US_AUTH_URL;
                     break;
                 default:
-                    require_once 'Zend/Cloud/Infrastructure/Exception.php';
+                    // require_once 'Zend/Cloud/Infrastructure/Exception.php';
                     throw new Zend_Cloud_Infrastructure_Exception('The region is not valid');
             }
         } else {
@@ -140,7 +140,7 @@ class Zend_Cloud_Infrastructure_Adapter_Rackspace extends Zend_Cloud_Infrastruct
         try {
             $this->rackspace = new Zend_Service_Rackspace_Servers($this->accessUser,$this->accessKey, $this->region);
         } catch (Exception  $e) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Error on create: ' . $e->getMessage(), $e->getCode(), $e);
         }
 
@@ -240,11 +240,11 @@ class Zend_Cloud_Infrastructure_Adapter_Rackspace extends Zend_Cloud_Infrastruct
     public function createInstance($name, $options)
     {
         if (empty($name)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must specify the name of the instance');
         }
         if (empty($options) || !is_array($options)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('The options must be an array');
         }
         // @todo create an generic abstract definition for an instance?
@@ -273,7 +273,7 @@ class Zend_Cloud_Infrastructure_Adapter_Rackspace extends Zend_Cloud_Infrastruct
      */ 
     public function stopInstance($id)
     {
-        require_once 'Zend/Cloud/Infrastructure/Exception.php';
+        // require_once 'Zend/Cloud/Infrastructure/Exception.php';
         throw new Zend_Cloud_Infrastructure_Exception('The stopInstance method is not implemented in the adapter');
     }
  
@@ -285,7 +285,7 @@ class Zend_Cloud_Infrastructure_Adapter_Rackspace extends Zend_Cloud_Infrastruct
      */ 
     public function startInstance($id)
     {
-        require_once 'Zend/Cloud/Infrastructure/Exception.php';
+        // require_once 'Zend/Cloud/Infrastructure/Exception.php';
         throw new Zend_Cloud_Infrastructure_Exception('The startInstance method is not implemented in the adapter');
     }
  
@@ -359,23 +359,23 @@ class Zend_Cloud_Infrastructure_Adapter_Rackspace extends Zend_Cloud_Infrastruct
     public function monitorInstance($id, $metric, $options = null)
     {
         if (!function_exists("ssh2_connect")) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Monitor requires the PHP "SSH" extension (ext/ssh2)');
         }
         if (empty($id)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must specify the id of the instance to monitor');
         }
         if (empty($metric)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must specify the metric to monitor');
         }
         if (!in_array($metric,$this->validMetrics)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception(sprintf('The metric "%s" is not valid', $metric));
         }
         if (!empty($options) && !is_array($options)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('The options must be an array');
         }
         
@@ -391,7 +391,7 @@ class Zend_Cloud_Infrastructure_Adapter_Rackspace extends Zend_Cloud_Infrastruct
                 break;
         }
         if (empty($cmd)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
+            // require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('The metric specified is not supported by the adapter');
         }
         

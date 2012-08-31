@@ -23,12 +23,12 @@
 /**
  * Zend_InfoCard_Xml_Element
  */
-require_once 'Zend/InfoCard/Xml/Element.php';
+// require_once 'Zend/InfoCard/Xml/Element.php';
 
 /**
  * Zend_InfoCard_Xml_KeyInfo
  */
-require_once 'Zend/InfoCard/Xml/KeyInfo.php';
+// require_once 'Zend/InfoCard/Xml/KeyInfo.php';
 
 /**
  * An abstract class representing a generic EncryptedData XML block. This class is extended

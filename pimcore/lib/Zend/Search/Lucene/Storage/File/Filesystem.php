@@ -21,7 +21,7 @@
  */
 
 /** Zend_Search_Lucene_Storage_File */
-require_once 'Zend/Search/Lucene/Storage/File.php';
+// require_once 'Zend/Search/Lucene/Storage/File.php';
 
 /**
  * @category   Zend
@@ -52,7 +52,7 @@ class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Stor
 
         if (strpos($mode, 'w') === false  &&  !is_readable($filename)) {
             // opening for reading non-readable file
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('File \'' . $filename . '\' is not readable.');
         }
 
@@ -63,7 +63,7 @@ class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Stor
 
         if ($this->_fileHandle === false) {
             ini_set('track_errors', $trackErrors);
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception($php_errormsg);
         }
 
@@ -162,7 +162,7 @@ class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Stor
         while ($length > 0 && !feof($this->_fileHandle)) {
             $nextBlock = fread($this->_fileHandle, $length);
             if ($nextBlock === false) {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception( "Error occured while file reading." );
             }
 
@@ -170,7 +170,7 @@ class Zend_Search_Lucene_Storage_File_Filesystem extends Zend_Search_Lucene_Stor
             $length -= strlen($nextBlock);
         }
         if ($length != 0) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception( "Error occured while file reading." );
         }
 

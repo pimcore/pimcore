@@ -24,7 +24,7 @@
 /**
  * Zend_XmlRpc_Value_Integer
  */
-require_once 'Zend/XmlRpc/Value/Integer.php';
+// require_once 'Zend/XmlRpc/Value/Integer.php';
 
 /**
  * @category   Zend
@@ -40,7 +40,7 @@ class Zend_XmlRpc_Value_BigInteger extends Zend_XmlRpc_Value_Integer
      */
     public function __construct($value)
     {
-        require_once 'Zend/Crypt/Math/BigInteger.php';
+        // require_once 'Zend/Crypt/Math/BigInteger.php';
         $integer = new Zend_Crypt_Math_BigInteger;
         $this->_value = $integer->init($value);
         $this->_type = self::XMLRPC_TYPE_I8;

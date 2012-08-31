@@ -23,17 +23,17 @@
 /**
  * Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /**
  * Zend_Cache
  */
-require_once 'Zend/Cache.php';
+// require_once 'Zend/Cache.php';
 
 /**
  * Zend_Service_SlideShare_SlideShow
  */
-require_once 'Zend/Service/SlideShare/SlideShow.php';
+// require_once 'Zend/Service/SlideShare/SlideShow.php';
 
 /**
  * The Zend_Service_SlideShare component is used to interface with the
@@ -323,7 +323,7 @@ class Zend_Service_SlideShare
         $filename = $ss->getFilename();
 
         if(!file_exists($filename) || !is_readable($filename)) {
-            require_once 'Zend/Service/SlideShare/Exception.php';
+            // require_once 'Zend/Service/SlideShare/Exception.php';
             throw new Zend_Service_SlideShare_Exception("Specified Slideshow for upload not found or unreadable");
         }
 
@@ -349,11 +349,11 @@ class Zend_Service_SlideShare
         $client->setParameterPost($params);
         $client->setFileUpload($filename, "slideshow_srcfile");
 
-        require_once 'Zend/Http/Client/Exception.php';
+        // require_once 'Zend/Http/Client/Exception.php';
         try {
             $response = $client->request('POST');
         } catch(Zend_Http_Client_Exception $e) {
-            require_once 'Zend/Service/SlideShare/Exception.php';
+            // require_once 'Zend/Service/SlideShare/Exception.php';
             throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}", 0, $e);
         }
 
@@ -362,12 +362,12 @@ class Zend_Service_SlideShare
         if($sxe->getName() == "SlideShareServiceError") {
             $message = (string)$sxe->Message[0];
             list($code, $error_str) = explode(':', $message);
-            require_once 'Zend/Service/SlideShare/Exception.php';
+            // require_once 'Zend/Service/SlideShare/Exception.php';
             throw new Zend_Service_SlideShare_Exception(trim($error_str), $code);
         }
 
         if(!$sxe->getName() == "SlideShowUploaded") {
-            require_once 'Zend/Service/SlideShare/Exception.php';
+            // require_once 'Zend/Service/SlideShare/Exception.php';
             throw new Zend_Service_SlideShare_Exception("Unknown XML Respons Received");
         }
 
@@ -401,11 +401,11 @@ class Zend_Service_SlideShare
             $client->setUri(self::SERVICE_GET_SHOW_URI);
             $client->setParameterPost($params);
 
-            require_once 'Zend/Http/Client/Exception.php';
+            // require_once 'Zend/Http/Client/Exception.php';
             try {
                 $response = $client->request('POST');
             } catch(Zend_Http_Client_Exception $e) {
-                require_once 'Zend/Service/SlideShare/Exception.php';
+                // require_once 'Zend/Service/SlideShare/Exception.php';
                 throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}", 0, $e);
             }
 
@@ -414,12 +414,12 @@ class Zend_Service_SlideShare
             if($sxe->getName() == "SlideShareServiceError") {
                 $message = (string)$sxe->Message[0];
                 list($code, $error_str) = explode(':', $message);
-                require_once 'Zend/Service/SlideShare/Exception.php';
+                // require_once 'Zend/Service/SlideShare/Exception.php';
                 throw new Zend_Service_SlideShare_Exception(trim($error_str), $code);
             }
 
             if(!$sxe->getName() == 'Slideshows') {
-                require_once 'Zend/Service/SlideShare/Exception.php';
+                // require_once 'Zend/Service/SlideShare/Exception.php';
                 throw new Zend_Service_SlideShare_Exception('Unknown XML Repsonse Received');
             }
 
@@ -509,7 +509,7 @@ class Zend_Service_SlideShare
                 $queryUri = self::SERVICE_GET_SHOW_BY_TAG_URI;
                 break;
             default:
-                require_once 'Zend/Service/SlideShare/Exception.php';
+                // require_once 'Zend/Service/SlideShare/Exception.php';
                 throw new Zend_Service_SlideShare_Exception("Invalid SlideShare Query");
         }
 
@@ -539,11 +539,11 @@ class Zend_Service_SlideShare
             $client->setUri($queryUri);
             $client->setParameterPost($params);
 
-            require_once 'Zend/Http/Client/Exception.php';
+            // require_once 'Zend/Http/Client/Exception.php';
             try {
                 $response = $client->request('POST');
             } catch(Zend_Http_Client_Exception $e) {
-                require_once 'Zend/Service/SlideShare/Exception.php';
+                // require_once 'Zend/Service/SlideShare/Exception.php';
                 throw new Zend_Service_SlideShare_Exception("Service Request Failed: {$e->getMessage()}", 0, $e);
             }
 
@@ -552,12 +552,12 @@ class Zend_Service_SlideShare
             if($sxe->getName() == "SlideShareServiceError") {
                 $message = (string)$sxe->Message[0];
                 list($code, $error_str) = explode(':', $message);
-                require_once 'Zend/Service/SlideShare/Exception.php';
+                // require_once 'Zend/Service/SlideShare/Exception.php';
                 throw new Zend_Service_SlideShare_Exception(trim($error_str), $code);
             }
 
             if(!$sxe->getName() == $responseTag) {
-                require_once 'Zend/Service/SlideShare/Exception.php';
+                // require_once 'Zend/Service/SlideShare/Exception.php';
                 throw new Zend_Service_SlideShare_Exception('Unknown or Invalid XML Repsonse Received');
             }
 
@@ -613,7 +613,7 @@ class Zend_Service_SlideShare
 
         }
 
-        require_once 'Zend/Service/SlideShare/Exception.php';
+        // require_once 'Zend/Service/SlideShare/Exception.php';
         throw new Zend_Service_SlideShare_Exception("Was not provided the expected XML Node for processing");
     }
 }

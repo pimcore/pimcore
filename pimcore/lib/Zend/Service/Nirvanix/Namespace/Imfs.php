@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_Nirvanix_Namespace_Base
  */
-require_once 'Zend/Service/Nirvanix/Namespace/Base.php';
+// require_once 'Zend/Service/Nirvanix/Namespace/Base.php';
 
 /**
  * Namespace proxy with additional convenience methods for the IMFS namespace.

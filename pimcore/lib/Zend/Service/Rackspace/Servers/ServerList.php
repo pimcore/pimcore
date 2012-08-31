@@ -19,8 +19,8 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Service/Rackspace/Servers.php';
-require_once 'Zend/Service/Rackspace/Servers/Server.php';
+// require_once 'Zend/Service/Rackspace/Servers.php';
+// require_once 'Zend/Service/Rackspace/Servers/Server.php';
 
 /**
  * List of servers of Rackspace
@@ -60,7 +60,7 @@ class Zend_Service_Rackspace_Servers_ServerList implements Countable, Iterator, 
     public function __construct($service,$list = array())
     {
         if (!($service instanceof Zend_Service_Rackspace_Servers) || !is_array($list)) {
-            require_once 'Zend/Service/Rackspace/Servers/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Servers/Exception.php';
             throw new Zend_Service_Rackspace_Servers_Exception("You must pass a Zend_Service_Rackspace_Servers object and an array");
         }
         $this->service= $service;
@@ -199,7 +199,7 @@ class Zend_Service_Rackspace_Servers_ServerList implements Countable, Iterator, 
         if ($this->offsetExists($offset)) {
             return $this->servers[$offset];
         } else {
-            require_once 'Zend/Service/Rackspace/Servers/Exception.php';
+            // require_once 'Zend/Service/Rackspace/Servers/Exception.php';
             throw new Zend_Service_Rackspace_Servers_Exception('Illegal index');
         }
     }
@@ -215,7 +215,7 @@ class Zend_Service_Rackspace_Servers_ServerList implements Countable, Iterator, 
      */
     public function offsetSet($offset, $value)
     {
-        require_once 'Zend/Service/Rackspace/Servers/Exception.php';
+        // require_once 'Zend/Service/Rackspace/Servers/Exception.php';
         throw new Zend_Service_Rackspace_Servers_Exception('You are trying to set read-only property');
     }
 
@@ -229,7 +229,7 @@ class Zend_Service_Rackspace_Servers_ServerList implements Countable, Iterator, 
      */
     public function offsetUnset($offset)
     {
-        require_once 'Zend/Service/Rackspace/Servers/Exception.php';
+        // require_once 'Zend/Service/Rackspace/Servers/Exception.php';
         throw new Zend_Service_Rackspace_Servers_Exception('You are trying to unset read-only property');
     }
 }

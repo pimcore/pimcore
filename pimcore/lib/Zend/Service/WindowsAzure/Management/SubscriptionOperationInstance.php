@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_WindowsAzure_Management_ServiceEntityAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Management/ServiceEntityAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Management/ServiceEntityAbstract.php';
 
 /**
  * @category   Zend

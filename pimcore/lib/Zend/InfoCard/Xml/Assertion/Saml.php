@@ -23,12 +23,12 @@
 /**
  * Zend_InfoCard_Xml_Element
  */
-require_once 'Zend/InfoCard/Xml/Element.php';
+// require_once 'Zend/InfoCard/Xml/Element.php';
 
 /**
  * Zend_InfoCard_Xml_Assertion_Interface
  */
-require_once 'Zend/InfoCard/Xml/Assertion/Interface.php';
+// require_once 'Zend/InfoCard/Xml/Assertion/Interface.php';
 
 /**
  * A Xml Assertion Document in SAML Token format

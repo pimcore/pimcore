@@ -20,7 +20,7 @@
  */
 
 /** Zend_Mobile_Push_Message_Mpns **/
-require_once 'Zend/Mobile/Push/Message/Mpns.php';
+// require_once 'Zend/Mobile/Push/Message/Mpns.php';
 
 /**
  * Mpns Toast Message

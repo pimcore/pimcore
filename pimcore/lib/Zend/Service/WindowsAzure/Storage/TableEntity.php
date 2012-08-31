@@ -236,7 +236,7 @@ class Zend_Service_WindowsAzure_Storage_TableEntity
                     $this->$method($values[$accessor->AzurePropertyName]);
                 }
             } else if ($throwOnError) {
-				require_once 'Zend/Service/WindowsAzure/Exception.php';
+				// require_once 'Zend/Service/WindowsAzure/Exception.php';
                 throw new Zend_Service_WindowsAzure_Exception("Property '" . $accessor->AzurePropertyName . "' was not found in \$values array");    
             }
         }

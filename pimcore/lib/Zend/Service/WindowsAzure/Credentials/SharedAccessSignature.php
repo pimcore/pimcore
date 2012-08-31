@@ -22,7 +22,7 @@
 /**
  * @see Zend_Service_WindowsAzure_Credentials_CredentialsAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/CredentialsAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/CredentialsAbstract.php';
 
 /**
  * @category   Zend
@@ -83,7 +83,7 @@ class Zend_Service_WindowsAzure_Credentials_SharedAccessSignature
 	{
 		foreach ($value as $url) {
 			if (strpos($url, $this->_accountName) === false) {
-				require_once 'Zend/Service/WindowsAzure/Exception.php';
+				// require_once 'Zend/Service/WindowsAzure/Exception.php';
 				throw new Zend_Service_WindowsAzure_Exception('The permission set can only contain URLs for the account name specified in the Zend_Service_WindowsAzure_Credentials_SharedAccessSignature instance.');
 			}
 		}

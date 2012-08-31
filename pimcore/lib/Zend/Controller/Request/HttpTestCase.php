@@ -22,7 +22,7 @@
 /**
  * @see Zend_Controller_Request_Http
  */
-require_once 'Zend/Controller/Request/Http.php';
+// require_once 'Zend/Controller/Request/Http.php';
 
 /**
  * Zend_Controller_Request_HttpTestCase
@@ -169,7 +169,7 @@ class Zend_Controller_Request_HttpTestCase extends Zend_Controller_Request_Http
     {
         $type = strtoupper(trim((string) $type));
         if (!in_array($type, $this->_validMethodTypes)) {
-            require_once 'Zend/Controller/Exception.php';
+            // require_once 'Zend/Controller/Exception.php';
             throw new Zend_Controller_Exception('Invalid request method specified');
         }
         $this->_method = $type;

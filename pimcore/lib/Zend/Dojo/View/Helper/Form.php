@@ -21,7 +21,7 @@
  */
 
 /** Zend_Dojo_View_Helper_Dijit */
-require_once 'Zend/Dojo/View/Helper/Dijit.php';
+// require_once 'Zend/Dojo/View/Helper/Dijit.php';
 
 /**
  * Dojo Form dijit
@@ -83,7 +83,7 @@ class Zend_Dojo_View_Helper_Form extends Zend_Dojo_View_Helper_Dijit
     public function getFormHelper()
     {
         if (null === $this->_helper) {
-            require_once 'Zend/View/Helper/Form.php';
+            // require_once 'Zend/View/Helper/Form.php';
             $this->_helper = new Zend_View_Helper_Form;
             $this->_helper->setView($this->view);
         }

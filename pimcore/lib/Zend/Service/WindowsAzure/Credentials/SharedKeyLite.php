@@ -22,7 +22,7 @@
 /**
  * @see Zend_Service_WindowsAzure_Credentials_CredentialsAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/CredentialsAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/CredentialsAbstract.php';
 
 /**
  * @category   Zend
@@ -74,7 +74,7 @@ class Zend_Service_WindowsAzure_Credentials_SharedKeyLite
 	) {
 		// Table storage?
 		if (!$forTableStorage) {
-			require_once 'Zend/Service/WindowsAzure/Credentials/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Credentials/Exception.php';
 			throw new Zend_Service_WindowsAzure_Credentials_Exception('The Windows Azure SDK for PHP does not support SharedKeyLite authentication on blob or queue storage. Use SharedKey authentication instead.');
 		}
 		

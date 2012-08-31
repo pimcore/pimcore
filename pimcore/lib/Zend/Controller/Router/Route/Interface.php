@@ -21,7 +21,7 @@
  */
 
 /** Zend_Config */
-require_once 'Zend/Config.php';
+// require_once 'Zend/Config.php';
 
 /**
  * @package    Zend_Controller

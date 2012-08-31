@@ -23,12 +23,12 @@
 /**
  * @see Zend_CodeGenerator_Php_Member_Abstract
  */
-require_once 'Zend/CodeGenerator/Php/Member/Abstract.php';
+// require_once 'Zend/CodeGenerator/Php/Member/Abstract.php';
 
 /**
  * @see Zend_CodeGenerator_Php_Property_DefaultValue
  */
-require_once 'Zend/CodeGenerator/Php/Property/DefaultValue.php';
+// require_once 'Zend/CodeGenerator/Php/Property/DefaultValue.php';
 
 /**
  * @category   Zend
@@ -160,7 +160,7 @@ class Zend_CodeGenerator_Php_Property extends Zend_CodeGenerator_Php_Member_Abst
 
         if ($this->isConst()) {
             if ($defaultValue != null && !$defaultValue->isValidConstantType()) {
-                require_once 'Zend/CodeGenerator/Php/Exception.php';
+                // require_once 'Zend/CodeGenerator/Php/Exception.php';
                 throw new Zend_CodeGenerator_Php_Exception('The property ' . $this->_name . ' is said to be '
                     . 'constant but does not have a valid constant value.');
             }

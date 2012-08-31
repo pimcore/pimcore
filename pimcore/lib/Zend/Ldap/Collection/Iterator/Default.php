@@ -85,7 +85,7 @@ class Zend_Ldap_Collection_Iterator_Default implements Iterator, Countable
             /**
              * @see Zend_Ldap_Exception
              */
-            require_once 'Zend/Ldap/Exception.php';
+            // require_once 'Zend/Ldap/Exception.php';
             throw new Zend_Ldap_Exception($this->_ldap, 'counting entries');
         }
     }
@@ -243,7 +243,7 @@ class Zend_Ldap_Collection_Iterator_Default implements Iterator, Countable
             $currentDn = @ldap_get_dn($this->_ldap->getResource(), $this->_current);
             if ($currentDn === false) {
                 /** @see Zend_Ldap_Exception */
-                require_once 'Zend/Ldap/Exception.php';
+                // require_once 'Zend/Ldap/Exception.php';
                 throw new Zend_Ldap_Exception($this->_ldap, 'getting dn');
             }
             return $currentDn;
@@ -263,7 +263,7 @@ class Zend_Ldap_Collection_Iterator_Default implements Iterator, Countable
         if (is_resource($this->_current) && $this->_itemCount > 0) {
             $this->_current = @ldap_next_entry($this->_ldap->getResource(), $this->_current);
             /** @see Zend_Ldap_Exception */
-            require_once 'Zend/Ldap/Exception.php';
+            // require_once 'Zend/Ldap/Exception.php';
             if ($this->_current === false) {
                 $msg = $this->_ldap->getLastError($code);
                 if ($code === Zend_Ldap_Exception::LDAP_SIZELIMIT_EXCEEDED) {
@@ -289,7 +289,7 @@ class Zend_Ldap_Collection_Iterator_Default implements Iterator, Countable
         if (is_resource($this->_resultId)) {
             $this->_current = @ldap_first_entry($this->_ldap->getResource(), $this->_resultId);
             /** @see Zend_Ldap_Exception */
-            require_once 'Zend/Ldap/Exception.php';
+            // require_once 'Zend/Ldap/Exception.php';
             if ($this->_current === false &&
                     $this->_ldap->getLastErrorCode() > Zend_Ldap_Exception::LDAP_SUCCESS) {
                 throw new Zend_Ldap_Exception($this->_ldap, 'getting first entry');

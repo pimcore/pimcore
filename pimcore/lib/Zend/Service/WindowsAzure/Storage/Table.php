@@ -23,27 +23,27 @@
 /**
  * @see Zend_Service_WindowsAzure_Storage_BatchStorageAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Storage/BatchStorageAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/BatchStorageAbstract.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_TableInstance
  */
-require_once 'Zend/Service/WindowsAzure/Storage/TableInstance.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/TableInstance.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_TableEntityQuery
  */
-require_once 'Zend/Service/WindowsAzure/Storage/TableEntityQuery.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/TableEntityQuery.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Storage_DynamicTableEntity
  */
-require_once 'Zend/Service/WindowsAzure/Storage/DynamicTableEntity.php';
+// require_once 'Zend/Service/WindowsAzure/Storage/DynamicTableEntity.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Credentials_SharedKeyLite 
  */
-require_once 'Zend/Service/WindowsAzure/Credentials/SharedKeyLite.php';
+// require_once 'Zend/Service/WindowsAzure/Credentials/SharedKeyLite.php';
 
 /**
  * @category   Zend
@@ -111,7 +111,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 	public function tableExists($tableName = '')
 	{
 		if ($tableName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Table name is not specified.');
 		}
 			
@@ -175,7 +175,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 		    
 			// More tables?
 		    if (!is_null($response->getHeader('x-ms-continuation-NextTableName'))) {
-				require_once 'Zend/Service/WindowsAzure/Exception.php';
+				// require_once 'Zend/Service/WindowsAzure/Exception.php';
 		        $returnValue = array_merge($returnValue, $this->listTables($response->getHeader('x-ms-continuation-NextTableName')));
 		    }
 
@@ -247,7 +247,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 		        (string)$entry->updated
 		    );
 		} else {
-                    require_once 'Zend/Service/WindowsAzure/Exception.php';
+                    // require_once 'Zend/Service/WindowsAzure/Exception.php';
                     throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -274,7 +274,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 	public function deleteTable($tableName = '')
 	{
 		if ($tableName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Table name is not specified.');
 		}
 
@@ -285,7 +285,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 		// Perform request
 		$response = $this->_performRequest('Tables(\'' . $tableName . '\')', '', Zend_Http_Client::DELETE, $headers, true, null);
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -301,11 +301,11 @@ class Zend_Service_WindowsAzure_Storage_Table
 	public function insertEntity($tableName = '', Zend_Service_WindowsAzure_Storage_TableEntity $entity = null)
 	{
 		if ($tableName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Table name is not specified.');
 		}
 		if (is_null($entity)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Entity is not specified.');
 		}
 		                     
@@ -358,7 +358,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 
 		    return $entity;
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -374,11 +374,11 @@ class Zend_Service_WindowsAzure_Storage_Table
 	public function deleteEntity($tableName = '', Zend_Service_WindowsAzure_Storage_TableEntity $entity = null, $verifyEtag = false)
 	{
 		if ($tableName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Table name is not specified.');
 		}
 		if (is_null($entity)) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Entity is not specified.');
 		}
 		                     
@@ -404,7 +404,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 		    $response = $this->_performRequest($tableName . '(PartitionKey=\'' . $entity->getPartitionKey() . '\', RowKey=\'' . $entity->getRowKey() . '\')', '', Zend_Http_Client::DELETE, $headers, true, null);
 		}
 		if (!$response->isSuccessful()) {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 		    throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -422,19 +422,19 @@ class Zend_Service_WindowsAzure_Storage_Table
 	public function retrieveEntityById($tableName, $partitionKey, $rowKey, $entityClass = 'Zend_Service_WindowsAzure_Storage_DynamicTableEntity')
 	{
 		if (is_null($tableName) || $tableName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Table name is not specified.');
 		}
 		if (is_null($partitionKey) || $partitionKey === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Partition key is not specified.');
 		}
 		if (is_null($rowKey) || $rowKey === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Row key is not specified.');
 		}
 		if (is_null($entityClass) || $entityClass === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Entity class is not specified.');
 		}
 
@@ -444,7 +444,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 		if (strlen($partitionKey . $rowKey) >= 256) {
 		    // Start a batch if possible
 		    if ($this->isInBatch()) {
-				require_once 'Zend/Service/WindowsAzure/Exception.php';
+				// require_once 'Zend/Service/WindowsAzure/Exception.php';
 		        throw new Zend_Service_WindowsAzure_Exception('Entity cannot be retrieved. A transaction is required to retrieve the entity, but another transaction is already active.');
 		    }
 		        
@@ -494,11 +494,11 @@ class Zend_Service_WindowsAzure_Storage_Table
 	public function retrieveEntities($tableName = '', $filter = '', $entityClass = 'Zend_Service_WindowsAzure_Storage_DynamicTableEntity', $nextPartitionKey = null, $nextRowKey = null)
 	{
 		if ($tableName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Table name is not specified.');
 		}
 		if ($entityClass === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Entity class is not specified.');
 		}
 
@@ -541,7 +541,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 		    // Change $tableName
 		    $tableName = $tableName->assembleFrom(true);
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 		    throw new Zend_Service_WindowsAzure_Exception('Invalid argument: $tableName');
 		}
 		
@@ -636,7 +636,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 		    // Return
 		    return $returnValue;
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 		    throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
@@ -717,11 +717,11 @@ class Zend_Service_WindowsAzure_Storage_Table
 	protected function _changeEntity($httpVerb = Zend_Http_Client::PUT, $tableName = '', Zend_Service_WindowsAzure_Storage_TableEntity $entity = null, $verifyEtag = false)
 	{
 		if ($tableName === '') {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Table name is not specified.');
 		}
 		if (is_null($entity)) {	
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception('Entity is not specified.');
 		}
 		                     
@@ -783,7 +783,7 @@ class Zend_Service_WindowsAzure_Storage_Table
 
 		    return $entity;
 		} else {
-			require_once 'Zend/Service/WindowsAzure/Exception.php';
+			// require_once 'Zend/Service/WindowsAzure/Exception.php';
 			throw new Zend_Service_WindowsAzure_Exception($this->_getErrorMessage($response, 'Resource could not be accessed.'));
 		}
 	}
