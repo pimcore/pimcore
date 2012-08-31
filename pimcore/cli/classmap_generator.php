@@ -33,10 +33,10 @@ $globalMap = array();
 function createMap(Iterator $i, $map) {
     $file      = $i->current();
     $namespace = empty($file->namespace) ? '' : $file->namespace . '\\';
-    $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "' . PIMCORE_DOCUMENT_ROOT . '", $file->getRealpath());
+    $filename  = str_replace(PIMCORE_DOCUMENT_ROOT, "' . \$pdr . '", $file->getRealpath());
 
     // Windows portability
-    $filename  = str_replace(array('/', '\\'), "' . DIRECTORY_SEPARATOR . '", $filename);
+    $filename  = str_replace(array('/', '\\'), "' . \$dsp . '", $filename);
 
     $map->{$namespace . $file->classname} = $filename;
 
@@ -59,6 +59,7 @@ foreach ($paths as $path) {
 // Create a file with the class/file map.
 // Stupid syntax highlighters make separating < from PHP declaration necessary
 $content = '<' . "?php\n"
+         . '$pdr = PIMCORE_DOCUMENT_ROOT;' . "\n" . '$dsp = DIRECTORY_SEPARATOR;' . "\n"
          . 'return ' . var_export((array) $globalMap, true) . ';';
 
 // Prefix with dirname(__FILE__); modify the generated content
