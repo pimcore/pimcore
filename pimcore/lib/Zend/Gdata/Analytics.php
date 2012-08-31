@@ -23,37 +23,37 @@
 /**
  * @see Zend_Gdata
  */
-require_once 'Zend/Gdata.php';
+// require_once 'Zend/Gdata.php';
 
 /**
  * @see Zend_Gdata_Analytics_AccountEntry
  */
-require_once 'Zend/Gdata/Analytics/AccountEntry.php';
+// require_once 'Zend/Gdata/Analytics/AccountEntry.php';
 
 /**
  * @see Zend_Gdata_Analytics_AccountFeed
  */
-require_once 'Zend/Gdata/Analytics/AccountFeed.php';
+// require_once 'Zend/Gdata/Analytics/AccountFeed.php';
 
 /**
  * @see Zend_Gdata_Analytics_DataEntry
  */
-require_once 'Zend/Gdata/Analytics/DataEntry.php';
+// require_once 'Zend/Gdata/Analytics/DataEntry.php';
 
 /**
  * @see Zend_Gdata_Analytics_DataFeed
  */
-require_once 'Zend/Gdata/Analytics/DataFeed.php';
+// require_once 'Zend/Gdata/Analytics/DataFeed.php';
 
 /**
  * @see Zend_Gdata_Analytics_DataQuery
  */
-require_once 'Zend/Gdata/Analytics/DataQuery.php';
+// require_once 'Zend/Gdata/Analytics/DataQuery.php';
 
 /**
  * @see Zend_Gdata_Analytics_AccountQuery
  */
-require_once 'Zend/Gdata/Analytics/AccountQuery.php';
+// require_once 'Zend/Gdata/Analytics/AccountQuery.php';
 
 /**
  * @category   Zend

@@ -159,7 +159,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_CosmosResultSet
          */
-        require_once 'Zend/Service/Technorati/CosmosResultSet.php';
+        // require_once 'Zend/Service/Technorati/CosmosResultSet.php';
         return new Zend_Service_Technorati_CosmosResultSet($dom, $options);
     }
 
@@ -221,7 +221,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_SearchResultSet
          */
-        require_once 'Zend/Service/Technorati/SearchResultSet.php';
+        // require_once 'Zend/Service/Technorati/SearchResultSet.php';
         return new Zend_Service_Technorati_SearchResultSet($dom, $options);
     }
 
@@ -269,7 +269,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_TagResultSet
          */
-        require_once 'Zend/Service/Technorati/TagResultSet.php';
+        // require_once 'Zend/Service/Technorati/TagResultSet.php';
         return new Zend_Service_Technorati_TagResultSet($dom, $options);
     }
 
@@ -305,7 +305,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_DailyCountsResultSet
          */
-        require_once 'Zend/Service/Technorati/DailyCountsResultSet.php';
+        // require_once 'Zend/Service/Technorati/DailyCountsResultSet.php';
         return new Zend_Service_Technorati_DailyCountsResultSet($dom);
     }
 
@@ -343,7 +343,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_TagsResultSet
          */
-        require_once 'Zend/Service/Technorati/TagsResultSet.php';
+        // require_once 'Zend/Service/Technorati/TagsResultSet.php';
         return new Zend_Service_Technorati_TagsResultSet($dom);
     }
 
@@ -372,7 +372,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_BlogInfoResult
          */
-        require_once 'Zend/Service/Technorati/BlogInfoResult.php';
+        // require_once 'Zend/Service/Technorati/BlogInfoResult.php';
         return new Zend_Service_Technorati_BlogInfoResult($dom);
     }
 
@@ -415,7 +415,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_TagsResultSet
          */
-        require_once 'Zend/Service/Technorati/TagsResultSet.php';
+        // require_once 'Zend/Service/Technorati/TagsResultSet.php';
         return new Zend_Service_Technorati_TagsResultSet($dom);
     }
 
@@ -449,7 +449,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_GetInfoResult
          */
-        require_once 'Zend/Service/Technorati/GetInfoResult.php';
+        // require_once 'Zend/Service/Technorati/GetInfoResult.php';
         return new Zend_Service_Technorati_GetInfoResult($dom);
     }
 
@@ -477,7 +477,7 @@ class Zend_Service_Technorati
         /**
          * @see Zend_Service_Technorati_KeyInfoResult
          */
-        require_once 'Zend/Service/Technorati/KeyInfoResult.php';
+        // require_once 'Zend/Service/Technorati/KeyInfoResult.php';
         return new Zend_Service_Technorati_KeyInfoResult($dom, $this->_apiKey);
     }
 
@@ -506,7 +506,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Rest_Client
              */
-            require_once 'Zend/Rest/Client.php';
+            // require_once 'Zend/Rest/Client.php';
             $this->_restClient = new Zend_Rest_Client(self::API_URI_BASE);
         }
 
@@ -655,7 +655,7 @@ class Zend_Service_Technorati
                 /**
                  * @see Zend_Service_Technorati_Exception
                  */
-                require_once 'Zend/Service/Technorati/Exception.php';
+                // require_once 'Zend/Service/Technorati/Exception.php';
                 throw new Zend_Service_Technorati_Exception(
                             "Invalid value '" . $options['days'] . "' for 'days' option");
             }
@@ -768,7 +768,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(
                         "Invalid value '{$options[$name]}' for '$name' option");
         }
@@ -788,7 +788,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(
                         "Empty value for '$name' option");
         }
@@ -854,7 +854,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(
                         "Invalid value '" . $options['format'] . "' for 'format' option. " .
                         "Zend_Service_Technorati supports only 'xml'");
@@ -881,7 +881,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(
                         "Invalid value '" . $options['limit'] . "' for 'limit' option");
         }
@@ -905,7 +905,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(
                         "Invalid value '" . $options['start'] . "' for 'start' option");
         }
@@ -945,7 +945,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception($error);
         }
     }
@@ -980,7 +980,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(sprintf(
                         'Invalid response status code (HTTP/%s %s %s)',
                         $response->getVersion(), $response->getStatus(), $response->getMessage()));
@@ -1003,7 +1003,7 @@ class Zend_Service_Technorati
             /**
              * @see Zend_Service_Technorati_Exception
              */
-            require_once 'Zend/Service/Technorati/Exception.php';
+            // require_once 'Zend/Service/Technorati/Exception.php';
             throw new Zend_Service_Technorati_Exception(
                         "The following parameters are invalid: '" .
                         implode("', '", $difference) . "'");

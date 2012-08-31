@@ -20,16 +20,16 @@
  */
 
 /** Zend_Oauth */
-require_once 'Zend/Oauth.php';
+// require_once 'Zend/Oauth.php';
 
 /** Zend_Http_Client */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /** Zend_Oauth_Http_Utility */
-require_once 'Zend/Oauth/Http/Utility.php';
+// require_once 'Zend/Oauth/Http/Utility.php';
 
 /** Zend_Oauth_Config */
-require_once 'Zend/Oauth/Config.php';
+// require_once 'Zend/Oauth/Config.php';
 
 /**
  * @category   Zend
@@ -246,7 +246,7 @@ class Zend_Oauth_Client extends Zend_Http_Client
             $this->setHeaders('Authorization', $oauthHeaderValue);
         } elseif ($requestScheme == Zend_Oauth::REQUEST_SCHEME_POSTBODY) {
             if ($requestMethod == self::GET) {
-                require_once 'Zend/Oauth/Exception.php';
+                // require_once 'Zend/Oauth/Exception.php';
                 throw new Zend_Oauth_Exception(
                     'The client is configured to'
                     . ' pass OAuth parameters through a POST body but request method'
@@ -283,7 +283,7 @@ class Zend_Oauth_Client extends Zend_Http_Client
             $this->getUri()->setQuery($query);
             $this->paramsGet = array();
         } else {
-            require_once 'Zend/Oauth/Exception.php';
+            // require_once 'Zend/Oauth/Exception.php';
             throw new Zend_Oauth_Exception('Invalid request scheme: ' . $requestScheme);
         }
     }
@@ -326,7 +326,7 @@ class Zend_Oauth_Client extends Zend_Http_Client
     public function __call($method, array $args)
     {
         if (!method_exists($this->_config, $method)) {
-            require_once 'Zend/Oauth/Exception.php';
+            // require_once 'Zend/Oauth/Exception.php';
             throw new Zend_Oauth_Exception('Method does not exist: ' . $method);
         }
         return call_user_func_array(array($this->_config,$method), $args);

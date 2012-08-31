@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Geo
  */
-require_once 'Zend/Gdata/Geo.php';
+// require_once 'Zend/Gdata/Geo.php';
 
 /**
  * Represents the gml:pos element used by the Gdata Geo extensions.

@@ -23,7 +23,7 @@
 /**
  * @see Zend_Gdata_Query
  */
-require_once 'Zend/Gdata/Query.php';
+// require_once 'Zend/Gdata/Query.php';
 
 /**
  * @category   Zend

@@ -20,7 +20,7 @@
  */
 
 /** Zend_Reflection_Docblock_Tag */
-require_once 'Zend/Reflection/Docblock/Tag.php';
+// require_once 'Zend/Reflection/Docblock/Tag.php';
 
 /**
  * @category   Zend
@@ -50,12 +50,12 @@ class Zend_Reflection_Docblock_Tag_Param extends Zend_Reflection_Docblock_Tag
         $matches = array();
 
         if (!preg_match('#^@(\w+)\s+([^\s]+)(?:\s+(\$\S+))?(?:\s+(.*))?#s', $tagDocblockLine, $matches)) {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception('Provided docblock line is does not contain a valid tag');
         }
 
         if ($matches[1] != 'param') {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception('Provided docblock line is does not contain a valid @param tag');
         }
 

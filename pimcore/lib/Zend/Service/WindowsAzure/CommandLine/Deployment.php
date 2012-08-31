@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_Console_Command
  */
-require_once 'Zend/Service/Console/Command.php';
+// require_once 'Zend/Service/Console/Command.php';
 
 /**
  * Deployment commands
@@ -78,7 +78,7 @@ class Zend_Service_WindowsAzure_CommandLine_Deployment
 	{
 		$deploymentSlot = 'staging';
 		if (!$staging && !$production) {
-			require_once 'Zend/Service/Console/Exception.php';
+			// require_once 'Zend/Service/Console/Exception.php';
 			throw new Zend_Service_Console_Exception('Either --Staging or --Production should be specified.');
 		}
 		if ($production) {
@@ -122,7 +122,7 @@ class Zend_Service_WindowsAzure_CommandLine_Deployment
 	{
 		$deploymentSlot = 'staging';
 		if (!$staging && !$production) {
-			require_once 'Zend/Service/Console/Exception.php';
+			// require_once 'Zend/Service/Console/Exception.php';
 			throw new Zend_Service_Console_Exception('Either --Staging or --Production should be specified.');
 		}
 		if ($production) {
@@ -237,7 +237,7 @@ class Zend_Service_WindowsAzure_CommandLine_Deployment
 			$productionDeploymentName = $stagingDeploymentName;
 		}
 		if (is_null($stagingDeploymentName)) {
-			require_once 'Zend/Service/Console/Exception.php';
+			// require_once 'Zend/Service/Console/Exception.php';
 			throw new Zend_Service_Console_Exception('Swapping deployment slots is only possible when both slots have an active deployment or when production slot is empty.');
 		}
 

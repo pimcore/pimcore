@@ -100,7 +100,7 @@ class Zend_Dojo_BuildLayer
             if ($options instanceof Zend_Config) {
                 $options = $options->toArray();
             } elseif (!is_array($options)) {
-                require_once 'Zend/Dojo/Exception.php';
+                // require_once 'Zend/Dojo/Exception.php';
                 throw new Zend_Dojo_Exception('Invalid options provided to constructor');
             }
             $this->setOptions($options);
@@ -173,7 +173,7 @@ class Zend_Dojo_BuildLayer
     {
         if (null === $this->_dojo) {
             if (null === ($view = $this->getView())) {
-                require_once 'Zend/Dojo/Exception.php';
+                // require_once 'Zend/Dojo/Exception.php';
                 throw new Zend_Dojo_Exception('View object not registered; cannot retrieve dojo helper');
             }
             $helper = $view->getHelper('dojo');
@@ -191,7 +191,7 @@ class Zend_Dojo_BuildLayer
     public function setLayerName($name)
     {
         if (!preg_match('/^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/i', $name)) {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('Invalid layer name provided; must be of form[a-z][a-z0-9_](\.[a-z][a-z0-9_])+');
         }
         $this->_layerName = $name;
@@ -527,7 +527,7 @@ class Zend_Dojo_BuildLayer
      */
     protected function _filterJsonProfileToJavascript($profile)
     {
-        require_once 'Zend/Json.php';
+        // require_once 'Zend/Json.php';
         $profile = Zend_Json::encode($profile);
         $profile = trim($profile, '"');
         $profile = preg_replace('/' . preg_quote('\\') . '/', '', $profile);

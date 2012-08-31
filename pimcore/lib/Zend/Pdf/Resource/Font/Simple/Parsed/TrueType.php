@@ -22,14 +22,14 @@
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Name.php';
 
 /** Zend_Pdf_Resource_Font_FontDescriptor */
-require_once 'Zend/Pdf/Resource/Font/FontDescriptor.php';
+// require_once 'Zend/Pdf/Resource/Font/FontDescriptor.php';
 
 
 /** Zend_Pdf_Resource_Font_Simple_Parsed */
-require_once 'Zend/Pdf/Resource/Font/Simple/Parsed.php';
+// require_once 'Zend/Pdf/Resource/Font/Simple/Parsed.php';
 
 /**
  * TrueType fonts implementation

@@ -24,7 +24,7 @@
 /**
  * @see Zend_Service_Technorati_ResultSet
  */
-require_once 'Zend/Service/Technorati/ResultSet.php';
+// require_once 'Zend/Service/Technorati/ResultSet.php';
 
 
 /**
@@ -91,7 +91,7 @@ class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_Re
             /**
              * @see Zend_Service_Technorati_Weblog
              */
-            require_once 'Zend/Service/Technorati/Weblog.php';
+            // require_once 'Zend/Service/Technorati/Weblog.php';
             $this->_weblog = new Zend_Service_Technorati_Weblog($result->item(0));
         }
 
@@ -170,7 +170,7 @@ class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_Re
         /**
          * @see Zend_Service_Technorati_CosmosResult
          */
-        require_once 'Zend/Service/Technorati/CosmosResult.php';
+        // require_once 'Zend/Service/Technorati/CosmosResult.php';
         return new Zend_Service_Technorati_CosmosResult($this->_results->item($this->_currentIndex));
     }
 }

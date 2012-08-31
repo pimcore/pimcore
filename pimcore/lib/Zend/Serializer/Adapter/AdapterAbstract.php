@@ -21,7 +21,7 @@
  */
 
 /** @see Zend_Serializer_Adapter_AdapterInterface */
-require_once 'Zend/Serializer/Adapter/AdapterInterface.php';
+// require_once 'Zend/Serializer/Adapter/AdapterInterface.php';
 
 /**
  * @category   Zend
@@ -103,7 +103,7 @@ abstract class Zend_Serializer_Adapter_AdapterAbstract implements Zend_Serialize
     {
         $name = (string) $name;
         if (!array_key_exists($name, $this->_options)) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Unknown option name "'.$name.'"');
         }
 

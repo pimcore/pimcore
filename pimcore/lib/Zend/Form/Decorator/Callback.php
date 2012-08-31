@@ -20,7 +20,7 @@
  */
 
 /** Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
+// require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_Callback
@@ -66,7 +66,7 @@ class Zend_Form_Decorator_Callback extends Zend_Form_Decorator_Abstract
     public function setCallback($callback)
     {
         if (!is_callable($callback)) {
-            require_once 'Zend/Form/Exception.php';
+            // require_once 'Zend/Form/Exception.php';
             throw new Zend_Form_Exception('Invalid callback provided to callback decorator');
         }
         $this->_callback = $callback;

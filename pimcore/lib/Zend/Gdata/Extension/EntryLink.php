@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * Represents the gd:entryLink element

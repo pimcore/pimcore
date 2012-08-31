@@ -21,14 +21,14 @@
  */
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Dictionary.php';
-require_once 'Zend/Pdf/Element/Name.php';
-require_once 'Zend/Pdf/Element/String.php';
-require_once 'Zend/Pdf/Element/Boolean.php';
+// require_once 'Zend/Pdf/Element/Dictionary.php';
+// require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/String.php';
+// require_once 'Zend/Pdf/Element/Boolean.php';
 
 
 /** Zend_Pdf_Action */
-require_once 'Zend/Pdf/Action.php';
+// require_once 'Zend/Pdf/Action.php';
 
 
 /**
@@ -55,7 +55,7 @@ class Zend_Pdf_Action_URI extends Zend_Pdf_Action
         parent::__construct($dictionary, $processedActions);
 
         if ($dictionary->URI === null) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('URI action dictionary entry is required');
         }
     }
@@ -71,7 +71,7 @@ class Zend_Pdf_Action_URI extends Zend_Pdf_Action
     {
         $scheme = parse_url((string)$uri, PHP_URL_SCHEME);
         if ($scheme === false || $scheme === null) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Invalid URI');
         }
     }

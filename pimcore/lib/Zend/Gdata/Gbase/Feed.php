@@ -24,12 +24,12 @@
 /**
  * @see Zend_Exception
  */
-require_once 'Zend/Exception.php';
+// require_once 'Zend/Exception.php';
 
 /**
  * @see Zend_Gdata_Feed
  */
-require_once 'Zend/Gdata/Feed.php';
+// require_once 'Zend/Gdata/Feed.php';
 
 /**
  * Base class for the Google Base Feed

@@ -23,27 +23,27 @@
 /**
  * @see Zend_Service_DeveloperGarden_Client_ClientAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SendSms_SendSMSResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SendSms/SendSMSResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SendSms/SendSMSResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SendSms_SendFlashSMSResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SendSms/SendFlashSMSResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SendSms/SendFlashSMSResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SendSms_SendSMS
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendSMS.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendSMS.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SendSms_SendFlashSMS
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendFlashSMS.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendFlashSMS.php';
 
 /**
  * @category   Zend
@@ -146,7 +146,7 @@ class Zend_Service_DeveloperGarden_SendSms
                 $response = $client->sendFlashSms($request);
                 break;
             default : {
-                require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+                // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
                 throw new Zend_Service_DeveloperGarden_Client_Exception('Unknown SMS Type');
             }
         }

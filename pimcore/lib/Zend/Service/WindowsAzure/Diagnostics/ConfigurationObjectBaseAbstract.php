@@ -47,7 +47,7 @@ abstract class Zend_Service_WindowsAzure_Diagnostics_ConfigurationObjectBaseAbst
             $this->_data[strtolower($name)] = $value;
             return;
         }
-	require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
+	// require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
         throw new Zend_Service_WindowsAzure_Diagnostics_Exception("Unknown property: " . $name);
     }
 
@@ -60,7 +60,7 @@ abstract class Zend_Service_WindowsAzure_Diagnostics_ConfigurationObjectBaseAbst
         if (array_key_exists(strtolower($name), $this->_data)) {
             return $this->_data[strtolower($name)];
         }
-	require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
+	// require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
         throw new Zend_Service_WindowsAzure_Diagnostics_Exception("Unknown property: " . $name);
     }
 }

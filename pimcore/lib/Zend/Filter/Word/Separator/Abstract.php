@@ -22,7 +22,7 @@
 /**
  * @see Zend_Filter_PregReplace
  */
-require_once 'Zend/Filter/PregReplace.php';
+// require_once 'Zend/Filter/PregReplace.php';
 
 /**
  * @category   Zend
@@ -56,7 +56,7 @@ abstract class Zend_Filter_Word_Separator_Abstract extends Zend_Filter_PregRepla
     public function setSeparator($separator)
     {
         if ($separator == null) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('"' . $separator . '" is not a valid separator.');
         }
         $this->_separator = $separator;

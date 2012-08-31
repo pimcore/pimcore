@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Extension_FeedLink
  */
-require_once 'Zend/Gdata/Extension/FeedLink.php';
+// require_once 'Zend/Gdata/Extension/FeedLink.php';
 
 /**
  * Represents the gd:comments element

@@ -23,7 +23,7 @@
 /**
  * @see Zend_Service_Rackspace_Exception
  */
-require_once 'Zend/Service/Rackspace/Exception.php';
+// require_once 'Zend/Service/Rackspace/Exception.php';
 
 /**
  * @category   Zend

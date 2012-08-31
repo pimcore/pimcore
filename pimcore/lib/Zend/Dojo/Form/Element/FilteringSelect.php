@@ -20,7 +20,7 @@
  */
 
 /** Zend_Dojo_Form_Element_ComboBox */
-require_once 'Zend/Dojo/Form/Element/ComboBox.php';
+// require_once 'Zend/Dojo/Form/Element/ComboBox.php';
 
 /**
  * FilteringSelect dijit

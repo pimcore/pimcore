@@ -40,7 +40,7 @@ class Scaffolder
 	{
 		// Check required parameters
 		if (empty($options['DiagnosticsConnectionString'])) {
-			require_once 'Zend/Service/Console/Exception.php';
+			// require_once 'Zend/Service/Console/Exception.php';
 			throw new Zend_Service_Console_Exception('Missing argument for scaffolder: DiagnosticsConnectionString');
 		}
 		

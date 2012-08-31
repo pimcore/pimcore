@@ -24,12 +24,12 @@
 /**
  * @see Zend_Gdata_Media_Feed
  */
-require_once 'Zend/Gdata/Media/Feed.php';
+// require_once 'Zend/Gdata/Media/Feed.php';
 
 /**
  * @see Zend_Gdata_YouTube_VideoEntry
  */
-require_once 'Zend/Gdata/YouTube/VideoEntry.php';
+// require_once 'Zend/Gdata/YouTube/VideoEntry.php';
 
 /**
  * The YouTube video flavor of an Atom Feed with media support

@@ -22,32 +22,32 @@
 /**
  * @see Zend_Service_Amazon_Abstract
  */
-require_once 'Zend/Service/Amazon/Abstract.php';
+// require_once 'Zend/Service/Amazon/Abstract.php';
 
 /**
  * @see Zend_Service_Amazon_SimpleDb_Response
  */
-require_once 'Zend/Service/Amazon/SimpleDb/Response.php';
+// require_once 'Zend/Service/Amazon/SimpleDb/Response.php';
 
 /**
  * @see Zend_Service_Amazon_SimpleDb_Page
  */
-require_once 'Zend/Service/Amazon/SimpleDb/Page.php';
+// require_once 'Zend/Service/Amazon/SimpleDb/Page.php';
 
 /**
  * @see Zend_Service_Amazon_SimpleDb_Attribute
  */
-require_once 'Zend/Service/Amazon/SimpleDb/Attribute.php';
+// require_once 'Zend/Service/Amazon/SimpleDb/Attribute.php';
 
 /**
  * @see Zend_Service_Amazon_SimpleDb_Exception
  */
-require_once 'Zend/Service/Amazon/SimpleDb/Exception.php';
+// require_once 'Zend/Service/Amazon/SimpleDb/Exception.php';
 
 /**
  * @see Zend_Crypt_Hmac
  */
-require_once 'Zend/Crypt/Hmac.php';
+// require_once 'Zend/Crypt/Hmac.php';
 
 /**
  * @category   Zend
@@ -112,7 +112,7 @@ class Zend_Service_Amazon_SimpleDb extends Zend_Service_Amazon_Abstract
             $endpoint = Zend_Uri::factory($endpoint);
         }
         if(!$endpoint->valid()) {
-            require_once 'Zend/Service/Amazon/SimpleDb/Exception.php';
+            // require_once 'Zend/Service/Amazon/SimpleDb/Exception.php';
             throw new Zend_Service_Amazon_SimpleDb_Exception("Invalid endpoint supplied");
         }
         $this->_endpoint = $endpoint;
@@ -549,7 +549,7 @@ class Zend_Service_Amazon_SimpleDb extends Zend_Service_Amazon_Abstract
 
         $data .= implode('&', $arrData);
 
-        require_once 'Zend/Crypt/Hmac.php';
+        // require_once 'Zend/Crypt/Hmac.php';
         $hmac = Zend_Crypt_Hmac::compute($this->_getSecretKey(), 'SHA256', $data, Zend_Crypt_Hmac::BINARY);
 
         return base64_encode($hmac);

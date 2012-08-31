@@ -20,10 +20,10 @@
  */
 
 /** Zend_Oauth */
-require_once 'Zend/Oauth.php';
+// require_once 'Zend/Oauth.php';
 
 /** Zend_Oauth_Http */
-require_once 'Zend/Oauth/Http.php';
+// require_once 'Zend/Oauth/Http.php';
 
 /**
  * @category   Zend
@@ -154,7 +154,7 @@ class Zend_Oauth_Http_Utility
             $className = 'Zend_Oauth_Signature_' . ucfirst(strtolower($signatureMethod));
         }
 
-        require_once str_replace('_', '/', $className) . '.php';
+        // require_once str_replace('_', '/', $className) . '.php';
         $signatureObject = new $className($consumerSecret, $tokenSecret, $hashAlgo);
         return $signatureObject->sign($params, $method, $url);
     }

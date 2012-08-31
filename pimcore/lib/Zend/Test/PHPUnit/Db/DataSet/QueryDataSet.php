@@ -23,22 +23,22 @@
 /**
  * @see PHPUnit_Extensions_Database_DataSet_QueryDataSet
  */
-require_once "PHPUnit/Extensions/Database/DataSet/QueryDataSet.php";
+// require_once "PHPUnit/Extensions/Database/DataSet/QueryDataSet.php";
 
 /**
  * @see PHPUnit_Extensions_Database_DB_IDatabaseConnection
  */
-require_once "PHPUnit/Extensions/Database/DB/IDatabaseConnection.php";
+// require_once "PHPUnit/Extensions/Database/DB/IDatabaseConnection.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_DataSet_QueryTable
  */
-require_once "Zend/Test/PHPUnit/Db/DataSet/QueryTable.php";
+// require_once "Zend/Test/PHPUnit/Db/DataSet/QueryTable.php";
 
 /**
  * @see Zend_Db_Select
  */
-require_once "Zend/Db/Select.php";
+// require_once "Zend/Db/Select.php";
 
 /**
  * Uses several query strings or Zend_Db_Select objects to form a dataset of tables for assertion with other datasets.
@@ -60,7 +60,7 @@ class Zend_Test_PHPUnit_Db_DataSet_QueryDataSet extends PHPUnit_Extensions_Datab
     public function __construct(PHPUnit_Extensions_Database_DB_IDatabaseConnection $databaseConnection)
     {
         if( !($databaseConnection instanceof Zend_Test_PHPUnit_Db_Connection) ) {
-            require_once "Zend/Test/PHPUnit/Db/Exception.php";
+            // require_once "Zend/Test/PHPUnit/Db/Exception.php";
             throw new Zend_Test_PHPUnit_Db_Exception("Zend_Test_PHPUnit_Db_DataSet_QueryDataSet only works with Zend_Test_PHPUnit_Db_Connection connections-");
         }
         $this->databaseConnection = $databaseConnection;

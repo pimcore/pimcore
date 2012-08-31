@@ -21,10 +21,10 @@
  */
 
 /** @see Zend_Form_Element_Xhtml */
-require_once 'Zend/Form/Element/Xhtml.php';
+// require_once 'Zend/Form/Element/Xhtml.php';
 
 /** @see Zend_Captcha_Adapter */
-require_once 'Zend/Captcha/Adapter.php';
+// require_once 'Zend/Captcha/Adapter.php';
 
 /**
  * Generic captcha element
@@ -204,7 +204,7 @@ class Zend_Form_Element_Captcha extends Zend_Form_Element_Xhtml
         $type = strtoupper($type);
         if ($type == self::CAPTCHA) {
             if (!isset($this->_loaders[$type])) {
-                require_once 'Zend/Loader/PluginLoader.php';
+                // require_once 'Zend/Loader/PluginLoader.php';
                 $this->_loaders[$type] = new Zend_Loader_PluginLoader(
                     array('Zend_Captcha' => 'Zend/Captcha/')
                 );

@@ -22,7 +22,7 @@
 /**
  * @see Zend_Filter_Interface
  */
-require_once 'Zend/Filter/Interface.php';
+// require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category   Zend
@@ -58,7 +58,7 @@ class Zend_Filter_File_Rename implements Zend_Filter_Interface
         } elseif (is_string($options)) {
             $options = array('target' => $options);
         } elseif (!is_array($options)) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Invalid options argument provided to filter');
         }
 
@@ -122,7 +122,7 @@ class Zend_Filter_File_Rename implements Zend_Filter_Interface
         if (is_string($options)) {
             $options = array('target' => $options);
         } elseif (!is_array($options)) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception ('Invalid options to rename filter provided');
         }
 
@@ -155,7 +155,7 @@ class Zend_Filter_File_Rename implements Zend_Filter_Interface
         }
 
         if (file_exists($file['target'])) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception(sprintf("File '%s' could not be renamed. It already exists.", $value));
         }
 
@@ -189,7 +189,7 @@ class Zend_Filter_File_Rename implements Zend_Filter_Interface
             return $file['target'];
         }
 
-        require_once 'Zend/Filter/Exception.php';
+        // require_once 'Zend/Filter/Exception.php';
         throw new Zend_Filter_Exception(sprintf("File '%s' could not be renamed. An error occured while processing the file.", $value));
     }
 

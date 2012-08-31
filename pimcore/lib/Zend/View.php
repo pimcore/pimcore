@@ -23,7 +23,7 @@
 /**
  * Abstract master class for extension.
  */
-require_once 'Zend/View/Abstract.php';
+// require_once 'Zend/View/Abstract.php';
 
 
 /**
@@ -61,7 +61,7 @@ class Zend_View extends Zend_View_Abstract
         $this->_useViewStream = (bool) ini_get('short_open_tag') ? false : true;
         if ($this->_useViewStream) {
             if (!in_array('zend.view', stream_get_wrappers())) {
-                require_once 'Zend/View/Stream.php';
+                // require_once 'Zend/View/Stream.php';
                 stream_wrapper_register('zend.view', 'Zend_View_Stream');
             }
         }

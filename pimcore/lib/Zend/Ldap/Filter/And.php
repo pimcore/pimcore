@@ -23,7 +23,7 @@
 /**
  * @see Zend_Ldap_Filter_Logical
  */
-require_once 'Zend/Ldap/Filter/Logical.php';
+// require_once 'Zend/Ldap/Filter/Logical.php';
 
 /**
  * Zend_Ldap_Filter_And provides an 'and' filter.
