@@ -702,6 +702,10 @@
 	background: url(/pimcore/static/img/icon/wrench.png) left center no-repeat !important;
 }
 
+.pimcore_icon_tab_targeting {
+    background: url(/pimcore/static/img/icon/user_suit.png) left center no-repeat !important;
+}
+
 .pimcore_icon_tab_properties {
 	background: url(/pimcore/static/img/icon/tag_green.png) left center no-repeat !important;
 }
@@ -1188,4 +1192,8 @@
 
 .pimcore_icon_overwrite {
     background: url(/pimcore/static/img/icon/shape_square_select.png) left center no-repeat !important;
+}
+
+.pimcore_icon_targeting {
+    background: url(/pimcore/static/img/icon/status_online.png) left center no-repeat !important;
 }

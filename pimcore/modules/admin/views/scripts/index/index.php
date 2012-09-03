@@ -234,6 +234,8 @@
             "pimcore/document/versions.js",
             "pimcore/document/pages/settings.js",
             "pimcore/document/pages/preview.js",
+            "pimcore/document/pages/targeting.js",
+            "pimcore/document/pages/target/item.js",
             "pimcore/document/snippets/settings.js",
             "pimcore/document/emails/settings.js",
             "pimcore/document/emails/logs.js",
