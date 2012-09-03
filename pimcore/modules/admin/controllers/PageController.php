@@ -161,6 +161,62 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         }
     }
 
+    public function targetingListAction() {
+
+        $targets = array();
+        $list = new Document_Page_Targeting_List();
+        $list->setCondition("documentId = ?", $this->_getParam("documentId"));
+
+        foreach($list->load() as $target) {
+            $targets[] = array(
+                "id" => $target->getId(),
+                "text" => $target->getName()
+            );
+        }
+
+        $this->_helper->json($targets);
+    }
+
+    public function targetingAddAction() {
+
+        $target = new Document_Page_Targeting();
+        $target->setName($this->_getParam("name"));
+        $target->setDocumentId($this->_getParam("documentId"));
+        $target->save();
+
+
+        $this->_helper->json(array("success" => true, "id" => $target->getId()));
+    }
+
+    public function targetingDeleteAction() {
+
+        $success = false;
+
+        $target = Document_Page_Targeting::getById($this->_getParam("id"));
+        if($target) {
+            $target->delete();
+            $success = true;
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
+    public function targetingGetAction() {
+
+        $target = Document_Page_Targeting::getById($this->_getParam("id"));
+
+        $this->_helper->json($target);
+    }
+
+    public function targetingSaveAction() {
+
+        $target = Document_Page_Targeting::getById($this->_getParam("id"));
+        $target->setValues($this->_getAllParams());
+        $target->save();
+
+        $this->_helper->json(array("success" => true));
+    }
+
     protected function setValuesToDocument(Document $page) {
 
         $this->addSettingsToDocument($page);
