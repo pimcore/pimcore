@@ -457,13 +457,32 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
     public function assemble($data = array(), $reset = false, $encode = true, $partial = false) {
 
+        $pathPrefix = "";
+        $hasPath = false;
+
+        // try to get document from controller front
+        $front = Zend_Controller_Front::getInstance();
+
+        if(array_key_exists("document", $data) && $data["document"] instanceof Document) {
+            $pathPrefix = $data["document"]->getFullPath();
+            unset($data["document"]);
+            $hasPath = true;
+        } else if($doc = $front->getRequest()->getParam("document")) {
+            $pathPrefix = $doc->getFullPath();
+            $hasPath = true;
+        }
+
+        $pathPrefix = ltrim($pathPrefix, "/");
+
         // this is only to append parameters to an existing document
         if(!$reset) {
             $data = array_merge($_GET, $data);
         }
 
         if(!empty($data)) {
-            return "?" . array_urlencode($data);
+            return $pathPrefix . "?" . array_urlencode($data);
+        } else if($hasPath) {
+            return $pathPrefix;
         }
 
         return "~NOT~SUPPORTED~";
