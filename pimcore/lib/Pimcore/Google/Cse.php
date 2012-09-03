@@ -139,13 +139,28 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function readGoogleResponse($googleResponse) {
         $this->setRaw($googleResponse);
 
+        $items = array();
+
+        // set promotions
+        if(array_key_exists("promotions", $googleResponse) && is_array($googleResponse["promotions"])) {
+            foreach ($googleResponse["promotions"] as $promo) {
+                $promo["type"] = "promotion";
+                $promo["formattedUrl"] = preg_replace("@^https?://@", "", $promo["link"]);
+                $promo["htmlFormattedUrl"] = $promo["formattedUrl"];
+
+                $items[] = new Pimcore_Google_Cse_Item($promo);
+            }
+        }
+
+
+        // set search results
         $total = intval($googleResponse["searchInformation"]["totalResults"]);
         if($total > 100) {
             $total = 100;
         }
         $this->setTotal($total);
 
-        $items = array();
+
         if(array_key_exists("items", $googleResponse) && is_array($googleResponse["items"])) {
             foreach ($googleResponse["items"] as $item) {
 
@@ -178,6 +193,8 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
                 if($document = Document::getByPath($urlParts["path"])) {
                     $item["document"] = $document;
                 }
+
+                $item["type"] = "searchresult";
 
                 $items[] = new Pimcore_Google_Cse_Item($item);
             }

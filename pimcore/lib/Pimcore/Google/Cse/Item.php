@@ -70,6 +70,11 @@ class Pimcore_Google_Cse_Item {
      */
     public $document;
 
+    /**
+     * @var string
+     */
+    public $type;
+
 
     /**
      * @param array $data
@@ -277,6 +282,22 @@ class Pimcore_Google_Cse_Item {
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
 
