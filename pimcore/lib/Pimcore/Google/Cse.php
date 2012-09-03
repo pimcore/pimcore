@@ -22,12 +22,16 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
      * @param array $config
      * @return Pimcore_Google_Cse
      */
-    public function search ($query, $offset = 0, $perPage = 10, $config = array()) {
+    public function search ($query, $offset = 0, $perPage = 10, $config = array(), $facet = null) {
         $list = new self();
         $list->setConfig($config);
         $list->setOffset($offset);
         $list->setPerPage($perPage);
         $list->setQuery($query);
+
+        if(!empty($facet)) {
+            $list->setQuery($list->getQuery() . " more:" . $facet);
+        }
 
         return $list;
     }
@@ -130,15 +134,39 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
      */
     public $raw = array();
 
+    /**
+     * @var array
+     */
+    public $facets = array();
+
+
+    /**
+     * @param null|mixed $googleResponse
+     */
     public function __construct ($googleResponse = null) {
         if($googleResponse) {
             $this->readGoogleResponse($googleResponse);
         }
     }
 
+    /**
+     * @param $googleResponse
+     */
     public function readGoogleResponse($googleResponse) {
         $this->setRaw($googleResponse);
 
+        // available factes
+        if(array_key_exists("context", $googleResponse) && is_array($googleResponse["context"])) {
+            if(array_key_exists("facets", $googleResponse["context"]) && is_array($googleResponse["context"]["facets"])) {
+                $facets = array();
+                foreach ($googleResponse["context"]["facets"] as $facet) {
+                    $facets[$facet[0]["label"]] = $facet[0]["anchor"];
+                }
+                $this->setFacets($facets);
+            }
+        }
+
+        // results incl. promotions, search results, ...
         $items = array();
 
         // set promotions
@@ -318,17 +346,40 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
         return $this->results;
     }
 
+    /**
+     * @param array $facets
+     */
+    public function setFacets($facets)
+    {
+        $this->facets = $facets;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFacets()
+    {
+        return $this->facets;
+    }
 
     /**
      *
      * Methods for Zend_Paginator_Adapter_Interface
      */
 
+    /**
+     * @return int
+     */
     public function count() {
         $this->getResults();
         return $this->getTotal();
     }
 
+    /**
+     * @param int $offset
+     * @param int $itemCountPerPage
+     * @return array
+     */
     public function getItems($offset, $itemCountPerPage) {
         $this->setOffset($offset);
         $this->setPerPage($itemCountPerPage);
@@ -338,6 +389,9 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
         return $items;
     }
 
+    /**
+     * @return Pimcore_Google_Cse|Zend_Paginator_Adapter_Interface
+     */
     public function getPaginatorAdapter() {
         return $this;
     }
@@ -346,6 +400,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     /**
      * Methods for Iterator
      */
+
 
     public function rewind() {
         reset($this->results);
