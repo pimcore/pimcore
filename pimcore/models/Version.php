@@ -446,6 +446,11 @@ class Version extends Pimcore_Model_Abstract {
                 $version = Version::getById($id);
                 $counter++;
 
+                // do not delete public versions
+                if($version->getPublic()) {
+                    continue;
+                }
+
                 if ($version->getCtype() == "document") {
                     $element = Document::getById($version->getCid());
                 }
