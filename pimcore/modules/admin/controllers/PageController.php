@@ -210,11 +210,41 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
     public function targetingSaveAction() {
 
+        $data = Zend_Json::decode($this->getParam("data"));
+
         $target = Document_Page_Targeting::getById($this->_getParam("id"));
-        $target->setValues($this->_getAllParams());
+        $target->setValues($data["settings"]);
+
+        $target->setConditions($data["conditions"]);
+
+        $actions = new Document_Page_Targeting_Actions();
+        $actions->setRedirectEnabled($data["actions"]["redirect.enabled"]);
+        $actions->setRedirectUrl($data["actions"]["redirect.url"]);
+        $actions->setRedirectCode($data["actions"]["redirect.code"]);
+        $actions->setEventEnabled($data["actions"]["event.enabled"]);
+        $actions->setEventKey($data["actions"]["event.key"]);
+        $actions->setEventValue($data["actions"]["event.value"]);
+        $actions->setCodesnippetEnabled($data["actions"]["codesnippet.enabled"]);
+        $actions->setCodesnippetCode($data["actions"]["codesnippet.code"]);
+        $actions->setCodesnippetSelector($data["actions"]["codesnippet.selector"]);
+        $actions->setCodesnippetPosition($data["actions"]["codesnippet.position"]);
+        $target->setActions($actions);
+
         $target->save();
 
         $this->_helper->json(array("success" => true));
+    }
+
+    public function targetingCreateVariantAction () {
+
+        $targeting = Document_Page_Targeting::getById($this->getParam("tragetingId"));
+        $page = Document::getById($this->getParam("documentId"));
+        $docService = new Document_Service($this->getUser());
+        $variant = $docService->copyAsChild($page,$page,true);
+        $variant->setKey(Element_Service::getSaveCopyName("document", $page->getKey() . "_targeting_" . Pimcore_File::getValidFilename($targeting->getName()), $page));
+        $variant->save();
+
+        $this->_helper->json(array("id" => $variant->getId(), "path" => $variant->getFullPath()));
     }
 
     protected function setValuesToDocument(Document $page) {

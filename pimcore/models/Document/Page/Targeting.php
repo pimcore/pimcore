@@ -40,7 +40,12 @@ class Document_Page_Targeting extends Pimcore_Model_Abstract {
     /**
      * @var array
      */
-    public $configuration = array();
+    public $conditions = array();
+
+    /**
+     * @var Document_Page_Targeting_Actions
+     */
+    public $actions;
 
 
     /**
@@ -56,25 +61,6 @@ class Document_Page_Targeting extends Pimcore_Model_Abstract {
         $target->getResource()->getById();
 
         return $target;
-    }
-
-    /**
-     * @param array $configuration
-     */
-    public function setConfiguration($configuration)
-    {
-        if(!$configuration) {
-            $configuration = array();
-        }
-        $this->configuration = $configuration;
-    }
-
-    /**
-     * @return array
-     */
-    public function getConfiguration()
-    {
-        return $this->configuration;
     }
 
     /**
@@ -139,5 +125,43 @@ class Document_Page_Targeting extends Pimcore_Model_Abstract {
     public function getDocumentId()
     {
         return $this->documentId;
+    }
+
+    /**
+     * @param \Document_Page_Targeting_Actions $actions
+     */
+    public function setActions($actions)
+    {
+        if(!$actions) {
+            $actions = new Document_Page_Targeting_Actions();
+        }
+        $this->actions = $actions;
+    }
+
+    /**
+     * @return \Document_Page_Targeting_Actions
+     */
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
+    /**
+     * @param array $conditions
+     */
+    public function setConditions($conditions)
+    {
+        if(!$conditions) {
+            $conditions = array();
+        }
+        $this->conditions = $conditions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConditions()
+    {
+        return $this->conditions;
     }
 }

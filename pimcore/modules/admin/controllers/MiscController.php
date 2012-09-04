@@ -370,6 +370,38 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->view->data = $data;
     }
 
+    public function countryListAction() {
+        $countries = Zend_Locale::getTranslationList('territory');
+        asort($countries);
+        $options = array();
+
+        foreach ($countries as $short => $translation) {
+            if (strlen($short) == 2) {
+                $options[] = array(
+                    "name" => $translation,
+                    "code" => $short
+                );
+            }
+        }
+
+        $this->_helper->json(array("data" => $options));
+    }
+
+    public function languageListAction() {
+        $languages = Zend_Locale::getTranslationList('language');
+        asort($languages);
+        $options = array();
+
+        foreach ($languages as $short => $translation) {
+            $options[] = array(
+                "name" => $translation,
+                "code" => $short
+            );
+        }
+
+        $this->_helper->json(array("data" => $options));
+    }
+
     public function phpinfoAction()
     {
         phpinfo();
