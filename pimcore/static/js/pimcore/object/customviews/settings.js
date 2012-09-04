@@ -35,6 +35,7 @@ pimcore.object.customviews.settings = Class.create({
                 id: "pimcore_customviews",
                 title: t("custom_views"),
                 bodyStyle: "padding: 10px;",
+                autoScroll: true,
                 iconCls: "pimcore_icon_custom_views",
                 border: false,
                 closable:true,
