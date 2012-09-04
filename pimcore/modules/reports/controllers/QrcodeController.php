@@ -134,7 +134,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
             $renderSettings["sendResult"] = array('Content-Disposition: attachment;filename="qrcode-' . $this->_getParam("name") . '.' . $extension . '"');
         }
 
-        foreach ($this->_getAllParams() as $key => $value) {
+        foreach ($this->getAllParams() as $key => $value) {
             if(array_key_exists($key, $codeSettings) && !empty($value)) {
                 if(stripos($key, "color")) {
                     if(strlen($value) == 7) {

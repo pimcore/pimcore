@@ -112,7 +112,7 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         $path = $this->_getParam("path");
         $revision = $this->_getParam("revision");
 
-        $remoteConfig = $this->_getAllParams();
+        $remoteConfig = $this->getAllParams();
         $remoteConfig["token"] = Pimcore_Liveconnect::getToken();
         $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/download/downloadFile.php?data=" . base64_encode(Pimcore_Tool_Serialize::serialize($remoteConfig)));
 

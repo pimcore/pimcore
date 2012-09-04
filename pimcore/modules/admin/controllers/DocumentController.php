@@ -379,7 +379,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     Logger::debug("prevented renaming document because of missing permissions ");
                 }
 
-                foreach ($this->_getAllParams() as $key => $value) {
+                foreach ($this->getAllParams() as $key => $value) {
                     if (!in_array($key, $blockedVars)) {
                         $document->setValue($key, $value);
                     }
