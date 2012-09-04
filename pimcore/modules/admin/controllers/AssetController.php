@@ -528,7 +528,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $success = false;
         $allowUpdate = true;
 
-        $updateData = $this->_getAllParams();
+        $updateData = $this->getAllParams();
 
         $asset = Asset::getById($this->_getParam("id"));
         if ($asset->isAllowed("settings")) {
@@ -783,7 +783,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             if($this->_getParam("config")) {
                 $thumbnail = $image->getThumbnailConfig(Zend_Json::decode($this->_getParam("config")));
             } else {
-                $thumbnail = $image->getThumbnailConfig($this->_getAllParams());
+                $thumbnail = $image->getThumbnailConfig($this->getAllParams());
             }
         }
         
@@ -801,7 +801,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 "x" => $this->_getParam("cropLeft")
             ));
 
-            $hash = md5(Pimcore_Tool_Serialize::serialize($this->_getAllParams()));
+            $hash = md5(Pimcore_Tool_Serialize::serialize($this->getAllParams()));
             $thumbnail->setName("auto_" . $hash);
         }
 
@@ -830,7 +830,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     public function getVideoThumbnailAction() {
 
         $video = Asset::getById(intval($this->_getParam("id")));
-        $thumbnail = $video->getImageThumbnailConfig($this->_getAllParams());
+        $thumbnail = $video->getImageThumbnailConfig($this->getAllParams());
 
         $format = strtolower($thumbnail->getFormat());
         if ($format == "source") {
