@@ -46,7 +46,8 @@ class Document_Page_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $data = $this->db->fetchRow("SELECT * FROM documents_targeting WHERE id = ?", $this->model->getId());
-        $data["configuration"] = unserialize($data["configuration"]);
+        $data["conditions"] = unserialize($data["conditions"]);
+        $data["actions"] = unserialize($data["actions"]);
         $this->assignVariablesToModel($data);
     }
 
@@ -82,7 +83,7 @@ class Document_Page_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->validColumns)) {
-                    if(is_array($value)) {
+                    if(is_array($value) || is_object($value)) {
                         $value = serialize($value);
                     }
                     $data[$key] = $value;
