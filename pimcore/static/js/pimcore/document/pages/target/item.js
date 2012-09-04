@@ -123,7 +123,6 @@ pimcore.document.pages.target.item = Class.create({
 
                                     var urlField = this.actionsForm.findBy(function (el) {
                                         try {
-                                            console.log(el);
                                             if(el.getName() == "redirect.url") {
                                                 return true;
                                             }
@@ -646,7 +645,7 @@ pimcore.document.pages.target.conditions = {
                                         if (status == google.maps.GeocoderStatus.OK) {
                                             marker.setPosition(results[0].geometry.location);
                                             gmap.setCenter(results[0].geometry.location, 16);
-                                            gmap.setZoom(14);
+                                            gmap.setZoom(7);
                                         }
                                     });
                                 }

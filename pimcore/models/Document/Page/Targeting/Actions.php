@@ -168,6 +168,11 @@ class Document_Page_Targeting_Actions {
      */
     public function setRedirectUrl($redirectUrl)
     {
+        if(is_string($redirectUrl)) {
+            if($doc = Document::getByPath($redirectUrl)) {
+                $redirectUrl = $doc->getId();
+            }
+        }
         $this->redirectUrl = $redirectUrl;
     }
 

@@ -52,7 +52,7 @@ class Document_Page_Targeting extends Pimcore_Model_Abstract {
      * Static helper to retrieve an instance of Document_Page_Targeting by the given ID
      *
      * @param integer $id
-     * @return Document_DocType
+     * @return Document_Page_Targeting
      */
     public static function getById($id) {
 
@@ -84,7 +84,7 @@ class Document_Page_Targeting extends Pimcore_Model_Abstract {
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -116,7 +116,7 @@ class Document_Page_Targeting extends Pimcore_Model_Abstract {
      */
     public function setDocumentId($documentId)
     {
-        $this->documentId = $documentId;
+        $this->documentId = (int) $documentId;
     }
 
     /**

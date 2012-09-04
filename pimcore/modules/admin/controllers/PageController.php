@@ -204,6 +204,13 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
     public function targetingGetAction() {
 
         $target = Document_Page_Targeting::getById($this->_getParam("id"));
+        $redirectUrl = $target->getActions()->getRedirectUrl();
+        if(is_numeric($redirectUrl)) {
+            $doc = Document::getById($redirectUrl);
+            if($doc instanceof Document) {
+                $target->getActions()->redirectUrl = $doc->getFullPath();
+            }
+        }
 
         $this->_helper->json($target);
     }
