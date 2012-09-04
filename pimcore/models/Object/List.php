@@ -31,7 +31,7 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
     /**
      * @var array
      */
-    public $objectTypes = array();
+    public $objectTypes = array(Object_Abstract::OBJECT_TYPE_OBJECT, Object_Abstract::OBJECT_TYPE_FOLDER);
     
     /**
      * @var array
