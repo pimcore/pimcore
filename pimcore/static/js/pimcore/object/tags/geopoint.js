@@ -216,7 +216,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
             this.reverseGeocodeInterval = window.setInterval(this.reverseGeocode.bind(this), 500)
 
-        }.bind(this))
+        }.bind(this));
 
         this.searchWindow.on("beforeclose", function () {
             clearInterval(this.reverseGeocodeInterval);
