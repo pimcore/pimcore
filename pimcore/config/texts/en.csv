@@ -877,7 +877,7 @@
 "downloading_plugin","Downloading Plugin ... "
 "cache_enabled","Enable"
 "cache_exclude_patterns","Exclude Patterns"
-"systemlog","Systemmessages"
+"systemlog","System messages"
 "stop","Stop"
 "outputfilters","Outputfilters"
 "image_datauri_filter","Image DataURI"
