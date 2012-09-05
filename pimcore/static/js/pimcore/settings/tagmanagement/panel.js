@@ -125,6 +125,13 @@ pimcore.settings.tagmanagement.panel = Class.create({
     },
 
     openTag: function (id) {
+
+        var existingPanel = Ext.getCmp("pimcore_tagmanagement_panel_" + id);
+        if(existingPanel) {
+            this.editPanel.activate(existingPanel);
+            return;
+        }
+
         Ext.Ajax.request({
             url: "/admin/settings/tag-management-get",
             params: {
@@ -196,11 +203,6 @@ pimcore.settings.tagmanagement.panel = Class.create({
 
         this.attributes.reference.getEditPanel().removeAll();
         this.remove();
-    },
-
-    activate: function () {
-        Ext.getCmp("pimcore_panel_tabs").activate("pimcore_tagmanagement");
     }
-
 });
 
