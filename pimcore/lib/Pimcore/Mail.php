@@ -77,6 +77,13 @@ class Pimcore_Mail extends Zend_Mail
     protected $enableLayoutOnPlaceholderRendering = true;
 
     /**
+     * forces the mail class to always us the "Pimcore Mode",
+     * so you don't have to set the charset every time when you create new Pimcore_Mail instance
+     * @var bool
+     */
+    public static $forcePimcoreMode = false;
+
+    /**
      * Creates a new Pimcore_Mail object (extends Zend_Mail)
      *
      * @param array $options
@@ -84,7 +91,7 @@ class Pimcore_Mail extends Zend_Mail
     public function __construct($charset = null)
     {
         // using $charset as param to be compatible with Zend_Mail
-        if(is_array($charset)) {
+        if(is_array($charset) || self::$forcePimcoreMode) {
             $options = $charset;
             parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
 
