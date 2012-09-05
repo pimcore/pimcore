@@ -436,7 +436,8 @@
             google_maps_api_key: "<?php echo $googleMapsApiKey ?>",
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
             showCloseConfirmation: true,
-            debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>
+            debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
+            targeting: <?php echo Zend_Json::encode((bool) $this->config->general->targeting) ?>
         };
     </script>
     

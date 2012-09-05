@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Page_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
+class Tool_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
 
     /**
      * Contains all valid columns in the database table
@@ -30,7 +30,7 @@ class Document_Page_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function init() {
-        $this->validColumns = $this->getValidTableColumns("documents_targeting");
+        $this->validColumns = $this->getValidTableColumns("targeting");
     }
 
     /**
@@ -45,7 +45,7 @@ class Document_Page_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM documents_targeting WHERE id = ?", $this->model->getId());
+        $data = $this->db->fetchRow("SELECT * FROM targeting WHERE id = ?", $this->model->getId());
         $data["conditions"] = unserialize($data["conditions"]);
         $data["actions"] = unserialize($data["actions"]);
         $this->assignVariablesToModel($data);
@@ -69,7 +69,7 @@ class Document_Page_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete("documents_targeting", $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete("targeting", $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -90,7 +90,7 @@ class Document_Page_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }
 
-            $this->db->update("documents_targeting", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update("targeting", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;
@@ -103,7 +103,7 @@ class Document_Page_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
      * @return boolean
      */
     public function create() {
-        $this->db->insert("documents_targeting", array());
+        $this->db->insert("targeting", array());
 
         $this->model->setId($this->db->lastInsertId());
 

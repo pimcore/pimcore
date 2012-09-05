@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Page_Targeting_List_Resource extends Pimcore_Model_List_Resource_Abstract {
+class Tool_Targeting_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
     /**
      * Loads a list of document-types for the specicifies parameters, returns an array of Document_DocType elements
@@ -24,11 +24,11 @@ class Document_Page_Targeting_List_Resource extends Pimcore_Model_List_Resource_
      */
     public function load() {
 
-        $targetsData = $this->db->fetchCol("SELECT id FROM documents_targeting" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $targetsData = $this->db->fetchCol("SELECT id FROM targeting" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $targets = array();
         foreach ($targetsData as $targetData) {
-            $targets[] = Document_Page_Targeting::getById($targetData);
+            $targets[] = Tool_Targeting::getById($targetData);
         }
 
         $this->model->setTargets($targets);

@@ -263,7 +263,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "debug_admin_translations" => $values["general.debug_admin_translations"],
                     "devmode" => $values["general.devmode"],
                     "logrecipient" => $values["general.logrecipient"],
-                    "viewSuffix" => $values["general.viewSuffix"]
+                    "viewSuffix" => $values["general.viewSuffix"],
+                    "targeting" => $values["general.targeting"]
                 ),
                 "database" => $oldValues["database"], // db cannot be changed here
                 "documents" => array(
