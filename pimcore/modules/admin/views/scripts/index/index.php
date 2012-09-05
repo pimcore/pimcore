@@ -210,6 +210,8 @@
             "pimcore/settings/liveconnect.js",
             "pimcore/settings/robotstxt.js",
             "pimcore/settings/httpErrorLog.js",
+            "pimcore/settings/targeting/panel.js",
+            "pimcore/settings/targeting/item.js",
 
             // element
             "pimcore/element/abstract.js",
