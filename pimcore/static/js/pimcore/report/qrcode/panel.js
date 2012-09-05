@@ -125,6 +125,13 @@ pimcore.report.qrcode.panel = Class.create({
     },
 
     openCode: function (id) {
+
+        var existingPanel = Ext.getCmp("pimcore_qrcode_panel_" + id);
+        if(existingPanel) {
+            this.editPanel.activate(existingPanel);
+            return;
+        }
+
         Ext.Ajax.request({
             url: "/admin/reports/qrcode/get",
             params: {
@@ -196,11 +203,6 @@ pimcore.report.qrcode.panel = Class.create({
 
         this.attributes.reference.getEditPanel().removeAll();
         this.remove();
-    },
-
-    activate: function () {
-        Ext.getCmp("pimcore_panel_tabs").activate("pimcore_qrcode");
     }
-
 });
 

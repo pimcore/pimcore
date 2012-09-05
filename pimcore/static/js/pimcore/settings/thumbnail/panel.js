@@ -22,7 +22,7 @@ pimcore.settings.thumbnail.panel = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_thumbnail");
+        tabPanel.activate("pimcore_thumbnails");
     },
 
     getTabPanel: function () {
@@ -125,6 +125,13 @@ pimcore.settings.thumbnail.panel = Class.create({
     },
 
     openThumbnail: function(id) {
+
+        var existingPanel = Ext.getCmp("pimcore_thumbnail_panel_" + id);
+        if(existingPanel) {
+            this.editPanel.activate(existingPanel);
+            return;
+        }
+
         Ext.Ajax.request({
             url: "/admin/settings/thumbnail-get",
             params: {
@@ -196,11 +203,6 @@ pimcore.settings.thumbnail.panel = Class.create({
 
         this.attributes.reference.getEditPanel().removeAll();
         this.remove();
-    },
-
-    activate: function () {
-        Ext.getCmp("pimcore_panel_tabs").activate("pimcore_thumbnails");
     }
-
 });
 
