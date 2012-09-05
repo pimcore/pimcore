@@ -164,7 +164,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
     public function targetingListAction() {
 
         $targets = array();
-        $list = new Document_Page_Targeting_List();
+        $list = new Tool_Targeting_List();
         $list->setCondition("documentId = ?", $this->_getParam("documentId"));
 
         foreach($list->load() as $target) {
@@ -179,7 +179,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
     public function targetingAddAction() {
 
-        $target = new Document_Page_Targeting();
+        $target = new Tool_Targeting();
         $target->setName($this->_getParam("name"));
         $target->setDocumentId($this->_getParam("documentId"));
         $target->save();
@@ -192,7 +192,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $success = false;
 
-        $target = Document_Page_Targeting::getById($this->_getParam("id"));
+        $target = Tool_Targeting::getById($this->_getParam("id"));
         if($target) {
             $target->delete();
             $success = true;
@@ -203,7 +203,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
     public function targetingGetAction() {
 
-        $target = Document_Page_Targeting::getById($this->_getParam("id"));
+        $target = Tool_Targeting::getById($this->_getParam("id"));
         $redirectUrl = $target->getActions()->getRedirectUrl();
         if(is_numeric($redirectUrl)) {
             $doc = Document::getById($redirectUrl);
@@ -219,12 +219,12 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $data = Zend_Json::decode($this->getParam("data"));
 
-        $target = Document_Page_Targeting::getById($this->_getParam("id"));
+        $target = Tool_Targeting::getById($this->_getParam("id"));
         $target->setValues($data["settings"]);
 
         $target->setConditions($data["conditions"]);
 
-        $actions = new Document_Page_Targeting_Actions();
+        $actions = new Tool_Targeting_Actions();
         $actions->setRedirectEnabled($data["actions"]["redirect.enabled"]);
         $actions->setRedirectUrl($data["actions"]["redirect.url"]);
         $actions->setRedirectCode($data["actions"]["redirect.code"]);
@@ -244,7 +244,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
     public function targetingCreateVariantAction () {
 
-        $targeting = Document_Page_Targeting::getById($this->getParam("tragetingId"));
+        $targeting = Tool_Targeting::getById($this->getParam("tragetingId"));
         $page = Document::getById($this->getParam("documentId"));
         $docService = new Document_Service($this->getUser());
         $variant = $docService->copyAsChild($page,$page,true);

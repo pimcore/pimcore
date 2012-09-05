@@ -26,7 +26,9 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
     protected $document;
 
     public function routeShutdown(Zend_Controller_Request_Abstract $request) {
-        if(!Pimcore_Tool::useFrontendOutputFilters($request)) {
+
+        $config = Pimcore_Config::getSystemConfig();
+        if(!Pimcore_Tool::useFrontendOutputFilters($request) || !$config->general->targeting) {
             return $this->disable();
         }
         
@@ -48,23 +50,26 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             return;
         }
         
-        if ($this->enabled && $this->document) {
+        if ($this->enabled) {
 
             $targets = array();
-            $list = new Document_Page_Targeting_List();
-            $list->setCondition("documentId = ?", $this->document->getId());
 
-            foreach($list->load() as $target) {
+            if($this->document) {
+                $list = new Tool_Targeting_List();
+                $list->setCondition("documentId = ?", $this->document->getId());
 
-                $redirectUrl = $target->getActions()->getRedirectUrl();
-                if(is_numeric($redirectUrl)) {
-                    $doc = Document::getById($redirectUrl);
-                    if($doc instanceof Document) {
-                        $target->getActions()->redirectUrl = $doc->getFullPath();
+                foreach($list->load() as $target) {
+
+                    $redirectUrl = $target->getActions()->getRedirectUrl();
+                    if(is_numeric($redirectUrl)) {
+                        $doc = Document::getById($redirectUrl);
+                        if($doc instanceof Document) {
+                            $target->getActions()->redirectUrl = $doc->getFullPath();
+                        }
                     }
-                }
 
-                $targets[] = $target;
+                    $targets[] = $target;
+                }
             }
 
             $controlCode = file_get_contents(__DIR__ . "/Targeting/targeting.js");

@@ -55,7 +55,7 @@ pimcore.document.pages.target.item = Class.create({
             items: [{
                 xtype: "fieldset",
                 title: t("redirect"),
-                id: "pimcore_targeting_actions_redirect_" + this.data.id,
+                itemId: "actions_redirect",
                 collapsible: true,
                 collapsed: !this.data.actions.redirectEnabled,
                 items: [{
@@ -142,7 +142,7 @@ pimcore.document.pages.target.item = Class.create({
             }, {
                 xtype: "fieldset",
                 title: t("event"),
-                id: "pimcore_targeting_actions_event_" + this.data.id,
+                itemId: "actions_event",
                 collapsible: true,
                 collapsed: !this.data.actions.eventEnabled,
                 items: [{
@@ -160,7 +160,7 @@ pimcore.document.pages.target.item = Class.create({
                 }]
             }, {
                 xtype: "fieldset",
-                id: "pimcore_targeting_actions_codesnippet_" + this.data.id,
+                itemId: "actions_codesnippet",
                 title: t("code_snippet"),
                 collapsible: true,
                 collapsed: !this.data.actions.codesnippetEnabled,
@@ -258,10 +258,35 @@ pimcore.document.pages.target.item = Class.create({
     addCondition: function (type, data) {
 
         var item = pimcore.document.pages.target.conditions[type](this, data);
+
+        // add logic for brackets
+        item.on("afterrender", function (el) {
+            el.getEl().applyStyles({position: "relative", "min-height": "40px"});
+            var leftBracket = el.getEl().insertHtml("beforeEnd", '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
+            var rightBracket = el.getEl().insertHtml("beforeEnd", '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
+
+            if(data["bracketLeft"]){
+                leftBracket.addClass("pimcore_targeting_bracket_active");
+            }
+            if(data["bracketRight"]){
+                rightBracket.addClass("pimcore_targeting_bracket_active");
+            }
+
+            leftBracket.on("click", function (ev, el) {
+                Ext.get(el).toggleClass("pimcore_targeting_bracket_active");
+            });
+
+            rightBracket.on("click", function (ev, el) {
+                Ext.get(el).toggleClass("pimcore_targeting_bracket_active");
+            });
+        });
+
         this.conditionsContainer.add(item);
         this.conditionsContainer.doLayout();
 
         this.currentIndex++;
+
+        this.recalculateButtonStatus();
     },
 
     save: function () {
@@ -269,14 +294,32 @@ pimcore.document.pages.target.item = Class.create({
         var saveData = {};
         saveData["settings"] = this.settingsForm.getForm().getFieldValues();
         saveData["actions"] = this.actionsForm.getForm().getFieldValues();
-        saveData["actions"]["redirect.enabled"] = !Ext.getCmp("pimcore_targeting_actions_redirect_" + this.data.id).collapsed;
-        saveData["actions"]["event.enabled"] = !Ext.getCmp("pimcore_targeting_actions_event_" + this.data.id).collapsed;
-        saveData["actions"]["codesnippet.enabled"] = !Ext.getCmp("pimcore_targeting_actions_codesnippet_" + this.data.id).collapsed;
+        saveData["actions"]["redirect.enabled"] = !this.actionsForm.getComponent("actions_redirect").collapsed;
+        saveData["actions"]["event.enabled"] = !this.actionsForm.getComponent("actions_event").collapsed;
+        saveData["actions"]["codesnippet.enabled"] = !this.actionsForm.getComponent("actions_codesnippet").collapsed;
 
         var conditionsData = [];
+        var condition, tb, operator;
         var conditions = this.conditionsContainer.items.getRange();
         for (var i=0; i<conditions.length; i++) {
-            conditionsData.push(conditions[i].getForm().getFieldValues());
+            condition = conditions[i].getForm().getFieldValues();
+
+            // get the operator (AND, OR, AND_NOT)
+            tb = conditions[i].getTopToolbar();
+            if (tb.getComponent("toggle_or").pressed) {
+                operator = "or";
+            } else if (tb.getComponent("toggle_and_not").pressed) {
+                operator = "and_not";
+            } else {
+                operator = "and";
+            }
+            condition["operator"] = operator;
+
+            // get the brackets
+            condition["bracketLeft"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_left")[0]).hasClass("pimcore_targeting_bracket_active");
+            condition["bracketRight"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_right")[0]).hasClass("pimcore_targeting_bracket_active");
+
+            conditionsData.push(condition);
         }
         saveData["conditions"] = conditionsData;
 
@@ -291,6 +334,23 @@ pimcore.document.pages.target.item = Class.create({
 
             }.bind(this)
         });
+    },
+
+    recalculateButtonStatus: function () {
+        var conditions = this.conditionsContainer.items.getRange();
+        var tb;
+        for (var i=0; i<conditions.length; i++) {
+            tb = conditions[i].getTopToolbar();
+            if(i==0) {
+                tb.getComponent("toggle_and").hide();
+                tb.getComponent("toggle_or").hide();
+                tb.getComponent("toggle_and_not").hide();
+            } else {
+                tb.getComponent("toggle_and").show();
+                tb.getComponent("toggle_or").show();
+                tb.getComponent("toggle_and_not").show();
+            }
+        }
     }
 
 });
@@ -315,7 +375,13 @@ pimcore.document.pages.target.conditions = {
         return index;
     },
 
-    getTopBar: function (name, index, parent) {
+    getTopBar: function (name, index, parent, data) {
+
+        var toggleGroup = "g_" + index + parent.data.id;
+        if(!data["operator"]) {
+            data.operator = "and";
+        }
+
         return [{
             xtype: "tbtext",
             text: "<b>" + name + "</b>"
@@ -345,6 +411,8 @@ pimcore.document.pages.target.conditions = {
                 container.doLayout();
                 tmpContainer.doLayout();
 
+                parent.recalculateButtonStatus();
+
                 pimcore.layout.refresh();
             }.bind(window, index, parent)
         },{
@@ -368,8 +436,28 @@ pimcore.document.pages.target.conditions = {
                 container.doLayout();
                 tmpContainer.doLayout();
 
+                parent.recalculateButtonStatus();
+
                 pimcore.layout.refresh();
             }.bind(window, index, parent)
+        },"-", {
+            text: t("AND"),
+            toggleGroup: toggleGroup,
+            enableToggle: true,
+            itemId: "toggle_and",
+            pressed: (data.operator == "and") ? true : false
+        },{
+            text: t("OR"),
+            toggleGroup: toggleGroup,
+            enableToggle: true,
+            itemId: "toggle_or",
+            pressed: (data.operator == "or") ? true : false
+        },{
+            text: t("AND_NOT"),
+            toggleGroup: toggleGroup,
+            enableToggle: true,
+            itemId: "toggle_and_not",
+            pressed: (data.operator == "and_not") ? true : false
         },"->",{
             iconCls: "pimcore_icon_delete",
             handler: function (index, parent) {
@@ -394,8 +482,8 @@ pimcore.document.pages.target.conditions = {
             layout: "pimcoreform",
             id: myId,
             style: "margin: 10px 0 0 0",
-            bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(niceName, myId, panel),
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
             items: [{
                 xtype: "combo",
                 fieldLabel: t("browser"),
@@ -443,8 +531,8 @@ pimcore.document.pages.target.conditions = {
             layout: "pimcoreform",
             id: myId,
             style: "margin: 10px 0 0 0",
-            bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(niceName, myId, panel),
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
             items: [{
                 xtype:'combo',
                 fieldLabel: t('country'),
@@ -492,8 +580,8 @@ pimcore.document.pages.target.conditions = {
             layout: "pimcoreform",
             id: myId,
             style: "margin: 10px 0 0 0",
-            bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(niceName, myId, panel),
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
             items: [{
                 xtype:'combo',
                 fieldLabel: t('language'),
@@ -541,8 +629,8 @@ pimcore.document.pages.target.conditions = {
             layout: "pimcoreform",
             id: myId,
             style: "margin: 10px 0 0 0",
-            bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(niceName, myId, panel),
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
             items: [{
                 xtype:'textfield',
                 fieldLabel: t('key'),
@@ -605,8 +693,8 @@ pimcore.document.pages.target.conditions = {
             layout: "pimcoreform",
             id: myId,
             style: "margin: 10px 0 0 0",
-            bodyStyle: "padding: 10px;",
-            tbar: this.getTopBar(niceName, myId, panel),
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
             items: [longitude, latitude,radius,{
                 xtype: "button",
                 text: t("open_search_editor"),

@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Page_Targeting_Actions {
+class Tool_Targeting_Actions {
 
     /**
      * @var bool

@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Page_Targeting extends Pimcore_Model_Abstract {
+class Tool_Targeting extends Pimcore_Model_Abstract {
 
     /**
      * @var int
@@ -43,16 +43,16 @@ class Document_Page_Targeting extends Pimcore_Model_Abstract {
     public $conditions = array();
 
     /**
-     * @var Document_Page_Targeting_Actions
+     * @var Tool_Targeting_Actions
      */
     public $actions;
 
 
     /**
-     * Static helper to retrieve an instance of Document_Page_Targeting by the given ID
+     * Static helper to retrieve an instance of Tool_Targeting by the given ID
      *
      * @param integer $id
-     * @return Document_Page_Targeting
+     * @return Tool_Targeting
      */
     public static function getById($id) {
 
@@ -128,18 +128,18 @@ class Document_Page_Targeting extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param \Document_Page_Targeting_Actions $actions
+     * @param \Tool_Targeting_Actions $actions
      */
     public function setActions($actions)
     {
         if(!$actions) {
-            $actions = new Document_Page_Targeting_Actions();
+            $actions = new Tool_Targeting_Actions();
         }
         $this->actions = $actions;
     }
 
     /**
-     * @return \Document_Page_Targeting_Actions
+     * @return \Tool_Targeting_Actions
      */
     public function getActions()
     {

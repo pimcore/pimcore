@@ -65,7 +65,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
         }
-        if (this.isAllowed("settings")) {
+        if (this.isAllowed("settings") && pimcore.settings.targeting) {
             items.push(this.targeting.getLayout());
         }
         if (this.isAllowed("versions")) {

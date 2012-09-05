@@ -578,6 +578,12 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("general.domain")
                             },
                             {
+                                xtype: "checkbox",
+                                fieldLabel: t("enable_targeting"),
+                                name: "general.targeting",
+                                checked: this.getValue("general.targeting")
+                            },
+                            {
                                 xtype:'fieldset',
                                 title: t('error_pages'),
                                 collapsible: false,
