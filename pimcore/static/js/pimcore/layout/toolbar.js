@@ -175,7 +175,8 @@ pimcore.layout.toolbar = Class.create({
                 },{
                     text: t("targeting"),
                     iconCls: "pimcore_icon_tab_targeting",
-                    handler: this.showTargeting
+                    handler: this.showTargeting,
+                    hidden: !pimcore.settings.targeting_enabled
                 }]
             });
         }
