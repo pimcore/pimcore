@@ -71,7 +71,7 @@ class Translation_Website extends Translation_Abstract
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false)
     {
         try {
-            $language = Zend_Registry::get('Zend_Locale')->getLanguage();
+            $language = (string) Zend_Registry::get('Zend_Locale');
         } catch (Exception $e) {
             throw new Exception("Couldn't determine current language.");
         }

@@ -145,7 +145,7 @@ class Pimcore_View_Helper_Glossary_Controller {
     protected function getData() {
 
         if(Zend_Registry::isRegistered("Zend_Locale")) {
-            $locale = Zend_Registry::get("Zend_Locale");
+            $locale = (string) Zend_Registry::get("Zend_Locale");
         } else {
             return array();
         }
@@ -160,7 +160,7 @@ class Pimcore_View_Helper_Glossary_Controller {
             // not inside a site
         }
 
-        $cacheKey = "glossary_" . $locale->getLanguage() . "_" . $siteId;
+        $cacheKey = "glossary_" . $locale . "_" . $siteId;
 
         try {
             $data = Zend_Registry::get($cacheKey);
@@ -173,7 +173,7 @@ class Pimcore_View_Helper_Glossary_Controller {
         if (!$data = Pimcore_Model_Cache::load($cacheKey)) {
 
             $list = new Glossary_List();
-            $list->setCondition("(language = ? OR language IS NULL OR language = '') AND (site = ? OR site IS NULL OR site = '')", array($locale->getLanguage(), $siteId));
+            $list->setCondition("(language = ? OR language IS NULL OR language = '') AND (site = ? OR site IS NULL OR site = '')", array($locale, $siteId));
             $list->setOrderKey("LENGTH(`text`)", false);
             $list->setOrder("DESC");
             $data = $list->getDataArray();

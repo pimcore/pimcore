@@ -116,20 +116,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     {
         $this->getResponse()->setHeader("Content-Type", "text/javascript", true);
 
-        $languages = Zend_Locale::getTranslationList('language');
-
-
-        asort($languages);
-        $languageOptions = array();
-        $validLanguages = array();
-        foreach ($languages as $short => $translation) {
-
-            if (strlen($short) == 2 or (strlen($short) == 5 and strpos($short, "_") == 2)) {
-                $languageOptions[$short] = $translation;
-            }
-        }
-
-        $this->view->languages = $languageOptions;
+        $locales = Pimcore_Tool::getSupportedLocales();
+        $this->view->languages = $locales;
     }
 
     public function getValidFilenameAction () {
@@ -388,11 +376,9 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function languageListAction() {
-        $languages = Zend_Locale::getTranslationList('language');
-        asort($languages);
-        $options = array();
+        $locales = Pimcore_Tool::getSupportedLocales();
 
-        foreach ($languages as $short => $translation) {
+        foreach ($locales as $short => $translation) {
             $options[] = array(
                 "name" => $translation,
                 "code" => $short
