@@ -124,7 +124,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $validLanguages = array();
         foreach ($languages as $short => $translation) {
 
-            if (strlen($short) == 2 or (strlen($short) == 5 and strpos($short, "_") == 2)) {
+            if (strlen($short) == 2 or (strlen($short) == 5 and strpos($short, "_") == 2) or (strlen($short) == 7 and strpos($short, "_") == 2)) {
                 $languageOptions[$short] = $translation;
             }
         }
