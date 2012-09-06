@@ -172,6 +172,10 @@ pimcore.layout.toolbar = Class.create({
                     text: t("qr_codes"),
                     iconCls: "pimcore_icon_qrcode",
                     handler: this.showQRCode
+                },{
+                    text: t("targeting"),
+                    iconCls: "pimcore_icon_tab_targeting",
+                    handler: this.showTargeting
                 }]
             });
         }
@@ -698,6 +702,26 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("qrcode", new pimcore.report.qrcode.panel());
+        }
+    },
+
+    showTargeting: function () {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        try {
+            tabPanel.activate(pimcore.globalmanager.get("targeting").getLayout());
+        }
+        catch (e) {
+            var targeting = new pimcore.settings.targeting.panel();
+            pimcore.globalmanager.add("targeting", targeting);
+
+            tabPanel.add(targeting.getLayout());
+            tabPanel.activate(targeting.getLayout());
+
+            targeting.getLayout().on("destroy", function () {
+                pimcore.globalmanager.remove("targeting");
+            }.bind(this));
+
+            pimcore.layout.refresh();
         }
     },
 

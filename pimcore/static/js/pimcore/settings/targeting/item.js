@@ -108,6 +108,7 @@ pimcore.settings.targeting.item = Class.create({
                     triggerAction: "all"
                 }, {
                     xtype: "button",
+                    hidden: (this.parent.page ? false : true),
                     text: t("create_a_variant_from_this_page"),
                     iconCls: "pimcore_icon_tab_variants",
                     handler: function () {
@@ -205,7 +206,7 @@ pimcore.settings.targeting.item = Class.create({
 
         this.settingsForm = new Ext.form.FormPanel({
             layout: "pimcoreform",
-            title: t("conditions"),
+            title: t("settings"),
             bodyStyle: "padding:10px;",
             autoScroll: true,
             border:false,
@@ -462,8 +463,43 @@ pimcore.document.pages.target.conditions = {
             iconCls: "pimcore_icon_delete",
             handler: function (index, parent) {
                 parent.conditionsContainer.remove(Ext.getCmp(index));
+                parent.recalculateButtonStatus();
             }.bind(window, index, parent)
         }];
+    },
+
+    itemUrl: function (panel, data, getName) {
+
+        var niceName = "URL (RegExp)";
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'textfield',
+                fieldLabel: "URL (RegExp)",
+                name: "url",
+                value: data.url,
+                width: 400
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "url"
+            }]
+        });
+
+        return item;
     },
 
     itemBrowser: function (panel, data, getName) {

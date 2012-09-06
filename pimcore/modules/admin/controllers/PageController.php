@@ -165,7 +165,12 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $targets = array();
         $list = new Tool_Targeting_List();
-        $list->setCondition("documentId = ?", $this->_getParam("documentId"));
+
+        if($this->_getParam("documentId")) {
+            $list->setCondition("documentId = ?", $this->_getParam("documentId"));
+        } else {
+            $list->setCondition("documentId IS NULL OR documentId = ''");
+        }
 
         foreach($list->load() as $target) {
             $targets[] = array(
@@ -181,7 +186,11 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $target = new Tool_Targeting();
         $target->setName($this->_getParam("name"));
-        $target->setDocumentId($this->_getParam("documentId"));
+
+        if($this->_getParam("documentId")) {
+            $target->setDocumentId($this->_getParam("documentId"));
+        }
+
         $target->save();
 
 
