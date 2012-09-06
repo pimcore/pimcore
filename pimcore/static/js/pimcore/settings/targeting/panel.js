@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.settings.targeting.panel");
 pimcore.settings.targeting.panel= Class.create({
 
     initialize: function(page) {
-        this.page = page;
+        this.treeDataUrl = '/admin/page/targeting-list/'
     },
 
 
@@ -26,6 +26,7 @@ pimcore.settings.targeting.panel= Class.create({
             this.layout = new Ext.Panel({
                 title: t('targeting'),
                 layout: "border",
+                closable: (this.page ? false : true),
                 border: false,
                 iconCls: "pimcore_icon_tab_targeting",
                 items: [this.getTree(), this.getTabPanel()]
@@ -51,7 +52,7 @@ pimcore.settings.targeting.panel= Class.create({
                     id: '0'
                 },
                 loader: new Ext.tree.TreeLoader({
-                    dataUrl: '/admin/page/targeting-list/documentId/' + this.page.id,
+                    dataUrl: this.treeDataUrl,
                     requestMethod: "GET",
                     baseAttrs: {
                         listeners: {
@@ -109,7 +110,7 @@ pimcore.settings.targeting.panel= Class.create({
                 url: "/admin/page/targeting-add",
                 params: {
                     name: value,
-                    documentId: this.page.id
+                    documentId: (this.page ? this.page.id : null)
                 },
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
