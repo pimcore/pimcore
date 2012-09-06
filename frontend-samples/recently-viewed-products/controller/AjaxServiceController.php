@@ -17,7 +17,7 @@ class OnlineShop_AjaxServiceController extends Website_Controller_Action {
         if (in_array($this->_getParam('id'), $recentlyViewed)) {
             $exists = true;
         }
-        if (!$exists) {
+        if (!$exists && $this->_getParam('id')) {
             array_push($recentlyViewed, $this->_getParam('id'));
             if (count($recentlyViewed) > self::MAX_PRODUCTS + 1) {
                 array_shift($recentlyViewed);
