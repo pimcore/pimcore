@@ -41,6 +41,12 @@ pimcore.edithelpers.frameElement = function (el, body) {
     try {
         var startDistance = 5;
         var offsets = Ext.get(el).getOffsetsTo(Ext.getBody());
+        var bodyOffsetLeft = intval(Ext.getBody().getStyle("margin-left"));
+        var bodyOffsetTop = intval(Ext.getBody().getStyle("margin-top"));
+
+        offsets[0] -= bodyOffsetLeft;
+        offsets[1] -= bodyOffsetTop;
+
         offsets[0] -= startDistance;
         offsets[1] -= startDistance;
 
