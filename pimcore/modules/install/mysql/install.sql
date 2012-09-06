@@ -197,7 +197,7 @@ CREATE TABLE `email_log` (
 DROP TABLE IF EXISTS `glossary`;
 CREATE TABLE `glossary` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `language` varchar(2) DEFAULT NULL,
+  `language` varchar(10) DEFAULT NULL,
   `casesensitive` tinyint(1) DEFAULT NULL,
   `exactmatch` tinyint(1) DEFAULT NULL,
   `text` varchar(255) DEFAULT NULL,
@@ -454,7 +454,7 @@ CREATE TABLE `users` (
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `language` varchar(2) DEFAULT NULL,
+  `language` varchar(10) DEFAULT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
   `active` tinyint(1) unsigned DEFAULT '1',
   `permissions` varchar(1000) DEFAULT NULL,

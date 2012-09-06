@@ -258,7 +258,7 @@ abstract class Pimcore_Placeholder_Abstract
      */
     public function getLanguage()
     {
-        return $this->getLocale()->getLanguage();
+        return (string) $this->getLocale();
     }
 
     /**

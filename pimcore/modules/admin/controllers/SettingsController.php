@@ -122,22 +122,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 fclose($handle);
             }
 
-            $languages = Zend_Locale::getTranslationList('language');
-
-            asort($languages);
+            $locales = Pimcore_Tool::getSupportedLocales();
             $languageOptions = array();
-            $validLanguages = array();
-            foreach ($languages as $short => $translation) {
-
-                if (strlen($short) == 2 or strpos($short, "_") == 2) {
-                    $languageOptions[] = array(
-                        "language" => $short,
-                        "display" => $translation . " ($short)"
-                    );
-                    $validLanguages[] = $short;
-                }
+            foreach ($locales as $short => $translation) {
+                $languageOptions[] = array(
+                    "language" => $short,
+                    "display" => $translation . " ($short)"
+                );
+                $validLanguages[] = $short;
             }
-
 
             $valueArray = $values->toArray();
             $valueArray['general']['validLanguage'] = explode(",", $valueArray['general']['validLanguages']);
@@ -873,12 +866,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $langs = array();
         $availableLanguages = Pimcore_Tool_Admin::getLanguages();
+        $locales = Pimcore_Tool::getSupportedLocales();
 
         foreach ($availableLanguages as $lang) {
-            $langs[] = array(
-                "language" => $lang,
-                "display" => Zend_Locale::getTranslation($lang, 'language', $lang)
-            );
+            if(array_key_exists($lang, $locales)) {
+                $langs[] = array(
+                    "language" => $lang,
+                    "display" => $locales[$lang]
+                );
+            }
         }
 
         $this->_helper->json($langs);
