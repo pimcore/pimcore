@@ -16,76 +16,107 @@
 class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin_Abstract {
     protected $controller;
 
+    protected $editmodeLibraries = array(
+        "/pimcore/static/js/pimcore/namespace.js",
+
+        "/pimcore/static/js/lib/prototype-light.js",
+        "/pimcore/static/js/lib/jquery-1.7.1.min.js",
+        "/pimcore/static/js/lib/ext/adapter/jquery/ext-jquery-adapter-debug.js",
+
+        "/pimcore/static/js/lib/ext/ext-all-debug.js",
+        "/pimcore/static/js/lib/ext-plugins/ux/Spinner.js",
+        "/pimcore/static/js/lib/ext-plugins/ux/SpinnerField.js",
+        "/pimcore/static/js/lib/ext-plugins/ux/MultiSelect.js",
+        "/pimcore/static/js/lib/ext-plugins/ux/Portal.js",
+        "/pimcore/static/js/lib/ext-plugins/ux/PortalColumn.js",
+        "/pimcore/static/js/lib/ext-plugins/ux/Portlet.js",
+        "/pimcore/static/js/lib/ext-plugins/GridRowOrder/roworder.js",
+        "/pimcore/static/js/lib/ckeditor/ckeditor.js",
+        "/pimcore/static/js/lib/ckeditor-plugins/pimcore-image.js",
+        "/pimcore/static/js/lib/ckeditor-plugins/pimcore-link.js",
+        "/pimcore/static/js/pimcore/libfixes.js"
+    );
+
+    protected $editmodeScripts = array(
+        "/pimcore/static/js/pimcore/functions.js",
+        "/pimcore/static/js/pimcore/document/edit/helper.js",
+        "/pimcore/static/js/pimcore/document/edit/dnd.js",
+        "/pimcore/static/js/pimcore/document/tag.js",
+        "/pimcore/static/js/pimcore/document/tags/block.js",
+        "/pimcore/static/js/pimcore/document/tags/date.js",
+        "/pimcore/static/js/pimcore/document/tags/href.js",
+        "/pimcore/static/js/pimcore/document/tags/multihref.js",
+        "/pimcore/static/js/pimcore/document/tags/checkbox.js",
+        "/pimcore/static/js/pimcore/document/tags/image.js",
+        "/pimcore/static/js/pimcore/document/tags/input.js",
+        "/pimcore/static/js/pimcore/document/tags/link.js",
+        "/pimcore/static/js/pimcore/document/tags/select.js",
+        "/pimcore/static/js/pimcore/document/tags/snippet.js",
+        "/pimcore/static/js/pimcore/document/tags/textarea.js",
+        "/pimcore/static/js/pimcore/document/tags/numeric.js",
+        "/pimcore/static/js/pimcore/document/tags/wysiwyg.js",
+        "/pimcore/static/js/pimcore/document/tags/renderlet.js",
+        "/pimcore/static/js/pimcore/document/tags/table.js",
+        "/pimcore/static/js/pimcore/document/tags/video.js",
+        "/pimcore/static/js/pimcore/document/tags/multiselect.js",
+        "/pimcore/static/js/pimcore/document/tags/areablock.js",
+        "/pimcore/static/js/pimcore/document/tags/area.js",
+        "/pimcore/static/js/pimcore/document/edit/helper.js"
+    );
+
+    protected $editmodeStylesheets = array(
+        "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
+        "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
+        "/pimcore/static/css/icons.css",
+        "/pimcore/static/css/editmode.css",
+        "/pimcore/static/js/lib/ext-plugins/ux/css/Spinner.css",
+        "/pimcore/static/js/lib/ext-plugins/ux/css/MultiSelect.css",
+        "/pimcore/static/js/lib/ext-plugins/ux/css/Portal.css"
+    );
+
     public function __construct(Pimcore_Controller_Action_Frontend $controller) {
         $this->controller = $controller;
     }
 
+    public function addEditModeStylesheet($style) {
+        return array_push($this->editmodeStylesheets, $style);
+    }
+
+    public function getEditModeStylesheets() {
+        return $this->editmodeStylesheets;
+    }
+
+    public function setEditModeStylesheets(array $styles) {
+        return $this->editmodeStylesheets = $styles;
+    }
+
+    public function addEditModeScript($script) {
+        return array_push($this->editmodeScripts, $script);
+    }
+
+    public function getEditModeScripts() {
+        return $this->editmodeScripts;
+    }
+
+    public function setEditModeScripts(array $script) {
+        return $this->editmodeScripts = $script;
+    }
+
+    public function addEditModeLibrary($lib) {
+        return array_push($this->editmodeLibraries, $lib);
+    }
+
+    public function getEditModeLibraries() {
+        return $this->editmodeLibraries;
+    }
+
+    public function setEditModeLibraries(array $libs) {
+        return $this->editmodeLibraries = $libs;
+    }
+
     public function postDispatch(Zend_Controller_Request_Abstract $request) {
 
-        // add scripts to editmode
-        
-        $editmodeLibraries = array(
-            "/pimcore/static/js/pimcore/namespace.js",
-            
-            "/pimcore/static/js/lib/prototype-light.js",
-            "/pimcore/static/js/lib/jquery-1.7.1.min.js",
-            "/pimcore/static/js/lib/ext/adapter/jquery/ext-jquery-adapter-debug.js",
-            
-            "/pimcore/static/js/lib/ext/ext-all-debug.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/Spinner.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/SpinnerField.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/MultiSelect.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/Portal.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/PortalColumn.js",
-            "/pimcore/static/js/lib/ext-plugins/ux/Portlet.js",
-            "/pimcore/static/js/lib/ext-plugins/GridRowOrder/roworder.js",
-            "/pimcore/static/js/lib/ckeditor/ckeditor.js",
-            "/pimcore/static/js/lib/ckeditor-plugins/pimcore-image.js",
-            "/pimcore/static/js/lib/ckeditor-plugins/pimcore-link.js",
-            "/pimcore/static/js/pimcore/libfixes.js"
-        );
-        
-        $editmodeScripts = array(
-            "/pimcore/static/js/pimcore/functions.js",
-            "/pimcore/static/js/pimcore/document/edit/helper.js",
-            "/pimcore/static/js/pimcore/document/edit/dnd.js",
-            "/pimcore/static/js/pimcore/document/tag.js",
-            "/pimcore/static/js/pimcore/document/tags/block.js",
-            "/pimcore/static/js/pimcore/document/tags/date.js",
-            "/pimcore/static/js/pimcore/document/tags/href.js",
-            "/pimcore/static/js/pimcore/document/tags/multihref.js",
-            "/pimcore/static/js/pimcore/document/tags/checkbox.js",
-            "/pimcore/static/js/pimcore/document/tags/image.js",
-            "/pimcore/static/js/pimcore/document/tags/input.js",
-            "/pimcore/static/js/pimcore/document/tags/link.js",
-            "/pimcore/static/js/pimcore/document/tags/select.js",
-            "/pimcore/static/js/pimcore/document/tags/snippet.js",
-            "/pimcore/static/js/pimcore/document/tags/textarea.js",
-            "/pimcore/static/js/pimcore/document/tags/numeric.js",
-            "/pimcore/static/js/pimcore/document/tags/wysiwyg.js",
-            "/pimcore/static/js/pimcore/document/tags/renderlet.js",
-            "/pimcore/static/js/pimcore/document/tags/table.js",
-            "/pimcore/static/js/pimcore/document/tags/video.js",
-            "/pimcore/static/js/pimcore/document/tags/multiselect.js",
-            "/pimcore/static/js/pimcore/document/tags/areablock.js",
-            "/pimcore/static/js/pimcore/document/tags/area.js",
-            "/pimcore/static/js/pimcore/document/edit/helper.js"
-        );
-
-
         $conf = Pimcore_Config::getSystemConfig();
-
-        $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css";
-
-        $editmodeStylesheets = array(
-            "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
-            $themeUrl,
-            "/pimcore/static/css/icons.css",
-            "/pimcore/static/css/editmode.css",
-            "/pimcore/static/js/lib/ext-plugins/ux/css/Spinner.css",
-            "/pimcore/static/js/lib/ext-plugins/ux/css/MultiSelect.css",
-            "/pimcore/static/js/lib/ext-plugins/ux/css/Portal.css"
-        );
 
         //add plugin editmode JS and CSS
         try {
@@ -131,8 +162,8 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                 }
             }
 
-            $editmodeScripts=array_merge($editmodeScripts,$jsPaths);
-            $editmodeStylesheets=array_merge($editmodeStylesheets,$cssPaths);
+            $editmodeScripts = array_merge($this->editmodeScripts, $jsPaths);
+            $editmodeStylesheets = array_merge($this->editmodeStylesheets, $cssPaths);
             
         }
         catch (Exception $e) {
@@ -149,7 +180,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
         }
         
         // include script libraries
-        foreach ($editmodeLibraries as $script) {
+        foreach ($this->editmodeLibraries as $script) {
             $editmodeHeadHtml .= '<script type="text/javascript" src="' . $script . '?_dc=' . Pimcore_Version::$revision . '"></script>';
             $editmodeHeadHtml .= "\n";
         }
