@@ -636,7 +636,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function setLocked($locked){
-        $this->locked = (bool) $locked;
+        $this->locked = $locked;
     }
 
     /**
