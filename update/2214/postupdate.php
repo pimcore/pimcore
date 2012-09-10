@@ -7,6 +7,6 @@ $tables = $db->fetchAll("SHOW TABLES LIKE 'object_localized_data_%'");
 
 foreach ($tables as $table) {
     $t = current($table);
-    $db->exec("ALTER TABLE `" . $t . "` CHANGE COLUMN `language` `language` varchar(10) NOT NULL DEFAULT '';");
+    $db->query("ALTER TABLE `" . $t . "` CHANGE COLUMN `language` `language` varchar(10) NOT NULL DEFAULT '';");
 }
 
