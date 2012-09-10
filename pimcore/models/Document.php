@@ -576,7 +576,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setLocked($locked){
-        $this->locked = (bool) $locked;
+        $this->locked = $locked;
     }
 
     /**
