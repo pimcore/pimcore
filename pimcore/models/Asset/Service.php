@@ -67,6 +67,7 @@ class Asset_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         $new->save();
 
         // add to store
@@ -108,6 +109,7 @@ class Asset_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         $new->save();
 
         if($target instanceof Asset_Folder){

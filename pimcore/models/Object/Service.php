@@ -110,6 +110,7 @@ class Object_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         $new->save();
 
         // add to store
@@ -148,6 +149,7 @@ class Object_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         $new->save();
 
         $this->updateChilds($target, $new);

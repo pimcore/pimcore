@@ -161,6 +161,7 @@ class Document_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         if(method_exists($new, "setPrettyUrl")) {
             $new->setPrettyUrl(null);
         }
@@ -201,6 +202,7 @@ class Document_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         if(method_exists($new, "setPrettyUrl")) {
             $new->setPrettyUrl(null);
         }
