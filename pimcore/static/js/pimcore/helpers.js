@@ -221,7 +221,7 @@ pimcore.helpers.dndUnmaskFrames = function () {
 };
 
 pimcore.helpers.isValidFilename = function (value) {
-    var result = value.match(/[a-zA-Z0-9_.\-]+/);
+    var result = value.match(/[a-zA-Z0-9_.\-~]+/);
     if (result == value) {
         // key must be at least one character, an maximum 30 characters
         if (value.length < 1 && value.length > 30) {
