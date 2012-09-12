@@ -18,8 +18,8 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
 
     public function getUpdateInformationAction () {
 
-        $id = $this->_getParam("id");
-        $type = $this->_getParam("type");
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
 
         if($type == "plugin") {
             $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;
@@ -80,9 +80,9 @@ class Extensionmanager_UpdateController extends Pimcore_Controller_Action_Admin 
 
     public function checkUpdateScriptAction () {
 
-        $id = $this->_getParam("id");
-        $type = $this->_getParam("type");
-        $revision = $this->_getParam("revision");
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
+        $revision = $this->getParam("revision");
 
         if($type == "plugin") {
             $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;

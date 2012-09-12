@@ -26,7 +26,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
         Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
         if (is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
-            $this->_redirect("/admin");
+            $this->redirect("/admin");
         }
     }
 
@@ -52,12 +52,12 @@ class Install_IndexController extends Pimcore_Controller_Action {
         // try to establish a mysql connection
         try {
 
-            $db = Zend_Db::factory($this->_getParam("mysql_adapter"),array(
-                'host' => $this->_getParam("mysql_host"),
-                'username' => $this->_getParam("mysql_username"),
-                'password' => $this->_getParam("mysql_password"),
-                'dbname' => $this->_getParam("mysql_database"),
-                "port" => $this->_getParam("mysql_port")
+            $db = Zend_Db::factory($this->getParam("mysql_adapter"),array(
+                'host' => $this->getParam("mysql_host"),
+                'username' => $this->getParam("mysql_username"),
+                'password' => $this->getParam("mysql_password"),
+                'dbname' => $this->getParam("mysql_database"),
+                "port" => $this->getParam("mysql_port")
             ));
 
             $db->getConnection();
@@ -73,7 +73,7 @@ class Install_IndexController extends Pimcore_Controller_Action {
         }
 
         // check username & password
-        if (strlen($this->_getParam("admin_password")) < 4 || strlen($this->_getParam("admin_username")) < 4) {
+        if (strlen($this->getParam("admin_password")) < 4 || strlen($this->getParam("admin_username")) < 4) {
             $errors[] = "Username and password should have at least 4 characters";
         }
 
@@ -99,13 +99,13 @@ class Install_IndexController extends Pimcore_Controller_Action {
                     )
                 ),
                 "database" => array(
-                    "adapter" => $this->_getParam("mysql_adapter"),
+                    "adapter" => $this->getParam("mysql_adapter"),
                     "params" => array(
-                        "host" => $this->_getParam("mysql_host"),
-                        "username" => $this->_getParam("mysql_username"),
-                        "password" => $this->_getParam("mysql_password"),
-                        "dbname" => $this->_getParam("mysql_database"),
-                        "port" => $this->_getParam("mysql_port"),
+                        "host" => $this->getParam("mysql_host"),
+                        "username" => $this->getParam("mysql_username"),
+                        "password" => $this->getParam("mysql_password"),
+                        "dbname" => $this->getParam("mysql_database"),
+                        "port" => $this->getParam("mysql_port"),
                     )
                 ),
                 "documents" => array(
@@ -256,8 +256,8 @@ class Install_IndexController extends Pimcore_Controller_Action {
 
             $user = User::create(array(
                 "parentId" => 0,
-                "username" => $this->_getParam("admin_username"),
-                "password" => Pimcore_Tool_Authentication::getPasswordHash($this->_getParam("admin_username"),$this->_getParam("admin_password")),
+                "username" => $this->getParam("admin_username"),
+                "password" => Pimcore_Tool_Authentication::getPasswordHash($this->getParam("admin_username"),$this->getParam("admin_password")),
                 "active" => true
             ));
             $user->setAdmin(true);

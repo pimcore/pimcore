@@ -28,7 +28,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
     public function lostpasswordAction() {
 
 
-        $username = $this->_getParam("username");
+        $username = $this->getParam("username");
         if ($username) {
             $user = User::getByName($username);
             if (!$user instanceof User) {
@@ -68,17 +68,17 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
     public function indexAction() {
 
         if ($this->getUser() instanceof User) {
-            $this->_redirect("/admin/?_dc=" . time());
+            $this->redirect("/admin/?_dc=" . time());
         }
 
-        if ($this->_getParam("auth_failed")) {
-            if ($this->_getParam("inactive")) {
+        if ($this->getParam("auth_failed")) {
+            if ($this->getParam("inactive")) {
                 $this->view->error = "error_user_inactive";
             } else {
                 $this->view->error = "error_auth_failed";
             }
         }
-        if ($this->_getParam("session_expired")) {
+        if ($this->getParam("session_expired")) {
             $this->view->error = "error_session_expired";
         }
     }
@@ -88,28 +88,28 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         if($_SERVER["QUERY_STRING"]) {
             setcookie("pimcore_opentabs", "," . $_SERVER["QUERY_STRING"] . ",", null, "/");
         }
-        $this->_redirect("/admin/");
+        $this->redirect("/admin/");
     }
 
     public function loginAction() {
 
         $userInactive = false;
         try {
-            $user = User::getByName($this->_getParam("username"));
+            $user = User::getByName($this->getParam("username"));
 
             if ($user instanceof User) {
                 if ($user->isActive()) {
                     $authenticated = false;
 
-                    if ($user->getPassword() == Pimcore_Tool_Authentication::getPasswordHash($this->_getParam("username"), $this->_getParam("password"))) {
+                    if ($user->getPassword() == Pimcore_Tool_Authentication::getPasswordHash($this->getParam("username"), $this->getParam("password"))) {
                         $authenticated = true;
 
-                    } else if ($this->_getParam("token") and Pimcore_Tool_Authentication::tokenAuthentication($this->_getParam("username"), $this->_getParam("token"), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB, false)) {
+                    } else if ($this->getParam("token") and Pimcore_Tool_Authentication::tokenAuthentication($this->getParam("username"), $this->getParam("token"), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB, false)) {
                         $authenticated = true;
 
                         // save the information to session when the user want's to reset the password
                         // this is because otherwise the old password is required => see also PIMCORE-1468
-                        if($this->_getParam("reset")) {
+                        if($this->getParam("reset")) {
                             $adminSession = Pimcore_Tool_Authentication::getSession();
                             $adminSession->password_reset = true;
                         }
@@ -138,21 +138,21 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         } catch (Exception $e) {
 
             //see if module or plugin authenticates user
-            $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->_getParam("username"),$this->_getParam("password"));
+            $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->getParam("username"),$this->getParam("password"));
             if($user instanceof User){
                 $adminSession = Pimcore_Tool_Authentication::getSession();
                 $adminSession->user = $user;
-                $this->_redirect("/admin/?_dc=" . time());
+                $this->redirect("/admin/?_dc=" . time());
             } else {
-                $this->writeLogFile($this->_getParam("username"), $e->getMessage());
+                $this->writeLogFile($this->getParam("username"), $e->getMessage());
                 Logger::info("Login Exception" . $e);
 
-                $this->_redirect("/admin/login/?auth_failed=true&inactive=" . $userInactive);
+                $this->redirect("/admin/login/?auth_failed=true&inactive=" . $userInactive);
                 exit;
             }
         }
 
-        $this->_redirect("/admin/?_dc=" . time());
+        $this->redirect("/admin/?_dc=" . time());
     }
 
     public function logoutAction() {
@@ -168,7 +168,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
         setcookie("pimcore_opentabs", false, 315554400, "/");
 
-        $this->_redirect("/admin/login/");
+        $this->redirect("/admin/login/");
     }
 
 

@@ -17,20 +17,20 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
     
     public function lockElementAction()
     {
-        Element_Editlock::lock($this->_getParam("id"), $this->_getParam("type"));
+        Element_Editlock::lock($this->getParam("id"), $this->getParam("type"));
         exit;
     }
 
     public function unlockElementAction()
     {
-        Element_Editlock::unlock($this->_getParam("id"), $this->_getParam("type"));
+        Element_Editlock::unlock($this->getParam("id"), $this->getParam("type"));
         exit;
     }
 
     public function getSubtypeAction () {
 
-        $id = (int) $this->_getParam("id");
-        $type = $this->_getParam("type");
+        $id = (int) $this->getParam("id");
+        $type = $this->getParam("type");
         $el = Element_Service::getElementById($type, $id);
 
         if($el) {
@@ -59,24 +59,24 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
         $list = new Element_Note_List();
 
-        $list->setLimit($this->_getParam("limit"));
-        $list->setOffset($this->_getParam("start"));
+        $list->setLimit($this->getParam("limit"));
+        $list->setOffset($this->getParam("start"));
 
-        if($this->_getParam("sort")) {
-            $list->setOrderKey($this->_getParam("sort"));
-            $list->setOrder($this->_getParam("dir"));
+        if($this->getParam("sort")) {
+            $list->setOrderKey($this->getParam("sort"));
+            $list->setOrder($this->getParam("dir"));
         } else {
             $list->setOrderKey("date");
             $list->setOrder("DESC");
         }
 
         $conditions = array();
-        if($this->_getParam("filter")) {
-            $conditions[] = "(`title` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `type` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . ")";
+        if($this->getParam("filter")) {
+            $conditions[] = "(`title` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `type` LIKE " . $list->quote("%".$this->getParam("filter")."%") . ")";
         }
 
-        if($this->_getParam("cid") && $this->_getParam("ctype")) {
-            $conditions[] = "(cid = " . $list->quote($this->_getParam("cid")) . " AND ctype = " . $list->quote($this->_getParam("ctype")) . ")";
+        if($this->getParam("cid") && $this->getParam("ctype")) {
+            $conditions[] = "(cid = " . $list->quote($this->getParam("cid")) . " AND ctype = " . $list->quote($this->getParam("ctype")) . ")";
         }
 
         if(!empty($conditions)) {
@@ -168,12 +168,12 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
     public function noteAddAction() {
 
         $note = new Element_Note();
-        $note->setCid((int) $this->_getParam("cid"));
-        $note->setCtype($this->_getParam("ctype"));
+        $note->setCid((int) $this->getParam("cid"));
+        $note->setCtype($this->getParam("ctype"));
         $note->setDate(time());
-        $note->setTitle($this->_getParam("title"));
-        $note->setDescription($this->_getParam("description"));
-        $note->setType($this->_getParam("type"));
+        $note->setTitle($this->getParam("title"));
+        $note->setDescription($this->getParam("description"));
+        $note->setType($this->getParam("type"));
         $note->save();
 
         $this->_helper->json(array(

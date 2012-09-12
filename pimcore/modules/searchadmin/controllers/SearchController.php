@@ -23,19 +23,19 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
         $user = $this->getUser();
 
-        $query = $this->_getParam("query");
+        $query = $this->getParam("query");
         if ($query == "*") {
             $query = "";
         }
 
         $query = str_replace("%", "*", $query);
 
-        $types = explode(",", $this->_getParam("type"));
-        $subtypes = explode(",", $this->_getParam("subtype"));
-        $classnames = explode(",", $this->_getParam("class"));
+        $types = explode(",", $this->getParam("type"));
+        $subtypes = explode(",", $this->getParam("subtype"));
+        $classnames = explode(",", $this->getParam("class"));
 
-        $offset = intval($this->_getParam("start"));
-        $limit = intval($this->_getParam("limit"));
+        $offset = intval($this->getParam("start"));
+        $limit = intval($this->getParam("limit"));
 
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
@@ -111,8 +111,8 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         //For objects - handling of bricks
         $fields = array();
         $bricks = array();
-        if($this->_getParam("fields")) {
-            $fields = $this->_getParam("fields");
+        if($this->getParam("fields")) {
+            $fields = $this->getParam("fields");
 
             foreach($fields as $f) {
                 $parts = explode("~", $f);
@@ -123,9 +123,9 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         }        
 
         // filtering for objects
-        if ($this->_getParam("filter")) {
-            $class = Object_Class::getByName($this->_getParam("class"));
-            $conditionFilters = Object_Service::getFilterCondition($this->_getParam("filter"), $class);
+        if ($this->getParam("filter")) {
+            $class = Object_Class::getByName($this->getParam("class"));
+            $conditionFilters = Object_Service::getFilterCondition($this->getParam("filter"), $class);
             $join = "";
             foreach($bricks as $ob) {
                 $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $class->getId();
@@ -177,11 +177,11 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
         //$searcherList->setOrder("desc");
         //$searcherList->setOrderKey("modificationdate");
 
-        if ($this->_getParam("sort")) {
-            $searcherList->setOrderKey($this->_getParam("sort"));
+        if ($this->getParam("sort")) {
+            $searcherList->setOrderKey($this->getParam("sort"));
         }
-        if ($this->_getParam("dir")) {
-            $searcherList->setOrder($this->_getParam("dir"));
+        if ($this->getParam("dir")) {
+            $searcherList->setOrder($this->getParam("dir"));
         }
 
 
@@ -211,7 +211,7 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
-        if($this->_getParam("limit")) {
+        if($this->getParam("limit")) {
             $totalMatches = $searcherList->getTotalCount();
         } else {
             $totalMatches = count($elements);

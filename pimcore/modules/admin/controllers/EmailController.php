@@ -20,14 +20,14 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
     {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->_getParam("id"), "document")) {
+        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "document")
+                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->_getParam("id"), "document");
+        Element_Editlock::lock($this->getParam("id"), "document");
 
-        $email = Document_Email::getById($this->_getParam("id"));
+        $email = Document_Email::getById($this->getParam("id"));
         $email = $this->getLatestVersion($email);
         $email->getVersions();
         $email->idPath = Pimcore_Tool::getIdPathForElement($email);
@@ -51,25 +51,25 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
     public function saveAction()
     {
 
-        if ($this->_getParam("id")) {
-            $page = Document_Email::getById($this->_getParam("id"));
+        if ($this->getParam("id")) {
+            $page = Document_Email::getById($this->getParam("id"));
 
             $page = $this->getLatestVersion($page);
             $page->setUserModification($this->getUser()->getId());
 
             // save to session
-            $key = "document_" . $this->_getParam("id");
+            $key = "document_" . $this->getParam("id");
             $session = new Zend_Session_Namespace("pimcore_documents");
             $session->$key = $page;
 
-            if ($this->_getParam("task") == "unpublish") {
+            if ($this->getParam("task") == "unpublish") {
                 $page->setPublished(false);
             }
-            if ($this->_getParam("task") == "publish") {
+            if ($this->getParam("task") == "publish") {
                 $page->setPublished(true);
             }
             // only save when publish or unpublish
-            if (($this->_getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->_getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
+            if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
                 $this->setValuesToDocument($page);
 
 
@@ -118,16 +118,16 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
     public function emailLogsAction()
     {
         $list = new Document_Email_Log_List();
-        if ($this->_getParam('documentId')) {
-            $list->setCondition('documentId = ' . (int)$this->_getParam('documentId'));
+        if ($this->getParam('documentId')) {
+            $list->setCondition('documentId = ' . (int)$this->getParam('documentId'));
         }
-        $list->setLimit($this->_getParam("limit"));
-        $list->setOffset($this->_getParam("start"));
+        $list->setLimit($this->getParam("limit"));
+        $list->setOffset($this->getParam("start"));
         $list->setOrderKey("sentDate");
 
-        if($this->_getParam('filter')){
-            if ($this->_getParam("filter")) {
-                $filterTerm = $list->quote("%".strtolower($this->_getParam("filter"))."%");
+        if($this->getParam('filter')){
+            if ($this->getParam("filter")) {
+                $filterTerm = $list->quote("%".strtolower($this->getParam("filter"))."%");
                 $list->setCondition("   `from` LIKE " . $filterTerm . " OR
                                         `to` LIKE " . $filterTerm . " OR
                                         `cc` LIKE " . $filterTerm . " OR
@@ -164,16 +164,16 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function showEmailLogAction()
     {
-        $type = $this->_getParam('type');
-        $emailLog = Document_Email_Log::getById($this->_getParam('id'));
+        $type = $this->getParam('type');
+        $emailLog = Document_Email_Log::getById($this->getParam('id'));
 
-        if ($this->_getParam('type') == 'text') {
+        if ($this->getParam('type') == 'text') {
             $this->disableViewAutoRender();
             echo '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $emailLog->getTextLog() . '</pre></body></html>';
-        } elseif ($this->_getParam('type') == 'html') {
+        } elseif ($this->getParam('type') == 'html') {
             $this->disableViewAutoRender();
             echo $emailLog->getHtmlLog();
-        } elseif ($this->_getParam('type') == 'params') {
+        } elseif ($this->getParam('type') == 'params') {
             $this->disableViewAutoRender();
             try {
                 $params = Zend_Json::decode($emailLog->getParams());
@@ -268,7 +268,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
     public function deleteEmailLogAction()
     {
         $success = false;
-        $emailLog = Document_Email_Log::getById($this->_getParam('id'));
+        $emailLog = Document_Email_Log::getById($this->getParam('id'));
         if ($emailLog instanceof Document_Email_Log) {
             $emailLog->delete();
             $success = true;
@@ -283,7 +283,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
      */
     public function resendEmailAction(){
         $success = false;
-        $emailLog = Document_Email_Log::getById($this->_getParam('id'));
+        $emailLog = Document_Email_Log::getById($this->getParam('id'));
 
         if($emailLog instanceof Document_Email_Log){
             $mail = new Pimcore_Mail();

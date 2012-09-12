@@ -20,10 +20,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         // check permissions
         $notRestrictedActions = array("get-current-user", "update-current-user", "get-all-users", "get-available-permissions", "tree-get-childs-by-id", "get-minimal");
-        if (!in_array($this->_getParam("action"), $notRestrictedActions)) {
+        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             if (!$this->getUser()->isAdmin()) {
 
-                $this->_redirect("/admin/login");
+                $this->redirect("/admin/login");
                 die();
             }
         }
@@ -32,7 +32,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     public function treeGetChildsByIdAction() {
 
         $list = new User_List();
-        $list->setCondition("parentId = ?", intval($this->_getParam("node")));
+        $list->setCondition("parentId = ?", intval($this->getParam("node")));
         $list->load();
 
         $users = array();
@@ -78,12 +78,12 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     public function addAction() {
 
         try {
-            $className = User_Service::getClassNameForType($this->_getParam("type"));
+            $className = User_Service::getClassNameForType($this->getParam("type"));
             $user = $className::create(array(
-                "parentId" => intval($this->_getParam("parentId")),
-                "name" => $this->_getParam("name"),
+                "parentId" => intval($this->getParam("parentId")),
+                "name" => $this->getParam("name"),
                 "password" => md5(microtime()),
-                "active" => $this->_getParam("active")
+                "active" => $this->getParam("active")
             ));
 
             $this->_helper->json(array(
@@ -98,7 +98,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function deleteAction() {
-        $user = User_Abstract::getById(intval($this->_getParam("id")));
+        $user = User_Abstract::getById(intval($this->getParam("id")));
         $user->delete();
 
         $this->_helper->json(array("success" => true));
@@ -106,10 +106,10 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     public function updateAction() {
 
-        $user = User_Abstract::getById(intval($this->_getParam("id")));
+        $user = User_Abstract::getById(intval($this->getParam("id")));
 
-        if($this->_getParam("data")) {
-            $values = Zend_Json::decode($this->_getParam("data"));
+        if($this->getParam("data")) {
+            $values = Zend_Json::decode($this->getParam("data"));
 
             if (!empty($values["password"])) {
                 $values["password"] = Pimcore_Tool_Authentication::getPasswordHash($user->getName(),$values["password"]);
@@ -131,8 +131,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
             }
 
             // check for workspaces
-            if($this->_getParam("workspaces")) {
-                $workspaces = Zend_Json::decode($this->_getParam("workspaces"));
+            if($this->getParam("workspaces")) {
+                $workspaces = Zend_Json::decode($this->getParam("workspaces"));
                 foreach ($workspaces as $type => $spaces) {
 
                     $newWorkspaces = array();
@@ -182,11 +182,11 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
     public function getAction() {
 
-        if(intval($this->_getParam("id")) < 1) {
+        if(intval($this->getParam("id")) < 1) {
             $this->_helper->json(array("success" => false));
         }
 
-        $user = User::getById(intval($this->_getParam("id")));
+        $user = User::getById(intval($this->getParam("id")));
 
         // workspaces
         $types = array("asset","document","object");
@@ -252,7 +252,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getMinimalAction() {
-        $user = User::getById(intval($this->_getParam("id")));
+        $user = User::getById(intval($this->getParam("id")));
         $user->setPassword(null);
 
         $minimalUserData['id'] = $user->getId();
@@ -269,8 +269,8 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
 
         $user = $this->getUser();
         if ($user != null) {
-            if ($user->getId() == $this->_getParam("id")) {
-                $values = Zend_Json::decode($this->_getParam("data"));
+            if ($user->getId() == $this->getParam("id")) {
+                $values = Zend_Json::decode($this->getParam("data"));
 
                 unset($values["admin"]);
                 unset($values["permissions"]);
@@ -337,7 +337,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     public function roleTreeGetChildsByIdAction() {
 
         $list = new User_Role_List();
-        $list->setCondition("parentId = ?", intval($this->_getParam("node")));
+        $list->setCondition("parentId = ?", intval($this->getParam("node")));
         $list->load();
 
         $roles = array();
@@ -381,7 +381,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
     }
 
     public function roleGetAction() {
-        $role = User_Role::getById(intval($this->_getParam("id")));
+        $role = User_Role::getById(intval($this->getParam("id")));
 
         // workspaces
         $types = array("asset","document","object");

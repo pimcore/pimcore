@@ -25,10 +25,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         // check permissions
         $notRestrictedActions = array("doc-types");
-        if (!in_array($this->_getParam("action"), $notRestrictedActions)) {
+        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             if (!$this->getUser()->isAllowed("documents")) {
 
-                $this->_redirect("/admin/login");
+                $this->redirect("/admin/login");
                 die();
             }
         }
@@ -54,7 +54,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function getDataByIdAction() {
 
-        $document = Document::getById($this->_getParam("id"));
+        $document = Document::getById($this->getParam("id"));
         if ($document->isAllowed("view")) {
             $this->_helper->json($document);
         }
@@ -65,8 +65,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     public function treeGetRootAction() {
 
         $id = 1;
-        if ($this->_getParam("id")) {
-            $id = intval($this->_getParam("id"));
+        if ($this->getParam("id")) {
+            $id = intval($this->getParam("id"));
         }
 
         $root = Document::getById($id);
@@ -79,15 +79,15 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function treeGetChildsByIdAction() {
 
-        $document = Document::getById($this->_getParam("node"));
+        $document = Document::getById($this->getParam("node"));
 
         $documents = array();
         if ($document->hasChilds()) {
-            $limit = intval($this->_getParam("limit"));
-            if (!$this->_getParam("limit")) {
+            $limit = intval($this->getParam("limit"));
+            if (!$this->getParam("limit")) {
                 $limit = 100000000;
             }
-            $offset = intval($this->_getParam("start"));
+            $offset = intval($this->getParam("start"));
 
             $list = new Document_List();
             $list->setCondition("parentId = ?", $document->getId());
@@ -106,7 +106,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             }
         }
 
-        if ($this->_getParam("limit")) {
+        if ($this->getParam("limit")) {
             $this->_helper->json(array(
                 "total" => $document->getChildAmount(),
                 "nodes" => $documents
@@ -124,9 +124,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $success = false;
 
         // check for permission
-        $parentDocument = Document::getById(intval($this->_getParam("parentId")));
+        $parentDocument = Document::getById(intval($this->getParam("parentId")));
         if ($parentDocument->isAllowed("create")) {
-            $intendedPath = $parentDocument->getFullPath() . "/" . $this->_getParam("key");
+            $intendedPath = $parentDocument->getFullPath() . "/" . $this->getParam("key");
 
             if (!Document_Service::pathExists($intendedPath)) {
 
@@ -136,43 +136,43 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                     "published" => false
                 );
 
-                $createValues["key"] = $this->_getParam("key");
+                $createValues["key"] = $this->getParam("key");
 
                 // check for a docType
-                if ($this->_getParam("docTypeId") && is_numeric($this->_getParam("docTypeId"))) {
-                    $docType = Document_DocType::getById(intval($this->_getParam("docTypeId")));
+                if ($this->getParam("docTypeId") && is_numeric($this->getParam("docTypeId"))) {
+                    $docType = Document_DocType::getById(intval($this->getParam("docTypeId")));
                     $createValues["template"] = $docType->getTemplate();
                     $createValues["controller"] = $docType->getController();
                     $createValues["action"] = $docType->getAction();
                     $createValues["module"] = $docType->getModule();
-                } else if($this->_getParam("type") == "page" || $this->_getParam("type") == "snippet" || $this->_getParam("type") == "email") {
+                } else if($this->getParam("type") == "page" || $this->getParam("type") == "snippet" || $this->getParam("type") == "email") {
                     $createValues["controller"] = Pimcore_Config::getSystemConfig()->documents->default_controller;
                     $createValues["action"] = Pimcore_Config::getSystemConfig()->documents->default_action;
                 }
 
-                switch ($this->_getParam("type")) {
+                switch ($this->getParam("type")) {
                     case "page":
-                        $document = Document_Page::create($this->_getParam("parentId"), $createValues);
+                        $document = Document_Page::create($this->getParam("parentId"), $createValues);
                         $success = true;
                         break;
                     case "snippet":
-                        $document = Document_Snippet::create($this->_getParam("parentId"), $createValues);
+                        $document = Document_Snippet::create($this->getParam("parentId"), $createValues);
                         $success = true;
                         break;
                     case "email": //ckogler
-                        $document = Document_Email::create($this->_getParam("parentId"), $createValues);
+                        $document = Document_Email::create($this->getParam("parentId"), $createValues);
                         $success = true;
                         break;
                     case "link":
-                        $document = Document_Link::create($this->_getParam("parentId"), $createValues);
+                        $document = Document_Link::create($this->getParam("parentId"), $createValues);
                         $success = true;
                         break;
                     case "hardlink":
-                        $document = Document_Hardlink::create($this->_getParam("parentId"), $createValues);
+                        $document = Document_Hardlink::create($this->getParam("parentId"), $createValues);
                         $success = true;
                         break;
                     case "folder":
-                        $document = Document_Folder::create($this->_getParam("parentId"), $createValues);
+                        $document = Document_Folder::create($this->getParam("parentId"), $createValues);
                         $document->setPublished(true);
                         try {
                             $document->save();
@@ -182,7 +182,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         }
                         break;
                     default:
-                        Logger::debug("Unknown document type, can't add [ " . $this->_getParam("type") . " ] ");
+                        Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
                         break;
                 }
             }
@@ -212,13 +212,13 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function deleteAction()
     {
-        if ($this->_getParam("type") == "childs") {
+        if ($this->getParam("type") == "childs") {
 
-            $parentDocument = Document::getById($this->_getParam("id"));
+            $parentDocument = Document::getById($this->getParam("id"));
 
             $list = new Document_List();
             $list->setCondition("path LIKE '" . $parentDocument->getFullPath() . "/%'");
-            $list->setLimit(intval($this->_getParam("amount")));
+            $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(path)", false);
             $list->setOrder("DESC");
 
@@ -232,8 +232,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
             $this->_helper->json(array("success" => true, "deleted" => $deletedItems));
 
-        } else if($this->_getParam("id")) {
-            $document = Document::getById($this->_getParam("id"));
+        } else if($this->getParam("id")) {
+            $document = Document::getById($this->getParam("id"));
             if ($document->isAllowed("delete")) {
                 Element_Recyclebin_Item::create($document, $this->getUser());
                 $document->delete();
@@ -250,11 +250,11 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $hasDependency = false;
 
         try {
-            $document = Document::getById($this->_getParam("id"));
+            $document = Document::getById($this->getParam("id"));
             $hasDependency = $document->getDependencies()->isRequired();
         }
         catch (Exception $e) {
-            Logger::err("failed to access document with id: " . $this->_getParam("id"));
+            Logger::err("failed to access document with id: " . $this->getParam("id"));
         }
 
         $deleteJobs = array();
@@ -315,7 +315,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getRequiresDependenciesAction() {
-        $id = $this->_getParam("id");
+        $id = $this->getParam("id");
         $document = Document::getById($id);
         if ($document instanceof Document) {
             $dependencies = Element_Service::getRequiresDependenciesForFrontend($document->getDependencies());
@@ -325,7 +325,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getRequiredByDependenciesAction() {
-        $id = $this->_getParam("id");
+        $id = $this->getParam("id");
         $document = Document::getById($id);
         if ($document instanceof Document) {
             $dependencies = Element_Service::getRequiredByDependenciesForFrontend($document->getDependencies());
@@ -339,12 +339,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $success = false;
         $allowUpdate = true;
 
-        $document = Document::getById($this->_getParam("id"));
+        $document = Document::getById($this->getParam("id"));
         if ($document->isAllowed("settings")) {
 
             // if the position is changed the path must be changed || also from the childs
-            if ($this->_getParam("parentId")) {
-                $parentDocument = Document::getById($this->_getParam("parentId"));
+            if ($this->getParam("parentId")) {
+                $parentDocument = Document::getById($this->getParam("parentId"));
 
                 //check if parent is changed
                 if ($document->getParentId() != $parentDocument->getId()) {
@@ -368,13 +368,13 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             }
 
             if ($allowUpdate) {
-                if ($this->_getParam("key") || $this->_getParam("parentId")) {
+                if ($this->getParam("key") || $this->getParam("parentId")) {
                     $oldPath = $document->getPath() . $document->getKey();
                 }
 
                 $blockedVars = array("controller", "action", "module");
 
-                if(!$document->isAllowed("rename") && $this->_getParam("key")){
+                if(!$document->isAllowed("rename") && $this->getParam("key")){
                     $blockedVars[]="key";
                     Logger::debug("prevented renaming document because of missing permissions ");
                 }
@@ -386,16 +386,16 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 }
 
                 // if changed the index change also all documents on the same level
-                if ($this->_getParam("index") !== null) {
+                if ($this->getParam("index") !== null) {
                     $list = new Document_List();
-                    $list->setCondition("parentId = ? AND id != ?", array($this->_getParam("parentId"), $document->getId()));
+                    $list->setCondition("parentId = ? AND id != ?", array($this->getParam("parentId"), $document->getId()));
                     $list->setOrderKey("index");
                     $list->setOrder("asc");
                     $childsList = $list->load();
 
                     $count = 0;
                     foreach ($childsList as $child) {
-                        if ($count == intval($this->_getParam("index"))) {
+                        if ($count == intval($this->getParam("index"))) {
                             $count++;
                         }
                         $child->setIndex($count);
@@ -416,10 +416,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             else {
                 Logger::debug("Prevented moving document, because document with same path+key already exists.");
             }
-        } else if ($document->isAllowed("rename") &&  $this->_getParam("key") ) {
+        } else if ($document->isAllowed("rename") &&  $this->getParam("key") ) {
             //just rename
             try {
-                    $document->setKey($this->_getParam("key") );
+                    $document->setKey($this->getParam("key") );
                     $document->setUserModification($this->getUser()->getId());
                     $document->save();
                     $success = true;
@@ -436,20 +436,20 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function docTypesAction() {
 
-        if ($this->_getParam("data")) {
+        if ($this->getParam("data")) {
             if ($this->getUser()->isAllowed("document_types")) {
-                if ($this->_getParam("xaction") == "destroy") {
+                if ($this->getParam("xaction") == "destroy") {
 
-                    $id = Zend_Json::decode($this->_getParam("data"));
+                    $id = Zend_Json::decode($this->getParam("data"));
 
                     $type = Document_DocType::getById($id);
                     $type->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
                 }
-                else if ($this->_getParam("xaction") == "update") {
+                else if ($this->getParam("xaction") == "update") {
 
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                    $data = Zend_Json::decode($this->getParam("data"));
 
                     // save type
                     $type = Document_DocType::getById($data["id"]);
@@ -459,8 +459,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
                     $this->_helper->json(array("data" => $type, "success" => true));
                 }
-                else if ($this->_getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                else if ($this->getParam("xaction") == "create") {
+                    $data = Zend_Json::decode($this->getParam("data"));
                     unset($data["id"]);
 
                     // save type
@@ -477,9 +477,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             // get list of types
             $list = new Document_DocType_List();
 
-            if($this->_getParam("sort")) {
-                $list->setOrderKey($this->_getParam("sort"));
-                $list->setOrder($this->_getParam("dir"));
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
             }
 
             $list->load();
@@ -498,8 +498,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     public function getDocTypesAction() {
 
         $list = new Document_DocType_List();
-        if ($this->_getParam("type")) {
-            $type = $this->_getParam("type");
+        if ($this->getParam("type")) {
+            $type = $this->getParam("type");
             if (Document_Service::isValidType($type)) {
                 $list->setCondition("type = ?", $type);
             }
@@ -519,12 +519,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function getPathForIdAction() {
 
-        $document = Document::getById($this->_getParam("id"));
+        $document = Document::getById($this->getParam("id"));
         die($document->getPath() . $document->getKey());
     }
 
     public function deleteVersionAction() {
-        $version = Version::getById($this->_getParam("id"));
+        $version = Version::getById($this->getParam("id"));
         $version->delete();
 
         $this->_helper->json(array("success" => true));
@@ -532,7 +532,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function versionUpdateAction() {
 
-        $data = Zend_Json::decode($this->_getParam("data"));
+        $data = Zend_Json::decode($this->getParam("data"));
 
         $version = Version::getById($data["id"]);
         $version->setPublic($data["public"]);
@@ -544,7 +544,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function versionToSessionAction() {
 
-        $version = Version::getById($this->_getParam("id"));
+        $version = Version::getById($this->getParam("id"));
         $document = $version->loadData();
 
         $key = "document_" . $document->getId();
@@ -558,7 +558,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         $this->versionToSessionAction();
 
-        $version = Version::getById($this->_getParam("id"));
+        $version = Version::getById($this->getParam("id"));
         $document = $version->loadData();
 
         $currentDocument = Document::getById($document->getId());
@@ -581,12 +581,12 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function createSiteAction() {
 
-        $domains = $this->_getParam("domains");
+        $domains = $this->getParam("domains");
         $domains = str_replace(" ", "", $domains);
         $domains = explode(",", $domains);
 
         $site = Site::create(array(
-            "rootId" => intval($this->_getParam("id")),
+            "rootId" => intval($this->getParam("id")),
             "domains" => $domains
         ));
         $site->save();
@@ -596,11 +596,11 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function updateSiteAction() {
 
-        $domains = $this->_getParam("domains");
+        $domains = $this->getParam("domains");
         $domains = str_replace(" ", "", $domains);
         $domains = explode(",", $domains);
 
-        $site = Site::getByRootId(intval($this->_getParam("id")));
+        $site = Site::getByRootId(intval($this->getParam("id")));
         $site->setDomains($domains);
         $site->save();
 
@@ -609,7 +609,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function removeSiteAction() {
 
-        $site = Site::getByRootId(intval($this->_getParam("id")));
+        $site = Site::getByRootId(intval($this->getParam("id")));
         $site->delete();
 
         $this->_helper->json(array("success" => true));
@@ -622,18 +622,18 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $session = new Zend_Session_Namespace("pimcore_copy");
         $session->$transactionId = array("idMapping" => array());
 
-        if ($this->_getParam("type") == "recursive" || $this->_getParam("type") == "recursive-update-references") {
+        if ($this->getParam("type") == "recursive" || $this->getParam("type") == "recursive-update-references") {
 
-            $document = Document::getById($this->_getParam("sourceId"));
+            $document = Document::getById($this->getParam("sourceId"));
 
             // first of all the new parent
             $pasteJobs[] = array(array(
                 "url" => "/admin/document/copy",
                 "params" => array(
-                    "sourceId" => $this->_getParam("sourceId"),
-                    "targetId" => $this->_getParam("targetId"),
+                    "sourceId" => $this->getParam("sourceId"),
+                    "targetId" => $this->getParam("targetId"),
                     "type" => "child",
-                    "enableInheritance" => $this->_getParam("enableInheritance"),
+                    "enableInheritance" => $this->getParam("enableInheritance"),
                     "transactionId" => $transactionId,
                     "saveParentId" => true
                 )
@@ -655,10 +655,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             "url" => "/admin/document/copy",
                             "params" => array(
                                 "sourceId" => $id,
-                                "targetParentId" => $this->_getParam("targetId"),
-                                "sourceParentId" => $this->_getParam("sourceId"),
+                                "targetParentId" => $this->getParam("targetId"),
+                                "sourceParentId" => $this->getParam("sourceId"),
                                 "type" => "child",
-                                "enableInheritance" => $this->_getParam("enableInheritance"),
+                                "enableInheritance" => $this->getParam("enableInheritance"),
                                 "transactionId" => $transactionId
                             )
                         ));
@@ -668,28 +668,28 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
 
             // add id-rewrite steps
-            if($this->_getParam("type") == "recursive-update-references") {
+            if($this->getParam("type") == "recursive-update-references") {
                 for($i=0; $i<(count($childIds)+1); $i++) {
                     $pasteJobs[] = array(array(
                         "url" => "/admin/document/copy-rewrite-ids",
                         "params" => array(
                             "transactionId" => $transactionId,
-                            "enableInheritance" => $this->_getParam("enableInheritance"),
+                            "enableInheritance" => $this->getParam("enableInheritance"),
                             "_dc" => uniqid()
                         )
                     ));
                 }
             }
         }
-        else if ($this->_getParam("type") == "child" || $this->_getParam("type") == "replace") {
+        else if ($this->getParam("type") == "child" || $this->getParam("type") == "replace") {
             // the object itself is the last one
             $pasteJobs[] = array(array(
                 "url" => "/admin/document/copy",
                 "params" => array(
-                    "sourceId" => $this->_getParam("sourceId"),
-                    "targetId" => $this->_getParam("targetId"),
-                    "type" => $this->_getParam("type"),
-                    "enableInheritance" => $this->_getParam("enableInheritance"),
+                    "sourceId" => $this->getParam("sourceId"),
+                    "targetId" => $this->getParam("targetId"),
+                    "type" => $this->getParam("type"),
+                    "enableInheritance" => $this->getParam("enableInheritance"),
                     "transactionId" => $transactionId
                 )
             ));
@@ -704,7 +704,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     public function copyRewriteIdsAction () {
 
         $session = new Zend_Session_Namespace("pimcore_copy");
-        $idStore = $session->{$this->_getParam("transactionId")};
+        $idStore = $session->{$this->getParam("transactionId")};
 
         if(!array_key_exists("rewrite-stack",$idStore)) {
             $idStore["rewrite-stack"] = array_values($idStore["idMapping"]);
@@ -715,7 +715,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         // rewriting elements only for snippets and pages
         if($document instanceof Document_PageSnippet) {
-            if($this->_getParam("enableInheritance") == "true") {
+            if($this->getParam("enableInheritance") == "true") {
                 $elements = $document->getElements();
                 $changedElements = array();
                 $contentMaster = $document->getContentMasterDocument();
@@ -776,7 +776,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         
 
         // write the store back to the session
-        $session->{$this->_getParam("transactionId")} = $idStore;
+        $session->{$this->getParam("transactionId")} = $idStore;
 
         $this->_helper->json(array(
             "success" => true,
@@ -786,19 +786,19 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function copyAction() {
         $success = false;
-        $sourceId = intval($this->_getParam("sourceId"));
+        $sourceId = intval($this->getParam("sourceId"));
         $source = Document::getById($sourceId);
         $session = new Zend_Session_Namespace("pimcore_copy");
         
-        $targetId = intval($this->_getParam("targetId"));
-        if($this->_getParam("targetParentId")) {
-            $sourceParent = Document::getById($this->_getParam("sourceParentId"));
+        $targetId = intval($this->getParam("targetId"));
+        if($this->getParam("targetParentId")) {
+            $sourceParent = Document::getById($this->getParam("sourceParentId"));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
-            if($session->{$this->_getParam("transactionId")}["parentId"]) {
-                $targetParent = Document::getById($session->{$this->_getParam("transactionId")}["parentId"]);
+            if($session->{$this->getParam("transactionId")}["parentId"]) {
+                $targetParent = Document::getById($session->{$this->getParam("transactionId")}["parentId"]);
             } else {
-                $targetParent = Document::getById($this->_getParam("targetParentId"));
+                $targetParent = Document::getById($this->getParam("targetParentId"));
             }
 
 
@@ -811,17 +811,17 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         if($target instanceof Document) {
             if ($target->isAllowed("create")) {
                 if ($source != null) {
-                    if ($this->_getParam("type") == "child") {
-                        $enableInheritance = ($this->_getParam("enableInheritance") == "true") ? true : false;
+                    if ($this->getParam("type") == "child") {
+                        $enableInheritance = ($this->getParam("enableInheritance") == "true") ? true : false;
                         $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance);
-                        $session->{$this->_getParam("transactionId")}["idMapping"][(int) $source->getId()] = (int) $newDocument->getId();
+                        $session->{$this->getParam("transactionId")}["idMapping"][(int) $source->getId()] = (int) $newDocument->getId();
 
                         // this is because the key can get the prefix "_copy" if the target does already exists
-                        if($this->_getParam("saveParentId")) {
-                            $session->{$this->_getParam("transactionId")}["parentId"] = $newDocument->getId();
+                        if($this->getParam("saveParentId")) {
+                            $session->{$this->getParam("transactionId")}["parentId"] = $newDocument->getId();
                         }
                     }
-                    else if ($this->_getParam("type") == "replace") {
+                    else if ($this->getParam("type") == "replace") {
                         $this->_documentService->copyContents($target, $source);
                     }
 
@@ -848,8 +848,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         include_once 'DaisyDiff/HTMLDiff.php';
         include_once 'simple_html_dom.php';
 
-        $versionFrom = Version::getById($this->_getParam("from"));
-        $versionTo = Version::getById($this->_getParam("to"));
+        $versionFrom = Version::getById($this->getParam("from"));
+        $versionTo = Version::getById($this->getParam("to"));
 
         $docFrom = $versionFrom->loadData();
         $docTo = $versionTo->loadData();
@@ -859,8 +859,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
         $request = $this->getRequest();
 
-        $fromSource = file_get_html($request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getFullPath() . "?pimcore_version=" . $this->_getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
-        $toSource = file_get_html($request->getScheme() . "://" . $request->getHttpHost() . $docTo->getFullPath() . "?pimcore_version=" . $this->_getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $fromSource = file_get_html($request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getFullPath() . "?pimcore_version=" . $this->getParam("from") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
+        $toSource = file_get_html($request->getScheme() . "://" . $request->getHttpHost() . $docTo->getFullPath() . "?pimcore_version=" . $this->getParam("to") . "&pimcore_admin_sid=" . $_COOKIE["pimcore_admin_sid"]);
 
         if ($docFrom instanceof Document_Page) {
             $from = $fromSource->find("body", 0);
@@ -965,7 +965,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function getIdForPathAction() {
 
-        if ($doc = Document::getByPath($this->_getParam("path"))) {
+        if ($doc = Document::getByPath($this->getParam("path"))) {
             $this->_helper->json(array(
                 "id" => $doc->getId(),
                 "type" => $doc->getType()
@@ -979,8 +979,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getVersionsAction() {
-        if ($this->_getParam("id")) {
-            $doc = Document::getById($this->_getParam("id"));
+        if ($this->getParam("id")) {
+            $doc = Document::getById($this->getParam("id"));
             $versions = $doc->getVersions();
 
             $this->_helper->json(array("versions" => $versions));
@@ -1010,7 +1010,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function seopanelTreeAction() {
 
-        $document = Document::getById($this->_getParam("node"));
+        $document = Document::getById($this->getParam("node"));
 
         $documents = array();
         if ($document->hasChilds()) {
@@ -1138,7 +1138,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     public function getAvailableActionsAction () {
 
         $actions = array();
-        $controller = $this->_getParam("controllerName");
+        $controller = $this->getParam("controllerName");
         $controllerClass = str_replace("-", " ", $controller);
         $controllerClass = str_replace(" ", "", ucwords($controllerClass));
         $controllerFile = PIMCORE_WEBSITE_PATH . "/controllers/" . $controllerClass . "Controller.php";
@@ -1176,7 +1176,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
     public function openByUrlAction () {
 
-        $urlParts = parse_url($this->_getParam("url"));
+        $urlParts = parse_url($this->getParam("url"));
         if($urlParts["path"]) {
             $document = Document::getByPath($urlParts["path"]);
             if($document) {

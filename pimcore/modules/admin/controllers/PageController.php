@@ -18,14 +18,14 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
     public function getDataByIdAction() {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->_getParam("id"), "document")) {
+        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "document")
+                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->_getParam("id"), "document");
+        Element_Editlock::lock($this->getParam("id"), "document");
 
-        $page = Document_Page::getById($this->_getParam("id"));
+        $page = Document_Page::getById($this->getParam("id"));
         $page = $this->getLatestVersion($page);
         
         $page->getVersions();
@@ -59,27 +59,27 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
     public function saveAction() {
 
-        if ($this->_getParam("id")) {
-            $page = Document_Page::getById($this->_getParam("id"));
+        if ($this->getParam("id")) {
+            $page = Document_Page::getById($this->getParam("id"));
             
             $page = $this->getLatestVersion($page);
             $page->setUserModification($this->getUser()->getId());
 
             // save to session
-            $key = "document_" . $this->_getParam("id");
+            $key = "document_" . $this->getParam("id");
             $session = new Zend_Session_Namespace("pimcore_documents");
             $session->$key = $page;
 
-            if ($this->_getParam("task") == "unpublish") {
+            if ($this->getParam("task") == "unpublish") {
                 $page->setPublished(false);
             }
-            if ($this->_getParam("task") == "publish") {
+            if ($this->getParam("task") == "publish") {
                 $page->setPublished(true);
             }
 
             // check for redirects
-            if($this->getUser()->isAllowed("redirects") && $this->_getParam("settings")) {
-                $settings = Zend_Json::decode($this->_getParam("settings"));
+            if($this->getUser()->isAllowed("redirects") && $this->getParam("settings")) {
+                $settings = Zend_Json::decode($this->getParam("settings"));
 
                 if(is_array($settings)) {
                     $redirectList = new Redirect_List();
@@ -118,7 +118,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
             }
 
             // only save when publish or unpublish
-            if (($this->_getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->_getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
+            if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
                 $this->setValuesToDocument($page);
 
 
@@ -154,7 +154,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
     public function mobilePreviewAction() {
 
-        $page = Document::getById($this->_getParam("id"));
+        $page = Document::getById($this->getParam("id"));
 
         if($page instanceof Document_Page) {
             $this->view->previewUrl = $page->getFullPath() . "?pimcore_preview=true&time=" . time();
@@ -166,8 +166,8 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $targets = array();
         $list = new Tool_Targeting_List();
 
-        if($this->_getParam("documentId")) {
-            $list->setCondition("documentId = ?", $this->_getParam("documentId"));
+        if($this->getParam("documentId")) {
+            $list->setCondition("documentId = ?", $this->getParam("documentId"));
         } else {
             $list->setCondition("documentId IS NULL OR documentId = ''");
         }
@@ -185,10 +185,10 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
     public function targetingAddAction() {
 
         $target = new Tool_Targeting();
-        $target->setName($this->_getParam("name"));
+        $target->setName($this->getParam("name"));
 
-        if($this->_getParam("documentId")) {
-            $target->setDocumentId($this->_getParam("documentId"));
+        if($this->getParam("documentId")) {
+            $target->setDocumentId($this->getParam("documentId"));
         }
 
         $target->save();
@@ -201,7 +201,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $success = false;
 
-        $target = Tool_Targeting::getById($this->_getParam("id"));
+        $target = Tool_Targeting::getById($this->getParam("id"));
         if($target) {
             $target->delete();
             $success = true;
@@ -212,7 +212,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
     public function targetingGetAction() {
 
-        $target = Tool_Targeting::getById($this->_getParam("id"));
+        $target = Tool_Targeting::getById($this->getParam("id"));
         $redirectUrl = $target->getActions()->getRedirectUrl();
         if(is_numeric($redirectUrl)) {
             $doc = Document::getById($redirectUrl);
@@ -228,7 +228,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
 
         $data = Zend_Json::decode($this->getParam("data"));
 
-        $target = Tool_Targeting::getById($this->_getParam("id"));
+        $target = Tool_Targeting::getById($this->getParam("id"));
         $target->setValues($data["settings"]);
 
         $target->setConditions($data["conditions"]);

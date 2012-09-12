@@ -25,7 +25,7 @@ class Install_CheckController extends Pimcore_Controller_Action {
             if(!$user instanceof User) {
                die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.xml for the time of the check.");
             }
-        } else if ($this->_getParam("mysql_adapter")) {
+        } else if ($this->getParam("mysql_adapter")) {
 
         } else {
             die("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
@@ -194,15 +194,15 @@ class Install_CheckController extends Pimcore_Controller_Action {
 
         $db = null;
 
-        if($this->_getParam("mysql_adapter")) {
+        if($this->getParam("mysql_adapter")) {
             // this is before installing
             try {
-                $db = Zend_Db::factory($this->_getParam("mysql_adapter"),array(
-                    'host' => $this->_getParam("mysql_host"),
-                    'username' => $this->_getParam("mysql_username"),
-                    'password' => $this->_getParam("mysql_password"),
-                    'dbname' => $this->_getParam("mysql_database"),
-                    "port" => $this->_getParam("mysql_port")
+                $db = Zend_Db::factory($this->getParam("mysql_adapter"),array(
+                    'host' => $this->getParam("mysql_host"),
+                    'username' => $this->getParam("mysql_username"),
+                    'password' => $this->getParam("mysql_password"),
+                    'dbname' => $this->getParam("mysql_database"),
+                    "port" => $this->getParam("mysql_port")
                 ));
 
                 $db->getConnection();

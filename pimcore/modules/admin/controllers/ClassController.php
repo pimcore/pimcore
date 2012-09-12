@@ -21,10 +21,10 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
         // check permissions
         $notRestrictedActions = array("get-tree", "fieldcollection-list", "fieldcollection-tree", "fieldcollection-get", "get-class-definition-for-column-config", "objectbrick-list", "objectbrick-tree", "objectbrick-get");
-        if (!in_array($this->_getParam("action"), $notRestrictedActions)) {
+        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             if (!$this->getUser()->isAllowed("classes")) {
 
-                $this->_redirect("/admin/login");
+                $this->redirect("/admin/login");
                 die();
             }
         }
@@ -79,7 +79,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getAction() {
-        $class = Object_Class::getById(intval($this->_getParam("id")));
+        $class = Object_Class::getById(intval($this->getParam("id")));
         $class->setFieldDefinitions(null);
 
         $this->_helper->json($class);
@@ -87,7 +87,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
     public function addAction() {
         $class = Object_Class::create();
-        $class->setName($this->correctClassname($this->_getParam("name")));
+        $class->setName($this->correctClassname($this->getParam("name")));
         $class->setUserOwner($this->user->getId());
         $class->save();
 
@@ -95,7 +95,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
     public function deleteAction() {
-        $class = Object_Class::getById(intval($this->_getParam("id")));
+        $class = Object_Class::getById(intval($this->getParam("id")));
         $class->delete();
 
         $this->removeViewRenderer();
@@ -103,7 +103,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
     public function importClassAction() {
 
-        $class = Object_Class::getById(intval($this->_getParam("id")));
+        $class = Object_Class::getById(intval($this->getParam("id")));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
         $conf = new Zend_Config_Xml($data);
@@ -143,10 +143,10 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     public function exportClassAction() {
 
         $this->removeViewRenderer();
-        $class = Object_Class::getById(intval($this->_getParam("id")));
+        $class = Object_Class::getById(intval($this->getParam("id")));
 
         if (!$class instanceof Object_Class) {
-            $errorMessage = ": Class with id [ " . $this->_getParam("id") . " not found. ]";
+            $errorMessage = ": Class with id [ " . $this->getParam("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
@@ -159,10 +159,10 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
     public function saveAction() {
-        $class = Object_Class::getById(intval($this->_getParam("id")));
+        $class = Object_Class::getById(intval($this->getParam("id")));
 
-        $configuration = Zend_Json::decode($this->_getParam("configuration"));
-        $values = Zend_Json::decode($this->_getParam("values"));
+        $configuration = Zend_Json::decode($this->getParam("configuration"));
+        $values = Zend_Json::decode($this->getParam("values"));
 
         // check if the class was changed during editing in the frontend
         if($class->getModificationDate() != $values["modificationDate"]) {
@@ -236,7 +236,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
      */
 
     public function fieldcollectionGetAction() {
-        $fc = Object_Fieldcollection_Definition::getByKey($this->_getParam("id"));
+        $fc = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
         $this->_helper->json($fc);
     }
 
@@ -244,15 +244,15 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
 
         $fc = new Object_Fieldcollection_Definition();
-        $fc->setKey($this->_getParam("key"));
+        $fc->setKey($this->getParam("key"));
 
-        if ($this->_getParam("values")) {
-            $values = Zend_Json::decode($this->_getParam("values"));
+        if ($this->getParam("values")) {
+            $values = Zend_Json::decode($this->getParam("values"));
             $fc->setParentClass($values["parentClass"]);
         }
 
-        if ($this->_getParam("configuration")) {
-            $configuration = Zend_Json::decode($this->_getParam("configuration"));
+        if ($this->getParam("configuration")) {
+            $configuration = Zend_Json::decode($this->getParam("configuration"));
 
             $configuration["datatype"] = "layout";
             $configuration["fieldtype"] = "panel";
@@ -269,7 +269,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
     public function importFieldcollectionAction() {
 
-        $fieldCollection = Object_Fieldcollection_Definition::getByKey($this->_getParam("id"));
+        $fieldCollection = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
         $conf = new Zend_Config_Xml($data);
@@ -293,9 +293,9 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     public function exportFieldcollectionAction() {
 
         $this->removeViewRenderer();
-        $fieldCollection = Object_Fieldcollection_Definition::getByKey($this->_getParam("id"));
+        $fieldCollection = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
         if (!$fieldCollection instanceof Object_Fieldcollection_Definition) {
-            $errorMessage = ": Field-Collection with id [ " . $this->_getParam("id") . " not found. ]";
+            $errorMessage = ": Field-Collection with id [ " . $this->getParam("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
@@ -308,7 +308,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
     public function fieldcollectionDeleteAction() {
-        $fc = Object_Fieldcollection_Definition::getByKey($this->_getParam("id"));
+        $fc = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
         $fc->delete();
 
         $this->_helper->json(array("success" => true));
@@ -336,9 +336,9 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $list = new Object_Fieldcollection_Definition_List();
         $list = $list->load();
 
-        if ($this->_hasParam("allowedTypes")) {
+        if ($this->hasParam("allowedTypes")) {
             $filteredList = array();
-            $allowedTypes = explode(",", $this->_getParam("allowedTypes"));
+            $allowedTypes = explode(",", $this->getParam("allowedTypes"));
             foreach ($list as $type) {
                 if (in_array($type->getKey(), $allowedTypes)) {
                     $filteredList[] = $type;
@@ -354,7 +354,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
 
     public function getClassDefinitionForColumnConfigAction() {
-        $class = Object_Class::getById(intval($this->_getParam("id")));
+        $class = Object_Class::getById(intval($this->getParam("id")));
         $class->setFieldDefinitions(null);
 
         $result = array();
@@ -401,7 +401,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
      */
 
     public function objectbrickGetAction() {
-        $fc = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
+        $fc = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
         $this->_helper->json($fc);
     }
 
@@ -409,17 +409,17 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
 
         $fc = new Object_Objectbrick_Definition();
-        $fc->setKey($this->_getParam("key"));
+        $fc->setKey($this->getParam("key"));
 
-        if ($this->_getParam("values")) {
-            $values = Zend_Json::decode($this->_getParam("values"));
+        if ($this->getParam("values")) {
+            $values = Zend_Json::decode($this->getParam("values"));
 
             $fc->setParentClass($values["parentClass"]);
             $fc->setClassDefinitions($values["classDefinitions"]);
         }
 
-        if ($this->_getParam("configuration")) {
-            $configuration = Zend_Json::decode($this->_getParam("configuration"));
+        if ($this->getParam("configuration")) {
+            $configuration = Zend_Json::decode($this->getParam("configuration"));
 
             $configuration["datatype"] = "layout";
             $configuration["fieldtype"] = "panel";
@@ -436,7 +436,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
 
     public function importObjectbrickAction() {
 
-        $objectBrick = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
+        $objectBrick = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
         $conf = new Zend_Config_Xml($data);
@@ -460,9 +460,9 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     public function exportObjectbrickAction() {
 
         $this->removeViewRenderer();
-        $objectBrick = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
+        $objectBrick = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
         if (!$objectBrick instanceof Object_Objectbrick_Definition) {
-            $errorMessage = ": Object-Brick with id [ " . $this->_getParam("id") . " not found. ]";
+            $errorMessage = ": Object-Brick with id [ " . $this->getParam("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
@@ -475,7 +475,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
     }
 
     public function objectbrickDeleteAction() {
-        $fc = Object_Objectbrick_Definition::getByKey($this->_getParam("id"));
+        $fc = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
         $fc->delete();
 
         $this->_helper->json(array("success" => true));
@@ -501,10 +501,10 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         $list = new Object_Objectbrick_Definition_List();
         $list = $list->load();
 
-        if ($this->_hasParam("class_id") && $this->_hasParam("field_name")) {
+        if ($this->hasParam("class_id") && $this->hasParam("field_name")) {
             $filteredList = array();
-            $classId = $this->_getParam("class_id");
-            $fieldname = $this->_getParam("field_name");
+            $classId = $this->getParam("class_id");
+            $fieldname = $this->getParam("field_name");
             foreach ($list as $type) {
                 $clsDefs = $type->getClassDefinitions();
                 if(!empty($clsDefs)) {
