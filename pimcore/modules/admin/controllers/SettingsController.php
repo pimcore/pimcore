@@ -17,20 +17,20 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function propertiesAction() {
 
-        if ($this->_getParam("data")) {
+        if ($this->getParam("data")) {
             if ($this->getUser()->isAllowed("predefined_properties")) {
-                if ($this->_getParam("xaction") == "destroy") {
+                if ($this->getParam("xaction") == "destroy") {
 
-                    $id = Zend_Json::decode($this->_getParam("data"));
+                    $id = Zend_Json::decode($this->getParam("data"));
 
                     $property = Property_Predefined::getById($id);
                     $property->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
                 }
-                else if ($this->_getParam("xaction") == "update") {
+                else if ($this->getParam("xaction") == "update") {
 
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                    $data = Zend_Json::decode($this->getParam("data"));
 
                     // save type
                     $property = Property_Predefined::getById($data["id"]);
@@ -40,8 +40,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                     $this->_helper->json(array("data" => $property, "success" => true));
                 }
-                else if ($this->_getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                else if ($this->getParam("xaction") == "create") {
+                    $data = Zend_Json::decode($this->getParam("data"));
                     unset($data["id"]);
 
                     // save type
@@ -66,16 +66,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // get list of types
 
             $list = new Property_Predefined_List();
-            $list->setLimit($this->_getParam("limit"));
-            $list->setOffset($this->_getParam("start"));
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
 
-            if($this->_getParam("sort")) {
-                $list->setOrderKey($this->_getParam("sort"));
-                $list->setOrder($this->_getParam("dir"));
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
             }
 
-            if($this->_getParam("filter")) {
-                $list->setCondition("`name` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
+            if($this->getParam("filter")) {
+                $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
             }
 
             $list->load();
@@ -210,7 +210,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function setSystemAction() {
         if ($this->getUser()->isAllowed("system_settings")) {
-            $values = Zend_Json::decode($this->_getParam("data"));
+            $values = Zend_Json::decode($this->getParam("data"));
 
             // convert all special characters to their entities so the xml writer can put it into the file
             $values = array_htmlspecialchars($values);
@@ -452,23 +452,23 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function staticroutesAction() {
 
-        if ($this->_getParam("data")) {
+        if ($this->getParam("data")) {
 
             if ($this->getUser()->isAllowed("routes")) {
 
-                $data = Zend_Json::decode($this->_getParam("data"));
+                $data = Zend_Json::decode($this->getParam("data"));
 
                 foreach ($data as &$value) {
                     $value = trim($value);
                 }
 
-                if ($this->_getParam("xaction") == "destroy") {
+                if ($this->getParam("xaction") == "destroy") {
                     $route = Staticroute::getById($data);
                     $route->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
                 }
-                else if ($this->_getParam("xaction") == "update") {
+                else if ($this->getParam("xaction") == "update") {
                     // save routes
                     $route = Staticroute::getById($data["id"]);
                     $route->setValues($data);
@@ -477,7 +477,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                     $this->_helper->json(array("data" => $route, "success" => true));
                 }
-                else if ($this->_getParam("xaction") == "create") {
+                else if ($this->getParam("xaction") == "create") {
 
                     unset($data["id"]);
 
@@ -498,16 +498,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
             $list = new Staticroute_List();
 
-            $list->setLimit($this->_getParam("limit"));
-            $list->setOffset($this->_getParam("start"));
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
 
-            if($this->_getParam("sort")) {
-                $list->setOrderKey($this->_getParam("sort"));
-                $list->setOrder($this->_getParam("dir"));
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
             }
 
-            if($this->_getParam("filter")) {
-                $list->setCondition("`name` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `pattern` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `reverse` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `controller` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `action` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
+            if($this->getParam("filter")) {
+                $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `pattern` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `reverse` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `controller` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `action` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
             }
             
             $list->load();
@@ -525,7 +525,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function translationsImportAction() {
 
-        $admin = $this->_getParam("admin");
+        $admin = $this->getParam("admin");
 
         if ($this->getUser()->isAllowed("translations")) {
             $languages = Pimcore_Tool::getValidLanguages();
@@ -625,7 +625,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function translationsExportAction() {
 
-        $admin = $this->_getParam("admin");
+        $admin = $this->getParam("admin");
 
         if ($this->getUser()->isAllowed("translations")) {
 
@@ -691,7 +691,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function addAdminTranslationKeysAction() {
         $this->removeViewRenderer();
 
-        $keys = $this->_getParam("keys");
+        $keys = $this->getParam("keys");
         if ($keys) {
             $availableLanguages = Pimcore_Tool_Admin::getLanguages();
             $data = Zend_Json_Decoder::decode($keys);
@@ -726,7 +726,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function translationsAction() {
 
-        $admin = $this->_getParam("admin");
+        $admin = $this->getParam("admin");
 
         if ($admin) {
             $class = new Translation_Admin();
@@ -739,18 +739,18 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // clear translation cache
             Pimcore_Model_Cache::clearTags(array("translator","translate"));
 
-            if ($this->_getParam("data")) {
+            if ($this->getParam("data")) {
 
-                $data = Zend_Json::decode($this->_getParam("data"));
+                $data = Zend_Json::decode($this->getParam("data"));
 
-                if ($this->_getParam("xaction") == "destroy") {
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                if ($this->getParam("xaction") == "destroy") {
+                    $data = Zend_Json::decode($this->getParam("data"));
                     $t = $class::getByKey($data);
                     $t->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
                 }
-                else if ($this->_getParam("xaction") == "update") {
+                else if ($this->getParam("xaction") == "update") {
                     $t = $class::getByKey($data["key"]);
 
                     foreach ($data as $key => $value) {
@@ -769,7 +769,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                     $this->_helper->json(array("data" => $return, "success" => true));
                 }
-                else if ($this->_getParam("xaction") == "create") {
+                else if ($this->getParam("xaction") == "create") {
 
                     try {
                         $t = $class::getByKey($data["key"]);
@@ -807,17 +807,17 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $list->setOrder("asc");
                 $list->setOrderKey("key");
 
-                if($this->_getParam("dir")) {
-                    $list->setOrder($this->_getParam("dir"));
+                if($this->getParam("dir")) {
+                    $list->setOrder($this->getParam("dir"));
                 }
-                if($this->_getParam("sort")) {
-                    $list->setOrderKey($this->_getParam("sort"));
+                if($this->getParam("sort")) {
+                    $list->setOrderKey($this->getParam("sort"));
                 }
 
-                $list->setLimit($this->_getParam("limit"));
-                $list->setOffset($this->_getParam("start"));
-                if ($this->_getParam("filter")) {
-                    $filterTerm = $list->quote("%".strtolower($this->_getParam("filter"))."%");
+                $list->setLimit($this->getParam("limit"));
+                $list->setOffset($this->getParam("start"));
+                if ($this->getParam("filter")) {
+                    $filterTerm = $list->quote("%".strtolower($this->getParam("filter"))."%");
                     $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm);
                 }
                 $list->load();
@@ -838,7 +838,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function translationsCleanupAction() {
 
-        $listClass = "Translation_" . ucfirst($this->_getParam("type")) . "_List";
+        $listClass = "Translation_" . ucfirst($this->getParam("type")) . "_List";
         if(class_exists($listClass)) {
 
             $list = new $listClass();
@@ -882,22 +882,22 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function redirectsAction() {
 
-        if ($this->_getParam("data")) {
+        if ($this->getParam("data")) {
 
             if ($this->getUser()->isAllowed("redirects")) {
 
-                if ($this->_getParam("xaction") == "destroy") {
+                if ($this->getParam("xaction") == "destroy") {
 
-                    $id = Zend_Json::decode($this->_getParam("data"));
+                    $id = Zend_Json::decode($this->getParam("data"));
 
                     $redirect = Redirect::getById($id);
                     $redirect->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
                 }
-                else if ($this->_getParam("xaction") == "update") {
+                else if ($this->getParam("xaction") == "update") {
 
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                    $data = Zend_Json::decode($this->getParam("data"));
 
                     // save redirect
                     $redirect = Redirect::getById($data["id"]);
@@ -920,8 +920,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     }
                     $this->_helper->json(array("data" => $redirect, "success" => true));
                 }
-                else if ($this->_getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                else if ($this->getParam("xaction") == "create") {
+                    $data = Zend_Json::decode($this->getParam("data"));
                     unset($data["id"]);
 
                     // save route
@@ -953,16 +953,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // get list of routes
 
             $list = new Redirect_List();
-            $list->setLimit($this->_getParam("limit"));
-            $list->setOffset($this->_getParam("start"));
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
 
-            if($this->_getParam("sort")) {
-                $list->setOrderKey($this->_getParam("sort"));
-                $list->setOrder($this->_getParam("dir"));
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
             }
 
-            if($this->_getParam("filter")) {
-                $list->setCondition("`source` LIKE " . $list->quote("%".$this->_getParam("filter")."%") . " OR `target` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
+            if($this->getParam("filter")) {
+                $list->setCondition("`source` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `target` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
             }
             
 
@@ -991,24 +991,24 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function glossaryAction() {
 
-        if ($this->_getParam("data")) {
+        if ($this->getParam("data")) {
 
             if ($this->getUser()->isAllowed("glossary")) {
 
                 Pimcore_Model_Cache::clearTag("glossary");
 
-                if ($this->_getParam("xaction") == "destroy") {
+                if ($this->getParam("xaction") == "destroy") {
 
-                    $id = Zend_Json::decode($this->_getParam("data"));
+                    $id = Zend_Json::decode($this->getParam("data"));
 
                     $glossary = Glossary::getById($id);
                     $glossary->delete();
 
                     $this->_helper->json(array("success" => true, "data" => array()));
                 }
-                else if ($this->_getParam("xaction") == "update") {
+                else if ($this->getParam("xaction") == "update") {
 
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                    $data = Zend_Json::decode($this->getParam("data"));
 
                     // save glossary
                     $glossary = Glossary::getById($data["id"]);
@@ -1035,8 +1035,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                     $this->_helper->json(array("data" => $glossary, "success" => true));
                 }
-                else if ($this->_getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->_getParam("data"));
+                else if ($this->getParam("xaction") == "create") {
+                    $data = Zend_Json::decode($this->getParam("data"));
                     unset($data["id"]);
 
                     // save glossary
@@ -1071,16 +1071,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // get list of routes
 
             $list = new Glossary_List();
-            $list->setLimit($this->_getParam("limit"));
-            $list->setOffset($this->_getParam("start"));
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
 
-            if($this->_getParam("sort")) {
-                $list->setOrderKey($this->_getParam("sort"));
-                $list->setOrder($this->_getParam("dir"));
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
             }
 
-            if($this->_getParam("filter")) {
-                $list->setCondition("`text` LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
+            if($this->getParam("filter")) {
+                $list->setCondition("`text` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
             }
 
             $list->load();
@@ -1173,7 +1173,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function websiteSaveAction() {
 
-        $data = Zend_Json::decode($this->_getParam("data"));
+        $data = Zend_Json::decode($this->getParam("data"));
 
         // convert all special characters to their entities to ensure that Zend_Config can write it
         foreach ($data as &$setting) {
@@ -1265,7 +1265,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $alreadyExist = false;
 
         try {
-            Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
+            Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
             $alreadyExist = true;
         } catch (Exception $e) {
             $alreadyExist = false;
@@ -1273,7 +1273,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if(!$alreadyExist) {
             $pipe = new Asset_Image_Thumbnail_Config();
-            $pipe->setName($this->_getParam("name"));
+            $pipe->setName($this->getParam("name"));
             $pipe->save();
         }
 
@@ -1282,7 +1282,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function thumbnailDeleteAction () {
 
-        $pipe = Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
+        $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
         $pipe->delete();
 
         $this->_helper->json(array("success" => true));
@@ -1291,7 +1291,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function thumbnailGetAction () {
 
-        $pipe = Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
+        $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
         //$pipe->delete();
 
         $this->_helper->json($pipe);
@@ -1300,9 +1300,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function thumbnailUpdateAction () {
 
-        $pipe = Asset_Image_Thumbnail_Config::getByName($this->_getParam("name"));
-        $settingsData = Zend_Json::decode($this->_getParam("settings"));
-        $itemsData = Zend_Json::decode($this->_getParam("items"));
+        $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
+        $settingsData = Zend_Json::decode($this->getParam("settings"));
+        $itemsData = Zend_Json::decode($this->getParam("items"));
 
         foreach ($settingsData as $key => $value) {
             $setter = "set" . ucfirst($key);
@@ -1366,7 +1366,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $alreadyExist = false;
 
         try {
-            Asset_Video_Thumbnail_Config::getByName($this->_getParam("name"));
+            Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
             $alreadyExist = true;
         } catch (Exception $e) {
             $alreadyExist = false;
@@ -1374,7 +1374,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if(!$alreadyExist) {
             $pipe = new Asset_Video_Thumbnail_Config();
-            $pipe->setName($this->_getParam("name"));
+            $pipe->setName($this->getParam("name"));
             $pipe->save();
         }
 
@@ -1383,7 +1383,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function videoThumbnailDeleteAction () {
 
-        $pipe = Asset_Video_Thumbnail_Config::getByName($this->_getParam("name"));
+        $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
         $pipe->delete();
 
         $this->_helper->json(array("success" => true));
@@ -1392,15 +1392,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function videoThumbnailGetAction () {
 
-        $pipe = Asset_Video_Thumbnail_Config::getByName($this->_getParam("name"));
+        $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
         $this->_helper->json($pipe);
     }
 
 
     public function videoThumbnailUpdateAction () {
 
-        $pipe = Asset_Video_Thumbnail_Config::getByName($this->_getParam("name"));
-        $data = Zend_Json::decode($this->_getParam("configuration"));
+        $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
+        $data = Zend_Json::decode($this->getParam("configuration"));
 
         $items = array();
         foreach ($data as $key => $value) {
@@ -1435,9 +1435,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots.txt";
 
-        if($this->_getParam("data") !== null) {
+        if($this->getParam("data") !== null) {
             // save data
-            file_put_contents($robotsPath, $this->_getParam("data"));
+            file_put_contents($robotsPath, $this->getParam("data"));
 
             $this->_helper->json(array(
                 "success" => true
@@ -1481,7 +1481,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function tagManagementAddAction () {
 
         try {
-            Tool_Tag_Config::getByName($this->_getParam("name"));
+            Tool_Tag_Config::getByName($this->getParam("name"));
             $alreadyExist = true;
         } catch (Exception $e) {
             $alreadyExist = false;
@@ -1489,7 +1489,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if(!$alreadyExist) {
             $tag = new Tool_Tag_Config();
-            $tag->setName($this->_getParam("name"));
+            $tag->setName($this->getParam("name"));
             $tag->save();
         }
 
@@ -1498,7 +1498,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementDeleteAction () {
 
-        $tag = Tool_Tag_Config::getByName($this->_getParam("name"));
+        $tag = Tool_Tag_Config::getByName($this->getParam("name"));
         $tag->delete();
 
         $this->_helper->json(array("success" => true));
@@ -1507,15 +1507,15 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementGetAction () {
 
-        $tag = Tool_Tag_Config::getByName($this->_getParam("name"));
+        $tag = Tool_Tag_Config::getByName($this->getParam("name"));
         $this->_helper->json($tag);
     }
 
 
     public function tagManagementUpdateAction () {
 
-        $tag = Tool_Tag_Config::getByName($this->_getParam("name"));
-        $data = Zend_Json::decode($this->_getParam("configuration"));
+        $tag = Tool_Tag_Config::getByName($this->getParam("name"));
+        $data = Zend_Json::decode($this->getParam("configuration"));
         $data = array_htmlspecialchars($data);
 
         $items = array();

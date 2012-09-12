@@ -18,14 +18,14 @@ class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document 
     public function getDataByIdAction() {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->_getParam("id"), "document")) {
+        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "document")
+                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->_getParam("id"), "document");
+        Element_Editlock::lock($this->getParam("id"), "document");
 
-        $link = Document_Hardlink::getById($this->_getParam("id"));
+        $link = Document_Hardlink::getById($this->getParam("id"));
         $link->idPath = Pimcore_Tool::getIdPathForElement($link);
         $link->userPermissions = $link->getUserPermissions();
         $link->setLocked($link->isLocked());
@@ -44,22 +44,22 @@ class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document 
     }
 
     public function saveAction() {
-        if ($this->_getParam("id")) {
-            $link = Document_Hardlink::getById($this->_getParam("id"));
+        if ($this->getParam("id")) {
+            $link = Document_Hardlink::getById($this->getParam("id"));
             $this->setValuesToDocument($link);
 
             $link->setModificationDate(time());
             $link->setUserModification($this->getUser()->getId());
 
-            if ($this->_getParam("task") == "unpublish") {
+            if ($this->getParam("task") == "unpublish") {
                 $link->setPublished(false);
             }
-            if ($this->_getParam("task") == "publish") {
+            if ($this->getParam("task") == "publish") {
                 $link->setPublished(true);
             }
 
             // only save when publish or unpublish
-            if (($this->_getParam("task") == "publish" && $link->isAllowed("publish")) || ($this->_getParam("task") == "unpublish" && $link->isAllowed("unpublish"))) {
+            if (($this->getParam("task") == "publish" && $link->isAllowed("publish")) || ($this->getParam("task") == "unpublish" && $link->isAllowed("unpublish"))) {
                 $link->save();
 
                 $this->_helper->json(array("success" => true));
@@ -72,7 +72,7 @@ class Admin_HardlinkController extends Pimcore_Controller_Action_Admin_Document 
     protected function setValuesToDocument(Document_Hardlink $link) {
 
         // data
-        $data = Zend_Json::decode($this->_getParam("data"));
+        $data = Zend_Json::decode($this->getParam("data"));
 
         $sourceId = null;
         if($sourceDocument = Document::getByPath($data["sourcePath"])) {

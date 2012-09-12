@@ -20,10 +20,10 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
         // check permissions
         $notRestrictedActions = array();
-        if (!in_array($this->_getParam("action"), $notRestrictedActions)) {
+        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             if (!$this->getUser()->isAllowed("documents")) {
 
-                $this->_redirect("/admin/login");
+                $this->redirect("/admin/login");
                 die();
             }
         }
@@ -32,7 +32,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
     protected function addPropertiesToDocument(Document $document) {
 
         // properties
-        if ($this->_getParam("properties")) {
+        if ($this->getParam("properties")) {
 
             $properties = array();
             // assign inherited properties
@@ -42,7 +42,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
                 }
             }
 
-            $propertiesData = Zend_Json::decode($this->_getParam("properties"));
+            $propertiesData = Zend_Json::decode($this->getParam("properties"));
 
             if (is_array($propertiesData)) {
                 foreach ($propertiesData as $propertyName => $propertyData) {
@@ -77,9 +77,9 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
     protected function addSchedulerToDocument(Document $document) {
 
         // scheduled tasks
-        if ($this->_getParam("scheduler")) {
+        if ($this->getParam("scheduler")) {
             $tasks = array();
-            $tasksData = Zend_Json::decode($this->_getParam("scheduler"));
+            $tasksData = Zend_Json::decode($this->getParam("scheduler"));
 
             if (!empty($tasksData)) {
                 foreach ($tasksData as $taskData) {
@@ -99,9 +99,9 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
     protected function addSettingsToDocument(Document $document) {
 
         // settings
-        if ($this->_getParam("settings")) {
+        if ($this->getParam("settings")) {
             if ($document->isAllowed("settings")) {
-                $settings = Zend_Json::decode($this->_getParam("settings"));
+                $settings = Zend_Json::decode($this->getParam("settings"));
                 $document->setValues($settings);
             }
         }
@@ -110,8 +110,8 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
     protected function addDataToDocument(Document $document) {
 
         // data
-        if ($this->_getParam("data")) {
-            $data = Zend_Json::decode($this->_getParam("data"));
+        if ($this->getParam("data")) {
+            $data = Zend_Json::decode($this->getParam("data"));
             foreach ($data as $name => $value) {
                 $data = $value["data"];
                 $type = $value["type"];
@@ -122,13 +122,13 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
     public function saveToSessionAction() {
 
-        if ($this->_getParam("id")) {
+        if ($this->getParam("id")) {
 
-            $key = "document_" . $this->_getParam("id");
+            $key = "document_" . $this->getParam("id");
             $session = new Zend_Session_Namespace("pimcore_documents");
 
             if (!$document = $session->$key) {
-                $document = Document::getById($this->_getParam("id"));
+                $document = Document::getById($this->getParam("id"));
             }
 
             // set _fulldump otherwise the properties will be removed because of the session-serialize 
@@ -145,11 +145,11 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
         $conf = Pimcore_Config::getSystemConfig();
         $key  = $conf->services->translate->apikey;
-        $locale = new Zend_Locale($this->_getParam("language"));
+        $locale = new Zend_Locale($this->getParam("language"));
         $language = $locale->getLanguage();
 
         $supportedTypes = array("input","textarea","wysiwyg");
-        $data = Zend_Json::decode($this->_getParam("data"));
+        $data = Zend_Json::decode($this->getParam("data"));
 
         foreach ($data as &$d) {
             if(in_array($d["type"],$supportedTypes)) {
@@ -170,7 +170,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
     }
 
     public function removeFromSessionAction() {
-        $key = "document_" . $this->_getParam("id");
+        $key = "document_" . $this->getParam("id");
         $session = new Zend_Session_Namespace("pimcore_documents");
 
         if ($document = $session->$key) {
@@ -203,10 +203,10 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
      */
     public function changeMasterDocumentAction() {
 
-        $doc = Document::getById($this->_getParam("id"));
+        $doc = Document::getById($this->getParam("id"));
         if($doc instanceof Document_PageSnippet) {
             $doc->setElements(array());
-            $doc->setContentMasterDocumentId($this->_getParam("contentMasterDocumentPath"));
+            $doc->setContentMasterDocumentId($this->getParam("contentMasterDocumentPath"));
             $doc->saveVersion();
         }
 

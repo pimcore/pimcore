@@ -40,8 +40,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             $locale = (string) Zend_Registry::get("Zend_Locale");
             $this->setLanguage($locale);
         } else {
-            if ($this->_getParam("language")) {
-                $this->setLanguage($this->_getParam("language"));
+            if ($this->getParam("language")) {
+                $this->setLanguage($this->getParam("language"));
             }
             else {
                 $config = Pimcore_Config::getSystemConfig();
@@ -78,8 +78,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
             // this is to make it possible to use the session id as a part of the route (ZF default route) used for pixlr.com editors, etc.
-            if($this->_getParam("pimcore_admin_sid")) {
-                $_REQUEST["pimcore_admin_sid"] = $this->_getParam("pimcore_admin_sid");
+            if($this->getParam("pimcore_admin_sid")) {
+                $_REQUEST["pimcore_admin_sid"] = $this->getParam("pimcore_admin_sid");
             }
 
             // authenticate user, first try to authenticate with session information
@@ -91,7 +91,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 }
             } else {
                 // try to authenticate with digest, but this is only allowed for WebDAV
-                if ($this->_getParam("module") == "admin" && $this->_getParam("controller") == "asset" && $this->_getParam("action") == "webdav") {
+                if ($this->getParam("module") == "admin" && $this->getParam("controller") == "asset" && $this->getParam("action") == "webdav") {
                     $user = Pimcore_Tool_Authentication::authenticateDigest();
                     if($user instanceof User) {
                         $this->setUser($user);
@@ -105,7 +105,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             }
 
             // redirect to the login-page if the user isn't authenticated
-            if (!$this->getUser() instanceof User && !($this->_getParam("module") == "admin" && $this->_getParam("controller") == "login")) {
+            if (!$this->getUser() instanceof User && !($this->getParam("module") == "admin" && $this->getParam("controller") == "login")) {
 
                 // put a detailed message into the debug.log
                 Logger::warn("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!");
@@ -120,13 +120,13 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 // send a auth header for the client (is covered by the ajax object in javascript)
                 $this->getResponse()->setHeader("X-Pimcore-Auth","required");
                 // redirect to login page
-                $this->_redirect("/admin/login");
+                $this->redirect("/admin/login");
                 // exit the execution -> just to be sure
                 exit;
             }
 
             // we're now authenticated so we can remove the default error handler so that we get just the normal PHP errors
-            if($this->_getParam("controller") != "login") {
+            if($this->getParam("controller") != "login") {
                 $front = Zend_Controller_Front::getInstance();
                 $front->unregisterPlugin("Pimcore_Controller_Plugin_ErrorHandler");
                 $front->throwExceptions(true);

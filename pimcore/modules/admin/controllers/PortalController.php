@@ -76,7 +76,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         
         foreach ($config["positions"] as $col) {
             foreach ($col as $row) {
-                if($row != $this->_getParam("type")) {
+                if($row != $this->getParam("type")) {
                     $newConfig[$colCount][] = $row;
                 }
             }
@@ -93,7 +93,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         
         $config = $this->getCurrentConfiguration();
         
-        $config["positions"][0][] = $this->_getParam("type");
+        $config["positions"][0][] = $this->getParam("type");
         
         $this->saveConfiguration($config);
         
@@ -111,14 +111,14 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         
         foreach ($config["positions"] as $col) {
             foreach ($col as $row) {
-                if($row != $this->_getParam("type")) {
+                if($row != $this->getParam("type")) {
                     $newConfig[$colCount][] = $row;
                 }
             }
             $colCount++;
         }
         
-        array_splice($newConfig[$this->_getParam("column")],$this->_getParam("row"),0,$this->_getParam("type"));
+        array_splice($newConfig[$this->getParam("column")],$this->getParam("row"),0,$this->getParam("type"));
         
         $config["positions"] = $newConfig;
         $this->saveConfiguration($config);
@@ -174,7 +174,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
     public function portletFeedSaveAction () {
         $config = $this->getCurrentConfiguration();
         
-        $config["settings"]["pimcore.layout.portlets.feed"]["url"] = $this->_getParam("url");
+        $config["settings"]["pimcore.layout.portlets.feed"]["url"] = $this->getParam("url");
         
         $this->saveConfiguration($config);
         exit;

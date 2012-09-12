@@ -98,8 +98,8 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
     }
 
     public function preDispatch() {
-        if ($this->_hasParam("_segment")) {
-            $this->_helper->viewRenderer->setResponseSegment($this->_getParam("_segment"));
+        if ($this->hasParam("_segment")) {
+            $this->_helper->viewRenderer->setResponseSegment($this->getParam("_segment"));
         }
     }
 

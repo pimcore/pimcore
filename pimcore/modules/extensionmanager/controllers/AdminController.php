@@ -87,9 +87,9 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
     }
 
     public function toggleExtensionStateAction () {
-        $type = $this->_getParam("type");
-        $id = $this->_getParam("id");
-        $method = $this->_getParam("method");
+        $type = $this->getParam("type");
+        $id = $this->getParam("id");
+        $method = $this->getParam("method");
 
         if($type && $id) {
             Pimcore_ExtensionManager::$method($type, $id);
@@ -101,8 +101,8 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
 
     public function installAction() {
 
-        $type = $this->_getParam("type");
-        $id = $this->_getParam("id");
+        $type = $this->getParam("type");
+        $id = $this->getParam("id");
 
         if($type == "plugin") {
 
@@ -133,8 +133,8 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
 
     public function uninstallAction() {
 
-        $type = $this->_getParam("type");
-        $id = $this->_getParam("id");
+        $type = $this->getParam("type");
+        $id = $this->getParam("id");
 
         if($type == "plugin") {
 
@@ -163,8 +163,8 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
 
     public function deleteAction () {
 
-        $type = $this->_getParam("type");
-        $id = $this->_getParam("id");
+        $type = $this->getParam("type");
+        $id = $this->getParam("id");
 
         Pimcore_ExtensionManager::delete($id, $type);
 

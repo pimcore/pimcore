@@ -217,6 +217,7 @@ class Pimcore_View extends Zend_View {
     }
 
     /**
+     * @deprecated
      * @param $key
      * @return mixed
      */
@@ -232,6 +233,7 @@ class Pimcore_View extends Zend_View {
     }
 
     /**
+     * @deprecated
      * @return array
      */
     public function _getAllParams () {

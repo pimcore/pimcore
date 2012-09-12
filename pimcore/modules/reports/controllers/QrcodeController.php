@@ -37,7 +37,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
     public function addAction () {
 
         try {
-            Tool_Qrcode_Config::getByName($this->_getParam("name"));
+            Tool_Qrcode_Config::getByName($this->getParam("name"));
             $alreadyExist = true;
         } catch (Exception $e) {
             $alreadyExist = false;
@@ -45,7 +45,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
         if(!$alreadyExist) {
             $code = new Tool_Qrcode_Config();
-            $code->setName($this->_getParam("name"));
+            $code->setName($this->getParam("name"));
             $code->save();
         }
 
@@ -54,7 +54,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function deleteAction () {
 
-        $code = Tool_Qrcode_Config::getByName($this->_getParam("name"));
+        $code = Tool_Qrcode_Config::getByName($this->getParam("name"));
         $code->delete();
 
         $this->_helper->json(array("success" => true));
@@ -63,15 +63,15 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function getAction () {
 
-        $code = Tool_Qrcode_Config::getByName($this->_getParam("name"));
+        $code = Tool_Qrcode_Config::getByName($this->getParam("name"));
         $this->_helper->json($code);
     }
 
 
     public function updateAction () {
 
-        $code = Tool_Qrcode_Config::getByName($this->_getParam("name"));
-        $data = Zend_Json::decode($this->_getParam("configuration"));
+        $code = Tool_Qrcode_Config::getByName($this->getParam("name"));
+        $data = Zend_Json::decode($this->getParam("configuration"));
         $data = array_htmlspecialchars($data);
 
         foreach ($data as $key => $value) {
@@ -88,7 +88,7 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function codeAction () {
 
-        $url = $this->_getParam("url");
+        $url = $this->getParam("url");
         $urlParts = parse_url($url);
 
         if(empty($urlParts["host"])) {
@@ -98,14 +98,14 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
             $urlParts["scheme"] = $this->getRequest()->getScheme();
         }
 
-        if($this->_getParam("googleAnalytics") === "true") {
+        if($this->getParam("googleAnalytics") === "true") {
             if(!array_key_exists("query", $urlParts)) {
                 $urlParts["query"] = "";
             } else {
                 $urlParts["query"] .= "&";
             }
 
-            $urlParts["query"] .= "utm_source=Mobile&utm_medium=QR-Code&utm_campaign=" . $this->_getParam("name");
+            $urlParts["query"] .= "utm_source=Mobile&utm_medium=QR-Code&utm_campaign=" . $this->getParam("name");
         }
 
         $url = $urlParts["scheme"] . "://" . $urlParts["host"] . $urlParts["path"];
@@ -124,14 +124,14 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
             'moduleSize' => 10
         );
 
-        $extension = $this->_getParam("renderer");
+        $extension = $this->getParam("renderer");
         if($extension == "image") {
             $extension ="png";
         }
 
         $renderSettings = array();
-        if($this->_getParam("download")) {
-            $renderSettings["sendResult"] = array('Content-Disposition: attachment;filename="qrcode-' . $this->_getParam("name") . '.' . $extension . '"');
+        if($this->getParam("download")) {
+            $renderSettings["sendResult"] = array('Content-Disposition: attachment;filename="qrcode-' . $this->getParam("name") . '.' . $extension . '"');
         }
 
         foreach ($this->getAllParams() as $key => $value) {
@@ -151,8 +151,8 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
         }
 
         $renderer = "image";
-        if($this->_getParam("renderer") && in_array($this->_getParam("renderer"), array("pdf", "image", "eps", "svg"))) {
-            $renderer = $this->_getParam("renderer");
+        if($this->getParam("renderer") && in_array($this->getParam("renderer"), array("pdf", "image", "eps", "svg"))) {
+            $renderer = $this->getParam("renderer");
         }
 
         $code = Pimcore_Image_Matrixcode::render('qrcode', $codeSettings, $renderer, $renderSettings);

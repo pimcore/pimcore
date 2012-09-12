@@ -37,7 +37,7 @@ class Admin_BackupController extends Pimcore_Controller_Action_Admin {
     public function filesAction() {
 
         $backup = $this->session->backup;
-        $return = $backup->fileStep($this->_getParam("step"));              
+        $return = $backup->fileStep($this->getParam("step"));
         $this->session->backup = $backup;
                                 
         $this->_helper->json($return);
@@ -55,8 +55,8 @@ class Admin_BackupController extends Pimcore_Controller_Action_Admin {
 
     public function mysqlAction() {
 
-        $name = $this->_getParam("name");
-        $type = $this->_getParam("type");
+        $name = $this->getParam("name");
+        $type = $this->getParam("type");
         
         $backup = $this->session->backup;
         $return = $backup->mysqlData($name, $type);              

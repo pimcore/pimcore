@@ -86,6 +86,7 @@ abstract class Document_Tag_Area_Abstract {
     }
 
     /**
+     * @deprecated
      * @param $key
      * @return mixed
      */
@@ -94,6 +95,7 @@ abstract class Document_Tag_Area_Abstract {
     }
 
     /**
+     * @deprecated
      * @return array
      */
     public function _getAllParams () {

@@ -104,9 +104,9 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
     public function getUpdateInformationAction () {
 
-        $id = $this->_getParam("id");
-        $type = $this->_getParam("type");
-        $excludes = explode("\n", $this->_getParam("exclude"));
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
+        $excludes = explode("\n", $this->getParam("exclude"));
         if(!$excludes[0]) {
             $excludes = array();
         }
@@ -184,8 +184,8 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
         $client = Pimcore_Tool::getHttpClient();
         $client->setParameterPost("data", base64_encode(Pimcore_Tool_Serialize::serialize(array(
-            "id" => $this->_getParam("id"),
-            "type" => $this->_getParam("type"),
+            "id" => $this->getParam("id"),
+            "type" => $this->getParam("type"),
             "token" => Pimcore_Liveconnect::getToken()
         ))));
         $client->setUri("http://extensions.pimcore.org/share/startUpload.php");
@@ -193,7 +193,7 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
         $response = $client->request(Zend_Http_Client::POST);
 
         // call share.php inside the extension
-        $extensionDir = Pimcore_ExtensionManager::getPathForExtension($this->_getParam("id"), $this->_getParam("type"));
+        $extensionDir = Pimcore_ExtensionManager::getPathForExtension($this->getParam("id"), $this->getParam("type"));
         $shareScript = $extensionDir . "/share.php";
         if(is_file($shareScript)) {
             include($shareScript);
@@ -206,11 +206,11 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
         $client = Pimcore_Tool::getHttpClient();
         $client->setParameterPost("data", base64_encode(Pimcore_Tool_Serialize::serialize(array(
-            "id" => $this->_getParam("id"),
-            "type" => $this->_getParam("type"),
+            "id" => $this->getParam("id"),
+            "type" => $this->getParam("type"),
             "token" => Pimcore_Liveconnect::getToken(),
-            "path" => str_replace($this->_getParam("pathPrefix"),"",$this->_getParam("path")),
-            "data" => base64_encode(file_get_contents(str_replace("/",DIRECTORY_SEPARATOR,$this->_getParam("path"))))
+            "path" => str_replace($this->getParam("pathPrefix"),"",$this->getParam("path")),
+            "data" => base64_encode(file_get_contents(str_replace("/",DIRECTORY_SEPARATOR,$this->getParam("path"))))
         ))));
         $client->setUri("http://extensions.pimcore.org/share/uploadFile.php");
 
@@ -226,8 +226,8 @@ class Extensionmanager_ShareController extends Pimcore_Controller_Action_Admin {
 
         $client = Pimcore_Tool::getHttpClient();
         $client->setParameterPost("data", base64_encode(Pimcore_Tool_Serialize::serialize(array(
-            "id" => $this->_getParam("id"),
-            "type" => $this->_getParam("type"),
+            "id" => $this->getParam("id"),
+            "type" => $this->getParam("type"),
             "token" => Pimcore_Liveconnect::getToken()
         ))));
         $client->setUri("http://extensions.pimcore.org/share/verifyUpload.php");

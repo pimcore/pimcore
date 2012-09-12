@@ -18,14 +18,14 @@ class Admin_FolderController extends Pimcore_Controller_Action_Admin_Document {
     public function getDataByIdAction() {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->_getParam("id"), "document")) {
+        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "document")
+                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->_getParam("id"), "document");
+        Element_Editlock::lock($this->getParam("id"), "document");
 
-        $folder = Document_Folder::getById($this->_getParam("id"));
+        $folder = Document_Folder::getById($this->getParam("id"));
         $folder->idPath = Pimcore_Tool::getIdPathForElement($folder);
         $folder->userPermissions = $folder->getUserPermissions();
         $folder->setLocked($folder->isLocked());
@@ -40,8 +40,8 @@ class Admin_FolderController extends Pimcore_Controller_Action_Admin_Document {
     }
 
     public function saveAction() {
-        if ($this->_getParam("id")) {
-            $folder = Document_Folder::getById($this->_getParam("id"));
+        if ($this->getParam("id")) {
+            $folder = Document_Folder::getById($this->getParam("id"));
             $folder->setModificationDate(time());
             $folder->setUserModification($this->getUser()->getId());
 

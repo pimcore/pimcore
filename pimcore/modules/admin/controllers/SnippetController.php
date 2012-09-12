@@ -18,14 +18,14 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
     public function getDataByIdAction() {
 
         // check for lock
-        if (Element_Editlock::isLocked($this->_getParam("id"), "document")) {
+        if (Element_Editlock::isLocked($this->getParam("id"), "document")) {
             $this->_helper->json(array(
-                "editlock" => Element_Editlock::getByElement($this->_getParam("id"), "document")
+                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "document")
             ));
         }
-        Element_Editlock::lock($this->_getParam("id"), "document");
+        Element_Editlock::lock($this->getParam("id"), "document");
 
-        $snippet = Document_Snippet::getById($this->_getParam("id"));
+        $snippet = Document_Snippet::getById($this->getParam("id"));
         $modificationDate = $snippet->getModificationDate();
         
         $snippet = $this->getLatestVersion($snippet);
@@ -53,27 +53,27 @@ class Admin_SnippetController extends Pimcore_Controller_Action_Admin_Document {
     }
 
     public function saveAction() {
-        if ($this->_getParam("id")) {
-            $snippet = Document_Snippet::getById($this->_getParam("id"));
+        if ($this->getParam("id")) {
+            $snippet = Document_Snippet::getById($this->getParam("id"));
             $snippet = $this->getLatestVersion($snippet);
 
             $snippet->setUserModification($this->getUser()->getId());
 
             // save to session
-            $key = "document_" . $this->_getParam("id");
+            $key = "document_" . $this->getParam("id");
             $session = new Zend_Session_Namespace("pimcore_documents");
             $session->$key = $snippet;
 
 
-            if ($this->_getParam("task") == "unpublish") {
+            if ($this->getParam("task") == "unpublish") {
                 $snippet->setPublished(false);
             }
-            if ($this->_getParam("task") == "publish") {
+            if ($this->getParam("task") == "publish") {
                 $snippet->setPublished(true);
             }
 
 
-            if (($this->_getParam("task") == "publish" && $snippet->isAllowed("publish")) or ($this->_getParam("task") == "unpublish" && $snippet->isAllowed("unpublish"))) {
+            if (($this->getParam("task") == "publish" && $snippet->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $snippet->isAllowed("unpublish"))) {
                 $this->setValuesToDocument($snippet);
 
                 try {

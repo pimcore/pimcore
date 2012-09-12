@@ -17,8 +17,8 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
 
 
     public function updateKeyAction() {
-        $id = $this->_getParam("id");
-        $key = $this->_getParam("key");
+        $id = $this->getParam("id");
+        $key = $this->getParam("key");
         $object = Object_Concrete::getById($id);
 
         try {
@@ -39,9 +39,9 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
         // get list of variants
 
 
-        if ($this->_getParam("xaction") == "update") {
+        if ($this->getParam("xaction") == "update") {
 
-            $data = Zend_Json::decode($this->_getParam("data"));
+            $data = Zend_Json::decode($this->getParam("data"));
 
             // save
             $object = Object_Abstract::getById($data["id"]);
@@ -76,7 +76,7 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
 
             try {
                 $object->save();
-                $this->_helper->json(array("data" => Object_Service::gridObjectData($object, $this->_getParam("fields")), "success" => true));
+                $this->_helper->json(array("data" => Object_Service::gridObjectData($object, $this->getParam("fields")), "success" => true));
             } catch (Exception $e) {
                 $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
             }
@@ -84,10 +84,10 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
 
         } else {
 
-            $parentObject = Object_Concrete::getById($this->_getParam("objectId"));
+            $parentObject = Object_Concrete::getById($this->getParam("objectId"));
 
             if(empty($parentObject)) {
-                throw new Exception("No Object found with id " . $this->_getParam("objectId"));
+                throw new Exception("No Object found with id " . $this->getParam("objectId"));
             }
 
             $class = $parentObject->getO_class();
@@ -100,8 +100,8 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
 
             $fields = array();
             $bricks = array();
-            if($this->_getParam("fields")) {
-                $fields = $this->_getParam("fields");
+            if($this->getParam("fields")) {
+                $fields = $this->getParam("fields");
 
                 foreach($fields as $f) {
                     $parts = explode("~", $f);
@@ -111,40 +111,40 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
                 }
             }
 
-            if ($this->_getParam("limit")) {
-                $limit = $this->_getParam("limit");
+            if ($this->getParam("limit")) {
+                $limit = $this->getParam("limit");
             }
-            if ($this->_getParam("start")) {
-                $start = $this->_getParam("start");
+            if ($this->getParam("start")) {
+                $start = $this->getParam("start");
             }
-            if ($this->_getParam("sort")) {
-                if ($this->_getParam("sort") == "fullpath") {
+            if ($this->getParam("sort")) {
+                if ($this->getParam("sort") == "fullpath") {
                     $orderKey = array("o_path", "o_key");
-                } else if ($this->_getParam("sort") == "id") {
+                } else if ($this->getParam("sort") == "id") {
                     $orderKey = "o_id";
-                } else if ($this->_getParam("sort") == "published") {
+                } else if ($this->getParam("sort") == "published") {
                     $orderKey = "o_published";
-                } else if ($this->_getParam("sort") == "modificationDate") {
+                } else if ($this->getParam("sort") == "modificationDate") {
                     $orderKey = "o_modificationDate";
-                } else if ($this->_getParam("sort") == "creationDate") {
+                } else if ($this->getParam("sort") == "creationDate") {
                     $orderKey = "o_creationDate";
                 } else {
-                    $orderKey = $this->_getParam("sort");
+                    $orderKey = $this->getParam("sort");
                 }
             }
-            if ($this->_getParam("dir")) {
-                $order = $this->_getParam("dir");
+            if ($this->getParam("dir")) {
+                $order = $this->getParam("dir");
             }
 
             $listClass = "Object_" . ucfirst($className) . "_List";
 
             $conditionFilters = "o_parentId = " . $parentObject->getId();
             // create filter condition
-            if ($this->_getParam("filter")) {
-                $conditionFilters .=  Object_Service::getFilterCondition($this->_getParam("filter"), $class);
+            if ($this->getParam("filter")) {
+                $conditionFilters .=  Object_Service::getFilterCondition($this->getParam("filter"), $class);
             }
-            if ($this->_getParam("condition")) {
-                $conditionFilters .= " AND (" . $this->_getParam("condition") . ")";
+            if ($this->getParam("condition")) {
+                $conditionFilters .= " AND (" . $this->getParam("condition") . ")";
             }
 
             $list = new $listClass();
