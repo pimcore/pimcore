@@ -44,19 +44,10 @@ class Pimcore_File {
     public static function getValidFilename($tmpFilename) {
         
         $tmpFilename = Pimcore_Tool_Transliteration::toASCII($tmpFilename);
-        $validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~";
-        $filenameParts = array();
+        $tmpFilename = strtolower($tmpFilename);
+        $tmpFilename = preg_replace('/[^a-z0-9-.~_]+/', '-', $tmpFilename);
 
-        for ($i = 0; $i < strlen($tmpFilename); $i++) {
-            if (strpos($validChars, $tmpFilename[$i]) !== false) {
-                $filenameParts[] = $tmpFilename[$i];
-            }
-            else {
-                $filenameParts[] = "_";
-            }
-        }
-
-        return strtolower(implode("", $filenameParts));
+        return $tmpFilename;
     }
 
     /**
