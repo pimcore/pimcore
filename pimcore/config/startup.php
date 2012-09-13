@@ -48,7 +48,6 @@ if (!defined("PIMCORE_LOG_MAIL_PERMANENT"))  define("PIMCORE_LOG_MAIL_PERMANENT"
 // it also improves the performance when reducing the amount of include paths, you can of course add additional paths anywhere in your code (/website)
 $includePaths = array(
     PIMCORE_PATH . "/lib",
-    "phar://" . PIMCORE_PATH . "/lib/zf.phar",
     PIMCORE_PATH . "/models",
     PIMCORE_WEBSITE_PATH . "/lib",
     PIMCORE_WEBSITE_PATH . "/models",
@@ -80,7 +79,7 @@ $autoloaderClassMapFiles = array(
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     if(file_exists($autoloaderClassMapFile)) {
         $classMapAutoLoader = new Zend_Loader_ClassMapAutoloader(array($autoloaderClassMapFile));
-        //$classMapAutoLoader->register();
+        $classMapAutoLoader->register();
     }
 }
 
