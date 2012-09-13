@@ -135,7 +135,7 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
                 $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
             try {
-                $this->db->update("documents_snippet", $dataSnippet);
+                $this->db->insert("documents_snippet", $dataSnippet);
             }
             catch (Exception $e) {
                 $this->db->update("documents_snippet", $dataSnippet, $this->db->quoteInto("id = ?", $this->model->getId() ));
