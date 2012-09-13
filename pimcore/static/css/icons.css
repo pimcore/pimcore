@@ -1197,3 +1197,7 @@
 .pimcore_icon_targeting {
     background: url(/pimcore/static/img/icon/status_online.png) left center no-repeat !important;
 }
+
+.pimcore_icon_convert {
+    background: url(/pimcore/static/img/icon/arrow_rotate_clockwise.png) left center no-repeat !important;
+}

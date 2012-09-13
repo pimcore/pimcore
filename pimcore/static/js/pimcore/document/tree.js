@@ -317,7 +317,6 @@ pimcore.document.tree = Class.create({
                 handler: this.attributes.reference.addDocument.bind(this, "folder")
             }));
 
-
             //paste
             if (this.attributes.reference.cacheDocumentId && this.attributes.permissions.create) {
                 pasteMenu.push({
@@ -419,6 +418,38 @@ pimcore.document.tree = Class.create({
                 handler: this.attributes.reference.editDocumentKey.bind(this)
             }));
         }
+
+        menu.add(new Ext.menu.Item({
+            text: t('convert_to'),
+            iconCls: "pimcore_icon_convert",
+            hideOnClick: false,
+            menu: [{
+                text: t("page"),
+                iconCls: "pimcore_icon_page",
+                handler: this.attributes.reference.convert.bind(this, "page"),
+                hidden: this.attributes.type == "page"
+            }, {
+                text: t("snippet"),
+                iconCls: "pimcore_icon_snippet",
+                handler: this.attributes.reference.convert.bind(this, "snippet"),
+                hidden: this.attributes.type == "snippet"
+            }, {
+                text: t("email"),
+                iconCls: "pimcore_icon_email",
+                handler: this.attributes.reference.convert.bind(this, "email"),
+                hidden: this.attributes.type == "email"
+            },{
+                text: t("link"),
+                iconCls: "pimcore_icon_link",
+                handler: this.attributes.reference.convert.bind(this, "link"),
+                hidden: this.attributes.type == "link"
+            }, {
+                text: t("hardlink"),
+                iconCls: "pimcore_icon_hardlink",
+                handler: this.attributes.reference.convert.bind(this, "hardlink"),
+                hidden: this.attributes.type == "hardlink"
+            }]
+        }));
 
         //publish
         if (this.attributes.permissions.publish && this.attributes.type != "folder") {
@@ -928,6 +959,34 @@ pimcore.document.tree = Class.create({
 
     deleteDocument : function () {
         pimcore.helpers.deleteDocument(this.id);
+    },
+
+    convert: function (type) {
+        Ext.MessageBox.show({
+            title:t('are_you_sure'),
+            msg: t("all_content_will_be_lost"),
+            buttons: Ext.Msg.OKCANCEL ,
+            icon: Ext.MessageBox.INFO ,
+            fn: function (type, button) {
+
+                if (pimcore.globalmanager.exists("document_" + this.id)) {
+                    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                    tabPanel.remove("document_" + this.id);
+                }
+
+                Ext.Ajax.request({
+                    url: "/admin/document/convert/",
+                    method: "post",
+                    params: {
+                        id: this.id,
+                        type: type
+                    },
+                    success: function () {
+                        this.parentNode.reload();
+                    }.bind(this)
+                });
+            }.bind(this, type)
+        });
     },
 
     isKeyValid: function (key) {

@@ -1192,4 +1192,30 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             "success" => false
         ));
     }
+
+    public function convertAction() {
+
+        $document = Document::getById($this->getParam("id"));
+
+        $type = $this->getParam("type");
+        $class = "Document_" . ucfirst($type);
+        if(class_exists($class)) {
+            $new = new $class;
+
+            // overwrite internal store to avoid "duplicate full path" error
+            Zend_Registry::set("document_" . $document->getId(), $new);
+
+            $props = get_object_vars($document);
+            foreach ($props as $name => $value) {
+                if(property_exists($new, $name)) {
+                    $new->$name = $value;
+                }
+            }
+
+            $new->setType($type);
+            $new->save();
+        }
+
+        $this->_helper->json(array("success" => true));
+    }
 }
