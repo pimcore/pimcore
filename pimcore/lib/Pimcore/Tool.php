@@ -461,6 +461,23 @@ class Pimcore_Tool {
 
     /**
      * @static
+     * @return void
+     */
+    public static function registerClassModelMappingNamespaces () {
+
+        $autoloader = Zend_Loader_Autoloader::getInstance();
+        if($map = Pimcore_Config::getModelClassMappingConfig()) {
+            $map = $map->toArray();
+
+            foreach ($map as $targetClass) {
+                $classParts = explode("_", $targetClass);
+                $autoloader->registerNamespace($classParts[0]);
+            }
+        }
+    }
+
+    /**
+     * @static
      * @return mixed
      */
     public static function getClientIp()
