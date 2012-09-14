@@ -15,7 +15,33 @@
 
 include("startup.php");
 
-if($argv[1] == "core") {
+
+
+try {
+    $opts = new Zend_Console_Getopt(array(
+        'core|c' => 'generate class map for all core files in /pimcore (usually used by the core team)',
+        'website|w' => 'generate class map for all classes in include path (usually for you ;-) ) - this is the default',
+        'help|h' => 'display this help'
+    ));
+} catch (Exception $e) {
+    echo $e->getMessage();
+}
+
+try {
+    $opts->parse();
+} catch (Zend_Console_Getopt_Exception $e) {
+    echo $e->getMessage();
+}
+
+
+// display help message
+if($opts->getOption("help")) {
+    echo $opts->getUsageMessage();
+    exit;
+}
+
+
+if($opts->getOption("core")) {
     $paths = array(
         PIMCORE_PATH . "/lib",
         PIMCORE_PATH . "/models",
