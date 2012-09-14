@@ -105,6 +105,9 @@ class Pimcore_Mail extends Zend_Mail
                 $this->setSubject($options['subject']);
             }
         } else {
+            if($charset === null) {
+                $charset = "UTF-8";
+            }
             parent::__construct($charset);
         }
 
