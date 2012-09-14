@@ -68,7 +68,8 @@ require_once "Zend/Loader/Autoloader.php";
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->suppressNotFoundWarnings(false);
-$autoloader->setFallbackAutoloader(true);
+$autoloader->setFallbackAutoloader(false);
+$autoloader->registerNamespace('Pimcore');
 
 // register class map loader => speed
 $autoloaderClassMapFiles = array(
