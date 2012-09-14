@@ -62,7 +62,7 @@ class Asset_Video_Thumbnail_Config {
     public static function getByName ($name) {
         $pipe = new self();
         $pipe->setName($name);
-        if(!$pipe->load()) {
+        if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
             throw new Exception("video thumbnail definition : " . $name . " does not exist");
         }
 
