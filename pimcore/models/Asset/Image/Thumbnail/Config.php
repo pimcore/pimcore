@@ -63,7 +63,7 @@ class Asset_Image_Thumbnail_Config {
     public static function getByName ($name) {
         $pipe = new self();
         $pipe->setName($name);
-        if(!$pipe->load()) {
+        if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
             throw new Exception("thumbnail definition : " . $name . " does not exist");
         }
 
