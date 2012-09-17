@@ -202,22 +202,26 @@ class Document_Tag_Video extends Document_Tag
             $thumbnail = $asset->getThumbnail($options["thumbnail"]);
             if ($thumbnail) {
 
-                // try to get the dimensions out ouf the video thumbnail
-                $imageThumbnailConf = array();
-                $thumbnailConf = $asset->getThumbnailConfig($options["thumbnail"]);
-                $transformations = $thumbnailConf->getItems();
-                if(is_array($transformations) && count($transformations) > 0) {
-                    foreach ($transformations as $transformation) {
-                        if(!empty($transformation)) {
-                            if(is_array($transformation["arguments"])) {
-                                foreach ($transformation["arguments"] as $key => $value) {
-                                    if($key == "width" || $key == "height") {
-                                        $imageThumbnailConf[$key] = $value;
+                if(!array_key_exists("imagethumbnail", $options) || empty($options["imagethumbnail"])) {
+                    // try to get the dimensions out ouf the video thumbnail
+                    $imageThumbnailConf = array();
+                    $thumbnailConf = $asset->getThumbnailConfig($options["thumbnail"]);
+                    $transformations = $thumbnailConf->getItems();
+                    if(is_array($transformations) && count($transformations) > 0) {
+                        foreach ($transformations as $transformation) {
+                            if(!empty($transformation)) {
+                                if(is_array($transformation["arguments"])) {
+                                    foreach ($transformation["arguments"] as $key => $value) {
+                                        if($key == "width" || $key == "height") {
+                                            $imageThumbnailConf[$key] = $value;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                } else {
+                    $imageThumbnailConf = $options["imagethumbnail"];
                 }
 
                 if(empty($imageThumbnailConf)) {
