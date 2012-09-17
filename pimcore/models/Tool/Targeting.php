@@ -47,6 +47,21 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
      */
     public $actions;
 
+    /**
+     * @param $key
+     * @param $value
+     */
+    public static function fireEvent ($key, $value = null) {
+        if($value === null) {
+            $value = true;
+        }
+
+        $front = Zend_Controller_Front::getInstance();
+        $plugin = $front->getPlugin("Pimcore_Controller_Plugin_Targeting");
+        if($plugin instanceof Pimcore_Controller_Plugin_Targeting) {
+            $plugin->addEvent($key, $value);
+        }
+    }
 
     /**
      * Static helper to retrieve an instance of Tool_Targeting by the given ID
