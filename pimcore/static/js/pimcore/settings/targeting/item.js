@@ -24,6 +24,8 @@ pimcore.settings.targeting.item = Class.create({
             activeTab: 0,
             title: this.data.name,
             closable: true,
+            deferredRender: false,
+            forceLayout: true,
             id: "pimcore_targeting_panel_" + this.data.id,
             buttons: [{
                 text: t("save"),
@@ -246,6 +248,7 @@ pimcore.settings.targeting.item = Class.create({
         this.conditionsContainer = new Ext.Panel({
             title: t("conditions"),
             autoScroll: true,
+            forceLayout: true,
             tbar: [{
                 iconCls: "pimcore_icon_add",
                 menu: addMenu
@@ -280,9 +283,12 @@ pimcore.settings.targeting.item = Class.create({
             rightBracket.on("click", function (ev, el) {
                 Ext.get(el).toggleClass("pimcore_targeting_bracket_active");
             });
+
+            console.log("item rendered");
         });
 
         this.conditionsContainer.add(item);
+        item.doLayout();
         this.conditionsContainer.doLayout();
 
         this.currentIndex++;
@@ -483,6 +489,7 @@ pimcore.document.pages.target.conditions = {
         var item =  new Ext.form.FormPanel({
             layout: "pimcoreform",
             id: myId,
+            forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),
@@ -517,6 +524,7 @@ pimcore.document.pages.target.conditions = {
         var item =  new Ext.form.FormPanel({
             layout: "pimcoreform",
             id: myId,
+            forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),
@@ -566,6 +574,7 @@ pimcore.document.pages.target.conditions = {
         var item =  new Ext.form.FormPanel({
             layout: "pimcoreform",
             id: myId,
+            forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),
@@ -615,6 +624,7 @@ pimcore.document.pages.target.conditions = {
         var item =  new Ext.form.FormPanel({
             layout: "pimcoreform",
             id: myId,
+            forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),
@@ -664,6 +674,7 @@ pimcore.document.pages.target.conditions = {
         var item =  new Ext.form.FormPanel({
             layout: "pimcoreform",
             id: myId,
+            forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),
@@ -728,6 +739,7 @@ pimcore.document.pages.target.conditions = {
         var item =  new Ext.form.FormPanel({
             layout: "pimcoreform",
             id: myId,
+            forceLayout: true,
             style: "margin: 10px 0 0 0",
             bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
             tbar: this.getTopBar(niceName, myId, panel, data),

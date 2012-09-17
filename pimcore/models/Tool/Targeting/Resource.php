@@ -78,6 +78,14 @@ class Tool_Targeting_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function update() {
+
+        if($this->model->getDocumentId()) {
+            $doc = Document::getById($this->model->getDocumentId());
+            if($doc instanceof Document) {
+                $doc->clearDependedCache();
+            }
+        }
+
         try {
             $type = get_object_vars($this->model);
 
