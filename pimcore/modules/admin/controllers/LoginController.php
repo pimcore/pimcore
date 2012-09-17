@@ -196,19 +196,34 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     protected function protect() {
 
+        $user = $this->getParam("username");
         $data = $this->readLogFile();
 
-        $matches = 0;
+        $matchesIpOnly = 0;
+        $matchesUserOnly = 0;
+        $matchesUserIp = 0;
 
         foreach ($data as $login) {
-            if ($login[1] == Pimcore_Tool::getAnonymizedClientIp()) {
-                if ($login[0] > (time() - 300)) {
-                    $matches++;
+            $matchIp = false;
+            $matchUser = false;
+
+            if ($login[0] > (time() - 300)) {
+                if($user && $login[2] == $user) {
+                    $matchesUserOnly++;
+                    $matchUser = true;
+                }
+                if ($login[1] == Pimcore_Tool::getAnonymizedClientIp()) {
+                    $matchesIpOnly++;
+                    $matchIp = true;
+                }
+
+                if($matchIp && $matchUser) {
+                    $matchesUserIp++;
                 }
             }
         }
 
-        if ($matches > 4) {
+        if ($matchesIpOnly > 49 || $matchesUserOnly > 9 || $matchesUserIp > 4) {
             $m = "Security Alert: Too many login attempts , please wait 5 minutes and try again.";
             Logger::crit($m);
             die($m);
