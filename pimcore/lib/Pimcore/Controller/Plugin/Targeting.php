@@ -95,8 +95,12 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
                 }
             }
 
-            $controlCode = file_get_contents(__DIR__ . "/Targeting/targeting.js");
-            $controlCode = JSMinPlus::minify($controlCode);
+            if(!($controlCode = Pimcore_Model_Cache::load("targeting_control_code")) || PIMCORE_DEVMODE) {
+                $controlCode = file_get_contents(__DIR__ . "/Targeting/targeting.js");
+                $controlCode = JSMinPlus::minify($controlCode);
+
+                Pimcore_Model_Cache::save($controlCode, "targeting_control_code", array("output"), null, 999);
+            }
 
             $code = '<script type="text/javascript" src="https://www.google.com/jsapi"></script>';
             $code .= '<script type="text/javascript">var _ptd = ' . Zend_Json::encode($targets) . '</script>';
@@ -106,9 +110,9 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
             // search for the end <head> tag, and insert the google analytics code before
             // this method is much faster than using simple_html_dom and uses less memory
-            $headEndPosition = strpos($body, "</head>");
+            $headEndPosition = strpos($body, "<head>");
             if($headEndPosition !== false) {
-                $body = substr_replace($body, $code."</head>", $headEndPosition, 7);
+                $body = substr_replace($body, "<head>\n".$code, $headEndPosition, 7);
             }
 
             $this->getResponse()->setBody($body);

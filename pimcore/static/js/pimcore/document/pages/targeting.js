@@ -17,7 +17,7 @@ pimcore.document.pages.targeting = Class.create(pimcore.settings.targeting.panel
 
     initialize: function(page) {
         this.page = page;
-        this.treeDataUrl = '/admin/page/targeting-list/documentId/' + this.page.id;
+        this.treeDataUrl = '/admin/reports/targeting/list/documentId/' + this.page.id;
     }
 
 });
