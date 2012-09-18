@@ -126,10 +126,10 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => true));
     }
     
-    
-    
-    
-    
+
+
+
+
     public function portletFeedAction () {
         $config = $this->getCurrentConfiguration();
         
@@ -286,11 +286,17 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         }
         
         $data = array_reverse($data);        
-        
-        //p_r($data);
-        //exit;
-        
+
         $this->_helper->json(array("data" => $data));
+    }
+
+    public function portletAnalyticsSaveAction () {
+        $config = $this->getCurrentConfiguration();
+
+        $config["settings"]["pimcore.layout.portlets.analytics"]["site"] = $this->getParam("site");
+
+        $this->saveConfiguration($config);
+        exit;
     }
     
     
