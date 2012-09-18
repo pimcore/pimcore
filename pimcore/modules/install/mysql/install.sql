@@ -133,7 +133,7 @@ CREATE TABLE `documents_link` (
   `id` int(11) unsigned NOT NULL default '0',
   `internalType` enum('document','asset') default NULL,
   `internal` int(11) unsigned default NULL,
-  `direct` varchar(255) default NULL,
+  `direct` varchar(1000) default NULL,
   `linktype` enum('direct','internal') default NULL,
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
