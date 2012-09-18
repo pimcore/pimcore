@@ -20,8 +20,19 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
     const DEFAULT_DBNAME = 'pimcore_cache';
     const DEFAULT_COLLECTION = 'cache_items';
 
+    /**
+     * @var Mongo
+     */
     protected $_conn;
+
+    /**
+     * @var MongoDB
+     */
     protected $_db;
+
+    /**
+     * @var MongoCollection
+     */
     protected $_collection;
 
     /**
@@ -58,9 +69,10 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
         // Merge the options passed in; overridding any default options
         $this->_options = array_merge($this->_options, $options);
 
-        $this->_conn       = new Mongo($this->_options['host'], $this->_options['port'], $this->_options['persistent']);
+        $this->_conn       = new Mongo('mongodb://' . $this->_options['host'] . ':' . $this->_options['port'], array('persistent' => $this->_options['persistent']));
         $this->_db         = $this->_conn->selectDB($this->_options['dbname']);
         $this->_collection = $this->_db->selectCollection($this->_options['collection']);
+
         $this->_collection->ensureIndex(array('t' => 1), array('background' => true));
         $this->_collection->ensureIndex(array('expire' => 1), array('background' => true));
     }
@@ -408,8 +420,8 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
      * @param int $extraLifetime
      * @return boolean true if ok
      */
-   public function touch($id, $extraLifetime)
-   {
+    public function touch($id, $extraLifetime)
+    {
         $cursor = $this->get($id);
         if ($tmp = $cursor->getNext()) {
             $data = $tmp['d'];
@@ -472,7 +484,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
 
         return $this->_collection->save(
             array(
-            	'_id' => $id,
+                '_id' => $id,
                 'd' => $data,
                 'created_at' => $now,
                 'l' => $lifetime,
