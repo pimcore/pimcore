@@ -171,6 +171,48 @@
             return val;
         },
 
+        executeInsertedScripts: function (domelement) {
+            var scripts = [];
+
+
+            ret = domelement.childNodes;
+            for (var i = 0; ret[i]; i++) {
+                if (scripts && util.nodeName(ret[i], "script") && (!ret[i].type || ret[i].type.toLowerCase() === "text/javascript")) {
+                    scripts.push(ret[i].parentNode ? ret[i].parentNode.removeChild(ret[i]) : ret[i]);
+                }
+            }
+
+            for (script in scripts) {
+                util.evalScript(scripts[script]);
+            }
+        },
+
+        nodeName:function (elem, name) {
+            return elem.nodeName && elem.nodeName.toUpperCase() === name.toUpperCase();
+        },
+
+        evalScript:function (elem) {
+
+            var data = ( elem.text || elem.textContent || elem.innerHTML || "" );
+            var head = document.getElementsByTagName("head")[0] || document.documentElement,
+                script = document.createElement("script");
+
+            script.type = "text/javascript";
+
+
+            try {
+                script.appendChild(document.createTextNode(data));
+            } catch (e) {
+                // IE8 Workaround
+                script.text = data;
+            }
+            head.insertBefore(script, head.firstChild);
+            head.removeChild(script);
+            if (elem.parentNode) {
+                elem.parentNode.removeChild(elem);
+            }
+        },
+
         geoDistance: function (lat1, lon1, lat2, lon2) {
             var R = 6371; // km
             var dLat = (lat2-lat1) * Math.PI / 180;
@@ -366,6 +408,8 @@
                                 } else if (pos == "replace") {
                                     el.innerHTML = actions["codesnippetCode"];
                                 }
+
+                                util.executeInsertedScripts(el);
                             }
                         } catch (e) {
                             util.log(e);
