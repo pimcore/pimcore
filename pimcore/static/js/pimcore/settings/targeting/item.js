@@ -92,30 +92,13 @@ pimcore.settings.targeting.item = Class.create({
                         }
                     }
                 }, {
-                    xtype: "combo",
-                    name: "redirect.code",
-                    fieldLabel: t("type"),
-                    store: [
-                        ["301", "Moved Permanently (301)"],
-                        ["307", "Temporary Redirect (307)"],
-                        ["300", "Multiple Choices (300)"],
-                        ["302", "Found (302)"],
-                        ["303", "See Other (303)"]
-                    ],
-                    mode: "local",
-                    value: this.data.actions.redirectCode,
-                    typeAhead: false,
-                    editable: false,
-                    forceSelection: true,
-                    triggerAction: "all"
-                }, {
                     xtype: "button",
                     hidden: (this.parent.page ? false : true),
                     text: t("create_a_variant_from_this_page"),
                     iconCls: "pimcore_icon_tab_variants",
                     handler: function () {
                         Ext.Ajax.request({
-                            url: "/admin/page/targeting-create-variant",
+                            url: "/admin/reports/targeting/create-variant",
                             params: {
                                 documentId: this.parent.page.id,
                                 tragetingId: this.data.id
@@ -142,6 +125,16 @@ pimcore.settings.targeting.item = Class.create({
                             }.bind(this)
                         });
                     }.bind(this)
+                }]
+            }, {
+                xtype: "fieldset",
+                title: t("programmatically"),
+                itemId: "actions_programmatically",
+                collapsible: true,
+                collapsed: !this.data.actions.programmaticallyEnabled,
+                items: [{
+                    xtype: "displayfield",
+                    value: t("in_this_case_a_developer_has_to_implement_a_logic_which_handles_this_action")
                 }]
             }, {
                 xtype: "fieldset",
@@ -283,8 +276,6 @@ pimcore.settings.targeting.item = Class.create({
             rightBracket.on("click", function (ev, el) {
                 Ext.get(el).toggleClass("pimcore_targeting_bracket_active");
             });
-
-            console.log("item rendered");
         });
 
         this.conditionsContainer.add(item);
@@ -304,6 +295,7 @@ pimcore.settings.targeting.item = Class.create({
         saveData["actions"]["redirect.enabled"] = !this.actionsForm.getComponent("actions_redirect").collapsed;
         saveData["actions"]["event.enabled"] = !this.actionsForm.getComponent("actions_event").collapsed;
         saveData["actions"]["codesnippet.enabled"] = !this.actionsForm.getComponent("actions_codesnippet").collapsed;
+        saveData["actions"]["programmatically.enabled"] = !this.actionsForm.getComponent("actions_programmatically").collapsed;
 
         var conditionsData = [];
         var condition, tb, operator;
@@ -331,7 +323,7 @@ pimcore.settings.targeting.item = Class.create({
         saveData["conditions"] = conditionsData;
 
         Ext.Ajax.request({
-            url: "/admin/page/targeting-save",
+            url: "/admin/reports/targeting/save",
             params: {
                 id: this.data.id,
                 data: Ext.encode(saveData)
@@ -535,20 +527,14 @@ pimcore.document.pages.target.conditions = {
                     ["ie", "Internet Explorer"],
                     ["firefox", "Firefox"],
                     ["chrome", "Google Chrome"],
-                    ["safari", "Safari (Desktop)"],
-                    ["opera", "Opera (Desktop)"]
+                    ["safari", "Safari"],
+                    ["opera", "Opera"]
                 ],
                 name: "browser",
                 mode: "local",
                 width: 200,
                 value: data.browser,
                 triggerAction: "all"
-            },{
-                fieldLabel: t("version"),
-                xtype: "spinnerfield",
-                width: 40,
-                value: data.version,
-                name: "version"
             },{
                 xtype: "hidden",
                 name: "type",
@@ -872,6 +858,345 @@ pimcore.document.pages.target.conditions = {
                 xtype: "hidden",
                 name: "type",
                 value: "geopoint"
+            }]
+        });
+
+        return item;
+    },
+
+    itemReferringsite: function (panel, data, getName) {
+
+        var niceName = t("referring_site");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'textfield',
+                fieldLabel: t('referrer'),
+                name: "referrer",
+                value: data.referrer,
+                width: 350
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "referringsite"
+            }]
+        });
+
+        return item;
+    },
+
+    itemSearchengine: function (panel, data, getName) {
+
+        var niceName = t("searchengine");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'combo',
+                fieldLabel: t('searchengine'),
+                name: "searchengine",
+                disableKeyFilter: true,
+                store: [["",t("all")],["google","Google"],["bing","Bing"],["yahoo", "Yahoo!"]],
+                triggerAction: "all",
+                mode: "local",
+                width: 250,
+                value: data.searchengine ? data.searchengine : ""
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "searchengine"
+            }]
+        });
+
+        return item;
+    },
+
+    itemVistitedpagebefore: function (panel, data, getName) {
+
+        var niceName = t("visited_page_before");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'textfield',
+                fieldLabel: "URL",
+                name: "url",
+                value: data.url,
+                width: 350
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "vistitedpagebefore"
+            }]
+        });
+
+        return item;
+    },
+
+    itemVistitedpagesbefore: function (panel, data, getName) {
+
+        var niceName = t("visited_pages_before_number");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'spinnerfield',
+                fieldLabel: t("number"),
+                name: "number",
+                value: data.number,
+                width: 40
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "vistitedpagesbefore"
+            }]
+        });
+
+        return item;
+    },
+
+    itemTimeonsite: function (panel, data, getName) {
+
+        var niceName = t("time_on_site");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'spinnerfield',
+                fieldLabel: t("hours"),
+                name: "hours",
+                value: data.hours ? data.hours : 0,
+                width: 40
+            },{
+                xtype:'spinnerfield',
+                fieldLabel: t("minutes"),
+                name: "minutes",
+                value: data.minutes ? data.minutes : 0,
+                width: 40
+            },{
+                xtype:'spinnerfield',
+                fieldLabel: t("seconds"),
+                name: "seconds",
+                value: data.seconds ? data.seconds : 0,
+                width: 40
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "timeonsite"
+            }]
+        });
+
+        return item;
+    },
+
+    itemLinkclicked: function (panel, data, getName) {
+
+        var niceName = t("link_clicked");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'textfield',
+                fieldLabel: "URL",
+                name: "url",
+                value: data.url,
+                width: 350
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "linkclicked"
+            }]
+        });
+
+        return item;
+    },
+
+    itemLinksclicked: function (panel, data, getName) {
+
+        var niceName = t("number_of_links_clicked");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'spinnerfield',
+                fieldLabel: t("number"),
+                name: "number",
+                value: data.number,
+                width: 40
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "linksclicked"
+            }]
+        });
+
+        return item;
+    },
+
+    itemHardwareplatform: function (panel, data, getName) {
+
+        var niceName = t("hardware_platform");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'combo',
+                fieldLabel: t('hardware_platform'),
+                name: "platform",
+                disableKeyFilter: true,
+                store: [["",t("all")],["desktop",t("desktop")],["tablet", t("tablet")], ["mobile", t("mobile")]],
+                triggerAction: "all",
+                mode: "local",
+                width: 250,
+                value: data.platform ? data.platform : "all"
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "hardwareplatform"
+            }]
+        });
+
+        return item;
+    },
+
+    itemOperatingsystem: function (panel, data, getName) {
+
+        var niceName = t("operating_system");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            forceLayout: true,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
+            tbar: this.getTopBar(niceName, myId, panel, data),
+            items: [{
+                xtype:'combo',
+                fieldLabel: t('operating_system'),
+                name: "system",
+                disableKeyFilter: true,
+                store: [["",t("all")],["windows","Windows"],["macos", "Mac OS"], ["linux", "Linux"], ["android","Android"], ["ios", "iOS"]],
+                triggerAction: "all",
+                mode: "local",
+                width: 250,
+                value: data.system ? data.system : "all"
+            },{
+                xtype: "hidden",
+                name: "type",
+                value: "operatingsystem"
             }]
         });
 

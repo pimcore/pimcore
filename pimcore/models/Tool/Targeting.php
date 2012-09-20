@@ -48,6 +48,17 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public $actions;
 
     /**
+     * @param int $targetId
+     * @return bool
+     */
+    public static function inTarget($targetId) {
+        if(array_key_exists("_ptc", $_GET) && intval($targetId) == intval($_GET["_ptc"])) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param $key
      * @param $value
      */

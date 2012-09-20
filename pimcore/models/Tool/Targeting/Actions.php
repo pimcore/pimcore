@@ -68,6 +68,27 @@ class Tool_Targeting_Actions {
     public $codesnippetPosition;
 
     /**
+     * @var bool
+     */
+    public $programmaticallyEnabled = false;
+
+    /**
+     * @param boolean $programmaticallyEnabled
+     */
+    public function setProgrammaticallyEnabled($programmaticallyEnabled)
+    {
+        $this->programmaticallyEnabled = $programmaticallyEnabled;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getProgrammaticallyEnabled()
+    {
+        return $this->programmaticallyEnabled;
+    }
+
+    /**
      * @param string $codesnippetCode
      */
     public function setCodesnippetCode($codesnippetCode)
