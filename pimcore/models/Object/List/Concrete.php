@@ -212,7 +212,9 @@ abstract class Object_List_Concrete extends Object_List {
      */
     public function setObjectbricks($objectbricks) {
         foreach($objectbricks as $ob) {
-            $this->addObjectbrick($ob);
+            if(!in_array($ob,$this->objectBrickConfigs)){
+                $this->addObjectbrick($ob);
+            }
         }
     }
 
