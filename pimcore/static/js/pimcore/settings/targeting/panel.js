@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.settings.targeting.panel");
 pimcore.settings.targeting.panel= Class.create({
 
     initialize: function(page) {
-        this.treeDataUrl = '/admin/page/targeting-list/'
+        this.treeDataUrl = '/admin/reports/targeting/list/'
     },
 
 
@@ -107,7 +107,7 @@ pimcore.settings.targeting.panel= Class.create({
         var regresult = value.match(/[a-zA-Z0-9_\-]+/);
         if (button == "ok" && value.length > 2 && regresult == value) {
             Ext.Ajax.request({
-                url: "/admin/page/targeting-add",
+                url: "/admin/reports/targeting/add",
                 params: {
                     name: value,
                     documentId: (this.page ? this.page.id : null)
@@ -134,7 +134,7 @@ pimcore.settings.targeting.panel= Class.create({
 
     deleteTarget: function () {
         Ext.Ajax.request({
-            url: "/admin/page/targeting-delete",
+            url: "/admin/reports/targeting/delete",
             params: {
                 id: this.id
             },
@@ -158,7 +158,7 @@ pimcore.settings.targeting.panel= Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/page/targeting-get",
+            url: "/admin/reports/targeting/get",
             params: {
                 id: node
             },

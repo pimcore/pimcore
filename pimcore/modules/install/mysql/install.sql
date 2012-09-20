@@ -133,7 +133,7 @@ CREATE TABLE `documents_link` (
   `id` int(11) unsigned NOT NULL default '0',
   `internalType` enum('document','asset') default NULL,
   `internal` int(11) unsigned default NULL,
-  `direct` varchar(255) default NULL,
+  `direct` varchar(1000) default NULL,
   `linktype` enum('direct','internal') default NULL,
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
@@ -409,6 +409,19 @@ CREATE TABLE `staticroutes` (
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `targeting`;
+CREATE TABLE `targeting` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `documentId` int(11) DEFAULT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
+  `conditions` longtext,
+  `actions` longtext,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_documentId` (`documentId`,`name`),
+  KEY `documentId` (`documentId`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `translations_admin`;
