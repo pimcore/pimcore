@@ -405,6 +405,7 @@ CREATE TABLE `staticroutes` (
   `action` varchar(255) default NULL,
   `variables` varchar(255) default NULL,
   `defaults` varchar(255) default NULL,
+  `siteId` int(11) DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
