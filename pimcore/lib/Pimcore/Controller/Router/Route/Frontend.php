@@ -220,6 +220,14 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 foreach ($routes as $route) {
 
                     if (@preg_match($route->getPattern(), $originalPath) && !$matchFound) {
+
+                        // check for site
+                        if($route->getSiteId()) {
+                            if(!Site::isSiteRequest() || $route->getSiteId() != Site::getCurrentSite()->getId()) {
+                                continue;
+                            }
+                        }
+
                         $params = array_merge($route->getDefaultsArray(), $params);
 
                         $variables = explode(",", $route->getVariables());
