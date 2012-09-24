@@ -729,9 +729,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $admin = $this->getParam("admin");
 
         if ($admin) {
-            $class = new Translation_Admin();
+            $class = "Translation_Admin";
         } else {
-            $class = new Translation_Website();
+            $class = "Translation_Website";
         }
 
         if ($this->getUser()->isAllowed("translations")) {
