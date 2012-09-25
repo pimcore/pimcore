@@ -156,34 +156,6 @@ var Class = (function() {
         }
     }
 
-    function toJSON(object) {
-        var type = typeof object;
-        switch (type) {
-        case 'undefined':
-        case 'function':
-        case 'unknown':
-            return;
-        case 'boolean':
-            return object.toString();
-        }
-
-        if (object === null)
-            return 'null';
-        if (object.toJSON)
-            return object.toJSON();
-        if (isElement(object))
-            return;
-
-        var results = [];
-        for ( var property in object) {
-            var value = toJSON(object[property]);
-            if (!isUndefined(value))
-                results.push(property.toJSON() + ': ' + value);
-        }
-
-        return '{' + results.join(', ') + '}';
-    }
-
     function toQueryString(object) {
         return $H(object).toQueryString();
     }
@@ -242,7 +214,6 @@ var Class = (function() {
     extend(Object, {
         extend : extend,
         inspect : inspect,
-        toJSON : toJSON,
         toQueryString : toQueryString,
         toHTML : toHTML,
         keys : keys,
@@ -450,16 +421,6 @@ Array.from = $A;
         return '[' + this.map(Object.inspect).join(', ') + ']';
     }
 
-    function toJSON() {
-        var results = [];
-        this.each(function(object) {
-            var value = Object.toJSON(object);
-            if (!Object.isUndefined(value))
-                results.push(value);
-        });
-        return '[' + results.join(', ') + ']';
-    }
-
     function indexOf(item, i) {
         i || (i = 0);
         var length = this.length;
@@ -510,8 +471,7 @@ Array.from = $A;
         clone : clone,
         toArray : clone,
         size : size,
-        inspect : inspect,
-        toJSON : toJSON
+        inspect : inspect
     });
 
     var CONCAT_ARGUMENTS_BUGGY = (function() {
