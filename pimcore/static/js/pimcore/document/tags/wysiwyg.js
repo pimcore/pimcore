@@ -345,7 +345,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 return true;
             }
             else {
-                insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" target="_blank" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
                 this.ckeditor.insertElement(insertEl);
                 return true;
             }

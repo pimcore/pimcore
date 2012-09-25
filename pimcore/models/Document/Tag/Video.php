@@ -565,7 +565,9 @@ class Document_Tag_Video extends Document_Tag
             </div>
         </div>';
 
-        if(!$this->editmode) {
+        $options = $this->getOptions();
+
+        if(!$this->editmode && !$options['disableProgressReload']) {
             $code .= '
                 <script type="text/javascript">
                     window.setTimeout(function() {
