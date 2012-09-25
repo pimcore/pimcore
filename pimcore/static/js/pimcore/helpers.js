@@ -810,7 +810,7 @@ pimcore.helpers.getOpenTab = function () {
     if(!openTabs) {
         openTabs = [];
     } else {
-        openTabs = Ext.decode(openTabs);
+        openTabs = JSON.parse(openTabs); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
     }
 
     return openTabs;
@@ -828,7 +828,7 @@ pimcore.helpers.rememberOpenTab = function (item) {
     openTabs.splice(10, 1000);
     openTabs.reverse();
 
-    localStorage.setItem("pimcore_opentabs", Ext.encode(openTabs));
+    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
 }
 
 pimcore.helpers.forgetOpenTab = function (item) {
@@ -838,7 +838,7 @@ pimcore.helpers.forgetOpenTab = function (item) {
     var pos = array_search(item, openTabs);
     openTabs.splice(pos, 1);
 
-    localStorage.setItem("pimcore_opentabs", Ext.encode(openTabs));
+    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
 }
 
 pimcore.helpers.openMemorizedTabs = function () {
