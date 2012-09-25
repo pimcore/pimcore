@@ -186,14 +186,22 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         // this does only work if "resize" is the first step in the image-pipeline
 
         if($this->isVectorGraphic()) {
-            // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
-            $res = $this->resource->getImageResolution();
-            $x_ratio = $res['x'] / $this->resource->getImageWidth();
-            $y_ratio = $res['y'] / $this->resource->getImageHeight();
-            $this->resource->removeImage();
+            // if we have a SVG, try to use rsvg instead of imagick
+            if(in_array($this->resource->getimageformat(), array("SVG", "SVGZ"))) {
+                $tmpPathPNG = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file";
+                exec("rsvg -w " . $width . " -h " . $height . " " .  $this->imagePath . " " . $tmpPathPNG);
+                $this->load($tmpPathPNG);
+                return $this;
+            } else {
+                // the resolution has to be set before loading the image, that's why we have to destroy the instance and load it again
+                $res = $this->resource->getImageResolution();
+                $x_ratio = $res['x'] / $this->resource->getImageWidth();
+                $y_ratio = $res['y'] / $this->resource->getImageHeight();
+                $this->resource->removeImage();
 
-            $this->resource->setResolution($width * $x_ratio, $height * $y_ratio);
-            $this->resource->readImage($this->imagePath);
+                $this->resource->setResolution($width * $x_ratio, $height * $y_ratio);
+                $this->resource->readImage($this->imagePath);
+            }
         }
 
         $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 1, false);
