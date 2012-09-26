@@ -1,3 +1,6 @@
+"password_protection","Password-Protection"
+"http_auth_warning","WARNING: This applies to all all websites"
+"logger","Logger"
 "redirect_unknown_domains_to_main_domain","Redirect unknown domains (not used for a site and for redirects, ...) to the main domain (above)"
 "colorspace","Colorspace"
 "in_this_case_a_developer_has_to_implement_a_logic_which_handles_this_action","In this case a developer has to implement the logic to handle this action (there are no further settings)"

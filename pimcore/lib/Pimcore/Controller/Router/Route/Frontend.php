@@ -66,6 +66,32 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         // set the original path
         $originalPath = $path;
 
+        // check for password protection (http auth)
+        if ($config->general->http_auth) {
+            $username = $config->general->http_auth->username;
+            $password = $config->general->http_auth->password;
+            if($username && $password) {
+                $adapter = new Zend_Auth_Adapter_Http(array(
+                    "accept_schemes" => "basic",
+                    "realm" => $_SERVER["HTTP_HOST"]
+                ));
+
+                $basicResolver = new Pimcore_Helper_Auth_Adapter_Http_Resolver_Static($username, $password);
+                $adapter->setBasicResolver($basicResolver);
+                $adapter->setRequest($front->getRequest());
+                $adapter->setResponse($front->getResponse());
+
+                $result = $adapter->authenticate();
+                if (!$result->isValid()) {
+                    // Bad userame/password, or canceled password prompt
+                    echo "Authentication Required";
+                    $front->getResponse()->sendResponse();
+                    exit;
+                }
+
+            }
+        }
+
         // do not allow requests including /index.php/ => SEO
         if(preg_match("@^/index.php(.*)@", $_SERVER["REQUEST_URI"], $matches) && strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
             $redirectUrl = $matches[1];
