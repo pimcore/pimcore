@@ -160,8 +160,14 @@ class Pimcore_ExtensionManager {
 
     public static function getBrickDirectories () {
         $areas = array();
-        $areaRepositories = array(
-            PIMCORE_WEBSITE_PATH . "/views/areas",
+        try
+        {
+            $areas = Zend_Registry::get('brick_directories');
+        }
+        catch  (Exception $e)
+        {
+            $areaRepositories = array(
+                PIMCORE_WEBSITE_PATH . "/views/areas",
             PIMCORE_WEBSITE_PATH . "/var/areas"
         );
 
@@ -171,14 +177,16 @@ class Pimcore_ExtensionManager {
             if(is_dir($respository) && is_readable($respository)) {
                 $blockDirs = scandir($respository);
 
-                foreach ($blockDirs as $blockDir) {
-                    if(is_dir($respository . "/" . $blockDir)) {
-                        if(is_file($respository . "/" . $blockDir . "/area.xml")) {
-                            $areas[$blockDir] = $respository . "/" . $blockDir;
+                    foreach ($blockDirs as $blockDir) {
+                        if(is_dir($respository . "/" . $blockDir)) {
+                            if(is_file($respository . "/" . $blockDir . "/area.xml")) {
+                                $areas[$blockDir] = $respository . "/" . $blockDir;
+                            }
                         }
                     }
                 }
             }
+            Zend_Registry::set('brick_directories', $areas);
         }
 
         return $areas;
@@ -186,15 +194,21 @@ class Pimcore_ExtensionManager {
 
     public static function getBrickConfigs() {
 
-        $configs = array();
-        
-        foreach (self::getBrickDirectories() as $areaName => $path) {
-            try {
-                $configs[$areaName] = new Zend_Config_Xml($path . "/area.xml");
-            } catch (Exception $e) {
-                Logger::error("Unable to initalize brick with id: " . $areaName);
-                Logger::error($e);
+        try {
+            $configs = Zend_Registry::get('brick_configs');
+        } catch (Exception $e) {
+            $configs = array();
+
+            foreach (self::getBrickDirectories() as $areaName => $path) {
+                try {
+                    $configs[$areaName] = new Zend_Config_Xml($path . "/area.xml");
+                } catch (Exception $e) {
+                    Logger::error("Unable to initalize brick with id: " . $areaName);
+                    Logger::error($e);
+                }
             }
+
+            Zend_Registry::set('brick_configs', $configs);
         }
 
         return $configs;
