@@ -53,7 +53,8 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
      * @return array|bool
      */
     public function match($path, $partial = false) {
-                
+
+        $front = Zend_Controller_Front::getInstance();
         $matchFound = false;
         $config = Pimcore_Config::getSystemConfig();
 
@@ -298,6 +299,22 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         if (!$matchFound) {
             $this->checkForRedirect(false);
         }
+
+        // redirect to the main domain if specified
+        try {
+            if ($config->general->redirect_to_maindomain && $config->general->domain && $config->general->domain != Pimcore_Tool::getHostname() && !Site::isSiteRequest()) {
+
+                $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $originalPath . (empty($_SERVER["QUERY_STRING"]) ? "" : "?") . $_SERVER["QUERY_STRING"];
+
+                header("HTTP/1.1 301 Moved Permanently");
+                header("Location: " . $url, true, 301);
+
+                // log all redirects to the redirect log
+                Pimcore_Log_Simple::log("redirect", Pimcore_Tool::getAnonymizedClientIp() . " \t Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
+                exit;
+            }
+        }
+        catch (Exception $e) {}
 
         if (!$matchFound) {
             return false;

@@ -235,6 +235,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "timezone" => $values["general.timezone"],
                     "php_cli" => $values["general.php_cli"],
                     "domain" => $values["general.domain"],
+                    "redirect_to_maindomain" => $values["general.redirect_to_maindomain"],
                     "language" => $values["general.language"],
                     "validLanguages" => $values["general.validLanguages"],
                     "theme" => $values["general.theme"],
