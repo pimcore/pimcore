@@ -374,4 +374,12 @@ abstract class Pimcore_Image_Adapter {
     public function isVectorGraphic () {
         return false;
     }
+
+
+    /**
+     * @param $type
+     */
+    public function setColorspace($type = "RGB") {
+        return $this;
+    }
 }

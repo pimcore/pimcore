@@ -768,7 +768,7 @@ pimcore.settings.system = Class.create({
                         collapsible: true,
                         collapsed: true,
                         autoHeight:true,
-                        labelWidth: 200,
+                        labelWidth: 250,
                         defaultType: 'textfield',
                         defaults: {width: 150},
                         items :[
@@ -816,13 +816,13 @@ pimcore.settings.system = Class.create({
                                 width: 300
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_rgb_profile'),
+                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
                                 name: 'assets.icc_rgb_profile',
                                 value: this.getValue("assets.icc_rgb_profile"),
                                 width: 300
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_cmyk_profile'),
+                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (imagick)",
                                 name: 'assets.icc_cmyk_profile',
                                 value: this.getValue("assets.icc_cmyk_profile"),
                                 width: 300
