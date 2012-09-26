@@ -31,13 +31,15 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
      */
     protected $resource;
 
-
     /**
      * @var string
      */
     protected $imagePath;
 
-
+    /**
+     * @param $imagePath
+     * @return bool|Pimcore_Image_Adapter|Pimcore_Image_Adapter_Imagick
+     */
     public function load ($imagePath) {
 
         if($this->resource) {
@@ -67,13 +69,13 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     /**
      * @param  $path
      */
-    public function save ($path, $format = null, $quality = null) {
+    public function save ($path, $format = null, $quality = null, $colorProfile = "RGB") {
 
         if(!$format) {
             $format = "png";
         }
 
-        $this->applyColorProfiles();
+        $this->setColorspace($colorProfile);
 
         $this->resource->stripimage();
         $this->resource->setImageFormat($format);
@@ -96,10 +98,17 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
-     * this is to force RGB and to apply custom icc color profiles
+     * @param string $type
+     * @return Pimcore_Image_Adapter|void
      */
-    protected function applyColorProfiles () {
-        if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_CMYK) {
+    public function setColorspace($type = "RGB") {
+
+        $type = strtoupper($type);
+        if(!in_array($type, array("RGB","CMYK"))) {
+            $type = "RGB";
+        }
+
+        if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_CMYK && $type == "RGB") {
             if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
                 $profiles = $this->resource->getImageProfiles('*', false);
                 // we're only interested if ICC profile(s) exist
@@ -111,6 +120,19 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
                 // then we add an RGB profile
                 $this->resource->profileImage('icc', self::getRGBColorProfile());
                 $this->resource->setImageColorspace(Imagick::COLORSPACE_RGB);
+            }
+        } else if ($this->resource->getImageColorspace() == Imagick::COLORSPACE_RGB && $type == "CMYK") {
+            if(self::getCMYKColorProfile() && self::getRGBColorProfile()) {
+                $profiles = $this->resource->getImageProfiles('*', false);
+                // we're only interested if ICC profile(s) exist
+                $has_icc_profile = (array_search('icc', $profiles) !== false);
+                // if it doesn't have a CMYK ICC profile, we add one
+                if ($has_icc_profile === false) {
+                    $this->resource->profileImage('icc', self::getRGBColorProfile());
+                }
+                // then we add an RGB profile
+                $this->resource->profileImage('icc', self::getCMYKColorProfile());
+                $this->resource->setImageColorspace(Imagick::COLORSPACE_CMYK);
             }
         }
 
@@ -125,6 +147,8 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $draw->point(0,0);
             $this->resource->drawImage($draw);
         }
+
+        return $this;
     }
 
     /**
