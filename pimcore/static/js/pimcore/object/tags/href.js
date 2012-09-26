@@ -83,21 +83,33 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         this.component.on("keyup", function (element, event) {
             element.setValue(this.data.path);
         }.bind(this));
-        
+
+        var items = [this.component, {
+            xtype: "button",
+            iconCls: "pimcore_icon_edit",
+            handler: this.openElement.bind(this)
+        },{
+            xtype: "button",
+            iconCls: "pimcore_icon_delete",
+            handler: this.empty.bind(this)
+        },{
+            xtype: "button",
+            iconCls: "pimcore_icon_search",
+            handler: this.openSearchEditor.bind(this)
+        }];
+
+        // add upload button when assets are allowed
+        if (this.fieldConfig.assetsAllowed) {
+            items.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_upload_single",
+                handler: this.uploadDialog.bind(this)
+            });
+        }
+
+
         this.composite = new Ext.form.CompositeField({
-            items: [this.component, {
-                xtype: "button",
-                iconCls: "pimcore_icon_edit",
-                handler: this.openElement.bind(this)
-            },{
-                xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: this.empty.bind(this)
-            },{
-                xtype: "button",
-                iconCls: "pimcore_icon_search",
-                handler: this.openSearchEditor.bind(this)
-            }],
+            items: items,
             itemCls: "object_field"
         });
         
@@ -137,6 +149,24 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         return this.composite;
 
+    },
+
+    uploadDialog: function () {
+        pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.assetUploadPath, "path", function (res) {
+            try {
+                var data = Ext.decode(res.response.responseText);
+                if(data["id"]) {
+                    this.data.id = data["id"];
+                    this.data.type = "asset";
+                    this.data.subtype = data["type"];
+                    this.dataChanged = true;
+
+                    this.component.setValue(data["fullpath"]);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this));
     },
 
     onNodeDrop: function (target, dd, e, data) {
@@ -183,6 +213,18 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 this.openSearchEditor();
             }.bind(this)
         }));
+
+        // add upload button when assets are allowed
+        if (this.fieldConfig.assetsAllowed) {
+            menu.add(new Ext.menu.Item({
+                text: t('upload'),
+                iconCls: "pimcore_icon_upload_single",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.uploadDialog();
+                }.bind(this)
+            }));
+        }
 
         menu.showAt(e.getXY());
 

@@ -75,10 +75,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
         $conf = Pimcore_Config::getSystemConfig();
 
-        $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css";
-        if ($conf->general->theme) {
-            $themeUrl = $conf->general->theme;
-        }
+        $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css";
 
         $editmodeStylesheets = array(
             "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
@@ -172,8 +169,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             $editmodeHeadHtml .= '<script type="text/javascript" src="' . Pimcore_Tool_Admin::getMinimizedScriptPath($scriptContents) . '?_dc=' . Pimcore_Version::$revision . '"></script>'."\n";
         }
 
-        $ns = new Zend_Session_Namespace("pimcore_admin");
-        $user = User::getById($ns->user->getId());
+        $user = Pimcore_Tool_Authentication::authenticateSession();
         $lang = $user->getLanguage();
 
         $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/'.$lang.'/?_dc=' . Pimcore_Version::$revision . '"></script>'."\n";

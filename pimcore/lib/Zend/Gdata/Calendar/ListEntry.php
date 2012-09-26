@@ -16,51 +16,51 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Calendar
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ListEntry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: ListEntry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Calendar_Extension_AccessLevel
  */
-require_once 'Zend/Gdata/Calendar/Extension/AccessLevel.php';
+// require_once 'Zend/Gdata/Calendar/Extension/AccessLevel.php';
 
 /**
  * @see Zend_Calendar_Extension_Color
  */
-require_once 'Zend/Gdata/Calendar/Extension/Color.php';
+// require_once 'Zend/Gdata/Calendar/Extension/Color.php';
 
 /**
  * @see Zend_Calendar_Extension_Hidden
  */
-require_once 'Zend/Gdata/Calendar/Extension/Hidden.php';
+// require_once 'Zend/Gdata/Calendar/Extension/Hidden.php';
 
 /**
  * @see Zend_Calendar_Extension_Selected
  */
-require_once 'Zend/Gdata/Calendar/Extension/Selected.php';
+// require_once 'Zend/Gdata/Calendar/Extension/Selected.php';
 
 /**
  * @see Zend_Gdata_Extension_EventStatus
  */
-require_once 'Zend/Gdata/Extension/EventStatus.php';
+// require_once 'Zend/Gdata/Extension/EventStatus.php';
 
 /**
  * @see Zend_Gdata_Extension_Visibility
  */
-require_once 'Zend/Gdata/Extension/Visibility.php';
+// require_once 'Zend/Gdata/Extension/Visibility.php';
 
 
 /**
  * @see Zend_Extension_Where
  */
-require_once 'Zend/Gdata/Extension/Where.php';
+// require_once 'Zend/Gdata/Extension/Where.php';
 
 /**
  * Represents a Calendar entry in the Calendar data API meta feed of a user's
@@ -69,7 +69,7 @@ require_once 'Zend/Gdata/Extension/Where.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Calendar
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Calendar_ListEntry extends Zend_Gdata_Entry

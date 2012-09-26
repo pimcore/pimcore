@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage Wsdl
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ArrayOfTypeComplex.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: ArrayOfTypeComplex.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Soap_Wsdl_Strategy_DefaultComplexType
  */
-require_once "Zend/Soap/Wsdl/Strategy/DefaultComplexType.php";
+// require_once "Zend/Soap/Wsdl/Strategy/DefaultComplexType.php";
 
 /**
  * Zend_Soap_Wsdl_Strategy_ArrayOfTypeComplex
@@ -31,7 +31,7 @@ require_once "Zend/Soap/Wsdl/Strategy/DefaultComplexType.php";
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage Wsdl
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Soap_Wsdl_Strategy_ArrayOfTypeComplex extends Zend_Soap_Wsdl_Strategy_DefaultComplexType
@@ -54,7 +54,7 @@ class Zend_Soap_Wsdl_Strategy_ArrayOfTypeComplex extends Zend_Soap_Wsdl_Strategy
         $nestingLevel = $this->_getNestedCount($type);
 
         if($nestingLevel > 1) {
-            require_once "Zend/Soap/Wsdl/Exception.php";
+            // require_once "Zend/Soap/Wsdl/Exception.php";
             throw new Zend_Soap_Wsdl_Exception(
                 "ArrayOfTypeComplex cannot return nested ArrayOfObject deeper than ".
                 "one level. Use array object properties to return deep nested data.
@@ -64,7 +64,7 @@ class Zend_Soap_Wsdl_Strategy_ArrayOfTypeComplex extends Zend_Soap_Wsdl_Strategy
         $singularType = $this->_getSingularPhpType($type);
 
         if(!class_exists($singularType)) {
-            require_once "Zend/Soap/Wsdl/Exception.php";
+            // require_once "Zend/Soap/Wsdl/Exception.php";
             throw new Zend_Soap_Wsdl_Exception(sprintf(
                 "Cannot add a complex type %s that is not an object or where ".
                 "class could not be found in 'DefaultComplexType' strategy.", $type

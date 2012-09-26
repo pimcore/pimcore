@@ -14,22 +14,22 @@
  *
  * @category   Zend
  * @package    Zend_Filter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Lzf.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Lzf.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Filter_Compress_CompressInterface
  */
-require_once 'Zend/Filter/Compress/CompressInterface.php';
+// require_once 'Zend/Filter/Compress/CompressInterface.php';
 
 /**
  * Compression adapter for Lzf
  *
  * @category   Zend
  * @package    Zend_Filter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Filter_Compress_Lzf implements Zend_Filter_Compress_CompressInterface
@@ -40,7 +40,7 @@ class Zend_Filter_Compress_Lzf implements Zend_Filter_Compress_CompressInterface
     public function __construct()
     {
         if (!extension_loaded('lzf')) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('This filter needs the lzf extension');
         }
     }
@@ -55,7 +55,7 @@ class Zend_Filter_Compress_Lzf implements Zend_Filter_Compress_CompressInterface
     {
         $compressed = lzf_compress($content);
         if (!$compressed) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Error during compression');
         }
 
@@ -72,7 +72,7 @@ class Zend_Filter_Compress_Lzf implements Zend_Filter_Compress_CompressInterface
     {
         $compressed = lzf_decompress($content);
         if (!$compressed) {
-            require_once 'Zend/Filter/Exception.php';
+            // require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception('Error during compression');
         }
 

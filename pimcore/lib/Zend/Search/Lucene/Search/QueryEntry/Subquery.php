@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Subquery.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Subquery.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Search_Lucene_Search_QueryEntry */
-require_once 'Zend/Search/Lucene/Search/QueryEntry.php';
+// require_once 'Zend/Search/Lucene/Search/QueryEntry.php';
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_QueryEntry_Subquery extends Zend_Search_Lucene_Search_QueryEntry
@@ -57,7 +57,7 @@ class Zend_Search_Lucene_Search_QueryEntry_Subquery extends Zend_Search_Lucene_S
      */
     public function processFuzzyProximityModifier($parameter = null)
     {
-        require_once 'Zend/Search/Lucene/Search/QueryParserException.php';
+        // require_once 'Zend/Search/Lucene/Search/QueryParserException.php';
         throw new Zend_Search_Lucene_Search_QueryParserException('\'~\' sign must follow term or phrase');
     }
 

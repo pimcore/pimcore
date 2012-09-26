@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DbStatement.php 23953 2011-05-03 05:47:39Z ralph $
+ * @version    $Id: DbStatement.php 25024 2012-07-30 15:08:15Z rob $
  */
 
 /**
  * @see Zend_Db_Statement_Interface
  */
-require_once "Zend/Db/Statement/Interface.php";
+// require_once "Zend/Db/Statement/Interface.php";
 
 /**
  * Testing Database Statement that acts as a stack to SQL resultsets.
@@ -31,7 +31,7 @@ require_once "Zend/Db/Statement/Interface.php";
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Test_DbStatement implements Zend_Db_Statement_Interface
@@ -305,7 +305,7 @@ class Zend_Test_DbStatement implements Zend_Db_Statement_Interface
             return false;
         } else {
             if(count($row) < $col) {
-                require_once "Zend/Db/Statement/Exception.php";
+                // require_once "Zend/Db/Statement/Exception.php";
                 throw new Zend_Db_Statement_Exception(
                     "Column Position '".$col."' is out of bounds."
                 );

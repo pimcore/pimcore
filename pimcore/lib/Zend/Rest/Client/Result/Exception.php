@@ -15,22 +15,22 @@
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exception.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Exception.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Rest_Client_Exception
  */
-require_once "Zend/Rest/Client/Exception.php";
+// require_once "Zend/Rest/Client/Exception.php";
 
 /**
  * Zend_Rest_Client_Result_Exception
  *
  * @package    Zend_Rest
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Rest_Client_Result_Exception extends Zend_Rest_Client_Exception{}

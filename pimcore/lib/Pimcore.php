@@ -54,6 +54,7 @@ class Pimcore {
         // set locale data cache, this must be after self::initLogger() since Pimcore_Model_Cache requires the logger
         // to log if there's something wrong with the cache configuration in cache.xml
         Zend_Locale_Data::setCache(Pimcore_Model_Cache::getInstance());
+        Zend_Locale::setCache(Pimcore_Model_Cache::getInstance());
 
         // load plugins and modules (=core plugins)
         self::initModules();
@@ -71,12 +72,11 @@ class Pimcore {
             }
         }
 
+        $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
         $front->registerPlugin(new Pimcore_Controller_Plugin_Maintenance(), 2);
-
 
         // register general pimcore plugins for frontend
         if ($frontend) {
-            $front->registerPlugin(new Pimcore_Controller_Plugin_ErrorHandler(), 1);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
         }
 
@@ -89,6 +89,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_JavascriptMinify(), 801);
             $front->registerPlugin(new Pimcore_Controller_Plugin_ImageDataUri(), 803);
             $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Targeting(), 805);
             $front->registerPlugin(new Pimcore_Controller_Plugin_HttpErrorLog(), 850);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
@@ -215,11 +216,14 @@ class Pimcore {
         // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
         $throwExceptions = false;
         if(array_key_exists("pimcore_editmode", $_REQUEST) || array_key_exists("pimcore_preview", $_REQUEST) || array_key_exists("pimcore_admin", $_REQUEST)) {
-            $throwExceptions = true;
+            $user = Pimcore_Tool_Authentication::authenticateSession();
+            if($user instanceof User) {
+                $throwExceptions = true;
+            }
         }
 
         // run dispatcher
-        if ($frontend && !(PIMCORE_DEBUG || $throwExceptions)) {
+        if (!PIMCORE_DEBUG && !$throwExceptions && !PIMCORE_DEVMODE) {
             @ini_set("display_errors", "Off");
             @ini_set("display_startup_errors", "Off");
 
@@ -348,6 +352,7 @@ class Pimcore {
                         $email = $user->getEmail();
                         if(!empty($email)){
                             $mail = Pimcore_Tool::getMail(array($email),"pimcore log notification");
+                            $mail->setIgnoreDebugMode(true);
                             if(!is_dir(PIMCORE_LOG_MAIL_TEMP)){
                                 mkdir(PIMCORE_LOG_MAIL_TEMP,0755,true);
                             }
@@ -370,6 +375,10 @@ class Pimcore {
         // try to set system-internal variables
 
         $maxExecutionTime = 240;
+        if(php_sapi_name() == "cli") {
+            $maxExecutionTime = 0;
+        }
+
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
         @ini_set("memory_limit", "1024M");
         @ini_set("max_execution_time", $maxExecutionTime);
@@ -438,7 +447,7 @@ class Pimcore {
                         if (is_array($p['plugin']['pluginNamespaces']['namespace'])) {
                             foreach ($p['plugin']['pluginNamespaces']['namespace'] as $namespace) {
                                 $autoloader->registerNamespace($namespace);
-                            }
+                    }
                         }
                         else if ($p['plugin']['pluginNamespaces']['namespace'] != null) {
                             $autoloader->registerNamespace($p['plugin']['pluginNamespaces']['namespace']);
@@ -501,7 +510,7 @@ class Pimcore {
                             }
                         }
 
-                    } catch (Exeption $e) {
+                    } catch (Exception $e) {
                         Logger::err("Could not instantiate and register plugin [" . $p['plugin']['pluginClassName'] . "]");
                     }
 
@@ -558,7 +567,7 @@ class Pimcore {
         $autoloader->registerNamespace('Csv');
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');
-        $autoloader->registerNamespace('OutputFilter');
+        $autoloader->registerNamespace('Tool');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }
@@ -712,7 +721,6 @@ class Pimcore {
             "pimcore_user",
             "pimcore_config_system",
             "pimcore_admin_user",
-            "pimcore_admin_initialized",
             "pimcore_config_website",
             "pimcore_editmode",
             "pimcore_error_document",
@@ -738,6 +746,8 @@ class Pimcore {
         }
 
         Pimcore_Resource::reset();
+
+        Logger::debug("garbage collection finished");
     }
 
     /**
@@ -769,10 +779,8 @@ class Pimcore {
     public static function outputBufferEnd ($data) {
 
         $contentEncoding = null;
-        if( strpos($_SERVER["HTTP_ACCEPT_ENCODING"], 'x-gzip') !== false ) {
-            $contentEncoding = 'x-gzip';
-        } else if( strpos($_SERVER["HTTP_ACCEPT_ENCODING"],'gzip') !== false ) {
-            $contentEncoding = 'gzip';
+        if( preg_match('@(?:^|,)\\s*((?:x-)?gzip)\\s*(?:$|,|;\\s*q=(?:0\\.|1))@' ,$_SERVER["HTTP_ACCEPT_ENCODING"] ,$m) ) {
+            $contentEncoding = $m[1];
         }
 
         // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
@@ -819,16 +827,17 @@ class Pimcore {
 
             // gzip the contents and send connection close to that the process can run in the background to finish
             // some tasks like writing the cache ...
+            // using mb_strlen() because of PIMCORE-1509
             if($gzipIt) {
                 $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00".
                     substr(gzcompress($data, 2), 0, -4).
                     pack('V', crc32($data)). // packing the CRC and the strlen is still required
-                    pack('V', strlen($data)); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
+                    pack('V', mb_strlen($data, "latin1")); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
 
                 // send headers & contents
                 header("Connection: close\r\n");
                 header("Content-Encoding: $contentEncoding\r\n");
-                header("Content-Length: " . strlen($output));
+                header("Content-Length: " . mb_strlen($output, "latin1"));
                 header("X-Powered-By: pimcore");
 
                 return $output;

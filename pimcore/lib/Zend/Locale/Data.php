@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage Data
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Data.php 24140 2011-06-14 02:11:19Z adamlundrigan $
+ * @version    $Id: Data.php 24766 2012-05-06 02:51:42Z adamlundrigan $
  */
 
 /**
  * include needed classes
  */
-require_once 'Zend/Locale.php';
+// require_once 'Zend/Locale.php';
 
 /**
  * Locale data reader, handles the CLDR
@@ -31,7 +31,7 @@ require_once 'Zend/Locale.php';
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage Data
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Locale_Data
@@ -154,7 +154,7 @@ class Zend_Locale_Data
         if (empty(self::$_ldml[(string) $locale])) {
             $filename = dirname(__FILE__) . '/Data/' . $locale . '.xml';
             if (!file_exists($filename)) {
-                require_once 'Zend/Locale/Exception.php';
+                // require_once 'Zend/Locale/Exception.php';
                 throw new Zend_Locale_Exception("Missing locale file '$filename' for '$locale' locale.");
             }
 
@@ -285,7 +285,7 @@ class Zend_Locale_Data
         }
 
         if (!(Zend_Locale::isLocale((string) $locale, null, false))) {
-            require_once 'Zend/Locale/Exception.php';
+            // require_once 'Zend/Locale/Exception.php';
             throw new Zend_Locale_Exception("Locale (" . (string) $locale . ") is a unknown locale");
         }
 
@@ -306,7 +306,7 @@ class Zend_Locale_Data
         $locale = self::_checkLocale($locale);
 
         if (!isset(self::$_cache) && !self::$_cacheDisabled) {
-            require_once 'Zend/Cache.php';
+            // require_once 'Zend/Cache.php';
             self::$_cache = Zend_Cache::factory(
                 'Core',
                 'File',
@@ -361,7 +361,7 @@ class Zend_Locale_Data
                 break;
 
             case 'type':
-                if (empty($type)) {
+                if (empty($value)) {
                     $temp = self::_getFile($locale, '/ldml/localeDisplayNames/types/type', 'type');
                 } else {
                     if (($value == 'calendar') or
@@ -902,7 +902,7 @@ class Zend_Locale_Data
                 break;
 
             default :
-                require_once 'Zend/Locale/Exception.php';
+                // require_once 'Zend/Locale/Exception.php';
                 throw new Zend_Locale_Exception("Unknown list ($path) for parsing locale data.");
                 break;
         }
@@ -932,7 +932,7 @@ class Zend_Locale_Data
         $locale = self::_checkLocale($locale);
 
         if (!isset(self::$_cache) && !self::$_cacheDisabled) {
-            require_once 'Zend/Cache.php';
+            // require_once 'Zend/Cache.php';
             self::$_cache = Zend_Cache::factory(
                 'Core',
                 'File',
@@ -1410,7 +1410,7 @@ class Zend_Locale_Data
                 break;
 
             default :
-                require_once 'Zend/Locale/Exception.php';
+                // require_once 'Zend/Locale/Exception.php';
                 throw new Zend_Locale_Exception("Unknown detail ($path) for parsing locale data.");
                 break;
         }

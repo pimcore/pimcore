@@ -14,25 +14,25 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PostCode.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: PostCode.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+// require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @see Zend_Locale_Format
  */
-require_once 'Zend/Locale/Format.php';
+// require_once 'Zend/Locale/Format.php';
 
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_PostCode extends Zend_Validate_Abstract
@@ -78,7 +78,7 @@ class Zend_Validate_PostCode extends Zend_Validate_Abstract
         }
 
         if (empty($options)) {
-            require_once 'Zend/Registry.php';
+            // require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Locale')) {
                 $this->setLocale(Zend_Registry::get('Zend_Locale'));
             }
@@ -98,7 +98,7 @@ class Zend_Validate_PostCode extends Zend_Validate_Abstract
 
         $format = $this->getFormat();
         if (empty($format)) {
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("A postcode-format string has to be given for validation");
         }
     }
@@ -123,12 +123,12 @@ class Zend_Validate_PostCode extends Zend_Validate_Abstract
      */
     public function setLocale($locale = null)
     {
-        require_once 'Zend/Locale.php';
+        // require_once 'Zend/Locale.php';
         $this->_locale = Zend_Locale::findLocale($locale);
         $locale        = new Zend_Locale($this->_locale);
         $region        = $locale->getRegion();
         if (empty($region)) {
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("Unable to detect a region for the locale '$locale'");
         }
 
@@ -139,7 +139,7 @@ class Zend_Validate_PostCode extends Zend_Validate_Abstract
         );
 
         if (empty($format)) {
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("Unable to detect a postcode format for the region '{$locale->getRegion()}'");
         }
 
@@ -167,7 +167,7 @@ class Zend_Validate_PostCode extends Zend_Validate_Abstract
     public function setFormat($format)
     {
         if (empty($format) || !is_string($format)) {
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("A postcode-format string has to be given for validation");
         }
 

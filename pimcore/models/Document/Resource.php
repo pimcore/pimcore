@@ -41,14 +41,14 @@ class Document_Resource extends Element_Resource {
      */
     public function getById($id) {
         try {
-            $data = $this->db->fetchRow("SELECT * FROM documents WHERE id = ?", $id);
-        }
-        catch (Exception $e) {
-        }
+            $data = $this->db->fetchRow("SELECT documents.*, tree_locks.locked FROM documents
+                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                    WHERE documents.id = ?", $id);
+
+        } catch (Exception $e) {}
 
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
-            $this->loadLocks();
         }
         else {
             throw new Exception("Document with the ID " . $id . " doesn't exists");
@@ -64,7 +64,7 @@ class Document_Resource extends Element_Resource {
     public function getByPath($path) {
 
         // check for root node
-        $_path = $path != "/" ? $_path = dirname($path) : $path;
+        $_path = $path != "/" ? dirname($path) : $path;
         $_path = str_replace("\\", "/", $_path); // windows patch
         $_key = basename($path);
         $_path .= $_path != "/" ? "/" : "";
@@ -323,7 +323,9 @@ class Document_Resource extends Element_Resource {
     public function isLocked () {
 
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN documents ON tree_locks.id = documents.id WHERE documents.path LIKE ? AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
+        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks
+            INNER JOIN documents ON tree_locks.id = documents.id
+                WHERE documents.path LIKE ? AND tree_locks.type = 'document' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
 
         if($belowLocks > 0) {
             return true;
@@ -338,11 +340,6 @@ class Document_Resource extends Element_Resource {
 
 
         return false;
-    }
-
-    public function loadLocks() {
-        // add tree-lock
-        $this->model->setLocked($this->db->fetchOne("SELECT locked FROM tree_locks WHERE id = ? AND type = ?", array($this->model->getId(), "document")));
     }
 
     public function updateLocks() {
@@ -384,7 +381,12 @@ class Document_Resource extends Element_Resource {
             // exception for list permission
             if(empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $this->model->getRealFullPath()."%");
+                $path = $this->model->getFullPath() . "/";
+                if($this->model->getId() == 1) {
+                    $path = "/";
+                }
+
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $path."%");
                 if($permissionsChilds) {
                     return true;
                 }

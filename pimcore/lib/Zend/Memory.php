@@ -14,27 +14,27 @@
  *
  * @category   Zend
  * @package    Zend_Memory
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Memory.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Memory.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Memory_Exception */
-require_once 'Zend/Memory/Manager.php';
+// require_once 'Zend/Memory/Manager.php';
 
 /** Zend_Memory_Value */
-require_once 'Zend/Memory/Value.php';
+// require_once 'Zend/Memory/Value.php';
 
 /** Zend_Memory_Container */
-require_once 'Zend/Memory/Container.php';
+// require_once 'Zend/Memory/Container.php';
 
 /** Zend_Memory_Exception */
-require_once 'Zend/Cache.php';
+// require_once 'Zend/Cache.php';
 
 /**
  * @category   Zend
  * @package    Zend_Memory
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Memory
@@ -65,7 +65,7 @@ class Zend_Memory
         }
 
         if (!$backendIsFound) {
-            require_once 'Zend/Memory/Exception.php';
+            // require_once 'Zend/Memory/Exception.php';
             throw new Zend_Memory_Exception("Incorrect backend ($backend)");
         }
 
@@ -73,7 +73,7 @@ class Zend_Memory
 
         // For perfs reasons, we do not use the Zend_Loader::loadClass() method
         // (security controls are explicit)
-        require_once str_replace('_', DIRECTORY_SEPARATOR, $backendClass) . '.php';
+        // require_once str_replace('_', DIRECTORY_SEPARATOR, $backendClass) . '.php';
 
         $backendObject = new $backendClass($backendOptions);
 

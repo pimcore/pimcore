@@ -34,12 +34,10 @@ class Object_Class_Data_Languagemultiselect extends Object_Class_Data_Multiselec
     public function configureOptions () {
 
         $validLanguages = (array) Pimcore_Tool::getValidLanguages();
-
-        $languages = Zend_Locale::getTranslationList('language');
-        asort($languages);
+        $locales = Pimcore_Tool::getSupportedLocales();
         $options = array();
 
-        foreach ($languages as $short => $translation) {
+        foreach ($locales as $short => $translation) {
 
             if($this->getOnlySystemLanguages()) {
                 if(!in_array($short, $validLanguages)) {
@@ -47,13 +45,10 @@ class Object_Class_Data_Languagemultiselect extends Object_Class_Data_Multiselec
                 }
             }
 
-            if (strlen($short) == 2 or (strlen($short) == 5 and strpos($short, "_")==2) ) {
-
-                $options[] = array(
-                    "key" => $translation,
-                    "value" => $short
-                );
-            }
+            $options[] = array(
+                "key" => $translation,
+                "value" => $short
+            );
         }
 
         $this->setOptions($options);

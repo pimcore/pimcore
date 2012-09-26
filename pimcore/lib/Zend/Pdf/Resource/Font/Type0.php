@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Type0.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Type0.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Array.php';
-require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Array.php';
+// require_once 'Zend/Pdf/Element/Name.php';
 
 
 /** Zend_Pdf_Resource_Font */
-require_once 'Zend/Pdf/Resource/Font.php';
+// require_once 'Zend/Pdf/Resource/Font.php';
 
 /**
  * Adobe PDF composite fonts implementation
@@ -57,7 +57,7 @@ require_once 'Zend/Pdf/Resource/Font.php';
  *
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Resource_Font_Type0 extends Zend_Pdf_Resource_Font

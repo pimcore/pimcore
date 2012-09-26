@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.link");
 pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
 
         if (!data) {
             data = {};
@@ -135,6 +135,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
                                             name: 'target',
                                             triggerAction: 'all',
                                             editable: true,
+                                            mode: "local",
                                             store: ["","_blank","_self","_top","_parent"],
                                             value: this.data.target
                                         },

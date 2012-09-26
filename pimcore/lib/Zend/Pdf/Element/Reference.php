@@ -14,25 +14,25 @@
  *
  * @category   Zend
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Reference.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Reference.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Null.php';
+// require_once 'Zend/Pdf/Element/Null.php';
 
 
 /** Zend_Pdf_Element */
-require_once 'Zend/Pdf/Element.php';
+// require_once 'Zend/Pdf/Element.php';
 
 /**
  * PDF file 'reference' element implementation
  *
  * @category   Zend
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Element_Reference extends Zend_Pdf_Element
@@ -91,11 +91,11 @@ class Zend_Pdf_Element_Reference extends Zend_Pdf_Element
     public function __construct($objNum, $genNum = 0, Zend_Pdf_Element_Reference_Context $context, Zend_Pdf_ElementFactory $factory)
     {
         if ( !(is_integer($objNum) && $objNum > 0) ) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Object number must be positive integer');
         }
         if ( !(is_integer($genNum) && $genNum >= 0) ) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Generation number must be non-negative integer');
         }
 
@@ -174,7 +174,7 @@ class Zend_Pdf_Element_Reference extends Zend_Pdf_Element
         }
 
         if ($obj->toString() != $this->_objNum . ' ' . $this->_genNum . ' R') {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Incorrect reference to the object');
         }
 

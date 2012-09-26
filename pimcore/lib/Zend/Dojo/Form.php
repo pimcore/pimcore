@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage Form
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Form */
-require_once 'Zend/Form.php';
+// require_once 'Zend/Form.php';
 
 /**
  * Dijit-enabled Form
@@ -28,9 +28,9 @@ require_once 'Zend/Form.php';
  * @uses       Zend_Form
  * @package    Zend_Dojo
  * @subpackage Form
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Form.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Form.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Dojo_Form extends Zend_Form
 {

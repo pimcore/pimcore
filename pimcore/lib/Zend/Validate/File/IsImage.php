@@ -14,22 +14,22 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: IsImage.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version   $Id: IsImage.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Validate_File_MimeType
  */
-require_once 'Zend/Validate/File/MimeType.php';
+// require_once 'Zend/Validate/File/MimeType.php';
 
 /**
  * Validator which checks if the file already exists in the directory
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_IsImage extends Zend_Validate_File_MimeType

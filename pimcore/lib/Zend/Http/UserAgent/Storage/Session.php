@@ -15,24 +15,24 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /**
  * @see Zend_Http_UserAgent_Storage
  */
-require_once 'Zend/Http/UserAgent/Storage.php';
+// require_once 'Zend/Http/UserAgent/Storage.php';
 
 /**
  * @see Zend_Session_Namespace
  */
-require_once 'Zend/Session/Namespace.php';
+// require_once 'Zend/Session/Namespace.php';
 
 /**
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
@@ -87,7 +87,7 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
             $options = (array) $options;
         }
         if (null !== $options && !is_array($options)) {
-            require_once 'Zend/Http/UserAgent/Storage/Exception.php';
+            // require_once 'Zend/Http/UserAgent/Storage/Exception.php';
             throw new Zend_Http_UserAgent_Storage_Exception(sprintf(
                 'Expected array or object options; "%s" provided',
                 gettype($options)

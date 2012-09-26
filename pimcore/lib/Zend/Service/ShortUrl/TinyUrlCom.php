@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Service_ShortUrl
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
@@ -22,14 +22,14 @@
 /**
  * @see Zend_Service_ShortUrl_AbstractShortener
  */
-require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
+// require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
 
 /**
  * TinyUrl.com API implementation
  *
  * @category   Zend
  * @package    Zend_Service_ShortUrl
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_ShortUrl_TinyUrlCom extends Zend_Service_ShortUrl_AbstractShortener
@@ -86,7 +86,7 @@ class Zend_Service_ShortUrl_TinyUrlCom extends Zend_Service_ShortUrl_AbstractSho
         //get response
         $response = $this->getHttpClient()->request();
 
-        require_once 'Zend/Dom/Query.php';
+        // require_once 'Zend/Dom/Query.php';
         $dom = new Zend_Dom_Query($response->getBody());
 
         //find the redirect url link

@@ -99,14 +99,14 @@ pimcore.settings.liveconnect = {
     },
 
     addToStatusBar: function () {
-        var statusbar = Ext.getCmp("statusbar");
+        var statusbar = Ext.getCmp("pimcore_statusbar");
         statusbar.insert(1, '-');
         statusbar.insert(2, '<div class="pimcore_statusbar_liveconnect">Live Connect</div>');
         statusbar.doLayout();
     },
 
     removeFromStatusBar: function () {
-        var statusbar = Ext.getCmp("statusbar");
+        var statusbar = Ext.getCmp("pimcore_statusbar");
         
         statusbar.remove(statusbar.get(2));
         statusbar.remove(statusbar.get(1));

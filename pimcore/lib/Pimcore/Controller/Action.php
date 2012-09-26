@@ -35,8 +35,19 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
             self::$_customViewInitialized = true;
         }
 
-        // set contenttype
-        $this->getResponse()->setHeader("Content-Type", "text/html; charset=UTF-8", true);
+        // set content type
+        if($this->getResponse()->canSendHeaders()) {
+            $this->getResponse()->setHeader("Content-Type", "text/html; charset=UTF-8", true);
+        }
+    }
+
+    protected function disableBrowserCache () {
+        // set this headers to avoid problems with proxies, ...
+        if($this->getResponse()->canSendHeaders()) {
+            $this->getResponse()->setHeader("Cache-Control","no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0, max-age=0", true);
+            $this->getResponse()->setHeader("Pragma","no-cache", true);
+            $this->getResponse()->setHeader("Expires", "Tue, 01 Jan 1980 00:00:00 GMT", true);
+        }
     }
 
     protected function removeViewRenderer() {
@@ -47,9 +58,12 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
 
     protected function enableLayout() {
 
+        $viewRenderer = Zend_Controller_Action_HelperBroker::getExistingHelper("viewRenderer");
+        $viewRenderer->setIsInitialized(false); // reset so that the view get's initialized again, because of error page from other modules
+        $viewRenderer->initView();
+
         Zend_Layout::startMvc();
         $layout = Zend_Layout::getMvcInstance();
-
         $layout->setViewSuffix(Pimcore_View::getViewScriptSuffix());
     }
 
@@ -84,8 +98,8 @@ class Pimcore_Controller_Action extends Zend_Controller_Action {
     }
 
     public function preDispatch() {
-        if ($this->_hasParam("_segment")) {
-            $this->_helper->viewRenderer->setResponseSegment($this->_getParam("_segment"));
+        if ($this->hasParam("_segment")) {
+            $this->_helper->viewRenderer->setResponseSegment($this->getParam("_segment"));
         }
     }
 

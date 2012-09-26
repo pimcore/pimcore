@@ -43,6 +43,10 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      * @return string
      */
     function setName($name) {
+
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+        $this->asset->setUserModification($user->getId());
+
         $this->asset->setFilename(Pimcore_File::getValidFilename($name));
         $this->asset->save();
     }
@@ -51,7 +55,24 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      * @return void
      */
     function delete() {
+
+        Asset_Service::loadAllFields($this->asset);
         $this->asset->delete();
+
+        // add the asset to the delete history, this is used so come over problems with programs like photoshop (delete, create instead of replace => move)
+        // for details see Asset_WebDAV_Tree::move()
+        $log = Asset_WebDAV_Service::getDeleteLog();
+
+        $this->asset->_fulldump = true;
+        $log[$this->asset->getFullpath()] = array(
+            "id" => $this->asset->getId(),
+            "timestamp" => time(),
+            "data" => Pimcore_Tool_Serialize::serialize($this->asset)
+        );
+
+        unset($this->asset->_fulldump);
+
+        Asset_WebDAV_Service::saveDeleteLog($log);
     }
 
     /**
@@ -69,10 +90,11 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
      */
     function put($data) {
 
-        $tmpFile = PIMCORE_WEBDAV_TEMP . "/" . md5($this->asset->getId() . microtime());
-        file_put_contents($tmpFile, $data);
-        $data = file_get_contents($tmpFile);
-        unlink($tmpFile);
+        // read from resource -> default for SabreDAV
+        $data = stream_get_contents($data);
+
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+        $this->asset->setUserModification($user->getId());
 
         $this->asset->setData($data);
         $this->asset->save();

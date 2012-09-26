@@ -88,6 +88,12 @@ class Logger {
                 $message = $call["class"] . $call["type"] . $call["function"] . "() [" . $call["line"] . "]: " . $message;
             }
 
+            // add the memory consumption
+            $memory = formatBytes(memory_get_usage(), 0);
+            $memory = str_pad($memory, 6, " ", STR_PAD_LEFT);
+
+            $message = $memory . " | " . $message;
+
             foreach (self::$logger as $logger) {
                 $logger->log($message,$code);
             }

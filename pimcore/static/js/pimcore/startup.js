@@ -40,16 +40,22 @@ var xhrActive = 0; // number of active xhr requests
 Ext.onReady(function() {
 
     // confirmation to close pimcore
-    if(!pimcore.settings.devmode) {
-        window.onbeforeunload = function() {
+    window.onbeforeunload = function() {
+
+        // set this here as a global so that eg. the editmode can access this (edit::iframeOnbeforeunload()),
+        // to prevent multiple warning messages to be shown
+        pimcore.globalmanager.add("pimcore_reload_in_progress", true);
+
+        if(!pimcore.settings.devmode) {
             // check for opened tabs and if the user has configured the warnings
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             var user = pimcore.globalmanager.get("user");
             if(pimcore.settings.showCloseConfirmation && tabPanel.items.getCount() > 0 && user["closeWarning"]) {
                 return t("do_you_really_want_to_close_pimcore");
             }
-        };
-    }
+        }
+    };
+
 
     // define some globals
     Ext.chart.Chart.CHART_URL = '/pimcore/static/js/lib/ext/resources/charts.swf';
@@ -76,7 +82,7 @@ Ext.onReady(function() {
 
         } else {
             //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot be saved due to HTTP 500 Response)
-            pimcore.helpers.showNotification(t("error"), t("error_general"), "error","");
+            pimcore.helpers.showNotification(t("error"), t("error_general"), "error", response.responseText);
         }
         
         xhrActive--;
@@ -131,14 +137,10 @@ Ext.onReady(function() {
         proxy: proxy,
         reader: reader,
         writer: writer,
-        remoteSort: true,
+        remoteSort: false,
         listeners: {
-            write : function(store, action, result, response, rs) {
-            },
-            save: function(store,batch,data){
-                store.sort([ { field : 'priority', direction: 'DESC' }, { field : 'name', direction: 'ASC' } ],'DESC');
-                pimcore.layout.refresh();
-            }
+            write : function(store, action, result, response, rs) {},
+            save: function(store,batch,data){}
         }
     });
     store.load();
@@ -222,7 +224,7 @@ Ext.onReady(function() {
     
     // STATUSBAR
     var statusbar = new Ext.ux.StatusBar({
-        id: 'statusbar',
+        id: 'pimcore_statusbar',
         statusAlign: 'right'
     });
     
@@ -250,7 +252,7 @@ Ext.onReady(function() {
     }
     
     statusbar.add("->");
-    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#000;">pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
+    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
     if (!empty(pimcore.settings.liveconnectToken)) {
         pimcore.settings.liveconnect.setToken(pimcore.settings.liveconnectToken);
@@ -280,8 +282,9 @@ Ext.onReady(function() {
                     id: "pimcore_body",
                     cls: "pimcore_body",
                     layout: "border",
-                    border: false,
+                    border: true,
                     tbar: {
+                        ctCls: "pimcore_panel_toolbar_container",
                         id: "pimcore_panel_toolbar",
                         xtype: "toolbar",
                         border: false
@@ -289,6 +292,7 @@ Ext.onReady(function() {
                     items: [
                         {
                             region:'west',
+                            ctCls: "pimcore_body_inner",
                             id:'pimcore_panel_tree_left',
                             split:true,
                             width: 250,
@@ -310,7 +314,6 @@ Ext.onReady(function() {
                             id: "pimcore_panel_tabs",
                             enableTabScroll:true,
                             hideMode: "offsets",
-                            defaults: {autoScroll:true},
                             cls: "tab_panel"
                         }),{
                             region:'east',
@@ -432,6 +435,42 @@ Ext.onReady(function() {
     mapF5 = new Ext.KeyMap(document, {
         key: [116],
         fn: pimcore.helpers.handleF5,
+        stopEvent: true
+    });
+
+    var openAssetById = new Ext.KeyMap(document, {
+        key: "a",
+        fn: pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
+        ctrl:true,
+        alt: false,
+        shift:true,
+        stopEvent: true
+    });
+
+    var openObjectById = new Ext.KeyMap(document, {
+        key: "o",
+        fn: pimcore.helpers.openElementByIdDialog.bind(this, "object"),
+        ctrl:true,
+        alt: false,
+        shift:true,
+        stopEvent: true
+    });
+
+    var openDocumentById = new Ext.KeyMap(document, {
+        key: "d",
+        fn: pimcore.helpers.openElementByIdDialog.bind(this, "document"),
+        ctrl:true,
+        alt: false,
+        shift:true,
+        stopEvent: true
+    });
+
+    var openDocumentByPath = new Ext.KeyMap(document, {
+        key: "f",
+        fn: pimcore.helpers.openDocumentByPathDialog,
+        ctrl:true,
+        alt: false,
+        shift:true,
         stopEvent: true
     });
 

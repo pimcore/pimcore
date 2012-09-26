@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Term.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Term.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Search_Lucene_Search_QueryEntry */
-require_once 'Zend/Search/Lucene/Search/QueryEntry.php';
+// require_once 'Zend/Search/Lucene/Search/QueryEntry.php';
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_QueryEntry_Term extends Zend_Search_Lucene_Search_QueryEntry
@@ -87,7 +87,7 @@ class Zend_Search_Lucene_Search_QueryEntry_Term extends Zend_Search_Lucene_Searc
             $this->_similarity = $parameter;
         } else {
             /** Zend_Search_Lucene_Search_Query_Fuzzy */
-            require_once 'Zend/Search/Lucene/Search/Query/Fuzzy.php';
+            // require_once 'Zend/Search/Lucene/Search/Query/Fuzzy.php';
             $this->_similarity = Zend_Search_Lucene_Search_Query_Fuzzy::DEFAULT_MIN_SIMILARITY;
         }
     }
@@ -103,7 +103,7 @@ class Zend_Search_Lucene_Search_QueryEntry_Term extends Zend_Search_Lucene_Searc
     {
         if ($this->_fuzzyQuery) {
             /** Zend_Search_Lucene_Search_Query_Preprocessing_Fuzzy */
-            require_once 'Zend/Search/Lucene/Search/Query/Preprocessing/Fuzzy.php';
+            // require_once 'Zend/Search/Lucene/Search/Query/Preprocessing/Fuzzy.php';
             $query = new Zend_Search_Lucene_Search_Query_Preprocessing_Fuzzy($this->_term,
                                                                              $encoding,
                                                                              ($this->_field !== null)?
@@ -117,7 +117,7 @@ class Zend_Search_Lucene_Search_QueryEntry_Term extends Zend_Search_Lucene_Searc
 
 
         /** Zend_Search_Lucene_Search_Query_Preprocessing_Term */
-        require_once 'Zend/Search/Lucene/Search/Query/Preprocessing/Term.php';
+        // require_once 'Zend/Search/Lucene/Search/Query/Preprocessing/Term.php';
         $query = new Zend_Search_Lucene_Search_Query_Preprocessing_Term($this->_term,
                                                                         $encoding,
                                                                         ($this->_field !== null)?

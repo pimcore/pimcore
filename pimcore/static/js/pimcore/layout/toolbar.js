@@ -35,6 +35,37 @@ pimcore.layout.toolbar = Class.create({
             }
         });
 
+        if (user.isAllowed("documents")) {
+            fileItems.push({
+                text: t("open_document_by_url"),
+                iconCls: "pimcore_icon_open_document_by_url",
+                handler: pimcore.helpers.openDocumentByPathDialog
+            });
+
+            fileItems.push({
+                text: t("open_document_by_id"),
+                iconCls: "pimcore_icon_open_document_by_id",
+                handler: pimcore.helpers.openElementByIdDialog.bind(this, "document")
+            });
+        }
+
+        if (user.isAllowed("assets")) {
+            fileItems.push({
+                text: t("open_asset_by_id"),
+                iconCls: "pimcore_icon_open_asset_by_id",
+                handler: pimcore.helpers.openElementByIdDialog.bind(this, "asset")
+            });
+        }
+
+        if (user.isAllowed("objects")) {
+            fileItems.push({
+                text: t("open_object_by_id"),
+                iconCls: "pimcore_icon_open_object_by_id",
+                handler: pimcore.helpers.openElementByIdDialog.bind(this, "object")
+            });
+        }
+
+
         fileItems.push({
             text: t("close_all_tabs"),
             iconCls: "pimcore_icon_menu_close_tabs",
@@ -137,7 +168,24 @@ pimcore.layout.toolbar = Class.create({
                     text: t("tag_snippet_management"),
                     iconCls: "pimcore_icon_tag",
                     handler: this.showTagManagement
+                },{
+                    text: t("qr_codes"),
+                    iconCls: "pimcore_icon_qrcode",
+                    handler: this.showQRCode
+                },{
+                    text: t("targeting"),
+                    iconCls: "pimcore_icon_tab_targeting",
+                    handler: this.showTargeting,
+                    hidden: !pimcore.settings.targeting_enabled
                 }]
+            });
+        }
+
+        if (user.isAllowed("system_settings")) {
+            extrasItems.push({
+                text: t('notes') + " & " + t("events"),
+                iconCls: "pimcore_icon_tab_notes",
+                handler: this.notes
             });
         }
 
@@ -188,6 +236,10 @@ pimcore.layout.toolbar = Class.create({
                     text: "PHP Info",
                     iconCls: "pimcore_icon_php",
                     handler: this.showPhpInfo
+                },{
+                    text: "System-Requirements Check",
+                    iconCls: "pimcore_icon_systemrequirements",
+                    handler: this.showSystemRequirementsCheck
                 },{
                     text: "Server Info",
                     iconCls: "pimcore_icon_server_info",
@@ -483,9 +535,7 @@ pimcore.layout.toolbar = Class.create({
             handler: this.logout
         });
         
-        
-        this.toolbar.add("-");
-        
+
         this.toolbar.add(new Ext.Toolbar.Spacer({
             width: "150"
         }));
@@ -644,6 +694,44 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("tagmanagement", new pimcore.settings.tagmanagement.panel());
+        }
+    },
+
+    showQRCode: function () {
+        try {
+            pimcore.globalmanager.get("qrcode").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("qrcode", new pimcore.report.qrcode.panel());
+        }
+    },
+
+    showTargeting: function () {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        try {
+            tabPanel.activate(pimcore.globalmanager.get("targeting").getLayout());
+        }
+        catch (e) {
+            var targeting = new pimcore.settings.targeting.panel();
+            pimcore.globalmanager.add("targeting", targeting);
+
+            tabPanel.add(targeting.getLayout());
+            tabPanel.activate(targeting.getLayout());
+
+            targeting.getLayout().on("destroy", function () {
+                pimcore.globalmanager.remove("targeting");
+            }.bind(this));
+
+            pimcore.layout.refresh();
+        }
+    },
+
+    notes: function () {
+        try {
+            pimcore.globalmanager.get("notes").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("notes", new pimcore.element.notes());
         }
     },
 
@@ -842,6 +930,19 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/linfo/index.php", "pimcore_icon_server_info", "Server Info"));
+        }
+
+    },
+
+    showSystemRequirementsCheck: function () {
+
+        var id = "systemrequirementscheck";
+
+        try {
+            pimcore.globalmanager.get(id).activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/install/check/", "pimcore_icon_systemrequirements", "System-Requirements Check"));
         }
 
     },

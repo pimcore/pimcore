@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Definition.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Definition.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -25,7 +25,7 @@
  * @todo       Implement iterator
  * @category   Zend
  * @package    Zend_Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Server_Definition implements Countable, Iterator
@@ -76,10 +76,10 @@ class Zend_Server_Definition implements Countable, Iterator
     public function addMethod($method, $name = null)
     {
         if (is_array($method)) {
-            require_once 'Zend/Server/Method/Definition.php';
+            // require_once 'Zend/Server/Method/Definition.php';
             $method = new Zend_Server_Method_Definition($method);
         } elseif (!$method instanceof Zend_Server_Method_Definition) {
-            require_once 'Zend/Server/Exception.php';
+            // require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('Invalid method provided');
         }
 
@@ -92,12 +92,12 @@ class Zend_Server_Definition implements Countable, Iterator
             $name = $method->getName();
         }
         if (null === $name) {
-            require_once 'Zend/Server/Exception.php';
+            // require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('No method name provided');
         }
 
         if (!$this->_overwriteExistingMethods && array_key_exists($name, $this->_methods)) {
-            require_once 'Zend/Server/Exception.php';
+            // require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception(sprintf('Method by name of "%s" already exists', $name));
         }
         $this->_methods[$name] = $method;

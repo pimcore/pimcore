@@ -34,7 +34,7 @@ class Pimcore_View extends Zend_View {
         try {
             // @todo add document-id to registry key | for example for embeded snippets
             // set suffixes if the tag is inside a block
-            try {
+            if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
                 $blocks = Zend_Registry::get("pimcore_tag_block_current");
 
                 $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
@@ -58,8 +58,6 @@ class Pimcore_View extends Zend_View {
                     }
                     $name = $name . implode("_", $blocks) . implode("_", $numeration);
                 }
-            }
-            catch (Exception $e) {
             }
 
             $document = $this->document;
@@ -100,7 +98,7 @@ class Pimcore_View extends Zend_View {
      * @param array $params
      * @return void
      */
-    public function template($scriptPath, $params = array()) {
+    public function template($scriptPath, $params = array(), $resetPassedParams = false) {
 
         foreach ($params as $key => $value) {
             $this->assign($key, $value);
@@ -122,6 +120,12 @@ class Pimcore_View extends Zend_View {
             if(is_file($scriptPath)) {
                 $found = true;
                 include($scriptPath);
+            }
+        }
+
+        if($resetPassedParams){
+            foreach($params as $key => $value){
+                $this->$key = null;
             }
         }
     }
@@ -213,6 +217,7 @@ class Pimcore_View extends Zend_View {
     }
 
     /**
+     * @deprecated
      * @param $key
      * @return mixed
      */
@@ -228,6 +233,7 @@ class Pimcore_View extends Zend_View {
     }
 
     /**
+     * @deprecated
      * @return array
      */
     public function _getAllParams () {

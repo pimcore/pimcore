@@ -16,25 +16,25 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Exif
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Entry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Entry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Exif
  */
-require_once 'Zend/Gdata/Exif.php';
+// require_once 'Zend/Gdata/Exif.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Tags
  */
-require_once 'Zend/Gdata/Exif/Extension/Tags.php';
+// require_once 'Zend/Gdata/Exif/Extension/Tags.php';
 
 /**
  * An Atom entry containing EXIF metadata.
@@ -42,7 +42,7 @@ require_once 'Zend/Gdata/Exif/Extension/Tags.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Exif
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Exif_Entry extends Zend_Gdata_Entry

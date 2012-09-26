@@ -14,27 +14,27 @@
  *
  * @category   Zend
  * @package    Zend_Oauth
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Access.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Access.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Oauth_Token */
-require_once 'Zend/Oauth/Token.php';
+// require_once 'Zend/Oauth/Token.php';
 
 /** Zend_Oauth_Http */
-require_once 'Zend/Oauth/Http.php';
+// require_once 'Zend/Oauth/Http.php';
 
 /** Zend_Uri_Http */
-require_once 'Zend/Uri/Http.php';
+// require_once 'Zend/Uri/Http.php';
 
 /** Zend_Oauth_Client */
-require_once 'Zend/Oauth/Client.php';
+// require_once 'Zend/Oauth/Client.php';
 
 /**
  * @category   Zend
  * @package    Zend_Oauth
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Oauth_Token_Access extends Zend_Oauth_Token
@@ -52,7 +52,7 @@ class Zend_Oauth_Token_Access extends Zend_Oauth_Token
         $url, Zend_Oauth_Config_ConfigInterface $config, array $customParams = null, $realm = null
     ) {
         if (!Zend_Uri::check($url)) {
-            require_once 'Zend/Oauth/Exception.php';
+            // require_once 'Zend/Oauth/Exception.php';
             throw new Zend_Oauth_Exception(
                 '\'' . $url . '\' is not a valid URI'
             );
@@ -72,7 +72,7 @@ class Zend_Oauth_Token_Access extends Zend_Oauth_Token
     public function toQueryString($url, Zend_Oauth_Config_ConfigInterface $config, array $params = null)
     {
         if (!Zend_Uri::check($url)) {
-            require_once 'Zend/Oauth/Exception.php';
+            // require_once 'Zend/Oauth/Exception.php';
             throw new Zend_Oauth_Exception(
                 '\'' . $url . '\' is not a valid URI'
             );

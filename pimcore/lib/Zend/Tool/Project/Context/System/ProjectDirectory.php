@@ -15,30 +15,30 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ProjectDirectory.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: ProjectDirectory.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Tool_Project_Context_Filesystem_Directory
  */
-require_once 'Zend/Tool/Project/Context/Filesystem/Directory.php';
+// require_once 'Zend/Tool/Project/Context/Filesystem/Directory.php';
 
 /**
  * @see Zend_Tool_Project_Context_System_Interface
  */
-require_once 'Zend/Tool/Project/Context/System/Interface.php';
+// require_once 'Zend/Tool/Project/Context/System/Interface.php';
 
 /**
  * @see Zend_Tool_Project_Context_System_TopLevelRestrictable
  */
-require_once 'Zend/Tool/Project/Context/System/TopLevelRestrictable.php';
+// require_once 'Zend/Tool/Project/Context/System/TopLevelRestrictable.php';
 
 /**
  * @see Zend_Tool_Project_Context_System_NotOverwritable
  */
-require_once 'Zend/Tool/Project/Context/System/NotOverwritable.php';
+// require_once 'Zend/Tool/Project/Context/System/NotOverwritable.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project
@@ -48,7 +48,7 @@ require_once 'Zend/Tool/Project/Context/System/NotOverwritable.php';
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Context_System_ProjectDirectory
@@ -90,7 +90,7 @@ class Zend_Tool_Project_Context_System_ProjectDirectory
 
         // if not, exception.
         if ($projectDirectory == null) {
-            require_once 'Zend/Tool/Project/Exception.php';
+            // require_once 'Zend/Tool/Project/Exception.php';
             throw new Zend_Tool_Project_Exception('projectDirectory cannot find the directory for this project.');
         }
 
@@ -112,7 +112,7 @@ class Zend_Tool_Project_Context_System_ProjectDirectory
                     if ($registry->getClient()->isInteractive()) {
                         // @todo prompt for override
                     } else {
-                        require_once 'Zend/Tool/Project/Context/Exception.php';
+                        // require_once 'Zend/Tool/Project/Context/Exception.php';
                         throw new Zend_Tool_Project_Context_Exception('This directory is not empty, project creation aborted.');
                     }
                     break;

@@ -204,7 +204,7 @@ pimcore.element.properties = Class.create({
                         sortable: true
                     },
                     {
-                        header: 'Inherited',
+                        header: t('inherited'),
                         dataIndex: 'inherited',
                         editable: false,
                         hidden: true,

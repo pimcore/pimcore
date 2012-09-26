@@ -28,7 +28,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
     public function lostpasswordAction() {
 
 
-        $username = $this->_getParam("username");
+        $username = $this->getParam("username");
         if ($username) {
             $user = User::getByName($username);
             if (!$user instanceof User) {
@@ -37,16 +37,13 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
                 if ($user->isActive()) {
                     if ($user->getEmail()) {
                         $token = Pimcore_Tool_Authentication::generateToken($username, $user->getPassword(), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB);
-                        $protocol = "http://";
-                        if(strpos(strtolower($_SERVER["SERVER_PROTOCOL"]),"https")===0){
-                            $protocol = "https://";
-                        }
-                        $uri = $protocol.$_SERVER['SERVER_NAME'];
-                        $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token;
+                        $uri = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() ;
+                        $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token . "&reset=true";
                         
                         try {
                             
                             $mail = Pimcore_Tool::getMail(array($user->getEmail()), "Pimcore lost password service");
+                            $mail->setIgnoreDebugMode(true);
                             $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
                             $mail->send();
                             $this->view->success = true;
@@ -70,20 +67,18 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     public function indexAction() {
 
-        Zend_Session::regenerateId();
-
         if ($this->getUser() instanceof User) {
-            $this->_redirect("/admin/?_dc=" . time());
+            $this->redirect("/admin/?_dc=" . time());
         }
 
-        if ($this->_getParam("auth_failed")) {
-            if ($this->_getParam("inactive")) {
+        if ($this->getParam("auth_failed")) {
+            if ($this->getParam("inactive")) {
                 $this->view->error = "error_user_inactive";
             } else {
                 $this->view->error = "error_auth_failed";
             }
         }
-        if ($this->_getParam("session_expired")) {
+        if ($this->getParam("session_expired")) {
             $this->view->error = "error_session_expired";
         }
     }
@@ -91,34 +86,42 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
     public function deeplinkAction () {
         // check for deeplink
         if($_SERVER["QUERY_STRING"]) {
-            setcookie("pimcore_opentabs", "," . $_SERVER["QUERY_STRING"] . ",", null, "/");
+            $this->view->tab = $_SERVER["QUERY_STRING"];
         }
-        $this->_redirect("/admin/");
     }
 
     public function loginAction() {
 
         $userInactive = false;
         try {
-            $user = User::getByName($this->_getParam("username"));
+            $user = User::getByName($this->getParam("username"));
 
             if ($user instanceof User) {
                 if ($user->isActive()) {
                     $authenticated = false;
 
-                    if ($user->getPassword() == Pimcore_Tool_Authentication::getPasswordHash($this->_getParam("username"), $this->_getParam("password"))) {
+                    if ($user->getPassword() == Pimcore_Tool_Authentication::getPasswordHash($this->getParam("username"), $this->getParam("password"))) {
                         $authenticated = true;
 
-                    } else if ($this->_getParam("token") and Pimcore_Tool_Authentication::tokenAuthentication($this->_getParam("username"), $this->_getParam("token"), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB, false)) {
+                    } else if ($this->getParam("token") and Pimcore_Tool_Authentication::tokenAuthentication($this->getParam("username"), $this->getParam("token"), MCRYPT_TRIPLEDES, MCRYPT_MODE_ECB, false)) {
                         $authenticated = true;
+
+                        // save the information to session when the user want's to reset the password
+                        // this is because otherwise the old password is required => see also PIMCORE-1468
+                        if($this->getParam("reset")) {
+                            $adminSession = Pimcore_Tool_Authentication::getSession();
+                            $adminSession->password_reset = true;
+                        }
                     }
                     else {
                         throw new Exception("User and Password doesn't match");
                     }
 
                     if ($authenticated) {
-                        $adminSession = new Zend_Session_Namespace("pimcore_admin");
+                        $adminSession = Pimcore_Tool_Authentication::getSession();
                         $adminSession->user = $user;
+
+                        Zend_Session::regenerateId();
                     }
 
                 } else {
@@ -133,27 +136,26 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
             }
         } catch (Exception $e) {
 
-            //see if module ore plugin authenticates user
-            $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->_getParam("username"),$this->_getParam("password"));
+            //see if module or plugin authenticates user
+            $user = Pimcore_API_Plugin_Broker::getInstance()->authenticateUser($this->getParam("username"),$this->getParam("password"));
             if($user instanceof User){
-                $adminSession = new Zend_Session_Namespace("pimcore_admin");
+                $adminSession = Pimcore_Tool_Authentication::getSession();
                 $adminSession->user = $user;
-                $this->_redirect("/admin/?_dc=" . time());
+                $this->redirect("/admin/?_dc=" . time());
             } else {
-                $this->writeLogFile($this->_getParam("username"), $e->getMessage());
+                $this->writeLogFile($this->getParam("username"), $e->getMessage());
                 Logger::info("Login Exception" . $e);
 
-                $this->_redirect("/admin/login/?auth_failed=true&inactive=" . $userInactive);
-                $this->getResponse()->sendResponse();
+                $this->redirect("/admin/login/?auth_failed=true&inactive=" . $userInactive);
                 exit;
             }
         }
 
-        $this->_redirect("/admin/?_dc=" . time());
+        $this->redirect("/admin/?_dc=" . time());
     }
 
     public function logoutAction() {
-        $adminSession = new Zend_Session_Namespace("pimcore_admin");
+        $adminSession = Pimcore_Tool_Authentication::getSession();
 
         if ($adminSession->user instanceof User) {
             Pimcore_API_Plugin_Broker::getInstance()->preLogoutUser($adminSession->user);
@@ -161,16 +163,17 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         }
 
         Zend_Session::destroy();
-        Zend_Session::regenerateId();
 
-        $this->_redirect("/admin/login/");
+        // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
+        setcookie("pimcore_opentabs", false, 315554400, "/");
+
+        $this->redirect("/admin/login/");
     }
 
 
     /**
      * Protection against bruteforce
      */
-
     protected function getLogFile() {
 
         $logfile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/loginerror.log";
@@ -192,20 +195,35 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
 
     protected function protect() {
 
+        $user = $this->getParam("username");
         $data = $this->readLogFile();
 
-        $matches = 0;
+        $matchesIpOnly = 0;
+        $matchesUserOnly = 0;
+        $matchesUserIp = 0;
 
         foreach ($data as $login) {
-            if ($login[1] == Pimcore_Tool::getClientIp()) {
-                if ($login[0] > (time() - 300)) {
-                    $matches++;
+            $matchIp = false;
+            $matchUser = false;
+
+            if ($login[0] > (time() - 300)) {
+                if($user && $login[2] == $user) {
+                    $matchesUserOnly++;
+                    $matchUser = true;
+                }
+                if ($login[1] == Pimcore_Tool::getAnonymizedClientIp()) {
+                    $matchesIpOnly++;
+                    $matchIp = true;
+                }
+
+                if($matchIp && $matchUser) {
+                    $matchesUserIp++;
                 }
             }
         }
 
-        if ($matches > 4) {
-            $m = "Security Alert: Too many logins, please wait 5 minutes and try again.";
+        if ($matchesIpOnly > 49 || $matchesUserOnly > 9 || $matchesUserIp > 4) {
+            $m = "Security Alert: Too many login attempts , please wait 5 minutes and try again.";
             Logger::crit($m);
             die($m);
         }
@@ -231,7 +249,7 @@ class Admin_LoginController extends Pimcore_Controller_Action_Admin {
         $logfile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/loginerror.log";
         $data = $this->readLogFile();
 
-        $remoteHost = Pimcore_Tool::getClientIp();
+        $remoteHost = Pimcore_Tool::getAnonymizedClientIp();
 
         $data[] = array(
             time(),

@@ -14,24 +14,30 @@
  *
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MultiSearcher.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: MultiSearcher.php 24862 2012-06-02 00:04:53Z adamlundrigan $
  */
 
 
 /** Zend_Search_Lucene_Interface */
-require_once 'Zend/Search/Lucene/Interface.php';
+// require_once 'Zend/Search/Lucene/Interface.php';
+
+/**
+ * Import Zend_Search_Lucene_Interface_MultiSearcher for BC (see ZF-12067)
+ * @see Zend_Search_Lucene_Interface_MultiSearcher 
+ */
+// require_once 'Zend/Search/Lucene/Interface/MultiSearcher.php';
 
 /**
  * Multisearcher allows to search through several independent indexes.
  *
  * @category   Zend
  * @package    Zend_Search_Lucene
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_Interface
+class Zend_Search_Lucene_MultiSearcher implements Zend_Search_Lucene_Interface
 {
     /**
      * List of indices for searching.
@@ -53,7 +59,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
 
         foreach ($this->_indices as $index) {
             if (!$index instanceof Zend_Search_Lucene_Interface) {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception('sub-index objects have to implement Zend_Search_Lucene_Interface.');
             }
         }
@@ -83,7 +89,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
      */
     public static function getActualGeneration(Zend_Search_Lucene_Storage_Directory $directory)
     {
-        require_once 'Zend/Search/Lucene/Exception.php';
+        // require_once 'Zend/Search/Lucene/Exception.php';
         throw new Zend_Search_Lucene_Exception("Generation number can't be retrieved for multi-searcher");
     }
 
@@ -106,7 +112,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
      */
     public function getFormatVersion()
     {
-        require_once 'Zend/Search/Lucene/Exception.php';
+        // require_once 'Zend/Search/Lucene/Exception.php';
         throw new Zend_Search_Lucene_Exception("Format version can't be retrieved for multi-searcher");
     }
 
@@ -130,7 +136,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
      */
     public function getDirectory()
     {
-        require_once 'Zend/Search/Lucene/Exception.php';
+        // require_once 'Zend/Search/Lucene/Exception.php';
         throw new Zend_Search_Lucene_Exception("Index directory can't be retrieved for multi-searcher");
     }
 
@@ -197,7 +203,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
             $id -= $indexCount;
         }
 
-        require_once 'Zend/Search/Lucene/Exception.php';
+        // require_once 'Zend/Search/Lucene/Exception.php';
         throw new Zend_Search_Lucene_Exception('Document id is out of the range.');
     }
 
@@ -229,7 +235,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public static function getDefaultSearchField()
     {
         if (count($this->_indices) == 0) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Indices list is empty');
         }
 
@@ -237,7 +243,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
 
         foreach ($this->_indices as $index) {
             if ($index->getDefaultSearchField() !== $defaultSearchField) {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception('Indices have different default search field.');
             }
         }
@@ -270,7 +276,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public static function getResultSetLimit()
     {
         if (count($this->_indices) == 0) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Indices list is empty');
         }
 
@@ -278,7 +284,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
 
         foreach ($this->_indices as $index) {
             if ($index->getResultSetLimit() !== $defaultResultSetLimit) {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception('Indices have different default search field.');
             }
         }
@@ -300,7 +306,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public function getMaxBufferedDocs()
     {
         if (count($this->_indices) == 0) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Indices list is empty');
         }
 
@@ -308,7 +314,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
 
         foreach ($this->_indices as $index) {
             if ($index->getMaxBufferedDocs() !== $maxBufferedDocs) {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception('Indices have different default search field.');
             }
         }
@@ -349,7 +355,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public function getMaxMergeDocs()
     {
         if (count($this->_indices) == 0) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Indices list is empty');
         }
 
@@ -357,7 +363,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
 
         foreach ($this->_indices as $index) {
             if ($index->getMaxMergeDocs() !== $maxMergeDocs) {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception('Indices have different default search field.');
             }
         }
@@ -405,7 +411,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public function getMergeFactor()
     {
         if (count($this->_indices) == 0) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Indices list is empty');
         }
 
@@ -413,7 +419,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
 
         foreach ($this->_indices as $index) {
             if ($index->getMergeFactor() !== $mergeFactor) {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception('Indices have different default search field.');
             }
         }
@@ -523,7 +529,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
             $id -= $indexCount;
         }
 
-        require_once 'Zend/Search/Lucene/Exception.php';
+        // require_once 'Zend/Search/Lucene/Exception.php';
         throw new Zend_Search_Lucene_Exception('Document id is out of the range.');
     }
 
@@ -557,7 +563,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public function termDocs(Zend_Search_Lucene_Index_Term $term, $docsFilter = null)
     {
         if ($docsFilter != null) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Document filters could not used with multi-searcher');
         }
 
@@ -593,7 +599,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
      */
     public function termDocsFilter(Zend_Search_Lucene_Index_Term $term, $docsFilter = null)
     {
-        require_once 'Zend/Search/Lucene/Exception.php';
+        // require_once 'Zend/Search/Lucene/Exception.php';
         throw new Zend_Search_Lucene_Exception('Document filters could not used with multi-searcher');
     }
 
@@ -609,7 +615,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public function termFreqs(Zend_Search_Lucene_Index_Term $term, $docsFilter = null)
     {
         if ($docsFilter != null) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Document filters could not used with multi-searcher');
         }
 
@@ -647,7 +653,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public function termPositions(Zend_Search_Lucene_Index_Term $term, $docsFilter = null)
     {
         if ($docsFilter != null) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Document filters could not used with multi-searcher');
         }
 
@@ -699,7 +705,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public function getSimilarity()
     {
         if (count($this->_indices) == 0) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Indices list is empty');
         }
 
@@ -707,7 +713,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
 
         foreach ($this->_indices as $index) {
             if ($index->getSimilarity() !== $similarity) {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception('Indices have different similarity.');
             }
         }
@@ -773,7 +779,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
             $id -= $indexCount;
         }
 
-        require_once 'Zend/Search/Lucene/Exception.php';
+        // require_once 'Zend/Search/Lucene/Exception.php';
         throw new Zend_Search_Lucene_Exception('Document id is out of the range.');
     }
 
@@ -799,7 +805,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     public function setDocumentDistributorCallback($callback)
     {
         if ($callback !== null  &&  !is_callable($callback)) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('$callback parameter must be a valid callback.');
         }
 
@@ -886,7 +892,7 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     {
         if ($this->_termsStream === null) {
             /** Zend_Search_Lucene_TermStreamsPriorityQueue */
-            require_once 'Zend/Search/Lucene/TermStreamsPriorityQueue.php';
+            // require_once 'Zend/Search/Lucene/TermStreamsPriorityQueue.php';
 
             $this->_termsStream = new Zend_Search_Lucene_TermStreamsPriorityQueue($this->_indices);
         } else {
@@ -970,4 +976,17 @@ class Zend_Search_Lucene_Interface_MultiSearcher implements Zend_Search_Lucene_I
     {
         // Do nothing, since it's never referenced by indices
     }
+}
+
+/**
+ * This class is provided for backwards-compatibility (See ZF-12067)
+ *
+ * @category   Zend
+ * @package    Zend_Search_Lucene
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
+class Zend_Search_Lucene_Interface_MultiSearcher
+    extends Zend_Search_Lucene_MultiSearcher
+{
 }

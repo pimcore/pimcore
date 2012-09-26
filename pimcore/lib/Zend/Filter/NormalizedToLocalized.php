@@ -14,27 +14,27 @@
  *
  * @category   Zend
  * @package    Zend_Filter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: NormalizedToLocalized.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: NormalizedToLocalized.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Filter_Interface
  */
-require_once 'Zend/Filter/Interface.php';
+// require_once 'Zend/Filter/Interface.php';
 
 /**
  * @see Zend_Loader
  */
-require_once 'Zend/Locale/Format.php';
+// require_once 'Zend/Locale/Format.php';
 
 /**
  * Localizes given normalized input
  *
  * @category   Zend
  * @package    Zend_Filter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Filter_NormalizedToLocalized implements Zend_Filter_Interface
@@ -97,7 +97,7 @@ class Zend_Filter_NormalizedToLocalized implements Zend_Filter_Interface
     public function filter($value)
     {
         if (is_array($value)) {
-            require_once 'Zend/Date.php';
+            // require_once 'Zend/Date.php';
             $date = new Zend_Date($value, $this->_options['locale']);
             return $date->toString($this->_options['date_format']);
         } else if ($this->_options['precision'] === 0) {

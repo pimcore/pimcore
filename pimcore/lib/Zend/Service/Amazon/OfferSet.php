@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OfferSet.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: OfferSet.php 24780 2012-05-08 19:34:59Z adamlundrigan $
  */
 
 
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_OfferSet
@@ -85,7 +85,7 @@ class Zend_Service_Amazon_OfferSet
     public function __construct(DOMElement $dom)
     {
         $xpath = new DOMXPath($dom->ownerDocument);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2005-10-05');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2011-08-01');
 
         $offer = $xpath->query('./az:OfferSummary', $dom);
         if ($offer->length == 1) {
@@ -109,7 +109,7 @@ class Zend_Service_Amazon_OfferSet
             /**
              * @see Zend_Service_Amazon_Offer
              */
-            require_once 'Zend/Service/Amazon/Offer.php';
+            // require_once 'Zend/Service/Amazon/Offer.php';
             foreach ($offers as $offer) {
                 $this->Offers[] = new Zend_Service_Amazon_Offer($offer);
             }

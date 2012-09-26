@@ -14,22 +14,22 @@
  *
  * @category  Zend
  * @package   Zend_File_Transfer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: Transfer.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version   $Id: Transfer.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Loader
  */
-require_once 'Zend/Loader.php';
+// require_once 'Zend/Loader.php';
 
 /**
  * Base class for all protocols supporting file transfers
  *
  * @category  Zend
  * @package   Zend_File_Transfer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_File_Transfer
@@ -75,7 +75,7 @@ class Zend_File_Transfer
         $direction = (integer) $direction;
         $this->_adapter[$direction] = new $adapter($options);
         if (!$this->_adapter[$direction] instanceof Zend_File_Transfer_Adapter_Abstract) {
-            require_once 'Zend/File/Transfer/Exception.php';
+            // require_once 'Zend/File/Transfer/Exception.php';
             throw new Zend_File_Transfer_Exception("Adapter " . $adapter . " does not extend Zend_File_Transfer_Adapter_Abstract");
         }
 
@@ -119,7 +119,7 @@ class Zend_File_Transfer
             return call_user_func_array(array($this->_adapter[$direction], $method), $options);
         }
 
-        require_once 'Zend/File/Transfer/Exception.php';
+        // require_once 'Zend/File/Transfer/Exception.php';
         throw new Zend_File_Transfer_Exception("Unknown method '" . $method . "' called!");
     }
 }

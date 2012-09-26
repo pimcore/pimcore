@@ -14,20 +14,20 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Rss.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Rss.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Feed_Writer_Renderer_RendererAbstract
  */
-require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
+// require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Renderer_Entry_Rss
@@ -89,7 +89,7 @@ class Zend_Feed_Writer_Renderer_Entry_Rss
     {
         if(!$this->getDataContainer()->getDescription()
         && !$this->getDataContainer()->getTitle()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'RSS 2.0 entry elements SHOULD contain exactly one'
             . ' title element but a title has not been set. In addition, there'
             . ' is no description as required in the absence of a title.';
@@ -118,7 +118,7 @@ class Zend_Feed_Writer_Renderer_Entry_Rss
     {
         if(!$this->getDataContainer()->getDescription()
         && !$this->getDataContainer()->getTitle()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'RSS 2.0 entry elements SHOULD contain exactly one'
             . ' description element but a description has not been set. In'
             . ' addition, there is no title element as required in the absence'
@@ -219,7 +219,7 @@ class Zend_Feed_Writer_Renderer_Entry_Rss
             return;
         }
         if (!isset($data['type'])) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $exception = new Zend_Feed_Exception('Enclosure "type" is not set');
             if (!$this->_ignoreExceptions) {
                 throw $exception;
@@ -229,7 +229,7 @@ class Zend_Feed_Writer_Renderer_Entry_Rss
             }
         }
         if (!isset($data['length'])) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $exception = new Zend_Feed_Exception('Enclosure "length" is not set');
             if (!$this->_ignoreExceptions) {
                 throw $exception;
@@ -239,7 +239,7 @@ class Zend_Feed_Writer_Renderer_Entry_Rss
             }
         }
         if (isset($data['length']) && (int) $data['length'] <= 0) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $exception = new Zend_Feed_Exception('Enclosure "length" must be an integer'
             . ' indicating the content\'s length in bytes');
             if (!$this->_ignoreExceptions) {

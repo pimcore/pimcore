@@ -57,22 +57,27 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
                         $stylesheetContent .= $style->innertext;
                     }
                     else {
-                        if($style->media == "screen" || !$style->media) {
-                            $source = $style->href;
-                            $path = "";
-                            if (is_file(PIMCORE_ASSET_DIRECTORY . $source)) {
-                                $path = PIMCORE_ASSET_DIRECTORY . $source;
-                            }
-                            else if (is_file(PIMCORE_DOCUMENT_ROOT . $source)) {
-                                $path = PIMCORE_DOCUMENT_ROOT . $source;
+
+                        $source = $style->href;
+                        $path = "";
+                        if (is_file(PIMCORE_ASSET_DIRECTORY . $source)) {
+                            $path = PIMCORE_ASSET_DIRECTORY . $source;
+                        }
+                        else if (is_file(PIMCORE_DOCUMENT_ROOT . $source)) {
+                            $path = PIMCORE_DOCUMENT_ROOT . $source;
+                        }
+
+                        if (!empty($path) && is_file("file://".$path)) {
+                            $content = file_get_contents($path);
+                            $content = $this->correctReferences($source,$content);
+
+                            if($style->media) {
+                                $content = "@media ".$style->media." {" . $content . "}";
                             }
 
-                            if (!empty($path) && is_file("file://".$path)) {
-                                $content = file_get_contents($path);
-                                $content = $this->correctReferences($source,$content);
-                                $stylesheetContent .= $content;
-                                $style->outertext = "";
-                            }
+                            $stylesheetContent .= $content;
+                            $style->outertext = "";
+
                         }
                     }
                 }
@@ -90,7 +95,7 @@ class Pimcore_Controller_Plugin_CssMinify extends Zend_Controller_Plugin_Abstrac
                     }
 
                     $head = $html->find("head",0);
-                    $head->innertext = $head->innertext . "\n" . '<link rel="stylesheet" media="screen" type="text/css" href="' . str_replace(PIMCORE_DOCUMENT_ROOT,"",$stylesheetPath) . '" />'."\n";
+                    $head->innertext = $head->innertext . "\n" . '<link rel="stylesheet" type="text/css" href="' . str_replace(PIMCORE_DOCUMENT_ROOT,"",$stylesheetPath) . '" />'."\n";
                 }
 
                 $body = $html->save();

@@ -14,22 +14,22 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Atom.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Atom.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Feed_Writer_Renderer_RendererAbstract
  */
-require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
+// require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
 
-require_once 'Zend/Feed/Writer/Renderer/Feed/Atom/Source.php';
+// require_once 'Zend/Feed/Writer/Renderer/Feed/Atom/Source.php';
 
 /**
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Renderer_Entry_Atom
@@ -91,7 +91,7 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
     protected function _setTitle(DOMDocument $dom, DOMElement $root)
     {
         if(!$this->getDataContainer()->getTitle()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'Atom 1.0 entry elements MUST contain exactly one'
             . ' atom:title element but a title has not been set';
             $exception = new Zend_Feed_Exception($message);
@@ -140,7 +140,7 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
     protected function _setDateModified(DOMDocument $dom, DOMElement $root)
     {
         if(!$this->getDataContainer()->getDateModified()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'Atom 1.0 entry elements MUST contain exactly one'
             . ' atom:updated element but a modification date has not been set';
             $exception = new Zend_Feed_Exception($message);
@@ -267,7 +267,7 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
     {
         if(!$this->getDataContainer()->getId()
         && !$this->getDataContainer()->getLink()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'Atom 1.0 entry elements MUST contain exactly one '
             . 'atom:id element, or as an alternative, we can use the same '
             . 'value as atom:link however neither a suitable link nor an '
@@ -289,7 +289,7 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
         !preg_match("#^urn:[a-zA-Z0-9][a-zA-Z0-9\-]{1,31}:([a-zA-Z0-9\(\)\+\,\.\:\=\@\;\$\_\!\*\-]|%[0-9a-fA-F]{2})*#",
             $this->getDataContainer()->getId()
         ) && !$this->_validateTagUri($this->getDataContainer()->getId())) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('Atom 1.0 IDs must be a valid URI/IRI');
         }
         $id = $dom->createElement('id');
@@ -341,7 +341,7 @@ class Zend_Feed_Writer_Renderer_Entry_Atom
     {
         $content = $this->getDataContainer()->getContent();
         if (!$content && !$this->getDataContainer()->getLink()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'Atom 1.0 entry elements MUST contain exactly one '
             . 'atom:content element, or as an alternative, at least one link '
             . 'with a rel attribute of "alternate" to indicate an alternate '

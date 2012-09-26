@@ -15,23 +15,23 @@
  * @category   Zend
  * @package    Zend_Markup
  * @subpackage Renderer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RendererAbstract.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: RendererAbstract.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_config
  */
-require_once 'Zend/Config.php';
+// require_once 'Zend/Config.php';
 /**
  * @see Zend_Filter
  */
-require_once 'Zend/Filter.php';
+// require_once 'Zend/Filter.php';
 /**
  * @see Zend_Markup_Renderer_TokenConverterInterface
  */
-require_once 'Zend/Markup/Renderer/TokenConverterInterface.php';
+// require_once 'Zend/Markup/Renderer/TokenConverterInterface.php';
 
 /**
  * Defines the basic rendering functionality
@@ -39,7 +39,7 @@ require_once 'Zend/Markup/Renderer/TokenConverterInterface.php';
  * @category   Zend
  * @package    Zend_Markup
  * @subpackage Renderer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Markup_Renderer_RendererAbstract
@@ -205,7 +205,7 @@ abstract class Zend_Markup_Renderer_RendererAbstract
     public function addMarkup($name, $type, array $options)
     {
         if (!isset($options['group']) && ($type ^ self::TYPE_ALIAS)) {
-            require_once 'Zend/Markup/Renderer/Exception.php';
+            // require_once 'Zend/Markup/Renderer/Exception.php';
             throw new Zend_Markup_Renderer_Exception("There is no render group defined.");
         }
 
@@ -227,7 +227,7 @@ abstract class Zend_Markup_Renderer_RendererAbstract
             // add a callback tag
             if (isset($options['callback'])) {
                 if (!($options['callback'] instanceof Zend_Markup_Renderer_TokenConverterInterface)) {
-                    require_once 'Zend/Markup/Renderer/Exception.php';
+                    // require_once 'Zend/Markup/Renderer/Exception.php';
                     throw new Zend_Markup_Renderer_Exception("Not a valid tag callback.");
                 }
                 if (method_exists($options['callback'], 'setRenderer')) {
@@ -244,7 +244,7 @@ abstract class Zend_Markup_Renderer_RendererAbstract
         } elseif ($type & self::TYPE_ALIAS) {
             // add an alias
             if (empty($options['name'])) {
-                require_once 'Zend/Markup/Renderer/Exception.php';
+                // require_once 'Zend/Markup/Renderer/Exception.php';
                 throw new Zend_Markup_Renderer_Exception(
                         'No alias was provided but tag was defined as such');
             }
@@ -424,7 +424,7 @@ abstract class Zend_Markup_Renderer_RendererAbstract
                 $markup['callback'] = new $class;
 
                 if (!($markup['callback'] instanceof Zend_Markup_Renderer_TokenConverterInterface)) {
-                    require_once 'Zend/Markup/Renderer/Exception.php';
+                    // require_once 'Zend/Markup/Renderer/Exception.php';
                     throw new Zend_Markup_Renderer_Exception("Callback for tag '$name' found, but it isn't valid.");
                 }
 

@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Dojo
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Data.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Data.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -26,7 +26,7 @@
  * @uses       Iterator
  * @uses       Countable
  * @package    Zend_Dojo
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
@@ -114,7 +114,7 @@ class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
         $item = $this->_normalizeItem($item, $id);
 
         if ($this->hasItem($item['id'])) {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('Overwriting items using addItem() is not allowed');
         }
 
@@ -132,7 +132,7 @@ class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
     public function addItems($items)
     {
         if (!is_array($items) && (!is_object($items) || !($items instanceof Traversable))) {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('Only arrays and Traversable objects may be added to ' . __CLASS__);
         }
 
@@ -225,7 +225,7 @@ class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
         } elseif (is_numeric($identifier)) {
             $this->_identifier = (int) $identifier;
         } else {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('Invalid identifier; please use a string or integer');
         }
 
@@ -354,10 +354,10 @@ class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
     public function fromJson($json)
     {
         if (!is_string($json)) {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('fromJson() expects JSON input');
         }
-        require_once 'Zend/Json.php';
+        // require_once 'Zend/Json.php';
         $data = Zend_Json::decode($json);
         return $this->fromArray($data);
     }
@@ -370,7 +370,7 @@ class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
     public function toArray()
     {
         if (null === ($identifier = $this->getIdentifier())) {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('Serialization requires that an identifier be present in the object; first call setIdentifier()');
         }
 
@@ -400,7 +400,7 @@ class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
      */
     public function toJson()
     {
-        require_once 'Zend/Json.php';
+        // require_once 'Zend/Json.php';
         return Zend_Json::encode($this->toArray());
     }
 
@@ -529,12 +529,12 @@ class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
     protected function _normalizeItem($item, $id)
     {
         if (null === ($identifier = $this->getIdentifier())) {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('You must set an identifier prior to adding items');
         }
 
         if (!is_object($item) && !is_array($item)) {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('Only arrays and objects may be attached');
         }
 
@@ -547,7 +547,7 @@ class Zend_Dojo_Data implements ArrayAccess,Iterator,Countable
         }
 
         if ((null === $id) && !array_key_exists($identifier, $item)) {
-            require_once 'Zend/Dojo/Exception.php';
+            // require_once 'Zend/Dojo/Exception.php';
             throw new Zend_Dojo_Exception('Item must contain a column matching the currently set identifier');
         } elseif (null === $id) {
             $id = $item[$identifier];

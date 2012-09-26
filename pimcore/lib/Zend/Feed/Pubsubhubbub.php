@@ -14,40 +14,40 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Pubsubhubbub.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Pubsubhubbub.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /**
  * @see Zend_Uri
  */
-require_once 'Zend/Uri.php';
+// require_once 'Zend/Uri.php';
 
 /**
  * @see Zend_Version
  */
-require_once 'Zend/Version.php';
+// require_once 'Zend/Version.php';
 
 /**
  * @see Zend_Feed_Reader
  */
-require_once 'Zend/Feed/Reader.php';
+// require_once 'Zend/Feed/Reader.php';
 
 /**
  * @see Zend_Feed_Abstract
  */
-require_once 'Zend/Feed/Abstract.php';
+// require_once 'Zend/Feed/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Pubsubhubbub
@@ -90,7 +90,7 @@ class Zend_Feed_Pubsubhubbub
         } elseif (is_object($source) && $source instanceof Zend_Feed_Abstract) {
             $feed = Zend_Feed_Reader::importFeed($source);
         } else {
-            require_once 'Zend/Feed/Pubsubhubbub/Exception.php';
+            // require_once 'Zend/Feed/Pubsubhubbub/Exception.php';
             throw new Zend_Feed_Pubsubhubbub_Exception('The source parameter was'
             . ' invalid, i.e. not a URL string or an instance of type'
             . ' Zend_Feed_Reader_FeedAbstract or Zend_Feed_Abstract');

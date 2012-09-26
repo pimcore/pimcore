@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Set.php 20166 2010-01-09 19:00:17Z bkarwin $
  */
@@ -23,13 +23,13 @@
 /**
  * @see Zend_Service_Ebay_Finding_Set_Abstract
  */
-require_once 'Zend/Service/Ebay/Finding/Set/Abstract.php';
+// require_once 'Zend/Service/Ebay/Finding/Set/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @uses       Zend_Service_Ebay_Finding_Set_Abstract
  */
@@ -51,7 +51,7 @@ class Zend_Service_Ebay_Finding_Error_Data_Set extends Zend_Service_Ebay_Finding
         /**
          * @see Zend_Service_Ebay_Finding_Error_Data
          */
-        require_once 'Zend/Service/Ebay/Finding/Error/Data.php';
+        // require_once 'Zend/Service/Ebay/Finding/Error/Data.php';
         return new Zend_Service_Ebay_Finding_Error_Data($node);
     }
 }

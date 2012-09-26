@@ -16,45 +16,45 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage App
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Entry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Entry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_App_FeedEntryParent
  */
-require_once 'Zend/Gdata/App/FeedEntryParent.php';
+// require_once 'Zend/Gdata/App/FeedEntryParent.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Content
  */
-require_once 'Zend/Gdata/App/Extension/Content.php';
+// require_once 'Zend/Gdata/App/Extension/Content.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Edited
  */
-require_once 'Zend/Gdata/App/Extension/Edited.php';
+// require_once 'Zend/Gdata/App/Extension/Edited.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Published
  */
-require_once 'Zend/Gdata/App/Extension/Published.php';
+// require_once 'Zend/Gdata/App/Extension/Published.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Source
  */
-require_once 'Zend/Gdata/App/Extension/Source.php';
+// require_once 'Zend/Gdata/App/Extension/Source.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Summary
  */
-require_once 'Zend/Gdata/App/Extension/Summary.php';
+// require_once 'Zend/Gdata/App/Extension/Summary.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Control
  */
-require_once 'Zend/Gdata/App/Extension/Control.php';
+// require_once 'Zend/Gdata/App/Extension/Control.php';
 
 /**
  * Concrete class for working with Atom entries.
@@ -62,7 +62,7 @@ require_once 'Zend/Gdata/App/Extension/Control.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage App
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_App_Entry extends Zend_Gdata_App_FeedEntryParent

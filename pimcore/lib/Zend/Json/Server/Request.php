@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_Json
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Request.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Request.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @category   Zend
  * @package    Zend_Json
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Json_Server_Request
@@ -247,7 +247,7 @@ class Zend_Json_Server_Request
      */
     public function loadJson($json)
     {
-        require_once 'Zend/Json.php';
+        // require_once 'Zend/Json.php';
         $options = Zend_Json::decode($json);
         $this->setOptions($options);
     }
@@ -273,7 +273,7 @@ class Zend_Json_Server_Request
             $jsonArray['jsonrpc'] = '2.0';
         }
 
-        require_once 'Zend/Json.php';
+        // require_once 'Zend/Json.php';
         return Zend_Json::encode($jsonArray);
     }
 

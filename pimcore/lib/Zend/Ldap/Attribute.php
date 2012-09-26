@@ -14,22 +14,22 @@
  *
  * @category   Zend
  * @package    Zend_Ldap
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Attribute.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Attribute.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Ldap_Converter
  */
-require_once 'Zend/Ldap/Converter.php';
+// require_once 'Zend/Ldap/Converter.php';
 
 /**
  * Zend_Ldap_Attribute is a collection of LDAP attribute related functions.
  *
  * @category   Zend
  * @package    Zend_Ldap
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Ldap_Attribute

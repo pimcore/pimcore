@@ -16,25 +16,25 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Geo
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Entry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Entry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Geo
  */
-require_once 'Zend/Gdata/Geo.php';
+// require_once 'Zend/Gdata/Geo.php';
 
 /**
  * @see Zend_Gdata_Geo_Extension_GeoRssWhere
  */
-require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
+// require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
 
 /**
  * An Atom entry containing Geograpic data.
@@ -42,7 +42,7 @@ require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Geo
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Geo_Entry extends Zend_Gdata_Entry

@@ -14,20 +14,20 @@
  *
  * @category   Zend
  * @package    Zend_Reflection
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Docblock.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Docblock.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Reflection_Docblock_Tag
  */
-require_once 'Zend/Reflection/Docblock/Tag.php';
+// require_once 'Zend/Reflection/Docblock/Tag.php';
 
 /**
  * @category   Zend
  * @package    Zend_Reflection
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Reflection_Docblock implements Reflector
@@ -115,7 +115,7 @@ class Zend_Reflection_Docblock implements Reflector
         if ($commentOrReflector instanceof Reflector) {
             $this->_reflector = $commentOrReflector;
             if (!method_exists($commentOrReflector, 'getDocComment')) {
-                require_once 'Zend/Reflection/Exception.php';
+                // require_once 'Zend/Reflection/Exception.php';
                 throw new Zend_Reflection_Exception('Reflector must contain method "getDocComment"');
             }
             $docComment = $commentOrReflector->getDocComment();
@@ -128,12 +128,12 @@ class Zend_Reflection_Docblock implements Reflector
         } elseif (is_string($commentOrReflector)) {
             $docComment = $commentOrReflector;
         } else {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception(get_class($this) . ' must have a (string) DocComment or a Reflector in the constructor');
         }
 
         if ($docComment == '') {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception('DocComment cannot be empty');
         }
 

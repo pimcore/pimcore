@@ -14,20 +14,20 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Deleted.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Deleted.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Feed_Writer_Renderer_RendererAbstract
  */
-require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
+// require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Renderer_Entry_Atom_Deleted

@@ -38,7 +38,7 @@ class Redirect_List_Resource extends Pimcore_Model_List_Resource_Abstract {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM redirects " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM redirects " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }

@@ -40,7 +40,7 @@ class Element_Sanitycheck extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setId($id){
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**

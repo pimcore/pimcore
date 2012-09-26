@@ -16,55 +16,55 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Photos
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: UserEntry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: UserEntry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Gapps
  */
-require_once 'Zend/Gdata/Gapps.php';
+// require_once 'Zend/Gdata/Gapps.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Nickname
  */
-require_once 'Zend/Gdata/Photos/Extension/Nickname.php';
+// require_once 'Zend/Gdata/Photos/Extension/Nickname.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Thumbnail
  */
-require_once 'Zend/Gdata/Photos/Extension/Thumbnail.php';
+// require_once 'Zend/Gdata/Photos/Extension/Thumbnail.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_QuotaCurrent
  */
-require_once 'Zend/Gdata/Photos/Extension/QuotaCurrent.php';
+// require_once 'Zend/Gdata/Photos/Extension/QuotaCurrent.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_QuotaLimit
  */
-require_once 'Zend/Gdata/Photos/Extension/QuotaLimit.php';
+// require_once 'Zend/Gdata/Photos/Extension/QuotaLimit.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_MaxPhotosPerAlbum
  */
-require_once 'Zend/Gdata/Photos/Extension/MaxPhotosPerAlbum.php';
+// require_once 'Zend/Gdata/Photos/Extension/MaxPhotosPerAlbum.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_User
  */
-require_once 'Zend/Gdata/Photos/Extension/User.php';
+// require_once 'Zend/Gdata/Photos/Extension/User.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Category
  */
-require_once 'Zend/Gdata/App/Extension/Category.php';
+// require_once 'Zend/Gdata/App/Extension/Category.php';
 
 /**
  * Data model class for a User Entry.
@@ -78,7 +78,7 @@ require_once 'Zend/Gdata/App/Extension/Category.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Photos
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Photos_UserEntry extends Zend_Gdata_Entry

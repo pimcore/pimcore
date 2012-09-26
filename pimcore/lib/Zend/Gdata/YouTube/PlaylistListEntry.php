@@ -16,40 +16,40 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PlaylistListEntry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: PlaylistListEntry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_YouTube
  */
-require_once 'Zend/Gdata/YouTube.php';
+// require_once 'Zend/Gdata/YouTube.php';
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Extension_FeedLink
  */
-require_once 'Zend/Gdata/Extension/FeedLink.php';
+// require_once 'Zend/Gdata/Extension/FeedLink.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Description
  */
-require_once 'Zend/Gdata/YouTube/Extension/Description.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Description.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_PlaylistId
  */
-require_once 'Zend/Gdata/YouTube/Extension/PlaylistId.php';
+// require_once 'Zend/Gdata/YouTube/Extension/PlaylistId.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_CountHint
  */
-require_once 'Zend/Gdata/YouTube/Extension/CountHint.php';
+// require_once 'Zend/Gdata/YouTube/Extension/CountHint.php';
 
 /**
  * Represents the YouTube video playlist flavor of an Atom entry
@@ -57,7 +57,7 @@ require_once 'Zend/Gdata/YouTube/Extension/CountHint.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube_PlaylistListEntry extends Zend_Gdata_Entry
@@ -218,7 +218,7 @@ class Zend_Gdata_YouTube_PlaylistListEntry extends Zend_Gdata_Entry
     {
         if (($this->getMajorProtocolVersion() == null) ||
             ($this->getMajorProtocolVersion() == 1)) {
-            require_once 'Zend/Gdata/App/VersionException.php';
+            // require_once 'Zend/Gdata/App/VersionException.php';
             throw new Zend_Gdata_App_VersionException('The yt:countHint ' .
                 'element is not supported in versions earlier than 2.');
         } else {
@@ -236,7 +236,7 @@ class Zend_Gdata_YouTube_PlaylistListEntry extends Zend_Gdata_Entry
     {
         if (($this->getMajorProtocolVersion() == null) ||
             ($this->getMajorProtocolVersion() == 1)) {
-            require_once 'Zend/Gdata/App/VersionException.php';
+            // require_once 'Zend/Gdata/App/VersionException.php';
             throw new Zend_Gdata_App_VersionException('The yt:playlistId ' .
                 'element is not supported in versions earlier than 2.');
         } else {

@@ -59,7 +59,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
     protected function correctClasses ($classes) {
 
         // this is the new method with Ext.form.MultiSelect
-        if(is_string($classes) && strpos($classes, ",") !== false) {
+        if(is_string($classes) && !empty($classes)) {
             $classParts = explode(",", $classes);
             $classes = array();
             foreach ($classParts as $class) {

@@ -15,9 +15,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Element.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Element.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
@@ -26,7 +26,7 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Element implements ArrayAccess
@@ -242,7 +242,7 @@ class Zend_Feed_Element implements ArrayAccess
             /**
              * @see Zend_Feed_Exception
              */
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('Cannot set the value of multiple tags simultaneously.');
         } else {
             $nodes[0]->nodeValue = $val;

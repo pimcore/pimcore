@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Client.php 24159 2011-06-28 12:30:56Z adamlundrigan $
+ * @version    $Id: Client.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
@@ -25,44 +25,44 @@
  * For handling the HTTP connection to the XML-RPC service
  * @see Zend_Http_Client
  */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /**
  * Enables object chaining for calling namespaced XML-RPC methods.
  * @see Zend_XmlRpc_Client_ServerProxy
  */
-require_once 'Zend/XmlRpc/Client/ServerProxy.php';
+// require_once 'Zend/XmlRpc/Client/ServerProxy.php';
 
 /**
  * Introspects remote servers using the XML-RPC de facto system.* methods
  * @see Zend_XmlRpc_Client_ServerIntrospection
  */
-require_once 'Zend/XmlRpc/Client/ServerIntrospection.php';
+// require_once 'Zend/XmlRpc/Client/ServerIntrospection.php';
 
 /**
  * Represent a native XML-RPC value, used both in sending parameters
  * to methods and as the parameters retrieve from method calls
  * @see Zend_XmlRpc_Value
  */
-require_once 'Zend/XmlRpc/Value.php';
+// require_once 'Zend/XmlRpc/Value.php';
 
 /**
  * XML-RPC Request
  * @see Zend_XmlRpc_Request
  */
-require_once 'Zend/XmlRpc/Request.php';
+// require_once 'Zend/XmlRpc/Request.php';
 
 /**
  * XML-RPC Response
  * @see Zend_XmlRpc_Response
  */
-require_once 'Zend/XmlRpc/Response.php';
+// require_once 'Zend/XmlRpc/Response.php';
 
 /**
  * XML-RPC Fault
  * @see Zend_XmlRpc_Fault
  */
-require_once 'Zend/XmlRpc/Fault.php';
+// require_once 'Zend/XmlRpc/Fault.php';
 
 
 /**
@@ -71,7 +71,7 @@ require_once 'Zend/XmlRpc/Fault.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_XmlRpc_Client
@@ -284,7 +284,7 @@ class Zend_XmlRpc_Client
              * Exception thrown when an HTTP error occurs
              * @see Zend_XmlRpc_Client_HttpException
              */
-            require_once 'Zend/XmlRpc/Client/HttpException.php';
+            // require_once 'Zend/XmlRpc/Client/HttpException.php';
             throw new Zend_XmlRpc_Client_HttpException(
                                     $httpResponse->getMessage(),
                                     $httpResponse->getStatus());
@@ -377,7 +377,7 @@ class Zend_XmlRpc_Client
              * Exception thrown when an XML-RPC fault is returned
              * @see Zend_XmlRpc_Client_FaultException
              */
-            require_once 'Zend/XmlRpc/Client/FaultException.php';
+            // require_once 'Zend/XmlRpc/Client/FaultException.php';
             throw new Zend_XmlRpc_Client_FaultException($fault->getMessage(),
                                                         $fault->getCode());
         }

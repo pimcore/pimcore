@@ -49,11 +49,13 @@ class Document_Hardlink_Resource extends Document_Resource {
                 $this->model->setId($id);
             }
 
-            $data = $this->db->fetchRow("SELECT * FROM documents LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id WHERE documents.id = ?", $this->model->getId());
+            $data = $this->db->fetchRow("SELECT documents.*, documents_hardlink.*, tree_locks.locked FROM documents
+                LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
+                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                    WHERE documents.id = ?", $this->model->getId());
 
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
-                $this->loadLocks();
             }
             else {
                 throw new Exception("Hardlink with the ID " . $this->model->getId() . " doesn't exists");

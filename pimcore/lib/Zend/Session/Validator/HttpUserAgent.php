@@ -14,16 +14,16 @@
  *
  * @category   Zend
  * @package    Zend_Session
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HttpUserAgent.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: HttpUserAgent.php 24593 2012-01-05 20:35:02Z matthew $
  * @since      Preview Release 0.2
  */
 
 /**
  * @see Zend_Session_Validator_Abstract
  */
-require_once 'Zend/Session/Validator/Abstract.php';
+// require_once 'Zend/Session/Validator/Abstract.php';
 
 /**
  * Zend_Session_Validator_HttpUserAgent
@@ -31,7 +31,7 @@ require_once 'Zend/Session/Validator/Abstract.php';
  * @category   Zend
  * @package    Zend_Session
  * @subpackage Validator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Session_Validator_HttpUserAgent extends Zend_Session_Validator_Abstract

@@ -110,6 +110,7 @@ class Object_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         $new->save();
 
         // add to store
@@ -148,6 +149,7 @@ class Object_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         $new->save();
 
         $this->updateChilds($target, $new);
@@ -178,6 +180,7 @@ class Object_Service extends Element_Service {
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
         $new->setProperties($source->getProperties());
+        $new->setUserModification($this->_user->getId());
 
         $new->save();
 
@@ -300,7 +303,7 @@ class Object_Service extends Element_Service {
         }
 
 
-        if(empty($value) || (method_exists($value, "isEmpty") && $value->isEmpty())) {
+        if(empty($value) || (is_object($value) && method_exists($value, "isEmpty") && $value->isEmpty())) {
             $parent = self::hasInheritableParentObject($object);
             if(!empty($parent)) {
                 return self::getValueForObject($parent, $getter, $brickType, $brickGetter);

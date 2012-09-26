@@ -55,19 +55,48 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         this.uniqeFieldId = uniqid();
 
         var allowedClasses = [];
-        for(var i=0; i<this.datax.classes.length; i++) {
-            allowedClasses.push(this.datax.classes[i]["classes"]);
+        if(typeof this.datax.classes == "object") {
+            // this is when it comes from the server
+            for(var i=0; i<this.datax.classes.length; i++) {
+                allowedClasses.push(this.datax.classes[i]["classes"]);
+            }
+        } else if(typeof this.datax.classes == "string") {
+            // this is when it comes from the local store
+            allowedClasses = this.datax.classes.split(",");
         }
 
         var allowedDocuments = [];
-        for(var i=0; i<this.datax.documentTypes.length; i++) {
-            allowedDocuments.push(this.datax.documentTypes[i]["documentTypes"]);
+        if(typeof this.datax.documentTypes == "object") {
+            // this is when it comes from the server
+            for(var i=0; i<this.datax.documentTypes.length; i++) {
+                allowedDocuments.push(this.datax.documentTypes[i]["documentTypes"]);
+            }
+        } else if(typeof this.datax.documentTypes == "string") {
+            // this is when it comes from the local store
+            allowedDocuments = this.datax.documentTypes.split(",");
         }
 
         var allowedAssets = [];
-        for(var i=0; i<this.datax.assetTypes.length; i++) {
-            allowedAssets.push(this.datax.assetTypes[i]["assetTypes"]);
+        if(typeof this.datax.assetTypes == "object") {
+            // this is when it comes from the server
+            for(var i=0; i<this.datax.assetTypes.length; i++) {
+                allowedAssets.push(this.datax.assetTypes[i]["assetTypes"]);
+            }
+        } else if(typeof this.datax.assetTypes == "string") {
+            // this is when it comes from the local store
+            allowedAssets = this.datax.assetTypes.split(",");
         }
+
+        var classesStore = new Ext.data.JsonStore({
+            autoDestroy: true,
+            url: '/admin/class/get-tree',
+            fields: ["text"]
+        });
+        classesStore.load({
+            "callback": function (allowedClasses) {
+                Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
+            }.bind(this, allowedClasses)
+        });
 
         var documentTypeStore = new Ext.data.JsonStore({
             autoDestroy: true,
@@ -151,7 +180,8 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         value: allowedDocuments.join(","),
                         displayField: "text",
                         valueField: "text",
-                        store: documentTypeStore
+                        store: documentTypeStore,
+                        width: 300
                     })
                 ]
             }, 
@@ -171,8 +201,10 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                             check:function(cbox, checked) {
                                 if (checked) {
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
+                                    Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).show();
                                 } else {
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).hide();
+                                    Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).hide();
 
                                 }
                             }.bind(this)
@@ -187,8 +219,41 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         value: allowedAssets.join(","),
                         displayField: "text",
                         valueField: "text",
-                        store: assetTypeStore
-                    })
+                        store: assetTypeStore,
+                        width: 300
+                    }), {
+                        fieldLabel: t("upload_path"),
+                        name: "assetUploadPath",
+                        hidden: !this.datax.assetsAllowed,
+                        id: 'class_asset_upload_path_' + this.uniqeFieldId,
+                        cls: "input_drop_target",
+                        value: this.datax.assetUploadPath,
+                        width: 250,
+                        xtype: "textfield",
+                        listeners: {
+                            "render": function (el) {
+                                new Ext.dd.DropZone(el.getEl(), {
+                                    reference: this,
+                                    ddGroup: "element",
+                                    getTargetFromEvent: function(e) {
+                                        return this.getEl();
+                                    }.bind(el),
+
+                                    onNodeOver : function(target, dd, e, data) {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    },
+
+                                    onNodeDrop : function (target, dd, e, data) {
+                                        if (data.node.attributes.elementType == "asset") {
+                                            this.setValue(data.node.attributes.path);
+                                            return true;
+                                        }
+                                        return false;
+                                    }.bind(el)
+                                });
+                            }
+                        }
+                    }
                 ]
             },
             {
@@ -223,7 +288,8 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         value: allowedClasses.join(","),
                         displayField: "text",
                         valueField: "text",
-                        store: pimcore.globalmanager.get("object_types_store")
+                        store: classesStore,
+                        width: 300
                     })
                 ]
             }

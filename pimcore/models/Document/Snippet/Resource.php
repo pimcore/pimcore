@@ -52,13 +52,14 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
                 $this->model->setId($id);
             }
 
-            $data = $this->db->fetchRow("SELECT * FROM documents LEFT JOIN documents_snippet ON documents.id = documents_snippet.id WHERE documents.id = ?", $this->model->getId());
+            $data = $this->db->fetchRow("SELECT documents.*, documents_snippet.*, tree_locks.locked FROM documents
+                LEFT JOIN documents_snippet ON documents.id = documents_snippet.id
+                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                    WHERE documents.id = ?", $this->model->getId());
 
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
-                $this->loadLocks();
-            }
-            else {
+            } else {
                 throw new Exception("Snippet with the ID " . $this->model->getId() . " doesn't exists");
             }
 
@@ -134,7 +135,7 @@ class Document_Snippet_Resource extends Document_PageSnippet_Resource {
                 $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
             }
             try {
-                $this->db->update("documents_snippet", $dataSnippet);
+                $this->db->insert("documents_snippet", $dataSnippet);
             }
             catch (Exception $e) {
                 $this->db->update("documents_snippet", $dataSnippet, $this->db->quoteInto("id = ?", $this->model->getId() ));

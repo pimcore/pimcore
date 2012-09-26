@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ImageFactory.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: ImageFactory.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
@@ -26,7 +26,7 @@
  * Helps manage the diverse set of supported image file types.
  *
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @todo       Use Zend_Mime not file extension for type determination.
  */
@@ -34,7 +34,7 @@ class Zend_Pdf_Resource_ImageFactory
 {
     public static function factory($filename) {
         if(!is_file($filename)) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("Cannot create image resource. File not found.");
         }
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
@@ -46,11 +46,11 @@ class Zend_Pdf_Resource_ImageFactory
             case 'tif':
                 //Fall through to next case;
             case 'tiff':
-                require_once 'Zend/Pdf/Resource/Image/Tiff.php';
+                // require_once 'Zend/Pdf/Resource/Image/Tiff.php';
                 return new Zend_Pdf_Resource_Image_Tiff($filename);
                 break;
             case 'png':
-                require_once 'Zend/Pdf/Resource/Image/Png.php';
+                // require_once 'Zend/Pdf/Resource/Image/Png.php';
                 return new Zend_Pdf_Resource_Image_Png($filename);
                 break;
             case 'jpg':
@@ -58,11 +58,11 @@ class Zend_Pdf_Resource_ImageFactory
             case 'jpe':
                 //Fall through to next case;
             case 'jpeg':
-                require_once 'Zend/Pdf/Resource/Image/Jpeg.php';
+                // require_once 'Zend/Pdf/Resource/Image/Jpeg.php';
                 return new Zend_Pdf_Resource_Image_Jpeg($filename);
                 break;
             default:
-                require_once 'Zend/Pdf/Exception.php';
+                // require_once 'Zend/Pdf/Exception.php';
                 throw new Zend_Pdf_Exception("Cannot create image resource. File extension not known or unsupported type.");
                 break;
         }

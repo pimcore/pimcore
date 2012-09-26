@@ -202,22 +202,26 @@ class Document_Tag_Video extends Document_Tag
             $thumbnail = $asset->getThumbnail($options["thumbnail"]);
             if ($thumbnail) {
 
-                // try to get the dimensions out ouf the video thumbnail
-                $imageThumbnailConf = array();
-                $thumbnailConf = $asset->getThumbnailConfig($options["thumbnail"]);
-                $transformations = $thumbnailConf->getItems();
-                if(is_array($transformations) && count($transformations) > 0) {
-                    foreach ($transformations as $transformation) {
-                        if(!empty($transformation)) {
-                            if(is_array($transformation["arguments"])) {
-                                foreach ($transformation["arguments"] as $key => $value) {
-                                    if($key == "width" || $key == "height") {
-                                        $imageThumbnailConf[$key] = $value;
+                if(!array_key_exists("imagethumbnail", $options) || empty($options["imagethumbnail"])) {
+                    // try to get the dimensions out ouf the video thumbnail
+                    $imageThumbnailConf = array();
+                    $thumbnailConf = $asset->getThumbnailConfig($options["thumbnail"]);
+                    $transformations = $thumbnailConf->getItems();
+                    if(is_array($transformations) && count($transformations) > 0) {
+                        foreach ($transformations as $transformation) {
+                            if(!empty($transformation)) {
+                                if(is_array($transformation["arguments"])) {
+                                    foreach ($transformation["arguments"] as $key => $value) {
+                                        if($key == "width" || $key == "height") {
+                                            $imageThumbnailConf[$key] = $value;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                } else {
+                    $imageThumbnailConf = $options["imagethumbnail"];
                 }
 
                 if(empty($imageThumbnailConf)) {
@@ -260,9 +264,17 @@ class Document_Tag_Video extends Document_Tag
         }
     }
 
+    protected function getScheme () {
+        if($this->view instanceof Zend_View && $this->view->getRequest()) {
+            return $this->view->getRequest()->getScheme();
+        } else {
+            return "https";
+        }
+    }
+
     public function getUrlCode()
     {
-        return $this->getFlowplayerCode($this->id);
+        return $this->getFlowplayerCode(array("mp4" => (string) $this->id));
     }
 
     public function getErrorCode($message = "") {
@@ -273,7 +285,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         // only display error message in debug mode
-        if(!PIMCORE_DEBUG) {
+        if(!Pimcore::inDebugMode()) {
             $message = "";
         }
 
@@ -325,9 +337,49 @@ class Document_Tag_Video extends Document_Tag
         if(array_key_exists("height", $options)) {
             $height = $options["height"];
         }
+        /*
+       if($options["config"]["clip"]["autoPlay"]){
+           $autoPlayString = "&autoplay=1";
+       } */
+
+        $valid_youtube_prams=array( "autohide",
+            "autoplay",
+            "cc_load_policy",
+            "color",
+            "controls",
+            "disablekb",
+            "enablejsapi",
+            "end",
+            "fs",
+            "iv_load_policy",
+            "list",
+            "listType",
+            "loop",
+            "modestbranding",
+            "origin",
+            "playerapiid",
+            "playlist",
+            "rel",
+            "showinfo",
+            "start",
+            "theme");
+        $additional_params="";
+        foreach($options["config"]["clip"] as $key=>$value){
+            if(in_array($key, $valid_youtube_prams)){
+                if(is_bool($value)){
+                    if($value){
+                        $additional_params.="&".$key."=1";
+                    }else{
+                        $additional_params.="&".$key."=0";
+                    }
+                }else{
+                    $additional_params.="&".$key."=".$value;
+                }
+            }
+        }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe width="' . $width . '" height="' . $height . '" src="http://www.youtube.com/embed/' . $youtubeId . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="' . $this->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent' . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
@@ -365,7 +417,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '">
-            <iframe src="http://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe src="' . $this->getScheme() . '://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
@@ -513,7 +565,9 @@ class Document_Tag_Video extends Document_Tag
             </div>
         </div>';
 
-        if(!$this->editmode) {
+        $options = $this->getOptions();
+
+        if(!$this->editmode && !$options['disableProgressReload']) {
             $code .= '
                 <script type="text/javascript">
                     window.setTimeout(function() {

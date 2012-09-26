@@ -15,56 +15,56 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BaseUserService.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: BaseUserService.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Service_DeveloperGarden_Client_ClientAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_BaseUserService_GetQuotaInformationResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/BaseUserService/GetQuotaInformationResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/BaseUserService/GetQuotaInformationResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_BaseUserService_ChangeQuotaPoolResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/BaseUserService/ChangeQuotaPoolResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/BaseUserService/ChangeQuotaPoolResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_BaseUserService_GetAccountBalanceResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/BaseUserService/GetAccountBalanceResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/BaseUserService/GetAccountBalanceResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_BaseUserService_AccountBalance
  */
-require_once 'Zend/Service/DeveloperGarden/BaseUserService/AccountBalance.php';
+// require_once 'Zend/Service/DeveloperGarden/BaseUserService/AccountBalance.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_BaseUserService_GetQuotaInformation
  */
-require_once 'Zend/Service/DeveloperGarden/Request/BaseUserService/GetQuotaInformation.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/BaseUserService/GetQuotaInformation.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_BaseUserService_ChangeQuotaPool
  */
-require_once 'Zend/Service/DeveloperGarden/Request/BaseUserService/ChangeQuotaPool.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/BaseUserService/ChangeQuotaPool.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_BaseUserService_GetAccountBalance
  */
-require_once 'Zend/Service/DeveloperGarden/Request/BaseUserService/GetAccountBalance.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/BaseUserService/GetAccountBalance.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @author     Marco Kaiser
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -139,7 +139,7 @@ class Zend_Service_DeveloperGarden_BaseUserService extends Zend_Service_Develope
     protected function _checkModuleId($moduleId)
     {
         if (!in_array($moduleId, $this->_moduleIds)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception('moduleId not valid');
         }
     }
@@ -162,14 +162,14 @@ class Zend_Service_DeveloperGarden_BaseUserService extends Zend_Service_Develope
                 $moduleString .= 'Sandbox';
                 break;
             default:
-                require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+                // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
                 throw new Zend_Service_DeveloperGarden_Client_Exception(
                     'Not a valid environment supplied.'
                 );
         }
 
         if (!in_array($moduleString, $this->_moduleIds)) {
-            require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
             throw new Zend_Service_DeveloperGarden_Client_Exception(
                 'Not a valid module name supplied.'
             );

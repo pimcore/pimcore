@@ -183,7 +183,7 @@ class Property extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setCid($cid) {
-        $this->cid = $cid;
+        $this->cid = (int) $cid;
     }
 
     /**

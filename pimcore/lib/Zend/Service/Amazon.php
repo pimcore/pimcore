@@ -16,21 +16,21 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Amazon.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Amazon.php 24782 2012-05-09 12:04:50Z adamlundrigan $
  */
 
 /**
  * @see Zend_Rest_Client
  */
-require_once 'Zend/Rest/Client.php';
+// require_once 'Zend/Rest/Client.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon
@@ -90,7 +90,7 @@ class Zend_Service_Amazon
             /**
              * @see Zend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
+            // require_once 'Zend/Service/Exception.php';
             throw new Zend_Service_Exception("Unknown country code: $countryCode");
         }
 
@@ -104,7 +104,7 @@ class Zend_Service_Amazon
      * @param  array $options Options to use for the Search Query
      * @throws Zend_Service_Exception
      * @return Zend_Service_Amazon_ResultSet
-     * @see http://www.amazon.com/gp/aws/sdk/main.html/102-9041115-9057709?s=AWSEcommerceService&v=2005-10-05&p=ApiReference/ItemSearchOperation
+     * @see http://www.amazon.com/gp/aws/sdk/main.html/102-9041115-9057709?s=AWSEcommerceService&v=2011-08-01&p=ApiReference/ItemSearchOperation
      */
     public function itemSearch(array $options)
     {
@@ -120,7 +120,7 @@ class Zend_Service_Amazon
             /**
              * @see Zend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
+            // require_once 'Zend/Service/Exception.php';
             throw new Zend_Service_Exception('An error occurred sending request. Status code: '
                                            . $response->getStatus());
         }
@@ -132,7 +132,7 @@ class Zend_Service_Amazon
         /**
          * @see Zend_Service_Amazon_ResultSet
          */
-        require_once 'Zend/Service/Amazon/ResultSet.php';
+        // require_once 'Zend/Service/Amazon/ResultSet.php';
         return new Zend_Service_Amazon_ResultSet($dom);
     }
 
@@ -142,7 +142,7 @@ class Zend_Service_Amazon
      *
      * @param  string $asin    Amazon ASIN ID
      * @param  array  $options Query Options
-     * @see http://www.amazon.com/gp/aws/sdk/main.html/102-9041115-9057709?s=AWSEcommerceService&v=2005-10-05&p=ApiReference/ItemLookupOperation
+     * @see http://www.amazon.com/gp/aws/sdk/main.html/102-9041115-9057709?s=AWSEcommerceService&v=2011-08-01&p=ApiReference/ItemLookupOperation
      * @throws Zend_Service_Exception
      * @return Zend_Service_Amazon_Item|Zend_Service_Amazon_ResultSet
      */
@@ -161,7 +161,7 @@ class Zend_Service_Amazon
             /**
              * @see Zend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
+            // require_once 'Zend/Service/Exception.php';
             throw new Zend_Service_Exception(
                 'An error occurred sending request. Status code: ' . $response->getStatus()
             );
@@ -171,21 +171,21 @@ class Zend_Service_Amazon
         $dom->loadXML($response->getBody());
         self::_checkErrors($dom);
         $xpath = new DOMXPath($dom);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2005-10-05');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2011-08-01');
         $items = $xpath->query('//az:Items/az:Item');
 
         if ($items->length == 1) {
             /**
              * @see Zend_Service_Amazon_Item
              */
-            require_once 'Zend/Service/Amazon/Item.php';
+            // require_once 'Zend/Service/Amazon/Item.php';
             return new Zend_Service_Amazon_Item($items->item(0));
         }
 
         /**
          * @see Zend_Service_Amazon_ResultSet
          */
-        require_once 'Zend/Service/Amazon/ResultSet.php';
+        // require_once 'Zend/Service/Amazon/ResultSet.php';
         return new Zend_Service_Amazon_ResultSet($dom);
     }
 
@@ -229,7 +229,7 @@ class Zend_Service_Amazon
         $options['AWSAccessKeyId'] = $this->appId;
         $options['Service']        = 'AWSECommerceService';
         $options['Operation']      = (string) $query;
-        $options['Version']        = '2005-10-05';
+        $options['Version']        = '2011-08-01';
 
         // de-canonicalize out sort key
         if (isset($options['ResponseGroup'])) {
@@ -262,7 +262,7 @@ class Zend_Service_Amazon
      */
     static public function computeSignature($baseUri, $secretKey, array $options)
     {
-        require_once "Zend/Crypt/Hmac.php";
+        // require_once "Zend/Crypt/Hmac.php";
 
         $signature = self::buildRawSignature($baseUri, $options);
         return base64_encode(
@@ -302,7 +302,7 @@ class Zend_Service_Amazon
     protected static function _checkErrors(DOMDocument $dom)
     {
         $xpath = new DOMXPath($dom);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2005-10-05');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2011-08-01');
 
         if ($xpath->query('//az:Error')->length >= 1) {
             $code = $xpath->query('//az:Error/az:Code/text()')->item(0)->data;
@@ -315,7 +315,7 @@ class Zend_Service_Amazon
                     /**
                      * @see Zend_Service_Exception
                      */
-                    require_once 'Zend/Service/Exception.php';
+                    // require_once 'Zend/Service/Exception.php';
                     throw new Zend_Service_Exception("$message ($code)");
             }
         }

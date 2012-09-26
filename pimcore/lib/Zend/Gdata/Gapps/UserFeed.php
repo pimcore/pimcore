@@ -16,20 +16,20 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gapps
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: UserFeed.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: UserFeed.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Feed
  */
-require_once 'Zend/Gdata/Feed.php';
+// require_once 'Zend/Gdata/Feed.php';
 
 /**
  * @see Zend_Gdata_Gapps_UserEntry
  */
-require_once 'Zend/Gdata/Gapps/UserEntry.php';
+// require_once 'Zend/Gdata/Gapps/UserEntry.php';
 
 /**
  * Data model for a collection of Google Apps user entries, usually
@@ -41,7 +41,7 @@ require_once 'Zend/Gdata/Gapps/UserEntry.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gapps
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Gapps_UserFeed extends Zend_Gdata_Feed

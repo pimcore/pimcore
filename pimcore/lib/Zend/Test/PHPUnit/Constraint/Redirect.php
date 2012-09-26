@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Redirect.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Redirect.php 25002 2012-06-26 14:38:28Z adamlundrigan $
  */
 
 /** @see PHPUnit_Framework_Constraint */
-require_once 'PHPUnit/Framework/Constraint.php';
+// require_once 'PHPUnit/Framework/Constraint.php';
 
 /**
  * Redirection constraints
@@ -30,7 +30,7 @@ require_once 'PHPUnit/Framework/Constraint.php';
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
@@ -64,6 +64,11 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
      * @var string
      */
     protected $_match             = null;
+    
+    /**
+     * What is actual redirect
+     */
+    protected $_actual            = null;
 
     /**
      * Whether or not assertion is negated
@@ -101,7 +106,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
     public function evaluate($other, $assertType = null)
     {
         if (!$other instanceof Zend_Controller_Response_Abstract) {
-            require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
+            // require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
             throw new Zend_Test_PHPUnit_Constraint_Exception('Redirect constraint assertions require a response object');
         }
 
@@ -111,7 +116,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
         }
 
         if (!in_array($assertType, $this->_assertTypes)) {
-            require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
+            // require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
             throw new Zend_Test_PHPUnit_Constraint_Exception(sprintf('Invalid assertion type "%s" provided to %s constraint', $assertType, __CLASS__));
         }
 
@@ -124,7 +129,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
         switch ($assertType) {
             case self::ASSERT_REDIRECT_TO:
                 if (3 > $argc) {
-                    require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
+                    // require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
                     throw new Zend_Test_PHPUnit_Constraint_Exception('No redirect URL provided against which to match');
                 }
                 $this->_match = $match = $argv[2];
@@ -133,7 +138,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
                     : $this->_match($response, $match);
             case self::ASSERT_REDIRECT_REGEX:
                 if (3 > $argc) {
-                    require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
+                    // require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
                     throw new Zend_Test_PHPUnit_Constraint_Exception('No pattern provided against which to match redirect');
                 }
                 $this->_match = $match = $argv[2];
@@ -142,6 +147,12 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
                     : $this->_regex($response, $match);
             case self::ASSERT_REDIRECT:
             default:
+                $headers  = $response->sendHeaders();
+                if (isset($headers['location'])) {
+                    $redirect = $headers['location'];
+                    $redirect = str_replace('Location: ', '', $redirect);
+                    $this->_actual = $redirect;
+                }
                 return ($this->_negate) ? !$response->isRedirect() : $response->isRedirect();
         }
     }
@@ -158,7 +169,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
      */
     public function fail($other, $description, $not = false)
     {
-        require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
+        // require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
         switch ($this->_assertType) {
             case self::ASSERT_REDIRECT_TO:
                 $failure = 'Failed asserting response redirects to "%s"';
@@ -166,6 +177,9 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
                     $failure = 'Failed asserting response DOES NOT redirect to "%s"';
                 }
                 $failure = sprintf($failure, $this->_match);
+                if (!$this->_negate && $this->_actual) {
+                    $failure .= sprintf(PHP_EOL . 'It redirects to "%s".', $this->_actual);
+                }
                 break;
             case self::ASSERT_REDIRECT_REGEX:
                 $failure = 'Failed asserting response redirects to URL MATCHING "%s"';
@@ -173,12 +187,18 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
                     $failure = 'Failed asserting response DOES NOT redirect to URL MATCHING "%s"';
                 }
                 $failure = sprintf($failure, $this->_match);
+                if ($this->_actual) {
+                    $failure .= sprintf(PHP_EOL . 'It redirects to "%s".', $this->_actual);
+                }
                 break;
             case self::ASSERT_REDIRECT:
             default:
                 $failure = 'Failed asserting response is a redirect';
                 if ($this->_negate) {
                     $failure = 'Failed asserting response is NOT a redirect';
+                    if ($this->_actual) {
+                        $failure .= sprintf(PHP_EOL . 'It redirects to "%s"', $this->_actual);
+                    }
                 }
                 break;
         }
@@ -216,6 +236,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
         $headers  = $response->sendHeaders();
         $redirect = $headers['location'];
         $redirect = str_replace('Location: ', '', $redirect);
+        $this->_actual = $redirect;
 
         return ($redirect == $match);
     }
@@ -236,6 +257,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
         $headers  = $response->sendHeaders();
         $redirect = $headers['location'];
         $redirect = str_replace('Location: ', '', $redirect);
+        $this->_actual = $redirect;
 
         return ($redirect != $match);
     }
@@ -256,6 +278,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
         $headers  = $response->sendHeaders();
         $redirect = $headers['location'];
         $redirect = str_replace('Location: ', '', $redirect);
+        $this->_actual = $redirect;
 
         return preg_match($pattern, $redirect);
     }
@@ -276,6 +299,7 @@ class Zend_Test_PHPUnit_Constraint_Redirect extends PHPUnit_Framework_Constraint
         $headers  = $response->sendHeaders();
         $redirect = $headers['location'];
         $redirect = str_replace('Location: ', '', $redirect);
+        $this->_actual = $redirect;
 
         return !preg_match($pattern, $redirect);
     }

@@ -216,7 +216,7 @@ class Document_Link extends Document
     {
 
         if (!empty($internal)) {
-            $this->internal = $internal;
+            $this->internal = (int) $internal;
             $this->setObjectFromId();
         }
         else {

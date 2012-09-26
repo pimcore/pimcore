@@ -15,20 +15,20 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Actions
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: URI.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: URI.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Dictionary.php';
-require_once 'Zend/Pdf/Element/Name.php';
-require_once 'Zend/Pdf/Element/String.php';
-require_once 'Zend/Pdf/Element/Boolean.php';
+// require_once 'Zend/Pdf/Element/Dictionary.php';
+// require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/String.php';
+// require_once 'Zend/Pdf/Element/Boolean.php';
 
 
 /** Zend_Pdf_Action */
-require_once 'Zend/Pdf/Action.php';
+// require_once 'Zend/Pdf/Action.php';
 
 
 /**
@@ -38,7 +38,7 @@ require_once 'Zend/Pdf/Action.php';
  *
  * @package    Zend_Pdf
  * @subpackage Actions
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Action_URI extends Zend_Pdf_Action
@@ -55,7 +55,7 @@ class Zend_Pdf_Action_URI extends Zend_Pdf_Action
         parent::__construct($dictionary, $processedActions);
 
         if ($dictionary->URI === null) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('URI action dictionary entry is required');
         }
     }
@@ -71,7 +71,7 @@ class Zend_Pdf_Action_URI extends Zend_Pdf_Action
     {
         $scheme = parse_url((string)$uri, PHP_URL_SCHEME);
         if ($scheme === false || $scheme === null) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Invalid URI');
         }
     }

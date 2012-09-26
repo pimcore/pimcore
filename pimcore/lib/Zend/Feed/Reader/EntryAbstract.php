@@ -14,15 +14,15 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: EntryAbstract.php 23953 2011-05-03 05:47:39Z ralph $
+ * @version    $Id: EntryAbstract.php 25024 2012-07-30 15:08:15Z rob $
  */
 
 /**
  * @category   Zend
  * @package    Zend_Feed_Reader
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Feed_Reader_EntryAbstract
@@ -211,7 +211,7 @@ abstract class Zend_Feed_Reader_EntryAbstract
                 return call_user_func_array(array($extension, $method), $args);
             }
         }
-        require_once 'Zend/Feed/Exception.php';
+        // require_once 'Zend/Feed/Exception.php';
         throw new Zend_Feed_Exception('Method: ' . $method
             . 'does not exist and could not be located on a registered Extension');
     }

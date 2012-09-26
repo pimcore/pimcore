@@ -16,23 +16,23 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Query.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Query.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * @see Zend_Service_Amazon
  */
-require_once 'Zend/Service/Amazon.php';
+// require_once 'Zend/Service/Amazon.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_Query extends Zend_Service_Amazon
@@ -76,7 +76,7 @@ class Zend_Service_Amazon_Query extends Zend_Service_Amazon
             /**
              * @see Zend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
+            // require_once 'Zend/Service/Exception.php';
             throw new Zend_Service_Exception('You must set a category before setting the search parameters');
         }
 

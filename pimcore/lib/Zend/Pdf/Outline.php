@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Actions
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Outline.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Outline.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
@@ -28,7 +28,7 @@
  *
  * @package    Zend_Pdf
  * @subpackage Outlines
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Pdf_Outline implements RecursiveIterator, Countable
@@ -198,7 +198,7 @@ abstract class Zend_Pdf_Outline implements RecursiveIterator, Countable
                     break;
 
                 default:
-                    require_once 'Zend/Pdf/Exception.php';
+                    // require_once 'Zend/Pdf/Exception.php';
                     throw new Zend_Pdf_Exception("Unknown option name - '$key'.");
                     break;
             }
@@ -229,10 +229,10 @@ abstract class Zend_Pdf_Outline implements RecursiveIterator, Countable
      */
     public static function create($param1, $param2 = null)
     {
-        require_once 'Zend/Pdf/Outline/Created.php';
+        // require_once 'Zend/Pdf/Outline/Created.php';
         if (is_string($param1)) {
             if ($param2 !== null  &&  !($param2 instanceof Zend_Pdf_Target  ||  is_string($param2))) {
-                require_once 'Zend/Pdf/Exception.php';
+                // require_once 'Zend/Pdf/Exception.php';
                 throw new Zend_Pdf_Exception('Outline create method takes $title (string) and $target (Zend_Pdf_Target or string) or an array as an input');
             }
 
@@ -240,7 +240,7 @@ abstract class Zend_Pdf_Outline implements RecursiveIterator, Countable
                                                       'target' => $param2));
         } else {
             if (!is_array($param1)  ||  $param2 !== null) {
-                require_once 'Zend/Pdf/Exception.php';
+                // require_once 'Zend/Pdf/Exception.php';
                 throw new Zend_Pdf_Exception('Outline create method takes $title (string) and $destination (Zend_Pdf_Destination) or an array as an input');
             }
 

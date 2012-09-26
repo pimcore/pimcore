@@ -15,21 +15,21 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Atom.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Atom.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * @see Zend_Feed_Abstract
  */
-require_once 'Zend/Feed/Abstract.php';
+// require_once 'Zend/Feed/Abstract.php';
 
 /**
  * @see Zend_Feed_Entry_Atom
  */
-require_once 'Zend/Feed/Entry/Atom.php';
+// require_once 'Zend/Feed/Entry/Atom.php';
 
 
 /**
@@ -44,7 +44,7 @@ require_once 'Zend/Feed/Entry/Atom.php';
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Atom extends Zend_Feed_Abstract
@@ -92,7 +92,7 @@ class Zend_Feed_Atom extends Zend_Feed_Abstract
                 /**
                  * @see Zend_Feed_Exception
                  */
-                require_once 'Zend/Feed/Exception.php';
+                // require_once 'Zend/Feed/Exception.php';
                 throw new Zend_Feed_Exception('No root <feed> or <' . $this->_entryElementName
                                               . '> element found, cannot parse feed.');
             }
@@ -379,7 +379,7 @@ class Zend_Feed_Atom extends Zend_Feed_Abstract
             /**
              * @see Zend_Feed_Exception
              */
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('Cannot send ATOM because headers have already been sent.');
         }
 

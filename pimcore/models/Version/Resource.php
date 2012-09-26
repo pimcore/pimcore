@@ -101,8 +101,7 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * @deprecated
-     * @param integer $days
+     * @param $steps
      * @return array
      */
     public function getOutdatedVersionsSteps($steps) {
@@ -111,34 +110,39 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     /**
-     * @param $types
+     * @param $elementTypes
      * @return array
      */
     public function maintenanceGetOutdatedVersions ($elementTypes) {
 
+        $versionIds = array();
+
         if(!empty($elementTypes)) {
-            
-            $conditions = array();
             foreach ($elementTypes as $elementType) {
                 if($elementType["days"] > 0) {
                     // by days
                     $deadline = time() - ($elementType["days"] * 86400);
-                    return $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?)", array($elementType["elementType"], $deadline));
+                    $tmpVersionIds = $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?)", array($elementType["elementType"], $deadline));
+                    $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $versionIds = array();
                     $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? GROUP BY cid HAVING amount > ?", array($elementType["elementType"], $elementType["steps"]));
                     foreach ($elementIds as $elementId) {
                         $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", array($elementId, $elementType["elementType"]));
                         $versionIds = array_merge($versionIds, $elementVersions);
+
+                        // call the garbage collector if memory consumption is > 100MB
+                        if(memory_get_usage() > 100000000) {
+                            Pimcore::collectGarbage();
+                            $versionIds = array_unique($versionIds);
+                        }
                     }
 
                     $versionIds = array_unique($versionIds);
-                    return $versionIds;
                 }
             }
-            
-            return array();
         }
+
+        return $versionIds;
     }
 }

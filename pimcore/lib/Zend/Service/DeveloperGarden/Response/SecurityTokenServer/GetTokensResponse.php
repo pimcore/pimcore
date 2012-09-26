@@ -15,26 +15,26 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: GetTokensResponse.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: GetTokensResponse.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_ResponseAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Response/ResponseAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/ResponseAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SecurityTokenServer_Interface
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/Interface.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/Interface.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @author     Marco Kaiser
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -66,7 +66,7 @@ class Zend_Service_DeveloperGarden_Response_SecurityTokenServer_GetTokensRespons
     public function getSecurityToken()
     {
         if (!$this->securityToken instanceof Zend_Service_DeveloperGarden_Response_SecurityTokenServer_SecurityTokenResponse) {
-            require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/Exception.php';
+            // require_once 'Zend/Service/DeveloperGarden/Response/SecurityTokenServer/Exception.php';
             throw new Zend_Service_DeveloperGarden_Response_SecurityTokenServer_Exception(
                 'No valid securityToken found.'
             );

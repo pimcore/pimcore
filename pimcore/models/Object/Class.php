@@ -120,6 +120,9 @@ class Object_Class extends Pimcore_Model_Abstract {
 
         try {
             $class = Zend_Registry::get($cacheKey);
+            if(!$class){
+                throw new Exception("Class in registry is null");
+            }
         }
         catch (Exception $e) {
 
@@ -396,7 +399,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @return void
      */
     function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -412,7 +415,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @return void
      */
     function setCreationDate($creationDate) {
-        $this->creationDate = $creationDate;
+        $this->creationDate = (int) $creationDate;
     }
 
     /**
@@ -420,7 +423,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @return void
      */
     function setModificationDate($modificationDate) {
-        $this->modificationDate = $modificationDate;
+        $this->modificationDate = (int) $modificationDate;
     }
 
     /**
@@ -428,7 +431,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @return void
      */
     function setUserOwner($userOwner) {
-        $this->userOwner = $userOwner;
+        $this->userOwner = (int) $userOwner;
     }
 
     /**
@@ -436,7 +439,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @return void
      */
     function setUserModification($userModification) {
-        $this->userModification = $userModification;
+        $this->userModification = (int) $userModification;
     }
 
     /**

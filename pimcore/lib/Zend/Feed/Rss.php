@@ -15,21 +15,21 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Rss.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Rss.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * @see Zend_Feed_Abstract
  */
-require_once 'Zend/Feed/Abstract.php';
+// require_once 'Zend/Feed/Abstract.php';
 
 /**
  * @see Zend_Feed_Entry_Rss
  */
-require_once 'Zend/Feed/Entry/Rss.php';
+// require_once 'Zend/Feed/Entry/Rss.php';
 
 
 /**
@@ -43,7 +43,7 @@ require_once 'Zend/Feed/Entry/Rss.php';
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Rss extends Zend_Feed_Abstract
@@ -90,7 +90,7 @@ class Zend_Feed_Rss extends Zend_Feed_Abstract
             /**
              * @see Zend_Feed_Exception
              */
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('No root <channel> element found, cannot parse channel.');
         }
 
@@ -517,7 +517,7 @@ class Zend_Feed_Rss extends Zend_Feed_Abstract
             /**
              * @see Zend_Feed_Exception
              */
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             throw new Zend_Feed_Exception('Cannot send RSS because headers have already been sent.');
         }
 

@@ -16,15 +16,15 @@
  * @category   Zend
  * @package    Zend_OpenId
  * @subpackage Zend_OpenId_Consumer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: File.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: File.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_OpenId_Consumer_Storage
  */
-require_once "Zend/OpenId/Consumer/Storage.php";
+// require_once "Zend/OpenId/Consumer/Storage.php";
 
 /**
  * External storage implemmentation using serialized files
@@ -32,7 +32,7 @@ require_once "Zend/OpenId/Consumer/Storage.php";
  * @category   Zend
  * @package    Zend_OpenId
  * @subpackage Zend_OpenId_Consumer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_OpenId_Consumer_Storage_File extends Zend_OpenId_Consumer_Storage
@@ -73,7 +73,7 @@ class Zend_OpenId_Consumer_Storage_File extends Zend_OpenId_Consumer_Storage
                 /**
                  * @see Zend_OpenId_Exception
                  */
-                require_once 'Zend/OpenId/Exception.php';
+                // require_once 'Zend/OpenId/Exception.php';
                 throw new Zend_OpenId_Exception(
                     'Cannot access storage directory ' . $dir,
                     Zend_OpenId_Exception::ERROR_STORAGE);
@@ -83,7 +83,7 @@ class Zend_OpenId_Consumer_Storage_File extends Zend_OpenId_Consumer_Storage
             /**
              * @see Zend_OpenId_Exception
              */
-            require_once 'Zend/OpenId/Exception.php';
+            // require_once 'Zend/OpenId/Exception.php';
             throw new Zend_OpenId_Exception(
                 'Cannot create a lock file in the directory ' . $dir,
                 Zend_OpenId_Exception::ERROR_STORAGE);
@@ -93,7 +93,7 @@ class Zend_OpenId_Consumer_Storage_File extends Zend_OpenId_Consumer_Storage
             /**
              * @see Zend_OpenId_Exception
              */
-            require_once 'Zend/OpenId/Exception.php';
+            // require_once 'Zend/OpenId/Exception.php';
             throw new Zend_OpenId_Exception(
                 'Cannot create a lock file in the directory ' . $dir,
                 Zend_OpenId_Exception::ERROR_STORAGE);
@@ -103,7 +103,7 @@ class Zend_OpenId_Consumer_Storage_File extends Zend_OpenId_Consumer_Storage
             /**
              * @see Zend_OpenId_Exception
              */
-            require_once 'Zend/OpenId/Exception.php';
+            // require_once 'Zend/OpenId/Exception.php';
             throw new Zend_OpenId_Exception(
                 'Cannot create a lock file in the directory ' . $dir,
                 Zend_OpenId_Exception::ERROR_STORAGE);

@@ -75,7 +75,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
             return $amount;
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
@@ -91,7 +91,7 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
         }
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(" . $this->getSelectPart("*") . ") as amount FROM `" . $this->getTableName() . "`" . $this->getJoins()  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
             return $amount;
         } catch (Exception $e) {
             return $this->exceptionHandler($e);
@@ -105,7 +105,10 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
     protected function exceptionHandler ($e) {
 
         // create view if it doesn't exist already // HACK
-        if(preg_match("/Base table or view not found/",$e->getMessage()) && $this->firstException) {
+        $pdoMySQL = preg_match("/Base table or view not found/",$e->getMessage());
+        $Mysqli = preg_match("/Table (.*) doesn't exist/",$e->getMessage());
+
+        if(($Mysqli || $pdoMySQL) && $this->firstException) {
             $this->firstException = false;
 
             $localizedFields = new Object_Localizedfield();
@@ -128,26 +131,27 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
             // default
             $this->tableName = "object_" . $this->model->getClassId();
 
-            // check for a localized field and if they should be used for this list
-            if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields") && !$this->model->getIgnoreLocalizedFields()) {
-                $language = "default";
+            if(!$this->model->getIgnoreLocale()) {
 
-                if(!$this->model->getIgnoreLocale()) {
+                // check for a localized field and if they should be used for this list
+                if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields") && !$this->model->getIgnoreLocalizedFields()) {
+
+                    $language = "default";
                     if($this->model->getLocale()) {
                         if(Pimcore_Tool::isValidLanguage((string) $this->model->getLocale())) {
                             $language = (string) $this->model->getLocale();
                         }
                     }
 
-                    try {
+                    if(Zend_Registry::isRegistered("Zend_Locale")) {
                         $locale = Zend_Registry::get("Zend_Locale");
                         if(Pimcore_Tool::isValidLanguage((string) $locale) && $language == "default") {
                             $language = (string) $locale;
                         }
-                    } catch (Exception $e) {}
+                    }
+                    $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
                 }
 
-                $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
             }
         }
         return $this->tableName;

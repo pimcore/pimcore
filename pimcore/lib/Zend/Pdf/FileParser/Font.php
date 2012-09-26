@@ -15,17 +15,17 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage FileParser
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Font.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Font.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Font.php';
+// require_once 'Zend/Pdf/Font.php';
 
 
 /** Zend_Pdf_FileParser */
-require_once 'Zend/Pdf/FileParser.php';
+// require_once 'Zend/Pdf/FileParser.php';
 
 /**
  * Abstract helper class for {@link Zend_Pdf_Font} that parses font files.
@@ -36,7 +36,7 @@ require_once 'Zend/Pdf/FileParser.php';
  *
  * @package    Zend_Pdf
  * @subpackage FileParser
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Pdf_FileParser_Font extends Zend_Pdf_FileParser
@@ -210,7 +210,7 @@ abstract class Zend_Pdf_FileParser_Font extends Zend_Pdf_FileParser
             $message = vsprintf($message, $args);
         }
 
-        require_once 'Zend/Log.php';
+        // require_once 'Zend/Log.php';
         $logger = new Zend_Log();
         $logger->log($message, Zend_Log::DEBUG);
     }

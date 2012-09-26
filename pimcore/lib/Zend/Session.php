@@ -15,9 +15,9 @@
  *
  * @category   Zend
  * @package    Zend_Session
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Session.php 24196 2011-07-05 15:58:11Z matthew $
+ * @version    $Id: Session.php 24819 2012-05-28 19:25:03Z rob $
  * @since      Preview Release 0.2
  */
 
@@ -25,17 +25,17 @@
 /**
  * @see Zend_Session_Abstract
  */
-require_once 'Zend/Session/Abstract.php';
+// require_once 'Zend/Session/Abstract.php';
 
 /**
  * @see Zend_Session_Namespace
  */
-require_once 'Zend/Session/Namespace.php';
+// require_once 'Zend/Session/Namespace.php';
 
 /**
  * @see Zend_Session_SaveHandler_Interface
  */
-require_once 'Zend/Session/SaveHandler/Interface.php';
+// require_once 'Zend/Session/SaveHandler/Interface.php';
 
 
 /**
@@ -43,7 +43,7 @@ require_once 'Zend/Session/SaveHandler/Interface.php';
  *
  * @category   Zend
  * @package    Zend_Session
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Session extends Zend_Session_Abstract
@@ -223,7 +223,7 @@ class Zend_Session extends Zend_Session_Abstract
             }
             else {
                 /** @see Zend_Session_Exception */
-                require_once 'Zend/Session/Exception.php';
+                // require_once 'Zend/Session/Exception.php';
                 throw new Zend_Session_Exception("Unknown option: $userOptionName = $userOptionValue");
             }
         }
@@ -303,7 +303,7 @@ class Zend_Session extends Zend_Session_Abstract
     {
         if (!self::$_unitTestEnabled && headers_sent($filename, $linenum)) {
             /** @see Zend_Session_Exception */
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception("You must call " . __CLASS__ . '::' . __FUNCTION__ .
                 "() before any output has been sent to the browser; output started in {$filename}/{$linenum}");
         }
@@ -383,9 +383,9 @@ class Zend_Session extends Zend_Session_Abstract
      */
     public static function sessionExists()
     {
-        if (ini_get('session.use_cookies') == '1' && isset($_COOKIE[session_name()])) {
+        if ((bool)ini_get('session.use_cookies') == true && isset($_COOKIE[session_name()])) {
             return true;
-        } elseif (!empty($_REQUEST[session_name()])) {
+        } elseif ((bool)ini_get('session.use_only_cookies') == false && isset($_REQUEST[session_name()])) {
             return true;
         } elseif (self::$_unitTestEnabled) {
             return true;
@@ -415,8 +415,16 @@ class Zend_Session extends Zend_Session_Abstract
      */
     public static function start($options = false)
     {
+        // Check to see if we've been passed an invalid session ID
+        if ( self::getId() && !self::_checkId(self::getId()) ) {
+            // Generate a valid, temporary replacement
+            self::setId(md5(self::getId()));
+            // Force a regenerate after session is started
+            self::$_regenerateIdState = -1;
+        }
+
         if (self::$_sessionStarted && self::$_destroyed) {
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception('The session was explicitly destroyed during this request, attempting to re-start is not allowed.');
         }
 
@@ -432,14 +440,14 @@ class Zend_Session extends Zend_Session_Abstract
         // In strict mode, do not allow auto-starting Zend_Session, such as via "new Zend_Session_Namespace()"
         if (self::$_strict && $options === true) {
             /** @see Zend_Session_Exception */
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception('You must explicitly start the session with Zend_Session::start() when session options are set to strict.');
         }
 
         $filename = $linenum = null;
         if (!self::$_unitTestEnabled && headers_sent($filename, $linenum)) {
             /** @see Zend_Session_Exception */
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception("Session must be started before any output has been sent to the browser;"
                . " output started in {$filename}/{$linenum}");
         }
@@ -447,7 +455,7 @@ class Zend_Session extends Zend_Session_Abstract
         // See http://www.php.net/manual/en/ref.session.php for explanation
         if (!self::$_unitTestEnabled && defined('SID')) {
             /** @see Zend_Session_Exception */
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception('session has already been started by session.auto-start or session_start()');
         }
 
@@ -462,7 +470,7 @@ class Zend_Session extends Zend_Session_Abstract
         if (!self::$_unitTestEnabled) {
 
             if (self::$_throwStartupExceptions) {
-                require_once 'Zend/Session/Exception.php';
+                // require_once 'Zend/Session/Exception.php';
                 set_error_handler(array('Zend_Session_Exception', 'handleSessionStartError'), $errorLevel);
             }
 
@@ -497,6 +505,26 @@ class Zend_Session extends Zend_Session_Abstract
         }
 
         self::_processStartupMetadataGlobal();
+    }
+
+    /**
+     * Perform a hash-bits check on the session ID
+     *
+     * @param string $id Session ID
+     * @return bool
+     */
+    protected static function _checkId($id)
+    {
+        $hashBitsPerChar = ini_get('session.hash_bits_per_character');
+        if (!$hashBitsPerChar) {
+            $hashBitsPerChar = 5; // the default value
+        }
+        switch($hashBitsPerChar) {
+            case 4: $pattern = '^[0-9a-f]*$'; break;
+            case 5: $pattern = '^[0-9a-v]*$'; break;
+            case 6: $pattern = '^[0-9a-zA-Z-,]*$'; break;
+        }
+        return preg_match('#'.$pattern.'#', $id);
     }
 
 
@@ -564,7 +592,7 @@ class Zend_Session extends Zend_Session_Abstract
                         unset($_SESSION['__ZF'][$namespace]['ENVGH']);
                     }
                 }
-
+                
                 if (isset($namespace) && empty($_SESSION['__ZF'][$namespace])) {
                     unset($_SESSION['__ZF'][$namespace]);
                 }
@@ -622,20 +650,20 @@ class Zend_Session extends Zend_Session_Abstract
     {
         if (!self::$_unitTestEnabled && defined('SID')) {
             /** @see Zend_Session_Exception */
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception('The session has already been started.  The session id must be set first.');
         }
 
         if (!self::$_unitTestEnabled && headers_sent($filename, $linenum)) {
             /** @see Zend_Session_Exception */
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception("You must call ".__CLASS__.'::'.__FUNCTION__.
                 "() before any output has been sent to the browser; output started in {$filename}/{$linenum}");
         }
 
         if (!is_string($id) || $id === '') {
             /** @see Zend_Session_Exception */
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception('You must provide a non-empty string as a session identifier.');
         }
 
@@ -765,13 +793,13 @@ class Zend_Session extends Zend_Session_Abstract
     {
         foreach ($_SESSION['__ZF']['VALID'] as $validator_name => $valid_data) {
             if (!class_exists($validator_name)) {
-                require_once 'Zend/Loader.php';
+                // require_once 'Zend/Loader.php';
                 Zend_Loader::loadClass($validator_name);
             }
             $validator = new $validator_name;
             if ($validator->validate() === false) {
                 /** @see Zend_Session_Exception */
-                require_once 'Zend/Session/Exception.php';
+                // require_once 'Zend/Session/Exception.php';
                 throw new Zend_Session_Exception("This session is not valid according to {$validator_name}.");
             }
         }
@@ -828,7 +856,7 @@ class Zend_Session extends Zend_Session_Abstract
     {
         if (parent::$_readable === false) {
             /** @see Zend_Session_Exception */
-            require_once 'Zend/Session/Exception.php';
+            // require_once 'Zend/Session/Exception.php';
             throw new Zend_Session_Exception(parent::_THROW_NOT_READABLE_MSG);
         }
 

@@ -15,14 +15,14 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: LowerCaseUtf8.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: LowerCaseUtf8.php 24832 2012-05-30 13:14:44Z adamlundrigan $
  */
 
 
 /** Zend_Search_Lucene_Analysis_TokenFilter */
-require_once 'Zend/Search/Lucene/Analysis/TokenFilter.php';
+// require_once 'Zend/Search/Lucene/Analysis/TokenFilter.php';
 
 
 /**
@@ -31,7 +31,7 @@ require_once 'Zend/Search/Lucene/Analysis/TokenFilter.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -44,7 +44,7 @@ class Zend_Search_Lucene_Analysis_TokenFilter_LowerCaseUtf8 extends Zend_Search_
     {
         if (!function_exists('mb_strtolower')) {
             // mbstring extension is disabled
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Utf8 compatible lower case filter needs mbstring extension to be enabled.');
         }
     }
@@ -57,14 +57,8 @@ class Zend_Search_Lucene_Analysis_TokenFilter_LowerCaseUtf8 extends Zend_Search_
      */
     public function normalize(Zend_Search_Lucene_Analysis_Token $srcToken)
     {
-        $newToken = new Zend_Search_Lucene_Analysis_Token(
-                                     mb_strtolower($srcToken->getTermText(), 'UTF-8'),
-                                     $srcToken->getStartOffset(),
-                                     $srcToken->getEndOffset());
-
-        $newToken->setPositionIncrement($srcToken->getPositionIncrement());
-
-        return $newToken;
+        $srcToken->setTermText(mb_strtolower($srcToken->getTermText(), 'UTF-8'));
+        return $srcToken;
     }
 }
 

@@ -36,14 +36,14 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
     
     public function getJobsAction () {
 
-        $jobs = Pimcore_Update::getJobs($this->_getParam("toRevision"));
+        $jobs = Pimcore_Update::getJobs($this->getParam("toRevision"));
         
         $this->_helper->json($jobs);
     }
     
     public function jobParallelAction () {
-        if($this->_getParam("type") == "download") {
-            Pimcore_Update::downloadData($this->_getParam("revision"), $this->_getParam("url"));
+        if($this->getParam("type") == "download") {
+            Pimcore_Update::downloadData($this->getParam("revision"), $this->getParam("url"));
         }
         
         $this->_helper->json(array("success" => true));
@@ -53,17 +53,17 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
         
         $status = array("success" => true);
         
-        if($this->_getParam("type") == "files") {
-            Pimcore_Update::installData($this->_getParam("revision"));
-        } else if ($this->_getParam("type") == "clearcache") {
+        if($this->getParam("type") == "files") {
+            Pimcore_Update::installData($this->getParam("revision"));
+        } else if ($this->getParam("type") == "clearcache") {
             Pimcore_Model_Cache::clearAll();
-        } else if ($this->_getParam("type") == "preupdate") {
-            $status = Pimcore_Update::executeScript($this->_getParam("revision"), "preupdate");
-        } else if ($this->_getParam("type") == "postupdate") {
-            $status = Pimcore_Update::executeScript($this->_getParam("revision"), "postupdate");
-        } else if ($this->_getParam("type") == "cleanup") {
+        } else if ($this->getParam("type") == "preupdate") {
+            $status = Pimcore_Update::executeScript($this->getParam("revision"), "preupdate");
+        } else if ($this->getParam("type") == "postupdate") {
+            $status = Pimcore_Update::executeScript($this->getParam("revision"), "postupdate");
+        } else if ($this->getParam("type") == "cleanup") {
             Pimcore_Update::cleanup();
-        } else if ($this->_getParam("type") == "languages") {
+        } else if ($this->getParam("type") == "languages") {
             Pimcore_Update::downloadLanguage();
         }
 
@@ -97,7 +97,7 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
 
     public function downloadLanguageAction() {
 
-        $lang = $this->_getParam("language");
+        $lang = $this->getParam("language");
         $success = Pimcore_Update::downloadLanguage($lang);
         
         $this->_helper->json(array(

@@ -67,7 +67,10 @@ pimcore.settings.redirects = Class.create({
         }, [
             {name: 'id'},
             {name: 'source', allowBlank: false},
+            {name: 'sourceEntireUrl', allowBlank: true},
+            {name: 'sourceSite', allowBlank: true},
             {name: 'target', allowBlank: false},
+            {name: 'targetSite', allowBlank: true},
             {name: 'statusCode', allowBlank: true},
             {name: 'priority', type:'int' ,allowBlank: true},
             {name: 'expiry', type: "date", convert: function (v, r) {
@@ -151,9 +154,40 @@ pimcore.settings.redirects = Class.create({
             }
         }));
 
+        var sourceEntireUrlCheck = new Ext.grid.CheckColumn({
+            header: t("source_entire_url"),
+            dataIndex: "sourceEntireUrl",
+            width: 70
+        });
+
         var typesColumns = [
             {header: t("source"), width: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
+            sourceEntireUrlCheck,
+            {header: t("source_site"), width: 200, sortable:true, dataIndex: "sourceSite", editor: new Ext.form.ComboBox({
+                store: pimcore.globalmanager.get("sites"),
+                valueField: "id",
+                displayField: "domain",
+                triggerAction: "all"
+            }), renderer: function (siteId) {
+                var store = pimcore.globalmanager.get("sites");
+                var pos = store.findExact("id", siteId);
+                if(pos >= 0) {
+                    return store.getAt(pos).get("domain");
+                }
+            }},
             {header: t("target"), width: 200, sortable: false, dataIndex: 'target', editor: new Ext.form.TextField({}), css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
+            {header: t("target_site"), width: 200, sortable:true, dataIndex: "targetSite", editor: new Ext.form.ComboBox({
+                store: pimcore.globalmanager.get("sites"),
+                valueField: "id",
+                displayField: "domain",
+                triggerAction: "all"
+            }), renderer: function (siteId) {
+                var store = pimcore.globalmanager.get("sites");
+                var pos = store.findExact("id", siteId);
+                if(pos >= 0) {
+                    return store.getAt(pos).get("domain");
+                }
+            }},
             {header: t("type"), width: 50, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [
                     ["301", "Moved Permanently (301)"],
@@ -308,7 +342,7 @@ pimcore.settings.redirects = Class.create({
                         ["begin", t("beginning_with")],
                         ["exact", t("matching_exact")],
                         ["contain", t("contain")],
-                        ["begin_end_slash", t("beginning_with_ending_with_optional_slash")]
+                        ["begin_end_slash", t("short_url")]
                     ],
                     mode: "local",
                     typeAhead: false,
@@ -345,16 +379,19 @@ pimcore.settings.redirects = Class.create({
         var source = "";
         var values = this.wizardForm.getForm().getFieldValues();
         var pattern = preg_quote(values.pattern);
-        pattern = str_replace("/","\\/",pattern);
+        pattern = str_replace("@","\\@",pattern);
 
         if(values.mode == "begin") {
-            source = "/^" + pattern + "/";
+            source = "@^" + pattern + "@";
         } else if (values.mode == "exact") {
-            source = "/^" + pattern + "$/";
+            source = "@^" + pattern + "$@";
         } else if (values.mode == "contain") {
-            source = "/" + pattern + "/";
+            source = "@" + pattern + "@";
         } else if (values.mode == "begin_end_slash") {
-            source = "/^" + pattern + "[\\/]?$/";
+            if(pattern.charAt(0) != "/") {
+                pattern = "/" + pattern;
+            }
+            source = "@^" + pattern + "[\\/]?$@";
         }
 
         var u = new this.grid.store.recordType({

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Method
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Prototype.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Prototype.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Server
  * @subpackage Method
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Server_Method_Prototype
@@ -95,7 +95,7 @@ class Zend_Server_Method_Prototype
                 $this->_parameterNameMap[$name] = count($this->_parameters) - 1;
             }
         } else {
-            require_once 'Zend/Server/Method/Parameter.php';
+            // require_once 'Zend/Server/Method/Parameter.php';
             $parameter = new Zend_Server_Method_Parameter(array(
                 'type' => (string) $parameter,
             ));

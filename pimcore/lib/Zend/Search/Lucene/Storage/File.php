@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: File.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: File.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Storage
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Search_Lucene_Storage_File
@@ -249,7 +249,7 @@ abstract class Zend_Search_Lucene_Storage_File
             if ($wordHigh == (int)0xFFFFFFFF  &&  ($wordLow & (int)0x80000000)) {
                 return $wordLow;
             } else {
-                require_once 'Zend/Search/Lucene/Exception.php';
+                // require_once 'Zend/Search/Lucene/Exception.php';
                 throw new Zend_Search_Lucene_Exception('Long integers lower than -2147483648 (0x80000000) are not supported on 32-bit platforms.');
             }
 
@@ -279,7 +279,7 @@ abstract class Zend_Search_Lucene_Storage_File
     public function writeLong32Bit($value)
     {
         if ($value < (int)0x80000000) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Long integers lower than -2147483648 (0x80000000) are not supported on 32-bit platforms.');
         }
 
@@ -447,7 +447,7 @@ abstract class Zend_Search_Lucene_Storage_File
         }
 
         if ($chars < 0) {
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception('Invalid UTF-8 string');
         }
 

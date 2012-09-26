@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Links.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Links.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_View_Helper_Navigation_HelperAbstract
  */
-require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
+// require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
 
 /**
  * Helper for printing <link> elements
@@ -31,7 +31,7 @@ require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Navigation_Links
@@ -270,7 +270,7 @@ class Zend_View_Helper_Navigation_Links
     public function findRelation(Zend_Navigation_Page $page, $rel, $type)
     {
         if (!in_array($rel, array('rel', 'rev'))) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(sprintf(
                 'Invalid argument: $rel must be "rel" or "rev"; "%s" given',
                 $rel));
@@ -709,7 +709,7 @@ class Zend_View_Helper_Navigation_Links
     public function renderLink(Zend_Navigation_Page $page, $attrib, $relation)
     {
         if (!in_array($attrib, array('rel', 'rev'))) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(sprintf(
                     'Invalid relation attribute "%s", must be "rel" or "rev"',
                     $attrib));

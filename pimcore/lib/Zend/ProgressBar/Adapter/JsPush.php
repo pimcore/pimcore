@@ -12,20 +12,20 @@
  *
  * @category   Zend
  * @package    Zend_ProgressBar
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: JsPush.php 23953 2011-05-03 05:47:39Z ralph $
+ * @version    $Id: JsPush.php 25024 2012-07-30 15:08:15Z rob $
  */
 
 /**
  * @see Zend_Json
  */
-require_once 'Zend/Json.php';
+// require_once 'Zend/Json.php';
 
 /**
  * @see Zend_ProgressBar_Adapter
  */
-require_once 'Zend/ProgressBar/Adapter.php';
+// require_once 'Zend/ProgressBar/Adapter.php';
 
 /**
  * Zend_ProgressBar_Adapter_JsPush offers a simple method for updating a
@@ -34,7 +34,7 @@ require_once 'Zend/ProgressBar/Adapter.php';
  * @category  Zend
  * @package   Zend_ProgressBar
  * @uses      Zend_ProgressBar_Adapter_Interface
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_ProgressBar_Adapter_JsPush extends Zend_ProgressBar_Adapter

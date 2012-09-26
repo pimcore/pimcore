@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Annotation
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Annotation.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Annotation.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element.php';
+// require_once 'Zend/Pdf/Element.php';
 
 /**
  * Abstract PDF annotation representation class
@@ -32,7 +32,7 @@ require_once 'Zend/Pdf/Element.php';
  *
  * @package    Zend_Pdf
  * @subpackage Annotation
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Pdf_Annotation
@@ -168,7 +168,7 @@ abstract class Zend_Pdf_Annotation
      * @return Zend_Pdf_Annotation
      */
     public function setText($text) {
-        require_once 'Zend/Pdf/Element/String.php';
+        // require_once 'Zend/Pdf/Element/String.php';
 
         if ($this->_annotationDictionary->Contents === null) {
             $this->_annotationDictionary->touch();
@@ -189,7 +189,7 @@ abstract class Zend_Pdf_Annotation
     public function __construct(Zend_Pdf_Element $annotationDictionary)
     {
         if ($annotationDictionary->getType() != Zend_Pdf_Element::TYPE_DICTIONARY) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Annotation dictionary resource has to be a dictionary.');
         }
 
@@ -197,12 +197,12 @@ abstract class Zend_Pdf_Annotation
 
         if ($this->_annotationDictionary->Type !== null  &&
             $this->_annotationDictionary->Type->value != 'Annot') {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Wrong resource type. \'Annot\' expected.');
         }
 
         if ($this->_annotationDictionary->Rect === null) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('\'Rect\' dictionary entry is required.');
         }
 
@@ -211,7 +211,7 @@ abstract class Zend_Pdf_Annotation
             $this->_annotationDictionary->Rect->items[1]->getType() != Zend_Pdf_Element::TYPE_NUMERIC ||
             $this->_annotationDictionary->Rect->items[2]->getType() != Zend_Pdf_Element::TYPE_NUMERIC ||
             $this->_annotationDictionary->Rect->items[3]->getType() != Zend_Pdf_Element::TYPE_NUMERIC ) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('\'Rect\' dictionary entry must be an array of four numeric elements.');
         }
     }

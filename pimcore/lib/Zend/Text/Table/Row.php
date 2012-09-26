@@ -14,9 +14,9 @@
  *
  * @category  Zend
  * @package   Zend_Text_Table
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: Row.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version   $Id: Row.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -24,7 +24,7 @@
  *
  * @category  Zend
  * @package   Zend_Text_Table
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Text_Table_Row
@@ -60,7 +60,7 @@ class Zend_Text_Table_Row
             extract($options, EXTR_IF_EXISTS);
         }
 
-        require_once 'Zend/Text/Table/Column.php';
+        // require_once 'Zend/Text/Table/Column.php';
 
         $column = new Zend_Text_Table_Column($content, $align, $colSpan, $encoding);
 
@@ -118,7 +118,7 @@ class Zend_Text_Table_Row
     public function getColumnWidths()
     {
         if ($this->_columnWidths === null) {
-            require_once 'Zend/Text/Table/Exception.php';
+            // require_once 'Zend/Text/Table/Exception.php';
             throw new Zend_Text_Table_Exception('No columns were rendered yet');
         }
 
@@ -144,7 +144,7 @@ class Zend_Text_Table_Row
         // If there is no single column, create a column which spans over the
         // entire row
         if (count($this->_columns) === 0) {
-            require_once 'Zend/Text/Table/Column.php';
+            // require_once 'Zend/Text/Table/Column.php';
             $this->appendColumn(new Zend_Text_Table_Column(null, null, count($columnWidths)));
         }
 
@@ -158,7 +158,7 @@ class Zend_Text_Table_Row
 
             // Verify if there are enough column widths defined
             if (($colNum + $colSpan) > count($columnWidths)) {
-                require_once 'Zend/Text/Table/Exception.php';
+                // require_once 'Zend/Text/Table/Exception.php';
                 throw new Zend_Text_Table_Exception('Too many columns');
             }
 
@@ -197,11 +197,11 @@ class Zend_Text_Table_Row
         for ($line = 0; $line < $maxHeight; $line++) {
             $result .= $decorator->getVertical();
 
-            foreach ($renderedColumns as $renderedColumn) {
+            foreach ($renderedColumns as $index => $renderedColumn) {
                 if (isset($renderedColumn[$line]) === true) {
                     $result .= $renderedColumn[$line];
                 } else {
-                    $result .= str_repeat(' ', strlen($renderedColumn[0]));
+                    $result .= str_repeat(' ', $this->_columnWidths[$index]);
                 }
 
                 $result .= $decorator->getVertical();

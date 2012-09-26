@@ -71,22 +71,44 @@ class Pimcore_Mail extends Zend_Mail
     protected $ignoreDebugMode = false;
 
     /**
+     * if true - the layout is enabled when document is rendered to a string
+     * @var bool
+     */
+    protected $enableLayoutOnPlaceholderRendering = true;
+
+    /**
+     * forces the mail class to always us the "Pimcore Mode",
+     * so you don't have to set the charset every time when you create new Pimcore_Mail instance
+     * @var bool
+     */
+    public static $forcePimcoreMode = false;
+
+    /**
      * Creates a new Pimcore_Mail object (extends Zend_Mail)
      *
      * @param array $options
      */
-    public function __construct(Array $options = array())
+    public function __construct($charset = null)
     {
-        parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
+        // using $charset as param to be compatible with Zend_Mail
+        if(is_array($charset) || self::$forcePimcoreMode) {
+            $options = $charset;
+            parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
 
-        if ($options["document"]) {
-            $this->setDocument($options["document"]);
-        }
-        if ($options['params']) {
-            $this->setParams($options['params']);
-        }
-        if ($options['subject']) {
-            $this->setSubject($options['subject']);
+            if ($options["document"]) {
+                $this->setDocument($options["document"]);
+            }
+            if ($options['params']) {
+                $this->setParams($options['params']);
+            }
+            if ($options['subject']) {
+                $this->setSubject($options['subject']);
+            }
+        } else {
+            if($charset === null) {
+                $charset = "UTF-8";
+            }
+            parent::__construct($charset);
         }
 
         $this->init();
@@ -161,6 +183,24 @@ class Pimcore_Mail extends Zend_Mail
      */
     public function getIgnoreDebugMode(){
         return $this->ignoreDebugMode;
+    }
+
+
+    /**
+     * activate / deactivate the layout when the document is rendered
+     * to a string when the placeholders are replaced
+     *
+     * @param $value bool
+     */
+    public function setEnableLayoutOnPlaceholderRendering($value){
+        $this->enableLayoutOnPlaceholderRendering = (bool)$value;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableLayoutOnPlaceholderRendering(){
+        return $this->enableLayoutOnPlaceholderRendering;
     }
 
     // overwriting Zend_Mail methods - necessary for logging... - start
@@ -420,9 +460,15 @@ class Pimcore_Mail extends Zend_Mail
     {
         if ($this->getDocument()) {
             $this->setDocumentSettings();
+        }
 
-            $this->setSubject($this->getSubjectRendered());
+        $this->setSubject($this->getSubjectRendered());
+
+        if($this->getBodyHtmlRendered()){
             $this->setBodyHtml($this->getBodyHtmlRendered());
+        }
+
+        if($this->getBodyTextRendered()){
             $this->setBodyText($this->getBodyTextRendered());
         }
 
@@ -520,7 +566,7 @@ class Pimcore_Mail extends Zend_Mail
         if (!$subject && $this->getDocument()) {
             $subject = $this->getDocument()->getSubject();
         }
-        return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument());
+        return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
     }
 
 
@@ -537,9 +583,9 @@ class Pimcore_Mail extends Zend_Mail
         //and not the content of the Document!
         if ($html instanceof Zend_Mime_Part) {
             $rawHtml = $html->getRawContent();
-            $content = $this->placeholderObject->replacePlaceholders($rawHtml, $this->getParams(), $this->getDocument());
+            $content = $this->placeholderObject->replacePlaceholders($rawHtml, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
         } elseif ($this->getDocument() instanceof Document) {
-            $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument());
+            $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
         } else {
             $content = null;
         }
@@ -565,7 +611,7 @@ class Pimcore_Mail extends Zend_Mail
         //if the content was manually set with $obj->setBodyText(); this content will be used
         if ($text instanceof Zend_Mime_Part) {
             $rawText = $text->getRawContent();
-            $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument());
+            $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument(),$this->getEnableLayoutOnPlaceholderRendering());
         } else {
             //creating text version from html email if html2text is installed
             try {

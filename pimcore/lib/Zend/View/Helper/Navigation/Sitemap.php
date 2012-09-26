@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Sitemap.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Sitemap.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_View_Helper_Navigation_HelperAbstract
  */
-require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
+// require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
 
 /**
  * Helper for printing sitemaps
@@ -33,7 +33,7 @@ require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Navigation_Sitemap
@@ -218,7 +218,7 @@ class Zend_View_Helper_Navigation_Sitemap
      */
     public function setServerUrl($serverUrl)
     {
-        require_once 'Zend/Uri.php';
+        // require_once 'Zend/Uri.php';
         $uri = Zend_Uri::factory($serverUrl);
         $uri->setFragment('');
         $uri->setPath('');
@@ -227,7 +227,7 @@ class Zend_View_Helper_Navigation_Sitemap
         if ($uri->valid()) {
             $this->_serverUrl = $uri->getUri();
         } else {
-            require_once 'Zend/Uri/Exception.php';
+            // require_once 'Zend/Uri/Exception.php';
             $e = new Zend_Uri_Exception(sprintf(
                     'Invalid server URL: "%s"',
                     $serverUrl));
@@ -335,10 +335,10 @@ class Zend_View_Helper_Navigation_Sitemap
 
         // check if we should validate using our own validators
         if ($this->getUseSitemapValidators()) {
-            require_once 'Zend/Validate/Sitemap/Changefreq.php';
-            require_once 'Zend/Validate/Sitemap/Lastmod.php';
-            require_once 'Zend/Validate/Sitemap/Loc.php';
-            require_once 'Zend/Validate/Sitemap/Priority.php';
+            // require_once 'Zend/Validate/Sitemap/Changefreq.php';
+            // require_once 'Zend/Validate/Sitemap/Lastmod.php';
+            // require_once 'Zend/Validate/Sitemap/Loc.php';
+            // require_once 'Zend/Validate/Sitemap/Priority.php';
 
             // create validators
             $locValidator        = new Zend_Validate_Sitemap_Loc();
@@ -387,7 +387,7 @@ class Zend_View_Helper_Navigation_Sitemap
 
             if ($this->getUseSitemapValidators() &&
                 !$locValidator->isValid($url)) {
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception(sprintf(
                         'Encountered an invalid URL for Sitemap XML: "%s"',
                         $url));
@@ -445,7 +445,7 @@ class Zend_View_Helper_Navigation_Sitemap
         // validate using schema if specified
         if ($this->getUseSchemaValidation()) {
             if (!@$dom->schemaValidate(self::SITEMAP_XSD)) {
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception(sprintf(
                         'Sitemap is invalid according to XML Schema at "%s"',
                         self::SITEMAP_XSD));

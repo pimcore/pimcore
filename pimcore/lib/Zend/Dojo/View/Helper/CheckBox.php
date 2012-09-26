@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage View
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CheckBox.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: CheckBox.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Dojo_View_Helper_Dijit */
-require_once 'Zend/Dojo/View/Helper/Dijit.php';
+// require_once 'Zend/Dojo/View/Helper/Dijit.php';
 
 /**
  * Dojo CheckBox dijit
@@ -29,7 +29,7 @@ require_once 'Zend/Dojo/View/Helper/Dijit.php';
  * @uses       Zend_Dojo_View_Helper_Dijit
  * @package    Zend_Dojo
  * @subpackage View
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
   */
 class Zend_Dojo_View_Helper_CheckBox extends Zend_Dojo_View_Helper_Dijit
@@ -65,7 +65,7 @@ class Zend_Dojo_View_Helper_CheckBox extends Zend_Dojo_View_Helper_Dijit
     public function checkBox($id, $value = null, array $params = array(), array $attribs = array(), array $checkedOptions = null)
     {
         // Prepare the checkbox options
-        require_once 'Zend/View/Helper/FormCheckbox.php';
+        // require_once 'Zend/View/Helper/FormCheckbox.php';
         $checked = false;
         if (isset($attribs['checked']) && $attribs['checked']) {
             $checked = true;

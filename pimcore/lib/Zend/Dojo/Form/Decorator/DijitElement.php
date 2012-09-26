@@ -14,12 +14,12 @@
  *
  * @category   Zend
  * @package    Zend_Form
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Form_Decorator_ViewHelper */
-require_once 'Zend/Form/Decorator/ViewHelper.php';
+// require_once 'Zend/Form/Decorator/ViewHelper.php';
 
 /**
  * Zend_Dojo_Form_Decorator_DijitElement
@@ -36,9 +36,9 @@ require_once 'Zend/Form/Decorator/ViewHelper.php';
  *
  * @package    Zend_Dojo
  * @subpackage Form_Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DijitElement.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: DijitElement.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Dojo_Form_Decorator_DijitElement extends Zend_Form_Decorator_ViewHelper
 {
@@ -152,7 +152,7 @@ class Zend_Dojo_Form_Decorator_DijitElement extends Zend_Form_Decorator_ViewHelp
         $element = $this->getElement();
         $view = $element->getView();
         if (null === $view) {
-            require_once 'Zend/Form/Decorator/Exception.php';
+            // require_once 'Zend/Form/Decorator/Exception.php';
             throw new Zend_Form_Decorator_Exception('DijitElement decorator cannot render without a registered view object');
         }
 

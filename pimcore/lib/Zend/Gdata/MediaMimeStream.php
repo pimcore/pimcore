@@ -16,20 +16,20 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MediaMimeStream.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: MediaMimeStream.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
 *  @see Zend_Gdata_MimeFile
 */
-require_once 'Zend/Gdata/MimeFile.php';
+// require_once 'Zend/Gdata/MimeFile.php';
 
 /**
 * @see Zend_Gdata_MimeBodyString
 */
-require_once 'Zend/Gdata/MimeBodyString.php';
+// require_once 'Zend/Gdata/MimeBodyString.php';
 
 
 /**
@@ -38,7 +38,7 @@ require_once 'Zend/Gdata/MimeBodyString.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_MediaMimeStream
@@ -92,7 +92,7 @@ class Zend_Gdata_MediaMimeStream
         $fileContentType = null)
     {
         if (!file_exists($filePath) || !is_readable($filePath)) {
-            require_once 'Zend/Gdata/App/IOException.php';
+            // require_once 'Zend/Gdata/App/IOException.php';
             throw new Zend_Gdata_App_IOException('File to be uploaded at ' .
                 $filePath . ' does not exist or is not readable.');
         }

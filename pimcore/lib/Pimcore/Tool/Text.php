@@ -122,6 +122,11 @@ class Pimcore_Tool_Text
                     $newTag = preg_replace("/".$linkAttr."=\"[^\"]*\"/",$linkAttr . '="' . $path . '"', $oldTag);
 
                     $text = str_replace($oldTag, $newTag, $text);
+                } else {
+                    // remove the img tag if there is an internal broken link
+                    if ($matches[1][$i] == "img") {
+                        $text = str_replace($matches[0][$i], "", $text);
+                    }
                 }
             }
         }
@@ -201,7 +206,7 @@ class Pimcore_Tool_Text
         }
 
         //$text = Pimcore_Tool_Text::removeLineBreaks($text);
-        preg_match_all("@\<(a|img)[^>]*([pimcore_id|pimcore_type]+=\"[0-9]+\")[^>]*([pimcore_id|pimcore_type]+=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
+        preg_match_all("@\<(a|img)[^>]*((?:pimcore_id|pimcore_type)+=\"[0-9]+\")[^>]*((?:pimcore_id|pimcore_type)+=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
 
         Zend_Registry::set($hash, $matches);
 

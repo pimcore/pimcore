@@ -16,85 +16,85 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Media
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MediaGroup.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: MediaGroup.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaContent
  */
-require_once 'Zend/Gdata/Media/Extension/MediaContent.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaContent.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaCategory
  */
-require_once 'Zend/Gdata/Media/Extension/MediaCategory.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaCategory.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaCopyright
  */
-require_once 'Zend/Gdata/Media/Extension/MediaCopyright.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaCopyright.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaCredit
  */
-require_once 'Zend/Gdata/Media/Extension/MediaCredit.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaCredit.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaDescription
  */
-require_once 'Zend/Gdata/Media/Extension/MediaDescription.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaDescription.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaHash
  */
-require_once 'Zend/Gdata/Media/Extension/MediaHash.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaHash.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaKeywords
  */
-require_once 'Zend/Gdata/Media/Extension/MediaKeywords.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaKeywords.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaPlayer
  */
-require_once 'Zend/Gdata/Media/Extension/MediaPlayer.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaPlayer.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaRating
  */
-require_once 'Zend/Gdata/Media/Extension/MediaRating.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaRating.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaRestriction
  */
-require_once 'Zend/Gdata/Media/Extension/MediaRestriction.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaRestriction.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaText
  */
-require_once 'Zend/Gdata/Media/Extension/MediaText.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaText.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaThumbnail
  */
-require_once 'Zend/Gdata/Media/Extension/MediaThumbnail.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaThumbnail.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaTitle
  */
-require_once 'Zend/Gdata/Media/Extension/MediaTitle.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaTitle.php';
 
 
 /**
@@ -106,7 +106,7 @@ require_once 'Zend/Gdata/Media/Extension/MediaTitle.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Media
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Media_Extension_MediaGroup extends Zend_Gdata_Extension

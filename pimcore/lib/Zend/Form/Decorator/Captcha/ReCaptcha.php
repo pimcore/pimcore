@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** @see Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
+// require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * ReCaptcha-based captcha decorator
@@ -31,7 +31,7 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Element
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Form_Decorator_Captcha_ReCaptcha extends Zend_Form_Decorator_Abstract
@@ -79,6 +79,8 @@ class Zend_Form_Decorator_Captcha_ReCaptcha extends Zend_Form_Decorator_Abstract
         // Create a window.onload event so that we can bind to the form.
         // Once bound, add an onsubmit event that will replace the hidden field 
         // values with those produced by ReCaptcha
+        // zendBindEvent mediates between Mozilla's addEventListener and
+        // IE's sole support for addEvent.
         $js =<<<EOJ
 <script type="text/javascript" language="JavaScript">
 function windowOnLoad(fn) {
@@ -90,11 +92,22 @@ function windowOnLoad(fn) {
         fn();
     };
 }
+function zendBindEvent(el, eventName, eventHandler) {
+    if (el.addEventListener){
+        el.addEventListener(eventName, eventHandler, false); 
+    } else if (el.attachEvent){
+        el.attachEvent('on'+eventName, eventHandler);
+    }
+}
 windowOnLoad(function(){
-    document.getElementById("$challengeId").form.addEventListener("submit", function(e) {
-        document.getElementById("$challengeId").value = document.getElementById("recaptcha_challenge_field").value;
-        document.getElementById("$responseId").value = document.getElementById("recaptcha_response_field").value;
-    });
+    zendBindEvent(
+        document.getElementById("$challengeId").form,
+        'submit',
+        function(e) {
+            document.getElementById("$challengeId").value = document.getElementById("recaptcha_challenge_field").value;
+            document.getElementById("$responseId").value = document.getElementById("recaptcha_response_field").value;
+        }    
+    );
 });
 </script>
 EOJ;

@@ -135,16 +135,6 @@ pimcore.settings.system = Class.create({
                 pimcore.globalmanager.remove("settings_system");
             }.bind(this));
 
-
-            var themeStore = new Ext.data.SimpleStore({
-                fields: ['name', 'path'],
-                data: [
-                    ["blue","/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css"],
-                    ["gray","/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css"]/*,
-                    ["slate","/pimcore/static/js/lib/ext-plugins/xtheme-slate/css/xtheme-slate.css"]*/
-                ]
-            });
-
             // sites error pages
             var sitesErrorPagesFields = [];
             var sites = pimcore.globalmanager.get("sites");
@@ -255,20 +245,6 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: t('valid_languages_frontend_description'),
                                 cls: "pimcore_extra_label_bottom"
-                            },
-                            {
-                                fieldLabel: t('admin_theme'),
-                                name: 'general.theme',
-                                xtype: "combo",
-                                editable: false,
-                                triggerAction: 'all',
-                                valueField: 'path',
-                                displayField: 'name',
-                                store: themeStore,
-                                mode: "local",
-                                value: this.getValue("general.theme"),
-                                width: 100,
-                                listWidth: 100
                             },
                             {
                                 fieldLabel: t('show_random_pictures_on_login_screen'),
@@ -424,6 +400,12 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: "&nbsp;",
                                 cls: "pimcore_extra_label_bottom"
+                            },
+                            {
+                                fieldLabel: t("debug_admin_translations"),
+                                xtype: "checkbox",
+                                name: "general.debug_admin_translations",
+                                checked: this.getValue("general.debug_admin_translations")
                             },
                             {
                                 fieldLabel: 'DEV-Mode (<span style="color:red;font-weight:bold;">DON`T ACTIVATE IT!</span>)',
@@ -594,6 +576,12 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t("domain"),
                                 name: "general.domain",
                                 value: this.getValue("general.domain")
+                            },
+                            {
+                                xtype: "checkbox",
+                                fieldLabel: t("enable_targeting"),
+                                name: "general.targeting",
+                                checked: this.getValue("general.targeting")
                             },
                             {
                                 xtype:'fieldset',
@@ -780,7 +768,7 @@ pimcore.settings.system = Class.create({
                         collapsible: true,
                         collapsed: true,
                         autoHeight:true,
-                        labelWidth: 200,
+                        labelWidth: 250,
                         defaultType: 'textfield',
                         defaults: {width: 150},
                         items :[
@@ -826,6 +814,18 @@ pimcore.settings.system = Class.create({
                                 name: 'assets.qtfaststart',
                                 value: this.getValue("assets.qtfaststart"),
                                 width: 300
+                            },
+                            {
+                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
+                                name: 'assets.icc_rgb_profile',
+                                value: this.getValue("assets.icc_rgb_profile"),
+                                width: 300
+                            },
+                            {
+                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (imagick)",
+                                name: 'assets.icc_cmyk_profile',
+                                value: this.getValue("assets.icc_cmyk_profile"),
+                                width: 300
                             }
                         ]
                     },
@@ -843,20 +843,32 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: t("google_account_description"),
+                                value: "<b>" + t('google_api_key_service') + "</b>",
+                                cls: "pimcore_extra_label"
+                            },{
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: t("google_api_access_description"),
                                 cls: "pimcore_extra_label"
                             },
                             {
-                                fieldLabel: t('username'),
-                                name: 'services.google.username',
-                                value: this.getValue("services.google.username"),
-                                width: 300
+                                fieldLabel: t('client_id'),
+                                name: 'services.google.client_id',
+                                value: this.getValue("services.google.client_id"),
+                                width: 600
                             },
                             {
-                                fieldLabel: t('password'),
-                                name: 'services.google.password',
-                                value: this.getValue("services.google.password"),
-                                inputType: "password"
+                                fieldLabel: t('email'),
+                                name: 'services.google.email',
+                                value: this.getValue("services.google.email"),
+                                width: 600
+                            },{
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: this.data.config.google_private_key_exists ? t("google_api_private_key_installed") : ('<span style="color:red;">' + t("google_api_key_missing") + " <br />" + this.data.config.google_private_key_path + '</span>'),
+                                cls: "pimcore_extra_label"
                             },{
                                 xtype: "displayfield",
                                 hideLabel: true,
@@ -868,13 +880,19 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: "<b>" + t('google_maps_api_v3_key'),
+                                value: "<b>" + t('google_api_key_simple') + "</b>",
                                 cls: "pimcore_extra_label"
                             },
                             {
-                                fieldLabel: t('api_key'),
-                                name: 'services.googlemaps.apikey',
-                                value: this.getValue("services.googlemaps.apikey"),
+                                fieldLabel: t('server_api_key'),
+                                name: 'services.google.simpleapikey',
+                                value: this.getValue("services.google.simpleapikey"),
+                                width: 650
+                            },
+                            {
+                                fieldLabel: t('browser_api_key'),
+                                name: 'services.google.browserapikey',
+                                value: this.getValue("services.google.browserapikey"),
                                 width: 650
                             },{
                                 xtype: "displayfield",

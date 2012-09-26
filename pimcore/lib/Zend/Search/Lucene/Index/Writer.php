@@ -15,21 +15,21 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Index
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Writer.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Writer.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Zend_Search_Lucene_LockManager */
-require_once 'Zend/Search/Lucene/LockManager.php';
+// require_once 'Zend/Search/Lucene/LockManager.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Index
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Index_Writer
@@ -235,7 +235,7 @@ class Zend_Search_Lucene_Index_Writer
     public function addDocument(Zend_Search_Lucene_Document $document)
     {
         /** Zend_Search_Lucene_Index_SegmentWriter_DocumentWriter */
-        require_once 'Zend/Search/Lucene/Index/SegmentWriter/DocumentWriter.php';
+        // require_once 'Zend/Search/Lucene/Index/SegmentWriter/DocumentWriter.php';
 
         if ($this->_currentSegment === null) {
             $this->_currentSegment =
@@ -374,7 +374,7 @@ class Zend_Search_Lucene_Index_Writer
         $newName = $this->_newSegmentName();
 
         /** Zend_Search_Lucene_Index_SegmentMerger */
-        require_once 'Zend/Search/Lucene/Index/SegmentMerger.php';
+        // require_once 'Zend/Search/Lucene/Index/SegmentMerger.php';
         $merger = new Zend_Search_Lucene_Index_SegmentMerger($this->_directory,
                                                              $newName);
         foreach ($segments as $segmentInfo) {
@@ -518,7 +518,7 @@ class Zend_Search_Lucene_Index_Writer
                         }
 
                         /** Zend_Search_Lucene_Index_SegmentInfo */
-                        require_once 'Zend/Search/Lucene/Index/SegmentInfo.php';
+                        // require_once 'Zend/Search/Lucene/Index/SegmentInfo.php';
                         $this->_segmentInfos[$segName] =
                                     new Zend_Search_Lucene_Index_SegmentInfo($this->_directory,
                                                                              $segName,
@@ -603,7 +603,7 @@ class Zend_Search_Lucene_Index_Writer
             Zend_Search_Lucene_LockManager::releaseWriteLock($this->_directory);
 
             // Throw the exception
-            require_once 'Zend/Search/Lucene/Exception.php';
+            // require_once 'Zend/Search/Lucene/Exception.php';
             throw new Zend_Search_Lucene_Exception($e->getMessage(), $e->getCode(), $e);
         }
 

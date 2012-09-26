@@ -15,11 +15,11 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once "Zend/Tool/Framework/Client/Response/ContentDecorator/Interface.php";
+// require_once "Zend/Tool/Framework/Client/Response/ContentDecorator/Interface.php";
 
 /**
  * Try to align a given text central on the screen.
@@ -27,9 +27,9 @@ require_once "Zend/Tool/Framework/Client/Response/ContentDecorator/Interface.php
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AlignCenter.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: AlignCenter.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Tool_Framework_Client_Console_ResponseDecorator_AlignCenter
     implements Zend_Tool_Framework_Client_Response_ContentDecorator_Interface

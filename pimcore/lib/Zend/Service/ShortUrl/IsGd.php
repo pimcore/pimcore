@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Service_ShortUrl
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
@@ -22,14 +22,14 @@
 /**
  * @see Zend_Service_ShortUrl_AbstractShortener
  */
-require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
+// require_once 'Zend/Service/ShortUrl/AbstractShortener.php';
 
 /**
  * Is.gd API implementation
  *
  * @category   Zend
  * @package    Zend_Service_ShortUrl
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_ShortUrl_IsGd extends Zend_Service_ShortUrl_AbstractShortener
@@ -82,7 +82,7 @@ class Zend_Service_ShortUrl_IsGd extends Zend_Service_ShortUrl_AbstractShortener
 
         $response = $this->getHttpClient()->request();
         if ($response->isError()) {
-            require_once 'Zend/Service/ShortUrl/Exception.php';
+            // require_once 'Zend/Service/ShortUrl/Exception.php';
             throw new Zend_Service_ShortUrl_Exception($response->getMessage());
         }
 
@@ -90,7 +90,7 @@ class Zend_Service_ShortUrl_IsGd extends Zend_Service_ShortUrl_AbstractShortener
             return $response->getHeader('Location');
         }
 
-        require_once 'Zend/Service/ShortUrl/Exception.php';
+        // require_once 'Zend/Service/ShortUrl/Exception.php';
         throw new Zend_Service_ShortUrl_Exception('Url unshortening was not successful');
     }
 }

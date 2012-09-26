@@ -14,19 +14,19 @@
  *
  * @category   Zend
  * @package    Zend_Memory
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Manager.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Manager.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Memory_Container_Movable */
-require_once 'Zend/Memory/Container/Movable.php';
+// require_once 'Zend/Memory/Container/Movable.php';
 
 /** Zend_Memory_Container_Locked */
-require_once 'Zend/Memory/Container/Locked.php';
+// require_once 'Zend/Memory/Container/Locked.php';
 
 /** Zend_Memory_AccessController */
-require_once 'Zend/Memory/AccessController.php';
+// require_once 'Zend/Memory/AccessController.php';
 
 
 /**
@@ -38,7 +38,7 @@ require_once 'Zend/Memory/AccessController.php';
  *
  * @category   Zend
  * @package    Zend_Memory
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Memory_Manager
@@ -407,7 +407,7 @@ class Zend_Memory_Manager
             }
         }
 
-        require_once 'Zend/Memory/Exception.php';
+        // require_once 'Zend/Memory/Exception.php';
         throw new Zend_Memory_Exception('Memory manager can\'t get enough space.');
     }
 

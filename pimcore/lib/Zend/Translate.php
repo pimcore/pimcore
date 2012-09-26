@@ -14,26 +14,26 @@
  *
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Translate.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Translate.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Loader
  */
-require_once 'Zend/Loader.php';
+// require_once 'Zend/Loader.php';
 
 /**
  * @see Zend_Translate_Adapter
  */
-require_once 'Zend/Translate/Adapter.php';
+// require_once 'Zend/Translate/Adapter.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Translate {
@@ -139,7 +139,7 @@ class Zend_Translate {
         unset($options['adapter']);
         $this->_adapter = new $adapter($options);
         if (!$this->_adapter instanceof Zend_Translate_Adapter) {
-            require_once 'Zend/Translate/Exception.php';
+            // require_once 'Zend/Translate/Exception.php';
             throw new Zend_Translate_Exception("Adapter " . $adapter . " does not extend Zend_Translate_Adapter");
         }
     }
@@ -214,7 +214,7 @@ class Zend_Translate {
         if (method_exists($this->_adapter, $method)) {
             return call_user_func_array(array($this->_adapter, $method), $options);
         }
-        require_once 'Zend/Translate/Exception.php';
+        // require_once 'Zend/Translate/Exception.php';
         throw new Zend_Translate_Exception("Unknown method '" . $method . "' called!");
     }
 }

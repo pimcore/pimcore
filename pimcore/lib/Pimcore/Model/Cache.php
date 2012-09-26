@@ -142,6 +142,9 @@ class Pimcore_Model_Cache {
         // reset default lifetime
         self::$instance->setLifetime(self::$defaultLifetime);
 
+        // always enable the automatic_serialization in this case Pimcore_Tool_Serialize is not used
+        self::$instance->setOption("automatic_serialization", true);
+
         return self::$instance;
     }
 
@@ -180,7 +183,7 @@ class Pimcore_Model_Cache {
         $config["backendType"] = "File";
         $config["backendConfig"] = array(
             "cache_dir" => PIMCORE_CACHE_DIRECTORY,
-            "cache_file_umask" => 0755
+            "cache_file_perm" => 0755
         );
         $config["customBackendNaming"] = false;
 
@@ -204,17 +207,13 @@ class Pimcore_Model_Cache {
             $key = self::$cachePrefix . $key;
             $data = $cache->load($key, $doNotTestCacheValidity);
 
-            // unserialize data, use custom serializer
-            $data = Pimcore_Tool_Serialize::unserialize($data);
-
             if(is_object($data)) {
                 $data->____pimcore_cache_item__ = $key;
             }
     
-            if ($data) {
-                Logger::debug("Successfully get data for key " . $key . " from cache");
-            }
-            else {
+            if ($data !== false) {
+                Logger::debug("Successfully got data for key " . $key . " from cache");
+            } else {
                 Logger::debug("Key " . $key . " doesn't exist in cache");
             }
     
@@ -233,7 +232,7 @@ class Pimcore_Model_Cache {
         if(self::getForceImmendiateWrite()) {
             self::storeToCache($data, $key, $tags, $lifetime, $priority);
         } else {
-            self::addToSaveStack(func_get_args());
+            self::addToSaveStack(array($data, $key, $tags, $lifetime, $priority));
         }
     }
     
@@ -301,13 +300,10 @@ class Pimcore_Model_Cache {
                 unset($data->____pimcore_cache_item__);
             }
 
-            // serialize data, use custom serializer
-            $data = Pimcore_Tool_Serialize::serialize($data);
-
             $key = self::$cachePrefix . $key;
             $success = $cache->save($data, $key, $tags);
             if($success !== true) {
-                Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen($data)));
+                Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($data))));
             }
 
             Logger::debug("Added " . $key . " to cache");

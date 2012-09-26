@@ -66,8 +66,8 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
 
     public function getDownloadInformationAction () {
 
-        $id = $this->_getParam("id");
-        $type = $this->_getParam("type");
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
 
         $remoteConfig = array(
             "token" => Pimcore_Liveconnect::getToken(),
@@ -107,12 +107,12 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
     }
 
     public function downloadFileAction () {
-        $id = $this->_getParam("id");
-        $type = $this->_getParam("type");
-        $path = $this->_getParam("path");
-        $revision = $this->_getParam("revision");
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
+        $path = $this->getParam("path");
+        $revision = $this->getParam("revision");
 
-        $remoteConfig = $this->_getAllParams();
+        $remoteConfig = $this->getAllParams();
         $remoteConfig["token"] = Pimcore_Liveconnect::getToken();
         $rawData = Pimcore_Tool::getHttpData("http://extensions.pimcore.org/download/downloadFile.php?data=" . base64_encode(Pimcore_Tool_Serialize::serialize($remoteConfig)));
 
@@ -151,10 +151,10 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
     }
 
     public function deleteAction () {
-        $id = $this->_getParam("id");
-        $type = $this->_getParam("type");
-        $path = $this->_getParam("path");
-        $revision = $this->_getParam("revision");
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
+        $path = $this->getParam("path");
+        $revision = $this->getParam("revision");
 
 
         if($type == "plugin") {
@@ -183,8 +183,8 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
     }
 
     public function emptyExtensionDirAction () {
-        $id = $this->_getParam("id");
-        $type = $this->_getParam("type");
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
 
         if($type == "plugin") {
             $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;

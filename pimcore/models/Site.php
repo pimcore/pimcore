@@ -110,14 +110,12 @@ class Site extends Pimcore_Model_Abstract {
      * @return bool
      */
     public static function isSiteRequest () {
-        try {
-            $site = Zend_Registry::get("pimcore_site");
-            $inSubSite = true;
-        } catch (Exception $e) {
-            $inSubSite = false;
+
+        if(Zend_Registry::isRegistered("pimcore_site")) {
+            return true;
         }
 
-        return $inSubSite;
+        return false;
     }
 
     /**
@@ -127,10 +125,10 @@ class Site extends Pimcore_Model_Abstract {
      * @throw Exception
      */
     public static function getCurrentSite() {
-        try {
+        if(Zend_Registry::isRegistered("pimcore_site")) {
             $site = Zend_Registry::get("pimcore_site");
             return $site;
-        } catch (Exception $e) {
+        } else {
             throw new Exception("This request/process is not inside a subsite");
         }
     }
@@ -147,6 +145,15 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function getDomains() {
         return $this->domains;
+    }
+
+    /**
+     * returns the main domain of the site (first domain in list)
+     * @return string
+     */
+    public function getMainDomain() {
+        $domains = $this->getDomains();
+        return trim((string) $domains[0]);
     }
 
     /**
@@ -168,7 +175,7 @@ class Site extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -187,7 +194,7 @@ class Site extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setRootId($rootId) {
-        $this->rootId = $rootId;
+        $this->rootId = (int) $rootId;
 
         $rd = Document::getById($this->rootId);
         $this->setRootDocument($rd);

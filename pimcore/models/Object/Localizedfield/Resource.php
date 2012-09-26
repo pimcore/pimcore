@@ -141,10 +141,12 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         $concats = array();
-        foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
-            // only add non-relational fields with one column to the group-concat
-            if(!$fd->isRelationType() && !is_array($fd->getColumnType())) {
-                $concats[] = "group_concat(" . $this->getTableName() . "." . $fd->getName() . ") AS `" . $fd->getName() . "`";
+        if($this->model->getClass()->getFielddefinition("localizedfields")) {
+            foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
+                // only add non-relational fields with one column to the group-concat
+                if(!$fd->isRelationType() && !is_array($fd->getColumnType())) {
+                    $concats[] = "group_concat(" . $this->getTableName() . "." . $fd->getName() . ") AS `" . $fd->getName() . "`";
+                }
             }
         }
 
@@ -164,7 +166,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `ooo_id` int(11) NOT NULL default '0',
-		  `language` varchar(5) default NULL,
+		  `language` varchar(10) NOT NULL DEFAULT '',
 		  PRIMARY KEY (`ooo_id`,`language`),
           INDEX `ooo_id` (`ooo_id`),
           INDEX `language` (`language`)

@@ -358,7 +358,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function loadData() {
-        if ($this->getType() != "folder") {
+        if ($this->getType() != "folder" && file_exists($this->getFileSystemPath())) {
             $this->setData(file_get_contents($this->getFileSystemPath()));
             $this->_dataChanged = false;
         }
@@ -825,7 +825,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function setCreationDate($creationDate) {
-        $this->creationDate = $creationDate;
+        $this->creationDate = (int) $creationDate;
     }
 
     /**
@@ -833,7 +833,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -854,7 +854,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function setModificationDate($modificationDate) {
-        $this->modificationDate = $modificationDate;
+        $this->modificationDate = (int) $modificationDate;
     }
 
     /**
@@ -865,7 +865,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         if ($this->parentId != null and $parentId != null and $this->parentId != $parentId) {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
-        $this->parentId = $parentId;
+        $this->parentId = (int) $parentId;
     }
 
     /**
@@ -1058,6 +1058,13 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function getCustomSetting($key) {
         return $this->customSettings[$key];
+    }
+
+    /**
+     * @param string $name
+     */
+    public function removeCustomSetting($key) {
+        unset($this->customSettings[$key]);
     }
 
     /**

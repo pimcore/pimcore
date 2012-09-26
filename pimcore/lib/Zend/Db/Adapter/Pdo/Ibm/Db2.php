@@ -15,24 +15,24 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Db2.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Db2.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** @see Zend_Db_Adapter_Pdo_Ibm */
-require_once 'Zend/Db/Adapter/Pdo/Ibm.php';
+// require_once 'Zend/Db/Adapter/Pdo/Ibm.php';
 
 /** @see Zend_Db_Statement_Pdo_Ibm */
-require_once 'Zend/Db/Statement/Pdo/Ibm.php';
+// require_once 'Zend/Db/Statement/Pdo/Ibm.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db_Adapter_Pdo_Ibm_Db2
@@ -168,13 +168,13 @@ class Zend_Db_Adapter_Pdo_Ibm_Db2
         $count = intval($count);
         if ($count < 0) {
             /** @see Zend_Db_Adapter_Exception */
-            require_once 'Zend/Db/Adapter/Exception.php';
+            // require_once 'Zend/Db/Adapter/Exception.php';
             throw new Zend_Db_Adapter_Exception("LIMIT argument count=$count is not valid");
         } else {
             $offset = intval($offset);
             if ($offset < 0) {
                 /** @see Zend_Db_Adapter_Exception */
-                require_once 'Zend/Db/Adapter/Exception.php';
+                // require_once 'Zend/Db/Adapter/Exception.php';
                 throw new Zend_Db_Adapter_Exception("LIMIT argument offset=$offset is not valid");
             }
 

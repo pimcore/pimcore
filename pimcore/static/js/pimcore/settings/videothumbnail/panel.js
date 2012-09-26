@@ -22,7 +22,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_thumbnail");
+        tabPanel.activate("pimcore_videothumbnails");
     },
 
     getTabPanel: function () {
@@ -113,26 +113,36 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'click' : this.onTreeNodeClick,
+            'click' : this.onTreeNodeClick.bind(this),
             "contextmenu": this.onTreeNodeContextmenu
         };
 
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function () {
+    onTreeNodeClick: function (node) {
+        this.openThumbnail(node.id);
+    },
+
+    openThumbnail: function (id) {
+
+        var existingPanel = Ext.getCmp("pimcore_videothumbnail_panel_" + id);
+        if(existingPanel) {
+            this.editPanel.activate(existingPanel);
+            return;
+        }
 
         Ext.Ajax.request({
             url: "/admin/settings/video-thumbnail-get",
             params: {
-                name: this.id
+                name: id
             },
             success: function (response) {
                 var data = Ext.decode(response.responseText);
 
                 var fieldPanel = new pimcore.settings.videothumbnail.item(data, this);
                 pimcore.layout.refresh();
-            }.bind(this.attributes.reference)
+            }.bind(this)
         });
     },
 
@@ -169,6 +179,8 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
                     if(!data || !data.success) {
                         Ext.Msg.alert(t('add_thumbnail'), t('problem_creating_new_thumbnail'));
+                    } else {
+                        this.openThumbnail(data.id);
                     }
                 }.bind(this)
             });
@@ -191,11 +203,6 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
         this.attributes.reference.getEditPanel().removeAll();
         this.remove();
-    },
-
-    activate: function () {
-        Ext.getCmp("pimcore_panel_tabs").activate("pimcore_videothumbnails");
     }
-
 });
 

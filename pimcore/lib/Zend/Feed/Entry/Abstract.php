@@ -15,21 +15,21 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Abstract.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * @see Zend_Feed
  */
-require_once 'Zend/Feed.php';
+// require_once 'Zend/Feed.php';
 
 /**
  * @see Zend_Feed_Element
  */
-require_once 'Zend/Feed/Element.php';
+// require_once 'Zend/Feed/Element.php';
 
 
 /**
@@ -38,7 +38,7 @@ require_once 'Zend/Feed/Element.php';
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Feed_Entry_Abstract extends Zend_Feed_Element
@@ -96,7 +96,7 @@ abstract class Zend_Feed_Entry_Abstract extends Zend_Feed_Element
                     /**
                      * @see Zend_Feed_Exception
                      */
-                    require_once 'Zend/Feed/Exception.php';
+                    // require_once 'Zend/Feed/Exception.php';
                     throw new Zend_Feed_Exception("DOMDocument cannot parse XML: $php_errormsg");
                 }
 
@@ -105,7 +105,7 @@ abstract class Zend_Feed_Entry_Abstract extends Zend_Feed_Element
                     /**
                      * @see Zend_Feed_Exception
                      */
-                    require_once 'Zend/Feed/Exception.php';
+                    // require_once 'Zend/Feed/Exception.php';
                     throw new Zend_Feed_Exception('No root <' . $this->_rootElement . '> element found, cannot parse feed.');
                 }
             } else {

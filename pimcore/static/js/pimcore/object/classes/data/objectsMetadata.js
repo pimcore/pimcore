@@ -13,7 +13,7 @@
  */
 
 pimcore.registerNS("pimcore.object.classes.data.objectsMetadata");
-pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classes.data.objects, {
+pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classes.data.data, {
 
     type: "objectsMetadata",
     /**
@@ -35,6 +35,10 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
+    },
+
+    getGroup: function () {
+        return "relation";
     },
 
     getTypeName: function () {
@@ -90,17 +94,13 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             store: pimcore.globalmanager.get("object_types_store"),
             valueField: 'id',
             displayField: 'text',
-            //listWidth: 'auto',
             fieldLabel: t('objectsMetadata_allowed_class'),
             name: 'allowedClassId',
             value: this.datax.allowedClassId,
             forceSelection:true,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
-//                    console.log("change");
                     this.datax.allowedClassId = classNamevalue;
-//                    console.log(this.datax.allowedClassId);
-
                     if (this.datax.allowedClassId != null) {
                         this.fieldStore.load({params:{id:this.datax.allowedClassId}});
                     }
@@ -141,7 +141,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             width: 'auto',
             value: this.datax.visibleFields,
             displayField: "key",
-            valueField: "key"
+            valueField: "key",
+            width: 300
         });
         this.specificPanel.add(this.fieldSelect);
 

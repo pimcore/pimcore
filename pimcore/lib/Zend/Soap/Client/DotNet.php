@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DotNet.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: DotNet.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Soap_Client */
-require_once 'Zend/Soap/Client.php';
+// require_once 'Zend/Soap/Client.php';
 
 if (extension_loaded('soap')) {
 
@@ -68,7 +68,7 @@ class Zend_Soap_Client_DotNet extends Zend_Soap_Client
         if (count($arguments) > 1  ||
             (count($arguments) == 1  &&  !is_array(reset($arguments)))
            ) {
-            require_once 'Zend/Soap/Client/Exception.php';
+            // require_once 'Zend/Soap/Client/Exception.php';
             throw new Zend_Soap_Client_Exception('.Net webservice arguments have to be grouped into array: array(\'a\' => $a, \'b\' => $b, ...).');
         }
 

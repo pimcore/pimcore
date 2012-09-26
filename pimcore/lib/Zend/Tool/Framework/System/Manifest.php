@@ -15,24 +15,24 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Manifest.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Manifest.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
-require_once 'Zend/Tool/Framework/Manifest/ProviderManifestable.php';
-require_once 'Zend/Tool/Framework/Manifest/ActionManifestable.php';
-require_once 'Zend/Tool/Framework/System/Provider/Version.php';
-require_once 'Zend/Tool/Framework/System/Provider/Config.php';
-require_once 'Zend/Tool/Framework/System/Provider/Phpinfo.php';
-require_once 'Zend/Tool/Framework/System/Provider/Manifest.php';
-require_once 'Zend/Tool/Framework/System/Action/Create.php';
-require_once 'Zend/Tool/Framework/System/Action/Delete.php';
+// require_once 'Zend/Tool/Framework/Manifest/ProviderManifestable.php';
+// require_once 'Zend/Tool/Framework/Manifest/ActionManifestable.php';
+// require_once 'Zend/Tool/Framework/System/Provider/Version.php';
+// require_once 'Zend/Tool/Framework/System/Provider/Config.php';
+// require_once 'Zend/Tool/Framework/System/Provider/Phpinfo.php';
+// require_once 'Zend/Tool/Framework/System/Provider/Manifest.php';
+// require_once 'Zend/Tool/Framework/System/Action/Create.php';
+// require_once 'Zend/Tool/Framework/System/Action/Delete.php';
 
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Framework_System_Manifest

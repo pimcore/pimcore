@@ -16,15 +16,15 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage App
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MediaFileSource.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: MediaFileSource.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_App_MediaData
  */
-require_once 'Zend/Gdata/App/BaseMediaSource.php';
+// require_once 'Zend/Gdata/App/BaseMediaSource.php';
 
 /**
  * Concrete class to use a file handle as an attachment within a MediaEntry.
@@ -32,7 +32,7 @@ require_once 'Zend/Gdata/App/BaseMediaSource.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage App
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_App_MediaFileSource extends Zend_Gdata_App_BaseMediaSource
@@ -76,14 +76,14 @@ class Zend_Gdata_App_MediaFileSource extends Zend_Gdata_App_BaseMediaSource
             $fileHandle = fopen($this->getFilename(), 'r', true);
             $result = fread($fileHandle, filesize($this->getFilename()));
             if ($result === false) {
-                require_once 'Zend/Gdata/App/IOException.php';
+                // require_once 'Zend/Gdata/App/IOException.php';
                 throw new Zend_Gdata_App_IOException("Error reading file - " .
                         $this->getFilename() . '. Read failed.');
             }
             fclose($fileHandle);
             return $result;
         } else {
-            require_once 'Zend/Gdata/App/IOException.php';
+            // require_once 'Zend/Gdata/App/IOException.php';
             throw new Zend_Gdata_App_IOException("Error reading file - " .
                     $this->getFilename() . '. File is not readable.');
         }

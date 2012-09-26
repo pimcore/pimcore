@@ -15,20 +15,20 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Generic.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Generic.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Db_Adapter_Abstract
  */
-require_once "Zend/Db/Adapter/Abstract.php";
+// require_once "Zend/Db/Adapter/Abstract.php";
 
 /**
  * @see PHPUnit_Extensions_Database_DB_IMetaData
  */
-require_once "PHPUnit/Extensions/Database/DB/IMetaData.php";
+// require_once "PHPUnit/Extensions/Database/DB/IMetaData.php";
 
 /**
  * Generic Metadata accessor for the Zend_Db adapters
@@ -37,7 +37,7 @@ require_once "PHPUnit/Extensions/Database/DB/IMetaData.php";
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Test_PHPUnit_Db_Metadata_Generic implements PHPUnit_Extensions_Database_DB_IMetaData

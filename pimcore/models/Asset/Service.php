@@ -67,6 +67,7 @@ class Asset_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         $new->save();
 
         // add to store
@@ -108,6 +109,7 @@ class Asset_Service extends Element_Service {
         $new->setUserModification($this->_user->getId());
         $new->setResource(null);
         $new->setLocked(false);
+        $new->setCreationDate(time());
         $new->save();
 
         if($target instanceof Asset_Folder){
@@ -134,6 +136,7 @@ class Asset_Service extends Element_Service {
             $target->setCustomSettings($source->getCustomSettings());
         }
 
+        $target->setUserModification($this->_user->getId());
         $target->setProperties($source->getProperties());
         $target->save();
 
@@ -174,5 +177,19 @@ class Asset_Service extends Element_Service {
         }
 
         return false;
+    }
+
+    /**
+     * @static
+     * @param Element_Interface $element
+     * @return Element_Interface
+     */
+    public static function loadAllFields (Element_Interface $element) {
+        if($element instanceof Asset && method_exists($element, "getData")) {
+            $element->setData(null);
+            $element->getData();
+        }
+
+        return $element;
     }
 }

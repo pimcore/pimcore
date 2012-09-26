@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Amf
  * @subpackage Util
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BinaryStream.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: BinaryStream.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -25,7 +25,7 @@
  *
  * @package    Zend_Amf
  * @subpackage Util
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Util_BinaryStream
@@ -63,7 +63,7 @@ class Zend_Amf_Util_BinaryStream
     public function __construct($stream)
     {
         if (!is_string($stream)) {
-            require_once 'Zend/Amf/Exception.php';
+            // require_once 'Zend/Amf/Exception.php';
             throw new Zend_Amf_Exception('Inputdata is not of type String');
         }
 
@@ -94,7 +94,7 @@ class Zend_Amf_Util_BinaryStream
     public function readBytes($length)
     {
         if (($length + $this->_needle) > $this->_streamLength) {
-            require_once 'Zend/Amf/Exception.php';
+            // require_once 'Zend/Amf/Exception.php';
             throw new Zend_Amf_Exception('Buffer underrun at needle position: ' . $this->_needle . ' while requesting length: ' . $length);
         }
         $bytes = substr($this->_stream, $this->_needle, $length);
@@ -124,7 +124,7 @@ class Zend_Amf_Util_BinaryStream
     public function readByte()
     {
         if (($this->_needle + 1) > $this->_streamLength) {
-            require_once 'Zend/Amf/Exception.php';
+            // require_once 'Zend/Amf/Exception.php';
             throw new Zend_Amf_Exception('Buffer underrun at needle position: ' . $this->_needle . ' while requesting length: ' . $length);
         }
 

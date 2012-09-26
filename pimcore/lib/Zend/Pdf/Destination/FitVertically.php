@@ -15,20 +15,20 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Destination
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FitVertically.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: FitVertically.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Array.php';
-require_once 'Zend/Pdf/Element/Name.php';
-require_once 'Zend/Pdf/Element/Numeric.php';
+// require_once 'Zend/Pdf/Element/Array.php';
+// require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Numeric.php';
 
 
 /** Zend_Pdf_Destination_Explicit */
-require_once 'Zend/Pdf/Destination/Explicit.php';
+// require_once 'Zend/Pdf/Destination/Explicit.php';
 
 /**
  * Zend_Pdf_Destination_FitVertically explicit detination
@@ -41,7 +41,7 @@ require_once 'Zend/Pdf/Destination/Explicit.php';
  *
  * @package    Zend_Pdf
  * @subpackage Destination
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Destination_FitVertically extends Zend_Pdf_Destination_Explicit
@@ -63,7 +63,7 @@ class Zend_Pdf_Destination_FitVertically extends Zend_Pdf_Destination_Explicit
         } else if (is_integer($page)) {
             $destinationArray->items[] = new Zend_Pdf_Element_Numeric($page);
         } else {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Page entry must be a Zend_Pdf_Page object or page number.');
         }
 

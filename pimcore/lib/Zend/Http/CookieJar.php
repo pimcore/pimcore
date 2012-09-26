@@ -15,23 +15,23 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage CookieJar
- * @version    $Id: CookieJar.php 23775 2011-03-01 17:25:24Z ralph $
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: CookieJar.php 24856 2012-06-01 01:10:47Z adamlundrigan $
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /**
  * @see Zend_Uri
  */
-require_once "Zend/Uri.php";
+// require_once "Zend/Uri.php";
 /**
  * @see Zend_Http_Cookie
  */
-require_once "Zend/Http/Cookie.php";
+// require_once "Zend/Http/Cookie.php";
 /**
  * @see Zend_Http_Response
  */
-require_once "Zend/Http/Response.php";
+// require_once "Zend/Http/Response.php";
 
 /**
  * A Zend_Http_CookieJar object is designed to contain and maintain HTTP cookies, and should
@@ -54,7 +54,7 @@ require_once "Zend/Http/Response.php";
  * @category   Zend
  * @package    Zend_Http
  * @subpackage CookieJar
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Http_CookieJar implements Countable, IteratorAggregate
@@ -76,6 +76,13 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
      *
      */
     const COOKIE_STRING_CONCAT = 2;
+
+    /**
+     * Return all cookies as one long string (strict mode)
+     *  - Single space after the semi-colon separating each cookie
+     *  - Remove trailing semi-colon, if any
+     */
+    const COOKIE_STRING_CONCAT_STRICT = 3;
 
     /**
      * Array storing cookies
@@ -132,7 +139,7 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
             $this->cookies[$domain][$path][$cookie->getName()] = $cookie;
             $this->_rawCookies[] = $cookie;
         } else {
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception('Supplient argument is not a valid cookie string or object');
         }
     }
@@ -148,7 +155,7 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
     public function addCookiesFromResponse($response, $ref_uri, $encodeValue = true)
     {
         if (! $response instanceof Zend_Http_Response) {
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception('$response is expected to be a Response object, ' .
                 gettype($response) . ' was passed');
         }
@@ -173,6 +180,9 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
     public function getAllCookies($ret_as = self::COOKIE_OBJECT)
     {
         $cookies = $this->_flattenCookiesArray($this->cookies, $ret_as);
+        if($ret_as == self::COOKIE_STRING_CONCAT_STRICT) {
+            $cookies = rtrim(trim($cookies), ';');
+        }
         return $cookies;
     }
 
@@ -192,7 +202,7 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
     {
         if (is_string($uri)) $uri = Zend_Uri::factory($uri);
         if (! $uri instanceof Zend_Uri_Http) {
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception("Invalid URI string or object passed");
         }
 
@@ -209,6 +219,9 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
 
         // Now, use self::_flattenCookiesArray again - only to convert to the return format ;)
         $ret = $this->_flattenCookiesArray($ret, $ret_as);
+        if($ret_as == self::COOKIE_STRING_CONCAT_STRICT) {
+            $ret = rtrim(trim($ret), ';');
+        }
 
         return $ret;
     }
@@ -228,7 +241,7 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
         }
 
         if (! $uri instanceof Zend_Uri_Http) {
-            require_once 'Zend/Http/Exception.php';
+            // require_once 'Zend/Http/Exception.php';
             throw new Zend_Http_Exception('Invalid URI specified');
         }
 
@@ -245,13 +258,17 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
                     return $cookie;
                     break;
 
+                case self::COOKIE_STRING_CONCAT_STRICT:
+                    return rtrim(trim($cookie->__toString()), ';');
+                    break;
+
                 case self::COOKIE_STRING_ARRAY:
                 case self::COOKIE_STRING_CONCAT:
                     return $cookie->__toString();
                     break;
 
                 default:
-                    require_once 'Zend/Http/Exception.php';
+                    // require_once 'Zend/Http/Exception.php';
                     throw new Zend_Http_Exception("Invalid value passed for \$ret_as: {$ret_as}");
                     break;
             }
@@ -270,9 +287,12 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
      */
     protected function _flattenCookiesArray($ptr, $ret_as = self::COOKIE_OBJECT) {
         if (is_array($ptr)) {
-            $ret = ($ret_as == self::COOKIE_STRING_CONCAT ? '' : array());
+            $ret = ($ret_as == self::COOKIE_STRING_CONCAT || $ret_as == self::COOKIE_STRING_CONCAT_STRICT) ? '' : array();
             foreach ($ptr as $item) {
-                if ($ret_as == self::COOKIE_STRING_CONCAT) {
+                if ($ret_as == self::COOKIE_STRING_CONCAT_STRICT) {
+                    $postfix_combine = (!is_array($item) ? ' ' : '');
+                    $ret .= $this->_flattenCookiesArray($item, $ret_as) . $postfix_combine;
+                } elseif ($ret_as == self::COOKIE_STRING_CONCAT) {
                     $ret .= $this->_flattenCookiesArray($item, $ret_as);
                 } else {
                     $ret = array_merge($ret, $this->_flattenCookiesArray($item, $ret_as));
@@ -284,6 +304,9 @@ class Zend_Http_CookieJar implements Countable, IteratorAggregate
                 case self::COOKIE_STRING_ARRAY:
                     return array($ptr->__toString());
                     break;
+
+                case self::COOKIE_STRING_CONCAT_STRICT:
+                    // break intentionally omitted
 
                 case self::COOKIE_STRING_CONCAT:
                     return $ptr->__toString();

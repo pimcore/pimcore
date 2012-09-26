@@ -16,20 +16,20 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Exif
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exposure.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Exposure.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Exif
  */
-require_once 'Zend/Gdata/Exif.php';
+// require_once 'Zend/Gdata/Exif.php';
 
 /**
  * Represents the exif:exposure element used by the Gdata Exif extensions.
@@ -37,7 +37,7 @@ require_once 'Zend/Gdata/Exif.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Exif
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Exif_Extension_Exposure extends Zend_Gdata_Extension

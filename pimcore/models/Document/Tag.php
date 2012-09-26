@@ -61,6 +61,11 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
     protected $editmode;
 
     /**
+     * @var bool
+     */
+    protected $inherited = false;
+
+    /**
      * @param string $type
      * @param string $name
      * @param integer $documentId
@@ -99,7 +104,8 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
             "data" => $data,
             "name" => $this->getName(),
             "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType()
+            "type" => $this->getType(),
+            "inherited" => $this->getInherited()
         );
         $options = @Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
 
@@ -139,7 +145,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      * @return void
      */
     public function setDocumentId($id) {
-        $this->documentId = $id;
+        $this->documentId = (int) $id;
     }
 
     /**
@@ -153,7 +159,7 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      * @return array
      */
     public function getOptions() {
-        return $this->options;
+        return is_array($this->options) ? $this->options : array();
     }
 
     /**
@@ -326,6 +332,22 @@ abstract class Document_Tag extends Pimcore_Model_Abstract implements Document_T
      */
     public function checkValidity() {
         return true; 
+    }
+
+    /**
+     * @param boolean $inherited
+     */
+    public function setInherited($inherited)
+    {
+        $this->inherited = $inherited;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getInherited()
+    {
+        return $this->inherited;
     }
 
 

@@ -19,6 +19,15 @@ class Pimcore_View_Helper_TranslateAdmin extends Zend_View_Helper_Translate {
     public function translateAdmin($key = "") {
         if ($key) {
             $locale = $_REQUEST["systemLocale"];
+
+            if(!$locale){
+                if(Zend_Registry::isRegistered("Zend_Locale")) {
+                    $locale = Zend_Registry::get("Zend_Locale");
+                } else {
+                    $locale = new Zend_Locale("en");
+                }
+            }
+
             if ($locale) {
 
                 $cacheKey = "translator_admin";

@@ -14,19 +14,19 @@
  *
  * @category   Zend
  * @package    Zend_Controller
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /**
  * Zend_XmlRpc_Value
  */
-require_once 'Zend/XmlRpc/Value.php';
+// require_once 'Zend/XmlRpc/Value.php';
 
 /**
  * Zend_XmlRpc_Fault
  */
-require_once 'Zend/XmlRpc/Fault.php';
+// require_once 'Zend/XmlRpc/Fault.php';
 
 /**
  * XmlRpc Response
@@ -35,9 +35,9 @@ require_once 'Zend/XmlRpc/Fault.php';
  *
  * @category Zend
  * @package  Zend_XmlRpc
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id: Response.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version $Id: Response.php 25033 2012-08-17 19:50:08Z matthew $
  */
 class Zend_XmlRpc_Response
 {
@@ -176,11 +176,27 @@ class Zend_XmlRpc_Response
             return false;
         }
 
+        // @see ZF-12293 - disable external entities for security purposes
+        $loadEntities         = libxml_disable_entity_loader(true);
+        $useInternalXmlErrors = libxml_use_internal_errors(true);
         try {
-            $useInternalXmlErrors = libxml_use_internal_errors(true);
+            $dom = new DOMDocument;
+            $dom->loadXML($response);
+            foreach ($dom->childNodes as $child) {
+                if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
+                    // require_once 'Zend/XmlRpc/Exception.php';
+                    throw new Zend_XmlRpc_Exception(
+                        'Invalid XML: Detected use of illegal DOCTYPE'
+                    );
+                }
+            }
+            // TODO: Locate why this passes tests but a simplexml import doesn't
+            // $xml = simplexml_import_dom($dom);
             $xml = new SimpleXMLElement($response);
+            libxml_disable_entity_loader($loadEntities);
             libxml_use_internal_errors($useInternalXmlErrors);
         } catch (Exception $e) {
+            libxml_disable_entity_loader($loadEntities);
             libxml_use_internal_errors($useInternalXmlErrors);
             // Not valid XML
             $this->_fault = new Zend_XmlRpc_Fault(651);
@@ -205,6 +221,7 @@ class Zend_XmlRpc_Response
 
         try {
             if (!isset($xml->params) || !isset($xml->params->param) || !isset($xml->params->param->value)) {
+                // require_once 'Zend/XmlRpc/Value/Exception.php';
                 throw new Zend_XmlRpc_Value_Exception('Missing XML-RPC value in XML');
             }
             $valueXml = $xml->params->param->value->asXML();

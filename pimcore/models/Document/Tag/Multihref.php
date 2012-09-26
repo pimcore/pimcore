@@ -22,6 +22,11 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      */
     public $elements = array();
 
+    /**
+     * @var array
+     */
+    public $elementIds = array();
+
      /**
      * @see Document_Tag_Interface::getType
      * @return string
@@ -30,11 +35,28 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
         return "multihref";
     }
 
+    /*
+     *
+     */
+    public function setElements() {
+
+        if(empty($this->elements)) {
+            $this->elements = array();
+            foreach ($this->elementIds as $elementId) {
+                $el = Element_Service::getElementById($elementId["type"], $elementId["id"]);
+                if($el instanceof Element_Interface) {
+                    $this->elements[] = $el;
+                }
+            }
+        }
+    }
+
     /**
      * @see Document_Tag_Interface::getData
      * @return mixed
      */
     public function getData() {
+        $this->setElements();
         return $this->elements;
     }
 
@@ -43,18 +65,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      * @return void
      */
     public function getDataForResource() {
-        $return = array();
-
-        if (is_array($this->elements) && count($this->elements) > 0) {
-            foreach ($this->elements as $element) {
-                $return[] = array(
-                    "id" => $element->getId(),
-                    "type" => Element_Service::getElementType($element)
-                );
-            }
-        }
-
-        return $return;
+        return $this->elementIds;
     }
 
     /**
@@ -63,6 +74,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      */
     public function getDataEditmode() {
 
+        $this->setElements();
         $return = array();
 
         if (is_array($this->elements) && count($this->elements) > 0) {
@@ -91,6 +103,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      */
     public function frontend() {
 
+        $this->setElements();
         $return = "";
 
         if (is_array($this->elements) && count($this->elements) > 0) {
@@ -120,32 +133,16 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      */
     public function setDataFromEditmode($data) {
 
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $element) {
-
-                if ($element["type"] == "object") {
-                    $e = Object_Abstract::getById($element["id"]);
-                }
-                else if ($element["type"] == "asset") {
-                    $e = Asset::getById($element["id"]);
-                }
-                else if ($element["type"] == "document") {
-                    $e = Document::getById($element["id"]);
-                }
-
-                if ($e instanceof Element_Interface) {
-                    $this->elements[] = $e;
-                }
-            }
-
+        if(is_array($data)) {
+            $this->elementIds = $data;
         }
-
     }
 
     /**
      * @return Element_Interface[]
      */
     public function getElements() {
+        $this->setElements();
         return $this->elements;
     }
 
@@ -153,6 +150,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      * @return boolean
      */
     public function isEmpty() {
+        $this->setElements();
         return count($this->elements) > 0 ? false : true;
     }
 
@@ -161,6 +159,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      */
     public function resolveDependencies() {
 
+        $this->setElements();
         $dependencies = array();
 
         if (is_array($this->elements) && count($this->elements) > 0) {
@@ -209,20 +208,23 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      */
     public function __sleep() {
 
-        $this->__sleepData = $this->getDataForResource();
-        $this->elements = array();
+        $finalVars = array();
+        $parentVars = parent::__sleep();
+        $blockedVars = array("elements");
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
 
-        return parent::__sleep();
+        return $finalVars;
     }
 
     /**
-     * @return void
+     *
      */
-    public function __wakeup() {
-        if(isset($this->__sleepData)) {
-            $this->setDataFromEditmode($this->__sleepData);
-            unset($this->__sleepData);
-        }
+    public function load () {
+        $this->setElements();
     }
 
     /**
@@ -230,25 +232,30 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      */
 
     public function rewind() {
+        $this->setElements();
         reset($this->elements);
     }
 
     public function current() {
+        $this->setElements();
         $var = current($this->elements);
         return $var;
     }
 
     public function key() {
+        $this->setElements();
         $var = key($this->elements);
         return $var;
     }
 
     public function next() {
+        $this->setElements();
         $var = next($this->elements);
         return $var;
     }
 
     public function valid() {
+        $this->setElements();
         $var = $this->current() !== false;
         return $var;
     }

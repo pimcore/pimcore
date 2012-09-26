@@ -14,20 +14,20 @@
  *
  * @category   Zend
  * @package    Zend_Soap
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Wsdl.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Wsdl.php 25033 2012-08-17 19:50:08Z matthew $
  */
 
 /**
  * @see Zend_Soap_Wsdl_Strategy_Interface
  */
-require_once "Zend/Soap/Wsdl/Strategy/Interface.php";
+// require_once "Zend/Soap/Wsdl/Strategy/Interface.php";
 
 /**
  * @see Zend_Soap_Wsdl_Strategy_Abstract
  */
-require_once "Zend/Soap/Wsdl/Strategy/Abstract.php";
+// require_once "Zend/Soap/Wsdl/Strategy/Abstract.php";
 
 /**
  * Zend_Soap_Wsdl
@@ -96,13 +96,23 @@ class Zend_Soap_Wsdl
                     xmlns:xsd='http://www.w3.org/2001/XMLSchema'
                     xmlns:soap-enc='http://schemas.xmlsoap.org/soap/encoding/'
                     xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'></definitions>";
+        libxml_disable_entity_loader(true);
         $this->_dom = new DOMDocument();
         if (!$this->_dom->loadXML($wsdl)) {
-            require_once 'Zend/Server/Exception.php';
+            // require_once 'Zend/Server/Exception.php';
             throw new Zend_Server_Exception('Unable to create DomDocument');
         } else {
+            foreach ($this->_dom->childNodes as $child) {
+                if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
+                    // require_once 'Zend/Server/Exception.php';
+                    throw new Zend_Server_Exception(
+                        'Invalid XML: Detected use of illegal DOCTYPE'
+                    );
+                }
+            }
             $this->_wsdl = $this->_dom->documentElement;
         }
+        libxml_disable_entity_loader(false);
 
         $this->setComplexTypeStrategy($strategy);
     }
@@ -125,8 +135,10 @@ class Zend_Soap_Wsdl
             // @todo: This is the worst hack ever, but its needed due to design and non BC issues of WSDL generation
             $xml = $this->_dom->saveXML();
             $xml = str_replace($oldUri, $uri, $xml);
+            libxml_disable_entity_loader(true);
             $this->_dom = new DOMDocument();
             $this->_dom->loadXML($xml);
+            libxml_disable_entity_loader(false);
         }
 
         return $this;
@@ -142,16 +154,16 @@ class Zend_Soap_Wsdl
     public function setComplexTypeStrategy($strategy)
     {
         if($strategy === true) {
-            require_once "Zend/Soap/Wsdl/Strategy/DefaultComplexType.php";
+            // require_once "Zend/Soap/Wsdl/Strategy/DefaultComplexType.php";
             $strategy = new Zend_Soap_Wsdl_Strategy_DefaultComplexType();
         } else if($strategy === false) {
-            require_once "Zend/Soap/Wsdl/Strategy/AnyType.php";
+            // require_once "Zend/Soap/Wsdl/Strategy/AnyType.php";
             $strategy = new Zend_Soap_Wsdl_Strategy_AnyType();
         } else if(is_string($strategy)) {
             if(class_exists($strategy)) {
                 $strategy = new $strategy();
             } else {
-                require_once "Zend/Soap/Wsdl/Exception.php";
+                // require_once "Zend/Soap/Wsdl/Exception.php";
                 throw new Zend_Soap_Wsdl_Exception(
                     sprintf("Strategy with name '%s does not exist.", $strategy
                 ));
@@ -159,7 +171,7 @@ class Zend_Soap_Wsdl
         }
 
         if(!($strategy instanceof Zend_Soap_Wsdl_Strategy_Interface)) {
-            require_once "Zend/Soap/Wsdl/Exception.php";
+            // require_once "Zend/Soap/Wsdl/Exception.php";
             throw new Zend_Soap_Wsdl_Exception("Set a strategy that is not of type 'Zend_Soap_Wsdl_Strategy_Interface'");
         }
         $this->_strategy = $strategy;
@@ -543,28 +555,24 @@ class Zend_Soap_Wsdl
             case 'string':
             case 'str':
                 return 'xsd:string';
-                break;
+            case 'long':
+                return 'xsd:long';
             case 'int':
             case 'integer':
                 return 'xsd:int';
-                break;
             case 'float':
-            case 'double':
                 return 'xsd:float';
-                break;
+            case 'double':
+                return 'xsd:double';
             case 'boolean':
             case 'bool':
                 return 'xsd:boolean';
-                break;
             case 'array':
                 return 'soap-enc:Array';
-                break;
             case 'object':
                 return 'xsd:struct';
-                break;
             case 'mixed':
                 return 'xsd:anyType';
-                break;
             case 'void':
                 return '';
             default:
@@ -618,7 +626,7 @@ class Zend_Soap_Wsdl
     private function _parseElement($element)
     {
         if (!is_array($element)) {
-            require_once "Zend/Soap/Wsdl/Exception.php";
+            // require_once "Zend/Soap/Wsdl/Exception.php";
             throw new Zend_Soap_Wsdl_Exception("The 'element' parameter needs to be an associative array.");
         }
 

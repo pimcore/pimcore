@@ -14,16 +14,16 @@
  *
  * @category   Zend
  * @package    Zend_Session
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Abstract.php 24593 2012-01-05 20:35:02Z matthew $
  * @since      Preview Release 0.2
  */
 
 /**
  * @see Zend_Session_Validator_Interface
  */
-require_once 'Zend/Session/Validator/Interface.php';
+// require_once 'Zend/Session/Validator/Interface.php';
 
 /**
  * Zend_Session_Validator_Abstract
@@ -31,7 +31,7 @@ require_once 'Zend/Session/Validator/Interface.php';
  * @category   Zend
  * @package    Zend_Session
  * @subpackage Validator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Session_Validator_Abstract implements Zend_Session_Validator_Interface
@@ -62,8 +62,10 @@ abstract class Zend_Session_Validator_Abstract implements Zend_Session_Validator
     protected function getValidData()
     {
         $validatorName = get_class($this);
-
-        return $_SESSION['__ZF']['VALID'][$validatorName];
+        if (isset($_SESSION['__ZF']['VALID'][$validatorName])) {
+            return $_SESSION['__ZF']['VALID'][$validatorName];
+        }
+        return null;
     }
 
 }

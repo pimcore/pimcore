@@ -15,25 +15,25 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Signature.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Signature.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Reflection_Class
  */
-require_once 'Zend/Reflection/Class.php';
+// require_once 'Zend/Reflection/Class.php';
 
 /**
  * @see Zend_Tool_Framework_Registry
  */
-require_once 'Zend/Tool/Framework/Registry/EnabledInterface.php';
+// require_once 'Zend/Tool/Framework/Registry/EnabledInterface.php';
 
 /**
  * @see Zend_Tool_Framework_Action_Base
  */
-require_once 'Zend/Tool/Framework/Action/Base.php';
+// require_once 'Zend/Tool/Framework/Action/Base.php';
 
 /**
  * The purpose of Zend_Tool_Framework_Provider_Signature is to derive
@@ -41,7 +41,7 @@ require_once 'Zend/Tool/Framework/Action/Base.php';
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Framework_Provider_Signature implements Zend_Tool_Framework_Registry_EnabledInterface
@@ -259,7 +259,7 @@ class Zend_Tool_Framework_Provider_Signature implements Zend_Tool_Framework_Regi
         if ($this->_providerReflection->hasMethod('getSpecialties')) {
             $specialties = $this->_provider->getSpecialties();
             if (!is_array($specialties)) {
-                require_once 'Zend/Tool/Framework/Provider/Exception.php';
+                // require_once 'Zend/Tool/Framework/Provider/Exception.php';
                 throw new Zend_Tool_Framework_Provider_Exception(
                     'Provider ' . get_class($this->_provider) . ' must return an array for method getSpecialties().'
                     );
@@ -268,7 +268,7 @@ class Zend_Tool_Framework_Provider_Signature implements Zend_Tool_Framework_Regi
             $defaultProperties = $this->_providerReflection->getDefaultProperties();
             $specialties = (isset($defaultProperties['_specialties'])) ? $defaultProperties['_specialties'] : array();
             if (!is_array($specialties)) {
-                require_once 'Zend/Tool/Framework/Provider/Exception.php';
+                // require_once 'Zend/Tool/Framework/Provider/Exception.php';
                 throw new Zend_Tool_Framework_Provider_Exception(
                     'Provider ' . get_class($this->_provider) . '\'s property $_specialties must be an array.'
                     );

@@ -16,70 +16,70 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Exif
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Tags.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Tags.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
+// require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Exif
  */
-require_once 'Zend/Gdata/Exif.php';
+// require_once 'Zend/Gdata/Exif.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Distance
  */
-require_once 'Zend/Gdata/Exif/Extension/Distance.php';
+// require_once 'Zend/Gdata/Exif/Extension/Distance.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Exposure
  */
-require_once 'Zend/Gdata/Exif/Extension/Exposure.php';
+// require_once 'Zend/Gdata/Exif/Extension/Exposure.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Flash
  */
-require_once 'Zend/Gdata/Exif/Extension/Flash.php';
+// require_once 'Zend/Gdata/Exif/Extension/Flash.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_FocalLength
  */
-require_once 'Zend/Gdata/Exif/Extension/FocalLength.php';
+// require_once 'Zend/Gdata/Exif/Extension/FocalLength.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_FStop
  */
-require_once 'Zend/Gdata/Exif/Extension/FStop.php';
+// require_once 'Zend/Gdata/Exif/Extension/FStop.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_ImageUniqueId
  */
-require_once 'Zend/Gdata/Exif/Extension/ImageUniqueId.php';
+// require_once 'Zend/Gdata/Exif/Extension/ImageUniqueId.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Iso
  */
-require_once 'Zend/Gdata/Exif/Extension/Iso.php';
+// require_once 'Zend/Gdata/Exif/Extension/Iso.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Make
  */
-require_once 'Zend/Gdata/Exif/Extension/Make.php';
+// require_once 'Zend/Gdata/Exif/Extension/Make.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Model
  */
-require_once 'Zend/Gdata/Exif/Extension/Model.php';
+// require_once 'Zend/Gdata/Exif/Extension/Model.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Time
  */
-require_once 'Zend/Gdata/Exif/Extension/Time.php';
+// require_once 'Zend/Gdata/Exif/Extension/Time.php';
 
 /**
  * Represents the exif:tags element used by the Gdata Exif extensions.
@@ -87,7 +87,7 @@ require_once 'Zend/Gdata/Exif/Extension/Time.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Exif
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Exif_Extension_Tags extends Zend_Gdata_Extension

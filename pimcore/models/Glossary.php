@@ -58,6 +58,11 @@ class Glossary extends Pimcore_Model_Abstract {
     public $exactmatch;
 
     /**
+     * @var int
+     */
+    public $site;
+
+    /**
      * @param integer $id
      * @return Glossary
      */
@@ -86,7 +91,7 @@ class Glossary extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -205,5 +210,24 @@ class Glossary extends Pimcore_Model_Abstract {
     public function getExactmatch()
     {
         return $this->exactmatch;
+    }
+
+    /**
+     * @param int $site
+     */
+    public function setSite($site)
+    {
+        if($site instanceof Site) {
+            $site = $site->getId();
+        }
+        $this->site = (int) $site;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSite()
+    {
+        return $this->site;
     }
 }

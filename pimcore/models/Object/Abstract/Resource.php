@@ -40,11 +40,12 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return void
      */
     public function getById($id) {
-        $data = $this->db->fetchRow("SELECT * FROM objects WHERE o_id = ?", $id);
+        $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
+            LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
+                WHERE o_id = ?", $id);
+
         if ($data["o_id"]) {
             $this->assignVariablesToModel($data);
-
-            $this->loadLocks();
         }
         else {
             throw new Exception("Object with the ID " . $id . " doesn't exists");
@@ -60,7 +61,7 @@ class Object_Abstract_Resource extends Element_Resource {
     public function getByPath($path) {
 
         // check for root node
-        $_path = $path != "/" ? $_path = dirname($path) : $path;
+        $_path = $path != "/" ? dirname($path) : $path;
         $_path = str_replace("\\", "/", $_path); // windows patch
         $_key = basename($path);
         $_path .= $_path != "/" ? "/" : "";
@@ -298,7 +299,7 @@ class Object_Abstract_Resource extends Element_Resource {
     public function isLocked () {
 
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN objects ON tree_locks.id = objects.o_id WHERE objects.o_path LIKE ? AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
+        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN objects ON tree_locks.id = objects.o_id WHERE objects.o_path LIKE ? AND tree_locks.type = 'object' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
 
         if($belowLocks > 0) {
             return true;
@@ -315,21 +316,21 @@ class Object_Abstract_Resource extends Element_Resource {
         return false;
     }
 
-    public function loadLocks() {
-        // add tree-lock
-        $this->model->setO_locked($this->db->fetchOne("SELECT locked FROM tree_locks WHERE id = ? AND type = ?", array($this->model->getId(), "object")));
-    }
-
     public function getClasses() {
+        if($this->getChildAmount()) {
+            $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->model->getFullPath() . "%");
 
-        $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->model->getFullPath() . "%");
+            $classes = array();
+            foreach ($classIds as $classId) {
+                $classes[] = Object_Class::getById($classId);
+            }
 
-        $classes = array();
-        foreach ($classIds as $classId) {
-            $classes[] = Object_Class::getById($classId);
+            return $classes;
+
+        } else {
+            return array();
         }
 
-        return $classes;
     }
 
     public function isAllowed($type, $user) {
@@ -359,7 +360,12 @@ class Object_Abstract_Resource extends Element_Resource {
             // exception for list permission
             if(empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_object WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $this->model->getFullPath()."%");
+                $path = $this->model->getFullPath() . "/";
+                if($this->model->getId() == 1) {
+                    $path = "/";
+                }
+
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_object WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $path."%");
                 if($permissionsChilds) {
                     return true;
                 }

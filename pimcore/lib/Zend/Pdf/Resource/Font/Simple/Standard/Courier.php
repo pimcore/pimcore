@@ -15,18 +15,18 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Courier.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Courier.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Name.php';
 
 
 /** Zend_Pdf_Resource_Font_Simple_Standard */
-require_once 'Zend/Pdf/Resource/Font/Simple/Standard.php';
+// require_once 'Zend/Pdf/Resource/Font/Simple/Standard.php';
 
 /**
  * Implementation for the standard PDF font Courier.
@@ -43,7 +43,7 @@ require_once 'Zend/Pdf/Resource/Font/Simple/Standard.php';
  *
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Resource_Font_Simple_Standard_Courier extends Zend_Pdf_Resource_Font_Simple_Standard
@@ -279,7 +279,7 @@ class Zend_Pdf_Resource_Font_Simple_Standard_Courier extends Zend_Pdf_Resource_F
             0xac => 0x0131,   0xf6 => 0x0132,   0xfc => 0x0133, 0x2260 => 0x0134,
           0x0123 => 0x0135,   0xf0 => 0x0136, 0x017e => 0x0137, 0x0146 => 0x0138,
             0xb9 => 0x0139, 0x012b => 0x013a, 0x20ac => 0x013b);
-        require_once 'Zend/Pdf/Cmap.php';
+        // require_once 'Zend/Pdf/Cmap.php';
         $this->_cmap = Zend_Pdf_Cmap::cmapWithTypeData(
             Zend_Pdf_Cmap::TYPE_BYTE_ENCODING_STATIC, $cmapData);
 

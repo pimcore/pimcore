@@ -15,41 +15,41 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SendSms.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: SendSms.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Service_DeveloperGarden_Client_ClientAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SendSms_SendSMSResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SendSms/SendSMSResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SendSms/SendSMSResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SendSms_SendFlashSMSResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SendSms/SendFlashSMSResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SendSms/SendFlashSMSResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SendSms_SendSMS
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendSMS.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendSMS.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SendSms_SendFlashSMS
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendFlashSMS.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SendSms/SendFlashSMS.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @author     Marco Kaiser
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -146,7 +146,7 @@ class Zend_Service_DeveloperGarden_SendSms
                 $response = $client->sendFlashSms($request);
                 break;
             default : {
-                require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
+                // require_once 'Zend/Service/DeveloperGarden/Client/Exception.php';
                 throw new Zend_Service_DeveloperGarden_Client_Exception('Unknown SMS Type');
             }
         }

@@ -16,50 +16,50 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MediaGroup.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: MediaGroup.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaGroup
  */
-require_once 'Zend/Gdata/Media/Extension/MediaGroup.php';
+// require_once 'Zend/Gdata/Media/Extension/MediaGroup.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_MediaContent
  */
-require_once 'Zend/Gdata/YouTube/Extension/MediaContent.php';
+// require_once 'Zend/Gdata/YouTube/Extension/MediaContent.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Duration
  */
-require_once 'Zend/Gdata/YouTube/Extension/Duration.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Duration.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_MediaRating
  */
-require_once 'Zend/Gdata/YouTube/Extension/MediaRating.php';
+// require_once 'Zend/Gdata/YouTube/Extension/MediaRating.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_MediaCredit
  */
-require_once 'Zend/Gdata/YouTube/Extension/MediaCredit.php';
+// require_once 'Zend/Gdata/YouTube/Extension/MediaCredit.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Private
  */
-require_once 'Zend/Gdata/YouTube/Extension/Private.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Private.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_VideoId
  */
-require_once 'Zend/Gdata/YouTube/Extension/VideoId.php';
+// require_once 'Zend/Gdata/YouTube/Extension/VideoId.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Uploaded
  */
-require_once 'Zend/Gdata/YouTube/Extension/Uploaded.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Uploaded.php';
 
 /**
  * This class represents the media:group element of Media RSS.
@@ -70,7 +70,7 @@ require_once 'Zend/Gdata/YouTube/Extension/Uploaded.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube_Extension_MediaGroup extends Zend_Gdata_Media_Extension_MediaGroup

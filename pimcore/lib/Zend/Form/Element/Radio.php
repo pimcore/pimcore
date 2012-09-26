@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Element
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Form_Element_Multi */
-require_once 'Zend/Form/Element/Multi.php';
+// require_once 'Zend/Form/Element/Multi.php';
 
 /**
  * Radio form element
@@ -28,9 +28,9 @@ require_once 'Zend/Form/Element/Multi.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Element
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Radio.php 23871 2011-04-23 22:40:16Z ramon $
+ * @version    $Id: Radio.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Form_Element_Radio extends Zend_Form_Element_Multi
 {

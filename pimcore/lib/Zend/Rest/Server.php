@@ -15,31 +15,31 @@
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Server.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Server.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Server_Interface
  */
-require_once 'Zend/Server/Interface.php';
+// require_once 'Zend/Server/Interface.php';
 
 /**
  * @see Zend_Server_Reflection
  */
-require_once 'Zend/Server/Reflection.php';
+// require_once 'Zend/Server/Reflection.php';
 
 /**
  * @see Zend_Server_Abstract
  */
-require_once 'Zend/Server/Abstract.php';
+// require_once 'Zend/Server/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Rest_Server implements Zend_Server_Interface
@@ -216,7 +216,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
 
                     $result = false;
                     if (count($calling_args) < count($func_args)) {
-                        require_once 'Zend/Rest/Server/Exception.php';
+                        // require_once 'Zend/Rest/Server/Exception.php';
                         $result = $this->fault(new Zend_Rest_Server_Exception('Invalid Method Call to ' . $this->_method . '. Missing argument(s): ' . implode(', ', $missing_args) . '.'), 400);
                     }
 
@@ -241,21 +241,21 @@ class Zend_Rest_Server implements Zend_Server_Interface
                         }
                     }
                 } else {
-                    require_once "Zend/Rest/Server/Exception.php";
+                    // require_once "Zend/Rest/Server/Exception.php";
                     $result = $this->fault(
                         new Zend_Rest_Server_Exception("Unknown Method '$this->_method'."),
                         404
                     );
                 }
             } else {
-                require_once "Zend/Rest/Server/Exception.php";
+                // require_once "Zend/Rest/Server/Exception.php";
                 $result = $this->fault(
                     new Zend_Rest_Server_Exception("Unknown Method '$this->_method'."),
                     404
                 );
             }
         } else {
-            require_once "Zend/Rest/Server/Exception.php";
+            // require_once "Zend/Rest/Server/Exception.php";
             $result = $this->fault(
                 new Zend_Rest_Server_Exception("No Method Specified."),
                 404
@@ -528,7 +528,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
             if (is_callable($func) && !in_array($func, self::$magicMethods)) {
                 $this->_functions[$func] = $this->_reflection->reflectFunction($func);
             } else {
-                require_once 'Zend/Rest/Server/Exception.php';
+                // require_once 'Zend/Rest/Server/Exception.php';
                 throw new Zend_Rest_Server_Exception("Invalid Method Added to Service.");
             }
         }
@@ -598,7 +598,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
                 $object = $this->_functions[$this->_method]->getDeclaringClass()->newInstance();
             }
         } catch (Exception $e) {
-            require_once 'Zend/Rest/Server/Exception.php';
+            // require_once 'Zend/Rest/Server/Exception.php';
             throw new Zend_Rest_Server_Exception('Error instantiating class ' . $class .
                                                  ' to invoke method ' . $this->_functions[$this->_method]->getName() .
                                                  ' (' . $e->getMessage() . ') ',

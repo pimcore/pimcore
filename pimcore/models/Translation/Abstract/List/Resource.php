@@ -18,7 +18,7 @@
 abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Resource_Abstract implements Translation_Abstract_List_Resource_Interface {
 
     public function getTotalCount() {
-        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a", $this->model->getConditionVariables());
+        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a", $this->model->getConditionVariables());
         return $amount;
     }
 
@@ -27,7 +27,7 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
             return count($this->model->getObjects());
         }
 
-        $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit() . ") AS a", $this->model->getConditionVariables());
+        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit() . ") AS a", $this->model->getConditionVariables());
         return $amount;
     }
 
@@ -72,5 +72,20 @@ abstract class Translation_Abstract_List_Resource extends Pimcore_Model_List_Res
 
         $this->model->setTranslations($translations);
         return $translations;
+    }
+
+    public function cleanup() {
+        $keysToDelete = $this->db->fetchCol("SELECT `key` FROM " . static::getTableName() . " as tbl1 WHERE
+               (SELECT count(*) FROM " . static::getTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
+               = (SELECT count(*) FROM " . static::getTableName() . " WHERE `key` = tbl1.`key`) GROUP BY `key`;");
+
+        if(is_array($keysToDelete) && !empty($keysToDelete)) {
+            $preparedKeys = array();
+            foreach ($keysToDelete as $value) {
+                $preparedKeys[] = $this->db->quote($value);
+            }
+
+            $this->db->delete(static::getTableName(), "`key` IN (" . implode(",", $preparedKeys) . ")");
+        }
     }
 }

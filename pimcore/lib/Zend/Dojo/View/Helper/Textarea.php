@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage View
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Textarea.php 23777 2011-03-01 18:26:05Z matthew $
+ * @version    $Id: Textarea.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Dojo_View_Helper_Dijit */
-require_once 'Zend/Dojo/View/Helper/Dijit.php';
+// require_once 'Zend/Dojo/View/Helper/Dijit.php';
 
 /**
  * Dojo Textarea dijit
@@ -29,7 +29,7 @@ require_once 'Zend/Dojo/View/Helper/Dijit.php';
  * @uses       Zend_Dojo_View_Helper_Dijit
  * @package    Zend_Dojo
  * @subpackage View
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
   */
 class Zend_Dojo_View_Helper_Textarea extends Zend_Dojo_View_Helper_Dijit

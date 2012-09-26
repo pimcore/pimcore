@@ -28,9 +28,24 @@ class Redirect extends Pimcore_Model_Abstract {
     public $source;
 
     /**
+     * @var bool
+     */
+    public $sourceEntireUrl;
+
+    /**
+     * @var int
+     */
+    public $sourceSite;
+
+    /**
      * @var string
      */
     public $target;
+
+    /**
+     * @var int
+     */
+    public $targetSite;
 
     /**
      * @var string
@@ -46,6 +61,7 @@ class Redirect extends Pimcore_Model_Abstract {
      * @var int
      */
     public $expiry;
+
 
     /**
      * StatusCodes
@@ -108,7 +124,7 @@ class Redirect extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -217,5 +233,65 @@ class Redirect extends Pimcore_Model_Abstract {
             echo $redirect->getSource() . "\n";
             $redirect->delete();
         }
+    }
+
+    /**
+     * @param boolean $sourceEntireUrl
+     */
+    public function setSourceEntireUrl($sourceEntireUrl)
+    {
+        if($sourceEntireUrl) {
+            $this->sourceEntireUrl = (bool) $sourceEntireUrl;
+        } else {
+            $this->sourceEntireUrl = null;
+        }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getSourceEntireUrl()
+    {
+        return $this->sourceEntireUrl;
+    }
+
+    /**
+     * @param int $sourceSite
+     */
+    public function setSourceSite($sourceSite)
+    {
+        if($sourceSite) {
+            $this->sourceSite = (int) $sourceSite;
+        } else {
+            $this->sourceSite = null;
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getSourceSite()
+    {
+        return $this->sourceSite;
+    }
+
+    /**
+     * @param int $targetSite
+     */
+    public function setTargetSite($targetSite)
+    {
+        if($targetSite) {
+            $this->targetSite = (int) $targetSite;
+        } else {
+            $this->targetSite = null;
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getTargetSite()
+    {
+        return $this->targetSite;
     }
 }

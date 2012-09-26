@@ -23,7 +23,7 @@ class Pimcore_Tool {
      */
     public static function isValidKey($key){
         $key = (string) $key;
-        $validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_.~";
+        $validChars = "abcdefghijklmnopqrstuvwxyz1234567890-_.~";
         for($i=0;$i<strlen($key);$i++){
             if(strpos($validChars,$key[$i])===FALSE){
                 Logger::error("Invalid character in filename: " . $key[$i] . " - complete filename is: " . $key);
@@ -122,6 +122,40 @@ class Pimcore_Tool {
         }
 
         return $languages;
+    }
+
+    /**
+     * @static
+     */
+    public static function getSupportedLocales() {
+
+        // we use the locale here, because Zend_Translate only supports locales not "languages"
+        $languages = Zend_Locale::getLocaleList();
+        $languageOptions = array();
+        foreach ($languages as $code => $active) {
+            if($active) {
+                $translation = Zend_Locale::getTranslation($code, "language");
+                if(!$translation) {
+                    $tmpLocale = new Zend_Locale($code);
+                    $lt = Zend_Locale::getTranslation($tmpLocale->getLanguage(), "language");
+                    $tt = Zend_Locale::getTranslation($tmpLocale->getRegion(), "territory");
+
+                    if($lt && $tt) {
+                        $translation = $lt ." (" . $tt . ")";
+                    }
+                }
+
+                if(!$translation) {
+                    $translation = $code;
+                }
+
+                $languageOptions[$code] = $translation;
+            }
+        }
+
+        asort($languageOptions);
+
+        return $languageOptions;
     }
 
     /**
@@ -294,11 +328,11 @@ class Pimcore_Tool {
      * @param  $sender
      * @param  $recipients
      * @param  $subject
-     * @return Zend_Mail
+     * @return Pimcore_Mail
      */
-    public static function getMail($recipients = null, $subject = null) {
+    public static function getMail($recipients = null, $subject = null, $charset = null) {
 
-        $mail = new Pimcore_Mail();
+        $mail = new Pimcore_Mail($charset);
 
         if($recipients) {
             if(is_string($recipients)) {
@@ -457,6 +491,13 @@ class Pimcore_Tool {
         }
 
         return $ip;
+    }
+
+    public static function getAnonymizedClientIp() {
+        $ip = self::getClientIp();
+        $aip = substr($ip, 0, strrpos($ip, ".")+1);
+        $aip .= "255";
+        return $aip;
     }
 
     /**

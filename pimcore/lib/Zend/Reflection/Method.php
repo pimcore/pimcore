@@ -14,30 +14,30 @@
  *
  * @category   Zend
  * @package    Zend_Reflection
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Method.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Method.php 24870 2012-06-02 02:15:12Z adamlundrigan $
  */
 
 /**
  * @see Zend_Reflection_Class
  */
-require_once 'Zend/Reflection/Class.php';
+// require_once 'Zend/Reflection/Class.php';
 
 /**
  * @see Zend_Reflection_Docblock
  */
-require_once 'Zend/Reflection/Docblock.php';
+// require_once 'Zend/Reflection/Docblock.php';
 
 /**
  * @see Zend_Reflection_Parameter
  */
-require_once 'Zend/Reflection/Parameter.php';
+// require_once 'Zend/Reflection/Parameter.php';
 
 /**
  * @category   Zend
  * @package    Zend_Reflection
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Reflection_Method extends ReflectionMethod
@@ -51,13 +51,13 @@ class Zend_Reflection_Method extends ReflectionMethod
     public function getDocblock($reflectionClass = 'Zend_Reflection_Docblock')
     {
         if ('' == $this->getDocComment()) {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception($this->getName() . ' does not have a docblock');
         }
 
         $instance = new $reflectionClass($this);
         if (!$instance instanceof Zend_Reflection_Docblock) {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Docblock');
         }
         return $instance;
@@ -91,7 +91,7 @@ class Zend_Reflection_Method extends ReflectionMethod
         $phpReflection  = parent::getDeclaringClass();
         $zendReflection = new $reflectionClass($phpReflection->getName());
         if (!$zendReflection instanceof Zend_Reflection_Class) {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Class');
         }
         unset($phpReflection);
@@ -111,7 +111,7 @@ class Zend_Reflection_Method extends ReflectionMethod
         while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
             $instance = new $reflectionClass(array($this->getDeclaringClass()->getName(), $this->getName()), $phpReflection->getName());
             if (!$instance instanceof Zend_Reflection_Parameter) {
-                require_once 'Zend/Reflection/Exception.php';
+                // require_once 'Zend/Reflection/Exception.php';
                 throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Parameter');
             }
             $zendReflections[] = $instance;
@@ -145,24 +145,43 @@ class Zend_Reflection_Method extends ReflectionMethod
     {
         $lines = array_slice(
             file($this->getDeclaringClass()->getFileName(), FILE_IGNORE_NEW_LINES),
-            $this->getStartLine(),
-            ($this->getEndLine() - $this->getStartLine()),
+            $this->getStartLine()-1,
+            ($this->getEndLine() - $this->getStartLine()) + 1,
             true
         );
 
-        $firstLine = array_shift($lines);
+        // Strip off lines until we come to a closing bracket
+        do {
+            if (count($lines) == 0) break;
+            $firstLine = array_shift($lines);
+        } while (strpos($firstLine, ')') === false);
 
-        if (trim($firstLine) !== '{') {
-            array_unshift($lines, $firstLine);
+        // If the opening brace isn't on the same line as method 
+        // signature, then we should pop off more lines until we find it
+        if (strpos($firstLine,'{') === false) {
+            do {
+                if (count($lines) == 0) break;
+                $firstLine = array_shift($lines);
+            } while (strpos($firstLine, '{') === false);
+        }
+
+        // If there are more characters on the line after the opening brace,
+        // push them back onto the lines stack as they are part of the body
+        $restOfFirstLine = trim(substr($firstLine, strpos($firstLine, '{')+1));
+        if (!empty($restOfFirstLine)) {
+            array_unshift($lines, $restOfFirstLine);
         }
 
         $lastLine = array_pop($lines);
 
-        if (trim($lastLine) !== '}') {
-            array_push($lines, $lastLine);
+        // If there are more characters on the line before the closing brace,
+        // push them back onto the lines stack as they are part of the body
+        $restOfLastLine = trim(substr($lastLine, 0, strrpos($lastLine, '}')-1));
+        if (!empty($restOfLastLine)) {
+            array_push($lines, $restOfLastLine);
         }
 
         // just in case we had code on the bracket lines
-        return rtrim(ltrim(implode("\n", $lines), '{'), '}');
+        return implode("\n", $lines);
     }
 }

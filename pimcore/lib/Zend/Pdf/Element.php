@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Element.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Element.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
@@ -24,7 +24,7 @@
  * PDF file element implementation
  *
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Pdf_Element
@@ -145,10 +145,10 @@ abstract class Zend_Pdf_Element
     public static function phpToPdf($input)
     {
         if (is_numeric($input)) {
-            require_once 'Zend/Pdf/Element/Numeric.php';
+            // require_once 'Zend/Pdf/Element/Numeric.php';
             return new Zend_Pdf_Element_Numeric($input);
         } else if (is_bool($input)) {
-            require_once 'Zend/Pdf/Element/Boolean.php';
+            // require_once 'Zend/Pdf/Element/Boolean.php';
             return new Zend_Pdf_Element_Boolean($input);
         } else if (is_array($input)) {
             $pdfElementsArray = array();
@@ -162,14 +162,14 @@ abstract class Zend_Pdf_Element
             }
 
             if ($isDictionary) {
-                require_once 'Zend/Pdf/Element/Dictionary.php';
+                // require_once 'Zend/Pdf/Element/Dictionary.php';
                 return new Zend_Pdf_Element_Dictionary($pdfElementsArray);
             } else {
-                require_once 'Zend/Pdf/Element/Array.php';
+                // require_once 'Zend/Pdf/Element/Array.php';
                 return new Zend_Pdf_Element_Array($pdfElementsArray);
             }
         } else {
-            require_once 'Zend/Pdf/Element/String.php';
+            // require_once 'Zend/Pdf/Element/String.php';
             return new Zend_Pdf_Element_String((string)$input);
         }
     }

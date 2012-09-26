@@ -14,19 +14,19 @@
  *
  * @category   Zend
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Style.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
-require_once 'Zend/Pdf/Canvas/Abstract.php';
+// require_once 'Zend/Pdf/Canvas/Abstract.php';
 
 /**
  * Canvas is an abstract rectangle drawing area which can be dropped into
  * page object at specified place.
  *
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Canvas extends Zend_Pdf_Canvas_Abstract

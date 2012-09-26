@@ -15,40 +15,40 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DatabaseTestCase.php 23953 2011-05-03 05:47:39Z ralph $
+ * @version    $Id: DatabaseTestCase.php 25024 2012-07-30 15:08:15Z rob $
  */
 
 /**
  * @see PHPUnit_Extensions_Database_TestCase
  */
-require_once "PHPUnit/Extensions/Database/TestCase.php";
+// require_once "PHPUnit/Extensions/Database/TestCase.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_Operation_Truncate
  */
-require_once "Zend/Test/PHPUnit/Db/Operation/Truncate.php";
+// require_once "Zend/Test/PHPUnit/Db/Operation/Truncate.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_Operation_Insert
  */
-require_once "Zend/Test/PHPUnit/Db/Operation/Insert.php";
+// require_once "Zend/Test/PHPUnit/Db/Operation/Insert.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_DataSet_DbTableDataSet
  */
-require_once "Zend/Test/PHPUnit/Db/DataSet/DbTableDataSet.php";
+// require_once "Zend/Test/PHPUnit/Db/DataSet/DbTableDataSet.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_DataSet_DbTable
  */
-require_once "Zend/Test/PHPUnit/Db/DataSet/DbTable.php";
+// require_once "Zend/Test/PHPUnit/Db/DataSet/DbTable.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_DataSet_DbRowset
  */
-require_once "Zend/Test/PHPUnit/Db/DataSet/DbRowset.php";
+// require_once "Zend/Test/PHPUnit/Db/DataSet/DbRowset.php";
 
 /**
  * Generic Testcase for Zend Framework related DbUnit Testing with PHPUnit
@@ -57,7 +57,7 @@ require_once "Zend/Test/PHPUnit/Db/DataSet/DbRowset.php";
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Test_PHPUnit_DatabaseTestCase extends PHPUnit_Extensions_Database_TestCase

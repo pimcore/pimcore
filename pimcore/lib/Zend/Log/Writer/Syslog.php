@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Syslog.php 23953 2011-05-03 05:47:39Z ralph $
+ * @version    $Id: Syslog.php 25024 2012-07-30 15:08:15Z rob $
  */
 
 /** Zend_Log */
-require_once 'Zend/Log.php';
+// require_once 'Zend/Log.php';
 
 /** Zend_Log_Writer_Abstract */
-require_once 'Zend/Log/Writer/Abstract.php';
+// require_once 'Zend/Log/Writer/Abstract.php';
 
 /**
  * Writes log messages to syslog
@@ -32,7 +32,7 @@ require_once 'Zend/Log/Writer/Abstract.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Log_Writer_Syslog extends Zend_Log_Writer_Abstract
@@ -195,14 +195,14 @@ class Zend_Log_Writer_Syslog extends Zend_Log_Writer_Abstract
         }
 
         if (!in_array($facility, $this->_validFacilities)) {
-            require_once 'Zend/Log/Exception.php';
+            // require_once 'Zend/Log/Exception.php';
             throw new Zend_Log_Exception('Invalid log facility provided; please see http://php.net/openlog for a list of valid facility values');
         }
 
         if ('WIN' == strtoupper(substr(PHP_OS, 0, 3))
             && ($facility !== LOG_USER)
         ) {
-            require_once 'Zend/Log/Exception.php';
+            // require_once 'Zend/Log/Exception.php';
             throw new Zend_Log_Exception('Only LOG_USER is a valid log facility on Windows');
         }
 

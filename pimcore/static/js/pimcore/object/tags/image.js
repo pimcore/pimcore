@@ -23,7 +23,6 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             this.data = data;
         }
         this.fieldConfig = fieldConfig;
-
     },
 
     getGridColumnConfig: function(field) {
@@ -61,6 +60,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
             },"->",{
+                xtype: "button",
+                iconCls: "pimcore_icon_upload_single",
+                handler: this.uploadDialog.bind(this)
+            },{
                 xtype: "button",
                 iconCls: "pimcore_icon_edit",
                 handler: this.openImage.bind(this)
@@ -164,6 +167,21 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             }
         });
     },
+
+    uploadDialog: function () {
+        pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
+            try {
+                var data = Ext.decode(res.response.responseText);
+                if(data["id"] && data["type"] == "image") {
+                    this.data = data["id"];
+                    this.dirty = true;
+                }
+                this.updateImage();
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this));
+    },
     
     addDataFromSelector: function (item) {
         if (item) {
@@ -229,6 +247,15 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             handler: function (item) {
                 item.parentMenu.destroy();
                 this.openSearchEditor();
+            }.bind(this)
+        }));
+
+        menu.add(new Ext.menu.Item({
+            text: t('upload'),
+            iconCls: "pimcore_icon_upload_single",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                this.uploadDialog();
             }.bind(this)
         }));
         

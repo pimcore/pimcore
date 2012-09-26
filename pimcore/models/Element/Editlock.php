@@ -75,7 +75,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
             return $lock;
         }
         catch (Exception $e) {
-            return false;
+            return null;
         }
     }
 
@@ -147,7 +147,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
     public function setUserId($userId) {
         if ($userId) {
             if ($user = User::getById($userId)) {
-                $this->userId = $userId;
+                $this->userId = (int) $userId;
                 $this->setUser($user);
             }
         }

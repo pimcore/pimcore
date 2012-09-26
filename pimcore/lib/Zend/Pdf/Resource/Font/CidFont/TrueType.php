@@ -15,22 +15,22 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TrueType.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: TrueType.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Internally used classes */
 
-require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Name.php';
 
 /** Zend_Pdf_Resource_Font_FontDescriptor */
-require_once 'Zend/Pdf/Resource/Font/FontDescriptor.php';
+// require_once 'Zend/Pdf/Resource/Font/FontDescriptor.php';
 
 
 /** Zend_Pdf_Resource_Font_CidFont */
-require_once 'Zend/Pdf/Resource/Font/CidFont.php';
+// require_once 'Zend/Pdf/Resource/Font/CidFont.php';
 
 /**
  * Type 2 CIDFonts implementation
@@ -44,7 +44,7 @@ require_once 'Zend/Pdf/Resource/Font/CidFont.php';
  *
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Resource_Font_CidFont_TrueType extends Zend_Pdf_Resource_Font_CidFont

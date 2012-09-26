@@ -16,90 +16,90 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Photos
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PhotoEntry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: PhotoEntry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_MediaEntry
  */
-require_once 'Zend/Gdata/Media/Entry.php';
+// require_once 'Zend/Gdata/Media/Entry.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_PhotoId
  */
-require_once 'Zend/Gdata/Photos/Extension/PhotoId.php';
+// require_once 'Zend/Gdata/Photos/Extension/PhotoId.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Version
  */
-require_once 'Zend/Gdata/Photos/Extension/Version.php';
+// require_once 'Zend/Gdata/Photos/Extension/Version.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_AlbumId
  */
-require_once 'Zend/Gdata/Photos/Extension/AlbumId.php';
+// require_once 'Zend/Gdata/Photos/Extension/AlbumId.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Id
  */
-require_once 'Zend/Gdata/Photos/Extension/Id.php';
+// require_once 'Zend/Gdata/Photos/Extension/Id.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Width
  */
-require_once 'Zend/Gdata/Photos/Extension/Width.php';
+// require_once 'Zend/Gdata/Photos/Extension/Width.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Height
  */
-require_once 'Zend/Gdata/Photos/Extension/Height.php';
+// require_once 'Zend/Gdata/Photos/Extension/Height.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Size
  */
-require_once 'Zend/Gdata/Photos/Extension/Size.php';
+// require_once 'Zend/Gdata/Photos/Extension/Size.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Client
  */
-require_once 'Zend/Gdata/Photos/Extension/Client.php';
+// require_once 'Zend/Gdata/Photos/Extension/Client.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Checksum
  */
-require_once 'Zend/Gdata/Photos/Extension/Checksum.php';
+// require_once 'Zend/Gdata/Photos/Extension/Checksum.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Timestamp
  */
-require_once 'Zend/Gdata/Photos/Extension/Timestamp.php';
+// require_once 'Zend/Gdata/Photos/Extension/Timestamp.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_CommentingEnabled
  */
-require_once 'Zend/Gdata/Photos/Extension/CommentingEnabled.php';
+// require_once 'Zend/Gdata/Photos/Extension/CommentingEnabled.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_CommentCount
  */
-require_once 'Zend/Gdata/Photos/Extension/CommentCount.php';
+// require_once 'Zend/Gdata/Photos/Extension/CommentCount.php';
 
 /**
  * @see Zend_Gdata_Exif_Extension_Tags
  */
-require_once 'Zend/Gdata/Exif/Extension/Tags.php';
+// require_once 'Zend/Gdata/Exif/Extension/Tags.php';
 
 /**
  * @see Zend_Gdata_Geo_Extension_GeoRssWhere
  */
-require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
+// require_once 'Zend/Gdata/Geo/Extension/GeoRssWhere.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Category
  */
-require_once 'Zend/Gdata/App/Extension/Category.php';
+// require_once 'Zend/Gdata/App/Extension/Category.php';
 
 /**
  * Data model class for a Comment Entry.
@@ -113,7 +113,7 @@ require_once 'Zend/Gdata/App/Extension/Category.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Photos
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Photos_PhotoEntry extends Zend_Gdata_Media_Entry

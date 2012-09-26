@@ -42,7 +42,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         // remove this instance when the panel is closed
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: this.data.id,
                     type: "document"
@@ -224,11 +224,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             if (this.isAllowed("publish")) {
                 buttons.push(this.toolbarButtons.publish);
             }
-            if (this.isAllowed("unpublish")) {
+            if (this.isAllowed("unpublish") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.unpublish);
             }
 
-            if(this.isAllowed("delete")) {
+            if(this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
 

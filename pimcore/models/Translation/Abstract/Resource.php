@@ -61,9 +61,7 @@ abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abst
                 try {
                     $this->db->insert(static::getTableName() , $data);
                 } catch (Exception $e) {
-                    if (!empty($data["text"])) {
-                        $this->db->update(static::getTableName() , $data, $this->db->quoteInto("`key` = ?", $this->model->getKey()) . " AND " . $this->db->quoteInto("language = ?", $language));
-                    }
+                    $this->db->update(static::getTableName() , $data, $this->db->quoteInto("`key` = ?", $this->model->getKey()) . " AND " . $this->db->quoteInto("language = ?", $language));
                 }
             }
         }

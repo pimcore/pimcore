@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Ldap
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Converter.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Converter.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -24,7 +24,7 @@
  *
  * @category   Zend
  * @package    Zend_Ldap
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Ldap_Converter
@@ -219,7 +219,8 @@ class Zend_Ldap_Converter
                 break;
             default:
                 if (is_numeric($value)) {
-                    return (float)$value;
+                    // prevent numeric values to be treated as date/time
+                    return $value;
                 } else if ('TRUE' === $value || 'FALSE' === $value) {
                     return self::fromLdapBoolean($value);
                 }

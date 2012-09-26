@@ -15,26 +15,26 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Oracle.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Oracle.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Db_Adapter_Abstract
  */
-require_once 'Zend/Db/Adapter/Abstract.php';
+// require_once 'Zend/Db/Adapter/Abstract.php';
 
 /**
  * @see Zend_Db_Statement_Oracle
  */
-require_once 'Zend/Db/Statement/Oracle.php';
+// require_once 'Zend/Db/Statement/Oracle.php';
 
 /**
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
@@ -115,7 +115,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Oracle_Exception
              */
-            require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+            // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
             throw new Zend_Db_Adapter_Oracle_Exception('The OCI8 extension is required for this adapter but the extension is not loaded');
         }
 
@@ -134,7 +134,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Oracle_Exception
              */
-            require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+            // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
             throw new Zend_Db_Adapter_Oracle_Exception(oci_error());
         }
     }
@@ -149,7 +149,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
         return ((bool) (is_resource($this->_connection)
                     && (get_resource_type($this->_connection) == 'oci8 connection'
                      || get_resource_type($this->_connection) == 'oci8 persistent connection')));
-    }
+        }
 
     /**
      * Force the connection to close.
@@ -206,7 +206,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
         $this->_connect();
         $stmtClass = $this->_defaultStmtClass;
         if (!class_exists($stmtClass)) {
-            require_once 'Zend/Loader.php';
+            // require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($stmtClass);
         }
         $stmt = new $stmtClass($this, $sql);
@@ -468,7 +468,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Oracle_Exception
              */
-            require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+            // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
             throw new Zend_Db_Adapter_Oracle_Exception(oci_error($this->_connection));
         }
         $this->_setExecuteMode(OCI_COMMIT_ON_SUCCESS);
@@ -486,7 +486,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Oracle_Exception
              */
-            require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+            // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
             throw new Zend_Db_Adapter_Oracle_Exception(oci_error($this->_connection));
         }
         $this->_setExecuteMode(OCI_COMMIT_ON_SUCCESS);
@@ -514,14 +514,14 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
                 /**
                  * @see Zend_Db_Adapter_Oracle_Exception
                  */
-                require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+                // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
                 throw new Zend_Db_Adapter_Oracle_Exception('FETCH_BOUND is not supported yet');
                 break;
             default:
                 /**
                  * @see Zend_Db_Adapter_Oracle_Exception
                  */
-                require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+                // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
                 throw new Zend_Db_Adapter_Oracle_Exception("Invalid fetch mode '$mode' specified");
                 break;
         }
@@ -543,7 +543,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Oracle_Exception
              */
-            require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+            // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
             throw new Zend_Db_Adapter_Oracle_Exception("LIMIT argument count=$count is not valid");
         }
 
@@ -552,7 +552,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
             /**
              * @see Zend_Db_Adapter_Oracle_Exception
              */
-            require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+            // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
             throw new Zend_Db_Adapter_Oracle_Exception("LIMIT argument offset=$offset is not valid");
         }
 
@@ -589,7 +589,7 @@ class Zend_Db_Adapter_Oracle extends Zend_Db_Adapter_Abstract
                 /**
                  * @see Zend_Db_Adapter_Oracle_Exception
                  */
-                require_once 'Zend/Db/Adapter/Oracle/Exception.php';
+                // require_once 'Zend/Db/Adapter/Oracle/Exception.php';
                 throw new Zend_Db_Adapter_Oracle_Exception("Invalid execution mode '$mode' specified");
                 break;
         }

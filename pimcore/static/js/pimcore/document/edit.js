@@ -68,8 +68,8 @@ pimcore.document.edit = Class.create({
     onClose: function () {
 
         try {
-            window[this.iframeName].location.href = "about:blank";
             this.reloadInProgress = true;
+            window[this.iframeName].location.href = "about:blank";
             Ext.get(this.iframeName).remove();
             delete window[this.iframeName];
 
@@ -80,6 +80,12 @@ pimcore.document.edit = Class.create({
     protectLocation: function () {
         if (this.reloadInProgress != true) {
             window.setTimeout(this.reload.bind(this), 200);
+        }
+    },
+
+    iframeOnbeforeunload: function () {
+        if(!this.reloadInProgress && !pimcore.globalmanager.get("pimcore_reload_in_progress")) {
+            return t("do_you_really_want_to_leave_the_editmode");
         }
     },
 
@@ -215,7 +221,7 @@ pimcore.document.edit = Class.create({
 
             for (var i = 0; i < editables.length; i++) {
                 try {
-                    if (editables[i].getName()) {
+                    if (editables[i].getName() && !editables[i].getInherited()) {
                         editableName = editables[i].getName();
                         values[editableName] = {};
                         values[editableName].data = editables[i].getValue();

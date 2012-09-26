@@ -14,18 +14,18 @@
  *
  * @category   Zend
  * @package    Zend_Serializer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Serializer.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Serializer.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** @see Zend_Loader_PluginLoader */
-require_once 'Zend/Loader/PluginLoader.php';
+// require_once 'Zend/Loader/PluginLoader.php';
 
 /**
  * @category   Zend
  * @package    Zend_Serializer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Serializer
@@ -61,14 +61,14 @@ class Zend_Serializer
         try {
             $adapterClass = $adapterLoader->load($adapterName);
         } catch (Exception $e) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Can\'t load serializer adapter "'.$adapterName.'"', 0, $e);
         }
 
         // ZF-8842:
         // check that the loaded class implements Zend_Serializer_Adapter_AdapterInterface without execute code
         if (!in_array('Zend_Serializer_Adapter_AdapterInterface', class_implements($adapterClass))) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('The serializer adapter class "'.$adapterClass.'" must implement Zend_Serializer_Adapter_AdapterInterface');
         }
 

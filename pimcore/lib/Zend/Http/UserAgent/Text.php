@@ -15,11 +15,11 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Http/UserAgent/AbstractDevice.php';
+// require_once 'Zend/Http/UserAgent/AbstractDevice.php';
 
 /**
  * Text browser type matcher
@@ -27,7 +27,7 @@ require_once 'Zend/Http/UserAgent/AbstractDevice.php';
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Http_UserAgent_Text extends Zend_Http_UserAgent_AbstractDevice

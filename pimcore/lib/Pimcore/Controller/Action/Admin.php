@@ -25,18 +25,23 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
      */
     protected $language = "en";
 
+    /**
+     * Indicates if this is the first call or a following
+     * @var bool
+     */
+    protected static $adminInitialized = false;
+
     public function init() {
 
         parent::init();
 
         // set language
-        try {
-            $locale = Zend_Registry::get("Zend_Locale");
-            $this->setLanguage($locale->getLanguage());
-        }
-        catch (Exception $e) {
-            if ($this->_getParam("language")) {
-                $this->setLanguage($this->_getParam("language"));
+        if(Zend_Registry::isRegistered("Zend_Locale")) {
+            $locale = (string) Zend_Registry::get("Zend_Locale");
+            $this->setLanguage($locale);
+        } else {
+            if ($this->getParam("language")) {
+                $this->setLanguage($this->getParam("language"));
             }
             else {
                 $config = Pimcore_Config::getSystemConfig();
@@ -47,11 +52,19 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             }
         }
 
-        try {
-            Zend_Registry::get("pimcore_admin_initialized");
-            $this->setUser(Zend_Registry::get("pimcore_admin_user"));
-        }
-        catch (Exception $e) {
+        if(self::$adminInitialized) {
+            // this will be executed on every call to this init() method
+            try {
+                $this->setUser(Zend_Registry::get("pimcore_admin_user"));
+            } catch (Exception $e) {
+                Logger::emerg("adminInitialized was set to true although there was no user set in the registry -> to be save the process was killed");
+                exit;
+            }
+        } else {
+            // the following code is only called once, even when there are some subcalls (eg. with $this->action, ... )
+
+            $this->disableBrowserCache();
+
             // general definitions
             Document::setHideUnpublished(false);
             Object_Abstract::setHideUnpublished(false);
@@ -65,8 +78,8 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
             // this is to make it possible to use the session id as a part of the route (ZF default route) used for pixlr.com editors, etc.
-            if($this->_getParam("pimcore_admin_sid")) {
-                $_REQUEST["pimcore_admin_sid"] = $this->_getParam("pimcore_admin_sid");
+            if($this->getParam("pimcore_admin_sid")) {
+                $_REQUEST["pimcore_admin_sid"] = $this->getParam("pimcore_admin_sid");
             }
 
             // authenticate user, first try to authenticate with session information
@@ -78,17 +91,21 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 }
             } else {
                 // try to authenticate with digest, but this is only allowed for WebDAV
-                if ($this->_getParam("module") == "admin" && $this->_getParam("controller") == "asset" && $this->_getParam("action") == "webdav") {
+                if ($this->getParam("module") == "admin" && $this->getParam("controller") == "asset" && $this->getParam("action") == "webdav") {
                     $user = Pimcore_Tool_Authentication::authenticateDigest();
                     if($user instanceof User) {
                         $this->setUser($user);
+
+                        Zend_Registry::set("pimcore_admin_user", $this->getUser());
+                        self::$adminInitialized = true;
+
                         return;
                     }
                 }
             }
 
             // redirect to the login-page if the user isn't authenticated
-            if (!$this->getUser() instanceof User && !($this->_getParam("module") == "admin" && $this->_getParam("controller") == "login")) {
+            if (!$this->getUser() instanceof User && !($this->getParam("module") == "admin" && $this->getParam("controller") == "login")) {
 
                 // put a detailed message into the debug.log
                 Logger::warn("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!");
@@ -103,14 +120,23 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
                 // send a auth header for the client (is covered by the ajax object in javascript)
                 $this->getResponse()->setHeader("X-Pimcore-Auth","required");
                 // redirect to login page
-                $this->_redirect("/admin/login");
-                // send immetiatley the response and exit the execution
-                $this->getResponse()->sendResponse();
+                $this->redirect("/admin/login");
+                // exit the execution -> just to be sure
                 exit;
             }
 
+            // we're now authenticated so we can remove the default error handler so that we get just the normal PHP errors
+            if($this->getParam("controller") != "login") {
+                $front = Zend_Controller_Front::getInstance();
+                $front->unregisterPlugin("Pimcore_Controller_Plugin_ErrorHandler");
+                $front->throwExceptions(true);
+                @ini_set("display_errors", "On");
+                @ini_set("display_startup_errors", "On");
+            }
+
             Zend_Registry::set("pimcore_admin_user", $this->getUser());
-            Zend_Registry::set("pimcore_admin_initialized", true);
+            self::$adminInitialized = true;
+
         }
     }
 
@@ -143,22 +169,20 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         }
 
         // check if given language is installed if not => skip
-        if(!in_array($locale->getLanguage(), Pimcore_Tool_Admin::getLanguages())) {
+        if(!in_array((string) $locale, Pimcore_Tool_Admin::getLanguages())) {
             return;
         }
 
-        $this->language = $locale->getLanguage();
+        $this->language = (string) $locale;
         $this->view->language = $this->getLanguage();
 
         Zend_Registry::set("Zend_Locale", $locale);
 
-        try {
+        if(Zend_Registry::isRegistered("Zend_Translate")) {
             $t = Zend_Registry::get("Zend_Translate");
             $t->setLocale($locale);
         }
-        catch (Exception $e) {
-            // translator not available yet
-        }
+
     }
 
     /**
@@ -185,10 +209,10 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             }
         }
         
-        try {
+        if(Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = Zend_Registry::get("Zend_Locale");
-            @$translator->setLocale($locale->getLanguage());
-        } catch (Exception $e) {}
+            @$translator->setLocale($locale);
+        }
         
         Zend_Registry::set("Zend_Translate", $translator);
 

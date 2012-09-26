@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** @see Zend_Captcha_Base */
-require_once 'Zend/Captcha/Base.php';
+// require_once 'Zend/Captcha/Base.php';
 
 /**
  * Word-based captcha adapter
@@ -30,9 +30,9 @@ require_once 'Zend/Captcha/Base.php';
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Word.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Word.php 24593 2012-01-05 20:35:02Z matthew $
  */
 abstract class Zend_Captcha_Word extends Zend_Captcha_Base
 {
@@ -261,7 +261,7 @@ abstract class Zend_Captcha_Word extends Zend_Captcha_Base
         if (!isset($this->_session) || (null === $this->_session)) {
             $id = $this->getId();
             if (!class_exists($this->_sessionClass)) {
-                require_once 'Zend/Loader.php';
+                // require_once 'Zend/Loader.php';
                 Zend_Loader::loadClass($this->_sessionClass);
             }
             $this->_session = new $this->_sessionClass('Zend_Form_Captcha_' . $id);

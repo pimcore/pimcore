@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_View_Helper_Abstract */
-require_once 'Zend/View/Helper/Abstract.php';
+// require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper for interacting with UserAgent instance
  *
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_UserAgent extends Zend_View_Helper_Abstract
@@ -75,7 +75,7 @@ class Zend_View_Helper_UserAgent extends Zend_View_Helper_Abstract
     public function getUserAgent()
     {
         if (null === $this->_userAgent) {
-            require_once 'Zend/Http/UserAgent.php';
+            // require_once 'Zend/Http/UserAgent.php';
             $this->setUserAgent(new Zend_Http_UserAgent());
         }
         return $this->_userAgent;

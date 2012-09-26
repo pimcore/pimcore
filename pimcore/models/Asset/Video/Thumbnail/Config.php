@@ -62,7 +62,7 @@ class Asset_Video_Thumbnail_Config {
     public static function getByName ($name) {
         $pipe = new self();
         $pipe->setName($name);
-        if(!$pipe->load()) {
+        if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
             throw new Exception("video thumbnail definition : " . $name . " does not exist");
         }
 
@@ -236,7 +236,7 @@ class Asset_Video_Thumbnail_Config {
      */
     public function setAudioBitrate($audioBitrate)
     {
-        $this->audioBitrate = $audioBitrate;
+        $this->audioBitrate = (int) $audioBitrate;
     }
 
     /**
@@ -252,7 +252,7 @@ class Asset_Video_Thumbnail_Config {
      */
     public function setVideoBitrate($videoBitrate)
     {
-        $this->videoBitrate = $videoBitrate;
+        $this->videoBitrate = (int) $videoBitrate;
     }
 
     /**

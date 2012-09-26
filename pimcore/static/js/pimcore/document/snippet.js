@@ -33,6 +33,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.snippets.settings(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
+            this.notes = new pimcore.element.notes(this, "document");
         }
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
@@ -71,7 +72,11 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
             items.push(reportLayout);
         }
 
-        var tabbar = new Ext.TabPanel({
+        if (this.isAllowed("settings")) {
+            items.push(this.notes.getLayout());
+        }
+
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:true,
@@ -82,7 +87,7 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
             activeTab: 0
         });
 
-        return tabbar;
+        return this.tabbar;
     },
 
     getSaveData : function (only) {

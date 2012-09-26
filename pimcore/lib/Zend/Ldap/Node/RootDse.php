@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage RootDSE
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RootDse.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: RootDse.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Ldap_Node_Abstract
  */
-require_once 'Zend/Ldap/Node/Abstract.php';
+// require_once 'Zend/Ldap/Node/Abstract.php';
 
 /**
  * Zend_Ldap_Node_RootDse provides a simple data-container for the RootDSE node.
@@ -31,7 +31,7 @@ require_once 'Zend/Ldap/Node/Abstract.php';
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage RootDSE
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Ldap_Node_RootDse extends Zend_Ldap_Node_Abstract
@@ -56,20 +56,20 @@ class Zend_Ldap_Node_RootDse extends Zend_Ldap_Node_Abstract
             /**
              * @see Zend_Ldap_Node_RootDse_ActiveDirectory
              */
-            require_once 'Zend/Ldap/Node/RootDse/ActiveDirectory.php';
+            // require_once 'Zend/Ldap/Node/RootDse/ActiveDirectory.php';
             return new Zend_Ldap_Node_RootDse_ActiveDirectory($dn, $data);
         } else if (isset($data['dsaname'])) {
             /**
              * @see Zend_Ldap_Node_RootDse_ActiveDirectory
              */
-            require_once 'Zend/Ldap/Node/RootDse/eDirectory.php';
+            // require_once 'Zend/Ldap/Node/RootDse/eDirectory.php';
             return new Zend_Ldap_Node_RootDse_eDirectory($dn, $data);
         } else if (isset($data['structuralobjectclass']) &&
                 $data['structuralobjectclass'][0] === 'OpenLDAProotDSE') {
             /**
              * @see Zend_Ldap_Node_RootDse_OpenLdap
              */
-            require_once 'Zend/Ldap/Node/RootDse/OpenLdap.php';
+            // require_once 'Zend/Ldap/Node/RootDse/OpenLdap.php';
             return new Zend_Ldap_Node_RootDse_OpenLdap($dn, $data);
         } else {
             return new self($dn, $data);
@@ -152,7 +152,7 @@ class Zend_Ldap_Node_RootDse extends Zend_Ldap_Node_Abstract
         /**
          * @see Zend_Ldap_Dn
          */
-        require_once 'Zend/Ldap/Dn.php';
+        // require_once 'Zend/Ldap/Dn.php';
         return Zend_Ldap_Dn::fromString($schemaDn);
     }
 }

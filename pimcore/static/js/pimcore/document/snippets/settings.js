@@ -26,7 +26,7 @@ pimcore.document.snippets.settings = Class.create({
 
             var docTypeStore = new Ext.data.JsonStore({
                 url: '/admin/document/get-doc-types?type=snippet',
-                fields: ["id","name","controller","action","template"],
+                fields: ["id","name","module","controller","action","template"],
                 root: "docTypes"
             });
 
@@ -177,6 +177,63 @@ pimcore.document.snippets.settings = Class.create({
                                 disabled: true
                             }
                         ]
+                    },{
+                        xtype:'fieldset',
+                        title: t('content_master_document'),
+                        collapsible: true,
+                        autoHeight:true,
+                        labelWidth: 200,
+                        defaultType: 'textfield',
+                        defaults: {width: 400},
+                        items :[
+                            {
+                                fieldLabel: t("document"),
+                                name: "contentMasterDocumentPath",
+                                value: this.snippet.data.contentMasterDocumentPath,
+                                cls: "input_drop_target",
+                                listeners: {
+                                    "render": function (el) {
+                                        new Ext.dd.DropZone(el.getEl(), {
+                                            reference: this,
+                                            ddGroup: "element",
+                                            getTargetFromEvent: function(e) {
+                                                return this.getEl();
+                                            }.bind(el),
+
+                                            onNodeOver : function(target, dd, e, data) {
+                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                            },
+
+                                            onNodeDrop : function (target, dd, e, data) {
+                                                if (data.node.attributes.elementType == "document") {
+                                                    this.setValue(data.node.attributes.path);
+                                                    return true;
+                                                }
+                                                return false;
+                                            }.bind(el)
+                                        });
+                                    }
+                                }
+                            }, {
+                                xtype: "button",
+                                text: t("apply_new_master_document"),
+                                iconCls: "pimcore_icon_apply",
+                                autoWidth: true,
+                                handler: function () {
+                                    Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
+                                        if (buttonValue == "yes") {
+                                            Ext.Ajax.request({
+                                                url: "/admin/snippet/change-master-document/id/" + this.snippet.id,
+                                                params: this.getValues(),
+                                                success: function () {
+                                                    this.snippet.reload();
+                                                }.bind(this)
+                                            });
+                                        }
+                                    }.bind(this));
+                                }.bind(this)
+                            }
+                        ]
                     }
                 ]
             });
@@ -186,7 +243,7 @@ pimcore.document.snippets.settings = Class.create({
     },
 
     setDocumentType: function (field, newValue, oldValue) {
-        var allowedFields = ["controller","action","template"];
+        var allowedFields = ["module","controller","action","template"];
         var form = this.getLayout().getForm();
         var element = null;
 
@@ -206,7 +263,7 @@ pimcore.document.snippets.settings = Class.create({
             throw "settings not available";
         }
 
-        var fields = ["controller","action","template"];
+        var fields = ["module","controller","action","template"];
         var form = this.getLayout().getForm();
         var element = null;
 

@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Element
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Form_Element_Multi */
-require_once 'Zend/Form/Element/Multi.php';
+// require_once 'Zend/Form/Element/Multi.php';
 
 /**
  * MultiCheckbox form element
@@ -32,9 +32,9 @@ require_once 'Zend/Form/Element/Multi.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Element
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MultiCheckbox.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: MultiCheckbox.php 24963 2012-06-15 14:32:23Z adamlundrigan $
  */
 class Zend_Form_Element_MultiCheckbox extends Zend_Form_Element_Multi
 {
@@ -49,4 +49,25 @@ class Zend_Form_Element_MultiCheckbox extends Zend_Form_Element_Multi
      * @var bool
      */
     protected $_isArray = true;
+
+    /**
+     * Load default decorators
+     *
+     * @return Zend_Form_Element_MultiCheckbox
+     */
+    public function loadDefaultDecorators()
+    {
+        if ($this->loadDefaultDecoratorsIsDisabled()) {
+            return $this;
+        }
+
+        parent::loadDefaultDecorators();
+
+        // Disable 'for' attribute
+        if (false !== $decorator = $this->getDecorator('label')) {
+            $decorator->setOption('disableFor', true);
+        }
+
+        return $this;
+    }
 }

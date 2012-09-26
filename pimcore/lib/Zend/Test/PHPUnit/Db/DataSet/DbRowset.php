@@ -15,20 +15,20 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DbRowset.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: DbRowset.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Db_Table_Rowset_Abstract
  */
-require_once "Zend/Db/Table/Rowset/Abstract.php";
+// require_once "Zend/Db/Table/Rowset/Abstract.php";
 
 /**
  * @see PHPUnit_Extensions_Database_DataSet_AbstractTable
  */
-require_once "PHPUnit/Extensions/Database/DataSet/AbstractTable.php";
+// require_once "PHPUnit/Extensions/Database/DataSet/AbstractTable.php";
 
 /**
  * Use a Zend_Db Rowset as a datatable for assertions with other PHPUnit Database extension tables.
@@ -37,7 +37,7 @@ require_once "PHPUnit/Extensions/Database/DataSet/AbstractTable.php";
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Test_PHPUnit_Db_DataSet_DbRowset extends PHPUnit_Extensions_Database_DataSet_AbstractTable
@@ -55,7 +55,7 @@ class Zend_Test_PHPUnit_Db_DataSet_DbRowset extends PHPUnit_Extensions_Database_
             if($table !== null) {
                 $tableName = $table->info('name');
             } else {
-                require_once "Zend/Test/PHPUnit/Db/Exception.php";
+                // require_once "Zend/Test/PHPUnit/Db/Exception.php";
                 throw new Zend_Test_PHPUnit_Db_Exception(
                     'No table name was given to Rowset Table and table name cannot be infered from the table, '.
                     'because the rowset is disconnected from database.'

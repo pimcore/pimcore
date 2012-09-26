@@ -43,6 +43,11 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public $maxItems;
 
     /**
+     * @var string
+     */
+    public $assetUploadPath;
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -144,7 +149,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setDocumentTypes($documentTypes)
     {
         // this is the new method with Ext.form.MultiSelect
-        if(is_string($documentTypes) && strpos($documentTypes, ",") !== false) {
+        if(is_string($documentTypes) && !empty($documentTypes)) {
             $parts = explode(",", $documentTypes);
             $documentTypes = array();
             foreach ($parts as $type) {
@@ -189,7 +194,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setAssetTypes($assetTypes)
     {
         // this is the new method with Ext.form.MultiSelect
-        if(is_string($assetTypes) && strpos($assetTypes, ",") !== false) {
+        if(is_string($assetTypes) && !empty($assetTypes)) {
             $parts = explode(",", $assetTypes);
             $assetTypes = array();
             foreach ($parts as $type) {
@@ -699,5 +704,21 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function getMaxItems()
     {
         return $this->maxItems;
+    }
+
+    /**
+     * @param string $assetUploadPath
+     */
+    public function setAssetUploadPath($assetUploadPath)
+    {
+        $this->assetUploadPath = $assetUploadPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssetUploadPath()
+    {
+        return $this->assetUploadPath;
     }
 }

@@ -50,7 +50,8 @@ class Document_Tag_Area extends Document_Tag {
             "data" => $data,
             "name" => $this->getName(),
             "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType()
+            "type" => $this->getType(),
+            "inherited" => $this->getInherited()
         );
         $options = @Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
 
@@ -76,8 +77,6 @@ class Document_Tag_Area extends Document_Tag {
      * @see Document_Tag_Interface::frontend
      */
     public function frontend() {
-
-
 
         $count = 0;
 
@@ -138,25 +137,27 @@ class Document_Tag_Area extends Document_Tag {
 
                 $actionClassname = "Document_Tag_Area_" . ucfirst($options["type"]);
                 if(Pimcore_Tool::classExists($actionClassname)) {
-                    $actionObj = new $actionClassname();
+                    $actionObject = new $actionClassname();
 
-                    if($actionObj instanceof Document_Tag_Area_Abstract) {
-                        $actionObj->setView($this->getView());
+                    if($actionObject instanceof Document_Tag_Area_Abstract) {
+                        $actionObject->setView($this->getView());
 
                         $areaConfig = new Zend_Config_Xml($areas[$options["type"]] . "/area.xml");
-                        $actionObj->setConfig($areaConfig);
+                        $actionObject->setConfig($areaConfig);
 
                         // params
                         $params = array_merge($this->view->getAllParams(), $params);
-                        $actionObj->setParams($params);
+                        $actionObject->setParams($params);
 
                         if($info) {
-                            $actionObj->setBrick($info);
+                            $actionObject->setBrick($info);
                         }
 
-                        if(method_exists($actionObj,"action")) {
-                            $actionObj->action();
+                        if(method_exists($actionObject,"action")) {
+                            $actionObject->action();
                         }
+
+                        $this->getView()->assign('actionObject',$actionObject);
                     }
                 }
             }
@@ -168,7 +169,11 @@ class Document_Tag_Area extends Document_Tag {
 
                 if(is_file($edit) && $editmode) {
                     echo '<div class="pimcore_area_edit_button"></div>';
-                    $this->getView()->editmode = false;
+
+                    // forces the editmode in view.php independent if there's an edit.php or not
+                    if(!array_key_exists("forceEditInView",$params) || !$params["forceEditInView"]) {
+                        $this->getView()->editmode = false;
+                    }
                 }
 
                 $this->getView()->template($view);
@@ -183,6 +188,9 @@ class Document_Tag_Area extends Document_Tag {
 
                 echo '</div>';
 
+                if(is_object($actionObject) && method_exists($actionObject,"postRenderAction")) {
+                    $actionObject->postRenderAction();
+                }
             }
         }
 
@@ -222,23 +230,21 @@ class Document_Tag_Area extends Document_Tag {
     public function setupStaticEnvironment() {
 
         // setup static environment for blocks
-        try {
+        if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
             $current = Zend_Registry::get("pimcore_tag_block_current");
             if (!is_array($current)) {
                 $current = array();
             }
-        }
-        catch (Exception $e) {
+        } else {
             $current = array();
         }
 
-        try {
+        if(Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
             $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
             if (!is_array($numeration)) {
                 $numeration = array();
             }
-        }
-        catch (Exception $e) {
+        } else {
             $numeration = array();
         }
 

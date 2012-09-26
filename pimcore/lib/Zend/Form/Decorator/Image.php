@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
+// require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_Image
@@ -35,9 +35,9 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Image.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Image.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Form_Decorator_Image extends Zend_Form_Decorator_Abstract
 {
@@ -137,7 +137,7 @@ class Zend_Form_Decorator_Image extends Zend_Form_Decorator_Abstract
         $image = $view->formImage($name, $element->getImageValue(), $attribs);
 
         if (null !== $tag) {
-            require_once 'Zend/Form/Decorator/HtmlTag.php';
+            // require_once 'Zend/Form/Decorator/HtmlTag.php';
             $decorator = new Zend_Form_Decorator_HtmlTag();
             $decorator->setOptions(array('tag' => $tag));
             $image = $decorator->render($image);

@@ -15,26 +15,26 @@
  * @category   Zend
  * @package    Zend_Markup
  * @subpackage Parser
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Textile.php 24266 2011-07-24 14:37:43Z ramon $
+ * @version    $Id: Textile.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Markup_TokenList
  */
-require_once 'Zend/Markup/TokenList.php';
+// require_once 'Zend/Markup/TokenList.php';
 
 /**
  * @see Zend_Markup_Parser_ParserInterface
  */
-require_once 'Zend/Markup/Parser/ParserInterface.php';
+// require_once 'Zend/Markup/Parser/ParserInterface.php';
 
 /**
  * @category   Zend
  * @package    Zend_Markup
  * @subpackage Parser
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Markup_Parser_Textile implements Zend_Markup_Parser_ParserInterface
@@ -135,14 +135,14 @@ class Zend_Markup_Parser_Textile implements Zend_Markup_Parser_ParserInterface
             /**
              * @see Zend_Markup_Parser_Exception
              */
-            require_once 'Zend/Markup/Parser/Exception.php';
+            // require_once 'Zend/Markup/Parser/Exception.php';
             throw new Zend_Markup_Parser_Exception('Value to parse should be a string.');
         }
         if (empty($value)) {
             /**
              * @see Zend_Markup_Parser_Exception
              */
-            require_once 'Zend/Markup/Parser/Exception.php';
+            // require_once 'Zend/Markup/Parser/Exception.php';
             throw new Zend_Markup_Parser_Exception('Value to parse cannot be left empty.');
         }
 

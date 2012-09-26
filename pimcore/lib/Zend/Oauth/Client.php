@@ -14,27 +14,27 @@
  *
  * @category   Zend
  * @package    Zend_Oauth
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Client.php 24311 2011-07-30 03:12:18Z ramon $
+ * @version    $Id: Client.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Oauth */
-require_once 'Zend/Oauth.php';
+// require_once 'Zend/Oauth.php';
 
 /** Zend_Http_Client */
-require_once 'Zend/Http/Client.php';
+// require_once 'Zend/Http/Client.php';
 
 /** Zend_Oauth_Http_Utility */
-require_once 'Zend/Oauth/Http/Utility.php';
+// require_once 'Zend/Oauth/Http/Utility.php';
 
 /** Zend_Oauth_Config */
-require_once 'Zend/Oauth/Config.php';
+// require_once 'Zend/Oauth/Config.php';
 
 /**
  * @category   Zend
  * @package    Zend_Oauth
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Oauth_Client extends Zend_Http_Client
@@ -246,7 +246,7 @@ class Zend_Oauth_Client extends Zend_Http_Client
             $this->setHeaders('Authorization', $oauthHeaderValue);
         } elseif ($requestScheme == Zend_Oauth::REQUEST_SCHEME_POSTBODY) {
             if ($requestMethod == self::GET) {
-                require_once 'Zend/Oauth/Exception.php';
+                // require_once 'Zend/Oauth/Exception.php';
                 throw new Zend_Oauth_Exception(
                     'The client is configured to'
                     . ' pass OAuth parameters through a POST body but request method'
@@ -261,7 +261,7 @@ class Zend_Oauth_Client extends Zend_Http_Client
             $this->setRawData($raw, 'application/x-www-form-urlencoded');
             $this->paramsPost = array();
         } elseif ($requestScheme == Zend_Oauth::REQUEST_SCHEME_QUERYSTRING) {
-            $params = array();
+            $params = $this->paramsGet;            
             $query = $this->getUri()->getQuery();
             if ($query) {
                 $queryParts = explode('&', $this->getUri()->getQuery());
@@ -283,7 +283,7 @@ class Zend_Oauth_Client extends Zend_Http_Client
             $this->getUri()->setQuery($query);
             $this->paramsGet = array();
         } else {
-            require_once 'Zend/Oauth/Exception.php';
+            // require_once 'Zend/Oauth/Exception.php';
             throw new Zend_Oauth_Exception('Invalid request scheme: ' . $requestScheme);
         }
     }
@@ -326,7 +326,7 @@ class Zend_Oauth_Client extends Zend_Http_Client
     public function __call($method, array $args)
     {
         if (!method_exists($this->_config, $method)) {
-            require_once 'Zend/Oauth/Exception.php';
+            // require_once 'Zend/Oauth/Exception.php';
             throw new Zend_Oauth_Exception('Method does not exist: ' . $method);
         }
         return call_user_func_array(array($this->_config,$method), $args);

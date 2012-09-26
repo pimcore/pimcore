@@ -15,25 +15,25 @@
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
  * @subpackage Entity
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Subscription.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Subscription.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** @see Zend_Feed_Pubsubhubbub_Model_ModelAbstract */
-require_once 'Zend/Feed/Pubsubhubbub/Model/ModelAbstract.php';
+// require_once 'Zend/Feed/Pubsubhubbub/Model/ModelAbstract.php';
 
 /** @see Zend_Feed_Pubsubhubbub_Model_SubscriptionInterface */
-require_once 'Zend/Feed/Pubsubhubbub/Model/SubscriptionInterface.php';
+// require_once 'Zend/Feed/Pubsubhubbub/Model/SubscriptionInterface.php';
 
 /** @see Zend_Date */
-require_once 'Zend/Date.php';
+// require_once 'Zend/Date.php';
 
 /**
  * @category   Zend
  * @package    Zend_Feed_Pubsubhubbub
  * @subpackage Entity
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Pubsubhubbub_Model_Subscription
@@ -50,7 +50,7 @@ class Zend_Feed_Pubsubhubbub_Model_Subscription
     public function setSubscription(array $data)
     {
         if (!isset($data['id'])) {
-            require_once 'Zend/Feed/Pubsubhubbub/Exception.php';
+            // require_once 'Zend/Feed/Pubsubhubbub/Exception.php';
             throw new Zend_Feed_Pubsubhubbub_Exception(
                 'ID must be set before attempting a save'
             );
@@ -83,7 +83,7 @@ class Zend_Feed_Pubsubhubbub_Model_Subscription
     public function getSubscription($key)
     {
         if (empty($key) || !is_string($key)) {
-            require_once 'Zend/Feed/Pubsubhubbub/Exception.php';
+            // require_once 'Zend/Feed/Pubsubhubbub/Exception.php';
             throw new Zend_Feed_Pubsubhubbub_Exception('Invalid parameter "key"'
                 .' of "' . $key . '" must be a non-empty string');
         }
@@ -103,7 +103,7 @@ class Zend_Feed_Pubsubhubbub_Model_Subscription
     public function hasSubscription($key)
     {
         if (empty($key) || !is_string($key)) {
-            require_once 'Zend/Feed/Pubsubhubbub/Exception.php';
+            // require_once 'Zend/Feed/Pubsubhubbub/Exception.php';
             throw new Zend_Feed_Pubsubhubbub_Exception('Invalid parameter "key"'
                 .' of "' . $key . '" must be a non-empty string');
         }

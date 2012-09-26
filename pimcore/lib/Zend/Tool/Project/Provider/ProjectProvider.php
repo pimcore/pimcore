@@ -14,18 +14,18 @@
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ProjectProvider.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: ProjectProvider.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** @see Zend_Tool_Project_Provider_Abstract */
-require_once 'Zend/Tool/Project/Provider/Abstract.php';
+// require_once 'Zend/Tool/Project/Provider/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Provider_ProjectProvider extends Zend_Tool_Project_Provider_Abstract
@@ -46,7 +46,7 @@ class Zend_Tool_Project_Provider_ProjectProvider extends Zend_Tool_Project_Provi
             /**
              * @see Zend_Tool_Project_Provider_Exception
              */
-            require_once 'Zend/Tool/Project/Provider/Exception.php';
+            // require_once 'Zend/Tool/Project/Provider/Exception.php';
             throw new Zend_Tool_Project_Provider_Exception('Zend_Tool_Project_Provider_Controller::createResource() expects \"projectProviderName\" is the name of a project provider resource to create.');
         }
 

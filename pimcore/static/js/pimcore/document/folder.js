@@ -31,6 +31,9 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
+        if (this.isAllowed("settings")) {
+            this.notes = new pimcore.element.notes(this, "document");
+        }
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
     },
@@ -73,7 +76,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: this.data.id,
                     type: "document"
@@ -132,7 +135,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 buttons.push(this.toolbarButtons.publish);
             }
 
-            if(this.isAllowed("delete")) {
+            if(this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
             }
 
@@ -181,6 +184,10 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         }
 
         items.push(this.dependencies.getLayout());
+
+        if (this.isAllowed("settings")) {
+            items.push(this.notes.getLayout());
+        }
 
         var tabbar = new Ext.TabPanel({
             tabPosition: "top",

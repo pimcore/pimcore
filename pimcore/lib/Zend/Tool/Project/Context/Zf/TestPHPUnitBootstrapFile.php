@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: TestApplicationBootstrapFile.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
@@ -23,7 +23,7 @@
 /**
  * @see Zend_Tool_Project_Context_Filesystem_File
  */
-require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
+// require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project
@@ -33,7 +33,7 @@ require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Context_Zf_TestPHPUnitBootstrapFile extends Zend_Tool_Project_Context_Filesystem_File
@@ -77,7 +77,7 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
-require_once 'Zend/Loader/Autoloader.php';
+// require_once 'Zend/Loader/Autoloader.php';
 Zend_Loader_Autoloader::getInstance();
 
 EOS

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Histograms.php 22804 2010-08-08 05:08:05Z renanbr $
  */
@@ -23,13 +23,13 @@
 /**
  * @see Zend_Service_Ebay_Finding_Response_Abstract
  */
-require_once 'Zend/Service/Ebay/Finding/Response/Abstract.php';
+// require_once 'Zend/Service/Ebay/Finding/Response/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @uses       Zend_Service_Ebay_Finding_Response_Abstract
  */
@@ -70,7 +70,7 @@ class Zend_Service_Ebay_Finding_Response_Histograms extends Zend_Service_Ebay_Fi
             /**
              * @see Zend_Service_Ebay_Finding_Aspect_Histogram_Container
              */
-            require_once 'Zend/Service/Ebay/Finding/Aspect/Histogram/Container.php';
+            // require_once 'Zend/Service/Ebay/Finding/Aspect/Histogram/Container.php';
             $this->aspectHistogramContainer = new Zend_Service_Ebay_Finding_Aspect_Histogram_Container($node);
         }
 
@@ -79,7 +79,7 @@ class Zend_Service_Ebay_Finding_Response_Histograms extends Zend_Service_Ebay_Fi
             /**
              * @see Zend_Service_Ebay_Finding_Category_Histogram_Container
              */
-            require_once 'Zend/Service/Ebay/Finding/Category/Histogram/Container.php';
+            // require_once 'Zend/Service/Ebay/Finding/Category/Histogram/Container.php';
             $this->categoryHistogramContainer = new Zend_Service_Ebay_Finding_Category_Histogram_Container($node);
         }
     }

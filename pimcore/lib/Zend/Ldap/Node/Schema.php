@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Schema
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Schema.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Schema.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Ldap_Node_Abstract
  */
-require_once 'Zend/Ldap/Node/Abstract.php';
+// require_once 'Zend/Ldap/Node/Abstract.php';
 
 /**
  * Zend_Ldap_Node_Schema provides a simple data-container for the Schema node.
@@ -31,7 +31,7 @@ require_once 'Zend/Ldap/Node/Abstract.php';
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Schema
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Ldap_Node_Schema extends Zend_Ldap_Node_Abstract
@@ -57,13 +57,13 @@ class Zend_Ldap_Node_Schema extends Zend_Ldap_Node_Abstract
                 /**
                  * @see Zend_Ldap_Node_Schema_ActiveDirectory
                  */
-                require_once 'Zend/Ldap/Node/Schema/ActiveDirectory.php';
+                // require_once 'Zend/Ldap/Node/Schema/ActiveDirectory.php';
                 return new Zend_Ldap_Node_Schema_ActiveDirectory($dn, $data, $ldap);
             case Zend_Ldap_Node_RootDse::SERVER_TYPE_OPENLDAP:
                 /**
                  * @see Zend_Ldap_Node_RootDse_ActiveDirectory
                  */
-                require_once 'Zend/Ldap/Node/Schema/OpenLdap.php';
+                // require_once 'Zend/Ldap/Node/Schema/OpenLdap.php';
                 return new Zend_Ldap_Node_Schema_OpenLdap($dn, $data, $ldap);
             case Zend_Ldap_Node_RootDse::SERVER_TYPE_EDIRECTORY:
             default:

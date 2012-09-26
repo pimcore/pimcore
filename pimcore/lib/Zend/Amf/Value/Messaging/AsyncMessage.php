@@ -15,14 +15,14 @@
  * @category   Zend
  * @package    Zend_Amf
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AsyncMessage.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: AsyncMessage.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Zend_Amf_Value_Messaging_AbstractMessage */
-require_once 'Zend/Amf/Value/Messaging/AbstractMessage.php';
+// require_once 'Zend/Amf/Value/Messaging/AbstractMessage.php';
 
 /**
  * This type of message contains information necessary to perform
@@ -30,7 +30,7 @@ require_once 'Zend/Amf/Value/Messaging/AbstractMessage.php';
  *
  * @package    Zend_Amf
  * @subpackage Value
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Value_Messaging_AsyncMessage extends Zend_Amf_Value_Messaging_AbstractMessage

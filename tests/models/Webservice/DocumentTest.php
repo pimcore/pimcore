@@ -106,7 +106,7 @@ class Webservice_DocumentTest extends PHPUnit_Framework_TestCase
         //copy the document retrieved from ws
         $new = clone $document;
         $new->id = null;
-        $new->setKey($document->getKey() . "_phpUnitTestCopy");
+        $new->setKey($document->getKey() . "_php-unit-test-copy");
         $new->setResource(null);
 
         //send new document back via ws

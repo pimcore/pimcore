@@ -14,30 +14,30 @@
  *
  * @category   Zend
  * @package    Zend_Rest
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Route.php 24013 2011-05-04 21:19:12Z ralph $
+ * @version    $Id: Route.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Controller_Router_Route_Interface
  */
-require_once 'Zend/Controller/Router/Route/Interface.php';
+// require_once 'Zend/Controller/Router/Route/Interface.php';
 
 /**
  * @see Zend_Controller_Router_Route_Module
  */
-require_once 'Zend/Controller/Router/Route/Module.php';
+// require_once 'Zend/Controller/Router/Route/Module.php';
 
 /**
  * @see Zend_Controller_Dispatcher_Interface
  */
-require_once 'Zend/Controller/Dispatcher/Interface.php';
+// require_once 'Zend/Controller/Dispatcher/Interface.php';
 
 /**
  * @see Zend_Controller_Request_Abstract
  */
-require_once 'Zend/Controller/Request/Abstract.php';
+// require_once 'Zend/Controller/Request/Abstract.php';
 
 /**
  * Rest Route
@@ -46,7 +46,7 @@ require_once 'Zend/Controller/Request/Abstract.php';
  *
  * @category   Zend
  * @package    Zend_Rest
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Rest_Route extends Zend_Controller_Router_Route_Module

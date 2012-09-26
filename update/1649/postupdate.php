@@ -11,6 +11,6 @@ function sendQuery ($sql) {
     }
 }
 
-sendQuery("UPDATE `users` SET `parentId` = 0 WHERE `admin` != 1;");
+sendQuery("UPDATE `users` SET `parentId` = 0;");
 
 ?>

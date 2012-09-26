@@ -15,66 +15,66 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: VoiceCall.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: VoiceCall.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Service_DeveloperGarden_Client_ClientAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_VoiceButler_NewCall
  */
-require_once 'Zend/Service/DeveloperGarden/Request/VoiceButler/NewCall.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/VoiceButler/NewCall.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_VoiceButler_NewCallSequenced
  */
-require_once 'Zend/Service/DeveloperGarden/Request/VoiceButler/NewCallSequenced.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/VoiceButler/NewCallSequenced.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_VoiceButler_TearDownCall
  */
-require_once 'Zend/Service/DeveloperGarden/Request/VoiceButler/TearDownCall.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/VoiceButler/TearDownCall.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_VoiceButler_CallStatus
  */
-require_once 'Zend/Service/DeveloperGarden/Request/VoiceButler/CallStatus.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/VoiceButler/CallStatus.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_VoiceButler_NewCallResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/NewCallResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/NewCallResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_VoiceButler_NewCallSequencedResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/NewCallSequencedResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/NewCallSequencedResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_VoiceButler_TearDownCallResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/TearDownCallResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/TearDownCallResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_VoiceButler_CallStatusResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/CallStatusResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/CallStatusResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_VoiceButler_CallStatus2Response
  */
-require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/CallStatus2Response.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/VoiceButler/CallStatus2Response.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @author     Marco Kaiser
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */

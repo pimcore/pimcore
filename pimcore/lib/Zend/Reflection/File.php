@@ -14,25 +14,25 @@
  *
  * @category   Zend
  * @package    Zend_Reflection
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: File.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: File.php 24803 2012-05-14 12:23:46Z adamlundrigan $
  */
 
 /**
  * @see Zend_Reflection_Class
  */
-require_once 'Zend/Reflection/Class.php';
+// require_once 'Zend/Reflection/Class.php';
 
 /**
  * @see Zend_Reflection_Function
  */
-require_once 'Zend/Reflection/Function.php';
+// require_once 'Zend/Reflection/Function.php';
 
 /**
  * @category   Zend
  * @package    Zend_Reflection
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Reflection_File implements Reflector
@@ -86,13 +86,22 @@ class Zend_Reflection_File implements Reflector
     public function __construct($file)
     {
         $fileName = $file;
-
-        if (($fileRealpath = realpath($fileName)) === false) {
+        
+        $fileRealpath = realpath($fileName);
+        if ($fileRealpath) {
+            // realpath() doesn't return false if Suhosin is included
+            // see http://uk3.php.net/manual/en/function.realpath.php#82770
+            if (!file_exists($fileRealpath)) {
+                $fileRealpath = false;
+            }
+        }
+        
+        if ($fileRealpath === false) {
             $fileRealpath = self::findRealpathInIncludePath($file);
         }
 
         if (!$fileRealpath || !in_array($fileRealpath, get_included_files())) {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception('File ' . $file . ' must be required before it can be reflected');
         }
 
@@ -109,7 +118,7 @@ class Zend_Reflection_File implements Reflector
      */
     public static function findRealpathInIncludePath($fileName)
     {
-        require_once 'Zend/Loader.php';
+        // require_once 'Zend/Loader.php';
         $includePaths = Zend_Loader::explodeIncludePath();
         while (count($includePaths) > 0) {
             $filePath = array_shift($includePaths) . DIRECTORY_SEPARATOR . $fileName;
@@ -185,7 +194,7 @@ class Zend_Reflection_File implements Reflector
     {
         $instance = new $reflectionClass($this);
         if (!$instance instanceof Zend_Reflection_Docblock) {
-            require_once 'Zend/Reflection/Exception.php';
+            // require_once 'Zend/Reflection/Exception.php';
             throw new Zend_Reflection_Exception('Invalid reflection class specified; must extend Zend_Reflection_Docblock');
         }
         return $instance;
@@ -203,7 +212,7 @@ class Zend_Reflection_File implements Reflector
         foreach ($this->_classes as $class) {
             $instance = new $reflectionClass($class);
             if (!$instance instanceof Zend_Reflection_Class) {
-                require_once 'Zend/Reflection/Exception.php';
+                // require_once 'Zend/Reflection/Exception.php';
                 throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Class');
             }
             $classes[] = $instance;
@@ -223,7 +232,7 @@ class Zend_Reflection_File implements Reflector
         foreach ($this->_functions as $function) {
             $instance = new $reflectionClass($function);
             if (!$instance instanceof Zend_Reflection_Function) {
-                require_once 'Zend/Reflection/Exception.php';
+                // require_once 'Zend/Reflection/Exception.php';
                 throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Function');
             }
             $functions[] = $instance;
@@ -246,7 +255,7 @@ class Zend_Reflection_File implements Reflector
             $selected = current($this->_classes);
             $instance = new $reflectionClass($selected);
             if (!$instance instanceof Zend_Reflection_Class) {
-                require_once 'Zend/Reflection/Exception.php';
+                // require_once 'Zend/Reflection/Exception.php';
                 throw new Zend_Reflection_Exception('Invalid reflection class given; must extend Zend_Reflection_Class');
             }
             return $instance;
@@ -255,13 +264,13 @@ class Zend_Reflection_File implements Reflector
         if (in_array($name, $this->_classes)) {
             $instance = new $reflectionClass($name);
             if (!$instance instanceof Zend_Reflection_Class) {
-                require_once 'Zend/Reflection/Exception.php';
+                // require_once 'Zend/Reflection/Exception.php';
                 throw new Zend_Reflection_Exception('Invalid reflection class given; must extend Zend_Reflection_Class');
             }
             return $instance;
         }
 
-        require_once 'Zend/Reflection/Exception.php';
+        // require_once 'Zend/Reflection/Exception.php';
         throw new Zend_Reflection_Exception('Class by name ' . $name . ' not found.');
     }
 
@@ -300,10 +309,11 @@ class Zend_Reflection_File implements Reflector
         $contents = $this->_contents;
         $tokens   = token_get_all($contents);
 
-        $functionTrapped = false;
-        $classTrapped    = false;
-        $requireTrapped  = false;
-        $openBraces      = 0;
+        $functionTrapped           = false;
+        $classTrapped              = false;
+        $requireTrapped            = false;
+        $embeddedVariableTrapped   = false;
+        $openBraces                = 0;
 
         $this->_checkFileDocBlock($tokens);
 
@@ -330,13 +340,23 @@ class Zend_Reflection_File implements Reflector
                 if ($token == '{') {
                     $openBraces++;
                 } else if ($token == '}') {
-                    $openBraces--;
+                    if ( $embeddedVariableTrapped ) {
+                        $embeddedVariableTrapped = false;
+                    } else {
+                        $openBraces--;
+                    }
                 }
 
                 continue;
             }
 
             switch ($type) {
+                case T_STRING_VARNAME:
+                case T_DOLLAR_OPEN_CURLY_BRACES:
+                case T_CURLY_OPEN:
+                    $embeddedVariableTrapped = true;
+                    continue;
+
                 // Name of something
                 case T_STRING:
                     if ($functionTrapped) {

@@ -15,14 +15,14 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /**
  * @see Zend_Form_Decorator_Abstract
  */
-require_once 'Zend/Form/Decorator/Abstract.php';
+// require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_Element_HtmlTag
@@ -43,9 +43,9 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HtmlTag.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: HtmlTag.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Form_Decorator_HtmlTag extends Zend_Form_Decorator_Abstract
 {
@@ -85,8 +85,9 @@ class Zend_Form_Decorator_HtmlTag extends Zend_Form_Decorator_Abstract
             $key = htmlspecialchars($key, ENT_COMPAT, $enc);
             if (is_array($val)) {
                 if (array_key_exists('callback', $val)
-                    && is_callable($val['callback'])) {
-                    $val = $val['callback']($this);
+                    && is_callable($val['callback'])
+                ) {
+                    $val = call_user_func($val['callback'], $this);
                 } else {
                     $val = implode(' ', $val);
                 }
@@ -108,9 +109,9 @@ class Zend_Form_Decorator_HtmlTag extends Zend_Form_Decorator_Abstract
     public function normalizeTag($tag)
     {
         if (!isset($this->_tagFilter)) {
-            require_once 'Zend/Filter.php';
-            require_once 'Zend/Filter/Alnum.php';
-            require_once 'Zend/Filter/StringToLower.php';
+            // require_once 'Zend/Filter.php';
+            // require_once 'Zend/Filter/Alnum.php';
+            // require_once 'Zend/Filter/StringToLower.php';
             $this->_tagFilter = new Zend_Filter();
             $this->_tagFilter->addFilter(new Zend_Filter_Alnum())
                              ->addFilter(new Zend_Filter_StringToLower());

@@ -15,51 +15,46 @@
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage Diagnostics
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 /**
- * @see Zend_Service_WindowsAzure_Diagnostics_Exception
- */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/Exception.php';
-
-/**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationObjectBaseAbstract
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationObjectBaseAbstract.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationObjectBaseAbstract.php';
 
 /**
  * @see Zend_Service_WindowsAzure_Diagnostics_ConfigurationDataSources
  */
-require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDataSources.php';
+// require_once 'Zend/Service/WindowsAzure/Diagnostics/ConfigurationDataSources.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service_WindowsAzure
  * @subpackage Diagnostics
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  *
- * @property Zend_Service_WindowsAzure_Diagnostics_ConfigurationDataSources    DataSources    Data sources
+ * @property Zend_Service_WindowsAzure_Diagnostics_ConfigurationDataSources	DataSources	Data sources
  */
 class Zend_Service_WindowsAzure_Diagnostics_ConfigurationInstance
-    extends Zend_Service_WindowsAzure_Diagnostics_ConfigurationObjectBaseAbstract
+	extends Zend_Service_WindowsAzure_Diagnostics_ConfigurationObjectBaseAbstract
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
         $this->_data = array(
-            'datasources'    => new Zend_Service_WindowsAzure_Diagnostics_ConfigurationDataSources()
+            'datasources'	=> new Zend_Service_WindowsAzure_Diagnostics_ConfigurationDataSources()
         );
-    }
+	}
 
 	/**
 	 * Load configuration XML
-	 *
+	 * 
 	 * @param string $configurationXml Configuration XML
 	 */
 	public function loadXml($configurationXml)
@@ -70,15 +65,15 @@ class Zend_Service_WindowsAzure_Diagnostics_ConfigurationInstance
 		// Assign general settings
 		$this->DataSources->OverallQuotaInMB = (int)$configurationXml->DataSources->OverallQuotaInMB;
 
-        // Assign Logs settings    
-        $this->DataSources->Logs->BufferQuotaInMB = (int)$configurationXml->DataSources->Logs->BufferQuotaInMB;
-        $this->DataSources->Logs->ScheduledTransferPeriodInMinutes = (int)$configurationXml->DataSources->Logs->ScheduledTransferPeriodInMinutes;
-        $this->DataSources->Logs->ScheduledTransferLogLevelFilter = (string)$configurationXml->DataSources->Logs->ScheduledTransferLogLevelFilter;
+		// Assign Logs settings	
+		$this->DataSources->Logs->BufferQuotaInMB = (int)$configurationXml->DataSources->Logs->BufferQuotaInMB;
+		$this->DataSources->Logs->ScheduledTransferPeriodInMinutes = (int)$configurationXml->DataSources->Logs->ScheduledTransferPeriodInMinutes;
+		$this->DataSources->Logs->ScheduledTransferLogLevelFilter = (string)$configurationXml->DataSources->Logs->ScheduledTransferLogLevelFilter;
 
-        // Assign DiagnosticInfrastructureLogs settings
-        $this->DataSources->DiagnosticInfrastructureLogs->BufferQuotaInMB = (int)$configurationXml->DataSources->DiagnosticInfrastructureLogs->BufferQuotaInMB;
-        $this->DataSources->DiagnosticInfrastructureLogs->ScheduledTransferPeriodInMinutes = (int)$configurationXml->DataSources->DiagnosticInfrastructureLogs->ScheduledTransferPeriodInMinutes;
-        $this->DataSources->DiagnosticInfrastructureLogs->ScheduledTransferLogLevelFilter = (string)$configurationXml->DataSources->DiagnosticInfrastructureLogs->ScheduledTransferLogLevelFilter;
+		// Assign DiagnosticInfrastructureLogs settings
+		$this->DataSources->DiagnosticInfrastructureLogs->BufferQuotaInMB = (int)$configurationXml->DataSources->DiagnosticInfrastructureLogs->BufferQuotaInMB;
+		$this->DataSources->DiagnosticInfrastructureLogs->ScheduledTransferPeriodInMinutes = (int)$configurationXml->DataSources->DiagnosticInfrastructureLogs->ScheduledTransferPeriodInMinutes;
+		$this->DataSources->DiagnosticInfrastructureLogs->ScheduledTransferLogLevelFilter = (string)$configurationXml->DataSources->DiagnosticInfrastructureLogs->ScheduledTransferLogLevelFilter;
 
 		// Assign PerformanceCounters settings
 		$this->DataSources->PerformanceCounters->BufferQuotaInMB = (int)$configurationXml->DataSources->PerformanceCounters->BufferQuotaInMB;
@@ -116,9 +111,10 @@ class Zend_Service_WindowsAzure_Diagnostics_ConfigurationInstance
 		// Assign Directories settings
 		$this->DataSources->Directories->BufferQuotaInMB = (int)$configurationXml->DataSources->Directories->BufferQuotaInMB;
 		$this->DataSources->Directories->ScheduledTransferPeriodInMinutes = (int)$configurationXml->DataSources->Directories->ScheduledTransferPeriodInMinutes;
+
 		if ($configurationXml->DataSources->Directories->Subscriptions
 			&& $configurationXml->DataSources->Directories->Subscriptions->DirectoryConfiguration) {
-			$subscriptions = $configurationXml->DataSources->WindowsEventLog->Subscriptions;
+			$subscriptions = $configurationXml->DataSources->Directories->Subscriptions;
 			if (count($subscriptions->DirectoryConfiguration) > 1) {
 				$subscriptions = $subscriptions->DirectoryConfiguration;
 			} else {
@@ -132,7 +128,7 @@ class Zend_Service_WindowsAzure_Diagnostics_ConfigurationInstance
 	
 	/**
 	 * Create configuration XML
-	 *
+	 * 
 	 * @return string
 	 */
 	public function toXml()
@@ -212,6 +208,7 @@ class Zend_Service_WindowsAzure_Diagnostics_ConfigurationInstance
 		$returnValue[] = '    </Directories>';
 		
 		$returnValue[] = '  </DataSources>';
+		$returnValue[] = '  <IsDefault>false</IsDefault>';
 		$returnValue[] = '</ConfigRequest>';
 		
 		// Return

@@ -14,15 +14,15 @@
  *
  * @category   Zend
  * @package    Zend_View
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PaginationControl.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: PaginationControl.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @category   Zend
  * @package    Zend_View
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_PaginationControl
@@ -94,7 +94,7 @@ class Zend_View_Helper_PaginationControl
                 /**
                  * @see Zend_View_Exception
                  */
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
 
                 $e = new Zend_View_Exception('No paginator instance provided or incorrect type');
                 $e->setView($this->view);
@@ -107,7 +107,7 @@ class Zend_View_Helper_PaginationControl
                 /**
                  * @see Zend_View_Exception
                  */
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception('No view partial provided and no default set');
                 $e->setView($this->view);
                 throw $e;
@@ -127,7 +127,7 @@ class Zend_View_Helper_PaginationControl
                 /**
                  * @see Zend_View_Exception
                  */
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception('A view partial supplied as an array must contain two values: the filename and its module');
                 $e->setView($this->view);
                 throw $e;

@@ -17,24 +17,24 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
     
     public function listAction () {
         
-        if($this->_getParam("xaction") == "destroy") {
-            $item = Element_Recyclebin_Item::getById($this->_getParam("data"));
+        if($this->getParam("xaction") == "destroy") {
+            $item = Element_Recyclebin_Item::getById($this->getParam("data"));
             $item->delete();
  
             $this->_helper->json(array("success" => true, "data" => array()));
         }
         else {
             $list = new Element_Recyclebin_Item_List();
-            $list->setLimit($this->_getParam("limit"));
-            $list->setOffset($this->_getParam("start"));
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
 
-            if($this->_getParam("sort")) {
-                $list->setOrderKey($this->_getParam("sort"));
-                $list->setOrder($this->_getParam("dir"));
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+                $list->setOrder($this->getParam("dir"));
             }
 
-            if($this->_getParam("filter")) {
-                $list->setCondition("path LIKE " . $list->quote("%".$this->_getParam("filter")."%"));
+            if($this->getParam("filter")) {
+                $list->setCondition("path LIKE " . $list->quote("%".$this->getParam("filter")."%"));
             }
             
             $items = $list->load();
@@ -44,7 +44,7 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
     }
     
     public function restoreAction () {
-        $item = Element_Recyclebin_Item::getById($this->_getParam("id"));
+        $item = Element_Recyclebin_Item::getById($this->getParam("id"));
         $item->restore();
  
         $this->_helper->json(array("success" => true));
@@ -59,7 +59,7 @@ class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
 
     public function addAction () {
 
-        $element = Element_Service::getElementById($this->_getParam("type"), $this->_getParam("id"));
+        $element = Element_Service::getElementById($this->getParam("type"), $this->getParam("id"));
 
         if($element) {
             Element_Recyclebin_Item::create($element, $this->getUser());

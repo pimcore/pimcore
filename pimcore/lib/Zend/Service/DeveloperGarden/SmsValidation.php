@@ -15,66 +15,66 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SmsValidation.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: SmsValidation.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Service_DeveloperGarden_Client_ClientAbstract
  */
-require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
+// require_once 'Zend/Service/DeveloperGarden/Client/ClientAbstract.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SmsValidation_GetValidatedNumbers
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/GetValidatedNumbers.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/GetValidatedNumbers.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_GetValidatedNumbersResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/GetValidatedNumbersResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/GetValidatedNumbersResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_ValidatedNumber
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/ValidatedNumber.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/ValidatedNumber.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SmsValidation_SendValidationKeyword
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/SendValidationKeyword.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/SendValidationKeyword.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_SendValidationKeywordResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/SendValidationKeywordResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/SendValidationKeywordResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SmsValidation_Validate
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/Validate.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/Validate.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_ValidateResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/ValidateResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/ValidateResponse.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Request_SmsValidation_Invalidate
  */
-require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/Invalidate.php';
+// require_once 'Zend/Service/DeveloperGarden/Request/SmsValidation/Invalidate.php';
 
 /**
  * @see Zend_Service_DeveloperGarden_Response_SmsValidation_InvalidateResponse
  */
-require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/InvalidateResponse.php';
+// require_once 'Zend/Service/DeveloperGarden/Response/SmsValidation/InvalidateResponse.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage DeveloperGarden
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @author     Marco Kaiser
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */

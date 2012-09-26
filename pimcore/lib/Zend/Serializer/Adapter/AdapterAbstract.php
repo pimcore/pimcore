@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_Serializer
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AdapterAbstract.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: AdapterAbstract.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** @see Zend_Serializer_Adapter_AdapterInterface */
-require_once 'Zend/Serializer/Adapter/AdapterInterface.php';
+// require_once 'Zend/Serializer/Adapter/AdapterInterface.php';
 
 /**
  * @category   Zend
  * @package    Zend_Serializer
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Serializer_Adapter_AdapterAbstract implements Zend_Serializer_Adapter_AdapterInterface
@@ -103,7 +103,7 @@ abstract class Zend_Serializer_Adapter_AdapterAbstract implements Zend_Serialize
     {
         $name = (string) $name;
         if (!array_key_exists($name, $this->_options)) {
-            require_once 'Zend/Serializer/Exception.php';
+            // require_once 'Zend/Serializer/Exception.php';
             throw new Zend_Serializer_Exception('Unknown option name "'.$name.'"');
         }
 

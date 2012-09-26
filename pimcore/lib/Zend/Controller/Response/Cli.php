@@ -14,14 +14,14 @@
  *
  * @category   Zend
  * @package    Zend_Controller
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Cli.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Cli.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Zend_Controller_Response_Abstract */
-require_once 'Zend/Controller/Response/Abstract.php';
+// require_once 'Zend/Controller/Response/Abstract.php';
 
 
 /**
@@ -32,7 +32,7 @@ require_once 'Zend/Controller/Response/Abstract.php';
  * @uses Zend_Controller_Response_Abstract
  * @package Zend_Controller
  * @subpackage Response
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Controller_Response_Cli extends Zend_Controller_Response_Abstract

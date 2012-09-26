@@ -215,6 +215,7 @@ pimcore.document.tree = Class.create({
         this.select();
 
         var pasteMenu = [];
+        var pasteInheritanceMenu = [];
 
         var menu = new Ext.menu.Menu();
         //ckogler added "email"
@@ -228,6 +229,8 @@ pimcore.document.tree = Class.create({
                 email : [], //ckogler
                 ref: this
             };
+
+            document_types.sort([ { field : 'priority', direction: 'DESC' }, { field : 'name', direction: 'ASC' } ],'DESC');
 
             document_types.each(function(record) {
                 if (record.get("type") == "page") {
@@ -314,7 +317,6 @@ pimcore.document.tree = Class.create({
                 handler: this.attributes.reference.addDocument.bind(this, "folder")
             }));
 
-
             //paste
             if (this.attributes.reference.cacheDocumentId && this.attributes.permissions.create) {
                 pasteMenu.push({
@@ -331,6 +333,22 @@ pimcore.document.tree = Class.create({
                     text: t("paste_as_child"),
                     iconCls: "pimcore_icon_paste",
                     handler: this.attributes.reference.pasteInfo.bind(this, "child")
+                });
+
+                pasteInheritanceMenu.push({
+                    text: t("paste_recursive_as_childs"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.attributes.reference.pasteInfo.bind(this, "recursive", true)
+                });
+                pasteInheritanceMenu.push({
+                    text: t("paste_recursive_updating_references"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.attributes.reference.pasteInfo.bind(this, "recursive-update-references", true)
+                });
+                pasteInheritanceMenu.push({
+                    text: t("paste_as_child"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.attributes.reference.pasteInfo.bind(this, "child", true)
                 });
             }
         }
@@ -368,6 +386,15 @@ pimcore.document.tree = Class.create({
             }));
         }
 
+        if(pasteInheritanceMenu.length > 0) {
+            menu.add(new Ext.menu.Item({
+                text: t('paste_inheritance'),
+                iconCls: "pimcore_icon_paste",
+                hideOnClick: false,
+                menu: pasteInheritanceMenu
+            }));
+        }
+
         if (this.id != 1) {
             menu.add(new Ext.menu.Item({
                 text: t('copy'),
@@ -392,9 +419,41 @@ pimcore.document.tree = Class.create({
             }));
         }
 
+        menu.add(new Ext.menu.Item({
+            text: t('convert_to'),
+            iconCls: "pimcore_icon_convert",
+            hideOnClick: false,
+            menu: [{
+                text: t("page"),
+                iconCls: "pimcore_icon_page",
+                handler: this.attributes.reference.convert.bind(this, "page"),
+                hidden: this.attributes.type == "page"
+            }, {
+                text: t("snippet"),
+                iconCls: "pimcore_icon_snippet",
+                handler: this.attributes.reference.convert.bind(this, "snippet"),
+                hidden: this.attributes.type == "snippet"
+            }, {
+                text: t("email"),
+                iconCls: "pimcore_icon_email",
+                handler: this.attributes.reference.convert.bind(this, "email"),
+                hidden: this.attributes.type == "email"
+            },{
+                text: t("link"),
+                iconCls: "pimcore_icon_link",
+                handler: this.attributes.reference.convert.bind(this, "link"),
+                hidden: this.attributes.type == "link"
+            }, {
+                text: t("hardlink"),
+                iconCls: "pimcore_icon_hardlink",
+                handler: this.attributes.reference.convert.bind(this, "hardlink"),
+                hidden: this.attributes.type == "hardlink"
+            }]
+        }));
+
         //publish
-        if (this.attributes.permissions.publish && this.attributes.type != "folder" && !this.attributes.locked) {
-            if (this.attributes.published) {
+        if (this.attributes.permissions.publish && this.attributes.type != "folder") {
+            if (this.attributes.published && !this.attributes.locked) {
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
                     iconCls: "pimcore_icon_tree_unpublish",
@@ -407,7 +466,6 @@ pimcore.document.tree = Class.create({
                     handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type, this.attributes.id, 'publish')
                 }));
             }
-
         }
 
 
@@ -506,6 +564,16 @@ pimcore.document.tree = Class.create({
             }
         }
 
+        if (this.attributes.type == "page") {
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_openpage",
+                handler: function () {
+                    window.open(this.attributes.path);
+                }.bind(this)
+            }));
+        }
+
         if (this.reload) {
             menu.add(new Ext.menu.Item({
                 text: t('refresh'),
@@ -557,17 +625,22 @@ pimcore.document.tree = Class.create({
 
     },
 
-    pasteInfo: function (type) {
+    pasteInfo: function (type, enableInheritance) {
         //this.attributes.reference.tree.loadMask.show();
 
         pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
+
+        if(enableInheritance !== true) {
+            enableInheritance = false;
+        }
 
         Ext.Ajax.request({
             url: "/admin/document/copy-info/",
             params: {
                 targetId: this.id,
                 sourceId: this.attributes.reference.cacheDocumentId,
-                type: type
+                type: type,
+                enableInheritance: enableInheritance
             },
             success: this.attributes.reference.paste.bind(this)
         });
@@ -886,6 +959,34 @@ pimcore.document.tree = Class.create({
 
     deleteDocument : function () {
         pimcore.helpers.deleteDocument(this.id);
+    },
+
+    convert: function (type) {
+        Ext.MessageBox.show({
+            title:t('are_you_sure'),
+            msg: t("all_content_will_be_lost"),
+            buttons: Ext.Msg.OKCANCEL ,
+            icon: Ext.MessageBox.INFO ,
+            fn: function (type, button) {
+
+                if (pimcore.globalmanager.exists("document_" + this.id)) {
+                    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                    tabPanel.remove("document_" + this.id);
+                }
+
+                Ext.Ajax.request({
+                    url: "/admin/document/convert/",
+                    method: "post",
+                    params: {
+                        id: this.id,
+                        type: type
+                    },
+                    success: function () {
+                        this.parentNode.reload();
+                    }.bind(this)
+                });
+            }.bind(this, type)
+        });
     },
 
     isKeyValid: function (key) {

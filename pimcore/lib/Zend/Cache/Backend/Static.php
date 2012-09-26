@@ -15,25 +15,25 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Static.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Static.php 24989 2012-06-21 07:24:13Z mabe $
  */
 
 /**
  * @see Zend_Cache_Backend_Interface
  */
-require_once 'Zend/Cache/Backend/Interface.php';
+// require_once 'Zend/Cache/Backend/Interface.php';
 
 /**
  * @see Zend_Cache_Backend
  */
-require_once 'Zend/Cache/Backend.php';
+// require_once 'Zend/Cache/Backend.php';
 
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cache_Backend_Static
@@ -99,17 +99,13 @@ class Zend_Cache_Backend_Static
      */
     public function getOption($name)
     {
+        $name = strtolower($name);
+
         if ($name == 'tag_cache') {
             return $this->getInnerCache();
-        } else {
-            if (in_array($name, $this->_options)) {
-                return $this->_options[$name];
-            }
-            if ($name == 'lifetime') {
-                return parent::getLifetime();
-            }
-            return null;
         }
+
+        return parent::getOption($name);
     }
 
     /**

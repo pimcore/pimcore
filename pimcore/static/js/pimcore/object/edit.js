@@ -92,7 +92,7 @@ pimcore.object.edit = Class.create({
         }
     },
 
-    getValues: function () {
+    getValues: function (omitMandatoryCheck) {
 
         if (!this.layout.rendered) {
             throw "edit not available";
@@ -136,7 +136,7 @@ pimcore.object.edit = Class.create({
             }
         }
 
-        if (invalidMandatoryFields.length > 0) {
+        if (invalidMandatoryFields.length > 0 && !omitMandatoryCheck) {
             Ext.MessageBox.alert(t("error"), t("mandatory_field_empty") + "<br />- " + invalidMandatoryFields.join("<br />- "));
             return false;
         }

@@ -16,20 +16,20 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PlaylistListFeed.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: PlaylistListFeed.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Media_Feed
  */
-require_once 'Zend/Gdata/Media/Feed.php';
+// require_once 'Zend/Gdata/Media/Feed.php';
 
 /**
  * @see Zend_Gdata_YouTube_PlaylistListEntry
  */
-require_once 'Zend/Gdata/YouTube/PlaylistListEntry.php';
+// require_once 'Zend/Gdata/YouTube/PlaylistListEntry.php';
 
 /**
  * The YouTube video playlist flavor of an Atom Feed with media support
@@ -39,7 +39,7 @@ require_once 'Zend/Gdata/YouTube/PlaylistListEntry.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube_PlaylistListFeed extends Zend_Gdata_Media_Feed

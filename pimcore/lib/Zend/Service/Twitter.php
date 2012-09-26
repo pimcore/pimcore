@@ -15,31 +15,31 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Twitter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Twitter.php 23877 2011-04-28 20:17:01Z ralph $
+ * @version    $Id: Twitter.php 25024 2012-07-30 15:08:15Z rob $
  */
 
 /**
  * @see Zend_Rest_Client
  */
-require_once 'Zend/Rest/Client.php';
+// require_once 'Zend/Rest/Client.php';
 
 /**
  * @see Zend_Rest_Client_Result
  */
-require_once 'Zend/Rest/Client/Result.php';
+// require_once 'Zend/Rest/Client/Result.php';
 
 /**
  * @see Zend_Oauth_Consumer
  */
-require_once 'Zend/Oauth/Consumer.php';
+// require_once 'Zend/Oauth/Consumer.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Twitter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Twitter extends Zend_Rest_Client
@@ -278,7 +278,7 @@ class Zend_Service_Twitter extends Zend_Rest_Client
     protected function _init()
     {
         if (!$this->isAuthorised() && $this->getUsername() !== null) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Twitter session is unauthorised. You need to initialize '
                 . 'Zend_Service_Twitter with an OAuth Access Token or use '
@@ -956,7 +956,7 @@ class Zend_Service_Twitter extends Zend_Rest_Client
     protected function _validateScreenName($name)
     {
         if (!preg_match('/^[a-zA-Z0-9_]{0,15}$/', $name)) {
-            require_once 'Zend/Service/Twitter/Exception.php';
+            // require_once 'Zend/Service/Twitter/Exception.php';
             throw new Zend_Service_Twitter_Exception(
                 'Screen name, "' . $name
                 . '" should only contain alphanumeric characters and'
@@ -976,7 +976,7 @@ class Zend_Service_Twitter extends Zend_Rest_Client
     {
         // Get the URI object and configure it
         if (!$this->_uri instanceof Zend_Uri_Http) {
-            require_once 'Zend/Rest/Client/Exception.php';
+            // require_once 'Zend/Rest/Client/Exception.php';
             throw new Zend_Rest_Client_Exception(
                 'URI object must be set before performing call'
             );

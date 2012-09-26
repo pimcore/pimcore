@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: HeadStyle.php 23775 2011-03-01 17:25:24Z ralph $
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: HeadStyle.php 24593 2012-01-05 20:35:02Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_View_Helper_Placeholder_Container_Standalone */
-require_once 'Zend/View/Helper/Placeholder/Container/Standalone.php';
+// require_once 'Zend/View/Helper/Placeholder/Container/Standalone.php';
 
 /**
  * Helper for setting and retrieving stylesheets
@@ -29,7 +29,7 @@ require_once 'Zend/View/Helper/Placeholder/Container/Standalone.php';
  * @uses       Zend_View_Helper_Placeholder_Container_Standalone
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_Standalone
@@ -146,7 +146,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
             }
 
             if (1 > $argc) {
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception(sprintf('Method "%s" requires minimally content for the stylesheet', $method));
                 $e->setView($this->view);
                 throw $e;
@@ -200,7 +200,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
     public function append($value)
     {
         if (!$this->_isValid($value)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('Invalid value passed to append; please use appendStyle()');
             $e->setView($this->view);
             throw $e;
@@ -219,7 +219,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
     public function offsetSet($index, $value)
     {
         if (!$this->_isValid($value)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('Invalid value passed to offsetSet; please use offsetSetStyle()');
             $e->setView($this->view);
             throw $e;
@@ -237,7 +237,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
     public function prepend($value)
     {
         if (!$this->_isValid($value)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('Invalid value passed to prepend; please use prependStyle()');
             $e->setView($this->view);
             throw $e;
@@ -255,7 +255,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
     public function set($value)
     {
         if (!$this->_isValid($value)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('Invalid value passed to set; please use setStyle()');
             $e->setView($this->view);
             throw $e;
@@ -274,7 +274,7 @@ class Zend_View_Helper_HeadStyle extends Zend_View_Helper_Placeholder_Container_
     public function captureStart($type = Zend_View_Helper_Placeholder_Container_Abstract::APPEND, $attrs = null)
     {
         if ($this->_captureLock) {
-            require_once 'Zend/View/Helper/Placeholder/Container/Exception.php';
+            // require_once 'Zend/View/Helper/Placeholder/Container/Exception.php';
             $e = new Zend_View_Helper_Placeholder_Container_Exception('Cannot nest headStyle captures');
             $e->setView($this->view);
             throw $e;

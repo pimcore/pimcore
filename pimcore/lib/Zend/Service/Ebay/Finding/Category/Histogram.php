@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Histogram.php 22791 2010-08-04 16:11:47Z renanbr $
  */
@@ -23,13 +23,13 @@
 /**
  * @see Zend_Service_Ebay_Finding_Abstract
  */
-require_once 'Zend/Service/Ebay/Finding/Category.php';
+// require_once 'Zend/Service/Ebay/Finding/Category.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @uses       Zend_Service_Ebay_Finding_Category
  */
@@ -70,7 +70,7 @@ class Zend_Service_Ebay_Finding_Category_Histogram extends Zend_Service_Ebay_Fin
             /**
              * @see Zend_Service_Ebay_Finding_Category_Histogram_Set
              */
-            require_once 'Zend/Service/Ebay/Finding/Category/Histogram/Set.php';
+            // require_once 'Zend/Service/Ebay/Finding/Category/Histogram/Set.php';
             $this->childCategoryHistogram = new Zend_Service_Ebay_Finding_Category_Histogram_Set($nodes);
         }
     }

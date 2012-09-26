@@ -34,6 +34,7 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
             this.settings = new pimcore.document.emails.settings(this);
             this.logs     = new pimcore.document.emails.logs(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
+            this.notes = new pimcore.element.notes(this, "document");
         }
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
@@ -46,10 +47,6 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         this.preview = new pimcore.document.pages.preview(this);
         this.reports = new pimcore.report.panel("document_snippet", this);
     },
-
-
-
-
 
     getTabPanel: function () {
         var items = [];
@@ -72,6 +69,11 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         if(reportLayout) {
             items.push(reportLayout);
         }
+
+        if (this.isAllowed("settings")) {
+            items.push(this.notes.getLayout());
+        }
+
         var tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',

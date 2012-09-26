@@ -48,6 +48,10 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
 
     getLayout: function ($super) {
 
+        if(typeof this.datax.options != "object") {
+            this.datax.options = [];
+        }
+
         this.valueStore = new Ext.data.JsonStore({
             fields: ["key", "value"],
             data: this.datax.options

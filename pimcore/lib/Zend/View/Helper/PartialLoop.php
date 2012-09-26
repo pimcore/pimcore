@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: PartialLoop.php 23775 2011-03-01 17:25:24Z ralph $
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: PartialLoop.php 24593 2012-01-05 20:35:02Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_View_Helper_Partial */
-require_once 'Zend/View/Helper/Partial.php';
+// require_once 'Zend/View/Helper/Partial.php';
 
 /**
  * Helper for rendering a template fragment in its own variable scope; iterates
@@ -29,7 +29,7 @@ require_once 'Zend/View/Helper/Partial.php';
  *
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_PartialLoop extends Zend_View_Helper_Partial
@@ -70,7 +70,7 @@ class Zend_View_Helper_PartialLoop extends Zend_View_Helper_Partial
             && (!$model instanceof Traversable)
             && (is_object($model) && !method_exists($model, 'toArray'))
         ) {
-            require_once 'Zend/View/Helper/Partial/Exception.php';
+            // require_once 'Zend/View/Helper/Partial/Exception.php';
             $e = new Zend_View_Helper_Partial_Exception('PartialLoop helper requires iterable data');
             $e->setView($this->view);
             throw $e;

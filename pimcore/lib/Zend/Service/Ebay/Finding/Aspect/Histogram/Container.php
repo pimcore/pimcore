@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Container.php 22791 2010-08-04 16:11:47Z renanbr $
  */
@@ -23,13 +23,13 @@
 /**
  * @see Zend_Service_Ebay_Finding_Abstract
  */
-require_once 'Zend/Service/Ebay/Finding/Abstract.php';
+// require_once 'Zend/Service/Ebay/Finding/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @uses       Zend_Service_Ebay_Finding_Abstract
  */
@@ -99,7 +99,7 @@ class Zend_Service_Ebay_Finding_Aspect_Histogram_Container extends Zend_Service_
             /**
              * @see Zend_Service_Ebay_Finding_Aspect_Set
              */
-            require_once 'Zend/Service/Ebay/Finding/Aspect/Set.php';
+            // require_once 'Zend/Service/Ebay/Finding/Aspect/Set.php';
             $this->aspect = new Zend_Service_Ebay_Finding_Aspect_Set($nodes);
         }
     }

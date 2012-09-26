@@ -15,25 +15,25 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Abstract.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Service_Amazon_Abstract
  */
-require_once 'Zend/Service/Amazon/Abstract.php';
+// require_once 'Zend/Service/Amazon/Abstract.php';
 
 /**
  * @see Zend_Service_Amazon_Ec2_Response
  */
-require_once 'Zend/Service/Amazon/Ec2/Response.php';
+// require_once 'Zend/Service/Amazon/Ec2/Response.php';
 
 /**
  * @see Zend_Service_Amazon_Ec2_Exception
  */
-require_once 'Zend/Service/Amazon/Ec2/Exception.php';
+// require_once 'Zend/Service/Amazon/Ec2/Exception.php';
 
 /**
  * Provides the basic functionality to send a request to the Amazon Ec2 Query API
@@ -41,7 +41,7 @@ require_once 'Zend/Service/Amazon/Ec2/Exception.php';
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Service_Amazon_Ec2_Abstract extends Zend_Service_Amazon_Abstract
@@ -103,7 +103,7 @@ abstract class Zend_Service_Amazon_Ec2_Abstract extends Zend_Service_Amazon_Abst
         } else {
             // make rue the region is valid
             if(!empty($region) && !in_array(strtolower($region), self::$_validEc2Regions, true)) {
-                require_once 'Zend/Service/Amazon/Exception.php';
+                // require_once 'Zend/Service/Amazon/Exception.php';
                 throw new Zend_Service_Amazon_Exception('Invalid Amazon Ec2 Region');
             }
         }
@@ -124,7 +124,7 @@ abstract class Zend_Service_Amazon_Ec2_Abstract extends Zend_Service_Amazon_Abst
         if(in_array(strtolower($region), self::$_validEc2Regions, true)) {
             self::$_defaultRegion = $region;
         } else {
-            require_once 'Zend/Service/Amazon/Exception.php';
+            // require_once 'Zend/Service/Amazon/Exception.php';
             throw new Zend_Service_Amazon_Exception('Invalid Amazon Ec2 Region');
         }
     }
@@ -142,7 +142,7 @@ abstract class Zend_Service_Amazon_Ec2_Abstract extends Zend_Service_Amazon_Abst
     /**
      * Sends a HTTP request to the queue service using Zend_Http_Client
      *
-     * @param array $params         List of parameters to send with the request
+     * @param  array $params List of parameters to send with the request
      * @return Zend_Service_Amazon_Ec2_Response
      * @throws Zend_Service_Amazon_Ec2_Exception
      */
@@ -166,7 +166,7 @@ abstract class Zend_Service_Amazon_Ec2_Abstract extends Zend_Service_Amazon_Abst
             $request->setParameterPost($params);
 
             $httpResponse = $request->request();
-
+            
 
         } catch (Zend_Http_Client_Exception $zhce) {
             $message = 'Error in request to AWS service: ' . $zhce->getMessage();
@@ -245,7 +245,7 @@ abstract class Zend_Service_Amazon_Ec2_Abstract extends Zend_Service_Amazon_Abst
 
         $data .= implode('&', $arrData);
 
-        require_once 'Zend/Crypt/Hmac.php';
+        // require_once 'Zend/Crypt/Hmac.php';
         $hmac = Zend_Crypt_Hmac::compute($this->_getSecretKey(), 'SHA256', $data, Zend_Crypt_Hmac::BINARY);
 
         return base64_encode($hmac);

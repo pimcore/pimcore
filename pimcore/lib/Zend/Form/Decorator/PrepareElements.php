@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Form_Decorator_FormElements */
-require_once 'Zend/Form/Decorator/FormElements.php';
+// require_once 'Zend/Form/Decorator/FormElements.php';
 
 /**
  * Zend_Form_Decorator_PrepareElements
@@ -35,9 +35,9 @@ require_once 'Zend/Form/Decorator/FormElements.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PrepareElements.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: PrepareElements.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Form_Decorator_PrepareElements extends Zend_Form_Decorator_FormElements
 {

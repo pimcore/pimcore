@@ -32,10 +32,9 @@ class Pimcore_Tool_Frontend {
     public static function getSiteKey (Site $site = null) {
         // check for site
         if(!$site) {
-            try {
+            if(Zend_Registry::isRegistered("pimcore_site")) {
                 $site = Zend_Registry::get("pimcore_site");
-            }
-            catch (Exception $e) {
+            } else {
                 $site = false;
             }
         }

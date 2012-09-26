@@ -15,21 +15,21 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Response.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Response.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Http_Response
  */
-require_once 'Zend/Http/Response.php';
+// require_once 'Zend/Http/Response.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage Ec2
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_Ec2_Response {
@@ -118,7 +118,7 @@ class Zend_Service_Amazon_Ec2_Response {
         } catch (Zend_Http_Exception $e) {
             $body = false;
         }
-
+        
         if ($this->_document === null) {
             if ($body !== false) {
                 // turn off libxml error handling

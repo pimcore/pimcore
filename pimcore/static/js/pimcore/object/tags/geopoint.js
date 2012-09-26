@@ -145,10 +145,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: t("search")
         });
 
-        this.mapPanel = new Ext.Panel({
-            plain: true
-        });
-
         this.currentLocationTextNode = new Ext.Toolbar.TextItem({
             text: " - "
         });
@@ -216,7 +212,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
             this.reverseGeocodeInterval = window.setInterval(this.reverseGeocode.bind(this), 500)
 
-        }.bind(this))
+        }.bind(this));
 
         this.searchWindow.on("beforeclose", function () {
             clearInterval(this.reverseGeocodeInterval);

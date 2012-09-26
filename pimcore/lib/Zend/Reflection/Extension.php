@@ -14,25 +14,25 @@
  *
  * @category   Zend
  * @package    Zend_Reflection
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Extension.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Extension.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Reflection_Class
  */
-require_once 'Zend/Reflection/Class.php';
+// require_once 'Zend/Reflection/Class.php';
 
 /**
  * @see Zend_Reflection_Function
  */
-require_once 'Zend/Reflection/Function.php';
+// require_once 'Zend/Reflection/Function.php';
 
 /**
  * @category   Zend
  * @package    Zend_Reflection
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Reflection_Extension extends ReflectionExtension
@@ -50,7 +50,7 @@ class Zend_Reflection_Extension extends ReflectionExtension
         while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
             $instance = new $reflectionClass($phpReflection->getName());
             if (!$instance instanceof Zend_Reflection_Function) {
-                require_once 'Zend/Reflection/Exception.php';
+                // require_once 'Zend/Reflection/Exception.php';
                 throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Function');
             }
             $zendReflections[] = $instance;
@@ -73,7 +73,7 @@ class Zend_Reflection_Extension extends ReflectionExtension
         while ($phpReflections && ($phpReflection = array_shift($phpReflections))) {
             $instance = new $reflectionClass($phpReflection->getName());
             if (!$instance instanceof Zend_Reflection_Class) {
-                require_once 'Zend/Reflection/Exception.php';
+                // require_once 'Zend/Reflection/Exception.php';
                 throw new Zend_Reflection_Exception('Invalid reflection class provided; must extend Zend_Reflection_Class');
             }
             $zendReflections[] = $instance;

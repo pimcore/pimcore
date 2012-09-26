@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Abstract.php 22824 2010-08-09 18:59:54Z renanbr $
  */
@@ -23,13 +23,13 @@
 /**
  * @see Zend_Service_Ebay_Finding_Abstract
  */
-require_once 'Zend/Service/Ebay/Finding/Abstract.php';
+// require_once 'Zend/Service/Ebay/Finding/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @uses       Zend_Service_Ebay_Finding_Abstract
  */
@@ -127,7 +127,7 @@ abstract class Zend_Service_Ebay_Finding_Response_Abstract extends Zend_Service_
             /**
              * @see Zend_Service_Ebay_Finding_Error_Message
              */
-            require_once 'Zend/Service/Ebay/Finding/Error/Message.php';
+            // require_once 'Zend/Service/Ebay/Finding/Error/Message.php';
             $this->errorMessage = new Zend_Service_Ebay_Finding_Error_Message($node);
         }
     }

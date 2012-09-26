@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage Zend_Controller_Action
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Layout.php 23775 2011-03-01 17:25:24Z ralph $
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Layout.php 24593 2012-01-05 20:35:02Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Controller_Action_Helper_Abstract */
-require_once 'Zend/Controller/Action/Helper/Abstract.php';
+// require_once 'Zend/Controller/Action/Helper/Abstract.php';
 
 /**
  * Helper for interacting with Zend_Layout objects
@@ -30,7 +30,7 @@ require_once 'Zend/Controller/Action/Helper/Abstract.php';
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage Zend_Controller_Action
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action_Helper_Abstract
@@ -64,7 +64,7 @@ class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action
             /**
              * @see Zend_Layout
              */
-            require_once 'Zend/Layout.php';
+            // require_once 'Zend/Layout.php';
             $layout = Zend_Layout::getMvcInstance();
         }
 
@@ -94,7 +94,7 @@ class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action
             /**
              * @see Zend_Controller_Front
              */
-            require_once 'Zend/Controller/Front.php';
+            // require_once 'Zend/Controller/Front.php';
             $this->_frontController = Zend_Controller_Front::getInstance();
         }
 
@@ -112,7 +112,7 @@ class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action
             /**
              * @see Zend_Layout
              */
-            require_once 'Zend/Layout.php';
+            // require_once 'Zend/Layout.php';
             if (null === ($this->_layout = Zend_Layout::getMvcInstance())) {
                 $this->_layout = new Zend_Layout();
             }
@@ -180,7 +180,7 @@ class Zend_Layout_Controller_Action_Helper_Layout extends Zend_Controller_Action
             return call_user_func_array(array($layout, $method), $args);
         }
 
-        require_once 'Zend/Layout/Exception.php';
+        // require_once 'Zend/Layout/Exception.php';
         throw new Zend_Layout_Exception(sprintf("Invalid method '%s' called on layout action helper", $method));
     }
 }

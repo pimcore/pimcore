@@ -16,25 +16,25 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Spreadsheets
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: WorksheetEntry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: WorksheetEntry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Spreadsheets_Extension_RowCount
  */
-require_once 'Zend/Gdata/Spreadsheets/Extension/RowCount.php';
+// require_once 'Zend/Gdata/Spreadsheets/Extension/RowCount.php';
 
 /**
  * @see Zend_Gdata_Spreadsheets_Extension_ColCount
  */
-require_once 'Zend/Gdata/Spreadsheets/Extension/ColCount.php';
+// require_once 'Zend/Gdata/Spreadsheets/Extension/ColCount.php';
 
 /**
  * Concrete class for working with Worksheet entries.
@@ -42,7 +42,7 @@ require_once 'Zend/Gdata/Spreadsheets/Extension/ColCount.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Spreadsheets
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Spreadsheets_WorksheetEntry extends Zend_Gdata_Entry

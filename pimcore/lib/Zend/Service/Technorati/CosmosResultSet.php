@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CosmosResultSet.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: CosmosResultSet.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * @see Zend_Service_Technorati_ResultSet
  */
-require_once 'Zend/Service/Technorati/ResultSet.php';
+// require_once 'Zend/Service/Technorati/ResultSet.php';
 
 
 /**
@@ -33,7 +33,7 @@ require_once 'Zend/Service/Technorati/ResultSet.php';
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_ResultSet
@@ -91,7 +91,7 @@ class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_Re
             /**
              * @see Zend_Service_Technorati_Weblog
              */
-            require_once 'Zend/Service/Technorati/Weblog.php';
+            // require_once 'Zend/Service/Technorati/Weblog.php';
             $this->_weblog = new Zend_Service_Technorati_Weblog($result->item(0));
         }
 
@@ -170,7 +170,7 @@ class Zend_Service_Technorati_CosmosResultSet extends Zend_Service_Technorati_Re
         /**
          * @see Zend_Service_Technorati_CosmosResult
          */
-        require_once 'Zend/Service/Technorati/CosmosResult.php';
+        // require_once 'Zend/Service/Technorati/CosmosResult.php';
         return new Zend_Service_Technorati_CosmosResult($this->_results->item($this->_currentIndex));
     }
 }

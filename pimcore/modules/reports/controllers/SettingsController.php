@@ -35,7 +35,7 @@ class Reports_SettingsController extends Pimcore_Controller_Action_Admin_Reports
     public function saveAction () {
         if ($this->getUser()->isAllowed("system_settings")) {
             
-            $values = Zend_Json::decode($this->_getParam("data"));
+            $values = Zend_Json::decode($this->getParam("data"));
 
             $config = new Zend_Config($values, true);
             $writer = new Zend_Config_Writer_Xml(array(
@@ -47,89 +47,5 @@ class Reports_SettingsController extends Pimcore_Controller_Action_Admin_Reports
             $this->_helper->json(array("success" => true));
         } 
         $this->_helper->json(false);
-    }
-    
-    public function getAnalyticsProfilesAction () {
-        
-        $credentials = $this->getAnalyticsCredentials();
-        if($credentials) {
-            $username = $credentials["username"];
-            $password = $credentials["password"];
-        }
-        
-        if($this->_getParam("username") && $this->_getParam("password")) {
-            $username = $this->_getParam("username");
-            $password = $this->_getParam("password");
-        }
-        
-        try {
-            $client = Zend_Gdata_ClientLogin::getHttpClient($username, $password, Zend_Gdata_Analytics::AUTH_SERVICE_NAME, Pimcore_Tool::getHttpClient("Zend_Gdata_HttpClient"));
-    		$service = new Zend_Gdata_Analytics($client);
-    	
-    		$result = $service->getAccountFeed();
-         
-            
-            $data = array(
-                "data" => array()
-            );
-            
-            foreach ($result as $entry) {
-                $data["data"][] = array(
-                    "id" => (string) $entry->profileId, 
-                    "name" => (string) $entry->accountName . " | " . $entry->title,
-                    "trackid" => (string) $entry->webPropertyId,
-                    "accountid" => (string) $entry->accountId
-                );
-            }
-            
-            $this->_helper->json($data);
-        }
-        catch (Exception $e) {
-           $this->_helper->json(false); 
-        }
-    }
- 
-    public function getWebmastertoolsSitesAction () {
-        
-        $credentials = $this->getWebmastertoolsCredentials();
-        if($credentials) {
-            $username = $credentials["username"];
-            $password = $credentials["password"];
-        }
-        
-        if($this->_getParam("username") && $this->_getParam("password")) {
-            $username = $this->_getParam("username");
-            $password = $this->_getParam("password");
-        }
-        
-        try {
-            $client = Zend_Gdata_ClientLogin::getHttpClient($username, $password, "sitemaps", Pimcore_Tool::getHttpClient("Zend_Gdata_HttpClient"));
-    		$service = new Zend_Gdata($client);
-            
-            $data = $service->getFeed("https://www.google.com/webmasters/tools/feeds/sites/");
-            
-
-            foreach ($data->getEntry() as $e) {
-                
-                $verification = "";
-                // get verification filename
-                foreach ($e->getExtensionElements() as $d) {
-                    $a = $d->getExtensionAttributes();
-                    if($a["type"]["value"] == "htmlpage") {
-                        $verification = $d->getText();
-                        break;
-                    }
-                }
-     
-                $sites[] = array(
-                    "profile" => (string) $e->getTitle(),
-                    "verification" => $verification
-                );
-            }
-            $this->_helper->json(array("data" => $sites));
-        }
-        catch (Exception $e) {
-            $this->_helper->json(false);
-        }
     }
 }

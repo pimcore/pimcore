@@ -14,30 +14,30 @@
  *
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AtomAbstract.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: AtomAbstract.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** @see Zend_Feed_Writer_Feed */
-require_once 'Zend/Feed/Writer/Feed.php';
+// require_once 'Zend/Feed/Writer/Feed.php';
 
 /** @see Zend_Version */
-require_once 'Zend/Version.php';
+// require_once 'Zend/Version.php';
 
 /** @see Zend_Feed_Writer_Renderer_RendererInterface */
-require_once 'Zend/Feed/Writer/Renderer/RendererInterface.php';
+// require_once 'Zend/Feed/Writer/Renderer/RendererInterface.php';
 
 /** @see Zend_Feed_Writer_Renderer_Entry_Atom */
-require_once 'Zend/Feed/Writer/Renderer/Entry/Atom.php';
+// require_once 'Zend/Feed/Writer/Renderer/Entry/Atom.php';
 
 /** @see Zend_Feed_Writer_Renderer_RendererAbstract */
-require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
+// require_once 'Zend/Feed/Writer/Renderer/RendererAbstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Feed_Writer
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Writer_Renderer_Feed_Atom_AtomAbstract
@@ -79,7 +79,7 @@ class Zend_Feed_Writer_Renderer_Feed_Atom_AtomAbstract
     protected function _setTitle(DOMDocument $dom, DOMElement $root)
     {
         if(!$this->getDataContainer()->getTitle()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'Atom 1.0 feed elements MUST contain exactly one'
             . ' atom:title element but a title has not been set';
             $exception = new Zend_Feed_Exception($message);
@@ -127,7 +127,7 @@ class Zend_Feed_Writer_Renderer_Feed_Atom_AtomAbstract
     protected function _setDateModified(DOMDocument $dom, DOMElement $root)
     {
         if(!$this->getDataContainer()->getDateModified()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'Atom 1.0 feed elements MUST contain exactly one'
             . ' atom:updated element but a modification date has not been set';
             $exception = new Zend_Feed_Exception($message);
@@ -204,7 +204,7 @@ class Zend_Feed_Writer_Renderer_Feed_Atom_AtomAbstract
     {
         $flinks = $this->getDataContainer()->getFeedLinks();
         if(!$flinks || !array_key_exists('atom', $flinks)) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'Atom 1.0 feed elements SHOULD contain one atom:link '
             . 'element with a rel attribute value of "self".  This is the '
             . 'preferred URI for retrieving Atom Feed Documents representing '
@@ -279,7 +279,7 @@ class Zend_Feed_Writer_Renderer_Feed_Atom_AtomAbstract
     {
         if(!$this->getDataContainer()->getId()
         && !$this->getDataContainer()->getLink()) {
-            require_once 'Zend/Feed/Exception.php';
+            // require_once 'Zend/Feed/Exception.php';
             $message = 'Atom 1.0 feed elements MUST contain exactly one '
             . 'atom:id element, or as an alternative, we can use the same '
             . 'value as atom:link however neither a suitable link nor an '

@@ -27,35 +27,11 @@ pimcore.object.importer = Class.create({
 
     showUpload: function () {
 
-        var uploadPanel = new Ext.ux.SwfUploadPanel({
-            border: false,
-            upload_url: '/admin/object-helper/import-upload/?pimcore_admin_sid=' + pimcore.settings.sessionId,
-            debug: false,
-            flash_url: "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/swfupload.swf",
-            single_select: false,
-            post_params: { id: this.importId },
-            file_queue_limit: 1,
-            single_file_select: true,
-            file_types: "*.csv",
-            confirm_delete: false,
-            remove_completed: true,
-            listeners: {
-                "fileUploadComplete": function (upload, file) {
-                    this.getFileInfo();
-                }.bind(this)
-            }
+        pimcore.helpers.uploadDialog('/admin/object-helper/import-upload/?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.importId, "Filedata", function(res) {
+            this.getFileInfo();
+        }.bind(this), function () {
+            Ext.MessageBox.alert(t("error"), t("error"));
         });
-
-        this.uploadWin = new Ext.Window({
-            modal: true,
-            width: 400,
-            height: 140,
-            layout: "fit",
-            title: t("import"),
-            items: [uploadPanel]
-        });
-
-        this.uploadWin.show();
     },
 
     getFileInfo: function () {
@@ -72,8 +48,6 @@ pimcore.object.importer = Class.create({
     },
 
     getFileInfoComplete: function (response) {
-
-        this.uploadWin.close();
 
         var data = Ext.decode(response.responseText);
 

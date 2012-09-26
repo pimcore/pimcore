@@ -54,6 +54,10 @@ class Asset_Image_Thumbnail_Config {
      */
     public $quality = 90;
 
+    /**
+     * @var string
+     */
+    public $colorspace;
 
     /**
      * @static
@@ -63,7 +67,7 @@ class Asset_Image_Thumbnail_Config {
     public static function getByName ($name) {
         $pipe = new self();
         $pipe->setName($name);
-        if(!$pipe->load()) {
+        if(!is_readable($pipe->getConfigFile()) || !$pipe->load()) {
             throw new Exception("thumbnail definition : " . $name . " does not exist");
         }
 
@@ -254,7 +258,7 @@ class Asset_Image_Thumbnail_Config {
     public function setQuality($quality)
     {
         if($quality) {
-            $this->quality = $quality;
+            $this->quality = (int) $quality;
         }
     }
 
@@ -377,5 +381,21 @@ class Asset_Image_Thumbnail_Config {
         }
 
         return $pipe;
+    }
+
+    /**
+     * @param string $colorspace
+     */
+    public function setColorspace($colorspace)
+    {
+        $this->colorspace = $colorspace;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColorspace()
+    {
+        return $this->colorspace;
     }
 }

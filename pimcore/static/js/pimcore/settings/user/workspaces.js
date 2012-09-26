@@ -31,7 +31,8 @@ pimcore.settings.user.workspaces = Class.create({
         this.panel = new Ext.Panel({
             title: t("workspaces"),
             bodyStyle: "padding:10px;",
-            items: [this.asset.getPanel(),this.document.getPanel(),this.object.getPanel()]
+            autoScroll: true,
+            items: [this.document.getPanel(), this.asset.getPanel(), this.object.getPanel()]
         });
 
         return this.panel;

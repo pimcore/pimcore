@@ -14,9 +14,9 @@
  *
  * @category  Zend
  * @package   Zend_Text_Figlet
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: Figlet.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version   $Id: Figlet.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -24,7 +24,7 @@
  *
  * @category  Zend
  * @package   Zend_Text_Figlet
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Text_Figlet
@@ -447,7 +447,7 @@ class Zend_Text_Figlet
         $textLength     = @iconv_strlen($text, 'UTF-8');
 
         if ($textLength === false) {
-            require_once 'Zend/Text/Figlet/Exception.php';
+            // require_once 'Zend/Text/Figlet/Exception.php';
             throw new Zend_Text_Figlet_Exception('$text is not encoded with ' . $encoding);
         }
 
@@ -968,14 +968,14 @@ class Zend_Text_Figlet
     {
         // Check if the font file exists
         if (!file_exists($fontFile)) {
-            require_once 'Zend/Text/Figlet/Exception.php';
+            // require_once 'Zend/Text/Figlet/Exception.php';
             throw new Zend_Text_Figlet_Exception($fontFile . ': Font file not found');
         }
 
         // Check if gzip support is required
         if (substr($fontFile, -3) === '.gz') {
             if (!function_exists('gzcompress')) {
-                require_once 'Zend/Text/Figlet/Exception.php';
+                // require_once 'Zend/Text/Figlet/Exception.php';
                 throw new Zend_Text_Figlet_Exception('GZIP library is required for '
                                                      . 'gzip compressed font files');
             }
@@ -989,7 +989,7 @@ class Zend_Text_Figlet
         // Try to open the file
         $fp = fopen($fontFile, 'rb');
         if ($fp === false) {
-            require_once 'Zend/Text/Figlet/Exception.php';
+            // require_once 'Zend/Text/Figlet/Exception.php';
             throw new Zend_Text_Figlet_Exception($fontFile . ': Could not open file');
         }
 
@@ -1013,7 +1013,7 @@ class Zend_Text_Figlet
                            $this->_fontSmush);
 
         if ($magic !== self::FONTFILE_MAGIC_NUMBER || $numsRead < 5) {
-            require_once 'Zend/Text/Figlet/Exception.php';
+            // require_once 'Zend/Text/Figlet/Exception.php';
             throw new Zend_Text_Figlet_Exception($fontFile . ': Not a FIGlet 2 font file');
         }
 

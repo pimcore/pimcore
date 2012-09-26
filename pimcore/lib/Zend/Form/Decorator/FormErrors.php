@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
+// require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_FormErrors
@@ -32,9 +32,9 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FormErrors.php 23853 2011-04-10 16:06:30Z ramon $
+ * @version    $Id: FormErrors.php 24869 2012-06-02 02:09:54Z adamlundrigan $
  */
 class Zend_Form_Decorator_FormErrors extends Zend_Form_Decorator_Abstract
 {
@@ -68,6 +68,12 @@ class Zend_Form_Decorator_FormErrors extends Zend_Form_Decorator_Abstract
     protected $_markupListItemStart;
     protected $_markupListStart;
     /**#@-*/
+
+    /**
+     * Whether or not to escape error label and error message
+     * @var bool
+     */
+    protected $_escape;
 
     /**
      * Render errors
@@ -405,6 +411,41 @@ class Zend_Form_Decorator_FormErrors extends Zend_Form_Decorator_Abstract
     }
 
     /**
+     * Set whether or not to escape error label and error message
+     *
+     * Sets also the 'escape' option for the view helper
+     *
+     * @param  bool $flag
+     * @return Zend_Form_Decorator_FormErrors
+     */
+    public function setEscape($flag)
+    {
+        $this->_escape = (bool) $flag;
+
+        // Set also option for view helper
+        $this->setOption('escape', $this->_escape);
+        return $this;
+    }
+
+    /**
+     * Get escape flag
+     *
+     * @return bool
+     */
+    public function getEscape()
+    {
+        if (null === $this->_escape) {
+            if (null !== ($escape = $this->getOption('escape'))) {
+                $this->setEscape($escape);
+            } else {
+                $this->setEscape(true);
+            }
+        }
+
+        return $this->_escape;
+    }
+
+    /**
      * Render element label
      *
      * @param  Zend_Form_Element $element
@@ -418,8 +459,12 @@ class Zend_Form_Decorator_FormErrors extends Zend_Form_Decorator_Abstract
             $label = $element->getName();
         }
 
+        if ($this->getEscape()) {
+            $label = $view->escape($label);
+        }
+
         return $this->getMarkupElementLabelStart()
-             . $view->escape($label)
+             . $label
              . $this->getMarkupElementLabelEnd();
     }
 

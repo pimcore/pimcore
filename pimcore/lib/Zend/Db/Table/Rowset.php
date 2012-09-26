@@ -16,16 +16,16 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Table
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Rowset.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Rowset.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * @see Zend_Db_Table_Rowset_Abstract
  */
-require_once 'Zend/Db/Table/Rowset/Abstract.php';
+// require_once 'Zend/Db/Table/Rowset/Abstract.php';
 
 
 /**
@@ -35,7 +35,7 @@ require_once 'Zend/Db/Table/Rowset/Abstract.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Table
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract

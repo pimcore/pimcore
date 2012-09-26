@@ -62,7 +62,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
                 animate:true,
                 containerScroll: true,
                 border: true,
-                width: 200,
+                width: 250,
                 split: true,
                 root: {
                     nodeType: 'async',
@@ -113,26 +113,36 @@ pimcore.settings.tagmanagement.panel = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'click' : this.onTreeNodeClick,
+            'click' : this.onTreeNodeClick.bind(this),
             "contextmenu": this.onTreeNodeContextmenu
         };
 
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function () {
+    onTreeNodeClick: function (node) {
+        this.openTag(node.id);
+    },
+
+    openTag: function (id) {
+
+        var existingPanel = Ext.getCmp("pimcore_tagmanagement_panel_" + id);
+        if(existingPanel) {
+            this.editPanel.activate(existingPanel);
+            return;
+        }
 
         Ext.Ajax.request({
             url: "/admin/settings/tag-management-get",
             params: {
-                name: this.id
+                name: id
             },
             success: function (response) {
                 var data = Ext.decode(response.responseText);
 
                 var fieldPanel = new pimcore.settings.tagmanagement.item(data, this);
                 pimcore.layout.refresh();
-            }.bind(this.attributes.reference)
+            }.bind(this)
         });
     },
 
@@ -156,7 +166,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
     addFieldComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z0-9_\-]+/);
-        if (button == "ok" && value.length > 2 && regresult == value) {
+        if (button == "ok" && value.length > 0 && regresult == value) {
             Ext.Ajax.request({
                 url: "/admin/settings/tag-management-add",
                 params: {
@@ -169,6 +179,8 @@ pimcore.settings.tagmanagement.panel = Class.create({
 
                     if(!data || !data.success) {
                         Ext.Msg.alert(t('add_tag'), t('problem_creating_new_tag'));
+                    } else {
+                        this.openTag(data.id);
                     }
                 }.bind(this)
             });
@@ -191,11 +203,6 @@ pimcore.settings.tagmanagement.panel = Class.create({
 
         this.attributes.reference.getEditPanel().removeAll();
         this.remove();
-    },
-
-    activate: function () {
-        Ext.getCmp("pimcore_panel_tabs").activate("pimcore_tagmanagement");
     }
-
 });
 

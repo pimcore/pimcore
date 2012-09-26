@@ -14,22 +14,22 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: IsCompressed.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version   $Id: IsCompressed.php 24702 2012-03-28 20:08:40Z rob $
  */
 
 /**
  * @see Zend_Validate_File_MimeType
  */
-require_once 'Zend/Validate/File/MimeType.php';
+// require_once 'Zend/Validate/File/MimeType.php';
 
 /**
  * Validator which checks if the file already exists in the directory
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_IsCompressed extends Zend_Validate_File_MimeType
@@ -94,6 +94,7 @@ class Zend_Validate_File_IsCompressed extends Zend_Validate_File_MimeType
             'application/x-stuffit',
             'application/x-tar',
             'application/zip',
+            'application/x-zip',
             'application/zoo',
             'multipart/x-gzip',
         );

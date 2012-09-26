@@ -50,11 +50,13 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
                 $this->model->setId($id);
             }
 
-            $data = $this->db->fetchRow("SELECT * FROM documents LEFT JOIN documents_page ON documents.id = documents_page.id WHERE documents.id = ?", $this->model->getId());
+            $data = $this->db->fetchRow("SELECT documents.*, documents_page.*, tree_locks.locked FROM documents
+                LEFT JOIN documents_page ON documents.id = documents_page.id
+                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                    WHERE documents.id = ?", $this->model->getId());
 
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
-                $this->loadLocks();
             }
             else {
                 throw new Exception("Page with the ID " . $this->model->getId() . " doesn't exists");

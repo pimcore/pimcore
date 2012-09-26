@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Filter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Not.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Not.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Ldap_Filter_Abstract
  */
-require_once 'Zend/Ldap/Filter/Abstract.php';
+// require_once 'Zend/Ldap/Filter/Abstract.php';
 
 /**
  * Zend_Ldap_Filter_Not provides a negation filter.
@@ -31,7 +31,7 @@ require_once 'Zend/Ldap/Filter/Abstract.php';
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Filter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Ldap_Filter_Not extends Zend_Ldap_Filter_Abstract

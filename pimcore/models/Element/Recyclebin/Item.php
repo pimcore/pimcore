@@ -16,24 +16,64 @@
  */
  
 class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
-    
+
+    /**
+     * @var int
+     */
     public $id;
+
+    /**
+     * @var string
+     */
     public $path;
+
+    /**
+     * @var string
+     */
     public $type;
+
+    /**
+     * @var string
+     */
     public $subtype;
+
+    /**
+     * @var int
+     */
     public $amount = 0;
+
+    /**
+     * @var Element_Interface
+     */
     public $element;
+
+    /**
+     * @var int
+     */
     public $date;
+
+    /**
+     * @var string
+     */
     public $deletedby;
-   
-        
+
+    /**
+     * @static
+     * @param Element_Interface $element
+     * @param User $user
+     */
     public static function create (Element_Interface $element, User $user) {
         
         $item = new self();
         $item->setElement($element);
         $item->save($user);
     }
-    
+
+    /**
+     * @static
+     * @param $id
+     * @return Element_Recyclebin_Item
+     */
     public static function getById ($id) {
         
         $item = new self();
@@ -41,8 +81,10 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         
         return $item;
     }
-    
-    
+
+    /**
+     *
+     */
     public function restore () {
         
         $raw = file_get_contents($this->getStoreageFile());
@@ -105,30 +147,23 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         file_put_contents($this->getStoreageFile(),$data);
         chmod($this->getStoreageFile(), 0766);
     }
-    
+
+    /**
+     *
+     */
     public function delete () {
         unlink($this->getStoreageFile());
         $this->getResource()->delete();
     }
-    
+
+    /**
+     * @param Element_Interface $element
+     */
     public function loadChilds (Element_Interface $element) {
         
         $this->amount++;
         
-        if($element instanceof Document) {
-            if($element instanceof Document_PageSnippet) {
-                $element->getElements();
-            }
-        }
-        else if ($element instanceof Asset) {
-            if(!$element instanceof Asset_Folder) {
-                $element->setData(null);
-                $element->getData();
-            }
-        }
-        else if ($element instanceof Object_Abstract) {
-
-        }
+        Element_Service::loadAllFields($element);
         
         // for all
         $element->getProperties();
@@ -151,7 +186,10 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
             }
         }
     }
-    
+
+    /**
+     * @param Element_Interface $element
+     */
     public function restoreChilds (Element_Interface $element) {
         $element->save();
         
@@ -167,71 +205,122 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
             }
         }
     }
-    
+
+    /**
+     * @return string
+     */
     public function getStoreageFile () {
         return PIMCORE_RECYCLEBIN_DIRECTORY . "/" . $this->getId() . ".psf";
     }
-    
+
+    /**
+     * @return int
+     */
     public function getId() {
         return $this->id;
-    }    
-    
+    }
+
+    /**
+     * @param int $id
+     */
     public function setId ($id) {
         $this->id = (int) $id;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getPath () {
         return $this->path;
     }
-    
+
+    /**
+     * @param string $path
+     */
     public function setPath ($path) {
         $this->path = $path;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getType () {
         return $this->type;
     }
-    
+
+    /**
+     * @param $type
+     */
     public function setType ($type) {
         $this->type = $type;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getSubtype () {
         return $this->subtype;
     }
-    
+
+    /**
+     * @param $subtype
+     */
     public function setSubtype ($subtype) {
         $this->subtype = $subtype;
     }
-    
+
+    /**
+     * @return int
+     */
     public function getAmount ()  {
         return $this->amount;
     }
-    
+
+    /**
+     * @param $amount
+     */
     public function setAmount ($amount) {
         $this->amount = (int) $amount;
     }
-    
+
+    /**
+     * @return int
+     */
     public function getDate ()  {
         return $this->date;
     }
-    
+
+    /**
+     * @param $date
+     */
     public function setDate ($date) {
         $this->date = (int) $date;
     }
-    
+
+    /**
+     * @return Element_Interface
+     */
     public function getElement () {
         return $this->element;
     }
-    
+
+    /**
+     * @param $element
+     */
     public function setElement ($element) {
         $this->element = $element;
     }
 
+    /**
+     * @param $username
+     */
     public function setDeletedby($username){
-        $this->deletedby=$username;
+        $this->deletedby = $username;
     }
 
+    /**
+     * @return string
+     */
     public function getDeletedby(){
         return $this->deletedby;
     }

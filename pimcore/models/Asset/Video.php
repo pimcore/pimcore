@@ -140,18 +140,27 @@ class Asset_Video extends Asset {
     /**
      * @param $thumbnailName
      */
-    public function getImageThumbnail($thumbnailName, $timeOffset = null) {
+    public function getImageThumbnail($thumbnailName, $timeOffset = null, $imageAsset = null) {
+
+        $cs = $this->getCustomSetting("image_thumbnail_time");
+        $im = $this->getCustomSetting("image_thumbnail_asset");
+        if(!$timeOffset && !$imageAsset && $cs) {
+            $timeOffset = $cs;
+        } else if (!$timeOffset && !$imageAsset && $im) {
+            $imageAsset = Asset::getById($im);
+        }
+
+        // fallback
+        if(!$timeOffset && !$imageAsset) {
+            $timeOffset = 5;
+        }
+
+        if($imageAsset instanceof Asset_Image) {
+            return $imageAsset->getThumbnail($thumbnailName);
+        }
 
         $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
         $thumbnail->setName($thumbnail->getName()."-".$timeOffset);
-
-        $cs = $this->getCustomSetting("image_thumbnail_time");
-        if(!$timeOffset && $cs) {
-            $timeOffset = $cs;
-        }
-        if(!$timeOffset) {
-            $timeOffset = 5;
-        }
 
         $converter = Pimcore_Video::getInstance();
         $converter->load($this->getFileSystemPath());

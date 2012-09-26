@@ -14,22 +14,22 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: MimeType.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version   $Id: MimeType.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+// require_once 'Zend/Validate/Abstract.php';
 
 /**
  * Validator for the mime type of a file
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
@@ -103,6 +103,12 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
     );
 
     /**
+     * Indicates whether use of $_magicFiles should be attempted.
+     * @var boolean
+     */
+    protected $_tryCommonMagicFiles = true;
+
+    /**
      * Option to allow header check
      *
      * @var boolean
@@ -124,7 +130,7 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
         } elseif (is_string($mimetype)) {
             $mimetype = explode(',', $mimetype);
         } elseif (!is_array($mimetype)) {
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("Invalid options to validator provided");
         }
 
@@ -151,8 +157,11 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
         if (null === $this->_magicfile) {
             if (!empty($_ENV['MAGIC'])) {
                 $this->setMagicFile($_ENV['MAGIC']);
-            } elseif (!(@ini_get("safe_mode") == 'On' || @ini_get("safe_mode") === 1)) {
-                require_once 'Zend/Validate/Exception.php';
+            } elseif (
+                !(@ini_get("safe_mode") == 'On' || @ini_get("safe_mode") === 1)
+                && $this->shouldTryCommonMagicFiles() // @see ZF-11784
+            ) {
+                // require_once 'Zend/Validate/Exception.php';
                 foreach ($this->_magicFiles as $file) {
                     // supressing errors which are thrown due to openbase_dir restrictions
                     try {
@@ -189,17 +198,17 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
             $this->_magicfile = null;
         } else if (!(class_exists('finfo', false))) {
             $this->_magicfile = null;
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Magicfile can not be set. There is no finfo extension installed');
         } else if (!is_file($file) || !is_readable($file)) {
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('The given magicfile can not be read');
         } else {
             $const = defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME;
             $this->_finfo = @finfo_open($const, $file);
             if (empty($this->_finfo)) {
                 $this->_finfo = null;
-                require_once 'Zend/Validate/Exception.php';
+                // require_once 'Zend/Validate/Exception.php';
                 throw new Zend_Validate_Exception('The given magicfile is not accepted by finfo');
             } else {
                 $this->_magicfile = $file;
@@ -207,6 +216,32 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
         }
 
         return $this;
+    }
+
+    /**
+     * Enables or disables attempts to try the common magic file locations
+     * specified by Zend_Validate_File_MimeType::_magicFiles
+     *
+     * @param  boolean $flag
+     * @return Zend_Validate_File_MimeType Provides fluent interface
+     * @see http://framework.zend.com/issues/browse/ZF-11784
+     */
+    public function setTryCommonMagicFilesFlag($flag = true)
+    {
+        $this->_tryCommonMagicFiles = (boolean) $flag;
+
+        return $this;
+    }
+
+    /**
+     * Accessor for Zend_Validate_File_MimeType::_magicFiles
+     *
+     * @return boolean
+     * @see http://framework.zend.com/issues/browse/ZF-11784
+     */
+    public function shouldTryCommonMagicFiles()
+    {
+        return $this->_tryCommonMagicFiles;
     }
 
     /**
@@ -275,7 +310,7 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
         if (is_string($mimetype)) {
             $mimetype = explode(',', $mimetype);
         } elseif (!is_array($mimetype)) {
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("Invalid options to validator provided");
         }
 
@@ -324,7 +359,7 @@ class Zend_Validate_File_MimeType extends Zend_Validate_Abstract
         }
 
         // Is file readable ?
-        require_once 'Zend/Loader.php';
+        // require_once 'Zend/Loader.php';
         if (!Zend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_READABLE);
         }

@@ -14,28 +14,28 @@
  *
  * @category   Zend
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Image.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Object.php';
-require_once 'Zend/Pdf/Element/Dictionary.php';
-require_once 'Zend/Pdf/Element/Name.php';
-require_once 'Zend/Pdf/Element/Numeric.php';
+// require_once 'Zend/Pdf/Element/Object.php';
+// require_once 'Zend/Pdf/Element/Dictionary.php';
+// require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Numeric.php';
 
 
 /** Zend_Pdf_Resource */
-require_once 'Zend/Pdf/Resource.php';
+// require_once 'Zend/Pdf/Resource.php';
 
 
 /**
  * Content stream (drawing instructions container)
  *
  * @package    Zend_Pdf
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Resource_ContentStream extends Zend_Pdf_Resource
@@ -59,7 +59,7 @@ class Zend_Pdf_Resource_ContentStream extends Zend_Pdf_Resource
             !$contentStreamObject instanceof Zend_Pdf_Element_Object_Stream &&
             !is_string($contentStreamObject)
         ) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Content stream parameter must be a string or stream object');
         }
 

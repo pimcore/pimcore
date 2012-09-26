@@ -43,7 +43,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      * @param string $key
      */
     public function setKey($key) {
-        $this->key = $key;
+        $this->key = strtolower($key);
     }
 
     /**
@@ -71,7 +71,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      * @param integer $date
      */
     public function setDate($date) {
-        $this->date = $date;
+        $this->date = (int) $date;
     }
 
     /**

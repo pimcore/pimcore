@@ -14,21 +14,21 @@
  *
  * @category   Zend
  * @package    Zend_Oauth
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Rsa.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Rsa.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Oauth_Signature_SignatureAbstract */
-require_once 'Zend/Oauth/Signature/SignatureAbstract.php';
+// require_once 'Zend/Oauth/Signature/SignatureAbstract.php';
 
 /** Zend_Crypt_Rsa */
-require_once 'Zend/Crypt/Rsa.php';
+// require_once 'Zend/Crypt/Rsa.php';
 
 /**
  * @category   Zend
  * @package    Zend_Oauth
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Oauth_Signature_Rsa extends Zend_Oauth_Signature_SignatureAbstract

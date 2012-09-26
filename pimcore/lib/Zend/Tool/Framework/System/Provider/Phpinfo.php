@@ -14,17 +14,17 @@
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Phpinfo.php 23953 2011-05-03 05:47:39Z ralph $
+ * @version    $Id: Phpinfo.php 25024 2012-07-30 15:08:15Z rob $
  */
 
-require_once 'Zend/Tool/Framework/Provider/Interface.php';
+// require_once 'Zend/Tool/Framework/Provider/Interface.php';
 
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Framework_System_Provider_Phpinfo implements Zend_Tool_Framework_Provider_Interface

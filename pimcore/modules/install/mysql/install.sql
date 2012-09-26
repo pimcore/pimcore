@@ -20,8 +20,8 @@ CREATE TABLE `assets` (
 
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
-  `id` varchar(100) NOT NULL DEFAULT '',
-  `tag` varchar(100) NULL DEFAULT NULL,
+  `id` varchar(165) NOT NULL DEFAULT '',
+  `tag` varchar(165) NULL DEFAULT NULL,
   PRIMARY KEY (`id`,`tag`),
   INDEX `id` (`id`),
   INDEX `tag` (`tag`)
@@ -133,7 +133,7 @@ CREATE TABLE `documents_link` (
   `id` int(11) unsigned NOT NULL default '0',
   `internalType` enum('document','asset') default NULL,
   `internal` int(11) unsigned default NULL,
-  `direct` varchar(255) default NULL,
+  `direct` varchar(1000) default NULL,
   `linktype` enum('direct','internal') default NULL,
   PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
@@ -149,6 +149,7 @@ CREATE TABLE `documents_page` (
   `description` varchar(255) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
   `prettyUrl` varchar(255) DEFAULT NULL,
+  `contentMasterDocumentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8;
@@ -160,6 +161,7 @@ CREATE TABLE `documents_snippet` (
   `controller` varchar(255) DEFAULT NULL,
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
+  `contentMasterDocumentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
@@ -195,15 +197,17 @@ CREATE TABLE `email_log` (
 DROP TABLE IF EXISTS `glossary`;
 CREATE TABLE `glossary` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `language` varchar(2) DEFAULT NULL,
+  `language` varchar(10) DEFAULT NULL,
   `casesensitive` tinyint(1) DEFAULT NULL,
   `exactmatch` tinyint(1) DEFAULT NULL,
   `text` varchar(255) DEFAULT NULL,
   `link` varchar(255) DEFAULT NULL,
   `abbr` varchar(255) DEFAULT NULL,
   `acronym` varchar(255) DEFAULT NULL,
+  `site` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `language` (`language`)
+  KEY `language` (`language`),
+  KEY `site` (`site`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `http_error_log`;
@@ -220,6 +224,31 @@ CREATE TABLE `http_error_log` (
   KEY `path` (`path`(255)),
   KEY `code` (`code`),
   KEY `date` (`date`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `notes`;
+CREATE TABLE `notes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) DEFAULT NULL,
+  `cid` int(11) DEFAULT NULL,
+  `ctype` enum('asset','document','object') DEFAULT NULL,
+  `date` int(11) DEFAULT NULL,
+  `user` int(11) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `description` longtext,
+  PRIMARY KEY (`id`),
+  KEY `cid` (`cid`),
+  KEY `ctype` (`ctype`),
+  KEY `date` (`date`)
+) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `notes_data`;
+CREATE TABLE `notes_data` (
+  `id` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
+  `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,
+  `data` text,
+  KEY `id` (`id`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `objects`;
@@ -297,7 +326,10 @@ DROP TABLE IF EXISTS `redirects`;
 CREATE TABLE `redirects` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `source` varchar(255) DEFAULT NULL,
+  `sourceEntireUrl` tinyint(1) DEFAULT NULL,
+  `sourceSite` int(11) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,
+  `targetSite` int(11) DEFAULT NULL,
   `statusCode` varchar(3) DEFAULT NULL,
   `priority` int(2) DEFAULT '0',
   `expiry` bigint(20) DEFAULT NULL,
@@ -373,20 +405,24 @@ CREATE TABLE `staticroutes` (
   `action` varchar(255) default NULL,
   `variables` varchar(255) default NULL,
   `defaults` varchar(255) default NULL,
+  `siteId` int(11) DEFAULT NULL,
   `priority` int(3) DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `priority` (`priority`),
   KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
-CREATE TABLE `tree_locks` (
-  `id` int(11) NOT NULL DEFAULT '0',
-  `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
-  `locked` enum('self','propagate') default NULL,
-  PRIMARY KEY (`id`,`type`),
-  KEY `id` (`id`),
-  KEY `type` (`type`),
-  KEY `locked` (`locked`)
+DROP TABLE IF EXISTS `targeting`;
+CREATE TABLE `targeting` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `documentId` int(11) DEFAULT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
+  `conditions` longtext,
+  `actions` longtext,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_documentId` (`documentId`,`name`),
+  KEY `documentId` (`documentId`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `translations_admin`;
@@ -411,6 +447,17 @@ CREATE TABLE `translations_website` (
   KEY `key` (`key`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `tree_locks`;
+CREATE TABLE `tree_locks` (
+  `id` int(11) NOT NULL DEFAULT '0',
+  `type` enum('asset','document','object') NOT NULL DEFAULT 'asset',
+  `locked` enum('self','propagate') default NULL,
+  PRIMARY KEY (`id`,`type`),
+  KEY `id` (`id`),
+  KEY `type` (`type`),
+  KEY `locked` (`locked`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -421,7 +468,7 @@ CREATE TABLE `users` (
   `firstname` varchar(255) DEFAULT NULL,
   `lastname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `language` varchar(2) DEFAULT NULL,
+  `language` varchar(10) DEFAULT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
   `active` tinyint(1) unsigned DEFAULT '1',
   `permissions` varchar(1000) DEFAULT NULL,

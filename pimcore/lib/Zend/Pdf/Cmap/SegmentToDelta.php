@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SegmentToDelta.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: SegmentToDelta.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_Pdf_Cmap */
-require_once 'Zend/Pdf/Cmap.php';
+// require_once 'Zend/Pdf/Cmap.php';
 
 
 /**
@@ -33,7 +33,7 @@ require_once 'Zend/Pdf/Cmap.php';
  *
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Cmap_SegmentToDelta extends Zend_Pdf_Cmap
@@ -321,7 +321,7 @@ class Zend_Pdf_Cmap_SegmentToDelta extends Zend_Pdf_Cmap
          */
         $actualLength = strlen($cmapData);
         if ($actualLength < 23) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Insufficient table data',
                                          Zend_Pdf_Exception::CMAP_TABLE_DATA_TOO_SMALL);
         }
@@ -330,14 +330,14 @@ class Zend_Pdf_Cmap_SegmentToDelta extends Zend_Pdf_Cmap
          */
         $type = $this->_extractUInt2($cmapData, 0);
         if ($type != Zend_Pdf_Cmap::TYPE_SEGMENT_TO_DELTA) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception('Wrong cmap table type',
                                          Zend_Pdf_Exception::CMAP_WRONG_TABLE_TYPE);
         }
 
         $length = $this->_extractUInt2($cmapData, 2);
         if ($length != $actualLength) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("Table length ($length) does not match actual length ($actualLength)",
                                          Zend_Pdf_Exception::CMAP_WRONG_TABLE_LENGTH);
         }
@@ -398,7 +398,7 @@ class Zend_Pdf_Cmap_SegmentToDelta extends Zend_Pdf_Cmap
          * of the table.
          */
         if ($offset != $length) {
-            require_once 'Zend/Pdf/Exception.php';
+            // require_once 'Zend/Pdf/Exception.php';
             throw new Zend_Pdf_Exception("Ending offset ($offset) does not match length ($length)",
                                          Zend_Pdf_Exception::CMAP_FINAL_OFFSET_NOT_LENGTH);
         }

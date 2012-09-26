@@ -164,7 +164,8 @@ class Document_Tag_Block extends Document_Tag {
             "data" => $data,
             "name" => $this->getName(),
             "id" => "pimcore_editable_" . $this->getName(),
-            "type" => $this->getType()
+            "type" => $this->getType(),
+            "inherited" => $this->getInherited()
         );
         $options = @Zend_Json::encode($options);
         //$options = base64_encode($options);
@@ -271,23 +272,21 @@ class Document_Tag_Block extends Document_Tag {
     public function setupStaticEnvironment() {
 
         // setup static environment for blocks
-        try {
+        if(Zend_Registry::isRegistered("pimcore_tag_block_current")) {
             $current = Zend_Registry::get("pimcore_tag_block_current");
             if (!is_array($current)) {
                 $current = array();
             }
-        }
-        catch (Exception $e) {
+        } else {
             $current = array();
         }
 
-        try {
+        if(Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
             $numeration = Zend_Registry::get("pimcore_tag_block_numeration");
             if (!is_array($numeration)) {
                 $numeration = array();
             }
-        }
-        catch (Exception $e) {
+        } else {
             $numeration = array();
         }
 

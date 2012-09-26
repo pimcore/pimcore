@@ -14,15 +14,15 @@
  *
  * @category   Zend
  * @package    Zend_Memory
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AccessController.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: AccessController.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * Zend_Memory_Container_Interface
  */
-require_once 'Zend/Memory/Container/Interface.php';
+// require_once 'Zend/Memory/Container/Interface.php';
 
 /**
  * Memory object container access controller.
@@ -38,7 +38,7 @@ require_once 'Zend/Memory/Container/Interface.php';
  *
  * @category   Zend
  * @package    Zend_Memory
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Memory_AccessController implements Zend_Memory_Container_Interface

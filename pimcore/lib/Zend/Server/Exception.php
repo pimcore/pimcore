@@ -14,21 +14,21 @@
  *
  * @category   Zend
  * @package    Zend_Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /**
  * Zend_Exception
  */
-require_once 'Zend/Exception.php';
+// require_once 'Zend/Exception.php';
 
 /**
  * Zend_Server_Reflection exceptions
  *
  * @package Zend_Server
  * @subpackage Reflection
- * @version $Id: Exception.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version $Id: Exception.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Server_Exception extends Zend_Exception
 {

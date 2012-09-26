@@ -193,16 +193,18 @@ CSS;
      * @return string
      * @throws Exception - if something else than a document is passed
      */
-    public static function setAbsolutePaths($string, $document = null)
+    public static function setAbsolutePaths($string, $document = null, $hostUrl = null)
     {
         if ($document && $document instanceof Document == false) {
             throw new Exception('$document has to be an instance of Document');
         }
 
-        $hostUrl = Pimcore_Tool::getHostUrl();
+        if(is_null($hostUrl)){
+            $hostUrl = Pimcore_Tool::getHostUrl();
+        }
 
         //matches all links
-        preg_match_all("@(href|src)\s*=[\"']([^(http|mailto)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);
+        preg_match_all("@(href|src)\s*=[\"']([^(http|mailto|javascript)].*?(css|jpe?g|gif|png)?)[\"']@is", $string, $matches);
         if (!empty($matches[0])) {
             foreach ($matches[0] as $key => $value) {
                 $fullMatch = $matches[0][$key];

@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SearchResultSet.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: SearchResultSet.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * @see Zend_Service_Technorati_ResultSet
  */
-require_once 'Zend/Service/Technorati/ResultSet.php';
+// require_once 'Zend/Service/Technorati/ResultSet.php';
 
 
 /**
@@ -33,7 +33,7 @@ require_once 'Zend/Service/Technorati/ResultSet.php';
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Technorati
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Technorati_SearchResultSet extends Zend_Service_Technorati_ResultSet
@@ -73,7 +73,7 @@ class Zend_Service_Technorati_SearchResultSet extends Zend_Service_Technorati_Re
         /**
          * @see Zend_Service_Technorati_SearchResult
          */
-        require_once 'Zend/Service/Technorati/SearchResult.php';
+        // require_once 'Zend/Service/Technorati/SearchResult.php';
         return new Zend_Service_Technorati_SearchResult($this->_results->item($this->_currentIndex));
     }
 }

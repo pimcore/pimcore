@@ -323,7 +323,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
             } else if ($element instanceof Document_PageSnippet){
                 $this->published = $element->isPublished();
                 $elements = $element->getElements();
-                if(is_array($elements)){
+                if(is_array($elements) && !empty($elements)) {
                     foreach($elements as $tag){
                         if($tag instanceof Document_Tag_Interface){
                             ob_start();
@@ -334,7 +334,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
                 }
                 if($element instanceof Document_Page){
                     $this->published = $element->isPublished();
-                    $this->data.=" ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords();
+                    $this->data .= " ".$element->getName()." ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords() . " " . $element->getPrettyUrl();
                 }
             }
         } else if($element instanceof Asset) {

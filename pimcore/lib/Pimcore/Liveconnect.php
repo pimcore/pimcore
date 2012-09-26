@@ -16,8 +16,7 @@
 class Pimcore_Liveconnect {
 
     public static function getSession () {
-        $session = new Zend_Session_Namespace("pimcore_admin");
-        return $session;
+        return Pimcore_Tool_Authentication::getSession();
     }
 
     public static function setToken ($token) {

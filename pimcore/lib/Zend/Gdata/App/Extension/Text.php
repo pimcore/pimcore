@@ -16,15 +16,15 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage App
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Text.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Text.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_App_Extension
  */
-require_once 'Zend/Gdata/App/Extension.php';
+// require_once 'Zend/Gdata/App/Extension.php';
 
 /**
  * Abstract class for data models that require only text and type-- such as:
@@ -33,7 +33,7 @@ require_once 'Zend/Gdata/App/Extension.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage App
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Gdata_App_Extension_Text extends Zend_Gdata_App_Extension

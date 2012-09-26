@@ -16,20 +16,20 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PlaylistVideoEntry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: PlaylistVideoEntry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_YouTube_VideoEntry
  */
-require_once 'Zend/Gdata/YouTube/VideoEntry.php';
+// require_once 'Zend/Gdata/YouTube/VideoEntry.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Position
  */
-require_once 'Zend/Gdata/YouTube/Extension/Position.php';
+// require_once 'Zend/Gdata/YouTube/Extension/Position.php';
 
 /**
  * Represents the YouTube video playlist flavor of an Atom entry
@@ -37,7 +37,7 @@ require_once 'Zend/Gdata/YouTube/Extension/Position.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage YouTube
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_YouTube_PlaylistVideoEntry extends Zend_Gdata_YouTube_VideoEntry

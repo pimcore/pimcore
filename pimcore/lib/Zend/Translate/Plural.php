@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Locale
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Plural.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Plural.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -24,7 +24,7 @@
  *
  * @category   Zend
  * @package    Zend_Locale
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Translate_Plural
@@ -215,7 +215,7 @@ class Zend_Translate_Plural
         }
 
         if (!is_callable($rule)) {
-            require_once 'Zend/Translate/Exception.php';
+            // require_once 'Zend/Translate/Exception.php';
             throw new Zend_Translate_Exception('The given rule can not be called');
         }
 

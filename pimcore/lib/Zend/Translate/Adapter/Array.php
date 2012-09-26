@@ -14,23 +14,23 @@
  *
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Array.php 23775 2011-03-01 17:25:24Z ralph $
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Array.php 24593 2012-01-05 20:35:02Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Locale */
-require_once 'Zend/Locale.php';
+// require_once 'Zend/Locale.php';
 
 /** Zend_Translate_Adapter */
-require_once 'Zend/Translate/Adapter.php';
+// require_once 'Zend/Translate/Adapter.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Translate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Translate_Adapter_Array extends Zend_Translate_Adapter
@@ -57,7 +57,7 @@ class Zend_Translate_Adapter_Array extends Zend_Translate_Adapter
             }
         }
         if (!is_array($data)) {
-            require_once 'Zend/Translate/Exception.php';
+            // require_once 'Zend/Translate/Exception.php';
             throw new Zend_Translate_Exception("Error including array or file '".$data."'");
         }
 

@@ -13,21 +13,21 @@
  * to padraic dot brady at yahoo dot com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Feed_Writer_Entry_Rss
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @package    Zend_Feed_Writer
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RendererAbstract.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: RendererAbstract.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Feed_Writer_Extension_RendererInterface
  */
-require_once 'Zend/Feed/Writer/Extension/RendererInterface.php';
+// require_once 'Zend/Feed/Writer/Extension/RendererInterface.php';
 
  /**
  * @category   Zend
- * @package    Zend_Feed_Writer_Entry_Rss
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @package    Zend_Feed_Writer
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Feed_Writer_Extension_RendererAbstract

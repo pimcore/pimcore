@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Finding.php 22824 2010-08-09 18:59:54Z renanbr $
  */
@@ -23,13 +23,13 @@
 /**
  * @see Zend_Service_Ebay_Abstract
  */
-require_once 'Zend/Service/Ebay/Abstract.php';
+// require_once 'Zend/Service/Ebay/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @uses       Zend_Service_Ebay_Abstract
  */
@@ -87,7 +87,7 @@ class Zend_Service_Ebay_Finding extends Zend_Service_Ebay_Abstract
                 /**
                  * @see Zend_Service_Ebay_Finding_Exception
                  */
-                require_once 'Zend/Service/Ebay/Finding/Exception.php';
+                // require_once 'Zend/Service/Ebay/Finding/Exception.php';
                 throw new Zend_Service_Ebay_Finding_Exception(
                     'Application Id is missing.');
             }
@@ -107,7 +107,7 @@ class Zend_Service_Ebay_Finding extends Zend_Service_Ebay_Abstract
             /**
              * @see Zend_Service_Ebay_Finding_Exception
              */
-            require_once 'Zend/Service/Ebay/Finding/Exception.php';
+            // require_once 'Zend/Service/Ebay/Finding/Exception.php';
             throw new Zend_Service_Ebay_Finding_Exception(
                 'Client object must extend Zend_Rest_Client.');
         }
@@ -125,7 +125,7 @@ class Zend_Service_Ebay_Finding extends Zend_Service_Ebay_Abstract
             /**
              * @see Zend_Rest_Client
              */
-            require_once 'Zend/Rest/Client.php';
+            // require_once 'Zend/Rest/Client.php';
             $this->_client = new Zend_Rest_Client();
         }
         return $this->_client;
@@ -257,7 +257,7 @@ class Zend_Service_Ebay_Finding extends Zend_Service_Ebay_Abstract
         /**
          * @see Zend_Service_Ebay_Finding_Response_Items
          */
-        require_once 'Zend/Service/Ebay/Finding/Response/Items.php';
+        // require_once 'Zend/Service/Ebay/Finding/Response/Items.php';
         $response = new Zend_Service_Ebay_Finding_Response_Items($dom->firstChild);
         return $response->setOperation($operation)
                         ->setOption($options);
@@ -284,7 +284,7 @@ class Zend_Service_Ebay_Finding extends Zend_Service_Ebay_Abstract
         /**
          * @see Zend_Service_Ebay_Finding_Response_Histograms
          */
-        require_once 'Zend/Service/Ebay/Finding/Response/Histograms.php';
+        // require_once 'Zend/Service/Ebay/Finding/Response/Histograms.php';
         $response = new Zend_Service_Ebay_Finding_Response_Histograms($dom->firstChild);
         return $response->setOperation($operation)
                         ->setOption($options);
@@ -312,7 +312,7 @@ class Zend_Service_Ebay_Finding extends Zend_Service_Ebay_Abstract
         /**
          * @see Zend_Service_Ebay_Finding_Response_Keywords
          */
-        require_once 'Zend/Service/Ebay/Finding/Response/Keywords.php';
+        // require_once 'Zend/Service/Ebay/Finding/Response/Keywords.php';
         $response = new Zend_Service_Ebay_Finding_Response_Keywords($dom->firstChild);
         return $response->setOperation($operation)
                         ->setOption($options);
@@ -408,7 +408,7 @@ class Zend_Service_Ebay_Finding extends Zend_Service_Ebay_Abstract
             /**
              * @see Zend_Service_Ebay_Finding_Exception
              */
-            require_once 'Zend/Service/Ebay/Finding/Exception.php';
+            // require_once 'Zend/Service/Ebay/Finding/Exception.php';
             throw new Zend_Service_Ebay_Finding_Exception($message);
         }
 

@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Menu.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Menu.php 24962 2012-06-15 14:28:42Z adamlundrigan $
  */
 
 /**
  * @see Zend_View_Helper_Navigation_HelperAbstract
  */
-require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
+// require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
 
 /**
  * Helper for rendering menus from navigation containers
@@ -31,7 +31,7 @@ require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Navigation_Menu
@@ -43,6 +43,13 @@ class Zend_View_Helper_Navigation_Menu
      * @var string
      */
     protected $_ulClass = 'navigation';
+
+    /**
+     * Unique identifier (id) for the ul element
+     *
+     * @var string
+     */
+    protected $_ulId = null;
 
     /**
      * Whether only active branch should be rendered
@@ -65,6 +72,11 @@ class Zend_View_Helper_Navigation_Menu
      */
     protected $_partial = null;
 
+    /**
+     * Expand all sibling nodes of active branch nodes
+     */
+    protected $_expandSiblingNodesOfActiveBranch = false;
+    
     /**
      * View helper entry point:
      * Retrieves helper and optionally sets container to operate on
@@ -111,6 +123,33 @@ class Zend_View_Helper_Navigation_Menu
     }
 
     /**
+     * Sets unique identifier (id) to use for the first 'ul' element when
+     * rendering
+     *
+     * @param  string|null  $ulId                Unique identifier (id) to set
+     * @return Zend_View_Helper_Navigation_Menu  fluent interface, returns self
+     */
+    public function setUlId($ulId)
+    {
+        if (is_string($ulId)) {
+            $this->_ulId = $ulId;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns unique identifier (id) to use for the first 'ul' element when
+     * rendering
+     *
+     * @return string|null  Unique identifier (id); Default is 'null'
+     */
+    public function getUlId()
+    {
+        return $this->_ulId;
+    }
+
+    /**
      * Sets a flag indicating whether only active branch should be rendered
      *
      * @param  bool $flag                        [optional] render only active
@@ -135,7 +174,33 @@ class Zend_View_Helper_Navigation_Menu
     {
         return $this->_onlyActiveBranch;
     }
+    
+    /**
+     * Sets a flag indicating whether to expand all sibling nodes of the active branch
+     * 
+     * @param  bool $flag                        [optional] expand all siblings of
+     *                                           nodes in the active branch. Default is true.
+     * @return Zend_View_Helper_Navigation_Menu  fluent interface, returns self
+     */
+    public function setExpandSiblingNodesOfActiveBranch($flag = true)
+    {
+        $this->_expandSiblingNodesOfActiveBranch = (bool) $flag;
+        return $this;
+    }
 
+    /**
+     * Returns a flag indicating whether to expand all sibling nodes of the active branch
+     *
+     * By default, this value is false, meaning the entire menu will be
+     * be rendered.
+     *
+     * @return bool  whether siblings of nodes in the active branch should be expanded
+     */
+    public function getExpandSiblingNodesOfActiveBranch()
+    {
+        return $this->_expandSiblingNodesOfActiveBranch;
+    }
+    
     /**
      * Enables/disables rendering of parents when only rendering active branch
      *
@@ -231,12 +296,16 @@ class Zend_View_Helper_Navigation_Menu
 
         // does page have a href?
         if ($href = $page->getHref()) {
-            $element = 'a';
-            $attribs['href'] = $href;
-            $attribs['target'] = $page->getTarget();
+            $element              = 'a';
+            $attribs['href']      = $href;
+            $attribs['target']    = $page->getTarget();
+            $attribs['accesskey'] = $page->getAccessKey();
         } else {
             $element = 'span';
         }
+
+        // Add custom HTML attributes
+        $attribs = array_merge($attribs, $page->getCustomHtmlAttribs());
 
         return '<' . $element . $this->_htmlAttribs($attribs) . '>'
              . $this->view->escape($label)
@@ -256,11 +325,17 @@ class Zend_View_Helper_Navigation_Menu
         } else {
             $options['indent'] = $this->getIndent();
         }
-
+        
         if (isset($options['ulClass']) && $options['ulClass'] !== null) {
             $options['ulClass'] = (string) $options['ulClass'];
         } else {
             $options['ulClass'] = $this->getUlClass();
+        }
+
+        if (isset($options['ulId']) && $options['ulId'] !== null) {
+            $options['ulId'] = (string) $options['ulId'];
+        } else {
+            $options['ulId'] = $this->getUlId();
         }
 
         if (array_key_exists('minDepth', $options)) {
@@ -275,6 +350,7 @@ class Zend_View_Helper_Navigation_Menu
             $options['minDepth'] = 0;
         }
 
+        // Maximum depth
         if (array_key_exists('maxDepth', $options)) {
             if (null !== $options['maxDepth']) {
                 $options['maxDepth'] = (int) $options['maxDepth'];
@@ -285,6 +361,10 @@ class Zend_View_Helper_Navigation_Menu
 
         if (!isset($options['onlyActiveBranch'])) {
             $options['onlyActiveBranch'] = $this->getOnlyActiveBranch();
+        }
+        
+        if (!isset($options['expandSiblingNodesOfActiveBranch'])) {
+            $options['expandSiblingNodesOfActiveBranch'] = $this->getExpandSiblingNodesOfActiveBranch();
         }
 
         if (!isset($options['renderParents'])) {
@@ -306,13 +386,16 @@ class Zend_View_Helper_Navigation_Menu
      * @param  string                    $indent     initial indentation
      * @param  int|null                  $minDepth   minimum depth
      * @param  int|null                  $maxDepth   maximum depth
+     * @param  string|null               $ulId       unique identifier (id) for
+     *                                               first UL
      * @return string                                rendered menu
      */
     protected function _renderDeepestMenu(Zend_Navigation_Container $container,
                                           $ulClass,
                                           $indent,
                                           $minDepth,
-                                          $maxDepth)
+                                          $maxDepth,
+                                          $ulId)
     {
         if (!$active = $this->findActive($container, $minDepth - 1, $maxDepth)) {
             return '';
@@ -331,8 +414,22 @@ class Zend_View_Helper_Navigation_Menu
             $active['page'] = $active['page']->getParent();
         }
 
-        $ulClass = $ulClass ? ' class="' . $ulClass . '"' : '';
-        $html = $indent . '<ul' . $ulClass . '>' . self::EOL;
+        $attribs = array(
+            'class' => $ulClass,
+            'id'    => $ulId,
+        );
+
+        // We don't need a prefix for the menu ID (backup)
+        $skipValue = $this->_skipPrefixForId;
+        $this->skipPrefixForId();
+
+        $html = $indent . '<ul'
+                        . $this->_htmlAttribs($attribs)
+                        . '>'
+                        . self::EOL;
+
+        // Reset prefix for IDs
+        $this->_skipPrefixForId = $skipValue;
 
         foreach ($active['page'] as $subPage) {
             if (!$this->accept($subPage)) {
@@ -358,6 +455,10 @@ class Zend_View_Helper_Navigation_Menu
      * @param  int|null                  $minDepth    minimum depth
      * @param  int|null                  $maxDepth    maximum depth
      * @param  bool                      $onlyActive  render only active branch?
+     * @param  bool                      $expandSibs  render siblings of active
+     *                                                branch nodes?
+     * @param  string|null               $ulId        unique identifier (id) for
+     *                                                first UL
      * @return string
      */
     protected function _renderMenu(Zend_Navigation_Container $container,
@@ -365,7 +466,9 @@ class Zend_View_Helper_Navigation_Menu
                                    $indent,
                                    $minDepth,
                                    $maxDepth,
-                                   $onlyActive)
+                                   $onlyActive,
+                                   $expandSibs,
+                                   $ulId)
     {
         $html = '';
 
@@ -392,6 +495,21 @@ class Zend_View_Helper_Navigation_Menu
             if ($depth < $minDepth || !$this->accept($page)) {
                 // page is below minDepth or not accepted by acl/visibilty
                 continue;
+            } else if ($expandSibs && $depth > $minDepth) {
+            	// page is not active itself, but might be in the active branch
+                $accept = false;
+                if ($foundPage) {
+                    if ($foundPage->hasPage($page)) {
+                        // accept if page is a direct child of the active page
+                        $accept = true;
+                    } else if ($page->getParent()->isActive(true)) {
+                        // page is a sibling of the active branch...
+                        $accept = true;
+                    }
+                }
+                if (!$isActive && !$accept) {
+                    continue;
+                }
             } else if ($onlyActive && !$isActive) {
                 // page is not active itself, but might be in the active branch
                 $accept = false;
@@ -420,13 +538,27 @@ class Zend_View_Helper_Navigation_Menu
             $myIndent = $indent . str_repeat('        ', $depth);
 
             if ($depth > $prevDepth) {
+                $attribs = array();
+
                 // start new ul tag
-                if ($ulClass && $depth ==  0) {
-                    $ulClass = ' class="' . $ulClass . '"';
-                } else {
-                    $ulClass = '';
+                if (0 == $depth) {
+                    $attribs = array(
+                        'class' => $ulClass,
+                        'id'    => $ulId,
+                    );
                 }
-                $html .= $myIndent . '<ul' . $ulClass . '>' . self::EOL;
+
+                // We don't need a prefix for the menu ID (backup)
+                $skipValue = $this->_skipPrefixForId;
+                $this->skipPrefixForId();
+
+                $html .= $myIndent . '<ul'
+                                   . $this->_htmlAttribs($attribs)
+                                   . '>'
+                                   . self::EOL;
+
+                // Reset prefix for IDs
+                $this->_skipPrefixForId = $skipValue;
             } else if ($prevDepth > $depth) {
                 // close li/ul tags until we're at current depth
                 for ($i = $prevDepth; $i > $depth; $i--) {
@@ -495,14 +627,17 @@ class Zend_View_Helper_Navigation_Menu
                                               $options['ulClass'],
                                               $options['indent'],
                                               $options['minDepth'],
-                                              $options['maxDepth']);
+                                              $options['maxDepth'],
+                                              $options['ulId']);
         } else {
             $html = $this->_renderMenu($container,
                                        $options['ulClass'],
                                        $options['indent'],
                                        $options['minDepth'],
                                        $options['maxDepth'],
-                                       $options['onlyActiveBranch']);
+                                       $options['onlyActiveBranch'],
+                                       $options['expandSiblingNodesOfActiveBranch'],
+                                       $options['ulId']);
         }
 
         return $html;
@@ -527,7 +662,7 @@ class Zend_View_Helper_Navigation_Menu
      *                                               render. Default is to render
      *                                               the container registered in
      *                                               the helper.
-     * @param  string                    $ulClass    [optional] CSS class to
+     * @param  string|null               $ulClass    [optional] CSS class to
      *                                               use for UL element. Default
      *                                               is to use the value from
      *                                               {@link getUlClass()}.
@@ -536,11 +671,14 @@ class Zend_View_Helper_Navigation_Menu
      *                                               spaces. Default is to use
      *                                               the value retrieved from
      *                                               {@link getIndent()}.
+     * @param  string|null               $ulId       [optional] Unique identifier
+     *                                               (id) use for UL element
      * @return string                                rendered content
      */
     public function renderSubMenu(Zend_Navigation_Container $container = null,
                                   $ulClass = null,
-                                  $indent = null)
+                                  $indent = null,
+                                  $ulId   = null)
     {
         return $this->renderMenu($container, array(
             'indent'           => $indent,
@@ -548,7 +686,8 @@ class Zend_View_Helper_Navigation_Menu
             'minDepth'         => null,
             'maxDepth'         => null,
             'onlyActiveBranch' => true,
-            'renderParents'    => false
+            'renderParents'    => false,
+            'ulId'             => $ulId,
         ));
     }
 
@@ -586,7 +725,7 @@ class Zend_View_Helper_Navigation_Menu
         }
 
         if (empty($partial)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(
                 'Unable to render menu: No partial view script provided'
             );
@@ -600,7 +739,7 @@ class Zend_View_Helper_Navigation_Menu
 
         if (is_array($partial)) {
             if (count($partial) != 2) {
-                require_once 'Zend/View/Exception.php';
+                // require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception(
                     'Unable to render menu: A view partial supplied as '
                     .  'an array must contain two values: partial view '

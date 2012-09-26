@@ -15,18 +15,18 @@
  * @category   Zend
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Symbol.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Symbol.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Internally used classes */
-require_once 'Zend/Pdf/Element/Name.php';
+// require_once 'Zend/Pdf/Element/Name.php';
 
 
 /** Zend_Pdf_Resource_Font_Simple_Standard */
-require_once 'Zend/Pdf/Resource/Font/Simple/Standard.php';
+// require_once 'Zend/Pdf/Resource/Font/Simple/Standard.php';
 
 /**
  * Implementation for the standard PDF font Symbol.
@@ -43,7 +43,7 @@ require_once 'Zend/Pdf/Resource/Font/Simple/Standard.php';
  *
  * @package    Zend_Pdf
  * @subpackage Fonts
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Pdf_Resource_Font_Simple_Standard_Symbol extends Zend_Pdf_Resource_Font_Simple_Standard
@@ -346,7 +346,7 @@ class Zend_Pdf_Resource_Font_Simple_Standard_Symbol extends Zend_Pdf_Resource_Fo
           0xf8f6 =>   0xb5, 0xf8f7 =>   0xb6, 0xf8f8 =>   0xb7, 0xf8f9 =>   0xb8,
           0xf8fa =>   0xb9, 0xf8fb =>   0xba, 0xf8fc =>   0xbb, 0xf8fd =>   0xbc,
           0xf8fe =>   0xbd, 0xf8ff =>   0xbe);
-        require_once 'Zend/Pdf/Cmap.php';
+        // require_once 'Zend/Pdf/Cmap.php';
         $this->_cmap = Zend_Pdf_Cmap::cmapWithTypeData(
             Zend_Pdf_Cmap::TYPE_BYTE_ENCODING_STATIC, $cmapData);
 

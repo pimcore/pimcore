@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Items.php 22804 2010-08-08 05:08:05Z renanbr $
  */
@@ -23,13 +23,13 @@
 /**
  * @see Zend_Service_Ebay_Finding_Response_Histograms
  */
-require_once 'Zend/Service/Ebay/Finding/Response/Histograms.php';
+// require_once 'Zend/Service/Ebay/Finding/Response/Histograms.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Ebay
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @uses       Zend_Service_Ebay_Finding_Response_Histograms
  */
@@ -85,7 +85,7 @@ class Zend_Service_Ebay_Finding_Response_Items extends Zend_Service_Ebay_Finding
             /**
              * @see Zend_Service_Ebay_Finding_Search_Result
              */
-            require_once 'Zend/Service/Ebay/Finding/Search/Result.php';
+            // require_once 'Zend/Service/Ebay/Finding/Search/Result.php';
             $this->searchResult = new Zend_Service_Ebay_Finding_Search_Result($node);
         }
 
@@ -94,7 +94,7 @@ class Zend_Service_Ebay_Finding_Response_Items extends Zend_Service_Ebay_Finding
             /**
              * @see Zend_Service_Ebay_Finding_PaginationOutput
              */
-            require_once 'Zend/Service/Ebay/Finding/PaginationOutput.php';
+            // require_once 'Zend/Service/Ebay/Finding/PaginationOutput.php';
             $this->paginationOutput = new Zend_Service_Ebay_Finding_PaginationOutput($node);
         }
     }
@@ -112,7 +112,7 @@ class Zend_Service_Ebay_Finding_Response_Items extends Zend_Service_Ebay_Finding
             /**
              * @see Zend_Service_Ebay_Finding_Exception
              */
-            require_once 'Zend/Service/Ebay/Finding/Exception.php';
+            // require_once 'Zend/Service/Ebay/Finding/Exception.php';
             throw new Zend_Service_Ebay_Finding_Exception(
                 "Page number '{$number}' is out of range.");
         }
@@ -155,7 +155,7 @@ class Zend_Service_Ebay_Finding_Response_Items extends Zend_Service_Ebay_Finding
                 /**
                  * @see Zend_Service_Ebay_Finding_Exception
                  */
-                require_once 'Zend/Service/Ebay/Finding/Exception.php';
+                // require_once 'Zend/Service/Ebay/Finding/Exception.php';
                 throw new Zend_Service_Ebay_Finding_Exception(
                     "Invalid operation '{$this->_operation}'.");
         }

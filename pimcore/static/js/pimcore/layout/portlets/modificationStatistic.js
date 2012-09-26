@@ -49,7 +49,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                 series: [
                     {
                         type: 'line',
-                        displayName: 'Documents',
+                        displayName: t('documents'),
                         yField: 'documents',
                         style: {
                             color:0x01841c
@@ -57,7 +57,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                     },
                     {
                         type:'line',
-                        displayName: 'Assets',
+                        displayName: t('assets'),
                         yField: 'assets',
                         style: {
                             color: 0x15428B
@@ -65,7 +65,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
                     },
                     {
                         type:'line',
-                        displayName: 'Objects',
+                        displayName: t('objects'),
                         yField: 'objects',
                         style: {
                             color: 0xff6600

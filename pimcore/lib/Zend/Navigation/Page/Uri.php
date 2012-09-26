@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_Navigation
  * @subpackage Page
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Uri.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Uri.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Navigation_Page_Abstract
  */
-require_once 'Zend/Navigation/Page.php';
+// require_once 'Zend/Navigation/Page.php';
 
 /**
  * Represents a page that is defined by specifying a URI
@@ -31,7 +31,7 @@ require_once 'Zend/Navigation/Page.php';
  * @category   Zend
  * @package    Zend_Navigation
  * @subpackage Page
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Navigation_Page_Uri extends Zend_Navigation_Page
@@ -53,7 +53,7 @@ class Zend_Navigation_Page_Uri extends Zend_Navigation_Page
     public function setUri($uri)
     {
         if (null !== $uri && !is_string($uri)) {
-            require_once 'Zend/Navigation/Exception.php';
+            // require_once 'Zend/Navigation/Exception.php';
             throw new Zend_Navigation_Exception(
                     'Invalid argument: $uri must be a string or null');
         }
@@ -79,7 +79,18 @@ class Zend_Navigation_Page_Uri extends Zend_Navigation_Page
      */
     public function getHref()
     {
-        return $this->getUri();
+        $uri = $this->getUri();
+        
+        $fragment = $this->getFragment();       
+        if (null !== $fragment) {
+            if ('#' == substr($uri, -1)) {
+                return $uri . $fragment;
+            } else {                
+                return $uri . '#' . $fragment;
+            }
+        }
+        
+        return $uri;
     }
 
     // Public methods:

@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_Markup
  * @subpackage Renderer_Html
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Img.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Img.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Markup_Renderer_Html
  */
-require_once 'Zend/Markup/Renderer/Html.php';
+// require_once 'Zend/Markup/Renderer/Html.php';
 /**
  * @see Zend_Markup_Renderer_Html_HtmlAbstract
  */
-require_once 'Zend/Markup/Renderer/Html/HtmlAbstract.php';
+// require_once 'Zend/Markup/Renderer/Html/HtmlAbstract.php';
 
 /**
  * Tag interface
@@ -35,7 +35,7 @@ require_once 'Zend/Markup/Renderer/Html/HtmlAbstract.php';
  * @category   Zend
  * @package    Zend_Markup
  * @subpackage Renderer_Html
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Markup_Renderer_Html_Img extends Zend_Markup_Renderer_Html_HtmlAbstract

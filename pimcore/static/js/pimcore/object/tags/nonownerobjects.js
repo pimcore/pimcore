@@ -44,7 +44,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
                     } else {
                         Ext.Ajax.request({
-                            url: "/admin/misc/lock-element",
+                            url: "/admin/element/lock-element",
                             params: {id: this.getStore().getAt(index).data.id, type: 'object'}
                         });
                         this.getStore().removeAt(index);
@@ -296,7 +296,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
                     } else {
                         Ext.Ajax.request({
-                            url: "/admin/misc/lock-element",
+                            url: "/admin/element/lock-element",
                             params: {id: item.id, type: 'object'}
                         });
                         this.store.add(new this.store.recordType({

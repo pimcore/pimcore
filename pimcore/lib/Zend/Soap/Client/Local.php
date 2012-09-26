@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Local.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Local.php 25033 2012-08-17 19:50:08Z matthew $
  */
 
 /** Zend_Soap_Server */
-require_once 'Zend/Soap/Server.php';
+// require_once 'Zend/Soap/Server.php';
 
 /** Zend_Soap_Client */
-require_once 'Zend/Soap/Client.php';
+// require_once 'Zend/Soap/Client.php';
 
 if (extension_loaded('soap')) {
 
@@ -84,6 +84,13 @@ class Zend_Soap_Client_Local extends Zend_Soap_Client
         ob_start();
         $this->_server->handle($request);
         $response = ob_get_clean();
+ 
+        if ($response === null || $response === '') {
+            $serverResponse = $this->server->getResponse();
+            if ($serverResponse !== null) {
+                $response = $serverResponse;
+            }
+        }
 
         return $response;
     }

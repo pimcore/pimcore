@@ -321,7 +321,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function save() {
 
         if (!Pimcore_Tool::isValidKey($this->getKey())) {
-            throw new Exception("invalid key for object with id [ " . $this->getId() . " ]");
+            throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
         }
 
         $this->correctPath();
@@ -635,6 +635,21 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return string
      */
     public function getFullPath() {
+
+        // check if this document is also the site root, if so return /
+        try {
+            if(Zend_Registry::isRegistered("pimcore_site")) {
+                $site = Zend_Registry::get("pimcore_site");
+                if ($site instanceof Site) {
+                    if ($site->getRootDocument()->getId() == $this->getId()) {
+                        return "/";
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            Logger::error($e);
+        }
+
         $path = $this->getPath() . $this->getKey();
         return $path;
     }
@@ -682,19 +697,19 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         if(!Pimcore::inAdmin()) {
             // check for site
             try {
+                if(Zend_Registry::isRegistered("pimcore_site")) {
+                    $site = Zend_Registry::get("pimcore_site");
+                    if ($site instanceof Site) {
+                        if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
+                            $rootPath = $site->getRootPath();
+                            $rootPath = addcslashes($rootPath, "/");
 
-                $site = Zend_Registry::get("pimcore_site");
-                if ($site instanceof Site) {
-                    if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
-                        $rootPath = $site->getRootPath();
-                        $rootPath = addcslashes($rootPath, "/");
-
-                        return preg_replace("/^" . $rootPath . "/", "", $this->path);
+                            return preg_replace("/^" . $rootPath . "/", "", $this->path);
+                        }
                     }
                 }
-            }
-            catch (Exception $e) {
-
+            } catch (Exception $e) {
+                Logger::error($e);
             }
         }
 
@@ -721,7 +736,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setCreationDate($creationDate) {
-        $this->creationDate = $creationDate;
+        $this->creationDate = (int) $creationDate;
     }
 
     /**
@@ -731,7 +746,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function setId($id) {
         //TODO: why can't I set a document ID null through setter?
         if ($id) {
-            $this->id = $id;
+            $this->id = (int) $id;
         }
     }
 
@@ -754,7 +769,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setModificationDate($modificationDate) {
-        $this->modificationDate = $modificationDate;
+        $this->modificationDate = (int) $modificationDate;
     }
 
 
@@ -767,7 +782,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         if ($this->parentId != null and $parentId != null and $this->parentId != $parentId) {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
-        $this->parentId = $parentId;
+        $this->parentId = (int) $parentId;
     }
 
     /**
@@ -790,7 +805,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setIndex($index) {
-        $this->index = $index;
+        $this->index = (int) $index;
     }
 
     /**
@@ -827,7 +842,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setUserModification($userModification) {
-        $this->userModification = $userModification;
+        $this->userModification = (int) $userModification;
     }
 
     /**
@@ -835,7 +850,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setUserOwner($userOwner) {
-        $this->userOwner = $userOwner;
+        $this->userOwner = (int) $userOwner;
     }
 
     /**

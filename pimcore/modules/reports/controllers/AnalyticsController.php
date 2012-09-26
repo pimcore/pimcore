@@ -14,43 +14,66 @@
  */
 
 class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Reports {
-    
+
+    /**
+     * @var apiAnalyticsService
+     */
+    protected $service;
     
     public function init () {
         parent::init();
         
-        $credentials = $this->getAnalyticsCredentials();
-        if(!$credentials) {
-            die("Analytics not configured");
+        $client = Pimcore_Google_Api::getServiceClient();
+        if(!$client) {
+            die("Google Analytics is not configured");
+        }
+
+        $this->service = new apiAnalyticsService($client);
+    }
+
+    public function deeplinkAction () {
+
+        $config = Pimcore_Google_Analytics::getSiteConfig();
+
+        $url = $this->getParam("url");
+        $url = str_replace(array("{accountId}", "{internalWebPropertyId}", "{id}"), array($config->accountid, $config->internalid, $config->profile), $url);
+        $url = "https://www.google.com/analytics/web/" . $url;
+
+        $this->redirect($url);
+    }
+
+    public function getProfilesAction () {
+
+        try {
+            $data = array("data" => array());
+            $result = $this->service->management_webproperties->listManagementWebproperties("~all");
+
+
+            foreach ($result["items"] as $entry) {
+
+                $details = $this->service->management_profiles->listManagementProfiles($entry["accountId"], $entry["id"]);
+
+                foreach ($details["items"] as $detail) {
+                    $data["data"][] = array(
+                        "id" => $detail["id"],
+                        "name" => $detail["name"],
+                        "trackid" => $detail["webPropertyId"],
+                        "internalid" => $detail["internalWebPropertyId"],
+                        "accountid" => $detail["accountId"]
+                    );
+                }
+            }
+
+            $this->_helper->json($data);
+        }
+        catch (Exception $e) {
+            $this->_helper->json(false);
         }
     }
-    
-    protected function getQuery($site) {
-        
-        $config = Pimcore_Google_Analytics::getSiteConfig($site);
 
-        if(!$config) {
-            die("Analytics not configured");
-        }
-        
-        $credentials = $this->getAnalyticsCredentials();
-        $query = $this->getService()->newDataQuery()->setProfileId($config->profile);
-        
-        return $query;
-    }
-    
-    protected function getService () {
-        
-        $credentials = $this->getAnalyticsCredentials();
-
-        $client = Zend_Gdata_ClientLogin::getHttpClient($credentials["username"], $credentials["password"], Zend_Gdata_Analytics::AUTH_SERVICE_NAME, Pimcore_Tool::getHttpClient("Zend_Gdata_HttpClient"));
-		$service = new Zend_Gdata_Analytics($client, "pimcore-open-source-CMS-framework");
-        
-        return $service;
-    }
     
     private function getSite () {
-        $siteId = $this->_getParam("site");
+        $siteId = $this->getParam("site");
         
         try {
            $site = Site::getById($siteId); 
@@ -69,69 +92,77 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
         
-        if($this->_getParam("dateFrom") && $this->_getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->_getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->_getParam("dateTo"))); 
+        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
         }
         
         $metrics = array("ga:pageviews");
-        if($this->_getParam("metric")) {
+        if($this->getParam("metric")) {
             $metrics = array();
             
-            if(is_array($this->_getParam("metric"))) {
-                foreach ($this->_getParam("metric") as $m) {
+            if(is_array($this->getParam("metric"))) {
+                foreach ($this->getParam("metric") as $m) {
                     $metrics[] = "ga:" . $m;
                 }
             }
             else {
-                $metrics[] = "ga:" . $this->_getParam("metric");
+                $metrics[] = "ga:" . $this->getParam("metric");
             }
             
         }
-       
-		$query = $this->getQuery($this->getSite());
-	
-		$query->addDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_DATE)
-			->setStartDate($startDate)
-			->setEndDate($endDate);
-                
-        
-        // add metrics 
-        foreach ($metrics as $metric) {
-	       $query->addMetric($metric);
-        }
-        
+
+        $filters = array();
+
         if($config->advanced) {
-            if($this->_getParam("id") && $this->_getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->_getParam("type") . "/" . $this->_getParam("id");
-                $query->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$url);
+            if($this->getParam("id") && $this->getParam("type")) {
+                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
+                $filters[] = "ga:pagePath==".$url;
             }
         }
         else {
-            if($this->_getParam("path")) {
-                $query->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$this->_getParam("path"));
+            if($this->getParam("path")) {
+                $filters[] = "ga:pagePath==".$this->getParam("path");
             }
         }
-        
-        
-		$result = $this->getService()->getDataFeed($query);
-        
-        $data = array();
-        
-		foreach($result as $row){
 
-            $date = new Zend_Date(strtotime($row->getDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_DATE)));
+        if($this->getParam("filters")) {
+            $filters[] = $this->getParam("filters");
+        }
+
+        $opts = array(
+            "dimensions" => "ga:date"
+        );
+
+        if(!empty($filters)) {
+            $opts["filters"] = implode(";", $filters);
+        }
+
+        $result = $this->service->data_ga->get(
+            "ga:" . $config->profile,
+            $startDate,
+            $endDate,
+            implode(",",$metrics),
+            $opts
+        );
+
+
+        $data = array();
+
+		foreach($result["rows"] as $row){
+
+            $date = $row[0];
             
             $tmpData = array(
-                "timestamp" => $date->getTimestamp(),
-                "datetext" => $this->formatDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_DATE,(string) $row->getDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_DATE))
+                "timestamp" => strtotime($date),
+                "datetext" => $this->formatDimension("date", $date)
             );
             
-            foreach ($metrics as $metric) {
-                if(!$this->_getParam("dataField")) {
-                    $tmpData[str_replace("ga:","",$metric)] = (int) $row->getMetric($metric)->getValue();
+            foreach ($result["columnHeaders"] as $index => $metric) {
+                if(!$this->getParam("dataField")) {
+                    $tmpData[str_replace("ga:","",$metric["name"])] = $row[$index];
                 } else {
-                    $tmpData[$this->_getParam("dataField")] = (int) $row->getMetric($metric)->getValue();
+                    $tmpData[$this->getParam("dataField")] = $row[$index];
                 }
             }
             
@@ -148,71 +179,59 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
         
-        if($this->_getParam("dateFrom") && $this->_getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->_getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->_getParam("dateTo"))); 
+        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
         }
 
-        $query = $this->getQuery($this->getSite());
-        
-        $query->addDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_DATE)
-			->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_UNIQUE_PAGEVIEWS)
-			->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)
-			->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_EXITS)
-			->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_BOUNCES)
-			->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_ENTRANCES)
-			->setStartDate($startDate)
-			->setEndDate($endDate);
-        
-
         if($config->advanced) {
-            if($this->_getParam("id") && $this->_getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->_getParam("type") . "/" . $this->_getParam("id");
-                $query->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$url);
+            if($this->getParam("id") && $this->getParam("type")) {
+                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
+                $filters[] = "ga:pagePath==".$url;
             }
         }
         else {
-            if($this->_getParam("path")) {
-                $query->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$this->_getParam("path"));
+            if($this->getParam("path")) {
+                $filters[] = "ga:pagePath==".$this->getParam("path");
             }
         }
-        
-		$result = $this->getService()->getDataFeed($query);
-        
+
+
+        $opts = array(
+            "dimensions" => "ga:date"
+        );
+
+        if(!empty($filters)) {
+            $opts["filters"] = implode(";", $filters);
+        }
+
+        $result = $this->service->data_ga->get(
+            "ga:" . $config->profile,
+            $startDate,
+            $endDate,
+            "ga:uniquePageviews,ga:pageviews,ga:exits,ga:bounces,ga:entrances",
+            $opts
+        );
+
         $data = array();
-        $dailyData = array();
         $dailyDataGrouped = array();
 
-        
-		foreach($result as $row){
-
-            $date = $this->formatDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_DATE, $row->getDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_DATE));
-            
-            $dailyDataGrouped[Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS][] = (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)->getValue();
-            $dailyDataGrouped[Zend_Gdata_Analytics_DataQuery::METRIC_UNIQUE_PAGEVIEWS][] = (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_UNIQUE_PAGEVIEWS)->getValue();
-            $dailyDataGrouped[Zend_Gdata_Analytics_DataQuery::METRIC_EXITS][] = (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_EXITS)->getValue();          
-            $dailyDataGrouped[Zend_Gdata_Analytics_DataQuery::METRIC_BOUNCES][] = (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_BOUNCES)->getValue(); 
-            $dailyDataGrouped[Zend_Gdata_Analytics_DataQuery::METRIC_ENTRANCES][] = (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_ENTRANCES)->getValue();
-            
-                       
-            $data[Zend_Gdata_Analytics_DataQuery::METRIC_BOUNCES] += (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_BOUNCES)->getValue();
-            $data[Zend_Gdata_Analytics_DataQuery::METRIC_ENTRANCES] += (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_ENTRANCES)->getValue();
-            $data[Zend_Gdata_Analytics_DataQuery::METRIC_EXITS] += (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_EXITS)->getValue();
-            $data[Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS] += (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)->getValue();
-            $data[Zend_Gdata_Analytics_DataQuery::METRIC_UNIQUE_PAGEVIEWS] += (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_UNIQUE_PAGEVIEWS)->getValue();
+		foreach($result["rows"] as $row){
+            foreach ($result["columnHeaders"] as $index => $metric) {
+                if($index) {
+                    $dailyDataGrouped[$metric["name"]][] = $row[$index];
+                    $data[$metric["name"]] += $row[$index];
+                }
+            }
         }
-                
-        //$data[Zend_Gdata_Analytics_DataQuery::METRIC_EXITS] = ($data[Zend_Gdata_Analytics_DataQuery::METRIC_EXITS]/$data[Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS]) * 100;
-        //$data[Zend_Gdata_Analytics_DataQuery::METRIC_BOUNCES] = $data["bounces"] / $data[Zend_Gdata_Analytics_DataQuery::METRIC_ENTRANCES] * 100;
-        
-        //unset($data["bounces"]);
+
         
         $order = array(
-            Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS => 0,
-            Zend_Gdata_Analytics_DataQuery::METRIC_UNIQUE_PAGEVIEWS => 1,
-            Zend_Gdata_Analytics_DataQuery::METRIC_EXITS => 2,
-            Zend_Gdata_Analytics_DataQuery::METRIC_ENTRANCES => 3,
-            Zend_Gdata_Analytics_DataQuery::METRIC_BOUNCES => 4
+            "ga:pageviews"=> 0,
+            "ga:uniquePageviews" => 1,
+            "ga:exits" => 2,
+            "ga:entrances" => 3,
+            "ga:bounces" => 4
         );
         
         $outputData = array();
@@ -220,7 +239,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
             $outputData[$order[$key]] = array(
                 "label" => str_replace("ga:","",$key),
                 "value" => round($value,2),
-                "chart" => Pimcore_Report_ImageChart::lineSmall($dailyDataGrouped[$key]),
+                "chart" => Pimcore_Helper_ImageChart::lineSmall($dailyDataGrouped[$key]),
                 "metric" => str_replace("ga:","",$key)
             );
         }
@@ -238,42 +257,48 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
         
-        if($this->_getParam("dateFrom") && $this->_getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->_getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->_getParam("dateTo"))); 
+        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
         }
-        
-		$query = $this->getQuery($this->getSite());
-	
-		$query->addDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_SOURCE)
-            ->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)
-			->setStartDate($startDate)
-			->setEndDate($endDate)
-            ->setSort(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS,true)
-            ->setMaxResults(10);
- 
-        
+
         if($config->advanced) {
-            if($this->_getParam("id") && $this->_getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->_getParam("type") . "/" . $this->_getParam("id");
-                $query->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$url);
+            if($this->getParam("id") && $this->getParam("type")) {
+                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
+                $filters[] = "ga:pagePath==".$url;
             }
         }
         else {
-            if($this->_getParam("path")) {
-                $query->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$this->_getParam("path"));
+            if($this->getParam("path")) {
+                $filters[] = "ga:pagePath==".$this->getParam("path");
             }
         }
-        
-        
-		$result = $this->getService()->getDataFeed($query);
-        
+
+
+        $opts = array(
+            "dimensions" => "ga:source",
+            "max-results" => "10",
+            "sort" => "-ga:pageviews"
+        );
+
+        if(!empty($filters)) {
+            $opts["filters"] = implode(";", $filters);
+        }
+
+        $result = $this->service->data_ga->get(
+            "ga:" . $config->profile,
+            $startDate,
+            $endDate,
+            "ga:pageviews",
+            $opts
+        );
+
         $data = array();
         
-		foreach($result as $row){
+		foreach($result["rows"] as $row){
             $data[] = array(
-                "pageviews" => (int) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)->getValue(),
-                "source" => $this->formatDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_SOURCE, (string) $row->getDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_SOURCE))
+                "pageviews" => $row[1],
+                "source" => $row[0]
             );
         }
         
@@ -290,58 +315,63 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         $descending = true;
         $limit = 10;
         
-        if($this->_getParam("dateFrom") && $this->_getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->_getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->_getParam("dateTo"))); 
+        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
         }
-        if($this->_getParam("dimension")) {
-            $dimension = $this->_getParam("dimension");
+        if($this->getParam("dimension")) {
+            $dimension = $this->getParam("dimension");
         }
-        if($this->_getParam("metric")) {
-            $metric = $this->_getParam("metric");
+        if($this->getParam("metric")) {
+            $metric = $this->getParam("metric");
         }
-        if($this->_getParam("sort")) {
-            if($this->_getParam("sort") == "asc") {
+        if($this->getParam("sort")) {
+            if($this->getParam("sort") == "asc") {
                 $descending = false;
             }
         }
-        if($this->_getParam("limit")) {
-            $limit = $this->_getParam("limit");
+        if($this->getParam("limit")) {
+            $limit = $this->getParam("limit");
         }
-        
-       
-		$query = $this->getQuery($this->getSite());
-	
-		$query->addDimension($dimension)
-            ->addMetric($metric)
-			->setStartDate($startDate)
-			->setEndDate($endDate)
-            ->setSort($metric,$descending)
-            ->setMaxResults($limit);
-  
-        
+
+
         if($config->advanced) {
-            if($this->_getParam("id") && $this->_getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->_getParam("type") . "/" . $this->_getParam("id");
-                $query->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$url);
+            if($this->getParam("id") && $this->getParam("type")) {
+                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
+                $filters[] = "ga:pagePath==".$url;
             }
         }
         else {
-            if($this->_getParam("path")) {
-                $query->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$this->_getParam("path"));
+            if($this->getParam("path")) {
+                $filters[] = "ga:pagePath==".$this->getParam("path");
             }
         }
-        
-        
-		$result = $this->getService()->getDataFeed($query);
-        
+
+
+        $opts = array(
+            "dimensions" => $dimension,
+            "max-results" => $limit,
+            "sort" => ($descending ? "-" : "") . $metric
+        );
+
+        if(!empty($filters)) {
+            $opts["filters"] = implode(";", $filters);
+        }
+
+        $result = $this->service->data_ga->get(
+            "ga:" . $config->profile,
+            $startDate,
+            $endDate,
+            $metric,
+            $opts
+        );
+
         $data = array();
-        
-		foreach($result as $row){
+		foreach($result["rows"] as $row){
 		  
             $data[] = array(
-                "dimension" => $this->formatDimension($dimension,(string) $row->getDimension($dimension)),
-                "metric" => (double) $row->getMetric($metric)->getValue()
+                "dimension" => $this->formatDimension($dimension, $row[0]),
+                "metric" => (double) $row[1]
             );
         }
         
@@ -354,73 +384,74 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         $startDate = date("Y-m-d",(time()-(86400*31)));
 		$endDate = date("Y-m-d");
         
-        if($this->_getParam("dateFrom") && $this->_getParam("dateTo")) {
-            $startDate = date("Y-m-d",strtotime($this->_getParam("dateFrom")));
-            $endDate = date("Y-m-d",strtotime($this->_getParam("dateTo"))); 
+        if($this->getParam("dateFrom") && $this->getParam("dateTo")) {
+            $startDate = date("Y-m-d",strtotime($this->getParam("dateFrom")));
+            $endDate = date("Y-m-d",strtotime($this->getParam("dateTo")));
         }
         
         // all pageviews
-        $query0 = $this->getQuery($this->getSite());
-	
-		$query0->addDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH)
-            ->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)
-			->setStartDate($startDate)
-			->setEndDate($endDate)
-            ->setSort(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS,true)
-            ->setMaxResults(1);
-  
-        
         if($config->advanced) {
-            if($this->_getParam("id") && $this->_getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->_getParam("type") . "/" . $this->_getParam("id");
-                $query0->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$url);
+            if($this->getParam("id") && $this->getParam("type")) {
+                $url = "/pimcoreanalytics/" . $this->getParam("type") . "/" . $this->getParam("id");
+                $filters[] = "ga:pagePath==".$url;
             }
         }
         else {
-            if($this->_getParam("path")) {
-                $query0->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$this->_getParam("path"));
+            if($this->getParam("path")) {
+                $filters[] = "ga:pagePath==".$this->getParam("path");
             }
         }
-        
-		$result0 = $this->getService()->getDataFeed($query0);
-       
-        $totalViews = (int) $result0[0]->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)->getValue();
+
+
+        $opts = array(
+            "dimensions" => "ga:pagePath",
+            "max-results" => 1,
+            "sort" => "-ga:pageViews"
+        );
+
+        if(!empty($filters)) {
+            $opts["filters"] = implode(";", $filters);
+        }
+
+        $result0 = $this->service->data_ga->get(
+            "ga:" . $config->profile,
+            $startDate,
+            $endDate,
+            "ga:pageViews",
+            $opts
+        );
+
+        $totalViews = (int) $result0["totalsForAllResults"]["ga:pageviews"];
        
        
         // ENTRANCES
-		$query1 = $this->getQuery($this->getSite());
-	
-		$query1->addDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PREV_PAGE_PATH)
-            ->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)
-			->setStartDate($startDate)
-			->setEndDate($endDate)
-            ->setSort(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS,true)
-            ->setMaxResults(10);
-  
-        
-        if($config->advanced) {
-            if($this->_getParam("id") && $this->_getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->_getParam("type") . "/" . $this->_getParam("id");
-                $query1->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$url);
-            }
+        $opts = array(
+            "dimensions" => "ga:previousPagePath",
+            "max-results" => 10,
+            "sort" => "-ga:pageViews"
+        );
+
+        if(!empty($filters)) {
+            $opts["filters"] = implode(";", $filters);
         }
-        else {
-            if($this->_getParam("path")) {
-                $query1->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH."==".$this->_getParam("path"));
-            }
-        }
-        
-		$result1 = $this->getService()->getDataFeed($query1);
+
+        $result1 = $this->service->data_ga->get(
+            "ga:" . $config->profile,
+            $startDate,
+            $endDate,
+            "ga:pageViews",
+            $opts
+        );
         
         
         $prev = array();
-		foreach($result1 as $row){
+		foreach($result1["rows"] as $row){
             $d =  array(
-                "path" => $this->formatDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PREV_PAGE_PATH,(string) $row->getDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PREV_PAGE_PATH)),
-                "pageviews" => (double) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)->getValue()
+                "path" => $this->formatDimension("ga:previousPagePath", $row[0]),
+                "pageviews" => $row[1]
             );
             
-            $document = Document::getByPath((string) $row->getDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PREV_PAGE_PATH));
+            $document = Document::getByPath($row[0]);
             if($document) {
                 $d["id"] = $document->getId();
             }
@@ -438,39 +469,33 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         
         
         // EXITS
-		$query2 = $this->getQuery($this->getSite());
-	
-		$query2->addDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH)
-            ->addMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)
-			->setStartDate($startDate)
-			->setEndDate($endDate)
-            ->setSort(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS,true)
-            ->setMaxResults(10);
-  
-        
-        if($config->advanced) {
-            if($this->_getParam("id") && $this->_getParam("type")) {
-                $url = "/pimcoreanalytics/" . $this->_getParam("type") . "/" . $this->_getParam("id");
-                $query2->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PREV_PAGE_PATH."==".$url);
-            }
+        $opts = array(
+            "dimensions" => "ga:pagePath",
+            "max-results" => 10,
+            "sort" => "-ga:pageViews"
+        );
+
+        if(!empty($filters)) {
+            $opts["filters"] = implode(";", $filters);
         }
-        else {
-            if($this->_getParam("path")) {
-                $query2->setFilter(Zend_Gdata_Analytics_DataQuery::DIMENSION_PREV_PAGE_PATH."==".$this->_getParam("path"));
-            }
-        }
-        
-		$result2 = $this->getService()->getDataFeed($query2);
+
+        $result2 = $this->service->data_ga->get(
+            "ga:" . $config->profile,
+            $startDate,
+            $endDate,
+            "ga:pageViews",
+            $opts
+        );
         
         
         $next = array();
-		foreach($result2 as $row){
+		foreach($result2["rows"] as $row){
             $d =  array(
-                "path" => $this->formatDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH,(string) $row->getDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH)),
-                "pageviews" => (double) $row->getMetric(Zend_Gdata_Analytics_DataQuery::METRIC_PAGEVIEWS)->getValue()
+                "path" => $this->formatDimension("ga:previousPagePath", $row[0]),
+                "pageviews" => $row[1]
             );
             
-            $document = Document::getByPath((string) $row->getDimension(Zend_Gdata_Analytics_DataQuery::DIMENSION_PAGE_PATH));
+            $document = Document::getByPath($row[0]);
             if($document) {
                 $d["id"] = $document->getId();
             }
@@ -489,7 +514,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
         
         $this->view->next = $next;
         $this->view->prev = $prev;
-        $this->view->path = $this->_getParam("path");
+        $this->view->path = $this->getParam("path");
         
         $this->getResponse()->setHeader("Content-Type","application/xml",true);
     }
@@ -651,7 +676,7 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
     
     protected function formatDimension ($type, $value) {
         
-        if($type == Zend_Gdata_Analytics_DataQuery::DIMENSION_DATE) {
+        if(strpos($type,"date") !== false) {
             $date = new Zend_Date(strtotime($value));
             return $date->get(Zend_Date::DATE_MEDIUM);
         }

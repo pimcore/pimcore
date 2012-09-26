@@ -171,7 +171,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
               `index` int(11) unsigned NOT NULL DEFAULT '0',
               `ownertype` enum('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
               `ownername` varchar(70) NOT NULL DEFAULT '',
-              `position` varchar(11) NOT NULL DEFAULT '0',
+              `position` varchar(70) NOT NULL DEFAULT '0',
               PRIMARY KEY (`src_id`,`dest_id`,`ownertype`,`ownername`,`fieldname`,`type`,`position`),
               KEY `index` (`index`),
               KEY `src_id` (`src_id`),

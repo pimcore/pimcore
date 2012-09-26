@@ -285,6 +285,10 @@ class Element_Service {
                 $sanityCheck->delete();
             }
             $sanityCheck = Element_Sanitycheck::getNext();
+
+            // reduce load on server
+            Logger::debug("Now timeout for 3 seconds");
+            sleep(3);
         }
 
     }
@@ -525,6 +529,8 @@ class Element_Service {
             Document_Service::loadAllDocumentFields($element);
         } else if ($element instanceof Object_Concrete) {
             Object_Service::loadAllObjectFields($element);
+        } else if ($element instanceof Asset) {
+            Asset_Service::loadAllFields($element);
         }
 
         return $element;

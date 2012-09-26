@@ -16,15 +16,15 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HttpAdapterStreamingProxy.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: HttpAdapterStreamingProxy.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Http_Client_Adapter_Proxy
  */
-require_once 'Zend/Http/Client/Adapter/Proxy.php';
+// require_once 'Zend/Http/Client/Adapter/Proxy.php';
 
 /**
  * Extends the proxy HTTP adapter to handle streams instead of discrete body
@@ -33,7 +33,7 @@ require_once 'Zend/Http/Client/Adapter/Proxy.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Gdata
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_HttpAdapterStreamingProxy extends Zend_Http_Client_Adapter_Proxy
@@ -59,13 +59,13 @@ class Zend_Gdata_HttpAdapterStreamingProxy extends Zend_Http_Client_Adapter_Prox
     {
         // If no proxy is set, throw an error
         if (! $this->config['proxy_host']) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
+            // require_once 'Zend/Http/Client/Adapter/Exception.php';
             throw new Zend_Http_Client_Adapter_Exception('No proxy host set!');
         }
 
         // Make sure we're properly connected
         if (! $this->socket) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
+            // require_once 'Zend/Http/Client/Adapter/Exception.php';
             throw new Zend_Http_Client_Adapter_Exception(
                 'Trying to write but we are not connected');
         }
@@ -74,7 +74,7 @@ class Zend_Gdata_HttpAdapterStreamingProxy extends Zend_Http_Client_Adapter_Prox
         $port = $this->config['proxy_port'];
 
         if ($this->connected_to[0] != $host || $this->connected_to[1] != $port) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
+            // require_once 'Zend/Http/Client/Adapter/Exception.php';
             throw new Zend_Http_Client_Adapter_Exception(
                 'Trying to write but we are connected to the wrong proxy ' .
                 'server');
@@ -109,7 +109,7 @@ class Zend_Gdata_HttpAdapterStreamingProxy extends Zend_Http_Client_Adapter_Prox
 
         // Send the request headers
         if (! @fwrite($this->socket, $request)) {
-            require_once 'Zend/Http/Client/Adapter/Exception.php';
+            // require_once 'Zend/Http/Client/Adapter/Exception.php';
             throw new Zend_Http_Client_Adapter_Exception(
                 'Error writing request to proxy server');
         }
@@ -117,7 +117,7 @@ class Zend_Gdata_HttpAdapterStreamingProxy extends Zend_Http_Client_Adapter_Prox
         //read from $body, write to socket
         while ($body->hasData()) {
             if (! @fwrite($this->socket, $body->read(self::CHUNK_SIZE))) {
-                require_once 'Zend/Http/Client/Adapter/Exception.php';
+                // require_once 'Zend/Http/Client/Adapter/Exception.php';
                 throw new Zend_Http_Client_Adapter_Exception(
                     'Error writing request to server');
             }

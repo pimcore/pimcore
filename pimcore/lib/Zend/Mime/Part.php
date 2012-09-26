@@ -14,22 +14,22 @@
  *
  * @category   Zend
  * @package    Zend_Mime
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Part.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Part.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * Zend_Mime
  */
-require_once 'Zend/Mime.php';
+// require_once 'Zend/Mime.php';
 
 /**
  * Class representing a MIME part.
  *
  * @category   Zend
  * @package    Zend_Mime
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Mime_Part {
@@ -92,7 +92,7 @@ class Zend_Mime_Part {
     public function getEncodedStream()
     {
         if (!$this->_isStream) {
-            require_once 'Zend/Mime/Exception.php';
+            // require_once 'Zend/Mime/Exception.php';
             throw new Zend_Mime_Exception('Attempt to get a stream from a string part');
         }
 
@@ -109,7 +109,7 @@ class Zend_Mime_Part {
                     )
                 );
                 if (!is_resource($filter)) {
-                    require_once 'Zend/Mime/Exception.php';
+                    // require_once 'Zend/Mime/Exception.php';
                     throw new Zend_Mime_Exception('Failed to append quoted-printable filter');
                 }
                 break;
@@ -124,7 +124,7 @@ class Zend_Mime_Part {
                     )
                 );
                 if (!is_resource($filter)) {
-                    require_once 'Zend/Mime/Exception.php';
+                    // require_once 'Zend/Mime/Exception.php';
                     throw new Zend_Mime_Exception('Failed to append base64 filter');
                 }
                 break;

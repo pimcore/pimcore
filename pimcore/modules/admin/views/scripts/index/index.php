@@ -5,10 +5,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="robots" content="noindex, nofollow" />
 
-    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <title><?php echo htmlentities($_SERVER["HTTP_HOST"], ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
+    <title><?php echo htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
 
     <!-- load in head because of the progress bar at loading -->
     <link rel="stylesheet" type="text/css" href="/pimcore/static/css/admin.css?_dc=<?php echo Pimcore_Version::$revision ?>" />
@@ -33,18 +33,11 @@
     
     <?php // define stylesheets ?>
     <?php
-        $conf = Pimcore_Config::getSystemConfig();
-
-        $themeUrl = "/pimcore/static/js/lib/ext/resources/css/xtheme-blue.css";
-        if ($conf->general->theme) {
-            $themeUrl = $conf->general->theme;
-        }
-
         $styles = array(
             "/admin/misc/admin-css",
             "/pimcore/static/css/icons.css",
             "/pimcore/static/js/lib/ext/resources/css/ext-all.css",
-            $themeUrl,
+            "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
             "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.css",
             "/pimcore/static/js/lib/ext-plugins/Notification/notification.css",
             "/pimcore/static/js/lib/ext-plugins/SuperBoxSelect/superboxselect.css",
@@ -64,7 +57,7 @@
 
     <!-- stylesheets -->
     <?php foreach ($styles as $style) { ?>
-        <link rel="stylesheet" type="text/css" href="<?php echo $style ?>" />
+        <link rel="stylesheet" type="text/css" href="<?php echo $style ?>?_dc=<?php echo Pimcore_Version::$revision ?>" />
     <?php } ?>
 
 
@@ -139,9 +132,18 @@
 
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",
-
-            "lib/codemirror/js/codemirror.js"
         );
+
+        // browser specific lib includes
+        $browser = new Pimcore_Browser();
+        $browserVersion = (int) $browser->getVersion();
+        $platform = $browser->getPlatform();
+
+
+        // ace editor (code editor in server file explorer) is only for => IE9, FF, Chrome
+        if ( ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 9) || $browser->getBrowser() != Pimcore_Browser::BROWSER_IE) {
+            $scriptLibs[] = "lib/ace/ace-noconflict.js";
+        }
 
 
         // PIMCORE SCRIPTS
@@ -208,6 +210,8 @@
             "pimcore/settings/liveconnect.js",
             "pimcore/settings/robotstxt.js",
             "pimcore/settings/httpErrorLog.js",
+            "pimcore/settings/targeting/panel.js",
+            "pimcore/settings/targeting/item.js",
 
             // element
             "pimcore/element/abstract.js",
@@ -218,6 +222,7 @@
             "pimcore/element/properties.js",
             "pimcore/element/scheduler.js",
             "pimcore/element/dependencies.js",
+            "pimcore/element/notes.js",
             "pimcore/object/helpers/grid.js",
             "pimcore/object/helpers/gridConfigDialog.js",
             "pimcore/object/helpers/gridTabAbstract.js",
@@ -228,10 +233,11 @@
             "pimcore/document/document.js",
             "pimcore/document/page_snippet.js",
             "pimcore/document/edit.js",
-            "pimcore/document/editemail.js",
             "pimcore/document/versions.js",
             "pimcore/document/pages/settings.js",
             "pimcore/document/pages/preview.js",
+            "pimcore/document/pages/targeting.js",
+            "pimcore/document/pages/target/item.js",
             "pimcore/document/snippets/settings.js",
             "pimcore/document/emails/settings.js",
             "pimcore/document/emails/logs.js",
@@ -246,7 +252,6 @@
             
             // assets
             "pimcore/asset/asset.js",
-            "pimcore/asset/metadata.js",
             "pimcore/asset/unknown.js",
             "pimcore/asset/image.js",
             "pimcore/asset/document.js",
@@ -368,12 +373,12 @@
             "pimcore/report/analytics/elementexplorer.js",
             "pimcore/report/analytics/elementnavigation.js",
             "pimcore/report/webmastertools/settings.js",
-            "pimcore/report/webmastertools/keywords.js",
-            "pimcore/report/webmastertools/crawling.js",
-            "pimcore/report/websiteoptimizer/abcreate.js",
 
             "pimcore/settings/tagmanagement/panel.js",
             "pimcore/settings/tagmanagement/item.js",
+
+            "pimcore/report/qrcode/panel.js",
+            "pimcore/report/qrcode/item.js",
 
             // extension manager
             "pimcore/extensionmanager/settings.js",
@@ -402,6 +407,12 @@
             "lib/ext-plugins/SwfUploadPanel/SwfUploadPanel.js"
         );
 
+        // google maps API key
+        $googleMapsApiKey = $this->config->services->google->simpleapikey;
+        if($this->config->services->google->browserapikey) {
+            $googleMapsApiKey = $this->config->services->google->browserapikey;
+        }
+
     ?>
     
     <!-- some javascript -->
@@ -424,15 +435,17 @@
             language: '<?php echo $this->language; ?>',
             websiteLanguages: <?php echo Zend_Json::encode(explode(",",$this->config->general->validLanguages)); ?>,
             google_translate_api_key: "<?php echo $this->config->services->translate->apikey; ?>",
-            google_maps_api_key: "<?php echo $this->config->services->googlemaps->apikey ?>",
+            google_maps_api_key: "<?php echo $googleMapsApiKey ?>",
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
-            showCloseConfirmation: true
+            showCloseConfirmation: true,
+            debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
+            targeting_enabled: <?php echo Zend_Json::encode((bool) $this->config->general->targeting) ?>
         };
     </script>
     
     
     <?php // 3rd party libraries ?>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $this->config->services->googlemaps->apikey ?>"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $googleMapsApiKey ?>"></script>
 
     <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>

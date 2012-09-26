@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_Serializer
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PhpCode.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: PhpCode.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** @see Zend_Serializer_Adapter_AdapterAbstract */
-require_once 'Zend/Serializer/Adapter/AdapterAbstract.php';
+// require_once 'Zend/Serializer/Adapter/AdapterAbstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Serializer
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Serializer_Adapter_PhpCode extends Zend_Serializer_Adapter_AdapterAbstract
@@ -59,7 +59,7 @@ class Zend_Serializer_Adapter_PhpCode extends Zend_Serializer_Adapter_AdapterAbs
         $eval = @eval('$ret=' . $code . ';');
         if ($eval === false) {
                 $lastErr = error_get_last();
-                require_once 'Zend/Serializer/Exception.php';
+                // require_once 'Zend/Serializer/Exception.php';
                 throw new Zend_Serializer_Exception('eval failed: ' . $lastErr['message']);
         }
         return $ret;

@@ -153,7 +153,7 @@ class Document_DocType extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setId($id) {
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     /**
@@ -193,7 +193,7 @@ class Document_DocType extends Pimcore_Model_Abstract {
      * @return void
      */
     public function setPriority($priority) {
-        $this->priority = intval($priority);
+        $this->priority = (int) $priority;
     }
 
     /**

@@ -15,26 +15,26 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Json.php 23775 2011-03-01 17:25:24Z ralph $
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Json.php 24829 2012-05-30 12:31:39Z adamlundrigan $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Json */
-require_once 'Zend/Json.php';
+// require_once 'Zend/Json.php';
 
 /** Zend_Controller_Front */
-require_once 'Zend/Controller/Front.php';
+// require_once 'Zend/Controller/Front.php';
 
 /** Zend_View_Helper_Abstract.php */
-require_once 'Zend/View/Helper/Abstract.php';
+// require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper for simplifying JSON responses
  *
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Json extends Zend_View_Helper_Abstract
@@ -43,16 +43,18 @@ class Zend_View_Helper_Json extends Zend_View_Helper_Abstract
      * Encode data as JSON, disable layouts, and set response header
      *
      * If $keepLayouts is true, does not disable layouts.
+     * If $encodeJson is false, does not JSON-encode $data
      *
      * @param  mixed $data
      * @param  bool $keepLayouts
      * NOTE:   if boolean, establish $keepLayouts to true|false
      *         if array, admit params for Zend_Json::encode as enableJsonExprFinder=>true|false
-     *         this array can contains a 'keepLayout'=>true|false
+     *         this array can contains a 'keepLayout'=>true|false and/or 'encodeData'=>true|false
      *         that will not be passed to Zend_Json::encode method but will be used here
+     * @param  bool $encodeData
      * @return string|void
      */
-    public function json($data, $keepLayouts = false)
+    public function json($data, $keepLayouts = false, $encodeData = true)
     {
         $options = array();
         if (is_array($keepLayouts))
@@ -62,11 +64,17 @@ class Zend_View_Helper_Json extends Zend_View_Helper_Abstract
                             ? $keepLayouts['keepLayouts']
                             : false;
             unset($options['keepLayouts']);
+            $encodeData  = (array_key_exists('encodeData', $keepLayouts))
+                            ? $keepLayouts['encodeData']
+                            : $encodeData;
+            unset($options['encodeData']);
         }
 
-        $data = Zend_Json::encode($data, null, $options);
+        if ($encodeData) {
+            $data = Zend_Json::encode($data, null, $options);
+        }
         if (!$keepLayouts) {
-            require_once 'Zend/Layout.php';
+            // require_once 'Zend/Layout.php';
             $layout = Zend_Layout::getMvcInstance();
             if ($layout instanceof Zend_Layout) {
                 $layout->disableLayout();

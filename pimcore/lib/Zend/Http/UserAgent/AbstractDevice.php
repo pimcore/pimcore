@@ -15,11 +15,11 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Http/UserAgent/Device.php';
+// require_once 'Zend/Http/UserAgent/Device.php';
 
 /**
  * Abstract Class to define a browser device.
@@ -27,7 +27,7 @@ require_once 'Zend/Http/UserAgent/Device.php';
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UserAgent
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Http_UserAgent_AbstractDevice
@@ -504,7 +504,9 @@ abstract class Zend_Http_UserAgent_AbstractDevice
                 $result['browser_name']    = $real[1][0];
                 $result['browser_version'] = $real[3][0];
             } else {
-                $result['browser_name']    = $result['browser_token'];
+                if(isset($result['browser_token'])) {
+                    $result['browser_name']    = $result['browser_token'];
+                }
                 $result['browser_version'] = '??';
             }
         } elseif ($product == 'mozilla' && $result['browser_version'] < 5.0) {
@@ -554,10 +556,12 @@ abstract class Zend_Http_UserAgent_AbstractDevice
             if (in_array($result['compatibility_flag'], $apple_device)) {
                 $result['device']           = strtolower($result['compatibility_flag']);
                 $result['device_os_token']  = 'iPhone OS';
-                $result['browser_language'] = trim($comment[3]);
+                if (isset($comment[3])) {
+                    $result['browser_language'] = trim($comment[3]);
+                }
                 if (isset($result['others']['detail'][1])) {
                     $result['browser_version']  = $result['others']['detail'][1][2];
-                } elseif (count($result['others']['detail'])) {
+                } elseif (isset($result['others']['detail']) && count($result['others']['detail'])) {
                     $result['browser_version']  = $result['others']['detail'][0][2];
                 }
                 if (!empty($result['others']['detail'][2])) {
@@ -694,10 +698,16 @@ abstract class Zend_Http_UserAgent_AbstractDevice
                 }
             }
 
-            // UA ends with 'Opera X.XX'
+            // UA ends with 'Opera X.XX' or 'Opera/X.XX'
             if ($result['others']['detail'][0][1] == 'Opera') {
                 $result['browser_name']    = $result['others']['detail'][0][1];
-                $result['browser_version'] = $result['others']['detail'][1][1];
+                // Opera X.XX
+                if (isset($result['others']['detail'][1][1])) {
+                    $result['browser_version'] = $result['others']['detail'][1][1];
+                // Opera/X.XX
+                } elseif (isset($result['others']['detail'][0][2])) {
+                    $result['browser_version'] = $result['others']['detail'][0][2];
+                }
             }
 
             // Opera Mini
@@ -759,7 +769,7 @@ abstract class Zend_Http_UserAgent_AbstractDevice
         $config = $config[$browserType]['features'];
 
         if (empty($config['classname'])) {
-            require_once 'Zend/Http/UserAgent/Exception.php';
+            // require_once 'Zend/Http/UserAgent/Exception.php';
             throw new Zend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter must have a "classname" config parameter defined');
         }
 
@@ -768,12 +778,12 @@ abstract class Zend_Http_UserAgent_AbstractDevice
             if (isset($config['path'])) {
                 $path = $config['path'];
             } else {
-                require_once 'Zend/Http/UserAgent/Exception.php';
+                // require_once 'Zend/Http/UserAgent/Exception.php';
                 throw new Zend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter must have a "path" config parameter defined');
             }
 
             if (false === include_once ($path)) {
-                require_once 'Zend/Http/UserAgent/Exception.php';
+                // require_once 'Zend/Http/UserAgent/Exception.php';
                 throw new Zend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter path that does not exist');
             }
         }

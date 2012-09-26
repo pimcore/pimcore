@@ -37,4 +37,15 @@ class Object_Class_List_Resource extends Pimcore_Model_List_Resource_Abstract {
 
         return $classes;
     }
+
+    public function getTotalCount() {
+
+        try {
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM classes " . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (Exception $e) {
+
+        }
+
+        return $amount;
+    }
 }

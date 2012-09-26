@@ -16,40 +16,40 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Calendar
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: EventEntry.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: EventEntry.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
+// require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Kind_EventEntry
  */
-require_once 'Zend/Gdata/Kind/EventEntry.php';
+// require_once 'Zend/Gdata/Kind/EventEntry.php';
 
 /**
  * @see Zend_Gdata_Calendar_Extension_SendEventNotifications
  */
-require_once 'Zend/Gdata/Calendar/Extension/SendEventNotifications.php';
+// require_once 'Zend/Gdata/Calendar/Extension/SendEventNotifications.php';
 
 /**
  * @see Zend_Gdata_Calendar_Extension_Timezone
  */
-require_once 'Zend/Gdata/Calendar/Extension/Timezone.php';
+// require_once 'Zend/Gdata/Calendar/Extension/Timezone.php';
 
 /**
  * @see Zend_Gdata_Calendar_Extension_Link
  */
-require_once 'Zend/Gdata/Calendar/Extension/Link.php';
+// require_once 'Zend/Gdata/Calendar/Extension/Link.php';
 
 /**
  * @see Zend_Gdata_Calendar_Extension_QuickAdd
  */
-require_once 'Zend/Gdata/Calendar/Extension/QuickAdd.php';
+// require_once 'Zend/Gdata/Calendar/Extension/QuickAdd.php';
 
 /**
  * Data model class for a Google Calendar Event Entry
@@ -57,7 +57,7 @@ require_once 'Zend/Gdata/Calendar/Extension/QuickAdd.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage Calendar
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Gdata_Calendar_EventEntry extends Zend_Gdata_Kind_EventEntry

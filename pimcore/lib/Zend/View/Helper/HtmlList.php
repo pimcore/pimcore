@@ -15,16 +15,16 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HtmlList.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: HtmlList.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /**
  * Zend_View_Helper_FormELement
  */
-require_once 'Zend/View/Helper/FormElement.php';
+// require_once 'Zend/View/Helper/FormElement.php';
 
 /**
  * Helper for ordered and unordered lists
@@ -33,7 +33,7 @@ require_once 'Zend/View/Helper/FormElement.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_HtmlList extends Zend_View_Helper_FormElement
@@ -50,7 +50,7 @@ class Zend_View_Helper_HtmlList extends Zend_View_Helper_FormElement
     public function htmlList(array $items, $ordered = false, $attribs = false, $escape = true)
     {
         if (!is_array($items)) {
-            require_once 'Zend/View/Exception.php';
+            // require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('First param must be an array');
             $e->setView($this->view);
             throw $e;

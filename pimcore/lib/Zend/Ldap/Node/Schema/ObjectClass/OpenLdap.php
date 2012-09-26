@@ -15,19 +15,19 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Schema
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OpenLdap.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: OpenLdap.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Ldap_Node_Schema_Item
  */
-require_once 'Zend/Ldap/Node/Schema/Item.php';
+// require_once 'Zend/Ldap/Node/Schema/Item.php';
 /**
  * @see Zend_Ldap_Node_Schema_ObjectClass_Interface
  */
-require_once 'Zend/Ldap/Node/Schema/ObjectClass/Interface.php';
+// require_once 'Zend/Ldap/Node/Schema/ObjectClass/Interface.php';
 
 /**
  * Zend_Ldap_Node_Schema_ObjectClass_OpenLdap provides access to the objectClass
@@ -36,7 +36,7 @@ require_once 'Zend/Ldap/Node/Schema/ObjectClass/Interface.php';
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage Schema
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Ldap_Node_Schema_ObjectClass_OpenLdap extends Zend_Ldap_Node_Schema_Item

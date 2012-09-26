@@ -41,14 +41,13 @@ class Asset_Resource extends Element_Resource {
      * @return void
      */
     public function getById($id) {
-        $data = $this->db->fetchRow("SELECT * FROM assets WHERE id = ?", $id);
+        $data = $this->db->fetchRow("SELECT assets.*, tree_locks.locked FROM assets
+            LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
+                WHERE assets.id = ?", $id);
+
         if ($data["id"] > 0) {
             $this->assignVariablesToModel($data);
-
-            // add tree-lock
-            $this->model->setLocked($this->db->fetchOne("SELECT locked FROM tree_locks WHERE id = ? AND type = ?", array($this->model->getId(), "asset")));
-        }
-        else {
+        } else {
             throw new Exception("Asset with ID " . $id . " doesn't exists");
         }
     }
@@ -62,7 +61,7 @@ class Asset_Resource extends Element_Resource {
     public function getByPath($path) {
 
         // check for root node
-        $_path = $path != "/" ? $_path = dirname($path) : $path;
+        $_path = $path != "/" ? dirname($path) : $path;
         $_path = str_replace("\\", "/", $_path); // windows patch
         $_key = basename($path);
         $_path .= $_path != "/" ? "/" : "";
@@ -73,7 +72,7 @@ class Asset_Resource extends Element_Resource {
             $this->assignVariablesToModel($data);
         }
         else {
-            throw new Exception("asset doesn't exist");
+            throw new Exception("asset with path: " . $path . " doesn't exist");
         }
     }
 
@@ -325,7 +324,7 @@ class Asset_Resource extends Element_Resource {
     public function isLocked () {
         
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
+        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
 
         if($belowLocks > 0) {
             return true;
@@ -387,7 +386,12 @@ class Asset_Resource extends Element_Resource {
             // exception for list permission
             if(empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
-                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $this->model->getFullPath()."%");
+                $path = $this->model->getFullPath() . "/";
+                if($this->model->getId() == 1) {
+                    $path = "/";
+                }
+
+                $permissionsChilds = $this->db->fetchOne("SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (" . implode(",",$userIds) . ") LIMIT 1", $path."%");
                 if($permissionsChilds) {
                     return true;
                 }

@@ -99,14 +99,32 @@ pimcore.helpers.closeObject = function (id) {
 
 
 pimcore.helpers.openElement = function (id, type, subtype) {
-    if (type == "document") {
-        pimcore.helpers.openDocument(id, subtype);
-    }
-    else if (type == "asset") {
-        pimcore.helpers.openAsset(id, subtype);
-    }
-    else if (type == "object") {
-        pimcore.helpers.openObject(id, subtype);
+    if(typeof subtype != "undefined") {
+        if (type == "document") {
+            pimcore.helpers.openDocument(id, subtype);
+        }
+        else if (type == "asset") {
+            pimcore.helpers.openAsset(id, subtype);
+        }
+        else if (type == "object") {
+            pimcore.helpers.openObject(id, subtype);
+        }
+    } else {
+        Ext.Ajax.request({
+            url: "/admin/element/get-subtype",
+            params: {
+                id: id,
+                type:  type
+            },
+            success: function (response) {
+                var res = Ext.decode(response.responseText);
+                if(res.success) {
+                    pimcore.helpers.openElement(res.id, res.type, res.subtype);
+                } else {
+                    Ext.MessageBox.alert(t("error"), t("element_not_found"))
+                }
+            }
+        });
     }
 };
 
@@ -203,7 +221,7 @@ pimcore.helpers.dndUnmaskFrames = function () {
 };
 
 pimcore.helpers.isValidFilename = function (value) {
-    var result = value.match(/[a-zA-Z0-9_.\-]+/);
+    var result = value.match(/[a-zA-Z0-9_.\-~]+/);
     if (result == value) {
         // key must be at least one character, an maximum 30 characters
         if (value.length < 1 && value.length > 30) {
@@ -245,7 +263,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText) {
     if(type == "error"){
 
         if(errorText != null && errorText != undefined){
-            text = text + " - " + errorText;
+            text = text + '<br /><br /><textarea style="width:300px; height:100px; font-size:11px;">' + strip_tags(errorText) + "</textarea>";
         }
         Ext.MessageBox.show({
             title:title,
@@ -316,14 +334,16 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
     var lockDetails = "<br /><br />";
     lockDetails += "<b>" + t("path") + ": <i>" + data.editlock.cpath + "</i></b><br />";
     lockDetails += "<b>" + t("type") + ": </b>" + t(ctype) + "<br />";
-    lockDetails += "<b>" + t("user") + ":</b> " + data.editlock.user.name + "<br />";
+    if(data.editlock.user) {
+        lockDetails += "<b>" + t("user") + ":</b> " + data.editlock.user.name + "<br />";
+    }
     lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
     lockDetails += "<br /><br />" + t("element_lock_question");
 
     Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails, function (lock, buttonValue) {
         if (buttonValue == "yes") {
             Ext.Ajax.request({
-                url: "/admin/misc/unlock-element",
+                url: "/admin/element/unlock-element",
                 params: {
                     id: lock[0],
                     type:  lock[1]
@@ -785,47 +805,45 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
     }
 };
 
-pimcore.helpers.rememberOpenTab = function (item) {
-    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
-    var openTabs = [];
-    if(openTabsCsv) {
-        openTabs = openTabsCsv.split(",");
+pimcore.helpers.getOpenTab = function () {
+    var openTabs = localStorage.getItem("pimcore_opentabs");
+    if(!openTabs) {
+        openTabs = [];
+    } else {
+        openTabs = JSON.parse(openTabs); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
     }
+
+    return openTabs;
+}
+
+pimcore.helpers.rememberOpenTab = function (item) {
+    var openTabs = pimcore.helpers.getOpenTab();
 
     if(!in_array(item, openTabs)) {
         openTabs.push(item);
     }
 
-    var cleanedOpenTabs = [];
-    for(var i=0; i<openTabs.length; i++) {
-        if(!empty(openTabs[i])) {
-            cleanedOpenTabs.push(openTabs[i]);
-        }
-    }
+    // limit to the latest 10
+    openTabs.reverse();
+    openTabs.splice(10, 1000);
+    openTabs.reverse();
 
-    Ext.util.Cookies.set("pimcore_opentabs", "," + cleanedOpenTabs.join(",") + ",");
+    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
 }
 
 pimcore.helpers.forgetOpenTab = function (item) {
 
-    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
-    if(openTabsCsv) {
-        openTabsCsv = "," + str_replace("," + item + ",", ",", openTabsCsv) + ",";
-    }
+    var openTabs = pimcore.helpers.getOpenTab();
 
-    openTabsCsv = str_replace(",," , ",", openTabsCsv);
+    var pos = array_search(item, openTabs);
+    openTabs.splice(pos, 1);
 
-    Ext.util.Cookies.set("pimcore_opentabs", openTabsCsv);
+    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
 }
 
 pimcore.helpers.openMemorizedTabs = function () {
-    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
-    var openTabs = [];
-    var parts = [];
+    var openTabs = pimcore.helpers.getOpenTab();
     var openedTabs = [];
-    if(openTabsCsv) {
-        openTabs = openTabsCsv.split(",");
-    }
 
     for(var i=0; i<openTabs.length; i++) {
         if(!empty(openTabs[i])) {
@@ -848,9 +866,131 @@ pimcore.helpers.openMemorizedTabs = function () {
     }
 }
 
+pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure) {
+
+    if(typeof success != "function") {
+        var success = function () {};
+    }
+
+    if(typeof failure != "function") {
+        var failure = function () {};
+    }
+
+    var url = '/admin/asset/add-asset-compatibility/?parent' + ucfirst(parentType) + '=' + parent;
+
+    var uploadWindowCompatible = new Ext.Window({
+        autoHeight: true,
+        title: t('add_assets'),
+        closeAction: 'close',
+        width:400,
+        modal: true
+    });
+
+    var uploadForm = new Ext.form.FormPanel({
+        layout: "pimcoreform",
+        fileUpload: true,
+        width: 400,
+        bodyStyle: 'padding: 10px;',
+        items: [{
+            xtype: 'fileuploadfield',
+            emptyText: t("select_a_file"),
+            fieldLabel: t("asset"),
+            width: 230,
+            name: 'Filedata',
+            buttonText: "",
+            buttonCfg: {
+                iconCls: 'pimcore_icon_upload_single'
+            },
+            listeners: {
+                fileselected: function () {
+                    uploadForm.getForm().submit({
+                        url: url,
+                        waitMsg: t("please_wait"),
+                        success: function (el, res) {
+                            success(res);
+                            uploadWindowCompatible.close();
+                        },
+                        failure: function (el, res) {
+                            failure(res);
+                            uploadWindowCompatible.close();
+                        }
+                    });
+                }
+            }
+        }]
+    });
+
+    uploadWindowCompatible.add(uploadForm);
+    uploadWindowCompatible.show();
+    uploadWindowCompatible.setWidth(401);
+    uploadWindowCompatible.doLayout();
+};
+
+pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
+
+    if(typeof success != "function") {
+        var success = function () {};
+    }
+
+    if(typeof failure != "function") {
+        var failure = function () {};
+    }
+
+    if(typeof filename != "function") {
+        var filename = "file";
+    }
+
+    var uploadWindowCompatible = new Ext.Window({
+        autoHeight: true,
+        title: t('upload'),
+        closeAction: 'close',
+        width:400,
+        modal: true
+    });
+
+    var uploadForm = new Ext.form.FormPanel({
+        layout: "pimcoreform",
+        fileUpload: true,
+        width: 400,
+        bodyStyle: 'padding: 10px;',
+        items: [{
+            xtype: 'fileuploadfield',
+            emptyText: t("select_a_file"),
+            fieldLabel: t("file"),
+            width: 230,
+            name: 'Filedata',
+            buttonText: "",
+            buttonCfg: {
+                iconCls: 'pimcore_icon_upload_single'
+            },
+            listeners: {
+                fileselected: function () {
+                    uploadForm.getForm().submit({
+                        url: url,
+                        waitMsg: t("please_wait"),
+                        success: function (el, res) {
+                            // content-type in response has to be text/html, otherwise (when application/json is sent) chrome will complain in
+                            // Ext.form.Action.Submit and mark the submission as failed
+                            success(res);
+                            uploadWindowCompatible.close();
+                        },
+                        failure: function (el, res) {
+                            failure(res);
+                            uploadWindowCompatible.close();
+                        }
+                    });
+                }
+            }
+        }]
+    });
+
+    uploadWindowCompatible.add(uploadForm);
+    uploadWindowCompatible.show();
+    uploadWindowCompatible.setWidth(401);
+    uploadWindowCompatible.doLayout();
+};
 
 pimcore.helpers.selectPathInTreeActiveSelections = {};
-
 pimcore.helpers.selectPathInTree = function (tree, path, callback) {
     try {
 
@@ -871,28 +1011,65 @@ pimcore.helpers.selectPathInTree = function (tree, path, callback) {
 
         tree.selectPath(path, null, function (success, node) {
             if(!success) {
-                /*Ext.Ajax.request({
-                    url: "/admin/object/get-id-path-paging-info",
-                    params: {
-                        path: path
-                    },
-                    success: function (transport) {
-                        var data = Ext.decode(transport.responseText);
-
-                    }
-                });*/
-                delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
-
+                Ext.MessageBox.alert(t("error"), t("not_possible_with_paging"));
             } else {
                 if(typeof initialData["callback"] == "function") {
                     initialData["callback"]();
                 }
-                delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
             }
+
+            delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
         });
 
     } catch (e) {
         delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
         console.log(e);
     }
+}
+
+pimcore.helpers.getClassForIcon = function (icon) {
+
+    var styleContainerId = "pimcore_dynamic_class_for_icon";
+    var styleContainer = Ext.get(styleContainerId);
+    if(!styleContainer) {
+        styleContainer = Ext.getBody().insertHtml("beforeEnd", '<style type="text/css" id="' + styleContainerId + '"></style>', true);
+    }
+
+    var content = styleContainer.dom.innerHTML;
+    var classname = "pimcore_dynamic_class_for_icon_" + uniqid();
+    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; }\n");
+    styleContainer.dom.innerHTML = content;
+
+    return classname;
+}
+
+
+pimcore.helpers.openElementByIdDialog = function (type) {
+    Ext.MessageBox.prompt(t('open_' + type + '_by_id'), t('please_enter_the_id_of_the_' + type), function (button, value, object) {
+        if(button == "ok") {
+            pimcore.helpers.openElement(value, type);
+        }
+    });
+}
+
+pimcore.helpers.openDocumentByPathDialog = function () {
+    Ext.MessageBox.prompt(t("open_document_by_url"), t("path_or_url_incl_http"), function (button, value, object) {
+        if (button == "ok") {
+            Ext.Ajax.request({
+                url: "/admin/document/open-by-url/",
+                method: "get",
+                params: {
+                    url: value
+                },
+                success: function (response) {
+                    var res = Ext.decode(response.responseText);
+                    if(res.success) {
+                        pimcore.helpers.openDocument(res.id, res.type);
+                    } else {
+                        Ext.MessageBox.alert(t("error"), t("no_matching_document_found_for") + ": " + value);
+                    }
+                }.bind(this)
+            });
+        }
+    });
 }

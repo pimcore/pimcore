@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Cache.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Cache.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
@@ -24,7 +24,7 @@
  *
  * @category   Zend
  * @package    Zend_Server
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Server_Cache
@@ -86,8 +86,8 @@ class Zend_Server_Cache
      *
      * <code>
      * if (!Zend_Server_Cache::get($filename, $server)) {
-     *     require_once 'Some/Service/Class.php';
-     *     require_once 'Another/Service/Class.php';
+     *     // require_once 'Some/Service/Class.php';
+     *     // require_once 'Another/Service/Class.php';
      *
      *     // Attach Some_Service_Class with namespace 'some'
      *     $server->attach('Some_Service_Class', 'some');

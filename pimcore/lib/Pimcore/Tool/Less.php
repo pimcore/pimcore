@@ -19,7 +19,54 @@ include_once("simple_html_dom.php");
 class Pimcore_Tool_Less {
 
 
-    public static function processHtml ($body) {
+    public static function processHtml($body) {
+
+        $processedPaths = array();
+
+        preg_match_all("@\<link[^>]*(rel=\"stylesheet/less\")[^>]*\>@msUi", $body, $matches);
+
+        if(is_array($matches)) {
+            foreach ($matches[0] as $tag) {
+                preg_match("/href=\"([^\"]+)*\"/", $tag, $href);
+                if(array_key_exists(1, $href) && !empty($href[1])) {
+                    $source = $href[1];
+
+                    if (is_file(PIMCORE_ASSET_DIRECTORY . $source)) {
+                        $path = PIMCORE_ASSET_DIRECTORY . $source;
+                    }
+                    else if (is_file(PIMCORE_DOCUMENT_ROOT . $source)) {
+                        $path = PIMCORE_DOCUMENT_ROOT . $source;
+                    }
+
+                    // add the same file only one time
+                    if(in_array($path, $processedPaths)) {
+                        continue;
+                    }
+
+                    $newFile = PIMCORE_TEMPORARY_DIRECTORY . "/less___" . Pimcore_File::getValidFilename(str_replace(".less", "", $source)) . "-" . filemtime($path) . ".css";
+                    if(!is_file($newFile)) {
+                        $compiledContent = self::compile($path, $source);
+                        file_put_contents($newFile, $compiledContent);
+                    }
+
+                    $body = str_replace($tag,
+                        str_replace("stylesheet/less", "stylesheet",
+                            str_replace($source,
+                                str_replace(PIMCORE_DOCUMENT_ROOT, "", $newFile)
+                            ,$tag))
+                    , $body);
+                }
+            }
+        }
+
+        return $body;
+    }
+
+    /**
+     * old version incl. combining and using simple_dom_html
+     *
+     *
+     *public static function processHtmlLEGACY ($body) {
         $html = str_get_html($body);
 
         if(!$html) {
@@ -52,7 +99,7 @@ class Pimcore_Tool_Less {
                 continue;
             }
 
-            if (is_file("file://".$path)) {
+            if (is_file("file:/".$path)) {
 
                 $compiledContent = self::compile($path, $source);
 
@@ -81,7 +128,7 @@ class Pimcore_Tool_Less {
         $body = $html->save();
 
         return $body;
-    }
+    }*/
 
     public static function compile ($path, $source = null) {
 

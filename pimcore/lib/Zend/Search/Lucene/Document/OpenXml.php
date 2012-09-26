@@ -15,14 +15,14 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Document
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OpenXml.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: OpenXml.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 
 /** Zend_Search_Lucene_Document */
-require_once 'Zend/Search/Lucene/Document.php';
+// require_once 'Zend/Search/Lucene/Document.php';
 
 
 /**
@@ -31,7 +31,7 @@ require_once 'Zend/Search/Lucene/Document.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Document
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Search_Lucene_Document_OpenXml extends Zend_Search_Lucene_Document

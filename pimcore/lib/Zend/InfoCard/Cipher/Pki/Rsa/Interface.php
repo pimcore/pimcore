@@ -15,15 +15,15 @@
  * @category   Zend
  * @package    Zend_InfoCard
  * @subpackage Zend_InfoCard_Cipher
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Interface.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Interface.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * Zend_InfoCard_Cipher_PKI_Adapter_Abstract
  */
-require_once 'Zend/InfoCard/Cipher/Pki/Adapter/Abstract.php';
+// require_once 'Zend/InfoCard/Cipher/Pki/Adapter/Abstract.php';
 
 /**
  * The interface which defines the RSA Public-key encryption object
@@ -31,7 +31,7 @@ require_once 'Zend/InfoCard/Cipher/Pki/Adapter/Abstract.php';
  * @category   Zend
  * @package    Zend_InfoCard
  * @subpackage Zend_InfoCard_Cipher
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 interface Zend_InfoCard_Cipher_Pki_Rsa_Interface

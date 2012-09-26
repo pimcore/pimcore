@@ -164,10 +164,15 @@ class Document_Tag_Image extends Document_Tag {
                 $this->options = array();
             }
 
-            $availableAttribs = array_merge($defaultAttributes, $this->options);
+            $customAttributes = array();
+            if(array_key_exists("attributes", $this->options) && is_array($this->options["attributes"])) {
+                $customAttributes = $this->options["attributes"];
+            }
+
+            $availableAttribs = array_merge($defaultAttributes, $customAttributes, $this->options);
 
             foreach ($availableAttribs as $key => $value) {
-                if ((is_string($value) || is_numeric($value)) && in_array($key, $allowedAttributes)) {
+                if ((is_string($value) || is_numeric($value)) && (in_array($key, $allowedAttributes) || array_key_exists($key, $customAttributes))) {
                     if(in_array($key,$htmlEscapeAttributes)){
                         $value = htmlspecialchars($value);
                     }
@@ -244,6 +249,13 @@ class Document_Tag_Image extends Document_Tag {
             return $this->image->getFullPath();
         }
         return "";
+    }
+
+    /**
+     * @return Asset_Image
+     */
+    public function getImage() {
+        return $this->image;
     }
 
     /*

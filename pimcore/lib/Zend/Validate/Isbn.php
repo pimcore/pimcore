@@ -14,20 +14,20 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Isbn.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Isbn.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+// require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Isbn extends Zend_Validate_Abstract
@@ -45,7 +45,7 @@ class Zend_Validate_Isbn extends Zend_Validate_Abstract
      */
     protected $_messageTemplates = array(
         self::INVALID => "Invalid type given. String or integer expected",
-        self::NO_ISBN => "'%value%' is no valid ISBN number",
+        self::NO_ISBN => "'%value%' is not a valid ISBN number",
     );
 
     /**
@@ -79,7 +79,7 @@ class Zend_Validate_Isbn extends Zend_Validate_Abstract
             /**
              * @see Zend_Validate_Exception
              */
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Invalid options provided.');
         }
 
@@ -227,7 +227,7 @@ class Zend_Validate_Isbn extends Zend_Validate_Abstract
             /**
              * @see Zend_Validate_Exception
              */
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Invalid ISBN separator.');
         }
 
@@ -259,7 +259,7 @@ class Zend_Validate_Isbn extends Zend_Validate_Abstract
             /**
              * @see Zend_Validate_Exception
              */
-            require_once 'Zend/Validate/Exception.php';
+            // require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Invalid ISBN type');
         }
 

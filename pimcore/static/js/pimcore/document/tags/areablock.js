@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.areablock");
 pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
 
         this.id = id;
         this.name = name;
@@ -47,6 +47,12 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.allowedTypes.push(this.options.types[i].type);
         }
 
+        var limitReached = false;
+        if(typeof options["limit"] != "undefined" && this.elements.length >= options.limit) {
+            limitReached = true;
+        }
+
+
         if (this.elements.length < 1) {
             this.createInitalControls();
         }
@@ -66,22 +72,24 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     editButton.render(editDiv);
                 } catch (e) {}
 
-                // plus button
-                plusDiv = Ext.get(this.elements[i]).query(".pimcore_block_plus")[0];
-                plusButton = new Ext.Button({
-                    cls: "pimcore_block_button_plus",
-                    iconCls: "pimcore_icon_plus",
-                    menu: [this.getTypeMenu(this, this.elements[i])],
-                    listeners: {
-                        "menushow": function () {
-                            Ext.get(this).addClass("pimcore_tag_areablock_force_show_buttons");
-                        }.bind(this.elements[i]),
-                        "menuhide": function () {
-                            Ext.get(this).removeClass("pimcore_tag_areablock_force_show_buttons");
-                        }.bind(this.elements[i])
-                    }
-                });
-                plusButton.render(plusDiv);
+                if(!limitReached) {
+                    // plus button
+                    plusDiv = Ext.get(this.elements[i]).query(".pimcore_block_plus")[0];
+                    plusButton = new Ext.Button({
+                        cls: "pimcore_block_button_plus",
+                        iconCls: "pimcore_icon_plus",
+                        menu: [this.getTypeMenu(this, this.elements[i])],
+                        listeners: {
+                            /*"menushow": function () {
+                                Ext.get(this).addClass("pimcore_tag_areablock_force_show_buttons");
+                            }.bind(this.elements[i]),
+                            "menuhide": function () {
+                                Ext.get(this).removeClass("pimcore_tag_areablock_force_show_buttons");
+                            }.bind(this.elements[i])*/
+                        }
+                    });
+                    plusButton.render(plusDiv);
+                }
 
                 // minus button
                 minusDiv = Ext.get(this.elements[i]).query(".pimcore_block_minus")[0];
@@ -142,16 +150,21 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                             var sourceEl = element;
                             var proxyEl = null;
-                            if(Ext.get(element).getHeight() > 300 || Ext.get(element).getWidth() > 900) {
+
+                            /*if(Ext.get(element).getHeight() > 300 || Ext.get(element).getWidth() > 900) {
                                 // use the button as proxy if the area itself is to big
                                 proxyEl = v.getEl().dom;
                             } else {
                                 proxyEl = element;
-                            }
+                            }*/
+
+                            // only use the button as proxy element
+                            proxyEl = v.getEl().dom;
 
                             if (sourceEl) {
                                 d = proxyEl.cloneNode(true);
                                 d.id = Ext.id();
+
                                 return v.dragData = {
                                     sourceEl: sourceEl,
                                     repairXY: Ext.fly(sourceEl).getXY(),
@@ -171,24 +184,30 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 }.bind(this, i));
                 typeButton.render(typeDiv);
 
+                /*
                 Ext.get(this.elements[i]).on("mouseenter", function () {
                     Ext.get(this.query(".pimcore_block_buttons")[0]).show();
                 });
                 Ext.get(this.elements[i]).on("mouseleave", function () {
                     Ext.get(this.query(".pimcore_block_buttons")[0]).hide();
                 });
+                */
+            }
+        }
+    },
 
-
-                if(this.elements.length >= options.limit) {
-                   Ext.get(id).addClass("pimcore_block_limitreached");
-                }
+    setInherited: function ($super, inherited) {
+        var elements = Ext.get(this.id).query(".pimcore_block_buttons");
+        if(elements.length > 0) {
+            for(var i=0; i<elements.length; i++) {
+                $super(inherited, Ext.get(elements[i]));
             }
         }
     },
 
     createDropZones: function () {
 
-        Ext.get(this.id).addClass("pimcore_tag_areablock_hide_buttons");
+        //Ext.get(this.id).addClass("pimcore_tag_areablock_hide_buttons");
 
         if(this.elements.length > 0) {
             for (var i = 0; i < this.elements.length; i++) {
@@ -242,7 +261,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             },
 
             onNodeDrop : function(target, dd, e, data){
-
                 if(data.fromToolbar) {
                     this.addBlockAt(data.brick.type, target.getAttribute("index"));
                     return true;
@@ -256,7 +274,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     removeDropZones: function () {
 
-        Ext.get(this.id).removeClass("pimcore_tag_areablock_hide_buttons");
+        //Ext.get(this.id).removeClass("pimcore_tag_areablock_hide_buttons");
 
         var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");
         for(var i=0; i<dropZones.length; i++) {
@@ -342,6 +360,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     addBlockAt: function (type, index) {
 
+        if(typeof this.options["limit"] != "undefined" && this.elements.length >= this.options.limit) {
+            Ext.MessageBox.alert(t("error"), t("limit_reached"));
+            return;
+        }
+
         // get next heigher key
         var nextKey = 0;
         var currentKey;
@@ -380,14 +403,13 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.createInitalControls();
         }
 
-        if(this.options.reload) {
-            this.reloadDocument();
-        }
+        // this is necessary because of the limit which is only applied when initializing
+        this.reloadDocument();
     },
 
     moveBlockTo: function (block, toIndex) {
 
-        Ext.get(Ext.get(block).query(".pimcore_block_buttons")[0]).hide();
+        //Ext.get(Ext.get(block).query(".pimcore_block_buttons")[0]).hide();
 
         toIndex = intval(toIndex);
 
@@ -539,7 +561,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
             if(!brick.icon) {
                 // this contains fallback-icons
-                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey","flag_orage","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
+                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey","flag_orange","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
                     "award_star_bronze_1","award_star_bronze_2","award_star_bronze_3","award_star_gold_1","award_star_gold_1","award_star_gold_1","award_star_silver_1","award_star_silver_2","award_star_silver_3",
                     "medal_bronze_1","medal_bronze_2","medal_bronze_3","medal_gold_1","medal_gold_1","medal_gold_1","medal_silver_1","medal_silver_2","medal_silver_3"];
                 brick.icon = "/pimcore/static/img/icon/" + iconStore[itemCount] + ".png";

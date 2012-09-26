@@ -14,20 +14,20 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Validate.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Validate.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * @see Zend_Validate_Interface
  */
-require_once 'Zend/Validate/Interface.php';
+// require_once 'Zend/Validate/Interface.php';
 
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate implements Zend_Validate_Interface
@@ -198,7 +198,7 @@ class Zend_Validate implements Zend_Validate_Interface
         $className  = ucfirst($classBaseName);
         try {
             if (!class_exists($className, false)) {
-                require_once 'Zend/Loader.php';
+                // require_once 'Zend/Loader.php';
                 foreach($namespaces as $namespace) {
                     $class = $namespace . '_' . $className;
                     $file  = str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
@@ -240,7 +240,7 @@ class Zend_Validate implements Zend_Validate_Interface
             // fallthrough and continue for missing validation classes
         }
 
-        require_once 'Zend/Validate/Exception.php';
+        // require_once 'Zend/Validate/Exception.php';
         throw new Zend_Validate_Exception("Validate class not found from basename '$classBaseName'");
     }
 
@@ -251,7 +251,7 @@ class Zend_Validate implements Zend_Validate_Interface
      */
     public static function getMessageLength()
     {
-        require_once 'Zend/Validate/Abstract.php';
+        // require_once 'Zend/Validate/Abstract.php';
         return Zend_Validate_Abstract::getMessageLength();
     }
 
@@ -262,7 +262,7 @@ class Zend_Validate implements Zend_Validate_Interface
      */
     public static function setMessageLength($length = -1)
     {
-        require_once 'Zend/Validate/Abstract.php';
+        // require_once 'Zend/Validate/Abstract.php';
         Zend_Validate_Abstract::setMessageLength($length);
     }
 
@@ -273,7 +273,7 @@ class Zend_Validate implements Zend_Validate_Interface
      */
     public static function getDefaultTranslator($translator = null)
     {
-        require_once 'Zend/Validate/Abstract.php';
+        // require_once 'Zend/Validate/Abstract.php';
         return Zend_Validate_Abstract::getDefaultTranslator();
     }
 
@@ -284,7 +284,7 @@ class Zend_Validate implements Zend_Validate_Interface
      */
     public static function setDefaultTranslator($translator = null)
     {
-        require_once 'Zend/Validate/Abstract.php';
+        // require_once 'Zend/Validate/Abstract.php';
         Zend_Validate_Abstract::setDefaultTranslator($translator);
     }
 }

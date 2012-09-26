@@ -67,6 +67,9 @@ class Pimcore_Resource_Mysql {
             $db->setProfiler($profiler);
         }
 
+        // set some defaults
+        Zend_Db_Table::setDefaultAdapter($db);
+
         // put the connection into a wrapper to handle connection timeouts, ...
         $db = new Pimcore_Resource_Wrapper($db);
 

@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage View
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Dijit.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Dijit.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /** Zend_View_Helper_HtmlElement */
-require_once 'Zend/View/Helper/HtmlElement.php';
+// require_once 'Zend/View/Helper/HtmlElement.php';
 
 /**
  * Dojo dijit base class
@@ -29,7 +29,7 @@ require_once 'Zend/View/Helper/HtmlElement.php';
  * @uses       Zend_View_Helper_Abstract
  * @package    Zend_Dojo
  * @subpackage View
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
   */
 abstract class Zend_Dojo_View_Helper_Dijit extends Zend_View_Helper_HtmlElement
@@ -234,7 +234,7 @@ abstract class Zend_Dojo_View_Helper_Dijit extends Zend_View_Helper_HtmlElement
         // Normalize constraints, if present
         foreach ($this->_jsonParams as $param) {
             if (array_key_exists($param, $params)) {
-                require_once 'Zend/Json.php';
+                // require_once 'Zend/Json.php';
 
                 if (is_array($params[$param])) {
                     $values = array();

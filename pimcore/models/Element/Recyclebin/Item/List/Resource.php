@@ -38,7 +38,7 @@ class Element_Recyclebin_Item_List_Resource extends Pimcore_Model_List_Resource_
     public function getTotalCount() {
 
         try {
-            $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM recyclebin " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM recyclebin " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (Exception $e) {
 
         }

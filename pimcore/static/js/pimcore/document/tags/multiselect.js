@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.document.tags.multiselect");
 pimcore.document.tags.multiselect = Class.create(pimcore.document.tag, {
 
-    initialize: function(id, name, options, data) {
+    initialize: function(id, name, options, data, inherited) {
         this.id = id;
         this.name = name;
 
@@ -24,6 +24,16 @@ pimcore.document.tags.multiselect = Class.create(pimcore.document.tag, {
 
         options.name = id + "_editable";
         options.value = data;
+
+        options.listeners = {};
+        // onchange event
+        if (options.onchange) {
+            options.listeners.change = eval(options.onchange);
+        }
+
+        if (options["reload"]) {
+            options.listeners.change = this.reloadDocument;
+        }
 
         this.element = new Ext.ux.form.MultiSelect(options);
 

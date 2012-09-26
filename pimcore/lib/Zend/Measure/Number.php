@@ -14,16 +14,16 @@
  *
  * @category  Zend
  * @package   Zend_Measure
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
- * @version   $Id: Number.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version   $Id: Number.php 24593 2012-01-05 20:35:02Z matthew $
  */
 
 /**
  * Implement needed classes
  */
-require_once 'Zend/Measure/Abstract.php';
-require_once 'Zend/Locale.php';
+// require_once 'Zend/Measure/Abstract.php';
+// require_once 'Zend/Locale.php';
 
 /**
  * Class for handling number conversions
@@ -33,7 +33,7 @@ require_once 'Zend/Locale.php';
  * @category   Zend
  * @package    Zend_Measure
  * @subpackage Zend_Measure_Number
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Measure_Number extends Zend_Measure_Abstract
@@ -155,7 +155,7 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
 
         if (!Zend_Locale::isLocale($locale, true, false)) {
             if (!Zend_Locale::isLocale($locale, true, false)) {
-                require_once 'Zend/Measure/Exception.php';
+                // require_once 'Zend/Measure/Exception.php';
                 throw new Zend_Measure_Exception("Language (" . (string) $locale . ") is unknown");
             }
 
@@ -169,7 +169,7 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
         }
 
         if (isset($this->_units[$type]) === false) {
-            require_once 'Zend/Measure/Exception.php';
+            // require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Type ($type) is unknown");
         }
 
@@ -191,7 +191,7 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
         }
 
         if (empty($this->_units[$type])) {
-            require_once 'Zend/Measure/Exception.php';
+            // require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception('unknown type of number:' . $type);
         }
 
@@ -255,7 +255,7 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
                 try {
                     $value = Zend_Locale_Format::getInteger($value, array('locale' => $locale));
                 } catch (Exception $e) {
-                    require_once 'Zend/Measure/Exception.php';
+                    // require_once 'Zend/Measure/Exception.php';
                     throw new Zend_Measure_Exception($e->getMessage(), $e->getCode(), $e);
                 }
                 if (call_user_func(Zend_Locale_Math::$comp, $value, 0) < 0) {
@@ -342,7 +342,7 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
 
                 --$count;
                 if ($count === 0) {
-                    require_once 'Zend/Measure/Exception.php';
+                    // require_once 'Zend/Measure/Exception.php';
                     throw new Zend_Measure_Exception("Your value '$tempvalue' cannot be processed because it extends 200 digits");
                 }
             }
@@ -369,7 +369,7 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
 
                     --$count;
                     if ($count === 0) {
-                        require_once 'Zend/Measure/Exception.php';
+                        // require_once 'Zend/Measure/Exception.php';
                         throw new Zend_Measure_Exception("Your value '$tempvalue' cannot be processed because it extends 200 digits");
                     }
                 }
@@ -393,7 +393,7 @@ class Zend_Measure_Number extends Zend_Measure_Abstract
     public function setType($type)
     {
         if (empty($this->_units[$type]) === true) {
-            require_once 'Zend/Measure/Exception.php';
+            // require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception('Unknown type of number:' . $type);
         }
 

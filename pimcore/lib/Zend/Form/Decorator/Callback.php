@@ -15,12 +15,12 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
+// require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_Callback
@@ -44,9 +44,9 @@ require_once 'Zend/Form/Decorator/Abstract.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage Decorator
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Callback.php 23775 2011-03-01 17:25:24Z ralph $
+ * @version    $Id: Callback.php 24593 2012-01-05 20:35:02Z matthew $
  */
 class Zend_Form_Decorator_Callback extends Zend_Form_Decorator_Abstract
 {
@@ -66,7 +66,7 @@ class Zend_Form_Decorator_Callback extends Zend_Form_Decorator_Abstract
     public function setCallback($callback)
     {
         if (!is_callable($callback)) {
-            require_once 'Zend/Form/Exception.php';
+            // require_once 'Zend/Form/Exception.php';
             throw new Zend_Form_Exception('Invalid callback provided to callback decorator');
         }
         $this->_callback = $callback;

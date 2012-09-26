@@ -15,23 +15,23 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: Doctype.php 24201 2011-07-05 16:22:04Z matthew $
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id: Doctype.php 24593 2012-01-05 20:35:02Z matthew $
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_Registry */
-require_once 'Zend/Registry.php';
+// require_once 'Zend/Registry.php';
 
 /** Zend_View_Helper_Abstract.php */
-require_once 'Zend/View/Helper/Abstract.php';
+// require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper for setting and retrieving the doctype
  *
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Doctype extends Zend_View_Helper_Abstract
@@ -129,7 +129,7 @@ class Zend_View_Helper_Doctype extends Zend_View_Helper_Abstract
                     break;
                 default:
                     if (substr($doctype, 0, 9) != '<!DOCTYPE') {
-                        require_once 'Zend/View/Exception.php';
+                        // require_once 'Zend/View/Exception.php';
                         $e = new Zend_View_Exception('The specified doctype is malformed');
                         $e->setView($this->view);
                         throw $e;
