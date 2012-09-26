@@ -219,6 +219,9 @@ class Site extends Pimcore_Model_Abstract {
      * @return string
      */
     public function getRootPath() {
+        if(!$this->rootPath && $this->getRootDocument()) {
+            return $this->getRootDocument()->getRealFullPath();
+        }
         return $this->rootPath;
     }
     
