@@ -579,6 +579,12 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 xtype: "checkbox",
+                                fieldLabel: t("redirect_unknown_domains_to_main_domain"),
+                                name: "general.redirect_to_maindomain",
+                                checked: this.getValue("general.redirect_to_maindomain")
+                            },
+                            {
+                                xtype: "checkbox",
                                 fieldLabel: t("enable_targeting"),
                                 name: "general.targeting",
                                 checked: this.getValue("general.targeting")
