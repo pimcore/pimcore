@@ -107,7 +107,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             if ($config->general->domain != Pimcore_Tool::getHostname()) {
                 $domain = Pimcore_Tool::getHostname();
                 $site = Site::getByDomain($domain);
-                $site->setRootPath($site->getRootDocument()->getFullPath());
                 $path = $site->getRootDocument()->getFullPath() . $path;
 
                 Zend_Registry::set("pimcore_site", $site);
