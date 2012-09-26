@@ -243,6 +243,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                     "debug" => $values["general.debug"],
                     "debug_ip" => $values["general.debug_ip"],
+                    "http_auth" => array(
+                        "username" => $values["general.http_auth.username"],
+                        "password" => $values["general.http_auth.password"]
+                    ),
                     "firephp" => $values["general.firephp"],
                     "loglevel" => array(
                         "debug" => $values["general.loglevel.debug"],
