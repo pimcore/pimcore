@@ -28,7 +28,7 @@ class Document_Hardlink_Service {
             if($sourceDoc = $doc->getSourceDocument()) {
                 $destDoc = self::upperCastDocument($sourceDoc);
                 $destDoc->setKey($doc->getKey());
-                $destDoc->setPath($doc->getPath());
+                $destDoc->setPath($doc->getRealPath());
                 $destDoc->initResource(get_class($sourceDoc));
                 $destDoc->setHardLinkSource($doc);
                 return $destDoc;
