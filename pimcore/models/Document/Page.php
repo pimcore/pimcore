@@ -164,7 +164,7 @@ class Document_Page extends Document_PageSnippet {
     public function getFullPath() {
 
         $path = parent::getFullPath();
-        if(!Pimcore::inAdmin()) {
+        if(!Pimcore::inAdmin() && !($this instanceof Document_Hardlink_Wrapper_Interface)) {
             // check for a pretty url
             $prettyUrl = $this->getPrettyUrl();
             if(!empty($prettyUrl) && strlen($prettyUrl) > 1) {
