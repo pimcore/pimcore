@@ -76,7 +76,7 @@ class Document_Hardlink_Wrapper_Page extends Document_Page implements Document_H
                 foreach($childs as &$c) {
                     $c = Document_Hardlink_Service::wrap($c);
                     $c->setHardLinkSource($hardLink);
-                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getFullpath()) . "@", $hardLink->getFullpath(), $c->getPath()));
+                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
                 }
             }
 
