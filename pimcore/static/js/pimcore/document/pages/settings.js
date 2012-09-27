@@ -56,7 +56,7 @@ pimcore.document.pages.settings = Class.create({
                             keyup: function () {
                                 if(this.getValue().indexOf("http") >= 0) {
                                     try {
-                                        var newUrl = "@" + parse_url(this.getValue(), "path") + "@";
+                                        var newUrl = "@" + preg_quote(parse_url(this.getValue(), "path")) + "@";
                                         this.setValue(newUrl);
                                     } catch (e) {
                                         console.log(e);
