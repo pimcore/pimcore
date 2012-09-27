@@ -141,6 +141,25 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             try {
                 $document = Document::getByPath($path);
 
+                // check for a pretty url inside a site
+                if (!$document && Site::isSiteRequest()) {
+                    // @TODO ugly needs to be replaced by a method in a resource class
+                    $sitePrettyDocId = (int) Pimcore_Resource::get()->fetchOne("SELECT documents.id FROM documents
+                        LEFT JOIN documents_page ON documents.id = documents_page.id
+                        WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?",
+                    array($site->getRootPath() . "/%", rtrim($originalPath, "/")));
+
+                    if ($sitePrettyDocId) {
+                        if($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
+                            $document = $sitePrettyDoc;
+                            // undo the modification of the path by the site detection (prefixing with site root path)
+                            // this is not necessary when using pretty-urls and will cause problems when validating the
+                            // prettyUrl later (redirecting to the prettyUrl in the case the page was called by the real path)
+                            $path = $originalPath;
+                        }
+                    }
+                }
+
                 // check for a parent hardlink with childs
                 if(!$document instanceof Document) {
                     $hardlinkedParentDocument = $this->getNearestDocumentByPath($path, true);
