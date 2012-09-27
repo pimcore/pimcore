@@ -416,6 +416,9 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
     protected function checkForRedirect ($override = false) {
         try {
 
+            $front = Zend_Controller_Front::getInstance();
+            $config = Pimcore_Config::getSystemConfig();
+
             // get current site if available
             $sourceSite = null;
             try {
@@ -488,6 +491,9 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                                 Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
                                 continue;
                             }
+                        } else if (!preg_match("@http(s)?://@i", $url) && $config->general->domain) {
+                            // prepend the host and scheme to avoid infinite loops when using "domain" redirects
+                            $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $url;
                         }
 
                         header($redirect->getHttpStatus());
