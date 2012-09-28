@@ -45,7 +45,16 @@ class Document_Hardlink_Wrapper_Snippet extends Document_Snippet implements Docu
             foreach ($hardLinkSourceProperties as $key => $prop) {
                 $prop = clone $prop;
                 $prop->setInherited(true);
+
+                // if the property doesn't exist in the source-properties just add it
+                if(!array_key_exists($key, $sourceProperties)) {
                 $hardLinkProperties[$key] = $prop;
+                } else {
+                    // if the property does exist in the source properties but it is inherited, then overwrite it with the hardlink property
+                    if($sourceProperties[$key]->isInherited()) {
+                        $hardLinkProperties[$key] = $prop;
+                    }
+                }
             }
 
 
