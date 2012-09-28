@@ -650,6 +650,39 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             Logger::error($e);
         }
 
+        // @TODO please forgive me, this is the dirtiest hack I've ever made :(
+        // if you got confused by this functionality drop me a line and I'll buy you some beers :)
+
+        // this is for the case that a link points to a document outside of the current site
+        // in this case we look for a hardlink in the current site which points to the current document
+        // why this could happen: we have 2 sites, in one site there's a hardlink to the other site and on a page inside
+        // the hardlink there are snippets embedded and this snippets have links pointing to a document which is also
+        // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
+        // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
+        if(!Pimcore::inAdmin() && Site::isSiteRequest() && !Pimcore_Tool_Frontend::isDocumentInCurrentSite($this)) {
+
+            $db = Pimcore_Resource::get();
+            $parent = $this;
+            while($parent) {
+                if($hardlinkId = $db->fetchOne("SELECT documents.id FROM documents
+                    LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
+                    WHERE documents_hardlink.sourceId = ?", $parent->getId())) {
+
+                    $hardlink = Document::getById($hardlinkId);
+                    if(Pimcore_Tool_Frontend::isDocumentInCurrentSite($hardlink)) {
+
+                        $siteRootPath = Site::getCurrentSite()->getRootPath();
+                        $siteRootPath = preg_quote($siteRootPath);
+                        $hardlinkPath = preg_replace("@^" . $siteRootPath . "@", "", $hardlink->getRealFullPath());
+
+                        return preg_replace("@^" . preg_quote($parent->getRealFullPath()) . "@", $hardlinkPath, $this->getRealFullPath());
+                        break;
+                    }
+                }
+                $parent = $parent->getParent();
+            }
+        }
+
         $path = $this->getPath() . $this->getKey();
         return $path;
     }
@@ -694,22 +727,20 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function getPath() {
 
-        if(!Pimcore::inAdmin()) {
-            // check for site
-            try {
-                if(Site::isSiteRequest()) {
-                    $site = Site::getCurrentSite();
-                    if ($site instanceof Site) {
-                        if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
-                            $rootPath = $site->getRootPath();
-                            $rootPath = preg_quote($rootPath);
-                            return preg_replace("@^" . $rootPath . "@", "", $this->path);
-                        }
+        // check for site, if so rewrite the path for output
+        try {
+            if(!Pimcore::inAdmin() && Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
+                if ($site instanceof Site) {
+                    if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
+                        $rootPath = $site->getRootPath();
+                        $rootPath = preg_quote($rootPath);
+                        return preg_replace("@^" . $rootPath . "@", "", $this->path);
                     }
                 }
-            } catch (Exception $e) {
-                Logger::error($e);
             }
+        } catch (Exception $e) {
+            Logger::error($e);
         }
 
         return $this->path;
