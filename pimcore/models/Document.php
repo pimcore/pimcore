@@ -638,8 +638,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
         // check if this document is also the site root, if so return /
         try {
-            if(Zend_Registry::isRegistered("pimcore_site")) {
-                $site = Zend_Registry::get("pimcore_site");
+            if(Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument()->getId() == $this->getId()) {
                         return "/";
@@ -697,14 +697,13 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         if(!Pimcore::inAdmin()) {
             // check for site
             try {
-                if(Zend_Registry::isRegistered("pimcore_site")) {
-                    $site = Zend_Registry::get("pimcore_site");
+                if(Site::isSiteRequest()) {
+                    $site = Site::getCurrentSite();
                     if ($site instanceof Site) {
                         if ($site->getRootDocument() instanceof Document_Page && $site->getRootDocument() !== $this) {
                             $rootPath = $site->getRootPath();
-                            $rootPath = addcslashes($rootPath, "/");
-
-                            return preg_replace("/^" . $rootPath . "/", "", $this->path);
+                            $rootPath = preg_quote($rootPath);
+                            return preg_replace("@^" . $rootPath . "@", "", $this->path);
                         }
                     }
                 }
