@@ -1160,3 +1160,5 @@
 "objectbrick_saved_successfully", "Object brick saved successfully"
 "cut", "Cut"
 "paste_cut_element", "Paste cut element"
+"file_explorer_saved_file_success","Saved successfully"
+"file_explorer_saved_file_error","Cannot save file"
