@@ -115,7 +115,20 @@ pimcore.settings.fileexplorer.file = Class.create({
             params: {
                 path: path,
                 content: content
-            }
+            },
+            success: function (response) {
+                try{
+                    var rdata = Ext.decode(response.responseText);
+                    if (rdata && rdata.success) {
+                        pimcore.helpers.showNotification(t("success"), t("file_explorer_saved_file_success"), "success");
+                    }
+                    else {
+                        pimcore.helpers.showNotification(t("error"), t("file_explorer_saved_file_error"), "error");
+                    }
+                } catch (e) {
+                    pimcore.helpers.showNotification(t("error"), t("file_explorer_saved_file_error"), "error");
+                }
+            }.bind(this)
         });
     },
 

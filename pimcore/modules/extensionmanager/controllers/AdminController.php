@@ -44,6 +44,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
             
             if (!empty($className)) {
                 $isEnabled = Pimcore_ExtensionManager::isEnabled("plugin", $config["plugin"]["pluginName"]);
+
                 $plugin = array(
                     "id" => $config["plugin"]["pluginName"],
                     "type" => "plugin",
@@ -54,6 +55,11 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
                     "configuration" => $config["plugin"]["pluginIframeSrc"],
                     "updateable" => $updateable
                 );
+
+                if($config["plugin"]["pluginXmlEditorFile"] && is_readable(PIMCORE_DOCUMENT_ROOT . $config["plugin"]["pluginXmlEditorFile"])){
+                    $plugin['xmlEditorFile'] = $config["plugin"]["pluginXmlEditorFile"];
+                }
+
                 $configurations[] = $plugin;
             }
         }
