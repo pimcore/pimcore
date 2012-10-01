@@ -802,7 +802,7 @@
 "install","Install"
 "uninstall","Uninstall"
 "plugin_uninstall_warning","Do you really want to uninstall this plugin? WARNING! All data of this plugin is going to be deleted!"
-"some_fields_cannot_be_saved","Some fields cannot be saved"
+"some_fields_cannot_be_saved","Some fields cannot be saved."
 "icon_path","Path to icon"
 "reload","Reload"
 "plugin_needs_reload","This plugin requires a reload of the user interface in order to be fully functional. Do you want to reload now?"
@@ -1162,3 +1162,4 @@
 "paste_cut_element", "Paste cut element"
 "file_explorer_saved_file_success","Saved successfully"
 "file_explorer_saved_file_error","Cannot save file"
+"reserved_field_names_error","Please do not use the following reserved field names: "
