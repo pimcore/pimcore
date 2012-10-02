@@ -662,12 +662,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         if(!Pimcore::inAdmin() && Site::isSiteRequest() && !Pimcore_Tool_Frontend::isDocumentInCurrentSite($this)) {
 
             $db = Pimcore_Resource::get();
+            $documentService = new Document_Service();
             $parent = $this;
             while($parent) {
-                if($hardlinkId = $db->fetchOne("SELECT documents.id FROM documents
-                    LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
-                    WHERE documents_hardlink.sourceId = ? AND documents.path LIKE ?", array($parent->getId(), Site::getCurrentSite()->getRootPath() . "/%"))) {
-
+                if($hardlinkId = $documentService->getDocumentIdFromHardlinkInSameSite(Site::getCurrentSite(), $parent)) {
                     $hardlink = Document::getById($hardlinkId);
                     if(Pimcore_Tool_Frontend::isDocumentInCurrentSite($hardlink)) {
 
