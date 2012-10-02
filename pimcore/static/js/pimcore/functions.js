@@ -25,6 +25,7 @@ function ts(key) {
         return "";
     }
 
+    key = key.toLocaleLowerCase();
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
 
     // remove plus at the start and the end to avoid double translations
