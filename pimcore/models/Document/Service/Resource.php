@@ -28,4 +28,15 @@ class Document_Service_Resource extends Pimcore_Model_Resource_Abstract {
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?",
         array($site->getRootPath() . "/%", rtrim($path, "/")));
     }
+
+    /**
+     * @param Site $site
+     * @param Document $document
+     * @return int
+     */
+    public function getDocumentIdFromHardlinkInSameSite(Site $site, Document $document) {
+        return $this->db->fetchOne("SELECT documents.id FROM documents
+            LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
+            WHERE documents_hardlink.sourceId = ? AND documents.path LIKE ?", array($document->getId(), $site->getRootPath() . "/%"));
+    }
 }
