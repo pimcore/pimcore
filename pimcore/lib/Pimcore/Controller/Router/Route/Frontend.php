@@ -143,11 +143,9 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
                 // check for a pretty url inside a site
                 if (!$document && Site::isSiteRequest()) {
-                    // @TODO ugly needs to be replaced by a method in a resource class
-                    $sitePrettyDocId = (int) Pimcore_Resource::get()->fetchOne("SELECT documents.id FROM documents
-                        LEFT JOIN documents_page ON documents.id = documents_page.id
-                        WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?",
-                    array($site->getRootPath() . "/%", rtrim($originalPath, "/")));
+
+                    $documentService = new Document_Service();
+                    $sitePrettyDocId = $documentService->getDocumentIdByPrettyUrlInSite(Site::getCurrentSite(), $originalPath);
 
                     if ($sitePrettyDocId) {
                         if($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
@@ -406,9 +404,25 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         $this->nearestDocumentByPath = $document;
                         break;
                     }
+                } else if (Site::isSiteRequest()) {
+                    // also check for a pretty url in a site
+                    $site = Site::getCurrentSite();
+                    $documentService = new Document_Service();
+
+                    // undo the changed made by the site detection in self::match()
+                    $originalPath = preg_replace("@^" . $site->getRootPath() . "@", "", $p);
+
+                    $sitePrettyDocId = $documentService->getDocumentIdByPrettyUrlInSite($site, $originalPath);
+                    if ($sitePrettyDocId) {
+                        if($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
+                            $this->nearestDocumentByPath = $sitePrettyDoc;
+                            break;
+                        }
+                    }
                 }
             }
         }
+
 
         if($document) {
             if(!$ignoreHardlinks) {
