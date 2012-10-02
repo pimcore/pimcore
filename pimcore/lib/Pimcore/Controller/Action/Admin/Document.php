@@ -129,6 +129,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
 
             if (!$document = $session->$key) {
                 $document = Document::getById($this->getParam("id"));
+                $document = $this->getLatestVersion($document);
             }
 
             // set _fulldump otherwise the properties will be removed because of the session-serialize 
@@ -173,9 +174,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         $key = "document_" . $this->getParam("id");
         $session = new Zend_Session_Namespace("pimcore_documents");
 
-        if ($document = $session->$key) {
-            $session->$key = null;
-        }
+        $session->$key = null;
 
         $this->removeViewRenderer();
     }
