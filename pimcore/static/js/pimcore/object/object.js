@@ -221,7 +221,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             items.push(this.variants.getLayout());
         }
 
-        var tabbar = new Ext.TabPanel({
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:true,
@@ -231,7 +231,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             activeTab: 0
         });
 
-        return tabbar;
+        return this.tabbar;
     },
 
     getLayoutToolbar : function () {
