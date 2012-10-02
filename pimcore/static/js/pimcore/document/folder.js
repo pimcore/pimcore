@@ -189,7 +189,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             items.push(this.notes.getLayout());
         }
 
-        var tabbar = new Ext.TabPanel({
+        this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
             region:'center',
             deferredRender:true,
@@ -199,7 +199,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             activeTab: 0
         });
 
-        return tabbar;
+        return this.tabbar;
     }
 });
 
