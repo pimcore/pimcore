@@ -175,7 +175,9 @@ class OnlineShop_Framework_Impl_CartItem extends Pimcore_Model_Abstract implemen
         }
     }
 
-
+    public function getTotalPrice() {
+        return $this->getPriceInfo()->getTotalPrice();
+    }
 
     /**
      * @return stdClass

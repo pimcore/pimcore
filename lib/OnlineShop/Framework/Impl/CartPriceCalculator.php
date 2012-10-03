@@ -43,7 +43,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
             }
         }
         if(!$currency) {
-            $currency = new Zend_Currency(new Zend_Locale("de_AT"));
+            $currency = $this->getDefaultCurrency();
         }
         $this->subTotal = new OnlineShop_Framework_Impl_Price($subTotal, $currency);
 
@@ -65,6 +65,13 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
         $this->isCalculated = true;
 
         // TODO: Implement calculate() method.
+    }
+
+    /**
+     * @return Zend_Currency
+     */
+    protected function getDefaultCurrency() {
+        return new Zend_Currency(Zend_Registry::get("Zend_Locale"));
     }
 
     /**

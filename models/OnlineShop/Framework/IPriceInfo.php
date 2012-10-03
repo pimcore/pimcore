@@ -14,6 +14,12 @@ interface OnlineShop_Framework_IPriceInfo {
 
     /**
      * @abstract
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getTotalPrice();
+
+    /**
+     * @abstract
      * @return bool
      */
     public function isMinPrice();

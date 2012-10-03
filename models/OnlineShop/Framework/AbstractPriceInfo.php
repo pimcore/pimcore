@@ -72,6 +72,14 @@
          throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
      }
 
+     /**
+      * @throws OnlineShop_Framework_Exception_UnsupportedException
+      * @return OnlineShop_Framework_IPrice
+      */
+     public function getTotalPrice() {
+         throw new OnlineShop_Framework_Exception_UnsupportedException(__METHOD__ . " is not supported for " . get_class($this));
+     }
+
      public function setProduct($product) {
          $this->product = $product;
      }

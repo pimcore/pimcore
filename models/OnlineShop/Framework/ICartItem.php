@@ -71,6 +71,12 @@ interface OnlineShop_Framework_ICartItem {
 
     /**
      * @abstract
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getTotalPrice();
+
+    /**
+     * @abstract
      * @return OnlineShop_Framework_IPriceInfo
      */
     public function getPriceInfo();
