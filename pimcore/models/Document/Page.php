@@ -164,7 +164,9 @@ class Document_Page extends Document_PageSnippet {
     public function getFullPath() {
 
         $path = parent::getFullPath();
-        if(!Pimcore::inAdmin()) {
+
+        // do not use pretty url's when in admin, the current document is wrapped by a hardlink or this document isn't in the current site
+        if(!Pimcore::inAdmin() && !($this instanceof Document_Hardlink_Wrapper_Interface) && Pimcore_Tool_Frontend::isDocumentInCurrentSite($this)) {
             // check for a pretty url
             $prettyUrl = $this->getPrettyUrl();
             if(!empty($prettyUrl) && strlen($prettyUrl) > 1) {

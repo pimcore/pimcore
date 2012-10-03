@@ -299,6 +299,35 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: "<b>" + t("password_protection") + " (HTTP-Auth)</b> "
+                            },
+                            {
+                                fieldLabel: t('username'),
+                                name: 'general.http_auth.username',
+                                value: this.getValue("general.http_auth.username")
+                            },
+                            {
+                                fieldLabel: t('password'),
+                                name: 'general.http_auth.password',
+                                value: this.getValue("general.http_auth.password")
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: "<b style='color:red;'>" + t("http_auth_warning") + "</b>",
+                                cls: "pimcore_extra_label_bottom"
+                            },
+                            {
+                                xtype: "displayfield",
+                                hideLabel: true,
+                                width: 600,
+                                value: "<b>" + t("logger") + "</b>"
+                            },
+                            {
                                 fieldLabel: "FirePHP (Firebug/Wildfire)",
                                 xtype: "checkbox",
                                 name: "general.firephp",
@@ -579,6 +608,12 @@ pimcore.settings.system = Class.create({
                             },
                             {
                                 xtype: "checkbox",
+                                fieldLabel: t("redirect_unknown_domains_to_main_domain"),
+                                name: "general.redirect_to_maindomain",
+                                checked: this.getValue("general.redirect_to_maindomain")
+                            },
+                            {
+                                xtype: "checkbox",
                                 fieldLabel: t("enable_targeting"),
                                 name: "general.targeting",
                                 checked: this.getValue("general.targeting")
@@ -768,7 +803,7 @@ pimcore.settings.system = Class.create({
                         collapsible: true,
                         collapsed: true,
                         autoHeight:true,
-                        labelWidth: 200,
+                        labelWidth: 250,
                         defaultType: 'textfield',
                         defaults: {width: 150},
                         items :[
@@ -816,13 +851,13 @@ pimcore.settings.system = Class.create({
                                 width: 300
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_rgb_profile'),
+                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
                                 name: 'assets.icc_rgb_profile',
                                 value: this.getValue("assets.icc_rgb_profile"),
                                 width: 300
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_cmyk_profile'),
+                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (imagick)",
                                 name: 'assets.icc_cmyk_profile',
                                 value: this.getValue("assets.icc_cmyk_profile"),
                                 width: 300

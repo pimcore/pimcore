@@ -15,7 +15,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Document_Tag_Link extends Document_Tag {
+class Document_Tag_Link extends Document_Tag
+{
 
     /**
      * Contains the data for the link
@@ -28,7 +29,8 @@ class Document_Tag_Link extends Document_Tag {
      * @see Document_Tag_Interface::getType
      * @return string
      */
-    public function getType() {
+    public function getType()
+    {
         return "link";
     }
 
@@ -36,7 +38,8 @@ class Document_Tag_Link extends Document_Tag {
      * @see Document_Tag_Interface::getData
      * @return mixed
      */
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 
@@ -44,7 +47,8 @@ class Document_Tag_Link extends Document_Tag {
      * @see Document_Tag_Interface::frontend
      * @return string
      */
-    public function frontend() {
+    public function frontend()
+    {
 
         $url = $this->getHref();
 
@@ -81,7 +85,7 @@ class Document_Tag_Link extends Document_Tag {
 
             $attribs = array_unique($attribs);
 
-            if(array_key_exists("attributes",$this->data) && !empty($this->data["attributes"])) {
+            if (array_key_exists("attributes", $this->data) && !empty($this->data["attributes"])) {
                 $attribs[] = $this->data["attributes"];
             }
 
@@ -93,23 +97,23 @@ class Document_Tag_Link extends Document_Tag {
     /**
      * @return bool
      */
-    public function checkValidity() {
+    public function checkValidity()
+    {
         $sane = true;
         if ($this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 $doc = Document::getById($this->data["internalId"]);
                 if (!$doc) {
                     $sane = false;
-                    Logger::notice("Detected insane relation, removing reference to non existent document with id [".$this->getDocumentId()."]");
+                    Logger::notice("Detected insane relation, removing reference to non existent document with id [" . $this->getDocumentId() . "]");
                     $new = Document_Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
-            }
-            else if ($this->data["internalType"] == "asset") {
+            } else if ($this->data["internalType"] == "asset") {
                 $asset = Asset::getById($this->data["internalId"]);
                 if (!$asset) {
                     $sane = false;
-                    Logger::notice("Detected insane relation, removing reference to non existent asset with id [".$this->getDocumentId()."]");
+                    Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->getDocumentId() . "]");
                     $new = Document_Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
@@ -122,7 +126,8 @@ class Document_Tag_Link extends Document_Tag {
     /**
      * @return string
      */
-    public function getHref() {
+    public function getHref()
+    {
 
         if ($this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
@@ -131,19 +136,11 @@ class Document_Tag_Link extends Document_Tag {
                         $this->data["path"] = $doc->getFullPath();
                     } else {
                         $this->data["path"] = "";
-                                        }
-                } else {
-                    //detected broken link
-                    $document = Document::getById($this->getDocumentId());
-
+                    }
                 }
-            }
-            else if ($this->data["internalType"] == "asset") {
+            } else if ($this->data["internalType"] == "asset") {
                 if ($asset = Asset::getById($this->data["internalId"])) {
                     $this->data["path"] = $asset->getFullPath();
-                } else {
-                    //detected broken link
-                    $document = Document::getById($this->getDocumentId());
                 }
             }
         }
@@ -164,56 +161,64 @@ class Document_Tag_Link extends Document_Tag {
     /**
      * @return string
      */
-    public function getText() {
+    public function getText()
+    {
         return $this->data["text"];
     }
 
     /**
      * @return string
      */
-    public function getTarget() {
+    public function getTarget()
+    {
         return $this->data["target"];
     }
 
     /**
      * @return string
      */
-    public function getParameters() {
+    public function getParameters()
+    {
         return $this->data["parameters"];
     }
 
     /**
      * @return string
      */
-    public function getAnchor() {
+    public function getAnchor()
+    {
         return $this->data["anchor"];
     }
 
     /**
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->data["title"];
     }
 
     /**
      * @return string
      */
-    public function getRel() {
+    public function getRel()
+    {
         return $this->data["rel"];
     }
 
     /**
      * @return string
      */
-    public function getTabindex() {
+    public function getTabindex()
+    {
         return $this->data["tabindex"];
     }
 
     /**
      * @return string
      */
-    public function getAccesskey() {
+    public function getAccesskey()
+    {
         return $this->data["accesskey"];
     }
 
@@ -223,7 +228,8 @@ class Document_Tag_Link extends Document_Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromResource($data) {
+    public function setDataFromResource($data)
+    {
         $this->data = Pimcore_Tool_Serialize::unserialize($data);
     }
 
@@ -232,7 +238,8 @@ class Document_Tag_Link extends Document_Tag {
      * @param mixed $data
      * @return void
      */
-    public function setDataFromEditmode($data) {
+    public function setDataFromEditmode($data)
+    {
 
         if ($doc = Document::getByPath($data["path"])) {
 
@@ -259,7 +266,8 @@ class Document_Tag_Link extends Document_Tag {
     /**
      * @return boolean
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return (strlen($this->getHref()) < 1);
     }
 
@@ -294,7 +302,8 @@ class Document_Tag_Link extends Document_Tag {
     /**
      * @return array
      */
-    public function resolveDependencies() {
+    public function resolveDependencies()
+    {
 
         $dependencies = array();
 
@@ -311,8 +320,7 @@ class Document_Tag_Link extends Document_Tag {
                             "type" => "document"
                         );
                     }
-                }
-                else if ($this->data["internalType"] == "asset") {
+                } else if ($this->data["internalType"] == "asset") {
                     if ($asset = Asset::getById($this->data["internalId"])) {
                         $key = "asset_" . $asset->getId();
 
@@ -334,7 +342,8 @@ class Document_Tag_Link extends Document_Tag {
      * @param  Webservice_Data_Document_Element $wsElement
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement)
+    {
 
         if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
 
@@ -346,8 +355,7 @@ class Document_Tag_Link extends Document_Tag {
                         if (!$referencedDocument instanceof Document) {
                             throw new Exception("cannot get values from web service import - link references unknown document with id [ " . $this->data["internalId"] . " ] ");
                         }
-                    }
-                    else if ($this->data["internalType"] == "asset") {
+                    } else if ($this->data["internalType"] == "asset") {
                         $referencedAsset = Asset::getById($this->data["internalId"]);
                         if (!$referencedAsset instanceof Asset) {
                             throw new Exception("cannot get values from web service import - link references unknown asset with id [ " . $this->data["internalId"] . " ] ");
@@ -369,7 +377,8 @@ class Document_Tag_Link extends Document_Tag {
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport() {
+    public function getForWebserviceExport()
+    {
         $el = parent::getForWebserviceExport();
         if ($this->data["internal"]) {
             if (intval($this->data["internalId"]) > 0) {
@@ -399,11 +408,12 @@ class Document_Tag_Link extends Document_Tag {
      * @param array $idMapping
      * @return void
      */
-    public function rewriteIds($idMapping) {
+    public function rewriteIds($idMapping)
+    {
         if ($this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
-                if(array_key_exists((int) $this->data["internalId"], $idMapping)){
-                    $this->data["internalId"] = $idMapping[(int) $this->data["internalId"]];
+                if (array_key_exists((int)$this->data["internalId"], $idMapping)) {
+                    $this->data["internalId"] = $idMapping[(int)$this->data["internalId"]];
                     $this->getHref();
                 }
             }

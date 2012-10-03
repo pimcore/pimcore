@@ -25,6 +25,7 @@ function ts(key) {
         return "";
     }
 
+    key = key.toLocaleLowerCase();
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
 
     // remove plus at the start and the end to avoid double translations
@@ -1438,4 +1439,85 @@ function parse_url (str, component) {
     }
     delete uri.source;
     return uri;
+}
+
+function round (value, precision, mode) {
+    // http://kevin.vanzonneveld.net
+    // +   original by: Philip Peterson
+    // +    revised by: Onno Marsman
+    // +      input by: Greenseed
+    // +    revised by: T.Wild
+    // +      input by: meo
+    // +      input by: William
+    // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
+    // +      input by: Josep Sanz (http://www.ws3.es/)
+    // +    revised by: Rafał Kukawski (http://blog.kukawski.pl/)
+    // %        note 1: Great work. Ideas for improvement:
+    // %        note 1:  - code more compliant with developer guidelines
+    // %        note 1:  - for implementing PHP constant arguments look at
+    // %        note 1:  the pathinfo() function, it offers the greatest
+    // %        note 1:  flexibility & compatibility possible
+    // *     example 1: round(1241757, -3);
+    // *     returns 1: 1242000
+    // *     example 2: round(3.6);
+    // *     returns 2: 4
+    // *     example 3: round(2.835, 2);
+    // *     returns 3: 2.84
+    // *     example 4: round(1.1749999999999, 2);
+    // *     returns 4: 1.17
+    // *     example 5: round(58551.799999999996, 2);
+    // *     returns 5: 58551.8
+    var m, f, isHalf, sgn; // helper variables
+    precision |= 0; // making sure precision is integer
+    m = Math.pow(10, precision);
+    value *= m;
+    sgn = (value > 0) | -(value < 0); // sign of the number
+    isHalf = value % 1 === 0.5 * sgn;
+    f = Math.floor(value);
+
+    if (isHalf) {
+        switch (mode) {
+        case 'PHP_ROUND_HALF_DOWN':
+            value = f + (sgn < 0); // rounds .5 toward zero
+            break;
+        case 'PHP_ROUND_HALF_EVEN':
+            value = f + (f % 2 * sgn); // rouds .5 towards the next even integer
+            break;
+        case 'PHP_ROUND_HALF_ODD':
+            value = f + !(f % 2); // rounds .5 towards the next odd integer
+            break;
+        default:
+            value = f + (sgn > 0); // rounds .5 away from zero
+        }
+    }
+
+    return (isHalf ? value : Math.round(value)) / m;
+}
+
+
+function implode (glue, pieces) {
+    // Joins array elements placing glue string between items and return one string
+    //
+    // version: 1109.2015
+    // discuss at: http://phpjs.org/functions/implode    // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    // +   improved by: Waldo Malqui Silva
+    // +   improved by: Itsacon (http://www.itsacon.net/)
+    // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
+    // *     example 1: implode(' ', ['Kevin', 'van', 'Zonneveld']);    // *     returns 1: 'Kevin van Zonneveld'
+    // *     example 2: implode(' ', {first:'Kevin', last: 'van Zonneveld'});
+    // *     returns 2: 'Kevin van Zonneveld'
+    var i = '',
+        retVal = '',        tGlue = '';
+    if (arguments.length === 1) {
+        pieces = glue;
+        glue = '';
+    }    if (typeof(pieces) === 'object') {
+        if (Object.prototype.toString.call(pieces) === '[object Array]') {
+            return pieces.join(glue);
+        }
+        for (i in pieces) {            retVal += tGlue + pieces[i];
+            tGlue = glue;
+        }
+        return retVal;
+    }    return pieces;
 }

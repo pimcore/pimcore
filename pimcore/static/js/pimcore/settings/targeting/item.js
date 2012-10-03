@@ -699,7 +699,7 @@ pimcore.document.pages.target.conditions = {
         var myId = Ext.id();
 
         var longitude = new Ext.form.NumberField({
-            decimalPrecision: 25,
+            decimalPrecision: 20,
             fieldLabel: t('longitude'),
             name: "longitude",
             value: data.longitude,
@@ -707,7 +707,7 @@ pimcore.document.pages.target.conditions = {
         });
 
         var latitude = new Ext.form.NumberField({
-            decimalPrecision: 25,
+            decimalPrecision: 20,
             fieldLabel: t('latitude'),
             name: "latitude",
             value: data.latitude,

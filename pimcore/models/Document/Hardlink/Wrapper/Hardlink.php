@@ -45,7 +45,16 @@ class Document_Hardlink_Wrapper_Hardlink extends Document_Hardlink implements Do
             foreach ($hardLinkSourceProperties as $key => $prop) {
                 $prop = clone $prop;
                 $prop->setInherited(true);
+
+                // if the property doesn't exist in the source-properties just add it
+                if(!array_key_exists($key, $sourceProperties)) {
                 $hardLinkProperties[$key] = $prop;
+                } else {
+                    // if the property does exist in the source properties but it is inherited, then overwrite it with the hardlink property
+                    if($sourceProperties[$key]->isInherited()) {
+                        $hardLinkProperties[$key] = $prop;
+                    }
+                }
             }
 
 
@@ -67,7 +76,7 @@ class Document_Hardlink_Wrapper_Hardlink extends Document_Hardlink implements Do
                 foreach($childs as &$c) {
                     $c = Document_Hardlink_Service::wrap($c);
                     $c->setHardLinkSource($hardLink);
-                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getFullpath()) . "@", $hardLink->getFullpath(), $c->getPath()));
+                    $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
                 }
             }
 

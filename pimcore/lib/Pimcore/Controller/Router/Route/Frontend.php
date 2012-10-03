@@ -53,7 +53,8 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
      * @return array|bool
      */
     public function match($path, $partial = false) {
-                
+
+        $front = Zend_Controller_Front::getInstance();
         $matchFound = false;
         $config = Pimcore_Config::getSystemConfig();
 
@@ -64,6 +65,32 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         
         // set the original path
         $originalPath = $path;
+
+        // check for password protection (http auth)
+        if ($config->general->http_auth) {
+            $username = $config->general->http_auth->username;
+            $password = $config->general->http_auth->password;
+            if($username && $password) {
+                $adapter = new Zend_Auth_Adapter_Http(array(
+                    "accept_schemes" => "basic",
+                    "realm" => $_SERVER["HTTP_HOST"]
+                ));
+
+                $basicResolver = new Pimcore_Helper_Auth_Adapter_Http_Resolver_Static($username, $password);
+                $adapter->setBasicResolver($basicResolver);
+                $adapter->setRequest($front->getRequest());
+                $adapter->setResponse($front->getResponse());
+
+                $result = $adapter->authenticate();
+                if (!$result->isValid()) {
+                    // Bad userame/password, or canceled password prompt
+                    echo "Authentication Required";
+                    $front->getResponse()->sendResponse();
+                    exit;
+                }
+
+            }
+        }
 
         // do not allow requests including /index.php/ => SEO
         if(preg_match("@^/index.php(.*)@", $_SERVER["REQUEST_URI"], $matches) && strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
@@ -80,7 +107,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             if ($config->general->domain != Pimcore_Tool::getHostname()) {
                 $domain = Pimcore_Tool::getHostname();
                 $site = Site::getByDomain($domain);
-                $site->setRootPath($site->getRootDocument()->getFullPath());
                 $path = $site->getRootDocument()->getFullPath() . $path;
 
                 Zend_Registry::set("pimcore_site", $site);
@@ -115,6 +141,23 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             try {
                 $document = Document::getByPath($path);
 
+                // check for a pretty url inside a site
+                if (!$document && Site::isSiteRequest()) {
+
+                    $documentService = new Document_Service();
+                    $sitePrettyDocId = $documentService->getDocumentIdByPrettyUrlInSite(Site::getCurrentSite(), $originalPath);
+
+                    if ($sitePrettyDocId) {
+                        if($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
+                            $document = $sitePrettyDoc;
+                            // undo the modification of the path by the site detection (prefixing with site root path)
+                            // this is not necessary when using pretty-urls and will cause problems when validating the
+                            // prettyUrl later (redirecting to the prettyUrl in the case the page was called by the real path)
+                            $path = $originalPath;
+                        }
+                    }
+                }
+
                 // check for a parent hardlink with childs
                 if(!$document instanceof Document) {
                     $hardlinkedParentDocument = $this->getNearestDocumentByPath($path, true);
@@ -137,7 +180,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         if (!empty($params["pimcore_version"]) || !empty($params["pimcore_preview"]) || !empty($params["pimcore_admin"]) || !empty($params["pimcore_editmode"]) || $document->isPublished() ) {
 
                             // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
-                            if($document instanceof Document_Page && $document->getPrettyUrl() && empty($params["pimcore_preview"]) && empty($params["pimcore_editmode"])) {
+                            if($document instanceof Document_Page && !($document instanceof Document_Hardlink_Wrapper_Interface) && $document->getPrettyUrl() && empty($params["pimcore_preview"]) && empty($params["pimcore_editmode"])) {
                                 if(rtrim($document->getPrettyUrl()," /") != rtrim($path,"/")) {
                                     header("Location: " . $document->getPrettyUrl(), true, 301);
                                     exit;
@@ -220,6 +263,14 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 foreach ($routes as $route) {
 
                     if (@preg_match($route->getPattern(), $originalPath) && !$matchFound) {
+
+                        // check for site
+                        if($route->getSiteId()) {
+                            if(!Site::isSiteRequest() || $route->getSiteId() != Site::getCurrentSite()->getId()) {
+                                continue;
+                            }
+                        }
+
                         $params = array_merge($route->getDefaultsArray(), $params);
 
                         $variables = explode(",", $route->getVariables());
@@ -291,6 +342,22 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             $this->checkForRedirect(false);
         }
 
+        // redirect to the main domain if specified
+        try {
+            if ($config->general->redirect_to_maindomain && $config->general->domain && $config->general->domain != Pimcore_Tool::getHostname() && !Site::isSiteRequest()) {
+
+                $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $originalPath . (empty($_SERVER["QUERY_STRING"]) ? "" : "?") . $_SERVER["QUERY_STRING"];
+
+                header("HTTP/1.1 301 Moved Permanently");
+                header("Location: " . $url, true, 301);
+
+                // log all redirects to the redirect log
+                Pimcore_Log_Simple::log("redirect", Pimcore_Tool::getAnonymizedClientIp() . " \t Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
+                exit;
+            }
+        }
+        catch (Exception $e) {}
+
         if (!$matchFound) {
             return false;
         }
@@ -337,9 +404,25 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         $this->nearestDocumentByPath = $document;
                         break;
                     }
+                } else if (Site::isSiteRequest()) {
+                    // also check for a pretty url in a site
+                    $site = Site::getCurrentSite();
+                    $documentService = new Document_Service();
+
+                    // undo the changed made by the site detection in self::match()
+                    $originalPath = preg_replace("@^" . $site->getRootPath() . "@", "", $p);
+
+                    $sitePrettyDocId = $documentService->getDocumentIdByPrettyUrlInSite($site, $originalPath);
+                    if ($sitePrettyDocId) {
+                        if($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
+                            $this->nearestDocumentByPath = $sitePrettyDoc;
+                            break;
+                        }
+                    }
                 }
             }
         }
+
 
         if($document) {
             if(!$ignoreHardlinks) {
@@ -365,6 +448,9 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
      */
     protected function checkForRedirect ($override = false) {
         try {
+
+            $front = Zend_Controller_Front::getInstance();
+            $config = Pimcore_Config::getSystemConfig();
 
             // get current site if available
             $sourceSite = null;
@@ -438,6 +524,9 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                                 Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
                                 continue;
                             }
+                        } else if (!preg_match("@http(s)?://@i", $url) && $config->general->domain) {
+                            // prepend the host and scheme to avoid infinite loops when using "domain" redirects
+                            $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $url;
                         }
 
                         header($redirect->getHttpStatus());

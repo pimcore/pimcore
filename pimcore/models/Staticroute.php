@@ -63,6 +63,11 @@ class Staticroute extends Pimcore_Model_Abstract {
     public $defaults;
 
     /**
+     * @var int
+     */
+    public $siteId;
+
+    /**
      * @var integer
      */
     public $priority = 1;
@@ -340,7 +345,23 @@ class Staticroute extends Pimcore_Model_Abstract {
     public function getReverse() {
         return $this->reverse;
     }
-    
+
+    /**
+     * @param int $siteId
+     */
+    public function setSiteId($siteId)
+    {
+        $this->siteId = $siteId ? (int) $siteId : null;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSiteId()
+    {
+        return $this->siteId;
+    }
+
     /**
      * @param array $urlOptions
      * @return string

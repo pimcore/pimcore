@@ -665,6 +665,7 @@ pimcore.object.classes.klass = Class.create({
                 }
 
                 if (fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false) {
+
                     if(data.datatype == "data") {
                         this.usedFieldNames.push(data.name);
                     }
@@ -673,7 +674,16 @@ pimcore.object.classes.klass = Class.create({
                 }
                 else {
                     node.getUI().addClass("tree_node_error");
-                    pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error");
+
+
+                    var invalidFieldsText = null;
+
+                    if(node.attributes.object.invalidFieldNames){
+                        invalidFieldsText = t("reserved_field_names_error")+(implode(',',node.attributes.object.forbiddenNames));
+                    }
+                    pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",invalidFieldsText);
+
+
 
                     this.getDataSuccess = false;
                     return false;

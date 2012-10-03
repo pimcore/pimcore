@@ -32,8 +32,8 @@ class Pimcore_Tool_Frontend {
     public static function getSiteKey (Site $site = null) {
         // check for site
         if(!$site) {
-            if(Zend_Registry::isRegistered("pimcore_site")) {
-                $site = Zend_Registry::get("pimcore_site");
+            if(Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
             } else {
                 $site = false;
             }
@@ -48,5 +48,38 @@ class Pimcore_Tool_Frontend {
         }
 
         return $siteKey;
+    }
+
+    /**
+     * @param Site $site
+     * @param Document $document
+     * @return bool
+     */
+    public static function isDocumentInSite ($site, $document) {
+        $inSite = true;
+
+        if ($site && $site->getRootDocument() instanceof Document_Page) {
+            if(!preg_match("@^" . $site->getRootDocument()->getRealFullPath() . "@", $document->getRealFullPath())) {
+                $inSite = false;
+            }
+        }
+
+        return $inSite;
+    }
+
+    /**
+     * @param Document $document
+     * @return bool
+     */
+    public static function isDocumentInCurrentSite($document) {
+
+        if(Site::isSiteRequest()) {
+            $site = Site::getCurrentSite();
+            if($site instanceof Site) {
+                return self::isDocumentInSite($site, $document);
+            }
+        }
+
+        return true;
     }
 }

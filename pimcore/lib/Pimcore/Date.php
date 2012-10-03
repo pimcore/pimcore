@@ -14,7 +14,10 @@
  */
 
 class Pimcore_Date extends Zend_Date {
-        
+
+    const MYSQL_DATETIME = 'YYYY-MM-dd HH:mm:ss';
+    const MYSQL_DATE     = 'YYYY-MM-dd';
+
     public function __wakeup () {
         $this->setLocale(null);
     }

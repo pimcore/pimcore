@@ -315,6 +315,12 @@ class Document_Tag_Video extends Document_Tag
         $parts = parse_url($this->id);
         parse_str($parts["query"], $vars);
 
+        //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
+        if(strpos($this->id,'embed') !== false){
+            $explodedPath = explode('/',$parts['path']);
+            $vars['v'] = $explodedPath[array_search('embed',$explodedPath)+1];
+        }
+
         if (!$vars["v"] || strpos($parts["host"], "youtube.com") === false) {
             return $this->getEmptyCode();
             //return $this->getFlowplayerCode();
@@ -565,7 +571,9 @@ class Document_Tag_Video extends Document_Tag
             </div>
         </div>';
 
-        if(!$this->editmode) {
+        $options = $this->getOptions();
+
+        if(!$this->editmode && !$options['disableProgressReload']) {
             $code .= '
                 <script type="text/javascript">
                     window.setTimeout(function() {

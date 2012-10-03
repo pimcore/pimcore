@@ -235,6 +235,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "timezone" => $values["general.timezone"],
                     "php_cli" => $values["general.php_cli"],
                     "domain" => $values["general.domain"],
+                    "redirect_to_maindomain" => $values["general.redirect_to_maindomain"],
                     "language" => $values["general.language"],
                     "validLanguages" => $values["general.validLanguages"],
                     "theme" => $values["general.theme"],
@@ -242,6 +243,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                     "debug" => $values["general.debug"],
                     "debug_ip" => $values["general.debug_ip"],
+                    "http_auth" => array(
+                        "username" => $values["general.http_auth.username"],
+                        "password" => $values["general.http_auth.password"]
+                    ),
                     "firephp" => $values["general.firephp"],
                     "loglevel" => array(
                         "debug" => $values["general.loglevel.debug"],
@@ -729,9 +734,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $admin = $this->getParam("admin");
 
         if ($admin) {
-            $class = new Translation_Admin();
+            $class = "Translation_Admin";
         } else {
-            $class = new Translation_Website();
+            $class = "Translation_Website";
         }
 
         if ($this->getUser()->isAllowed("translations")) {

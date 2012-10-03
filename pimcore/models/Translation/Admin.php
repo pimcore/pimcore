@@ -17,14 +17,4 @@
 
 class Translation_Admin extends Translation_Abstract {
 
-        /**
-     * @param string $key
-     * @return Translation
-     */
-    public static function getByKey($id) {
-        $translation = new self();
-        $translation->getResource()->getByKey($id);
-
-        return $translation;
-    }
 }

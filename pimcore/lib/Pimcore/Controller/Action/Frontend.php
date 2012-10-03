@@ -176,7 +176,10 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             // get the cononical (source) document
             $hardlinkCanonicalSourceDocument = Document::getById($this->getDocument()->getId());
             $request = $this->getRequest();
-            $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath() . '>; rel="canonical"');
+
+            if(Pimcore_Tool_Frontend::isDocumentInCurrentSite($hardlinkCanonicalSourceDocument)) {
+                $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath() . '>; rel="canonical"');
+            }
         }
 
         // set some parameters

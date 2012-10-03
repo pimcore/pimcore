@@ -342,7 +342,8 @@ pimcore.settings.redirects = Class.create({
                         ["begin", t("beginning_with")],
                         ["exact", t("matching_exact")],
                         ["contain", t("contain")],
-                        ["begin_end_slash", t("short_url")]
+                        ["begin_end_slash", t("short_url")],
+                        ["domain", t("domain")]
                     ],
                     mode: "local",
                     typeAhead: false,
@@ -377,6 +378,8 @@ pimcore.settings.redirects = Class.create({
     saveWizard: function () {
 
         var source = "";
+        var sourceEntireUrl = false;
+        var priority = 1;
         var values = this.wizardForm.getForm().getFieldValues();
         var pattern = preg_quote(values.pattern);
         pattern = str_replace("@","\\@",pattern);
@@ -392,10 +395,22 @@ pimcore.settings.redirects = Class.create({
                 pattern = "/" + pattern;
             }
             source = "@^" + pattern + "[\\/]?$@";
+        } else if (values.mode == "domain") {
+            if(values.pattern.indexOf("http") >= 0) {
+                pattern = parse_url(values.pattern, "host");
+            } else {
+                pattern = values.pattern;
+            }
+            pattern = preg_quote(pattern);
+            source = "@https?://" + pattern + "@";
+            sourceEntireUrl = true;
+            priority = 99;
         }
 
         var u = new this.grid.store.recordType({
-            source: source
+            source: source,
+            sourceEntireUrl: sourceEntireUrl,
+            priority: priority
         });
         this.grid.store.insert(0, u);
 

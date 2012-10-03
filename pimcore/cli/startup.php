@@ -34,6 +34,7 @@ $front->setResponse(new Zend_Controller_Response_Cli());
 
 // generic pimcore setup
 Pimcore::setSystemRequirements();
+Pimcore::initAutoloader();
 Pimcore::initConfiguration();
 Pimcore::setupFramework();
 Pimcore::initLogger();

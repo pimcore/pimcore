@@ -15,7 +15,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Element_Service {
+class Element_Service extends Pimcore_Model_Abstract {
 
     /**
      * @param Dependency $d

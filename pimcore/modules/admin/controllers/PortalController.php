@@ -177,7 +177,8 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         $config["settings"]["pimcore.layout.portlets.feed"]["url"] = $this->getParam("url");
         
         $this->saveConfiguration($config);
-        exit;
+
+        $this->_helper->json(array("success" => true));
     }
     
     public function portletModifiedDocumentsAction () {

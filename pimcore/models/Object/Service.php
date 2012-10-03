@@ -31,7 +31,7 @@ class Object_Service extends Element_Service {
      * @param  User $user
      * @return void
      */
-    public function __construct($user) {
+    public function __construct($user = null) {
         $this->_user = $user;
     }
 

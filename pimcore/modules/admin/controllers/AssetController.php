@@ -806,10 +806,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
 
-        $this->getResponse()->setHeader("Content-Type", "image/" . $format, true);
+        header("Content-Type: image/" . $format, true);
 
         if($this->getParam("download")) {
-            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $image->getFilename() . '"');
+            header('Content-Disposition: attachment; filename="' . $image->getFilename() . '"');
         }
 
         $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $image->getThumbnail($thumbnail);

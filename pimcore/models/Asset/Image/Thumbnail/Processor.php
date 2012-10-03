@@ -57,7 +57,8 @@ class Asset_Image_Thumbnail_Processor {
                 "gif" => "gif",
                 "jpeg" => "jpeg",
                 "jpg" => "jpeg",
-                "png" => "png"
+                "png" => "png",
+                "tiff" => "tiff"
             );
 
             $fileExt = Pimcore_File::getFileExtension($asset->getFilename());
@@ -113,7 +114,7 @@ class Asset_Image_Thumbnail_Processor {
             }
         }
 
-        $image->save($fsPath, $format, $config->getQuality());
+        $image->save($fsPath, $format, $config->getQuality(), $config->getColorspace());
 
         return $path;
     }

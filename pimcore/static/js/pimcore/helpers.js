@@ -805,52 +805,45 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
     }
 };
 
-pimcore.helpers.rememberOpenTab = function (item) {
-    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
-    var openTabs = [];
-    if(openTabsCsv) {
-        openTabs = openTabsCsv.split(",");
+pimcore.helpers.getOpenTab = function () {
+    var openTabs = localStorage.getItem("pimcore_opentabs");
+    if(!openTabs) {
+        openTabs = [];
+    } else {
+        openTabs = JSON.parse(openTabs); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
     }
+
+    return openTabs;
+}
+
+pimcore.helpers.rememberOpenTab = function (item) {
+    var openTabs = pimcore.helpers.getOpenTab();
 
     if(!in_array(item, openTabs)) {
         openTabs.push(item);
     }
 
-    var cleanedOpenTabs = [];
-    for(var i=0; i<openTabs.length; i++) {
-        if(!empty(openTabs[i])) {
-            cleanedOpenTabs.push(openTabs[i]);
-        }
-    }
-
     // limit to the latest 10
-    cleanedOpenTabs.reverse();
-    cleanedOpenTabs.splice(10, 1000);
-    cleanedOpenTabs.reverse();
+    openTabs.reverse();
+    openTabs.splice(10, 1000);
+    openTabs.reverse();
 
-    Ext.util.Cookies.set("pimcore_opentabs", "," + cleanedOpenTabs.join(",") + ",");
+    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
 }
 
 pimcore.helpers.forgetOpenTab = function (item) {
 
-    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
-    if(openTabsCsv) {
-        openTabsCsv = "," + str_replace("," + item + ",", ",", openTabsCsv) + ",";
-    }
+    var openTabs = pimcore.helpers.getOpenTab();
 
-    openTabsCsv = str_replace(",," , ",", openTabsCsv);
+    var pos = array_search(item, openTabs);
+    openTabs.splice(pos, 1);
 
-    Ext.util.Cookies.set("pimcore_opentabs", openTabsCsv);
+    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
 }
 
 pimcore.helpers.openMemorizedTabs = function () {
-    var openTabsCsv = Ext.util.Cookies.get("pimcore_opentabs");
-    var openTabs = [];
-    var parts = [];
+    var openTabs = pimcore.helpers.getOpenTab();
     var openedTabs = [];
-    if(openTabsCsv) {
-        openTabs = openTabsCsv.split(",");
-    }
 
     for(var i=0; i<openTabs.length; i++) {
         if(!empty(openTabs[i])) {
