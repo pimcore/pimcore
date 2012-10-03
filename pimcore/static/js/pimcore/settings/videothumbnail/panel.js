@@ -167,6 +167,15 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
         var regresult = value.match(/[a-zA-Z0-9_\-]+/);
         if (button == "ok" && value.length > 2 && regresult == value) {
+
+            var thumbnails = this.tree.getRootNode().childNodes;
+            for (var i = 0; i < thumbnails.length; i++) {
+                if (thumbnails[i].text == value) {
+                    Ext.MessageBox.alert(t('add_thumbnail'), t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                    return;
+                }
+            }
+
             Ext.Ajax.request({
                 url: "/admin/settings/video-thumbnail-add",
                 params: {
