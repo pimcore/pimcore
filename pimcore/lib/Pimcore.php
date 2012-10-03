@@ -386,6 +386,7 @@ class Pimcore {
         @ini_set("magic_quotes_gpc", 0);
         @ini_set("magic_quotes_runtime", 0);
         set_time_limit($maxExecutionTime);
+        mb_internal_encoding("UTF-8");
 
         // this is for simple_dom_html
         ini_set('pcre.recursion-limit', 100000);
