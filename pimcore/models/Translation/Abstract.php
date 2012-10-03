@@ -43,7 +43,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      * @param string $key
      */
     public function setKey($key) {
-        $this->key = strtolower($key);
+        $this->key = mb_strtolower($key);
     }
 
     /**
