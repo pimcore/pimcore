@@ -127,7 +127,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
 
         if($this->getParam('filter')){
             if ($this->getParam("filter")) {
-                $filterTerm = $list->quote("%".strtolower($this->getParam("filter"))."%");
+                $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
                 $list->setCondition("   `from` LIKE " . $filterTerm . " OR
                                         `to` LIKE " . $filterTerm . " OR
                                         `cc` LIKE " . $filterTerm . " OR
