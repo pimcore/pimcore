@@ -114,7 +114,7 @@ class Asset_Image_Thumbnail_Processor {
             }
         }
 
-        $image->save($fsPath, $format, $config->getQuality(), $config->getColorspace());
+        $image->save($fsPath, $format, $config->getQuality());
 
         return $path;
     }

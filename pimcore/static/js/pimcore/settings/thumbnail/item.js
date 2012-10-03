@@ -106,15 +106,6 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.quality,
                 fieldLabel: t("quality"),
                 width: 60
-            }, {
-                xtype: "combo",
-                name: "colorspace",
-                fieldLabel: t("colorspace"),
-                value: this.data.colorspace,
-                triggerAction: 'all',
-                editable: false,
-                store: ["","RGB","CMYK"],
-                width: 75
             }]
         });
 
