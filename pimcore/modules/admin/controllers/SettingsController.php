@@ -1553,9 +1553,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $tag->save();
 
-        // clear cache tag
-        Pimcore_Model_Cache::clearTag("tagmanagement");
-
         $this->_helper->json(array("success" => true));
     }
 }
