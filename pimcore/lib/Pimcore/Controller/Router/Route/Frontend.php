@@ -181,7 +181,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
                             // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
                             if($document instanceof Document_Page && !($document instanceof Document_Hardlink_Wrapper_Interface) && $document->getPrettyUrl() && empty($params["pimcore_preview"]) && empty($params["pimcore_editmode"])) {
-                                if(rtrim($document->getPrettyUrl()," /") != rtrim($path,"/")) {
+                                if(rtrim(strtolower($document->getPrettyUrl())," /") != rtrim(strtolower($path),"/")) {
                                     header("Location: " . $document->getPrettyUrl(), true, 301);
                                     exit;
                                 }
