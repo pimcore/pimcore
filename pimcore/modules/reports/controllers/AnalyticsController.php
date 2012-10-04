@@ -53,14 +53,16 @@ class Reports_AnalyticsController extends Pimcore_Controller_Action_Admin_Report
 
                 $details = $this->service->management_profiles->listManagementProfiles($entry["accountId"], $entry["id"]);
 
-                foreach ($details["items"] as $detail) {
-                    $data["data"][] = array(
-                        "id" => $detail["id"],
-                        "name" => $detail["name"],
-                        "trackid" => $detail["webPropertyId"],
-                        "internalid" => $detail["internalWebPropertyId"],
-                        "accountid" => $detail["accountId"]
-                    );
+                if (is_array($details["items"])) {
+                    foreach ($details["items"] as $detail) {
+                        $data["data"][] = array(
+                            "id" => $detail["id"],
+                            "name" => $detail["name"],
+                            "trackid" => $detail["webPropertyId"],
+                            "internalid" => $detail["internalWebPropertyId"],
+                            "accountid" => $detail["accountId"]
+                        );
+                    }
                 }
             }
 
