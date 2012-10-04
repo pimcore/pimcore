@@ -327,6 +327,7 @@ pimcore.document.pages.settings = Class.create({
                                 name: "contentMasterDocumentPath",
                                 value: this.page.data.contentMasterDocumentPath,
                                 cls: "input_drop_target",
+                                id: "contentMasterDocumentPath_" + this.page.id,
                                 listeners: {
                                     "render": function (el) {
                                         new Ext.dd.DropZone(el.getEl(), {
@@ -350,24 +351,51 @@ pimcore.document.pages.settings = Class.create({
                                         });
                                     }
                                 }
-                            }, {
-                                xtype: "button",
-                                text: t("apply_new_master_document"),
-                                iconCls: "pimcore_icon_apply",
-                                autoWidth: true,
-                                handler: function () {
-                                    Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
-                                        if (buttonValue == "yes") {
-                                            Ext.Ajax.request({
-                                                url: "/admin/page/change-master-document/id/" + this.page.id,
-                                                params: this.getValues(),
-                                                success: function () {
-                                                    this.page.reload();
-                                                }.bind(this)
-                                            });
-                                        }
-                                    }.bind(this));
-                                }.bind(this)
+                            },
+                            {
+                                xtype: "toolbar",
+                                width: 605,
+                                items: [{
+                                    text:t("apply_new_master_document"),
+                                    iconCls:"pimcore_icon_apply",
+                                    autoWidth:true,
+                                    handler:function () {
+                                        Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
+                                            if (buttonValue == "yes") {
+                                                Ext.Ajax.request({
+                                                    url:"/admin/page/change-master-document/id/" + this.page.id,
+                                                    params:{
+                                                        contentMasterDocumentPath:Ext.getCmp("contentMasterDocumentPath_" + this.page.id).getValue()
+                                                    },
+                                                    success:function () {
+                                                        this.page.reload();
+                                                    }.bind(this)
+                                                });
+                                            }
+                                        }.bind(this));
+                                    }.bind(this)
+                                },
+                                    {
+                                        text:t("delete_master_document"),
+                                        iconCls:"pimcore_icon_delete",
+                                        autoWidth:true,
+                                        handler:function () {
+                                            Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
+                                                if (buttonValue == "yes") {
+                                                    Ext.getCmp("contentMasterDocumentPath_" + this.page.id).setValue("");
+                                                    Ext.Ajax.request({
+                                                        url:"/admin/page/change-master-document/id/" + this.page.id,
+                                                        params:{
+                                                            contentMasterDocumentPath:""
+                                                        },
+                                                        success:function () {
+                                                            this.page.reload();
+                                                        }.bind(this)
+                                                    });
+                                                }
+                                            }.bind(this));
+                                        }.bind(this)
+                                    }]
                             }
                         ]
                     }
