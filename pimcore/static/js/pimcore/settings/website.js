@@ -87,7 +87,7 @@ pimcore.settings.website = Class.create({
                 url: "/admin/settings/website-load",
                 reader: new Ext.data.JsonReader({
                     root: 'settings',
-                    fields: ['name','type',{name: "data", type: "string", convert: function (v, rec) {
+                    fields: ['name', 'type', 'siteId', {name: "data", type: "string", convert: function (v, rec) {
                         if (rec.type == "document" || rec.type == "asset" || rec.type == "object") {
                             var type = rec.type;
                             if (type == "document") {
@@ -108,7 +108,8 @@ pimcore.settings.website = Class.create({
                         }
 
                         return v;
-                    }}]
+                    }}
+                    ]
                 })
             });
             
@@ -157,7 +158,19 @@ pimcore.settings.website = Class.create({
                         listeners: {
                             "mousedown": this.cellMousedown.bind(this)
                         }
-                    }
+                    },
+                    {header: t("site"), width: 200, sortable:true, dataIndex: "siteId", editor: new Ext.form.ComboBox({
+                        store: pimcore.globalmanager.get("sites"),
+                        valueField: "id",
+                        displayField: "domain",
+                        triggerAction: "all"
+                    }), renderer: function (siteId) {
+                        var store = pimcore.globalmanager.get("sites");
+                        var pos = store.findExact("id", siteId);
+                        if(pos >= 0) {
+                            return store.getAt(pos).get("domain");
+                        }
+                    }}
                 ]
             });
 
@@ -436,12 +449,13 @@ pimcore.settings.website = Class.create({
                 if (!currentData.data.inherited) {
                     values[currentData.data.name] = {
                         data: currentData.data.data,
-                        type: currentData.data.type
+                        type: currentData.data.type,
+                        siteId : typeof(currentData.data.siteId) != 'undefined' ? currentData.data.siteId : '' //empty string because we want to have the siteId tag in the xml file
                     };
                 }
             }
         }
-        
+
         var data = Ext.encode(values);
         
         Ext.Ajax.request({
