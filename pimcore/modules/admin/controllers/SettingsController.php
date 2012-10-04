@@ -822,7 +822,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                 $list->setLimit($this->getParam("limit"));
                 $list->setOffset($this->getParam("start"));
                 if ($this->getParam("filter")) {
-                    $filterTerm = $list->quote("%".strtolower($this->getParam("filter"))."%");
+                    $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
                     $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm);
                 }
                 $list->load();
@@ -1552,9 +1552,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $tag->setParams($params);
 
         $tag->save();
-
-        // clear cache tag
-        Pimcore_Model_Cache::clearTag("tagmanagement");
 
         $this->_helper->json(array("success" => true));
     }

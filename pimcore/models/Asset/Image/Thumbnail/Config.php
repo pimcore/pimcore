@@ -55,11 +55,6 @@ class Asset_Image_Thumbnail_Config {
     public $quality = 90;
 
     /**
-     * @var string
-     */
-    public $colorspace;
-
-    /**
      * @static
      * @param  $name
      * @return Asset_Image_Thumbnail_Config
@@ -381,21 +376,5 @@ class Asset_Image_Thumbnail_Config {
         }
 
         return $pipe;
-    }
-
-    /**
-     * @param string $colorspace
-     */
-    public function setColorspace($colorspace)
-    {
-        $this->colorspace = $colorspace;
-    }
-
-    /**
-     * @return string
-     */
-    public function getColorspace()
-    {
-        return $this->colorspace;
     }
 }

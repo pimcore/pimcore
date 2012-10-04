@@ -1036,8 +1036,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                             $nodeConfig["title"] = $childDocument->getTitle();
                             $nodeConfig["description"] = $childDocument->getDescription();
 
-                            $nodeConfig["title_length"] = strlen($childDocument->getTitle());
-                            $nodeConfig["description_length"] = strlen($childDocument->getDescription());
+                            $nodeConfig["title_length"] = mb_strlen($childDocument->getTitle());
+                            $nodeConfig["description_length"] = mb_strlen($childDocument->getDescription());
 
                             // anaylze content
                             $nodeConfig["links"] = 0;
@@ -1093,10 +1093,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                 Logger::debug($e);
                             }
 
-                            if(strlen($childDocument->getTitle()) > 80
-                              || strlen($childDocument->getTitle()) < 5
-                              || strlen($childDocument->getDescription()) > 180
-                              || strlen($childDocument->getDescription()) < 20
+                            if(mb_strlen($childDocument->getTitle()) > 80
+                              || mb_strlen($childDocument->getTitle()) < 5
+                              || mb_strlen($childDocument->getDescription()) > 180
+                              || mb_strlen($childDocument->getDescription()) < 20
                               || $nodeConfig["h1"] != 1
                               || $nodeConfig["hx"] < 1) {
                                 $nodeConfig["cls"] = "pimcore_document_seo_warning";

@@ -61,7 +61,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
         foreach ($list->getTranslations() as $translation) {
             if($translation instanceof Translation_Abstract) {
                 foreach ($translation->getTranslations() as $language => $text) {
-                    $this->_translate[$language][strtolower($translation->getKey())] = Pimcore_Tool_Text::removeLineBreaks($text);
+                    $this->_translate[$language][mb_strtolower($translation->getKey())] = Pimcore_Tool_Text::removeLineBreaks($text);
                 }
             }
         }
@@ -94,7 +94,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
     public function translate($messageId, $locale = null) {
 
         $messageIdOriginal = $messageId;
-        $messageId = strtolower($messageId);
+        $messageId = mb_strtolower($messageId);
 
         // the maximum length of message-id's is 255
         if(strlen($messageId) > 255) {
