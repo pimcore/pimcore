@@ -25,13 +25,14 @@ function ts(key) {
         return "";
     }
 
-    var originalKey = key;
-    key = key.toLocaleLowerCase();
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
 
     // remove plus at the start and the end to avoid double translations
     key = key.replace(/^[\+]+/,"");
     key = key.replace(/[\+]+$/,"");
+
+    var originalKey = key;
+    key = key.toLocaleLowerCase();
 
     if (pimcore && pimcore.admin_i18n && pimcore.admin_i18n[key]) {
         // add here a "zero width joiner" to detect if a key is already translated
