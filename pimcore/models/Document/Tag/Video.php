@@ -370,16 +370,19 @@ class Document_Tag_Video extends Document_Tag
             "start",
             "theme");
         $additional_params="";
-        foreach($options["config"]["clip"] as $key=>$value){
-            if(in_array($key, $valid_youtube_prams)){
-                if(is_bool($value)){
-                    if($value){
-                        $additional_params.="&".$key."=1";
+
+        if(!empty($options["config"]["clip"])){
+            foreach($options["config"]["clip"] as $key=>$value){
+                if(in_array($key, $valid_youtube_prams)){
+                    if(is_bool($value)){
+                        if($value){
+                            $additional_params.="&".$key."=1";
+                        }else{
+                            $additional_params.="&".$key."=0";
+                        }
                     }else{
-                        $additional_params.="&".$key."=0";
+                        $additional_params.="&".$key."=".$value;
                     }
-                }else{
-                    $additional_params.="&".$key."=".$value;
                 }
             }
         }
