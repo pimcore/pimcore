@@ -25,6 +25,7 @@ function ts(key) {
         return "";
     }
 
+    var originalKey = key;
     key = key.toLocaleLowerCase();
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
 
@@ -43,7 +44,7 @@ function ts(key) {
 
         // if the key contains a "zero width joiner" it is already translated
         if(in_array(key, alreadyTranslated)) {
-            return key;
+            return originalKey;
         }
 
         if(!in_array(key, pimcore.globalmanager.get("translations_admin_added"))){
@@ -55,7 +56,7 @@ function ts(key) {
     if(pimcore.settings.debug_admin_translations){
         return "+" + key + "+";
     } else {
-        return key;
+        return originalKey;
     }
 }
 
