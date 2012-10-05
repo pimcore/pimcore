@@ -35,6 +35,11 @@ class Pimcore_Controller_Plugin_HttpErrorLog extends Zend_Controller_Plugin_Abst
                 Logger::error("Unable to log http error");
                 Logger::error($e);
             }
+
+            // put the response into the cache
+            $responseData = $this->getResponse()->getBody()
+            //Pimcore_Model_Cache::save()
+
         }
     }
 }
