@@ -39,7 +39,7 @@ class Pimcore_Controller_Plugin_HttpErrorLog extends Zend_Controller_Plugin_Abst
             // put the response into the cache
             //$responseData = $this->getResponse()->getBody()
             //Pimcore_Model_Cache::save()
-            ///
+            ////
 
         }
     }
