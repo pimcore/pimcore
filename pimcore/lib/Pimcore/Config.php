@@ -75,7 +75,11 @@ class Pimcore_Config {
                     $arrayData = $rawConfig->toArray();
 
                     foreach ($arrayData as $key => $value) {
-                        if((!$siteId && $value['siteId'] > 0) || ($siteId > 0 && $value['siteId'] != $siteId)){
+                        if(!$siteId && $value['siteId'] > 0){
+                            continue;
+                        }
+
+                        if($siteId && $value['siteId'] > 0 && $siteId != $value['siteId']){
                             continue;
                         }
 
@@ -105,7 +109,6 @@ class Pimcore_Config {
                         }
                     }
                 }
-
                 $config = new Zend_Config($settingsArray, true);
 
                 Pimcore_Model_Cache::save($config, $cacheKey, $cacheTags, null, 998);
