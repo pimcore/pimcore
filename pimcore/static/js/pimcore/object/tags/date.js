@@ -15,17 +15,22 @@
 pimcore.registerNS("pimcore.object.tags.date");
 pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
-    type: "date",
+    type:"date",
 
-    initialize: function (data, fieldConfig) {
+    initialize:function (data, fieldConfig) {
+
+        if (typeof data === "undefined" && fieldConfig.defaultValue) {
+            data = fieldConfig.defaultValue;
+        }
+
         this.data = data;
         this.fieldConfig = fieldConfig;
 
     },
 
-    getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+    getGridColumnConfig:function (field) {
+        return {header:ts(field.label), width:150, sortable:false, dataIndex:field.key, renderer:function (key, value, metaData, record) {
+            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.css += " grid_value_inherited";
             }
 
@@ -39,17 +44,17 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key)};
     },
 
-    getGridColumnFilter: function(field) {
-        return {type: 'date', dataIndex: field.key};
+    getGridColumnFilter:function (field) {
+        return {type:'date', dataIndex:field.key};
     },
 
-    getLayoutEdit: function () {
+    getLayoutEdit:function () {
 
         var date = {
-            fieldLabel: this.fieldConfig.title,
-            name: this.fieldConfig.name,
-            itemCls: "object_field",
-            width: 100
+            fieldLabel:this.fieldConfig.title,
+            name:this.fieldConfig.name,
+            itemCls:"object_field",
+            width:100
         };
 
         if (this.data) {
@@ -61,7 +66,7 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getLayoutShow: function () {
+    getLayoutShow:function () {
 
         this.component = this.getLayoutEdit();
         this.component.disable();
@@ -69,18 +74,18 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getValue: function () {
+    getValue:function () {
         if (this.component.getValue()) {
             return this.component.getValue().getTime();
         }
         return false;
     },
 
-    getName: function () {
+    getName:function () {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
+    isInvalidMandatory:function () {
 
         // no render check is necessary because the date compontent returns the right values even it is not rendered
         if (this.getValue() == false) {
