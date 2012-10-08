@@ -15,24 +15,26 @@
 pimcore.registerNS("pimcore.object.tags.checkbox");
 pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
-    type: "checkbox",
+    type:"checkbox",
 
-    initialize: function (data, fieldConfig) {
+    initialize:function (data, fieldConfig) {
 
         this.data = "";
 
         if (data) {
             this.data = data;
+        } else if (typeof data === "undefined" && fieldConfig.defaultValue) {
+            this.data = fieldConfig.defaultValue;
         }
         this.fieldConfig = fieldConfig;
     },
 
-    getGridColumnConfig: function(field) {
+    getGridColumnConfig:function (field) {
         return new Ext.grid.CheckColumn({
-            header: ts(field.label),
-            dataIndex: field.key,
-            renderer: function (key, value, metaData, record, rowIndex, colIndex, store) {
-                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+            header:ts(field.label),
+            dataIndex:field.key,
+            renderer:function (key, value, metaData, record, rowIndex, colIndex, store) {
+                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.css += " grid_value_inherited";
                 }
                 metaData.css += ' x-grid3-check-col-td';
@@ -41,16 +43,16 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         });
     },
 
-    getGridColumnFilter: function(field) {
-        return {type: 'boolean', dataIndex: field.key};
-    },    
+    getGridColumnFilter:function (field) {
+        return {type:'boolean', dataIndex:field.key};
+    },
 
-    getLayoutEdit: function () {
+    getLayoutEdit:function () {
 
         var checkbox = {
-            fieldLabel: this.fieldConfig.title,
-            name: this.fieldConfig.name,
-            itemCls: "object_field"
+            fieldLabel:this.fieldConfig.title,
+            name:this.fieldConfig.name,
+            itemCls:"object_field"
         };
 
 
@@ -66,7 +68,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
     },
 
 
-    getLayoutShow: function () {
+    getLayoutShow:function () {
 
         this.component = this.getLayoutEdit();
         this.component.disable();
@@ -74,15 +76,15 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getValue: function () {
+    getValue:function () {
         return this.component.getValue();
     },
 
-    getName: function () {
+    getName:function () {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
+    isInvalidMandatory:function () {
         return false;
     }
 });

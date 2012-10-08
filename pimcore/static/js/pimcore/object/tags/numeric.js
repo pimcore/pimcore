@@ -18,6 +18,9 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     type: "numeric",
 
     initialize: function (data, fieldConfig) {
+        if (typeof data === "undefined" && fieldConfig.defaultValue){
+            data = fieldConfig.defaultValue;
+        }
 
         this.data = data;
         this.fieldConfig = fieldConfig;
