@@ -67,22 +67,7 @@ class Object_Concrete extends Object_Abstract {
      */
     protected $omitMandatoryCheck = false;
 
-    /**
-     *
-     */
-    public function __construct () {
 
-        // set default values
-        if($this->getClass()) {
-            $fielddefinitions = $this->getClass()->getFieldDefinitions();
-            foreach ($fielddefinitions as $fd) {
-                if (method_exists($fd, 'getDefaultValue') && $fd->getDefaultValue() !== null) {
-                    $setter = "set".ucfirst($fd->getName());
-                    $this->$setter($fd->getDefaultValue());
-                }
-            }
-        }
-    }
 
     /**
      * @param  string $fieldName
