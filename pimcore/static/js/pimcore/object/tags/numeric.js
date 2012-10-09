@@ -73,7 +73,8 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         this.component = new Ext.ux.form.SpinnerField(input);
 
         if (this.unstoredValue) {
-            this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
+            //this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
+            //this.component.addListener("focus",this.removeDefaultValueButton.bind(this));
         }
 
         return this.component;

@@ -65,7 +65,8 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
         this.component.setValue(this.data);
         if (this.unstoredValue) {
-            this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
+            //this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
+            //this.component.addListener("change",this.removeDefaultValueButton.bind(this));
         }
 
         return this.component;
@@ -115,6 +116,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                 if (dirty) {
                     this.component["__pimcore_dirty"] = true;
                 }
+
 
                 return dirty;
             }

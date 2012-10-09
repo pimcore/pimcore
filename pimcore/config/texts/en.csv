@@ -1165,5 +1165,5 @@
 "file_explorer_saved_file_error","Cannot save file"
 "reserved_field_names_error","Please do not use the following reserved field names: "
 "use_current_date","Use current date"
-"default_value_warning","Default values are not stored in the database, nor are they set in empty Object instances. They are only available in the pimcore GUI"
+"default_value_warning","Default values are not stored in the database table definition, nor are they set in empty Object instances. They are only available in the pimcore GUI"
 "gui_default_value","Unstored default value"

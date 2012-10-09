@@ -84,7 +84,9 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
 
         if (this.unstoredValue) {
-            this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
+            //this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
+            //this.datefield.addListener("change",this.removeDefaultValueButton.bind(this));
+            //this.timefield.addListener("change",this.removeDefaultValueButton.bind(this));
         }
 
         return this.component;
