@@ -23,8 +23,9 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
         if (data) {
             this.data = data;
-        } else if (typeof data === "undefined" && fieldConfig.defaultValue) {
+        } else if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
             this.data = fieldConfig.defaultValue;
+            this.unstoredValue = true;
         }
         this.fieldConfig = fieldConfig;
     },
@@ -63,6 +64,9 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         this.component = new Ext.form.Checkbox(checkbox);
 
         this.component.setValue(this.data);
+        if (this.unstoredValue) {
+            this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
+        }
 
         return this.component;
     },
@@ -88,34 +92,34 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         return false;
     },
 
-        isDirty:function () {
-            var dirty = false;
-            if (this.component && typeof this.component.isDirty == "function") {
+    isDirty:function () {
+        var dirty = false;
+        if (this.component && typeof this.component.isDirty == "function") {
 
-                if (!this.component.rendered) {
-                    if(!this.fieldConfig.defaultValue){
-                        return false;
-                    } else return true;
+            if (!this.component.rendered) {
+                if (!this.fieldConfig.defaultValue) {
+                    return false;
+                } else return true;
 
-                } else {
-                    dirty = this.component.isDirty();
+            } else {
+                dirty = this.component.isDirty();
 
-                    if(!dirty && (this.fieldConfig.defaultValue)){
-                       dirty = true;
-                    }
-
-                    // once a field is dirty it should be always dirty (not an ExtJS behavior)
-                    if (this.component["__pimcore_dirty"]) {
-                        dirty = true;
-                    }
-                    if (dirty) {
-                        this.component["__pimcore_dirty"] = true;
-                    }
-
-                    return dirty;
+                if (!dirty && (this.fieldConfig.defaultValue)) {
+                    dirty = true;
                 }
-            }
 
-            throw "isDirty() is not implemented";
+                // once a field is dirty it should be always dirty (not an ExtJS behavior)
+                if (this.component["__pimcore_dirty"]) {
+                    dirty = true;
+                }
+                if (dirty) {
+                    this.component["__pimcore_dirty"] = true;
+                }
+
+                return dirty;
+            }
         }
+
+        throw "isDirty() is not implemented";
+    }
 });

@@ -79,11 +79,8 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
     public function getDataForResource($data, $object = null)
     {
 
-
         if (is_bool($data)) {
             $data = (int)$data;
-        } else if ($data == null) {
-            $data = $this->getDefaultValue();
         }
 
 

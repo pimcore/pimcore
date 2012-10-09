@@ -19,10 +19,12 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
     initialize:function (data, fieldConfig) {
 
-        if (typeof data === "undefined" && fieldConfig.defaultValue) {
+        if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
             data = fieldConfig.defaultValue;
-        } else if (typeof data === "undefined" && fieldConfig.useCurrentDate) {
+            this.unstoredValue = true;
+        } else if ((typeof data === "undefined" || data === null) && fieldConfig.useCurrentDate) {
             data = (new Date().getTime()) / 1000;
+            this.unstoredValue = true;
         }
 
         this.data = data;
@@ -80,6 +82,11 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             itemCls:"object_field"
         });
 
+
+        if (this.unstoredValue) {
+            this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
+        }
+
         return this.component;
     },
 
@@ -120,34 +127,34 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
         return false;
     },
 
-        isDirty:function () {
-            var dirty = false;
-            if (this.component && typeof this.component.isDirty == "function") {
+    isDirty:function () {
+        var dirty = false;
+        if (this.component && typeof this.component.isDirty == "function") {
 
-                if (!this.component.rendered) {
-                    if(!this.fieldConfig.defaultValue && !this.fieldConfig.useCurrentDate){
-                        return false;
-                    } else return true;
+            if (!this.component.rendered) {
+                if (!this.fieldConfig.defaultValue && !this.fieldConfig.useCurrentDate) {
+                    return false;
+                } else return true;
 
-                } else {
-                    dirty = this.component.isDirty();
+            } else {
+                dirty = this.component.isDirty();
 
-                    if(!dirty && (this.fieldConfig.defaultValue || this.fieldConfig.useCurrentDate)){
-                       dirty = true;
-                    }
-
-                    // once a field is dirty it should be always dirty (not an ExtJS behavior)
-                    if (this.component["__pimcore_dirty"]) {
-                        dirty = true;
-                    }
-                    if (dirty) {
-                        this.component["__pimcore_dirty"] = true;
-                    }
-
-                    return dirty;
+                if (!dirty && (this.fieldConfig.defaultValue || this.fieldConfig.useCurrentDate)) {
+                    dirty = true;
                 }
-            }
 
-            throw "isDirty() is not implemented";
+                // once a field is dirty it should be always dirty (not an ExtJS behavior)
+                if (this.component["__pimcore_dirty"]) {
+                    dirty = true;
+                }
+                if (dirty) {
+                    this.component["__pimcore_dirty"] = true;
+                }
+
+                return dirty;
+            }
         }
+
+        throw "isDirty() is not implemented";
+    }
 });
