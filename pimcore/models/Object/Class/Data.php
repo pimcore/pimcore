@@ -617,7 +617,10 @@ abstract class Object_Class_Data
 
 
         if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if(!$data) $data = ' . $this->getDefaultValue() . ';' . "\n";
+            $code .= "\t" . 'if($data===null) { ' . "\n";
+            $code .= "\t\t" . '$data = ' . $this->getDefaultValue() . ';' . "\n";
+            $code .= "\t\t" . '$this->set' . ucfirst($key) . '($data);' . "\n";
+            $code .= "\t" . '}' . "\n";
         }
 
 
@@ -674,8 +677,10 @@ abstract class Object_Class_Data
 
 
         if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if(!$this->' . $key . ') $this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
+            $code .= "\t" . 'if($this->' . $key . '===null) $this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
         }
+
+
 
         $code .= "\t return " . '$this->' . $key . ";\n";
         $code .= "}\n\n";
@@ -719,7 +724,7 @@ abstract class Object_Class_Data
         $code .= "public function get" . ucfirst($key) . " () {\n";
 
         if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if(!$this->' . $key . ') $this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
+            $code .= "\t" . 'if(!$this->' . $key . '===null) $this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
         }
 
         $code .= "\t return " . '$this->' . $key . ";\n";
@@ -769,7 +774,10 @@ abstract class Object_Class_Data
         $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
 
         if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if(!$data) $data = ' . $this->getDefaultValue() . ';' . "\n";
+            $code .= "\t" . 'if($data===null) { ' . "\n";
+            $code .= "\t\t" . '$data = ' . $this->getDefaultValue() . ';' . "\n";
+            $code .= "\t\t" . '$this->set' . ucfirst($key) . '($data,$language);' . "\n";
+            $code .= "\t" . '}' . "\n";
         }
 
         $code .= "\t return " . '$data' . ";\n";
