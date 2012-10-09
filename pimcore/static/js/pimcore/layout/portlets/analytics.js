@@ -30,7 +30,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
     getLayout: function () {
         var site = 0;
         try {
-           site = this.portal.userConf.settings["pimcore.layout.portlets.analytics"].site;
+            site = this.portal.userConf.settings["pimcore.layout.portlets.analytics"].site;
         }
         catch(e) {
 
@@ -45,123 +45,75 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
 
         store.load();
 
-        var availableSites = pimcore.globalmanager.get("sites");
+        var tbar = false;
 
-        availableSites.load();
+        if (pimcore.globalmanager.get("sites").totalLength > 0) {
 
-        // @todo make it at once
+            tbar = [
+                "->",
+                {
+                    xtype:"tbtext",
+                    text:t('select_site')
+                },
+                {
+                    xtype:"combo",
+                    value: 5,
+                    valueField: "id",
+                    displayField: "site",
+                    store: new Ext.data.JsonStore({
+                        autoDestroy: true,
+                        url: '/admin/portal/portlet-analytics-sides',
+                        root: 'data',
+                        fields: ['id','site']
+                    }),
+                    triggerAction: "all",
+                    listeners:{
+                        select: function (el) {
+                            store.load({
+                                params: {
+                                    site : el.getValue()
+                                }
+                            });
+                            Ext.Ajax.request({
+                                url: "/admin/portal/portlet-analytics-save",
+                                params: {
+                                    site:  el.getValue()
+                                }
+                            });
+                        }
+                   }
+                }
+            ]
+        }
 
-        if (availableSites.getCount() > 1) {
-
-            var tempstore = new Array([0, t('main_site')]);
-
-            // @todo make it with sense
-
-            availableSites.each(function(element,scope) {
-                tempstore.push([
-                    element.get("id"),
-                    element.get("domain")
-                ]);
-            });
-
-            try {
-                console.log(tempstore);
-            }
-            catch (e) {
-
-            }
-
-
-            var panel = new Ext.Panel({
-                layout:'fit',
-                height: 275,
-                tbar: [
-                    "->",
+        var panel = new Ext.Panel({
+            layout:'fit',
+            height: 275,
+            tbar: tbar,
+            items: {
+                xtype: 'linechart',
+                store: store,
+                xField: 'datetext',
+                series: [
                     {
-                        xtype:"tbtext",
-                        text:t('select_site')
+                        type: 'line',
+                        displayName: t('pageviews'),
+                        yField: 'pageviews',
+                        style: {
+                            color:0x01841c
+                        }
                     },
                     {
-                        xtype:"combo",
-                        mode:"local",
-                        value: site,
-                        store: tempstore,
-                        idProperty: "id",
-                        triggerAction: "all",
-                        listeners:{
-                            select: function (el) {
-                                store.load({
-                                    params: {
-                                        site : el.getValue()
-                                    }
-                                });
-                                Ext.Ajax.request({
-                                    url: "/admin/portal/portlet-analytics-save",
-                                    params: {
-                                        site:  el.getValue()
-                                    }
-                                });
-                            }
+                        type:'line',
+                        displayName: t("visits"),
+                        yField: 'visits',
+                        style: {
+                            color: 0x15428B
                         }
                     }
-                ],
-                items: {
-                    xtype: 'linechart',
-                    store: store,
-                    xField: 'datetext',
-                    series: [
-                        {
-                            type: 'line',
-                            displayName: t('pageviews'),
-                            yField: 'pageviews',
-                            style: {
-                                color:0x01841c
-                            }
-                        },
-                        {
-                            type:'line',
-                            displayName: t("visits"),
-                            yField: 'visits',
-                            style: {
-                                color: 0x15428B
-                            }
-                        }
-                    ]
-                }
-            });
-        }
-        else {
-            var panel = new Ext.Panel({
-                layout:'fit',
-                height: 275,
-                items: {
-                    xtype: 'linechart',
-                    store: store,
-                    xField: 'datetext',
-                    series: [
-                        {
-                            type: 'line',
-                            displayName: t('pageviews'),
-                            yField: 'pageviews',
-                            style: {
-                                color:0x01841c
-                            }
-                        },
-                        {
-                            type:'line',
-                            displayName: t("visits"),
-                            yField: 'visits',
-                            style: {
-                                color: 0x15428B
-                            }
-                        }
-                    ]
-                }
-            });
-        }
-
-
-
+                ]
+            }
+        });
 
         this.layout = new Ext.ux.Portlet(Object.extend(this.getDefaultConfig(), {
             title: this.getName(),
