@@ -19,10 +19,12 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
 
     initialize:function (data, fieldConfig) {
 
-        if (typeof data === "undefined" && fieldConfig.defaultValue) {
+        if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
             data = fieldConfig.defaultValue;
-        } else if (typeof data === "undefined" && fieldConfig.useCurrentDate) {
+            this.unstoredValue = true;
+        } else if ((typeof data === "undefined" || data === null) && fieldConfig.useCurrentDate) {
             data = (new Date().getTime()) / 1000;
+            this.unstoredValue = true;
         }
 
         this.data = data;
@@ -65,6 +67,10 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         }
 
         this.component = new Ext.form.DateField(date);
+
+        if(this.unstoredValue){
+            this.component.addListener("afterrender",this.addDefaultValueSourceButton.bind(this));
+        }
         return this.component;
     },
 

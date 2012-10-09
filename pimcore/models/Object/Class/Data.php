@@ -615,15 +615,6 @@ abstract class Object_Class_Data
             $code .= "\t" . 'if(!$data && Object_Abstract::doGetInheritedValues()) { return $this->getValueFromParent("' . $key . '");}' . "\n";
         }
 
-
-        if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if($data===null) { ' . "\n";
-            $code .= "\t\t" . '$data = ' . $this->getDefaultValue() . ';' . "\n";
-            $code .= "\t\t" . '$this->set' . ucfirst($key) . '($data);' . "\n";
-            $code .= "\t" . '}' . "\n";
-        }
-
-
         $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";
 
@@ -676,12 +667,6 @@ abstract class Object_Class_Data
         $code .= "\t" . '}' . "\n";
 
 
-        if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if($this->' . $key . '===null) $this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
-        }
-
-
-
         $code .= "\t return " . '$this->' . $key . ";\n";
         $code .= "}\n\n";
 
@@ -722,10 +707,6 @@ abstract class Object_Class_Data
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
-
-        if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if($this->' . $key . '===null) $this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
-        }
 
         $code .= "\t return " . '$this->' . $key . ";\n";
         $code .= "}\n\n";
@@ -772,13 +753,6 @@ abstract class Object_Class_Data
         // adds a hook preGetValue which can be defined in an extended class
         $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
         $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
-
-        if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if($data===null) { ' . "\n";
-            $code .= "\t\t" . '$data = ' . $this->getDefaultValue() . ';' . "\n";
-            $code .= "\t\t" . '$this->set' . ucfirst($key) . '($data,$language);' . "\n";
-            $code .= "\t" . '}' . "\n";
-        }
 
         $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";
