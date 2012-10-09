@@ -118,5 +118,36 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             return true;
         }
         return false;
-    }
+    },
+
+        isDirty:function () {
+            var dirty = false;
+            if (this.component && typeof this.component.isDirty == "function") {
+
+                if (!this.component.rendered) {
+                    if(!this.fieldConfig.defaultValue && !this.fieldConfig.useCurrentDate){
+                        return false;
+                    } else return true;
+
+                } else {
+                    dirty = this.component.isDirty();
+
+                    if(!dirty && (this.fieldConfig.defaultValue || this.fieldConfig.useCurrentDate)){
+                       dirty = true;
+                    }
+
+                    // once a field is dirty it should be always dirty (not an ExtJS behavior)
+                    if (this.component["__pimcore_dirty"]) {
+                        dirty = true;
+                    }
+                    if (dirty) {
+                        this.component["__pimcore_dirty"] = true;
+                    }
+
+                    return dirty;
+                }
+            }
+
+            throw "isDirty() is not implemented";
+        }
 });

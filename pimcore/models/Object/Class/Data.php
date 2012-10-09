@@ -724,7 +724,7 @@ abstract class Object_Class_Data
         $code .= "public function get" . ucfirst($key) . " () {\n";
 
         if (method_exists($this, "getDefaultValue") and $this->getDefaultValue()) {
-            $code .= "\t" . 'if(!$this->' . $key . '===null) $this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
+            $code .= "\t" . 'if($this->' . $key . '===null) $this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
         }
 
         $code .= "\t return " . '$this->' . $key . ";\n";

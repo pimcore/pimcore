@@ -15,64 +15,64 @@
 pimcore.registerNS("pimcore.object.tags.abstract");
 pimcore.object.tags.abstract = Class.create({
 
-    object: null,
-    name: null,
-    title: "",
-    initialData: null,
+    object:null,
+    name:null,
+    title:"",
+    initialData:null,
 
-    setObject: function (object) {
+    setObject:function (object) {
         this.object = object;
     },
 
-    getObject: function () {
+    getObject:function () {
         return this.object;
     },
 
-    setName: function (name) {
+    setName:function (name) {
         this.name = name;
     },
 
-    getName: function () {
+    getName:function () {
         return this.name;
     },
 
-    setTitle: function (title) {
+    setTitle:function (title) {
         this.title = title;
     },
 
-    getTitle: function () {
+    getTitle:function () {
         return this.title;
     },
 
-    setInitialData: function (initialData) {
+    setInitialData:function (initialData) {
         this.initialData = initialData;
     },
 
-    getInitialData: function () {
+    getInitialData:function () {
         return this.initialData;
     },
 
-    getGridColumnEditor: function(field) {
+    getGridColumnEditor:function (field) {
         return null;
     },
 
-    getGridColumnConfig: function(field) {
-        var renderer = function(key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+    getGridColumnConfig:function (field) {
+        var renderer = function (key, value, metaData, record) {
+            if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.css += " grid_value_inherited";
             }
             return value;
 
         }.bind(this, field.key);
 
-        return {header: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer, editor: this.getGridColumnEditor(field)};
+        return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer, editor:this.getGridColumnEditor(field)};
     },
 
-    getGridColumnFilter: function(field) {
+    getGridColumnFilter:function (field) {
         return null;
     },
 
-    getEl: function () {
+    getEl:function () {
         if (this.component) {
             return this.component.getEl()
         }
@@ -80,14 +80,16 @@ pimcore.object.tags.abstract = Class.create({
         throw "the component `" + this.getName() + "´ doesn't implement the method getEl() and is not standard-compliant!";
     },
 
-    unmarkInherited: function () {
+    unmarkInherited:function () {
         var el = this.getEl();
-        el.removeClass("object_value_inherited");
+        if(el){
+            el.removeClass("object_value_inherited");
+            this.removeInheritanceSourceButton();
+        }
 
-        this.removeInheritanceSourceButton();
     },
 
-    markInherited: function (metaData) {
+    markInherited:function (metaData) {
 
         var el = this.getEl();
         if (el) {
@@ -96,10 +98,13 @@ pimcore.object.tags.abstract = Class.create({
         this.addInheritanceSourceButton(metaData);
     },
 
-    getWrappingEl: function () {
+
+
+
+    getWrappingEl:function () {
         var el = this.getEl();
         try {
-            if(!el.hasClass("object_field")) {
+            if (!el.hasClass("object_field")) {
                 el = el.parent(".object_field");
             }
         } catch (e) {
@@ -109,26 +114,26 @@ pimcore.object.tags.abstract = Class.create({
 
         return el;
     },
-
-    addInheritanceSourceButton: function (metaData) {
+/*
+    addInheritanceSourceButton:function (metaData) {
 
         var el = this.getWrappingEl();
-        if(el) {
-            el.setStyle({position: "relative"});
+        if (el) {
+            el.setStyle({position:"relative"});
             el.insertHtml("afterBegin", '<div class="pimcore_open_inheritance_source"></div>');
             var button = Ext.get(el.query(".pimcore_open_inheritance_source")[0]);
-            if(button) {
+            if (button) {
                 button.addListener("click", function (metaData) {
 //                    console.log("Click");
 
                     var myName = this.getName();
                     var myObject = this.getObject();
 
-                    if(!metaData && myObject.data.metaData && myObject.data.metaData[myName]) {
+                    if (!metaData && myObject.data.metaData && myObject.data.metaData[myName]) {
                         metaData = myObject.data.metaData[myName];
                     }
 
-                    if(metaData) {
+                    if (metaData) {
                         pimcore.helpers.openObject(metaData.objectid, "object");
                     }
 
@@ -137,57 +142,85 @@ pimcore.object.tags.abstract = Class.create({
         }
     },
 
-    removeInheritanceSourceButton: function () {
+
+    addDefaultValueSourceButton:function () {
+
         var el = this.getWrappingEl();
-        if(el) {
-            var button = Ext.get(el.query(".pimcore_open_inheritance_source")[0]);
-            if(button) {
+        if (el) {
+            el.setStyle({position:"relative"});
+            el.insertHtml("afterBegin", '<div class="pimcore_defaultValue_source"></div>');
+           console.log("marked default value source");
+            if (button) {
+                button.addListener("click", function () {
+
+
+                }.bind(this, metaData));
+            }
+        }
+    },
+*/
+
+    removeDefaultValueButton:function () {
+        var el = this.getWrappingEl();
+        if (el) {
+            var button = Ext.get(el.query(".pimcore_defaultValue_source")[0]);
+            if (button) {
                 button.remove();
             }
         }
     },
 
-    isInvalidMandatory: function () {
+    removeInheritanceSourceButton:function () {
+        var el = this.getWrappingEl();
+        if (el) {
+            var button = Ext.get(el.query(".pimcore_open_inheritance_source")[0]);
+            if (button) {
+                button.remove();
+            }
+        }
+    },
 
-        if(!this.isRendered() && !empty(this.getInitialData())) {
+    isInvalidMandatory:function () {
+
+        if (!this.isRendered() && !empty(this.getInitialData())) {
             return false;
         } else if (!this.isRendered()) {
             return true;
         }
-        
+
         if (this.getValue().length < 1) {
             return true;
         }
         return false;
     },
-    
 
-    isMandatory: function () {
+
+    isMandatory:function () {
         return this.fieldConfig.mandatory;
     },
 
-    isRendered: function () {
-        if(this.component) {
+    isRendered:function () {
+        if (this.component) {
             return this.component.rendered;
         }
 
         throw "it seems that the field -" + this.getName() + "- does not implement the isRendered() method and doesn't contain this.component";
     },
 
-    isDirty: function () {
+    isDirty:function () {
         var dirty = false;
-        if(this.component && typeof this.component.isDirty == "function") {
+        if (this.component && typeof this.component.isDirty == "function") {
 
-            if(!this.component.rendered) {
+            if (!this.component.rendered) {
                 return false;
             } else {
                 dirty = this.component.isDirty();
 
                 // once a field is dirty it should be always dirty (not an ExtJS behavior)
-                if(this.component["__pimcore_dirty"]) {
+                if (this.component["__pimcore_dirty"]) {
                     dirty = true;
                 }
-                if(dirty) {
+                if (dirty) {
                     this.component["__pimcore_dirty"] = true;
                 }
 
