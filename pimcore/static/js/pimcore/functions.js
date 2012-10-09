@@ -25,12 +25,14 @@ function ts(key) {
         return "";
     }
 
-    key = key.toLocaleLowerCase();
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
 
     // remove plus at the start and the end to avoid double translations
     key = key.replace(/^[\+]+/,"");
     key = key.replace(/[\+]+$/,"");
+
+    var originalKey = key;
+    key = key.toLocaleLowerCase();
 
     if (pimcore && pimcore.admin_i18n && pimcore.admin_i18n[key]) {
         // add here a "zero width joiner" to detect if a key is already translated
@@ -43,7 +45,7 @@ function ts(key) {
 
         // if the key contains a "zero width joiner" it is already translated
         if(in_array(key, alreadyTranslated)) {
-            return key;
+            return originalKey;
         }
 
         if(!in_array(key, pimcore.globalmanager.get("translations_admin_added"))){
@@ -55,7 +57,7 @@ function ts(key) {
     if(pimcore.settings.debug_admin_translations){
         return "+" + key + "+";
     } else {
-        return key;
+        return originalKey;
     }
 }
 

@@ -49,17 +49,21 @@ class Pimcore_Config {
         Zend_Registry::set("pimcore_config_system", $config);
     }
 
-
     /**
      * @static
      * @return mixed|Zend_Config
      */
     public static function getWebsiteConfig () {
-
         if(Zend_Registry::isRegistered("pimcore_config_website")) {
             $config = Zend_Registry::get("pimcore_config_website");
         } else {
             $cacheKey = "website_config";
+
+            if(Site::isSiteRequest()){
+                $siteId = Site::getCurrentSite()->getId();
+                $cacheKey = $cacheKey . "_site_" . $siteId;
+            }
+
             if (!$config = Pimcore_Model_Cache::load($cacheKey)) {
 
                 $websiteSettingFile = PIMCORE_CONFIGURATION_DIRECTORY . "/website.xml";
@@ -71,6 +75,14 @@ class Pimcore_Config {
                     $arrayData = $rawConfig->toArray();
 
                     foreach ($arrayData as $key => $value) {
+                        if(!$siteId && $value['siteId'] > 0){
+                            continue;
+                        }
+
+                        if($siteId && $value['siteId'] > 0 && $siteId != $value['siteId']){
+                            continue;
+                        }
+
                         $s = null;
                         if($value["type"] == "document") {
                             $s = Document::getByPath($value["data"]);

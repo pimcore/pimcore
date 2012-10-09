@@ -1224,7 +1224,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             $data[] = array(
                 "name" => $key,
                 "type" => $value["type"],
-                "data" => $value["data"]
+                "data" => $value["data"],
+                "siteId" => ($value["siteId"] > 0) ? (int)$value["siteId"] : '',
             );
         }
 

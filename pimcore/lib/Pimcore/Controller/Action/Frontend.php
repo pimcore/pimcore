@@ -338,10 +338,19 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                 Logger::emergency($error->exception);
 
                 try {
-                    $document = Zend_Registry::get("pimcore_error_document");
-                    $this->setDocument($document);
-                    $this->setParam("document", $document);
-                    $this->disableLayout();
+                    // check if we have the error page already in the cache
+                    // the cache is written in Pimcore_Controller_Plugin_HttpErrorLog::dispatchLoopShutdown()
+                    $cacheKey = "error_page_response_" . Pimcore_Tool_Frontend::getSiteKey();
+                    if($responseBody = Pimcore_Model_Cache::load($cacheKey)) {
+                        $this->getResponse()->setBody($responseBody);
+                        $this->getResponse()->sendResponse();
+                        exit;
+                    } else {
+                        $document = Zend_Registry::get("pimcore_error_document");
+                        $this->setDocument($document);
+                        $this->setParam("document", $document);
+                        $this->disableLayout();
+                    }
                 }
                 catch (Exception $e) {
                     die("Unable to load error document");

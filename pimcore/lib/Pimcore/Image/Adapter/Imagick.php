@@ -220,6 +220,9 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource->readImage($this->imagePath);
         }
 
+        $width  = (int)$width;
+        $height = (int)$height;
+
         $this->resource->resizeimage($width, $height, Imagick::FILTER_UNDEFINED, 1, false);
 
         $this->setWidth($width);
