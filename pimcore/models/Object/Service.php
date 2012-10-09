@@ -457,7 +457,7 @@ class Object_Service extends Element_Service {
 
         $conditionFilters = "";
         if (count($conditionPartsFilters) > 0) {
-            $conditionFilters = " AND (" . implode(" AND ", $conditionPartsFilters) . ")";
+            $conditionFilters = "(" . implode(" AND ", $conditionPartsFilters) . ")";
         }
         Logger::log("ObjectController filter condition:" . $conditionFilters);
         return $conditionFilters;

@@ -138,13 +138,13 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
 
             $listClass = "Object_" . ucfirst($className) . "_List";
 
-            $conditionFilters = "o_parentId = " . $parentObject->getId();
+            $conditionFilters = array("o_parentId = " . $parentObject->getId());
             // create filter condition
             if ($this->getParam("filter")) {
-                $conditionFilters .=  Object_Service::getFilterCondition($this->getParam("filter"), $class);
+                $conditionFilters[] =  Object_Service::getFilterCondition($this->getParam("filter"), $class);
             }
             if ($this->getParam("condition")) {
-                $conditionFilters .= " AND (" . $this->getParam("condition") . ")";
+                $conditionFilters[] = "(" . $this->getParam("condition") . ")";
             }
 
             $list = new $listClass();
@@ -153,7 +153,7 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
                     $list->addObjectbrick($b);
                 }
             }
-            $list->setCondition($conditionFilters);
+            $list->setCondition(implode(" AND ", $conditionFilters));
             $list->setLimit($limit);
             $list->setOffset($start);
             $list->setOrder($order);
