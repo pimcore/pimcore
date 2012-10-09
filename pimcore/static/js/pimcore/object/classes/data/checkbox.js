@@ -54,7 +54,8 @@ pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.
                 fieldLabel: t("default_value"),
                 name: "defaultValue",
                 checked: this.datax.defaultValue
-            }
+            },
+            new Ext.form.DisplayField({hideLabel:true,html:'<span class="object_field_setting_warning">'+t('default_value_warning')+'</span>'})
         ]);
 
         return this.layout;

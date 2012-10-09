@@ -63,7 +63,8 @@ pimcore.object.classes.data.numeric = Class.create(pimcore.object.classes.data.d
                 fieldLabel: t("default_value"),
                 name: "defaultValue",
                 value: this.datax.defaultValue
-            }
+            },
+            new Ext.form.DisplayField({hideLabel:true,html:'<span class="object_field_setting_warning">'+t('default_value_warning')+'</span>'})
         ]);
 
         return this.layout;

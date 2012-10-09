@@ -85,7 +85,9 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
                 listeners:{
                     check:this.toggleDefaultDate.bind(this)
                 }
-            }
+            },
+            new Ext.form.DisplayField({hideLabel:true,html:'<span class="object_field_setting_warning">'+t('default_value_warning')+'</span>'})
+
         ]);
 
         return this.layout;
