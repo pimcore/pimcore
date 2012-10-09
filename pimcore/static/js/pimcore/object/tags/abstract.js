@@ -77,7 +77,7 @@ pimcore.object.tags.abstract = Class.create({
             return this.component.getEl()
         }
 
-        throw "the component `" + this.getName() + "� doesn't implement the method getEl() and is not standard-compliant!";
+        throw "the component `" + this.getName() + "´ doesn't implement the method getEl() and is not standard-compliant!";
     },
 
     unmarkInherited: function () {
