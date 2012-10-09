@@ -94,8 +94,8 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
      */
     public function getDataFromResource($data)
     {
-        return (bool)$data;
-    }
+        return $data;
+}
 
     /**
      * @see Object_Class_Data::getDataForQueryResource

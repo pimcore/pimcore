@@ -161,9 +161,12 @@ pimcore.object.tags.abstract = Class.create({
 
 
     removeDefaultValueButton:function () {
+
         var el = this.getWrappingEl();
+
         if (el) {
             var button = Ext.get(el.query(".pimcore_defaultValue_source")[0]);
+
             if (button) {
                 button.remove();
             }

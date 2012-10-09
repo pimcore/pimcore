@@ -69,7 +69,8 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         this.component = new Ext.form.DateField(date);
 
         if(this.unstoredValue){
-            this.component.addListener("afterrender",this.addDefaultValueSourceButton.bind(this));
+            //this.component.addListener("afterrender",this.addDefaultValueSourceButton.bind(this));
+            //this.component.addListener("change",this.removeDefaultValueButton.bind(this));
         }
         return this.component;
     },
