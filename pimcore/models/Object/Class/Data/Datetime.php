@@ -238,138 +238,173 @@ class Object_Class_Data_Datetime extends Object_Class_Data
     }
 
 
-    /**
-     * Creates getter code which is used for generation of php file for object classes using this data type
-     * @param $class
-     * @return string
-     */
-    public function getGetterCode($class)
-    {
-        $key = $this->getName();
-        $code = "";
+/**
+        * Creates getter code which is used for generation of php file for object classes using this data type
+        * @param $class
+        * @return string
+        */
+       public function getGetterCode($class)
+       {
+           $key = $this->getName();
+           $code = "";
 
-        $code .= '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
-        $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . " () {\n";
+           $code .= '/**' . "\n";
+           $code .= '* @return ' . $this->getPhpdocType() . "\n";
+           $code .= '*/' . "\n";
+           $code .= "public function get" . ucfirst($key) . " () {\n";
 
-        // adds a hook preGetValue which can be defined in an extended class
-        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+           // adds a hook preGetValue which can be defined in an extended class
+           $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
+           $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
 
-        if (method_exists($this, "preGetData")) {
-            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
-        } else {
-            $code .= "\t" . '$data = $this->' . $key . ";\n";
-        }
+           if (method_exists($this, "preGetData")) {
+               $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+           } else {
+               $code .= "\t" . '$data = $this->' . $key . ";\n";
+           }
 
-        // insert this line if inheritance from parent objects is allowed
-        if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if(!$data && Object_Abstract::doGetInheritedValues()) { return $this->getValueFromParent("' . $key . '");}' . "\n";
-        }
+           // insert this line if inheritance from parent objects is allowed
+           if ($class->getAllowInherit()) {
+               $code .= "\t" . 'if(!$data && Object_Abstract::doGetInheritedValues()) { return $this->getValueFromParent("' . $key . '");}' . "\n";
+           }
 
-        if ($this->useCurrentDate) {
-            $code .= "\t" . 'if(!$data) $data = time();' . "\n";
-        } else if ($this->getDefaultValue()) {
-            $code .= "\t" . 'if(!$data) $data = ' . $this->getDefaultValue() . ';' . "\n";
-        }
+           if ($this->useCurrentDate) {
+               $code .= "\t" . 'if(!$data) { ' . "\n";
+               $code .= "\t\t" . '$data = new Pimcore_Date();' . "\n";
+               $code .= "\t\t" . '$this->set' . ucfirst($key) . '($data);' . "\n";
+               $code .= "\t" . '}' . "\n";
+           } else if ($this->getDefaultValue()) {
 
-        $code .= "\t return is_numeric(" . '$data' . ") ? new Pimcore_Date(" . '$data ' . ") : " . '$data' . ";\n";
-        $code .= "}\n\n";
+               $defaultValue = $this->getDefaultValue();
+               if (!$defaultValue instanceof Pimcore_Date) {
+                   $defaultValue = new Pimcore_Date($defaultValue);
+               }
 
-        return $code;
-    }
-
-
-    /**
-     * Creates getter code which is used for generation of php file for object brick classes using this data type
-     * @param $brickClass
-     * @return string
-     */
-    public function getGetterCodeObjectbrick($brickClass)
-    {
-        $key = $this->getName();
-        $code = '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
-        $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . " () {\n";
-
-        $code .= "\t" . 'if(!$this->' . $key . ' && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
-        $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
-        $code .= "\t" . '}' . "\n";
+               $code .= "\t" . 'if(!$data) { ' . "\n";
+               $code .= "\t\t" . '$data = new Pimcore_Date(' . $defaultValue->getTimestamp() . ');' . "\n";
+               $code .= "\t\t" . '$this->set' . ucfirst($key) . '($data);' . "\n";
+               $code .= "\t" . '}' . "\n";
+           }
 
 
-        if ($this->useCurrentDate) {
-            $code .= "\t" . 'if(!' . '$this->' . $key . ') ' . '$this->' . $key . ' = time();' . "\n";
-        } else if ($this->getDefaultValue()) {
-            $code .= "\t" . 'if(!' . '$this->' . $key . ') ' . '$this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
-        }
+           $code .= "\t" . 'return $data;' . "\n";
+           $code .= "}\n\n";
 
-        $code .= "\t return is_numeric(" . '$this->' . $key . ") ? new Pimcore_Date(" . '$this->' . $key . ") : " . '$this->' . $key . ";\n";
+           return $code;
+       }
 
 
-        $code .= "}\n\n";
+       /**
+        * Creates getter code which is used for generation of php file for object brick classes using this data type
+        * @param $brickClass
+        * @return string
+        */
+       public function getGetterCodeObjectbrick($brickClass)
+       {
+           $key = $this->getName();
+           $code = '/**' . "\n";
+           $code .= '* @return ' . $this->getPhpdocType() . "\n";
+           $code .= '*/' . "\n";
+           $code .= "public function get" . ucfirst($key) . " () {\n";
 
-        return $code;
-
-    }
-
-    /**
-     * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
-     * @param $fieldcollectionDefinition
-     * @return string
-     */
-    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
-    {
-        $key = $this->getName();
-        $code = '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
-        $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . " () {\n";
-        if ($this->useCurrentDate) {
-            $code .= "\t" . 'if(!' . '$this->' . $key . ') ' . '$this->' . $key . ' = time();' . "\n";
-        } else if ($this->getDefaultValue()) {
-            $code .= "\t" . 'if(!' . '$this->' . $key . ') ' . '$this->' . $key . ' = ' . $this->getDefaultValue() . ';' . "\n";
-        }
-
-        $code .= "\t return is_numeric(" . '$this->' . $key . ") ? new Pimcore_Date(" . '$this->' . $key . ") : " . '$this->' . $key . ";\n";
+           $code .= "\t" . 'if(!$this->' . $key . ' && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
+           $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+           $code .= "\t" . '}' . "\n";
 
 
-        $code .= "}\n\n";
+           if ($this->useCurrentDate) {
+               $code .= "\t" . 'if(!' . '$this->' . $key . ') ' . '$this->' . $key . ' = new Pimcore_Date();' . "\n";
+           } else if ($this->getDefaultValue()) {
+               $defaultValue = $this->getDefaultValue();
+               if (!$defaultValue instanceof Pimcore_Date) {
+                   $defaultValue = new Pimcore_Date($defaultValue);
+               }
+               $code .= "\t" . 'if(!' . '$this->' . $key . ') ' . '$this->' . $key . ' = new Pimcore_Date(' . $defaultValue->getTimestamp() . ');' . "\n";
+           }
 
-        return $code;
-    }
+           $code .= "\t" . 'return $this->' . $key . ";\n";
 
 
-    /**
-     * Creates getter code which is used for generation of php file for localized fields in classes using this data type
-     * @param $class
-     * @return string
-     */
-    public function getGetterCodeLocalizedfields($class)
-    {
-        $key = $this->getName();
-        $code = '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
-        $code .= '*/' . "\n";
-        $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
+           $code .= "}\n\n";
 
-        $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
+           return $code;
 
-        // adds a hook preGetValue which can be defined in an extended class
-        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+       }
 
-        if ($this->useCurrentDate) {
-            $code .= "\t" . 'if(!$data) $data = time();' . "\n";
-        } else if ($this->getDefaultValue()) {
-            $code .= "\t" . 'if(!$data) $data = ' . $this->getDefaultValue() . ';' . "\n";
-        }
+       /**
+        * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
+        * @param $fieldcollectionDefinition
+        * @return string
+        */
+       public function getGetterCodeFieldcollection($fieldcollectionDefinition)
+       {
+           $key = $this->getName();
+           $code = '/**' . "\n";
+           $code .= '* @return ' . $this->getPhpdocType() . "\n";
+           $code .= '*/' . "\n";
+           $code .= "public function get" . ucfirst($key) . " () {\n";
 
-        $code .= "\t return is_numeric(" . '$data' . ") ? new Pimcore_Date(" . '$data ' . ") : " . '$data' . ";\n";
-        $code .= "}\n\n";
-        return $code;
-    }
+           if ($this->useCurrentDate) {
+               $code .= "\t" . 'if(!' . '$this->' . $key . ') ' . '$this->' . $key . ' = new Pimcore_Date();' . "\n";
+           } else if ($this->getDefaultValue()) {
+               $defaultValue = $this->getDefaultValue();
+               if (!$defaultValue instanceof Pimcore_Date) {
+                   $defaultValue = new Pimcore_Date($defaultValue);
+               }
+               $code .= "\t" . 'if(!' . '$this->' . $key . ') ' . '$this->' . $key . ' =  new Pimcore_Date(' . $defaultValue->getTimestamp() . ');' . "\n";
+           }
+
+           $code .= "\t" . 'return $this->' . $key . ";\n";
+
+           $code .= "}\n\n";
+
+           return $code;
+       }
+
+
+       /**
+        * Creates getter code which is used for generation of php file for localized fields in classes using this data type
+        * @param $class
+        * @return string
+        */
+       public function getGetterCodeLocalizedfields($class)
+       {
+           $key = $this->getName();
+           $code = '/**' . "\n";
+           $code .= '* @return ' . $this->getPhpdocType() . "\n";
+           $code .= '*/' . "\n";
+           $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
+
+           $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
+
+           // adds a hook preGetValue which can be defined in an extended class
+           $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
+           $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
+
+           if ($this->useCurrentDate) {
+               $code .= "\t" . 'if(!$data) { ' . "\n";
+               $code .= "\t\t" . '$data = new Pimcore_Date();' . "\n";
+               $code .= "\t\t" . '$this->set' . ucfirst($key) . '($data,$language);' . "\n";
+               $code .= "\t" . '}' . "\n";
+           } else if ($this->getDefaultValue()) {
+
+               $defaultValue = $this->getDefaultValue();
+               if (!$defaultValue instanceof Pimcore_Date) {
+                   $defaultValue = new Pimcore_Date($defaultValue);
+               }
+
+               $code .= "\t" . 'if(!$data) { ' . "\n";
+               $code .= "\t\t" . '$data = new Pimcore_Date(' . $defaultValue->getTimestamp() . ');' . "\n";
+               $code .= "\t\t" . '$this->set' . ucfirst($key) . '($data,$language);' . "\n";
+               $code .= "\t" . '}' . "\n";
+           }
+
+
+           $code .= "\t" . 'return $data;' . "\n";
+           $code .= "}\n\n";
+           return $code;
+       }
+
 
     /**
      * @param boolean $useCurrentDate
