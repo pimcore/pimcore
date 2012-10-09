@@ -131,27 +131,29 @@ class Object_List_Concrete_Resource extends Object_List_Resource {
             // default
             $this->tableName = "object_" . $this->model->getClassId();
 
-            if(!$this->model->getIgnoreLocale()) {
+            if(!$this->model->getIgnoreLocalizedFields()) {
 
                 // check for a localized field and if they should be used for this list
-                if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields") && !$this->model->getIgnoreLocalizedFields()) {
+                if(property_exists("Object_" . ucfirst($this->model->getClassName()), "localizedfields")) {
 
                     $language = "default";
-                    if($this->model->getLocale()) {
-                        if(Pimcore_Tool::isValidLanguage((string) $this->model->getLocale())) {
-                            $language = (string) $this->model->getLocale();
-                        }
-                    }
 
-                    if(Zend_Registry::isRegistered("Zend_Locale")) {
-                        $locale = Zend_Registry::get("Zend_Locale");
-                        if(Pimcore_Tool::isValidLanguage((string) $locale) && $language == "default") {
-                            $language = (string) $locale;
+                    if(!$this->model->getIgnoreLocale()) {
+                        if($this->model->getLocale()) {
+                            if(Pimcore_Tool::isValidLanguage((string) $this->model->getLocale())) {
+                                $language = (string) $this->model->getLocale();
+                            }
+                        }
+
+                        if(Zend_Registry::isRegistered("Zend_Locale") && $language == "default") {
+                            $locale = Zend_Registry::get("Zend_Locale");
+                            if(Pimcore_Tool::isValidLanguage((string) $locale)) {
+                                $language = (string) $locale;
+                            }
                         }
                     }
                     $this->tableName = "object_localized_" . $this->model->getClassId() . "_" . $language;
                 }
-
             }
         }
         return $this->tableName;
