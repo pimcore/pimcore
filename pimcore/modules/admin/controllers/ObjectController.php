@@ -1165,12 +1165,14 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $listClass = "Object_" . ucfirst($className) . "_List";
 
+            $conditionFilters = "";
+
             // create filter condition
             if ($this->getParam("filter")) {
-                $conditionFilters = Object_Service::getFilterCondition($this->getParam("filter"), $class);
+                $conditionFilters .= Object_Service::getFilterCondition($this->getParam("filter"), $class);
             }
             if ($this->getParam("condition")) {
-                $conditionFilters = " AND (" . $this->getParam("condition") . ")";
+                $conditionFilters .= " AND (" . $this->getParam("condition") . ")";
             }
 
             $list = new $listClass();
