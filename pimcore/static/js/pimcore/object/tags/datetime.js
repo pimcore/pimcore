@@ -21,6 +21,8 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
         if (typeof data === "undefined" && fieldConfig.defaultValue) {
             data = fieldConfig.defaultValue;
+        } else if (typeof data === "undefined" && fieldConfig.useCurrentDate) {
+            data = (new Date().getTime()) / 1000;
         }
 
         this.data = data;

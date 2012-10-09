@@ -100,6 +100,8 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     getValue: function () {
         if(this.isRendered()) {
             return this.component.getValue().toString();
+        } else if (this.fieldConfig.defaultValue){
+            return this.fieldConfig.defaultValue
         }
         return null;
     },
