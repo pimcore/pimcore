@@ -55,11 +55,18 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
             fieldLabel:t("default_value"),
             name:"defaultValue",
             itemCls:"object_field",
-            width:100
+            width:100,
+            disabled: this.datax.useCurrentDate
         };
 
         if (this.datax.defaultValue) {
-            var tmpDate = new Date(this.datax.defaultValue * 1000);
+
+            if(typeof this.datax.defaultValue === 'object'){
+                var tmpDate = this.datax.defaultValue;
+            } else {
+                var tmpDate = new Date(this.datax.defaultValue * 1000);
+            }
+
             date.value = tmpDate;
         }
 
@@ -94,4 +101,5 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
 
 
     }
+
 });
