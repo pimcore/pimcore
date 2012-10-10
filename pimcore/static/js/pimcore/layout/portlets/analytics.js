@@ -57,7 +57,8 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                 },
                 {
                     xtype:"combo",
-                    value: 5,
+                    value: site,
+                    autoSelect: true,
                     valueField: "id",
                     displayField: "site",
                     store: new Ext.data.JsonStore({
