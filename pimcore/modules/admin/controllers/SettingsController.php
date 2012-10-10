@@ -1090,7 +1090,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "id" => $site->getId(),
                         "rootId" => $site->getRootId(),
                         "domains" => implode(",", $site->getDomains()),
-                        "rootPath" => $site->getRootDocument()->getFullPath(),
+                        "rootPath" => $site->getRootPath(),
                         "domain" => $domain
                     );
                 }
