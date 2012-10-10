@@ -67,7 +67,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = (int)$width;
     }
 
     /**
