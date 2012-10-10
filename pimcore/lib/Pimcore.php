@@ -190,7 +190,15 @@ class Pimcore {
             $router->addRoute('searchadmin', $routeSearchAdmin);
             if ($conf instanceof Zend_Config and $conf->webservice and $conf->webservice->enabled) {
                     $router->addRoute('webservice', $routeWebservice);
-            } 
+            }
+
+            // force the main (default) domain for "admin" requests
+            if($conf->general->domain && $conf->general->domain != Pimcore_Tool::getHostname()) {
+                $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
+                header("HTTP/1.1 301 Moved Permanently");
+                header("Location: " . $url, true, 301);
+                exit;
+            }
         }
 
         // check if webdav is configured and add router
