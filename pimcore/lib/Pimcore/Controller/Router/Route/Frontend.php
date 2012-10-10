@@ -103,6 +103,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
         // check for a registered site
         try {
+            // do not initialize a site if it is a "special" admin request
             if (!Pimcore_Tool::isFrontentRequestByAdmin()) {
                 $domain = Pimcore_Tool::getHostname();
                 $site = Site::getByDomain($domain);
@@ -128,7 +129,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             }
 
             if($hostRedirect) {
-                $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $hostRedirect . $originalPath . (empty($_SERVER["QUERY_STRING"]) ? "" : "?") . $_SERVER["QUERY_STRING"];
+                $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $hostRedirect . $_SERVER["REQUEST_URI"];
 
                 header("HTTP/1.1 301 Moved Permanently");
                 header("Location: " . $url, true, 301);
