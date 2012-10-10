@@ -107,7 +107,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             if (!Pimcore_Tool::isFrontentRequestByAdmin()) {
                 $domain = Pimcore_Tool::getHostname();
                 $site = Site::getByDomain($domain);
-                $path = $site->getRootDocument()->getFullPath() . $path;
+                $path = $site->getRootPath() . $path;
 
                 Zend_Registry::set("pimcore_site", $site);
             }
@@ -532,7 +532,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
                                 // if the target site is specified and and the target-path is starting at root (not absolute to site)
                                 // the root-path will be replaced so that the page can be shown
-                                $url = preg_replace("@^" . $targetSite->getRootDocument()->getFullPath() . "/@", "/", $url);
+                                $url = preg_replace("@^" . $targetSite->getRootPath() . "/@", "/", $url);
                                 $url = $requestScheme . "://" . $targetSite->getMainDomain() . $url;
                             } catch (Exception $e){
                                 Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
