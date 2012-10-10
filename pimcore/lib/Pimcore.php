@@ -215,7 +215,7 @@ class Pimcore {
 
         // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
         $throwExceptions = false;
-        if(array_key_exists("pimcore_editmode", $_REQUEST) || array_key_exists("pimcore_preview", $_REQUEST) || array_key_exists("pimcore_admin", $_REQUEST)) {
+        if(Pimcore_Tool::isFrontentRequestByAdmin()) {
             $user = Pimcore_Tool_Authentication::authenticateSession();
             if($user instanceof User) {
                 $throwExceptions = true;
