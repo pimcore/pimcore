@@ -1121,6 +1121,7 @@
 "swf_upload_error_file_not_found","File not found 404."
 "swf_upload_error_security_error","Security Error. Not allowed to post to different url"
 "delete_message_dependencies","There are dependencies, delete anyway?"
+"delete_message_folder_and_objects", "Do you really want to delete this folder and all its children?"
 "delete_message","Do you really want to delete this element?"
 "objectbricks","Objectbricks"
 "add_objectbrick","Add Objectbrick"
