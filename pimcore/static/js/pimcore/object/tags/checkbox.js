@@ -25,7 +25,6 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             this.data = data;
         } else if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
             this.data = fieldConfig.defaultValue;
-            this.unstoredValue = true;
         }
         this.fieldConfig = fieldConfig;
     },
@@ -64,11 +63,6 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         this.component = new Ext.form.Checkbox(checkbox);
 
         this.component.setValue(this.data);
-        if (this.unstoredValue) {
-            //this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
-            //this.component.addListener("change",this.removeDefaultValueButton.bind(this));
-        }
-
         return this.component;
     },
 

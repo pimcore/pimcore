@@ -20,7 +20,6 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
     initialize:function (data, fieldConfig) {
         if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
             data = fieldConfig.defaultValue;
-            this.unstoredValue = true;
         }
 
         this.data = data;
@@ -71,12 +70,6 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         input.decimalPrecision = 20;
 
         this.component = new Ext.ux.form.SpinnerField(input);
-
-        if (this.unstoredValue) {
-            //this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
-            //this.component.addListener("focus",this.removeDefaultValueButton.bind(this));
-        }
-
         return this.component;
     },
 
