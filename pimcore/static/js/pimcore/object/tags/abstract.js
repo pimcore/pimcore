@@ -122,7 +122,6 @@ pimcore.object.tags.abstract = Class.create({
             var button = Ext.get(el.query(".pimcore_open_inheritance_source")[0]);
             if (button) {
                 button.addListener("click", function (metaData) {
-//                    console.log("Click");
 
                     var myName = this.getName();
                     var myObject = this.getObject();
@@ -136,39 +135,6 @@ pimcore.object.tags.abstract = Class.create({
                     }
 
                 }.bind(this, metaData));
-            }
-        }
-    },
-
-
-    addDefaultValueSourceButton:function () {
-
-        var el = this.getWrappingEl();
-        if (el) {
-            el.setStyle({position:"relative"});
-            el.insertHtml("afterBegin", '<div class="pimcore_defaultValue_source"></div>');
-            var button = Ext.get(el.query(".pimcore_defaultValue_source")[0]);
-            if (button) {
-                new Ext.ToolTip({
-                    target:button,
-                    showDelay:100,
-                    anchor:"left",
-                    title:t("gui_default_value")
-                });
-            }
-        }
-    },
-
-
-    removeDefaultValueButton:function () {
-
-        var el = this.getWrappingEl();
-
-        if (el) {
-            var button = Ext.get(el.query(".pimcore_defaultValue_source")[0]);
-
-            if (button) {
-                button.remove();
             }
         }
     },

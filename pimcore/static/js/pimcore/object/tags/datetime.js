@@ -21,10 +21,8 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
         if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
             data = fieldConfig.defaultValue;
-            this.unstoredValue = true;
         } else if ((typeof data === "undefined" || data === null) && fieldConfig.useCurrentDate) {
             data = (new Date().getTime()) / 1000;
-            this.unstoredValue = true;
         }
 
         this.data = data;
@@ -81,13 +79,6 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             items:[this.datefield, this.timefield],
             itemCls:"object_field"
         });
-
-
-        if (this.unstoredValue) {
-            //this.component.addListener("afterrender", this.addDefaultValueSourceButton.bind(this));
-            //this.datefield.addListener("change",this.removeDefaultValueButton.bind(this));
-            //this.timefield.addListener("change",this.removeDefaultValueButton.bind(this));
-        }
 
         return this.component;
     },
