@@ -68,6 +68,12 @@ class Object_Concrete extends Object_Abstract {
     protected $omitMandatoryCheck = false;
 
 
+    /**
+     *
+     */
+    public function __construct () {
+        // nothing to do here
+    }
 
     /**
      * @param  string $fieldName
