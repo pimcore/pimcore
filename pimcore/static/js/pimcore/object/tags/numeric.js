@@ -79,7 +79,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel:this.fieldConfig.title,
             name:this.fieldConfig.name,
-            cls:"object_field"
+            itemCls:"object_field"
         };
 
         if (this.data) {
