@@ -468,9 +468,9 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
             // get current site if available
             $sourceSite = null;
-            try {
+            if(Site::isSiteRequest()) {
                 $sourceSite = Site::getCurrentSite();
-            } catch (Exception $e) { }
+            }
 
             $cacheKey = "system_route_redirect";
             if (empty($this->redirects) && !($this->redirects = Pimcore_Model_Cache::load($cacheKey))) {
@@ -538,7 +538,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                                 Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
                                 continue;
                             }
-                        } else if (!preg_match("@http(s)?://@i", $url) && $config->general->domain) {
+                        } else if (!preg_match("@http(s)?://@i", $url) && $config->general->domain && $redirect->getSourceEntireUrl()) {
                             // prepend the host and scheme to avoid infinite loops when using "domain" redirects
                             $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $url;
                         }
