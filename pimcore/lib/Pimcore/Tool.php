@@ -22,15 +22,7 @@ class Pimcore_Tool {
      * @return void
      */
     public static function isValidKey($key){
-        $key = (string) $key;
-        $validChars = "abcdefghijklmnopqrstuvwxyz1234567890-_.~";
-        for($i=0;$i<strlen($key);$i++){
-            if(strpos($validChars,$key[$i])===FALSE){
-                Logger::error("Invalid character in filename: " . $key[$i] . " - complete filename is: " . $key);
-                return false;
-            }
-        }
-        return true;
+        return (bool) preg_match("/^[a-z0-9_~\.\-]+$/", $key);
     }
 
     /**
@@ -39,7 +31,7 @@ class Pimcore_Tool {
      * @return bool
      */
     public static function isValidPath($path) {
-        if (preg_match("/[a-zA-Z0-9_~.\-\/]+/", $path, $matches)) {
+        if (preg_match("/[a-zA-Z0-9_~\.\-\/]+/", $path, $matches)) {
             if ($matches[0] == $path) {
                 return true;
             }
@@ -211,6 +203,22 @@ class Pimcore_Tool {
     }
 
     /**
+     * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
+     */
+    public static function isFrontentRequestByAdmin () {
+        if (array_key_exists("pimcore_editmode", $_REQUEST)
+            || array_key_exists("pimcore_preview", $_REQUEST)
+            || array_key_exists("pimcore_admin", $_REQUEST)
+            || array_key_exists("pimcore_object_preview", $_REQUEST)
+            || array_key_exists("pimcore_version", $_REQUEST)) {
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @static
      * @param Zend_Controller_Request_Abstract $request
      * @return bool
@@ -222,19 +230,7 @@ class Pimcore_Tool {
             return false;
         }
 
-
-        // check for editmode
-        if ($request->getParam("pimcore_editmode")) {
-            return false;
-        }
-
-        // check for version
-        if ($request->getParam("pimcore_version")) {
-            return false;
-        }
-
-        // check for preview
-        if ($request->getParam("pimcore_preview")) {
+        if(Pimcore_Tool::isFrontentRequestByAdmin()) {
             return false;
         }
 
