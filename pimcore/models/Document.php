@@ -320,7 +320,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
-        if (!Pimcore_Tool::isValidKey($this->getKey())) {
+        // check for a valid key, home has no key, so omit the check
+        if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
             throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
         }
 
