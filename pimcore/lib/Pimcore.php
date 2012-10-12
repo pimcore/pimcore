@@ -33,9 +33,6 @@ class Pimcore {
 
         self::setSystemRequirements();
 
-        // register shutdown function
-        Pimcore_Event::register("pimcore.shutdown", array("Pimcore", "shutdown"), array(), 999);
-
         // detect frontend (website)
         $frontend = Pimcore_Tool::isFrontend();
 
@@ -878,6 +875,8 @@ class Pimcore {
 
         // write collected items to cache backend       
         Pimcore_Model_Cache::write();
+
+        Tool_Lock::releaseAll();
     }
 
     /**
