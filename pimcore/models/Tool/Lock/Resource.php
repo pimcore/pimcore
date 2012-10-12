@@ -62,4 +62,18 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
     public function release ($key) {
         $this->db->delete("locks", "id = '" . $key . "'");
     }
+
+    public function lock ($key) {
+
+        try {
+            $this->db->insert("locks", array(
+                "id" => $key,
+                "date" => time()
+            ));
+        } catch (Exception $e) {
+            $this->db->update("locks", array(
+                "date" => time()
+            ), "id = '" . $key . "'");
+        }
+    }
 }

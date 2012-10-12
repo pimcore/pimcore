@@ -62,6 +62,15 @@ class Tool_Lock extends Pimcore_Model_Abstract {
      * @param string $key
      * @return bool
      */
+    public static function lock ($key) {
+        $instance = self::getInstance();
+        return $instance->getResource()->lock($key);
+    }
+
+    /**
+     * @param string $key
+     * @return bool
+     */
     public static function isLocked ($key) {
         $instance = self::getInstance();
         return $instance->getResource()->isLocked($key);

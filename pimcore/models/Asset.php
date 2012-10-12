@@ -369,7 +369,11 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function save() {
 
-        Tool_Lock::acquire($this->getCacheTag());
+        if($this->getId()) {
+            // do not lock when creating a new asset, this will cause a dead-lock because the cache-tag is used as key
+            // and the cache tag is different when releasing the lock later, because the asset has then an id
+            Tool_Lock::acquire($this->getCacheTag());
+        }
 
         if (!Pimcore_Tool::isValidKey($this->getKey())) {
             throw new Exception("invalid filname '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
