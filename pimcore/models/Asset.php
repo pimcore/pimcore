@@ -369,6 +369,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function save() {
 
+        Tool_Lock::acquire($this->getCacheTag());
+
         if (!Pimcore_Tool::isValidKey($this->getKey())) {
             throw new Exception("invalid filname '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
         }
@@ -384,6 +386,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
             $this->update();
         }
+
+        Tool_Lock::release($this->getCacheTag());
     }
 
     public function correctPath() {
