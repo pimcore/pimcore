@@ -39,7 +39,7 @@ Ext.onReady(function () {
     // this is because some pages set the body height, and the positioning is then done by "absolute"
     // the problem is that ExtJS relies on the body height for DnD, so if the body isn't as high as the hole page
     // dnd works only in the section covered by the specified body height
-    window.setInterval(function () {
+    window.setTimeout(function () {
         try {
             var body = document.body,
                 html = document.documentElement;
