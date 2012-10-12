@@ -115,6 +115,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
         }
 
 
+        // test if there is a suitable redirect with override = all (=> priority = 99)
+        if (!$matchFound) {
+            $this->checkForRedirect(true);
+        }
+
+
         // redirect to the main domain if specified
         try {
             $hostRedirect = null;
@@ -146,7 +152,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             $matchFound = true;
             //$params["document"] = $this->getNearestDocumentByPath($path);
         }
-        
+
         // you can also call a page by it's ID /?pimcore_document=XXXX
         if (!$matchFound) {
             if(!empty($params["pimcore_document"]) || !empty($params["pdid"])) {
@@ -157,10 +163,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             }
         }
 
-        // test if there is a suitable redirect with override = all (=> priority = 99)
-        if (!$matchFound) {
-            $this->checkForRedirect(true);
-        }
 
         // test if there is a suitable page
         if (!$matchFound) {
