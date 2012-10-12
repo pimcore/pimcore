@@ -39,7 +39,7 @@ class Tool_Lock extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public static function acquire ($key) {
         $instance = self::getInstance();
@@ -49,13 +49,22 @@ class Tool_Lock extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param $key
+     * @param string $key
      */
     public static function release ($key) {
         $instance = self::getInstance();
         $instance->getResource()->release($key);
 
         unset(self::$acquiredLocks[$key]);
+    }
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public static function isLocked ($key) {
+        $instance = self::getInstance();
+        return $instance->getResource()->isLocked($key);
     }
 
     /**
