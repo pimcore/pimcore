@@ -50,7 +50,7 @@ class Tool_Lock_Resource extends Pimcore_Model_Resource_Abstract {
     public function acquire ($key) {
 
         while($this->isLocked($key)) {
-            sleep(5);
+            sleep(1);
         }
 
         $this->db->insert("locks", array(
