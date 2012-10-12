@@ -320,7 +320,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
-        Tool_Lock::acquire($this->getCacheTag());
+        if($this->getId()) {
+            // do not lock when creating a new document, this will cause a dead-lock because the cache-tag is used as key
+            // and the cache tag is different when releasing the lock later, because the document has then an id
+            Tool_Lock::acquire($this->getCacheTag());
+        }
 
         // check for a valid key, home has no key, so omit the check
         if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
