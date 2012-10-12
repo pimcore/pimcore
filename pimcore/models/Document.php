@@ -320,6 +320,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
+        Tool_Lock::acquire($this->getCacheTag());
+
         // check for a valid key, home has no key, so omit the check
         if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
             throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
@@ -338,6 +340,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
             $this->update();
         }
+
+        Tool_Lock::release($this->getCacheTag());
     }
 
     public function correctPath() {

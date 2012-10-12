@@ -529,6 +529,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function save() {
 
+        Tool_Lock::acquire($this->getCacheTag());
+
         // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
         $hideUnpublishedBackup = self::getHideUnpublished();
         self::setHideUnpublished(false);
@@ -550,6 +552,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         }
 
         self::setHideUnpublished($hideUnpublishedBackup);
+
+        Tool_Lock::release($this->getCacheTag());
     }
     
     
