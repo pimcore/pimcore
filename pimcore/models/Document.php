@@ -356,6 +356,9 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         }
 
         Tool_Lock::release($this->getCacheTag());
+
+        // empty object cache
+        $this->clearDependedCache();
     }
 
     public function correctPath() {
@@ -389,7 +392,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      *
      * @return void
      */
-    public function update() {
+    protected function update() {
 
         if (!$this->getKey() && $this->getId() != 1) {
             $this->delete();
@@ -434,14 +437,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             $this->getResource()->updateChildsPaths($this->_oldPath);
         }
 
-        // empty object cache
-        $this->clearDependedCache();
-
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), $this);
 
         Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
-
     }
 
     public function clearDependedCache() {

@@ -22,7 +22,7 @@ class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_H
         $this->raiseHardlinkError();
     }
 
-    public function update() {
+    protected function update() {
         $this->raiseHardlinkError();
     }
 

@@ -22,7 +22,7 @@ class Document_Hardlink_Wrapper_Snippet extends Document_Snippet implements Docu
         $this->raiseHardlinkError();
     }
 
-    public function update() {
+    protected function update() {
         $this->raiseHardlinkError();
     }
 

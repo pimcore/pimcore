@@ -401,6 +401,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             throw $e;
         }
 
+        $this->clearDependedCache();
+
         Tool_Lock::release($this->getCacheTag());
     }
 
@@ -535,9 +537,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         if ($this->_oldPath) {
             $this->getResource()->updateChildsPaths($this->_oldPath);
         }
-
-       
-        $this->clearDependedCache();
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), $this);
