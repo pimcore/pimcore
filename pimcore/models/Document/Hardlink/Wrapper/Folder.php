@@ -23,7 +23,7 @@ class Document_Hardlink_Wrapper_Folder extends Document_Folder implements Docume
         $this->raiseHardlinkError();
     }
 
-    public function update() {
+    protected function update() {
         $this->raiseHardlinkError();
     }
 
