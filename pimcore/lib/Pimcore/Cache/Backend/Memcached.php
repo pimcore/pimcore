@@ -83,7 +83,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      */
     protected function saveTags($id, $tags) {
 
-        $this->getDb()->beginTransaction();
+        //$this->getDb()->beginTransaction();
 
         try {
             while ($tag = array_shift($tags)) {
@@ -110,7 +110,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                     }
                 }
             }
-            $this->getDb()->commit();
+            //$this->getDb()->commit();
 
         } catch (Exception $e) {
             Logger::error($e);
