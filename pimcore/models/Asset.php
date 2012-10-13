@@ -375,20 +375,30 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             Tool_Lock::acquire($this->getCacheTag());
         }
 
-        if (!Pimcore_Tool::isValidKey($this->getKey())) {
-            throw new Exception("invalid filname '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
-        }
+        $this->beginTransaction();
 
-        $this->correctPath();
+        try {
+            if (!Pimcore_Tool::isValidKey($this->getKey())) {
+                throw new Exception("invalid filname '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
+            }
 
-        if ($this->getId()) {
-            $this->update();
-        }
-        else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
-            $this->getResource()->create();
-            Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
-            $this->update();
+            $this->correctPath();
+
+            if ($this->getId()) {
+                $this->update();
+            }
+            else {
+                Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
+                $this->getResource()->create();
+                Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
+                $this->update();
+            }
+
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollBack();
+
+            throw $e;
         }
 
         Tool_Lock::release($this->getCacheTag());

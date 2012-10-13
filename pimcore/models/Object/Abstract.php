@@ -535,27 +535,37 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             Tool_Lock::acquire($this->getCacheTag());
         }
 
-        // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
-        $hideUnpublishedBackup = self::getHideUnpublished();
-        self::setHideUnpublished(false);
+        $this->beginTransaction();
 
-        if(!Pimcore_Tool::isValidKey($this->getKey())){
-            throw new Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
+        try {
+            // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
+            $hideUnpublishedBackup = self::getHideUnpublished();
+            self::setHideUnpublished(false);
+
+            if(!Pimcore_Tool::isValidKey($this->getKey())){
+                throw new Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
+            }
+
+           $this->correctPath();
+
+            if ($this->getO_Id()) {
+                $this->update();
+            }
+            else {
+                Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
+                $this->getResource()->create();
+                Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
+                $this->update();
+            }
+
+            self::setHideUnpublished($hideUnpublishedBackup);
+
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollBack();
+
+            throw $e;
         }
-
-       $this->correctPath();
-
-        if ($this->getO_Id()) {
-            $this->update();
-        }
-        else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
-            $this->getResource()->create();
-            Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
-            $this->update();
-        }
-
-        self::setHideUnpublished($hideUnpublishedBackup);
 
         Tool_Lock::release($this->getCacheTag());
     }
