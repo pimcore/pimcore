@@ -326,23 +326,33 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             Tool_Lock::acquire($this->getCacheTag());
         }
 
-        // check for a valid key, home has no key, so omit the check
-        if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
-            throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
-        }
+        $this->beginTransaction();
 
-        $this->correctPath();
-        // set date
-        $this->setModificationDate(time());
+        try {
+            // check for a valid key, home has no key, so omit the check
+            if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
+                throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
+            }
 
-        if ($this->getId()) {
-            $this->update();
-        }
-        else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
-            $this->getResource()->create();
-            Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
-            $this->update();
+            $this->correctPath();
+            // set date
+            $this->setModificationDate(time());
+
+            if ($this->getId()) {
+                $this->update();
+            }
+            else {
+                Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
+                $this->getResource()->create();
+                Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
+                $this->update();
+            }
+
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollBack();
+
+            throw $e;
         }
 
         Tool_Lock::release($this->getCacheTag());

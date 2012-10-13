@@ -42,6 +42,27 @@ abstract class Pimcore_Model_Resource_Abstract implements Pimcore_Model_Resource
     }
 
     /**
+     *
+     */
+    public function beginTransaction() {
+        $this->db->beginTransaction();
+    }
+
+    /**
+     *
+     */
+    public function commit() {
+        $this->db->commit();
+    }
+
+    /**
+     *
+     */
+    public function rollBack() {
+        $this->db->rollBack();
+    }
+
+    /**
      * @param array $data
      * @return void
      */
