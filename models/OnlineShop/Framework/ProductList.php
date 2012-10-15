@@ -291,9 +291,21 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         }
     }
 
-    public function getGroupByRelationValues($fieldname, $countValues = false) {
+    /**
+     * @param      $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded => set to false for and-conditions
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getGroupByRelationValues($fieldname, $countValues = false,$fieldnameShouldBeExcluded=true) {
+        $excludedFieldName=$fieldname;
+        if (!$fieldnameShouldBeExcluded){
+            $excludedFieldName=null;
+        }
         if($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $fieldname, OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE), $countValues);
+            return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE), $countValues);
 
         } else {
             throw new Exception("Not supported yet");
