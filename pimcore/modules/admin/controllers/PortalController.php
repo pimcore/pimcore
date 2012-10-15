@@ -15,9 +15,7 @@
  
 class Admin_PortalController extends Pimcore_Controller_Action_Admin {
     
-    
-    private static $defaultFeed = "http://twitter.com/statuses/user_timeline/83599668.rss";
-    
+
     protected function getConfigDir () {
         return PIMCORE_CONFIGURATION_DIRECTORY."/portal";
     }
@@ -46,12 +44,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
                     "pimcore.layout.portlets.modifiedObjects",
                     "pimcore.layout.portlets.modifiedDocuments"
                 )
-            )/*,
-            "settings" => array(
-                "pimcore.layout.portlets.feed" => array(
-                    "url" => self::$defaultFeed
-                )
-            )*/
+            )
         );
     }
     
@@ -140,30 +133,41 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         }
         
         
-        $feedUrl = self::$defaultFeed;
+        $feedUrl = "";
         if($config["settings"]["pimcore.layout.portlets.feed"]["url"]) {
             $feedUrl = $config["settings"]["pimcore.layout.portlets.feed"]["url"];
         }
-        
-        $feed = Zend_Feed_Reader::import($feedUrl); 
-        
-        $count = 0;
-        foreach ($feed as $entry) {
-            
-            // display only the latest 11 entries
-            $count++;
-            if($count > 10) {
-                break;
+
+        $feed = null;
+        if(!empty($feedUrl)) {
+            try {
+                $feed = Zend_Feed_Reader::import($feedUrl);
+            } catch (Exception $e) {
+                Logger::error($e);
             }
-            
-            
-            $entries[] = array(
-                "title" => $entry->getTitle(),
-                "description" => $entry->getDescription(),
-                'authors' => $entry->getAuthors(),
-                'link' => $entry->getLink(),
-                'content' => $entry->getContent()
-            );
+        }
+
+        $count = 0;
+        $entries = array();
+
+        if($feed) {
+            foreach ($feed as $entry) {
+
+                // display only the latest 11 entries
+                $count++;
+                if($count > 10) {
+                    break;
+                }
+
+
+                $entries[] = array(
+                    "title" => $entry->getTitle(),
+                    "description" => $entry->getDescription(),
+                    'authors' => $entry->getAuthors(),
+                    'link' => $entry->getLink(),
+                    'content' => $entry->getContent()
+                );
+            }
         }
         
         $this->_helper->json(array(
