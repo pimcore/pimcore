@@ -206,7 +206,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
 
                 if(is_file($edit) && $editmode) {
-                    echo '<div class="pimcore_area_edit_button"></div>';
+                    echo '<div class="pimcore_area_edit_button_' . $this->getName() . ' pimcore_area_edit_button"></div>';
 
                     // forces the editmode in view.php independent if there's an edit.php or not
                     if(!array_key_exists("forceEditInView",$params) || !$params["forceEditInView"]) {
@@ -219,7 +219,7 @@ class Document_Tag_Areablock extends Document_Tag {
                 if(is_file($edit) && $editmode) {
                     $this->getView()->editmode = true;
 
-                    echo '<div class="pimcore_area_editmode">';
+                    echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode">';
                     $this->getView()->template($edit);
                     echo '</div>';
                 }
@@ -341,13 +341,13 @@ class Document_Tag_Areablock extends Document_Tag {
      */
     public function blockStart() {
         $this->outputEditmode('<div class="pimcore_area_entry pimcore_block_entry ' . $this->getName() . '" key="' . $this->indices[$this->current]["key"] . '" type="' . $this->indices[$this->current]["type"] . '">');
-        $this->outputEditmode('<div class="pimcore_block_buttons">');
-        $this->outputEditmode('<div class="pimcore_block_plus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_up"></div>');
-        $this->outputEditmode('<div class="pimcore_block_down"></div>');
-        $this->outputEditmode('<div class="pimcore_block_type"></div>');
-        $this->outputEditmode('<div class="pimcore_block_clear"></div>');
+        $this->outputEditmode('<div class="pimcore_block_buttons_' . $this->getName() . ' pimcore_block_buttons">');
+        $this->outputEditmode('<div class="pimcore_block_plus_' . $this->getName() . ' pimcore_block_plus"></div>');
+        $this->outputEditmode('<div class="pimcore_block_minus_' . $this->getName() . ' pimcore_block_minus"></div>');
+        $this->outputEditmode('<div class="pimcore_block_up_' . $this->getName() . ' pimcore_block_up"></div>');
+        $this->outputEditmode('<div class="pimcore_block_down_' . $this->getName() . ' pimcore_block_down"></div>');
+        $this->outputEditmode('<div class="pimcore_block_type_' . $this->getName() . ' pimcore_block_type"></div>');
+        $this->outputEditmode('<div class="pimcore_block_clear_' . $this->getName() . ' pimcore_block_clear"></div>');
         $this->outputEditmode('</div>');
     }
 
