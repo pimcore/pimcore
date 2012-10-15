@@ -10,7 +10,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
 {
     /** @var $proxy OnlineShop_Framework_FilterService_AbstractFilterType*/
     private $proxy;
-    private $field;
+    protected $field;
 
 
     function __construct($view, $script,$config)
