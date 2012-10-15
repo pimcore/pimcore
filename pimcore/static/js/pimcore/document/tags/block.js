@@ -45,7 +45,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
 
                 if(!limitReached) {
                     // amount selection
-                    amountDiv = Ext.get(this.elements[i]).query(".pimcore_block_amount")[0];
+                    amountDiv = Ext.get(this.elements[i]).query(".pimcore_block_amount_" + this.name)[0];
                     amountBox = new Ext.form.ComboBox({
                         cls: "pimcore_block_amount_select",
                         store: this.getAmountValues(),
@@ -67,7 +67,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                     amountBox.render(amountDiv);
 
                     // plus button
-                    plusDiv = Ext.get(this.elements[i]).query(".pimcore_block_plus")[0];
+                    plusDiv = Ext.get(this.elements[i]).query(".pimcore_block_plus_" + this.name)[0];
                     plusButton = new Ext.Button({
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus",
@@ -79,7 +79,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                 }
 
                 // minus button
-                minusDiv = Ext.get(this.elements[i]).query(".pimcore_block_minus")[0];
+                minusDiv = Ext.get(this.elements[i]).query(".pimcore_block_minus_" + this.name)[0];
                 minusButton = new Ext.Button({
                     cls: "pimcore_block_button_minus",
                     iconCls: "pimcore_icon_minus",
@@ -90,7 +90,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                 minusButton.render(minusDiv);
 
                 // up button
-                upDiv = Ext.get(this.elements[i]).query(".pimcore_block_up")[0];
+                upDiv = Ext.get(this.elements[i]).query(".pimcore_block_up_" + this.name)[0];
                 upButton = new Ext.Button({
                     cls: "pimcore_block_button_up",
                     iconCls: "pimcore_icon_up",
@@ -101,7 +101,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
                 upButton.render(upDiv);
 
                 // up button
-                downDiv = Ext.get(this.elements[i]).query(".pimcore_block_down")[0];
+                downDiv = Ext.get(this.elements[i]).query(".pimcore_block_down_" + this.name)[0];
                 downButton = new Ext.Button({
                     cls: "pimcore_block_button_down",
                     iconCls: "pimcore_icon_down",
@@ -125,7 +125,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
     },
 
     setInherited: function ($super, inherited) {
-        var elements = Ext.get(this.id).query(".pimcore_block_buttons");
+        var elements = Ext.get(this.id).query(".pimcore_block_buttons_" + this.name);
         if(elements.length > 0) {
             for(var i=0; i<elements.length; i++) {
                 $super(inherited, Ext.get(elements[i]));
@@ -155,10 +155,10 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
 
     createInitalControls: function (amountValues) {
         var amountEl = document.createElement("div");
-        amountEl.setAttribute("class", "pimcore_block_amount");
+        amountEl.setAttribute("class", "pimcore_block_amount pimcore_block_amount_" + this.name);
 
         var plusEl = document.createElement("div");
-        plusEl.setAttribute("class", "pimcore_block_plus");
+        plusEl.setAttribute("class", "pimcore_block_plus pimcore_block_plus_" + this.name);
 
         var clearEl = document.createElement("div");
         clearEl.setAttribute("class", "pimcore_block_clear");
