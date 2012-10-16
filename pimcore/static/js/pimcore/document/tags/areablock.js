@@ -605,19 +605,19 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                                         areablocks[i].createDropZones();
                                     }
                                 }
-                            },
+                            }.bind(this),
                             afterDragDrop: function () {
                                 var areablocks = pimcore.document.tags[this.toolbarGlobalVar].areablocks;
                                 for(var i=0; i<areablocks.length; i++) {
                                     areablocks[i].removeDropZones();
                                 }
-                            },
+                            }.bind(this),
                             afterInvalidDrop: function () {
                                 var areablocks = pimcore.document.tags[this.toolbarGlobalVar].areablocks;
                                 for(var i=0; i<areablocks.length; i++) {
                                     areablocks[i].removeDropZones();
                                 }
-                            },
+                            }.bind(this),
 
                             getRepairXY: function() {
                                 return this.dragData.repairXY;
