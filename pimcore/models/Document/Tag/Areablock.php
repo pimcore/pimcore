@@ -272,6 +272,20 @@ class Document_Tag_Areablock extends Document_Tag {
         Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
+    protected function getToolBarDefaultConfig () {
+        return array(
+            "areablock_toolbar" => array(
+                "title" => "",
+                "width" => 160,
+                "x" => 20,
+                "y" => 50,
+                "xAlign" => "left",
+                "buttonWidth" => 148,
+                "buttonMaxCharacters" => 20
+            )
+        );
+    }
+
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
@@ -289,9 +303,11 @@ class Document_Tag_Areablock extends Document_Tag {
         else {
             $data = $this->getData();
         }
-        
+
+        $configOptions = array_merge($this->getToolBarDefaultConfig(), $this->getOptions());
+
         $options = array(
-            "options" => $this->getOptions(),
+            "options" => $configOptions,
             "data" => $data,
             "name" => $this->getName(),
             "id" => "pimcore_editable_" . $this->getName(),
