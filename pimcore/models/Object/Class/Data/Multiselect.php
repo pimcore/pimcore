@@ -227,5 +227,18 @@ class Object_Class_Data_Multiselect extends Object_Class_Data {
     }
 
 
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     * @param  $value
+     * @param  $operator
+     * @return string
+     *
+     */
+    public function getFilterCondition($value,$operator){
+        if ($operator == "=") {
+            $value = "'%".$value."%'";
+            return "`".$this->name."` LIKE ".$value." ";
+        }
+    }
 
 }
