@@ -440,7 +440,16 @@
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
             showCloseConfirmation: true,
             debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
-            targeting_enabled: <?php echo Zend_Json::encode((bool) $this->config->general->targeting) ?>
+            targeting_enabled: <?php echo Zend_Json::encode((bool) $this->config->general->targeting) ?>,
+            areablock_toolbar: {
+                            width: 120,
+                            x : 20,
+                            y : 50,
+                            buttons : {
+                                width: 108,
+                                maxCharacters: 12
+                            }
+                        }
         };
     </script>
     
