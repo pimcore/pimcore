@@ -83,7 +83,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      */
     protected function saveTags($id, $tags) {
 
-        $this->getDb()->beginTransaction();
+        //$this->getDb()->beginTransaction();
 
         try {
             while ($tag = array_shift($tags)) {
@@ -110,7 +110,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                     }
                 }
             }
-            $this->getDb()->commit();
+            //$this->getDb()->commit();
 
         } catch (Exception $e) {
             Logger::error($e);
@@ -151,21 +151,16 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
 
         $this->checkCacheConsistency();
 
-        $lifetime = $this->getLifetime($specificLifetime);
-        if ($this->_options['compression']) {
-            $flag = MEMCACHE_COMPRESSED;
-        } else {
-            $flag = 0;
-        }
-        
+        $result = parent::save($data, $id, array(), $specificLifetime);
+
         // hack may it works also without it
-        $this->_memcache->delete($id);
+        //$this->_memcache->delete($id);
         // hack end
-        
-        $result = $this->_memcache->replace($id, array($data, time()), $flag, $lifetime);
-        if( $result == false ) { 
-            $result = $this->_memcache->set($id, array($data, time()), $flag, $lifetime);
-        } 
+
+        //$result = $this->_memcache->replace($id, array($data, time()), $flag, $lifetime);
+        //if( $result == false ) {
+        //    $result = $this->_memcache->set($id, array($data, time()), $flag, $lifetime);
+        //}
         
         
         if (count($tags) > 0) {

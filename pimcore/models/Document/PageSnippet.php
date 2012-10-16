@@ -68,7 +68,7 @@ abstract class Document_PageSnippet extends Document {
      * @see Document::update
      * @return void
      */
-    public function update() {
+    protected function update() {
 
         // update elements
         $this->getElements();

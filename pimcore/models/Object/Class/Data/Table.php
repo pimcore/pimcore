@@ -85,7 +85,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = (int)$width;
     }
 
     /**
@@ -100,7 +100,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = (int)$height;
     }
 
     /**
@@ -115,7 +115,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return void
      */
     public function setCols($cols) {
-        $this->cols = $cols;
+        $this->cols = (int)$cols;
     }
 
     /**
@@ -130,7 +130,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      * @return void
      */
     public function setRows($rows) {
-        $this->rows = $rows;
+        $this->rows = (int)$rows;
     }
 
 

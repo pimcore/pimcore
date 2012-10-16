@@ -638,4 +638,42 @@ class Document_Tag_Video extends Document_Tag
 
     }
 
+
+    /**
+     * @return string
+     */
+    public function getVideoType() {
+        return $this->type;
+    }
+
+    /**
+     * @return Asset
+     */
+    public function getVideoAsset() {
+        if($this->getVideoType() == "asset") {
+            return Asset::getById($this->id);
+        }
+    }
+
+    /**
+     * @param $config
+     * @return string
+     */
+    public function getImageThumbnail($config) {
+        if($this->getVideoAsset()) {
+            return $this->getVideoAsset()->getImageThumbnail($config);
+        }
+        return "";
+    }
+
+    /**
+     * @param $config
+     * @return array
+     */
+    public function getThumbnail($config) {
+        if($this->getVideoAsset()) {
+            return $this->getVideoAsset()->getThumbnail($config);
+        }
+        return array();
+    }
 }

@@ -45,7 +45,7 @@ class Pimcore_File {
         
         $tmpFilename = Pimcore_Tool_Transliteration::toASCII($tmpFilename);
         $tmpFilename = strtolower($tmpFilename);
-        $tmpFilename = preg_replace('/[^a-z0-9-.~_]+/', '-', $tmpFilename);
+        $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', '-', $tmpFilename);
 
         return $tmpFilename;
     }

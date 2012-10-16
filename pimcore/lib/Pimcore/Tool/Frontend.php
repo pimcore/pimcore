@@ -82,4 +82,20 @@ class Pimcore_Tool_Frontend {
 
         return true;
     }
+
+    /**
+     * @param Document $document
+     */
+    public static function getSiteForDocument($document) {
+        $sites = new Site_List();
+        $sites = $sites->load();
+
+        foreach ($sites as $site) {
+            if(preg_match("@^" . $site->getRootPath() . "/@", $document->getRealFullPath()) || $site->getRootDocument()->getId() == $document->getId()) {
+                return $site;
+            }
+        }
+
+        return;
+    }
 }

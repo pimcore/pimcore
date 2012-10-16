@@ -15,34 +15,36 @@
 pimcore.registerNS("pimcore.object.tags.slider");
 pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
-    type: "slider",
+    type:"slider",
 
-    initialize: function (data, fieldConfig) {
+    initialize:function (data, fieldConfig) {
 
         this.data = "";
 
         if (data) {
             this.data = data;
+        } else if (typeof data === "undefined" && fieldConfig.defaultValue) {
+            this.data = fieldConfig.defaultValue;
         }
-        
+
         if (!fieldConfig.width) {
             fieldConfig.width = 300;
         }
-        
+
         this.fieldConfig = fieldConfig;
 
     },
 
-    getGridColumnFilter: function(field) {
-        return {type: 'numeric', dataIndex: field.key};
-    },    
+    getGridColumnFilter:function (field) {
+        return {type:'numeric', dataIndex:field.key};
+    },
 
-    getLayoutEdit: function () {
+    getLayoutEdit:function () {
 
         var slider = {
-            fieldLabel: this.fieldConfig.title,
-            name: this.fieldConfig.name,
-            itemCls: "object_field"
+            fieldLabel:this.fieldConfig.title,
+            name:this.fieldConfig.name,
+            itemCls:"object_field"
         };
 
         if (this.data) {
@@ -71,32 +73,32 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.decimalPrecision) {
             slider.decimalPrecision = this.fieldConfig.decimalPrecision;
         }
-        
+
         slider.plugins = new Ext.slider.Tip();
-        
+
         this.component = new Ext.Slider(slider);
-        
+
         this.component.on("afterrender", this.showValueInLabel.bind(this));
         this.component.on("dragend", this.showValueInLabel.bind(this));
         this.component.on("change", this.showValueInLabel.bind(this));
 
-        this.component.on("change", function() {
+        this.component.on("change", function () {
             this.dirty = true;
         }.bind(this));
-        
+
         return this.component;
     },
 
-    showValueInLabel: function () {
+    showValueInLabel:function () {
         var labelEl = Ext.get(this.component.getEl().parent(".object_field").query("label")[0]);
-        
-        if(!this.labelText) {
+
+        if (!this.labelText) {
             this.labelText = labelEl.dom.innerHTML;
         }
         var el = labelEl.update(this.labelText + " (" + this.component.getValue() + ")");
     },
-    
-    getLayoutShow: function () {
+
+    getLayoutShow:function () {
 
         this.component = this.getLayoutEdit();
         this.component.disable();
@@ -104,23 +106,23 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getValue: function () {
+    getValue:function () {
         return this.component.getValue().toString();
     },
 
-    getName: function () {
+    getName:function () {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
+    isInvalidMandatory:function () {
         return false;
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty:function () {
+        if (!this.isRendered()) {
             return false;
         }
-        
+
         return this.dirty;
     }
 });

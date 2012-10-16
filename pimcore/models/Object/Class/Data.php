@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -15,7 +15,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-abstract class Object_Class_Data {
+abstract class Object_Class_Data
+{
 
     /**
      * @var string
@@ -26,12 +27,12 @@ abstract class Object_Class_Data {
      * @var string
      */
     public $title;
-    
+
     /**
      * @var string
      */
     public $tooltip;
-    
+
     /**
      * @var boolean
      */
@@ -96,55 +97,55 @@ abstract class Object_Class_Data {
      * @var bool
      */
     public $visibleGridView = true;
-        
+
     /**
      * @var bool
      */
     public $visibleSearch = true;
-    
-    
+
+
     /**
      * @var array
      */
     public static $validFilterOperators = array(
-            "LIKE",
-            "NOT LIKE",
-            "=",
-            "IS",
-            "IS NOT",
-            "!=",
-            "<",
-            ">",
-            ">=",
-            "<="
-        );
+        "LIKE",
+        "NOT LIKE",
+        "=",
+        "IS",
+        "IS NOT",
+        "!=",
+        "<",
+        ">",
+        ">=",
+        "<="
+    );
 
     /**
      * Returns the the data that should be stored in the resource
      *
      * @param mixed $data
      * @return mixed
-     
+
     abstract public function getDataForResource($data);
-    */
-    
+     */
+
     /**
      * Convert the saved data in the resource to the internal eg. Image-Id to Asset_Image object, this is the inverted getDataForResource()
      *
      * @param mixed $data
      * @return mixed
-     
+
     abstract public function getDataFromResource($data);
-    */
-    
+     */
+
     /**
      * Returns the data which should be stored in the query columns
      *
      * @param mixed $data
      * @return mixed
-     
+
     abstract public function getDataForQueryResource($data);
-    */
+     */
 
     /**
      * Returns the data for the editmode
@@ -171,10 +172,11 @@ abstract class Object_Class_Data {
      * @param boolean $omitMandatoryCheck
      * @throws Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false){
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
 
-        if(!$omitMandatoryCheck and $this->getMandatory() and empty($data)){
-            throw new Exception("Empty mandatory field [ ".$this->getName()." ]");
+        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+            throw new Exception("Empty mandatory field [ " . $this->getName() . " ]");
         }
 
     }
@@ -185,10 +187,11 @@ abstract class Object_Class_Data {
      * @param Object_Abstract $object
      * @return string
      */
-    public function getForCsvExport($object){
+    public function getForCsvExport($object)
+    {
         $key = $this->getName();
-        $getter = "get".ucfirst($key);
-        return $object->$getter() ;
+        $getter = "get" . ucfirst($key);
+        return $object->$getter();
     }
 
     /**
@@ -198,7 +201,8 @@ abstract class Object_Class_Data {
      * @param Object_Abstract $abstract
      * @return Object_Class_Data
      */
-    public function getFromCsvImport($importValue){
+    public function getFromCsvImport($importValue)
+    {
         return $importValue;
     }
 
@@ -207,46 +211,52 @@ abstract class Object_Class_Data {
      * @param Object_Abstract $object
      * @return mixed
      */
-    public function getForWebserviceExport ($object) {
+    public function getForWebserviceExport($object)
+    {
         $key = $this->getName();
-        $getter = "get".ucfirst($key);
+        $getter = "get" . ucfirst($key);
         return $object->$getter();
     }
-    
+
     /**
      * converts data to be imported via webservices
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value, $object = null) {
+    public function getFromWebserviceImport($value, $object = null)
+    {
         return $value;
     }
-    
+
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
     /**
      * @return boolean
      */
-    public function getMandatory() {
+    public function getMandatory()
+    {
         return $this->mandatory;
     }
 
     /**
      * @return array
      */
-    public function getPermissions() {
+    public function getPermissions()
+    {
         return $this->permissions;
     }
 
@@ -254,7 +264,8 @@ abstract class Object_Class_Data {
      * @param string $name
      * @return void
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
@@ -262,7 +273,8 @@ abstract class Object_Class_Data {
      * @param string $title
      * @return void
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         $this->title = $title;
     }
 
@@ -270,15 +282,17 @@ abstract class Object_Class_Data {
      * @param boolean $mandatory
      * @return void
      */
-    public function setMandatory($mandatory) {
-        $this->mandatory = (bool) $mandatory;
+    public function setMandatory($mandatory)
+    {
+        $this->mandatory = (bool)$mandatory;
     }
 
     /**
      * @param array $permissions
      * @return void
      */
-    public function setPermissions($permissions) {
+    public function setPermissions($permissions)
+    {
         $this->permissions = $permissions;
     }
 
@@ -286,7 +300,8 @@ abstract class Object_Class_Data {
      * @param array $data
      * @return void
      */
-    public function setValues($data = array()) {
+    public function setValues($data = array())
+    {
         foreach ($data as $key => $value) {
             $method = "set" . $key;
             if (method_exists($this, $method)) {
@@ -299,7 +314,8 @@ abstract class Object_Class_Data {
     /**
      * @return string
      */
-    public function getDatatype() {
+    public function getDatatype()
+    {
         return $this->datatype;
     }
 
@@ -307,14 +323,16 @@ abstract class Object_Class_Data {
      * @param string $datatype
      * @return void
      */
-    public function setDatatype($datatype) {
+    public function setDatatype($datatype)
+    {
         $this->datatype = $datatype;
     }
 
     /**
      * @return string
      */
-    public function getFieldtype() {
+    public function getFieldtype()
+    {
         return $this->fieldtype;
     }
 
@@ -322,14 +340,16 @@ abstract class Object_Class_Data {
      * @param string $fieldtype
      * @return void
      */
-    public function setFieldtype($fieldtype) {
+    public function setFieldtype($fieldtype)
+    {
         $this->fieldtype = $fieldtype;
     }
 
     /**
      * @return string | array
      */
-    public function getColumnType() {
+    public function getColumnType()
+    {
         return $this->columnType;
     }
 
@@ -337,14 +357,16 @@ abstract class Object_Class_Data {
      * @param string | array $columnType
      * @return void
      */
-    public function setColumnType($columnType) {
+    public function setColumnType($columnType)
+    {
         $this->columnType = $columnType;
     }
 
     /**
      * @return string | array
      */
-    public function getQueryColumnType() {
+    public function getQueryColumnType()
+    {
         return $this->queryColumnType;
     }
 
@@ -352,14 +374,16 @@ abstract class Object_Class_Data {
      * @param string | array $queryColumnType
      * @return void
      */
-    public function setQueryColumnType($queryColumnType) {
+    public function setQueryColumnType($queryColumnType)
+    {
         $this->queryColumnType = $queryColumnType;
     }
 
     /**
      * @return boolean
      */
-    public function getNoteditable() {
+    public function getNoteditable()
+    {
         return $this->noteditable;
     }
 
@@ -367,14 +391,16 @@ abstract class Object_Class_Data {
      * @param boolean $noteditable
      * @return void
      */
-    public function setNoteditable($noteditable) {
-        $this->noteditable = (bool) $noteditable;
+    public function setNoteditable($noteditable)
+    {
+        $this->noteditable = (bool)$noteditable;
     }
 
     /**
      * @return integer
      */
-    public function getIndex() {
+    public function getIndex()
+    {
         return $this->index;
     }
 
@@ -382,14 +408,16 @@ abstract class Object_Class_Data {
      * @param integer $index
      * @return void
      */
-    public function setIndex($index) {
+    public function setIndex($index)
+    {
         $this->index = $index;
     }
 
     /**
      * @return string
      */
-    public function getPhpdocType() {
+    public function getPhpdocType()
+    {
         return $this->phpdocType;
     }
 
@@ -397,7 +425,8 @@ abstract class Object_Class_Data {
      *
      * @return boolean
      */
-    public function getStyle() {
+    public function getStyle()
+    {
         return $this->style;
     }
 
@@ -405,15 +434,17 @@ abstract class Object_Class_Data {
      *
      * @param boolean $style
      */
-    public function setStyle($style) {
-        $this->style = (string) $style;
+    public function setStyle($style)
+    {
+        $this->style = (string)$style;
     }
 
     /**
      *
      * @return boolean
      */
-    public function getLocked() {
+    public function getLocked()
+    {
         return $this->locked;
     }
 
@@ -421,15 +452,17 @@ abstract class Object_Class_Data {
      *
      * @param boolean $locked
      */
-    public function setLocked($locked) {
-        $this->locked = (bool) $locked;
+    public function setLocked($locked)
+    {
+        $this->locked = (bool)$locked;
     }
 
     /**
      *
      * @return string
      */
-    public function getTooltip() {
+    public function getTooltip()
+    {
         return $this->tooltip;
     }
 
@@ -437,22 +470,25 @@ abstract class Object_Class_Data {
      *
      * @param string $tooltip
      */
-    public function setTooltip($tooltip) {
-        $this->tooltip = (string) $tooltip;
+    public function setTooltip($tooltip)
+    {
+        $this->tooltip = (string)$tooltip;
     }
 
     /**
      *
      * @return boolean
      */
-    public function isRelationType() {
+    public function isRelationType()
+    {
         return $this->relationType;
     }
 
     /**
      * @return boolean
      */
-    public function getInvisible() {
+    public function getInvisible()
+    {
         return $this->invisible;
     }
 
@@ -460,14 +496,16 @@ abstract class Object_Class_Data {
      *
      * @param boolean $invisible
      */
-    public function setInvisible($invisible) {
-        $this->invisible = (bool) $invisible;
+    public function setInvisible($invisible)
+    {
+        $this->invisible = (bool)$invisible;
     }
-    
+
     /**
      * @return boolean
      */
-    public function getVisibleGridView() {
+    public function getVisibleGridView()
+    {
         return $this->visibleGridView;
     }
 
@@ -475,14 +513,16 @@ abstract class Object_Class_Data {
      *
      * @param boolean $visibleGridView
      */
-    public function setVisibleGridView($visibleGridView) {
-        $this->visibleGridView = (bool) $visibleGridView;
+    public function setVisibleGridView($visibleGridView)
+    {
+        $this->visibleGridView = (bool)$visibleGridView;
     }
-    
+
     /**
      * @return boolean
      */
-    public function getVisibleSearch() {
+    public function getVisibleSearch()
+    {
         return $this->visibleSearch;
     }
 
@@ -490,30 +530,33 @@ abstract class Object_Class_Data {
      *
      * @param boolean $visibleSearch
      */
-    public function setVisibleSearch($visibleSearch) {
-        $this->visibleSearch = (bool) $visibleSearch;
+    public function setVisibleSearch($visibleSearch)
+    {
+        $this->visibleSearch = (bool)$visibleSearch;
     }
-    
+
     /**
      * This is a dummy and is mostly implemented by relation types
-     * 
+     *
      * @param mixed $data
      * @param Object_Concrete $ownerObject
      * @param array $blockedTags
      */
-    public function getCacheTags ($data, $ownerObject, $tags = array()) {
+    public function getCacheTags($data, $ownerObject, $tags = array())
+    {
         return $tags;
     }
-    
+
     /**
      * This is a dummy and is mostly implemented by relation types
-     * 
+     *
      * @param mixed $data
      */
-    public function resolveDependencies ($data) {
+    public function resolveDependencies($data)
+    {
         return array();
     }
-  
+
     /**
      * returns sql query statement to filter according to this data types value(s)
      * @param  $value
@@ -521,23 +564,24 @@ abstract class Object_Class_Data {
      * @return string
      *
      */
-    public function getFilterCondition($value,$operator){
-        if($value === "NULL") {
-            if($operator == '='){
+    public function getFilterCondition($value, $operator)
+    {
+        if ($value === "NULL") {
+            if ($operator == '=') {
                 $operator = "IS";
-            } else if ($operator == "!="){
+            } else if ($operator == "!=") {
                 $operator = "IS NOT";
             }
         } else if (!is_array($value) && !is_object($value)) {
-            if($operator == "LIKE"){
-                $value = "'%".$value."%'";
+            if ($operator == "LIKE") {
+                $value = "'%" . $value . "%'";
             } else {
-                $value = "'".$value."'";
+                $value = "'" . $value . "'";
             }
         }
-        
-        if(in_array($operator,Object_Class_Data::$validFilterOperators)){
-            return "`".$this->name."` ".$operator." ".$value." ";
+
+        if (in_array($operator, Object_Class_Data::$validFilterOperators)) {
+            return "`" . $this->name . "` " . $operator . " " . $value . " ";
         } else return "";
     }
 
@@ -546,7 +590,8 @@ abstract class Object_Class_Data {
      * @param $class
      * @return string
      */
-    public function getGetterCode ($class) {
+    public function getGetterCode($class)
+    {
         $key = $this->getName();
         $code = "";
 
@@ -559,7 +604,7 @@ abstract class Object_Class_Data {
         $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
         $code .= "\t" . 'if($preValue !== null && !Pimcore::inAdmin()) { return $preValue;}' . "\n";
 
-        if(method_exists($this,"preGetData")) {
+        if (method_exists($this, "preGetData")) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
             $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -581,7 +626,8 @@ abstract class Object_Class_Data {
      * @param $class
      * @return string
      */
-    public function getSetterCode ($class) {
+    public function getSetterCode($class)
+    {
         $key = $this->getName();
         $code = "";
 
@@ -591,7 +637,7 @@ abstract class Object_Class_Data {
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
 
-        if(method_exists($this,"preSetData")) {
+        if (method_exists($this, "preSetData")) {
             $code .= "\t" . '$this->' . $key . " = " . '$this->getClass()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
@@ -608,7 +654,8 @@ abstract class Object_Class_Data {
      * @param $brickClass
      * @return string
      */
-    public function getGetterCodeObjectbrick ($brickClass) {
+    public function getGetterCodeObjectbrick($brickClass)
+    {
         $key = $this->getName();
         $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
@@ -618,6 +665,7 @@ abstract class Object_Class_Data {
         $code .= "\t" . 'if(!$this->' . $key . ' && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
         $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
         $code .= "\t" . '}' . "\n";
+
 
         $code .= "\t return " . '$this->' . $key . ";\n";
         $code .= "}\n\n";
@@ -631,7 +679,8 @@ abstract class Object_Class_Data {
      * @param $brickClass
      * @return string
      */
-    public function getSetterCodeObjectbrick ($brickClass) {
+    public function getSetterCodeObjectbrick($brickClass)
+    {
         $key = $this->getName();
 
         $code = '/**' . "\n";
@@ -641,7 +690,7 @@ abstract class Object_Class_Data {
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
         $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
         $code .= "}\n\n";
-        
+
         return $code;
     }
 
@@ -651,12 +700,14 @@ abstract class Object_Class_Data {
      * @param $fieldcollectionDefinition
      * @return string
      */
-    public function getGetterCodeFieldcollection ($fieldcollectionDefinition) {
+    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
+    {
         $key = $this->getName();
         $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
+
         $code .= "\t return " . '$this->' . $key . ";\n";
         $code .= "}\n\n";
 
@@ -668,7 +719,8 @@ abstract class Object_Class_Data {
      * @param $fieldcollectionDefinition
      * @return string
      */
-    public function getSetterCodeFieldcollection ($fieldcollectionDefinition) {
+    public function getSetterCodeFieldcollection($fieldcollectionDefinition)
+    {
         $key = $this->getName();
 
         $code = '/**' . "\n";
@@ -678,7 +730,7 @@ abstract class Object_Class_Data {
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
         $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
         $code .= "}\n\n";
-        
+
         return $code;
     }
 
@@ -688,7 +740,8 @@ abstract class Object_Class_Data {
      * @param $class
      * @return string
      */
-    public function getGetterCodeLocalizedfields ($class) {
+    public function getGetterCodeLocalizedfields($class)
+    {
         $key = $this->getName();
         $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
@@ -712,7 +765,8 @@ abstract class Object_Class_Data {
      * @param $class
      * @return string
      */
-    public function getSetterCodeLocalizedfields ($class) {
+    public function getSetterCodeLocalizedfields($class)
+    {
         $key = $this->getName();
 
         $code = '/**' . "\n";

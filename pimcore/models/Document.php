@@ -320,23 +320,45 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
-        if (!Pimcore_Tool::isValidKey($this->getKey())) {
-            throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
+        if($this->getId()) {
+            // do not lock when creating a new document, this will cause a dead-lock because the cache-tag is used as key
+            // and the cache tag is different when releasing the lock later, because the document has then an id
+            Tool_Lock::acquire($this->getCacheTag());
         }
 
-        $this->correctPath();
-        // set date
-        $this->setModificationDate(time());
+        $this->beginTransaction();
 
-        if ($this->getId()) {
-            $this->update();
+        try {
+            // check for a valid key, home has no key, so omit the check
+            if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
+                throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
+            }
+
+            $this->correctPath();
+            // set date
+            $this->setModificationDate(time());
+
+            if ($this->getId()) {
+                $this->update();
+            }
+            else {
+                Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
+                $this->getResource()->create();
+                Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
+                $this->update();
+            }
+
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollBack();
+
+            throw $e;
         }
-        else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
-            $this->getResource()->create();
-            Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
-            $this->update();
-        }
+
+        Tool_Lock::release($this->getCacheTag());
+
+        // empty object cache
+        $this->clearDependedCache();
     }
 
     public function correctPath() {
@@ -370,7 +392,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      *
      * @return void
      */
-    public function update() {
+    protected function update() {
 
         if (!$this->getKey() && $this->getId() != 1) {
             $this->delete();
@@ -415,14 +437,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             $this->getResource()->updateChildsPaths($this->_oldPath);
         }
 
-        // empty object cache
-        $this->clearDependedCache();
-
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), $this);
 
         Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
-
     }
 
     public function clearDependedCache() {
@@ -661,7 +679,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if(!Pimcore::inAdmin() && Site::isSiteRequest() && !Pimcore_Tool_Frontend::isDocumentInCurrentSite($this)) {
 
-            $db = Pimcore_Resource::get();
             $documentService = new Document_Service();
             $parent = $this;
             while($parent) {
@@ -678,6 +695,19 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                     }
                 }
                 $parent = $parent->getParent();
+            }
+
+            $config = Pimcore_Config::getSystemConfig();
+            $front = Zend_Controller_Front::getInstance();
+            $scheme = ($front->getRequest()->isSecure() ? "https" : "http") . "://";
+            if($site = Pimcore_Tool_Frontend::getSiteForDocument($this)) {
+                // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
+                if ($site->getRootDocument()->getId() == $this->getId()) {
+                    return $scheme . $site->getMainDomain() . "/";
+                }
+                return $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
+            } else if ($config->general->domain) {
+                return $scheme . $config->general->domain . $this->getRealFullPath();
             }
         }
 

@@ -21,7 +21,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         this.data = {};
         this.languageElements = {};
-
         if (data) {
             this.data = data;
         }
@@ -144,10 +143,13 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     getDataForField: function (name) {
+
         try {
             if (this.data[this.currentLanguage]) {
                 if (this.data[this.currentLanguage][name]) {
                     return this.data[this.currentLanguage][name];
+                } else if (typeof this.data[this.currentLanguage][name] !== undefined){
+                    return null;
                 }
             }
         } catch (e) {
@@ -184,7 +186,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 }
             }
         }
-
         return localizedData;
     },
 

@@ -15,15 +15,18 @@
 pimcore.registerNS("pimcore.object.tags.numeric");
 pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
 
-    type: "numeric",
+    type:"numeric",
 
-    initialize: function (data, fieldConfig) {
+    initialize:function (data, fieldConfig) {
+        if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
+            data = fieldConfig.defaultValue;
+        }
 
         this.data = data;
         this.fieldConfig = fieldConfig;
     },
 
-    getGridColumnEditor: function(field) {
+    getGridColumnEditor:function (field) {
         var editorConfig = {};
 
         if (field.config) {
@@ -34,7 +37,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if(field.layout.noteditable) {
+        if (field.layout.noteditable) {
             return null;
         }
         // NUMERIC
@@ -44,16 +47,16 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
-    getGridColumnFilter: function(field) {
-        return {type: 'numeric', dataIndex: field.key};
+    getGridColumnFilter:function (field) {
+        return {type:'numeric', dataIndex:field.key};
     },
 
-    getLayoutEdit: function () {
+    getLayoutEdit:function () {
 
         var input = {
-            fieldLabel: this.fieldConfig.title,
-            name: this.fieldConfig.name,
-            itemCls: "object_field"
+            fieldLabel:this.fieldConfig.title,
+            name:this.fieldConfig.name,
+            itemCls:"object_field"
         };
 
         if (!isNaN(this.data)) {
@@ -67,17 +70,16 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         input.decimalPrecision = 20;
 
         this.component = new Ext.ux.form.SpinnerField(input);
-
         return this.component;
     },
 
 
-    getLayoutShow: function () {
+    getLayoutShow:function () {
 
         var input = {
-            fieldLabel: this.fieldConfig.title,
-            name: this.fieldConfig.name,
-            cls: "object_field"
+            fieldLabel:this.fieldConfig.title,
+            name:this.fieldConfig.name,
+            itemCls:"object_field"
         };
 
         if (this.data) {
@@ -94,20 +96,22 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    getValue: function () {
-        if(this.isRendered()) {
+    getValue:function () {
+        if (this.isRendered()) {
             return this.component.getValue().toString();
+        } else if (this.fieldConfig.defaultValue) {
+            return this.fieldConfig.defaultValue
         }
         return null;
     },
 
-    getName: function () {
+    getName:function () {
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
+    isInvalidMandatory:function () {
 
-        if(!this.isRendered() && (!empty(this.getInitialData() || this.getInitialData() === 0) )) {
+        if (!this.isRendered() && (!empty(this.getInitialData() || this.getInitialData() === 0) )) {
             return false;
         } else if (!this.isRendered()) {
             return true;
@@ -117,5 +121,36 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             return false;
         }
         return true;
+    },
+
+    isDirty:function () {
+        var dirty = false;
+        if (this.component && typeof this.component.isDirty == "function") {
+
+            if (!this.component.rendered) {
+                if (!this.fieldConfig.defaultValue) {
+                    return false;
+                } else return true;
+
+            } else {
+                dirty = this.component.isDirty();
+
+                if (!dirty && (this.fieldConfig.defaultValue)) {
+                    dirty = true;
+                }
+
+                // once a field is dirty it should be always dirty (not an ExtJS behavior)
+                if (this.component["__pimcore_dirty"]) {
+                    dirty = true;
+                }
+                if (dirty) {
+                    this.component["__pimcore_dirty"] = true;
+                }
+
+                return dirty;
+            }
+        }
+
+        throw "isDirty() is not implemented";
     }
 });
