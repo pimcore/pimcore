@@ -88,7 +88,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                     $front->getResponse()->sendResponse();
                     exit;
                 }
-
             }
         }
 
@@ -104,15 +103,48 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
         // check for a registered site
         try {
-            if ($config->general->domain != Pimcore_Tool::getHostname()) {
+            // do not initialize a site if it is a "special" admin request
+            if (!Pimcore_Tool::isFrontentRequestByAdmin()) {
                 $domain = Pimcore_Tool::getHostname();
                 $site = Site::getByDomain($domain);
-                $path = $site->getRootDocument()->getFullPath() . $path;
+                $path = $site->getRootPath() . $path;
 
                 Zend_Registry::set("pimcore_site", $site);
             }
+        } catch (Exception $e) {
         }
-        catch (Exception $e) {}
+
+
+        // test if there is a suitable redirect with override = all (=> priority = 99)
+        if (!$matchFound) {
+            $this->checkForRedirect(true);
+        }
+
+
+        // redirect to the main domain if specified
+        try {
+            $hostRedirect = null;
+            if ($config->general->redirect_to_maindomain && $config->general->domain && $config->general->domain != Pimcore_Tool::getHostname() && !Site::isSiteRequest()) {
+                $hostRedirect = $config->general->domain;
+            }
+            if(Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
+                if($site->getMainDomain() != Pimcore_Tool::getHostname()) {
+                    $hostRedirect = $site->getMainDomain();
+                }
+            }
+
+            if($hostRedirect) {
+                $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $hostRedirect . $_SERVER["REQUEST_URI"];
+
+                header("HTTP/1.1 301 Moved Permanently");
+                header("Location: " . $url, true, 301);
+
+                // log all redirects to the redirect log
+                Pimcore_Log_Simple::log("redirect", Pimcore_Tool::getAnonymizedClientIp() . " \t Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
+                exit;
+            }
+        } catch (Exception $e) {}
 
 
         // check for direct definition of controller/action
@@ -120,7 +152,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             $matchFound = true;
             //$params["document"] = $this->getNearestDocumentByPath($path);
         }
-        
+
         // you can also call a page by it's ID /?pimcore_document=XXXX
         if (!$matchFound) {
             if(!empty($params["pimcore_document"]) || !empty($params["pdid"])) {
@@ -131,10 +163,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             }
         }
 
-        // test if there is a suitable redirect with override = all (=> priority = 99)
-        if (!$matchFound) {
-            $this->checkForRedirect(true);
-        }
 
         // test if there is a suitable page
         if (!$matchFound) {
@@ -177,15 +205,13 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 if ($document instanceof Document) {
                     if (in_array($document->getType(), array("page","snippet","email"))) {
 
-                        if (!empty($params["pimcore_version"]) || !empty($params["pimcore_preview"]) || !empty($params["pimcore_admin"]) || !empty($params["pimcore_editmode"]) || $document->isPublished() ) {
+                        if (Pimcore_Tool::isFrontentRequestByAdmin() || $document->isPublished() ) {
 
                             // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
                             if($document instanceof Document_Page
                                 && !($document instanceof Document_Hardlink_Wrapper_Interface)
                                 && $document->getPrettyUrl()
-                                && empty($params["pimcore_preview"])
-                                && empty($params["pimcore_editmode"])
-                                && empty($params["pimcore_version"])
+                                && !Pimcore_Tool::isFrontentRequestByAdmin()
                             ) {
                                 if(rtrim(strtolower($document->getPrettyUrl())," /") != rtrim(strtolower($path),"/")) {
                                     header("Location: " . $document->getPrettyUrl(), true, 301);
@@ -348,22 +374,6 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             $this->checkForRedirect(false);
         }
 
-        // redirect to the main domain if specified
-        try {
-            if ($config->general->redirect_to_maindomain && $config->general->domain && $config->general->domain != Pimcore_Tool::getHostname() && !Site::isSiteRequest()) {
-
-                $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $originalPath . (empty($_SERVER["QUERY_STRING"]) ? "" : "?") . $_SERVER["QUERY_STRING"];
-
-                header("HTTP/1.1 301 Moved Permanently");
-                header("Location: " . $url, true, 301);
-
-                // log all redirects to the redirect log
-                Pimcore_Log_Simple::log("redirect", Pimcore_Tool::getAnonymizedClientIp() . " \t Source: " . $_SERVER["REQUEST_URI"] . " -> " . $url);
-                exit;
-            }
-        }
-        catch (Exception $e) {}
-
         if (!$matchFound) {
             return false;
         }
@@ -460,19 +470,19 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
             // get current site if available
             $sourceSite = null;
-            try {
+            if(Site::isSiteRequest()) {
                 $sourceSite = Site::getCurrentSite();
-            } catch (Exception $e) { }
+            }
 
             $cacheKey = "system_route_redirect";
-            if (empty($this->redirects) && !$this->redirects = Pimcore_Model_Cache::load($cacheKey)) {
+            if (empty($this->redirects) && !($this->redirects = Pimcore_Model_Cache::load($cacheKey))) {
 
                 $list = new Redirect_List();
                 $list->setOrder("DESC");
                 $list->setOrderKey("priority");
                 $this->redirects = $list->load();
 
-                Pimcore_Model_Cache::save($this->redirects, $cacheKey, array("system","redirect","route"), null, 998);
+                Pimcore_Model_Cache::save($this->redirects, $cacheKey, array("system","redirect","route","output"), null, 998);
             }
 
             $requestScheme = ($_SERVER['HTTPS'] == 'on') ? Zend_Controller_Request_Http::SCHEME_HTTPS : Zend_Controller_Request_Http::SCHEME_HTTP;
@@ -524,13 +534,13 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
 
                                 // if the target site is specified and and the target-path is starting at root (not absolute to site)
                                 // the root-path will be replaced so that the page can be shown
-                                $url = preg_replace("@^" . $targetSite->getRootDocument()->getFullPath() . "/@", "/", $url);
+                                $url = preg_replace("@^" . $targetSite->getRootPath() . "/@", "/", $url);
                                 $url = $requestScheme . "://" . $targetSite->getMainDomain() . $url;
                             } catch (Exception $e){
                                 Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
                                 continue;
                             }
-                        } else if (!preg_match("@http(s)?://@i", $url) && $config->general->domain) {
+                        } else if (!preg_match("@http(s)?://@i", $url) && $config->general->domain && $redirect->getSourceEntireUrl()) {
                             // prepend the host and scheme to avoid infinite loops when using "domain" redirects
                             $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $url;
                         }

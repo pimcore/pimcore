@@ -21,6 +21,32 @@ class Pimcore_Resource_Wrapper {
     protected $resource;
 
     /**
+     * use a seperate connection for DDL queries to avoid implicit commits
+     * @var Zend_Db_Adapter_Abstract
+     */
+    protected $DDLResource;
+
+    /**
+     * @param \Zend_Db_Adapter_Abstract $DDLResource
+     */
+    public function setDDLResource($DDLResource)
+    {
+        $this->DDLResource = $DDLResource;
+    }
+
+    /**
+     * @return \Zend_Db_Adapter_Abstract
+     */
+    public function getDDLResource()
+    {
+        if(!$this->DDLResource) {
+            // get the Zend_Db_Adapter_Abstract not the wrapper
+            $this->DDLResource = Pimcore_Resource::getConnection()->getResource();
+        }
+        return $this->DDLResource;
+    }
+
+    /**
      * @param $resource
      */
     public function __construct($resource) {
@@ -78,7 +104,12 @@ class Pimcore_Resource_Wrapper {
             }
         }
 
-        $r = call_user_func_array(array($this->getResource(), $method), $args);
+        $resource = $this->getResource();
+        if($method == "query" && Pimcore_Resource::isDDLQuery($args[0])) {
+            $resource = $this->getDDLResource();
+        }
+
+        $r = call_user_func_array(array($resource, $method), $args);
 
         if(Pimcore::inAdmin() && $capture) {
             Pimcore_Resource::stopCapturingDefinitionModifications();

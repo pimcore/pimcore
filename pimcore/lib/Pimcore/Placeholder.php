@@ -288,7 +288,7 @@ class Pimcore_Placeholder
                     $placeholderObject->setLocale();
 
                     $replaceWith = $placeholderObject->getReplacement();
-                    if (!$replaceWith) {
+                    if (!isset($replaceWith)) {
                         $replaceWith = $placeholderObject->getEmptyValue();
                     }
                     $stringReplaced = str_replace($placeholderObject->getPlaceholderString(), $replaceWith, $stringReplaced);

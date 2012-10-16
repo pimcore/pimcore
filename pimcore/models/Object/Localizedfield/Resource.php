@@ -185,19 +185,18 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
 
             $key = $value->getName();
 
-            // nullable & default value
-            list($defaultvalue, $nullable) = $this->getDefaultValueAndNullableForField($value);
+
 
             if (is_array($value->getColumnType())) {
                 // if a datafield requires more than one field
                 foreach ($value->getColumnType() as $fkey => $fvalue) {
-                    $this->addModifyColumn($table, $key . "__" . $fkey, $fvalue, $defaultvalue, $nullable);
+                    $this->addModifyColumn($table, $key . "__" . $fkey, $fvalue,"", "NULL");
                     $protectedColums[] = $key . "__" . $fkey;
                 }
             }
             else {
                 if ($value->getColumnType()) {
-                    $this->addModifyColumn($table, $key, $value->getColumnType(), $defaultvalue, $nullable);
+                    $this->addModifyColumn($table, $key, $value->getColumnType(), "", "NULL");
                     $protectedColums[] = $key;
                 }
             }
@@ -209,23 +208,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
         $this->createLocalizedViews();
     }
 
-    // @TODO the following methods dublicates Object_Class_Resource
-    private function getDefaultValueAndNullableForField ($field) {
 
-        $nullable = "NULL";
-        /*if ($field->getMandatory()) {
-            $nullable = "NOT NULL";
-        }*/
-
-        $defaultvalue = "";
-        if (method_exists($field, 'getDefaultValue') && $field->getDefaultValue() !== null) {
-            $defaultvalue = " DEFAULT '" . $field->getDefaultValue() . "'";
-        } else if (method_exists($field, 'getDefaultValue') && $field->getDefaultValue() === null and $nullable == "NULL"){
-            $defaultvalue = " DEFAULT NULL";
-        }
-
-        return array($defaultvalue, $nullable);
-    }
 
     private function addIndexToField ($field, $table) {
 

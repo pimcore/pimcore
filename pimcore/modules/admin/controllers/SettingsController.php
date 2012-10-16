@@ -533,93 +533,21 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
         $admin = $this->getParam("admin");
 
         if ($this->getUser()->isAllowed("translations")) {
-            $languages = Pimcore_Tool::getValidLanguages();
 
-            //read import data
-            $tmpData = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-            //convert to utf-8 if needed
-            $encoding = Pimcore_Tool_Text::detectEncoding($tmpData);
-            if ($encoding) {
-                $tmpData = iconv($encoding, "UTF-8", $tmpData);
-            }
-            //store data for further usage
-            $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations";
-            file_put_contents($importFile, $tmpData);
-            chmod($importFile, 0766);
-
-            $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original";
-            file_put_contents($importFileOriginal, $tmpData);
-            chmod($importFileOriginal, 0766);
-
-            // determine csv type
-            $dialect = Pimcore_Tool_Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations_original");
-            //read data
-            if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_translations", "r")) !== FALSE) {
-                while (($rowData = fgetcsv($handle, 10000, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                    $data[] = $rowData;
-                }
-                fclose($handle);
-            }
-            //process translations
-            if (is_array($data) and count($data) > 1) {
-                $keys = $data[0];
-                $data = array_slice($data, 1);
-                foreach ($data as $row) {
-
-                    $keyValueArray = array();
-                    for ($counter = 0; $counter < count($row); $counter++) {
-                        $rd = str_replace("&quot;", '"', $row[$counter]);
-                        $keyValueArray[$keys[$counter]] = $rd;
-                    }
-
-                    $t = null;
-                    if ($keyValueArray["key"]) {
-                        try {
-                            if ($admin) {
-                                $t = Translation_Admin::getByKey($keyValueArray["key"]);
-                            } else {
-                                $t = Translation_Website::getByKey($keyValueArray["key"]);
-                            }
-
-                        }
-                        catch (Exception $e) {
-                            Logger::debug("Unable to find translation with key: " . $keyValueArray["key"]);
-                        }
-                    }
-
-
-                    if (!$t instanceof Translation_Abstract) {
-                        if ($admin) {
-                            $t = new Translation_Admin();
-                        } else {
-                            $t = new Translation_Website();
-                        }
-
-                    }
-
-                    $t->setDate(time());
-                    foreach ($keyValueArray as $key => $value) {
-                        if ($key != "key" && $key != "date" && in_array($key, $languages)) {
-                            $t->addTranslation($key, $value);
-                        }
-                    }
-                    if ($keyValueArray["key"]) {
-                        $t->setKey($keyValueArray["key"]);
-                    }
-                    $t->save();
-                }
-                $this->_helper->json(array(
-                    "success" => true
-                ), false);
-
-                // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
-                // Ext.form.Action.Submit and mark the submission as failed
-                $this->getResponse()->setHeader("Content-Type", "text/html");
-
-            } else {
-                throw new Exception("less than 2 rows of data - nothing to import");
+            $tmpFile = $_FILES["Filedata"]["tmp_name"];
+            if($admin){
+                Translation_Admin::importTranslationsFromFile($tmpFile,true);
+            }else{
+                Translation_Website::importTranslationsFromFile($tmpFile,true);
             }
 
+            $this->_helper->json(array(
+                "success" => true
+            ), false);
+
+            // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+            // Ext.form.Action.Submit and mark the submission as failed
+            $this->getResponse()->setHeader("Content-Type", "text/html");
 
         } else {
             Logger::err("user [" . $this->getUser()->getId() . "] attempted to import translations csv, but has no permission to do so.");
@@ -1162,7 +1090,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "id" => $site->getId(),
                         "rootId" => $site->getRootId(),
                         "domains" => implode(",", $site->getDomains()),
-                        "rootPath" => $site->getRootDocument()->getFullPath(),
+                        "rootPath" => $site->getRootPath(),
                         "domain" => $domain
                     );
                 }

@@ -33,14 +33,18 @@ abstract class Object_List_Concrete extends Object_List {
     public $locale;
 
     /**
-     * @var bool
-     */
-    public $ignoreLocale;
-
-    /**
+     * do not use the localized views for this list (in the case the class contains localized fields),
+     * conditions on localized fields are not possible
      * @var bool
      */
     public $ignoreLocalizedFields = false;
+
+    /**
+    * ignore the locale and use the concatinated object_localized_ID_default view instead
+    * @var bool
+    */
+    public $ignoreLocale;
+
 
     /**
      * @return void

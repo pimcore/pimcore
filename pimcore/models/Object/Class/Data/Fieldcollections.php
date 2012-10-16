@@ -510,7 +510,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function setMaxItems($maxItems)
     {
-        $this->maxItems = $maxItems;
+        $this->maxItems = (int)$maxItems;
     }
 
     /**

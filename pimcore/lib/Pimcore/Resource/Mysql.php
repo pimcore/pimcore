@@ -67,9 +67,6 @@ class Pimcore_Resource_Mysql {
             $db->setProfiler($profiler);
         }
 
-        // set some defaults
-        Zend_Db_Table::setDefaultAdapter($db);
-
         // put the connection into a wrapper to handle connection timeouts, ...
         $db = new Pimcore_Resource_Wrapper($db);
 
@@ -127,10 +124,15 @@ class Pimcore_Resource_Mysql {
 
     /**
      * @static
-     * @param $connection
+     * @param Pimcore_Resource_Wrapper $connection
      * @return void
      */
     public static function set($connection) {
+        // set default adapter for Zend_Db_Table -> use getResource() because setDefaultAdapter()
+        // accepts only instances of Zend_Db but $connection is an instance of Pimcore_Resource_Wrapper
+        Zend_Db_Table::setDefaultAdapter($connection->getResource());
+
+        // register globally
         Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
     }
 
@@ -156,13 +158,21 @@ class Pimcore_Resource_Mysql {
     }
 
     /**
+     * @param $query
+     * @return bool
+     */
+    public static function isDDLQuery($query) {
+        return (bool) preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE)(.*)(DATABASE|EVENT|FUNCTION|PROCEDURE|TABLE|TABLESPACE|VIEW|INDEX|TRIGGER)/i", $query);
+    }
+
+    /**
      * @static
      * @param string $method
      * @param array $args
      */
     public static function startCapturingDefinitionModifications ($method, $args) {
         if($method == "query") {
-            if(preg_match("/(ALTER|CREATE|DROP|RENAME|TRUNCATE)(.*)(DATABASE|EVENT|FUNCTION|PROCEDURE|TABLE|TABLESPACE|VIEW|INDEX|TRIGGER)/i",$args[0])) {
+            if(self::isDDLQuery($args[0])) {
                 self::logDefinitionModification($args[0]);
             }
         } else {

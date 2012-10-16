@@ -57,8 +57,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         }
 
 
-        if ($this->getParam("pimcore_editmode") || $this->getParam("pimcore_version") || $this->getParam("pimcore_preview") || $this->getParam("pimcore_admin") || $this->getParam("pimcore_object_preview") ) {
-            $specialAdminRequest = true;
+        if (Pimcore_Tool::isFrontentRequestByAdmin()) {
             $this->disableBrowserCache();
 
             // start admin session & get logged in user
@@ -67,7 +66,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
 
 
         if (!$this->document->isPublished()) {
-            if ($specialAdminRequest) {
+            if (Pimcore_Tool::isFrontentRequestByAdmin()) {
                 if (!$user) {
                     throw new Exception("access denied for " . $this->document->getFullPath());
                 }

@@ -92,7 +92,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = (int)$width;
     }
 
     /**
@@ -107,7 +107,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = (int)$height;
     }
 
 
@@ -123,7 +123,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setMinValue($minValue) {
-        $this->minValue = $minValue;
+        $this->minValue = (float)$minValue;
     }
 
     /**
@@ -138,7 +138,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setMaxValue($maxValue) {
-        $this->maxValue = $maxValue;
+        $this->maxValue = (float)$maxValue;
     }
 
     /**
@@ -176,7 +176,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setIncrement($increment) {
-        $this->increment = $increment;
+        $this->increment = (float)$increment;
     }
     
     
@@ -192,7 +192,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setDecimalPrecision($decimalPrecision) {
-        $this->decimalPrecision = $decimalPrecision;
+        $this->decimalPrecision = (int)$decimalPrecision;
     }
 
     /**

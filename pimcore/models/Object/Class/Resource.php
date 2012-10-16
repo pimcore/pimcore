@@ -196,13 +196,12 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
                 
-                // nullable & default value
-                list($defaultvalue, $nullable) = $this->getDefaultValueAndNullableForField($value);
+
 
                 // if a datafield requires more than one column in the query table
                 if (is_array($value->getQueryColumnType())) {
                     foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectTable, $key . "__" . $fkey, $fvalue, $defaultvalue, $nullable);
+                        $this->addModifyColumn($objectTable, $key . "__" . $fkey, $fvalue, "", "NULL");
                         $protectedColums[] = $key . "__" . $fkey;
                     }
                 }
@@ -210,7 +209,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
                 if(!$value->isRelationType() && is_array($value->getColumnType())) {
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectDatastoreTable, $key . "__" . $fkey, $fvalue, $defaultvalue, $nullable);
+                        $this->addModifyColumn($objectDatastoreTable, $key . "__" . $fkey, $fvalue, "", "NULL");
                         $protectedDatastoreColumns[] = $key . "__" . $fkey;
                     }
                 }
@@ -218,11 +217,11 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
                 // everything else
 //                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
                     if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
-                        $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), $defaultvalue, $nullable);
+                        $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), "", "NULL");
                         $protectedColums[] = $key;
                     }
                     if (!is_array($value->getColumnType()) && $value->getColumnType() && !$value->isRelationType()) {
-                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), $defaultvalue, $nullable);
+                        $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), "", "NULL");
                         $protectedDatastoreColumns[] = $key;
                     }
 //                }
@@ -265,24 +264,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
         }
     }
 
-    private function getDefaultValueAndNullableForField ($field) {
-        
-        $nullable = "NULL";
 
-        // this doesn't work with the mysql strict-mode
-        /*if ($field->getMandatory()) {
-            $nullable = "NOT NULL";
-        }*/
-        
-        $defaultvalue = "";
-        if (method_exists($field, 'getDefaultValue') && $field->getDefaultValue() !== null) {
-            $defaultvalue = " DEFAULT '" . $field->getDefaultValue() . "'";
-        } else if (method_exists($field, 'getDefaultValue') && $field->getDefaultValue() === null and $nullable == "NULL"){
-            $defaultvalue = " DEFAULT NULL";
-        }
-        
-        return array($defaultvalue, $nullable);
-    }
     
     private function addModifyColumn ($table, $colName, $type, $default, $null) {
         

@@ -76,7 +76,7 @@ class Document_Page extends Document_PageSnippet {
     /**
      *
      */
-    public function update() {
+    protected function update() {
 
         parent::update();
 

@@ -35,6 +35,26 @@ var dndManager;
 
 Ext.onReady(function () {
 
+    // this sets the height of the body and html element to the current absolute height of the page
+    // this is because some pages set the body height, and the positioning is then done by "absolute"
+    // the problem is that ExtJS relies on the body height for DnD, so if the body isn't as high as the hole page
+    // dnd works only in the section covered by the specified body height
+    window.setTimeout(function () {
+        try {
+            var body = document.body,
+                html = document.documentElement;
+
+            var height = Math.max(body.scrollHeight, body.offsetHeight,
+                html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+            Ext.getBody().setHeight(height);
+            Ext.get(Ext.query("html")[0]).setHeight(height);
+        } catch (e) {
+            console.log(e);
+        }
+    }, 500);
+
+
     Ext.QuickTips.init();
 
     // i18n

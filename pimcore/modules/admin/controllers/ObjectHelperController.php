@@ -616,15 +616,16 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         $listClass = "Object_" . ucfirst($className) . "_List";
 
+        $conditionFilters = array("o_path LIKE '" . $folder->getFullPath() . "%'");
         if ($this->getParam("filter")) {
-            $conditionFilters = Object_Service::getFilterCondition($this->getParam("filter"), $class);
+            $conditionFilters[] = Object_Service::getFilterCondition($this->getParam("filter"), $class);
         }
         if ($this->getParam("condition")) {
-            $conditionFilters = " AND (" . $this->getParam("condition") . ")";
+            $conditionFilters[] = "(" . $this->getParam("condition") . ")";
         }
 
         $list = new $listClass();
-        $list->setCondition("o_path LIKE '" . $folder->getFullPath() . "%'" . $conditionFilters);
+        $list->setCondition(implode(" AND ", $conditionFilters));
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 
@@ -708,16 +709,19 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $folder = Object_Abstract::getById($this->getParam("folderId"));
         $class = Object_Class::getById($this->getParam("classId"));
 
+        $conditionFilters = array("o_path = ? OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'");
+
         if ($this->getParam("filter")) {
-            $conditionFilters = Object_Service::getFilterCondition($this->getParam("filter"), $class);
+            $conditionFilters[] = Object_Service::getFilterCondition($this->getParam("filter"), $class);
         }
         if ($this->getParam("condition")) {
-            $conditionFilters = " AND (" . $this->getParam("condition") . ")";
+            $conditionFilters[] = " AND (" . $this->getParam("condition") . ")";
         }
+
         $className = $class->getName();
         $listClass = "Object_" . ucfirst($className) . "_List";
         $list = new $listClass();
-        $list->setCondition("o_path = ? OR o_path LIKE '" . str_replace("//","/",$folder->getFullPath() . "/") . "%'" . $conditionFilters, array($folder->getFullPath()));
+        $list->setCondition(implode(" AND ", $conditionFilters), array($folder->getFullPath()));
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 

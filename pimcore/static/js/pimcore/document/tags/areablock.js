@@ -63,18 +63,20 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                 // edit button
                 try {
-                    editDiv = Ext.get(this.elements[i]).query(".pimcore_area_edit_button")[0];
-                    editButton = new Ext.Button({
-                        cls: "pimcore_block_button_plus",
-                        iconCls: "pimcore_icon_edit",
-                        handler: this.editmodeOpen.bind(this, this.elements[i])
-                    });
-                    editButton.render(editDiv);
+                    editDiv = Ext.get(this.elements[i]).query(".pimcore_area_edit_button_" + this.name)[0];
+                    if(editDiv) {
+                        editButton = new Ext.Button({
+                            cls: "pimcore_block_button_plus",
+                            iconCls: "pimcore_icon_edit",
+                            handler: this.editmodeOpen.bind(this, this.elements[i])
+                        });
+                        editButton.render(editDiv);
+                    }
                 } catch (e) {}
 
                 if(!limitReached) {
                     // plus button
-                    plusDiv = Ext.get(this.elements[i]).query(".pimcore_block_plus")[0];
+                    plusDiv = Ext.get(this.elements[i]).query(".pimcore_block_plus_" + this.name)[0];
                     plusButton = new Ext.Button({
                         cls: "pimcore_block_button_plus",
                         iconCls: "pimcore_icon_plus",
@@ -92,7 +94,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 }
 
                 // minus button
-                minusDiv = Ext.get(this.elements[i]).query(".pimcore_block_minus")[0];
+                minusDiv = Ext.get(this.elements[i]).query(".pimcore_block_minus_" + this.name)[0];
                 minusButton = new Ext.Button({
                     cls: "pimcore_block_button_minus",
                     iconCls: "pimcore_icon_minus",
@@ -103,7 +105,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 minusButton.render(minusDiv);
 
                 // up button
-                upDiv = Ext.get(this.elements[i]).query(".pimcore_block_up")[0];
+                upDiv = Ext.get(this.elements[i]).query(".pimcore_block_up_" + this.name)[0];
                 upButton = new Ext.Button({
                     cls: "pimcore_block_button_up",
                     iconCls: "pimcore_icon_up",
@@ -114,7 +116,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 upButton.render(upDiv);
 
                 // down button
-                downDiv = Ext.get(this.elements[i]).query(".pimcore_block_down")[0];
+                downDiv = Ext.get(this.elements[i]).query(".pimcore_block_down_" + this.name)[0];
                 downButton = new Ext.Button({
                     cls: "pimcore_block_button_down",
                     iconCls: "pimcore_icon_down",
@@ -130,7 +132,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     typebuttontext = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> " + typeNameMappings[this.elements[i].type].description
                 }
 
-                typeDiv = Ext.get(this.elements[i]).query(".pimcore_block_type")[0];
+                typeDiv = Ext.get(this.elements[i]).query(".pimcore_block_type_" + this.name)[0];
                 typeButton = new Ext.Button({
                     cls: "pimcore_block_button_type",
                     text: typebuttontext,
@@ -197,7 +199,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     setInherited: function ($super, inherited) {
-        var elements = Ext.get(this.id).query(".pimcore_block_buttons");
+        var elements = Ext.get(this.id).query(".pimcore_block_buttons_" + this.name);
         if(elements.length > 0) {
             for(var i=0; i<elements.length; i++) {
                 $super(inherited, Ext.get(elements[i]));
@@ -482,7 +484,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     editmodeOpen: function (element) {
 
-        var content = Ext.get(element).query(".pimcore_area_editmode")[0];
+        var content = Ext.get(element).query(".pimcore_area_editmode_" + this.name)[0];
 
         this.editmodeWindow = new Ext.Window({
             modal: true,
