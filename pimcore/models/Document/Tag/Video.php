@@ -444,7 +444,10 @@ class Document_Tag_Video extends Document_Tag
         }
 
         // this is to be backward compatible to <= v 1.4.7
-        $configurations = array_merge($clipConfig, $options["youtube"]);
+        $configurations = $clipConfig;
+        if(is_array($options["youtube"])){
+            $configurations = array_merge($clipConfig, $options["youtube"]);
+        }
 
         if(!empty($configurations)){
             foreach($configurations as $key=>$value){
