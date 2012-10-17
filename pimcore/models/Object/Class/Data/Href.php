@@ -324,7 +324,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = (int)$width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     /**
