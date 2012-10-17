@@ -207,6 +207,11 @@ class Document_Tag_Video extends Document_Tag
             $this->type = $data["type"];
         }
 
+        // this is to be backward compatible to <= v 1.4.7
+        if($data["id"]){
+            $data["path"] = $data["id"];
+        }
+
         $video = Asset::getByPath($data["path"]);
         if($video instanceof Asset_Video) {
             $this->id = $video->getId();
