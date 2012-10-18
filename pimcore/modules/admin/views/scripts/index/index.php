@@ -225,6 +225,7 @@
             "pimcore/element/notes.js",
             "pimcore/object/helpers/grid.js",
             "pimcore/object/helpers/gridConfigDialog.js",
+            "pimcore/object/helpers/classTree.js",
             "pimcore/object/helpers/gridTabAbstract.js",
             "pimcore/element/selector/object.js",
 
