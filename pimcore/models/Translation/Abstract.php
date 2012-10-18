@@ -168,9 +168,11 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      * @param bool $replaceExistingTranslations
      * @throws Exception
      */
-    public static function importTranslationsFromFile($file,$replaceExistingTranslations = true){
+    public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null){
         if(is_readable($file)){
-            $languages = Pimcore_Tool::getValidLanguages();
+            if(!$languages || empty($languages) || !is_array($languages)) {
+                $languages = Pimcore_Tool::getValidLanguages();
+            }
 
             //read import data
             $tmpData = file_get_contents($file);
