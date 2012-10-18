@@ -133,10 +133,10 @@ class Pimcore_Resource_Mysql {
             // set default adapter for Zend_Db_Table -> use getResource() because setDefaultAdapter()
             // accepts only instances of Zend_Db but $connection is an instance of Pimcore_Resource_Wrapper
             Zend_Db_Table::setDefaultAdapter($connection->getResource());
-
-            // register globally
-            Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
         }
+
+        // register globally
+        Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
     }
 
     /**
