@@ -150,7 +150,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
             enableKeyEvents: true,
             listeners: {
                 keyup: function (el) {
-                    el.setValue(this.data.poster)
+                    //el.setValue(this.data.poster)
                 }.bind(this)
             }
         });
