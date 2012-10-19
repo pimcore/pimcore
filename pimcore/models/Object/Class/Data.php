@@ -788,11 +788,11 @@ abstract class Object_Class_Data
      * @return int|null
      */
     public function getAsIntegerCast($number){
-        return strlen($number) === 0 ? null : (int)$number;
+        return strlen($number) === 0 ? "" : (int)$number;
     }
 
     public function getAsFloatCast($number){
-        return strlen($number) === 0 ? null : (float)$number;
+        return strlen($number) === 0 ? "" : (float)$number;
     }
 
 }
