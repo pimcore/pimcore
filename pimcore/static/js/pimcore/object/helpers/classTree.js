@@ -20,6 +20,7 @@ pimcore.object.helpers.classTree = Class.create({
             region: "center",
             enableDrag: true,
             enableDrop: false,
+            ddGroup: "columnconfigelement",
             autoScroll: true,
             rootVisible: false,
             root: {
