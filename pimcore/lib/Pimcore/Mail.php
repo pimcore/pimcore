@@ -84,6 +84,23 @@ class Pimcore_Mail extends Zend_Mail
     public static $forcePimcoreMode = false;
 
     /**
+     * if $hostUrl is set - this url well be used to create absolute urls
+     * otherwise it is determined automatically
+     * @see Pimcore_Helper_Mail::setAbsolutePaths()
+     *
+     * @var null
+     */
+    protected $hostUrl = null;
+
+    public function setHostUrl($url){
+        $this->hostUrl = $url;
+    }
+
+    public function getHostUrl(){
+        return $this->hostUrl;
+    }
+
+    /**
      * Creates a new Pimcore_Mail object (extends Zend_Mail)
      *
      * @param array $options
@@ -103,6 +120,9 @@ class Pimcore_Mail extends Zend_Mail
             }
             if ($options['subject']) {
                 $this->setSubject($options['subject']);
+            }
+            if ($options['hostUrl']) {
+                $this->setHostUrl($options['hostUrl']);
             }
         } else {
             if($charset === null) {
@@ -593,7 +613,7 @@ class Pimcore_Mail extends Zend_Mail
         //modifying the content e.g set absolute urls...
         if ($content) {
             $content = Pimcore_Helper_Mail::embedAndModifyCss($content, $this->getDocument());
-            $content = Pimcore_Helper_Mail::setAbsolutePaths($content, $this->getDocument());
+            $content = Pimcore_Helper_Mail::setAbsolutePaths($content, $this->getDocument(), $this->getHostUrl());
         }
 
         return $content;
