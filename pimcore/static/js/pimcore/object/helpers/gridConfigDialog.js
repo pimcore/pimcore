@@ -142,6 +142,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 },
 
                 enableDD:true,
+                ddGroup: "columnconfigelement",
                 id:'tree',
                 region:'east',
                 title: t('selected_grid_columns'),
