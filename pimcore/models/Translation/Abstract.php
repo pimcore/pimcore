@@ -43,7 +43,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      * @param string $key
      */
     public function setKey($key) {
-        $this->key = mb_strtolower($key);
+        $this->key = self::getValidTranslationKey($key);
     }
 
     /**
@@ -98,6 +98,15 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
     }
 
     /**
+     * @static
+     * @param $key
+     * @return string
+     */
+    protected static function getValidTranslationKey($key){
+        return mb_strtolower($key);
+    }
+
+    /**
       * @static
       * @param $id - translation key
       * @param bool $create - creates an empty translation entry if the key doesn't exists
@@ -109,7 +118,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
          $translation = new static();
 
          try {
-             $translation->getResource()->getByKey($id);
+             $translation->getResource()->getByKey(self::getValidTranslationKey($id));
          } catch (Exception $e) {
              if (!$create) {
                  throw new Exception($e->getMessage());
