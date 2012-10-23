@@ -93,7 +93,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
     /**
      * @return void
      */
-    public function clearDependedCache () {
+    public static function clearDependedCache () {
         Pimcore_Model_Cache::clearTags(array("translator","translate"));
     }
 
