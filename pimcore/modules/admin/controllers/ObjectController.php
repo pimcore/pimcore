@@ -1067,7 +1067,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     {
 
         if($this->getParam("language")) {
-            $this->setLanguage($this->getParam("language"));
+            $this->setLanguage($this->getParam("language"), true);
         }
 
         if ($this->getParam("data")) {
@@ -1474,5 +1474,4 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
         return $object;
     }
-
 }

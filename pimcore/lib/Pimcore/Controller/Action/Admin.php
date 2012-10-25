@@ -159,7 +159,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         return $this->language;
     }
 
-    public function setLanguage($language) {
+    public function setLanguage($language, $useFrontendLanguages = false) {
 
         if (Zend_Locale::isLocale($language, true)) {
             $locale = new Zend_Locale($language);
@@ -168,20 +168,29 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
             $locale = new Zend_Locale("en");
         }
 
-        // check if given language is installed if not => skip
-        if(!in_array((string) $locale, Pimcore_Tool_Admin::getLanguages())) {
-            return;
+        if($useFrontendLanguages) {
+            // check if given language is a valid language
+            if(!Pimcore_Tool::isValidLanguage($locale)) {
+                return;
+            }
+
+            Zend_Registry::set("Zend_Locale", $locale);
+        } else {
+            // check if given language is installed if not => skip
+            if(!in_array((string) $locale, Pimcore_Tool_Admin::getLanguages())) {
+                return;
+            }
+
+            Zend_Registry::set("Zend_Locale", $locale);
+            if(Zend_Registry::isRegistered("Zend_Translate")) {
+                $t = Zend_Registry::get("Zend_Translate");
+                $t->setLocale($locale);
+            }
+
         }
 
         $this->language = (string) $locale;
         $this->view->language = $this->getLanguage();
-
-        Zend_Registry::set("Zend_Locale", $locale);
-
-        if(Zend_Registry::isRegistered("Zend_Translate")) {
-            $t = Zend_Registry::get("Zend_Translate");
-            $t->setLocale($locale);
-        }
 
     }
 
