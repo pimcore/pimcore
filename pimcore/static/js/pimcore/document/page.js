@@ -159,6 +159,37 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         }
 
         return parameters;
+    },
+
+    createScreenshot: function () {
+        pimcore.helpers.urlToCanvas("/?pimcore_document=" + this.id, function (canvas) {
+
+            // resize canvas
+            var tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+
+            tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+
+            // resize to width 400px
+            canvas.width = tempCanvas.width / 3.2;
+            canvas.height = tempCanvas.height / 3.2;
+
+            // draw temp canvas back into canvas, scaled as needed
+            canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, canvas.width, canvas.height);
+            delete tempCanvas;
+
+            var data = canvas.toDataURL('image/jpeg', 85);
+
+            Ext.Ajax.request({
+                url: '/admin/page/upload-screenshot',
+                method: "post",
+                params: {
+                    id: this.id,
+                    data: data
+                }
+            });
+        }.bind(this));
     }
 
 });

@@ -132,6 +132,7 @@
 
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",
+            "lib/html2canvas.min.js",
         );
 
         // browser specific lib includes

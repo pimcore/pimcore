@@ -1073,3 +1073,31 @@ pimcore.helpers.openDocumentByPathDialog = function () {
         }
     });
 }
+
+pimcore.helpers.urlToCanvas = function (url, callback) {
+    var date = new Date();
+    var frameId = "screenshotIframe_" + date.getTime();
+
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("name", frameId);
+    iframe.setAttribute("id", frameId);
+    iframe.setAttribute("src", url);
+    iframe.setAttribute("style","width:1280px; position:absolute; left:-10000; top:-10000px;");
+    iframe.onload = function () {
+        window.setTimeout(function () {
+            html2canvas([window[frameId].document.body], {
+                onrendered: function (canvas) {
+                    document.body.removeChild(iframe);
+                    if(typeof callback == "function") {
+                        callback(canvas);
+                    }
+                }
+            })
+        }, 400);
+    }
+
+    document.body.appendChild(iframe);
+}
+
+
+
