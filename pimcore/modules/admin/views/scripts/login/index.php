@@ -138,6 +138,10 @@ $config = Pimcore_Config::getSystemConfig();
     window.setTimeout(function () {
         document.getElementById("content").className = "animated bounceInDown";
     }, 1000);
+
+    window.setTimeout(function () {
+        document.getElementById("username").focus();
+    }, 2000);
 </script>
 
 <?php if ($config->general->loginscreenimageservice) { ?>
