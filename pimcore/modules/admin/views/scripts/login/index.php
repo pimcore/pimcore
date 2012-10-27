@@ -72,7 +72,7 @@ $config = Pimcore_Config::getSystemConfig();
 <img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
 
 <div id="vcenter">
-    <div id="content">
+    <div id="content" class="hidden">
 
         <?php if ($this->error) { ?>
             <div class="error">
@@ -135,6 +135,9 @@ $config = Pimcore_Config::getSystemConfig();
 
 <script type="text/javascript">
     document.getElementById("username").focus();
+    window.setTimeout(function () {
+        document.getElementById("content").className = "animated bounceInDown";
+    }, 1000);
 </script>
 
 <?php if ($config->general->loginscreenimageservice) { ?>
