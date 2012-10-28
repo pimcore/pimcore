@@ -35,6 +35,9 @@ pimcore.settings.fileexplorer.file = Class.create({
         var response = Ext.decode(response.responseText);
         if(response.success) {
 
+            // DISABLE TEMPORARY
+            return;
+
             var toolbarItems = [];
             if(response.writeable) {
                 toolbarItems.push({
