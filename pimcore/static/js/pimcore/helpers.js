@@ -1113,6 +1113,12 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
         window.setTimeout(function (node) {
             var el = Ext.get(node.getUI().getEl());
             el.on("mouseenter", function (node) {
+
+                // only display thumbnails when dnd is not active
+                if(Ext.dd.DragDropMgr.dragCurrent) {
+                    return;
+                }
+
                 var thumbnail = node.attributes.thumbnail;
                 var position = (this.position == "right") ? "left" : "right";
                 if(thumbnail) {
