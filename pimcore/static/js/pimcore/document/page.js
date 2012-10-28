@@ -162,7 +162,11 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
     },
 
     createScreenshot: function () {
-        pimcore.helpers.urlToCanvas("/?pimcore_document=" + this.id, function (canvas) {
+
+        var date = new Date();
+        var path = this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime();
+
+        pimcore.helpers.urlToCanvas(path, function (canvas) {
 
             // resize canvas
             var tempCanvas = document.createElement('canvas');
