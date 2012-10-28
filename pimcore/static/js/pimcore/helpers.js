@@ -1074,10 +1074,19 @@ pimcore.helpers.openDocumentByPathDialog = function () {
     });
 }
 
+pimcore.helpers.isCanvasSupported = function () {
+    var elem = document.createElement('canvas');
+    return !!(elem.getContext && elem.getContext('2d'));
+}
+
 pimcore.helpers.urlToCanvas = function (url, callback) {
+
+    if(!pimcore.helpers.isCanvasSupported()) {
+        return;
+    }
+
     var date = new Date();
     var frameId = "screenshotIframe_" + date.getTime();
-
     var iframe = document.createElement("iframe");
     iframe.setAttribute("name", frameId);
     iframe.setAttribute("id", frameId);
