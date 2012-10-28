@@ -951,7 +951,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             $thumbnailFile = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $childDocument->getId() . ".jpg";
             if(file_exists($thumbnailFile)) {
                 $thumbnailPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $thumbnailFile);
-                //$tmpDocument["qtipCfg"]["text"] .= '<br /><img src="' . $thumbnailPath . '" width="400" />';
+                $tmpDocument["thumbnail"] = $thumbnailPath;
             }
         }
 
