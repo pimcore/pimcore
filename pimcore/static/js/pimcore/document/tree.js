@@ -19,6 +19,8 @@ pimcore.document.tree = Class.create({
 
     initialize: function(config) {
 
+        this.position = "left";
+
         if (!config) {
             this.config = {
                 rootId: 1,
@@ -113,31 +115,7 @@ pimcore.document.tree = Class.create({
             this.tree.loadMask.enable();
         }.bind(this));
 
-        this.tree.on("append", function (tree, parent, node, index) {
-            window.setTimeout(function () {
-                var el = Ext.get(this.getUI().getEl());
-                el.on("mouseenter", function () {
-                    var thumbnail = this.attributes.thumbnail;
-                    if(thumbnail) {
-                        var container = Ext.get("pimcore_document_preview");
-                        var imageHtml = '<img src="' + thumbnail + '" />';
-                        if(container) {
-                            container.update(imageHtml);
-                            container.show();
-                        } else {
-                            Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_document_preview">' + imageHtml + '</div>');
-                        }
-                    }
-                }.bind(this));
-
-                el.on("mouseleave", function () {
-                    var container = Ext.get("pimcore_document_preview");
-                    if(container) {
-                        container.hide();
-                    }
-                }.bind(this));
-            }.bind(node), 200);
-        });
+        this.tree.on("append", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.doLayout();
