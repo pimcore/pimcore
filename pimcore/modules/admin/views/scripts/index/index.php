@@ -85,7 +85,7 @@
 
             // library
             "lib/prototype-light.js",
-            "lib/jquery-1.8.2.min.js",
+            "lib/jquery.min.js",
             "lib/jquery.color.js",
             $scriptExtAdapter,
 
