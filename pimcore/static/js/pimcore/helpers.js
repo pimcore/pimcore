@@ -1102,7 +1102,7 @@ pimcore.helpers.urlToCanvas = function (url, callback) {
                     }
                 }
             })
-        }, 400);
+        }, 2000);
     }
 
     document.body.appendChild(iframe);
