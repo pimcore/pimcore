@@ -23,6 +23,8 @@ class Pimcore_Tool_Transliteration {
      */
     public static function toASCII ($value, $language = null) {
 
+        // the transliteration is based on the locale
+        // äüö is in EN auo in DE  aeueoe
         if(!$language) {
             if(Zend_Registry::isRegistered("Zend_Locale")) {
                 $locale = Zend_Registry::get("Zend_Locale");
