@@ -10,7 +10,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
 {
     /** @var $proxy OnlineShop_Framework_FilterService_AbstractFilterType*/
     private $proxy;
-    protected $field;
+    protected  $field;
 
 
     function __construct($view, $script,$config)
@@ -22,6 +22,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
         if (!$config->field){
             throw new Exception("wrong configuration for " .  __CLASS__ . ": config setting field is missing!");
         }
+
         $this->proxy = new $config->proxyclass($view,$script);
         $this->field= $config->field;
     }
@@ -33,7 +34,6 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
     {
         $filterDefinition->field=$this->field;
         return $this->proxy->getFilterFrontend($filterDefinition,$productList,$currentFilter);
-
     }
 
     public function addCondition(
@@ -42,7 +42,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
         $isPrecondition = false
     ) {
         $filterDefinition->field=$this->field;
-        $this->proxy->addCondition($filterDefinition,$productList,$currentFilter,$params,$isPrecondition);
+        return $this->proxy->addCondition($filterDefinition,$productList,$currentFilter,$params,$isPrecondition);
     }
 
 
