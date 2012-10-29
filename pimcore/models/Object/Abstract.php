@@ -568,6 +568,9 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         }
 
         Tool_Lock::release($this->getCacheTag());
+
+        // empty object cache
+        $this->clearDependedCache();
     }
     
     
@@ -647,15 +650,9 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         if($this->_oldPath){
             $this->getResource()->updateChildsPaths($this->_oldPath);
         }
-        
-        
-        // empty object cache
-        $this->clearDependedCache();
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), $this);
-
-        
     }
 
 
