@@ -401,7 +401,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             throw $e;
         }
 
-        $this->clearDependedCache();
+        $this->clearDependentCache();
 
         Tool_Lock::release($this->getCacheTag());
     }
@@ -724,7 +724,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $this->getResource()->delete();
 
         // empty object cache
-        $this->clearDependedCache();
+        $this->clearDependentCache();
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), null);
@@ -732,7 +732,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         Pimcore_API_Plugin_Broker::getInstance()->postDeleteAsset($this);
     }
 
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         try {
             Pimcore_Model_Cache::clearTag("asset_" . $this->getId());
         }

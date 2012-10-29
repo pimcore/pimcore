@@ -120,7 +120,7 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
 
         $this->db->update("sites", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**
@@ -131,6 +131,6 @@ class Site_Resource extends Pimcore_Model_Resource_Abstract {
     public function delete() {
         $this->db->delete("sites", $this->db->quoteInto("id = ?", $this->model->getId()));
         
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 }

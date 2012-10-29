@@ -66,7 +66,7 @@ abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abst
             }
         }
 
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
 
@@ -78,7 +78,7 @@ abstract class Translation_Abstract_Resource extends Pimcore_Model_Resource_Abst
     public function delete() {
         $this->db->delete(static::getTableName() , $this->db->quoteInto("`key`= ?", $this->model->getKey()));
 
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**

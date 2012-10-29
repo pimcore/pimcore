@@ -191,7 +191,7 @@ class Redirect extends Pimcore_Model_Abstract {
     /**
      * @return void
      */
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         
         // this is mostly called in Redirect_Resource not here
         try {
