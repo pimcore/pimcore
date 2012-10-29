@@ -229,7 +229,7 @@ class Site extends Pimcore_Model_Abstract {
     /**
      * @return void
      */
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         
         // this is mostly called in Site_Resource not here
         try {

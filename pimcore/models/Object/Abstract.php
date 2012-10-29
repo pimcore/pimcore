@@ -515,7 +515,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         $this->getResource()->delete();
         
         // empty object cache
-        $this->clearDependedCache();
+        $this->clearDependentCache();
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), null);
@@ -570,7 +570,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         Tool_Lock::release($this->getCacheTag());
 
         // empty object cache
-        $this->clearDependedCache();
+        $this->clearDependentCache();
     }
     
     
@@ -656,7 +656,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     }
 
 
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         try {
             Pimcore_Model_Cache::clearTag("object_" . $this->getO_Id());
         }
