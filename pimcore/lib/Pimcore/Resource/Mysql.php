@@ -150,6 +150,7 @@ class Pimcore_Resource_Mysql {
 
                 if($db instanceof Pimcore_Resource_Wrapper) {
                     $db->closeConnection();
+                    $db->closeDDLResource();
                 }
 
                 // set it explicit to null to be sure it can be removed by the GC
