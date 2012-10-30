@@ -51,6 +51,7 @@ class Pimcore_Resource_Wrapper {
      */
     public function closeDDLResource() {
         if($this->DDLResource) {
+            Logger::debug("closing mysql connection with ID: " . $this->DDLResource->fetchOne("SELECT CONNECTION_ID()"));
             $this->DDLResource->closeConnection();
             $this->DDLResource = null;
         }
