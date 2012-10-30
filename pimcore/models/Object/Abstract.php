@@ -542,7 +542,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             $hideUnpublishedBackup = self::getHideUnpublished();
             self::setHideUnpublished(false);
 
-            if(!Pimcore_Tool::isValidKey($this->getKey())){
+            if(!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1){
                 throw new Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
             }
 
