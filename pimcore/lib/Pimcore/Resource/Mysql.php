@@ -149,6 +149,7 @@ class Pimcore_Resource_Mysql {
                 $db = Zend_Registry::get("Pimcore_Resource_Mysql");
 
                 if($db instanceof Pimcore_Resource_Wrapper) {
+                    Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
                     $db->closeConnection();
                     $db->closeDDLResource();
                 }
