@@ -173,7 +173,7 @@ class Pimcore_Resource_Mysql {
      * @param string $method
      * @param array $args
      */
-    public static function startCapturingDefinitionModifications ($method, $args) {
+    public static function startCapturingDefinitionModifications ($connection, $method, $args) {
         if($method == "query") {
             if(self::isDDLQuery($args[0])) {
                 self::logDefinitionModification($args[0]);
@@ -182,8 +182,8 @@ class Pimcore_Resource_Mysql {
             $tablesToCheck = array("classes","users_permission_definitions");
 
             if(in_array($args[0], $tablesToCheck)) {
-                self::$_logProfilerWasEnabled = self::get()->getProfiler()->getEnabled();
-                self::get()->getProfiler()->setEnabled(true);
+                self::$_logProfilerWasEnabled = $connection->getProfiler()->getEnabled();
+                $connection->getProfiler()->setEnabled(true);
                 self::$_logCaptureActive = true;
             }
         }
@@ -193,25 +193,21 @@ class Pimcore_Resource_Mysql {
      * @static
      *
      */
-    public static function stopCapturingDefinitionModifications () {
+    public static function stopCapturingDefinitionModifications ($connection) {
 
         if(self::$_logCaptureActive) {
-            $search = array();
-            $replace = array();
-            $query = self::get()->getProfiler()->getLastQueryProfile()->getQuery();
-            $params = self::get()->getProfiler()->getLastQueryProfile()->getQueryParams();
+            $query = $connection->getProfiler()->getLastQueryProfile()->getQuery();
+            $params = $connection->getProfiler()->getLastQueryProfile()->getQueryParams();
 
             // @TODO named parameters
             if(!empty($params)) {
-                for ($i=0; $i<count($params); $i++) {
-                    $search[] = "?";
-                    $replace[] = self::get()->quote($params[$i]);
+                for ($i=1; $i<count($params); $i++) {
+                    $query = substr_replace($query, $connection->quote($params[$i]), strpos($query, "?"), 1);
                 }
-                $query = str_replace($search, $replace, $query);
             }
 
             self::logDefinitionModification($query);
-            self::get()->getProfiler()->setEnabled(self::$_logProfilerWasEnabled);
+            $connection->getProfiler()->setEnabled(self::$_logProfilerWasEnabled);
         }
 
         self::$_logCaptureActive = false;
