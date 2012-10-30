@@ -47,6 +47,16 @@ class Pimcore_Resource_Wrapper {
     }
 
     /**
+     *
+     */
+    public function closeDDLResource() {
+        if($this->DDLResource) {
+            $this->DDLResource->closeConnection();
+            $this->DDLResource = null;
+        }
+    }
+
+    /**
      * @param $resource
      */
     public function __construct($resource) {
@@ -94,25 +104,27 @@ class Pimcore_Resource_Wrapper {
      */
     public function callResourceMethod ($method, $args) {
 
+        $isDDLQuery = false;
+        $resource = $this->getResource();
+        if($method == "query" && Pimcore_Resource::isDDLQuery($args[0])) {
+            $resource = $this->getDDLResource();
+            $isDDLQuery = true;
+        }
+
         $capture = false;
 
         if(Pimcore::inAdmin()) {
             $methodsToCheck = array("query","update","delete","insert");
             if(in_array($method, $methodsToCheck)) {
                 $capture = true;
-                Pimcore_Resource::startCapturingDefinitionModifications($method, $args);
+                Pimcore_Resource::startCapturingDefinitionModifications($resource, $method, $args);
             }
-        }
-
-        $resource = $this->getResource();
-        if($method == "query" && Pimcore_Resource::isDDLQuery($args[0])) {
-            $resource = $this->getDDLResource();
         }
 
         $r = call_user_func_array(array($resource, $method), $args);
 
         if(Pimcore::inAdmin() && $capture) {
-            Pimcore_Resource::stopCapturingDefinitionModifications();
+            Pimcore_Resource::stopCapturingDefinitionModifications($resource);
         }
 
         return $r;
