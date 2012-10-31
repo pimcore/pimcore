@@ -101,6 +101,13 @@
                 <column name="technologies" interpreter="OnlineShop_Framework_IndexService_Interpreter_DefaultObjects" />
 
 
+                <column name="metaattributes" type="varchar(255)"  getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMultiselect">
+                    <config>
+                        <source fieldname="al" forceBool="true"/>
+                        <source fieldname="ok" forceBool="true"/>
+                    </config>
+                </column>
+
                 <!-- columns only for similarity calculation - are not shown in default column selector fields -->
                 <column name="simularity_color" fieldname="color" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_Soundex" />
                 <column name="simularity_gender" fieldname="gender" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_Soundex" />

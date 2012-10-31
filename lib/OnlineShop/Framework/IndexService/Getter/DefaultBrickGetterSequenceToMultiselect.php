@@ -35,7 +35,7 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMulti
                 if(method_exists($object, $fieldGetter)) {
                     $value = $object->$fieldGetter();
                     if($value) {
-                        if(is_bool($value)) {
+                        if(is_bool($value) || $source->forceBool == "true") {
                             $values[] = $source->fieldname;
                         } else {
                             $values[] = $value;
