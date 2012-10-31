@@ -106,7 +106,7 @@ class OnlineShop_Framework_IndexService {
             foreach($searchIndexColums as $c) {
                 $columnNames[] = $this->db->quoteIdentifier($c);
             }
-            $this->dbexec('ALTER TABLE `' . self::TABLENAME . '` ADD FULLTEXT INDEX search (' . implode(",", $columnNames) . ')');
+            $this->dbexec('ALTER TABLE `' . self::TABLENAME . '` ADD FULLTEXT INDEX search (' . implode(",", $columnNames) . ');');
         }
 
 
