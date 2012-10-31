@@ -23,7 +23,7 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMulti
                     $fieldGetter = "get" . ucfirst($source->fieldname);
                     $value = $brick->$fieldGetter();
 
-                    if($source->invert = "true") {
+                    if($source->invert == "true") {
                         $value = !$value;
                     }
 
@@ -40,7 +40,7 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMulti
                 if(method_exists($object, $fieldGetter)) {
                     $value = $object->$fieldGetter();
 
-                    if($source->invert = "true") {
+                    if($source->invert == "true") {
                         $value = !$value;
                     }
 
