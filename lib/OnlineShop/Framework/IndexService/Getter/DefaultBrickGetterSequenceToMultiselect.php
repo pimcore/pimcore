@@ -22,8 +22,13 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMulti
                 if($brick) {
                     $fieldGetter = "get" . ucfirst($source->fieldname);
                     $value = $brick->$fieldGetter();
+
+                    if($source->invert = "true") {
+                        $value = !$value;
+                    }
+
                     if($value) {
-                        if(is_bool($value)) {
+                        if(is_bool($value) || $source->forceBool == "true") {
                             $values[] = $source->fieldname;
                         } else {
                             $values[] = $value;
@@ -34,6 +39,11 @@ class OnlineShop_Framework_IndexService_Getter_DefaultBrickGetterSequenceToMulti
                 $fieldGetter = "get" . ucfirst($source->fieldname);
                 if(method_exists($object, $fieldGetter)) {
                     $value = $object->$fieldGetter();
+
+                    if($source->invert = "true") {
+                        $value = !$value;
+                    }
+
                     if($value) {
                         if(is_bool($value) || $source->forceBool == "true") {
                             $values[] = $source->fieldname;
