@@ -193,7 +193,7 @@ class Pimcore_Placeholder
                     //try to create the json config object
                     try {
                         $configJsonString = str_replace("&quot;", '"', $placeholderConfigString);
-                        $placeholderConfig = new Zend_Config_Json($configJsonString);
+                        $placeholderConfig = new Zend_Config_Json($configJsonString,null,array('ignoreconstants' => true));
                     } catch (Exception $e) {
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                     }
