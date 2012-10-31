@@ -348,6 +348,13 @@ class Pimcore_Model_Cache {
         // remove items which are too much, and cannot be added to the cache anymore
         array_splice(self::$saveStack,self::$maxWriteToCacheItems);
     }
+
+    /**
+     *
+     */
+    public function clearSaveStack() {
+        self::$saveStack = array();
+    }
     
     /**
      * Write the stack to the cache
