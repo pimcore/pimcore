@@ -616,7 +616,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         $listClass = "Object_" . ucfirst($className) . "_List";
 
-        if(empty($folder)) {
+        if(!empty($folder)) {
             $conditionFilters = array("o_path LIKE '" . $folder->getFullPath() . "%'");
         } else {
             $conditionFilters = array();
