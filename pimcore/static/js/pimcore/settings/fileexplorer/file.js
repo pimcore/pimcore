@@ -44,34 +44,10 @@ pimcore.settings.fileexplorer.file = Class.create({
                 });
             }
 
-            this.editorId = "codeeditor_" + uniqid();
-            this.editorMode = "text";
-            if(response.path.match(/\.php$/)) {
-                this.editorMode = "php";
-            } else if (response.path.match(/\.js$/)) {
-                this.editorMode = "javascript";
-            } else if (response.path.match(/\.css$/)) {
-                this.editorMode = "css";
-            }  else if (response.path.match(/\.less$/)) {
-                this.editorMode = "less";
-            } else if (response.path.match(/\.scss$/)) {
-                this.editorMode = "scss";
-            } else if (response.path.match(/\.html$/)) {
-                this.editorMode = "html";
-            } else if (response.path.match(/\.coffee$/)) {
-                this.editorMode = "coffee";
-            } else if (response.path.match(/\.json$/)) {
-                this.editorMode = "json";
-            } else if (response.path.match(/\.sh$/)) {
-                this.editorMode = "sh";
-            } else if (response.path.match(/\.sql$/)) {
-                this.editorMode = "sql";
-            } else if (response.path.match(/\.svg$/)) {
-                this.editorMode = "svg";
-            } else if (response.path.match(/\.xml$/)) {
-                this.editorMode = "xml";
-            }
-
+            this.textarea = new Ext.form.TextArea({
+                value: response.content,
+                style: "font-family:courier"
+            });
 
             this.editor = new Ext.Panel({
                 title: response.path,
@@ -79,26 +55,11 @@ pimcore.settings.fileexplorer.file = Class.create({
                 layout: "fit",
                 tbar: toolbarItems,
                 bodyStyle: "position:relative;",
-                html: '<pre id="' + this.editorId + '"></pre>'
+                items: [this.textarea]
             });
 
             this.editor.on("beforedestroy", function () {
                 delete this.explorer.openfiles[this.path];
-            }.bind(this));
-
-            this.editor.on("resize", function (el, width, height) {
-                if(this.aceEditor) {
-                    Ext.get(this.editorId).setWidth(width);
-                    Ext.get(this.editorId).setHeight(height-12);
-                    this.aceEditor.resize();
-                }
-            }.bind(this));
-
-            this.editor.on("afterrender", function () {
-                this.aceEditor = ace.edit(this.editorId);
-                this.aceEditor.setTheme("ace/theme/chrome");
-                this.aceEditor.getSession().setMode("ace/mode/" + this.editorMode);
-                this.aceEditor.getSession().setValue(response.content);
             }.bind(this));
 
             this.explorer.editorPanel.add(this.editor);
@@ -108,7 +69,7 @@ pimcore.settings.fileexplorer.file = Class.create({
     },
 
     saveFile: function (path) {
-        var content = this.aceEditor.getSession().getValue();
+        var content = this.textarea.getValue();
         Ext.Ajax.request({
             method: "post",
             url: "/admin/misc/fileexplorer-content-save",

@@ -17,4 +17,25 @@
 
 class Translation_Admin extends Translation_Abstract {
 
+    /**
+     * Static Helper to get the translation of the current logged in user
+     *
+     * @static
+     * @param $id - translation key
+     * @param bool $create - creates an empty translation entry if the key doesn't exists
+     * @param bool $returnIdIfEmpty - returns $id if no translation is available
+     * @return string
+     * @throws Exception
+     */
+    public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false)
+    {
+        try {
+            $language = Pimcore_Tool_Authentication::authenticateSession()->getLanguage();
+        } catch (Exception $e) {
+            throw new Exception("Couldn't determine current language.");
+        }
+
+        return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
+    }
+
 }

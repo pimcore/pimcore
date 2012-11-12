@@ -782,4 +782,17 @@ abstract class Object_Class_Data
         return $code;
     }
 
+    /**
+     * @param $number
+     *
+     * @return int|null
+     */
+    public function getAsIntegerCast($number){
+        return strlen($number) === 0 ? "" : (int)$number;
+    }
+
+    public function getAsFloatCast($number){
+        return strlen($number) === 0 ? "" : (float)$number;
+    }
+
 }

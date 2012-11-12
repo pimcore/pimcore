@@ -208,7 +208,9 @@ abstract class Object_List_Concrete extends Object_List {
         }
 
         Object_Objectbrick_Definition::getByKey($type);
-        $this->objectBrickConfigs[] = $type;  ;
+        if (!in_array($type, $this->objectBrickConfigs)) {
+            $this->objectBrickConfigs[] = $type;
+        }
     }
 
     /**

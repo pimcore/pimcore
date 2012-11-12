@@ -18,7 +18,9 @@ pimcore.object.tree = Class.create({
     treeDataUrl: "/admin/object/tree-get-childs-by-id/",
 
     initialize: function(config) {
-        
+
+        this.position = "left";
+
         if (!config) {
             this.config = {
                 rootId: 1,

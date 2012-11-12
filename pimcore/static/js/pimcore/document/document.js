@@ -134,6 +134,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         var rdata = Ext.decode(response.responseText);
                         if (rdata && rdata.success) {
                             pimcore.helpers.showNotification(t("success"), t("successful_saved_document"), "success");
+                            this.resetChanges();
+
+                            if(typeof this["createScreenshot"] == "function") {
+                                this.createScreenshot();
+                            }
                         }
                         else {
                             pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error",t(rdata.message));
@@ -152,8 +157,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 }.bind(this)
             });
         }
-        
-        this.resetChanges();
     },
     
     

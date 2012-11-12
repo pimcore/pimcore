@@ -1073,3 +1073,83 @@ pimcore.helpers.openDocumentByPathDialog = function () {
         }
     });
 }
+
+pimcore.helpers.isCanvasSupported = function () {
+    var elem = document.createElement('canvas');
+    return !!(elem.getContext && elem.getContext('2d'));
+}
+
+pimcore.helpers.urlToCanvas = function (url, callback) {
+
+    if(!pimcore.helpers.isCanvasSupported()) {
+        return;
+    }
+
+    var date = new Date();
+    var frameId = "screenshotIframe_" + date.getTime();
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("name", frameId);
+    iframe.setAttribute("id", frameId);
+    iframe.setAttribute("src", url);
+    iframe.setAttribute("style","width:1280px; position:absolute; left:-10000; top:-10000px;");
+    iframe.onload = function () {
+        window.setTimeout(function () {
+            html2canvas([window[frameId].document.body], {
+                onrendered: function (canvas) {
+                    document.body.removeChild(iframe);
+                    if(typeof callback == "function") {
+                        callback(canvas);
+                    }
+                }
+            })
+        }, 2000);
+    }
+
+    document.body.appendChild(iframe);
+}
+
+pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
+    if(typeof node.attributes["thumbnail"] != "undefined") {
+        window.setTimeout(function (node) {
+            var el = Ext.get(node.getUI().getEl());
+            el.on("mouseenter", function (node) {
+
+                // only display thumbnails when dnd is not active
+                if(Ext.dd.DragDropMgr.dragCurrent) {
+                    return;
+                }
+
+                var thumbnail = node.attributes.thumbnail;
+                var position = (this.position == "right") ? "left" : "right";
+                if(thumbnail) {
+                    var container = Ext.get("pimcore_tree_preview");
+                    var imageHtml = '<img src="' + thumbnail + '" />';
+                    var styles = "";
+                    if(position == "left") {
+                        styles += "left:5px; right:auto; padding:10px 10px 10px 0";
+                    } else {
+                        styles += "right:5px; left:auto; padding:10px 0 10px 10px";
+                    }
+
+                    if(container) {
+                        container.update(imageHtml);
+                        container.show();
+                        container.applyStyles(styles);
+                    } else {
+                        Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview" style="' + styles + '">' + imageHtml + '</div>');
+                    }
+                }
+            }.bind(this, node));
+
+            el.on("mouseleave", function () {
+                var container = Ext.get("pimcore_tree_preview");
+                if(container) {
+                    container.hide();
+                }
+            }.bind(this));
+        }.bind(this, node), 200);
+    }
+}
+
+
+

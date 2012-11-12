@@ -464,7 +464,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function setHeight($height)
     {
-        $this->height = (int)$height;
+        $this->height = $this->getAsIntegerCast($height);
     }
 
     public function getHeight()
@@ -514,7 +514,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function setWidth($width)
     {
-        $this->width = (int)$width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     public function getWidth()

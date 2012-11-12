@@ -203,7 +203,11 @@ class Document_Tag_Areablock extends Document_Tag {
             if(is_file($view)) {
                 $editmode = $this->getView()->editmode;
 
-                echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
+                if(method_exists($actionObject,"getBrickHtmlTagOpen")) {
+                    echo $actionObject->getBrickHtmlTagOpen($this);
+                }else{
+                    echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
+                }
 
                 if(is_file($edit) && $editmode) {
                     echo '<div class="pimcore_area_edit_button_' . $this->getName() . ' pimcore_area_edit_button"></div>';
@@ -224,7 +228,11 @@ class Document_Tag_Areablock extends Document_Tag {
                     echo '</div>';
                 }
 
-                echo '</div>';
+                if(method_exists($actionObject,"getBrickHtmlTagClose")) {
+                    echo $actionObject->getBrickHtmlTagClose($this);
+                }else{
+                    echo '</div>';
+                }
 
                 if(is_object($actionObject) && method_exists($actionObject,"postRenderAction")) {
                     $actionObject->postRenderAction();
@@ -272,6 +280,20 @@ class Document_Tag_Areablock extends Document_Tag {
         Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
+    protected function getToolBarDefaultConfig () {
+        return array(
+            "areablock_toolbar" => array(
+                "title" => "",
+                "width" => 160,
+                "x" => 20,
+                "y" => 50,
+                "xAlign" => "left",
+                "buttonWidth" => 148,
+                "buttonMaxCharacters" => 20
+            )
+        );
+    }
+
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
@@ -289,9 +311,11 @@ class Document_Tag_Areablock extends Document_Tag {
         else {
             $data = $this->getData();
         }
-        
+
+        $configOptions = array_merge($this->getToolBarDefaultConfig(), $this->getOptions());
+
         $options = array(
-            "options" => $this->getOptions(),
+            "options" => $configOptions,
             "data" => $data,
             "name" => $this->getName(),
             "id" => "pimcore_editable_" . $this->getName(),

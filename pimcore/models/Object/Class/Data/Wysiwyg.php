@@ -74,7 +74,7 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = (int)$width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     /**
@@ -82,7 +82,7 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = (int)$height;
+        $this->height = $this->getAsIntegerCast($height);
     }
 
 

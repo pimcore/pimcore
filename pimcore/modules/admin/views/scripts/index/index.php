@@ -85,7 +85,7 @@
 
             // library
             "lib/prototype-light.js",
-            "lib/jquery-1.7.1.min.js",
+            "lib/jquery.min.js",
             "lib/jquery.color.js",
             $scriptExtAdapter,
 
@@ -132,19 +132,8 @@
 
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",
+            "lib/html2canvas.min.js",
         );
-
-        // browser specific lib includes
-        $browser = new Pimcore_Browser();
-        $browserVersion = (int) $browser->getVersion();
-        $platform = $browser->getPlatform();
-
-
-        // ace editor (code editor in server file explorer) is only for => IE9, FF, Chrome
-        if ( ($browser->getBrowser() == Pimcore_Browser::BROWSER_IE && $browserVersion >= 9) || $browser->getBrowser() != Pimcore_Browser::BROWSER_IE) {
-            $scriptLibs[] = "lib/ace/ace-noconflict.js";
-        }
-
 
         // PIMCORE SCRIPTS
         $scripts = array(
@@ -225,6 +214,7 @@
             "pimcore/element/notes.js",
             "pimcore/object/helpers/grid.js",
             "pimcore/object/helpers/gridConfigDialog.js",
+            "pimcore/object/helpers/classTree.js",
             "pimcore/object/helpers/gridTabAbstract.js",
             "pimcore/element/selector/object.js",
 

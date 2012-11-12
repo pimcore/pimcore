@@ -314,6 +314,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("save"), t("successful_saved_asset"), "success");
+                        this.resetChanges();
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_asset"), "error",t(rdata.message));
@@ -330,8 +331,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }.bind(this),
             params: this.getSaveData(only)
         });
-        
-        this.resetChanges();
     },
 
      saveClose: function(){

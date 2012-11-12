@@ -425,7 +425,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      */
     public function setWidth($width)
     {
-        $this->width = (int)$width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     /**
@@ -442,7 +442,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      */
     public function setHeight($height)
     {
-        $this->height = (int)$height;
+        $this->height = $this->getAsIntegerCast($height);
     }
 
 
@@ -695,7 +695,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      */
     public function setMaxItems($maxItems)
     {
-        $this->maxItems = (int)$maxItems;
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
     }
 
     /**

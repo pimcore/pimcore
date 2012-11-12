@@ -515,7 +515,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         $this->getResource()->delete();
         
         // empty object cache
-        $this->clearDependedCache();
+        $this->clearDependentCache();
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), null);
@@ -542,7 +542,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             $hideUnpublishedBackup = self::getHideUnpublished();
             self::setHideUnpublished(false);
 
-            if(!Pimcore_Tool::isValidKey($this->getKey())){
+            if(!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1){
                 throw new Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
             }
 
@@ -568,6 +568,9 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         }
 
         Tool_Lock::release($this->getCacheTag());
+
+        // empty object cache
+        $this->clearDependentCache();
     }
     
     
@@ -647,19 +650,13 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         if($this->_oldPath){
             $this->getResource()->updateChildsPaths($this->_oldPath);
         }
-        
-        
-        // empty object cache
-        $this->clearDependedCache();
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), $this);
-
-        
     }
 
 
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         try {
             Pimcore_Model_Cache::clearTag("object_" . $this->getO_Id());
         }

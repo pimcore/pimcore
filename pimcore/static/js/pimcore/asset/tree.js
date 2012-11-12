@@ -19,6 +19,8 @@ pimcore.asset.tree = Class.create({
 
     initialize: function(config) {
 
+        this.position = "left";
+
         if (!config) {
             this.config = {
                 rootId: 1,
@@ -233,6 +235,8 @@ pimcore.asset.tree = Class.create({
                 }.bind(this), true);
             }
         }.bind(this));
+
+        this.tree.on("append", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.doLayout();
