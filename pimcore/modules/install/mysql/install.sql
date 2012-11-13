@@ -481,6 +481,7 @@ CREATE TABLE `users` (
   `roles` varchar(1000) DEFAULT NULL,
   `welcomescreen` tinyint(1) DEFAULT NULL,
   `closeWarning` tinyint(1) DEFAULT NULL,
+  `memorizeTabs` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
