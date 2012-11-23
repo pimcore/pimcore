@@ -56,6 +56,7 @@ pimcore.settings.document.doctypes = Class.create({
     getRowEditor: function () {
 
         this.store = pimcore.globalmanager.get("document_types_store");
+        var documentDocumentTypeStore = pimcore.globalmanager.get("document_documenttype_store")
 
         var typesColumns = [
             {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
@@ -66,7 +67,7 @@ pimcore.settings.document.doctypes = Class.create({
             {header: t("type"), width: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
-                store: ["page","snippet","email"]  //ckogler added "email"
+                store: documentDocumentTypeStore
             })},
             {header: t("priority"), width: 50, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
                 store: [1,2,3,4,5,6,7,8,9,10],

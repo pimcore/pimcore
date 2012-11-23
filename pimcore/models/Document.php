@@ -24,6 +24,13 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public static $types = array("folder", "page", "snippet", "link", "hardlink", "email");  //ck added "email"
 
+    public static function addDocumentType($type) {
+        if(!in_array($type, self::$types)) {
+            self::$types[] = $type;
+        }
+    }
+
+
     
     private static $hidePublished = false;
     public static function setHideUnpublished($hidePublished) {

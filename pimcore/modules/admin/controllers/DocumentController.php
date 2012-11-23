@@ -182,7 +182,19 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         }
                         break;
                     default:
-                        Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
+                        $classname = "Document_" . ucfirst($this->getParam("type"));
+                        if(class_exists($classname)) {
+                            $document = $classname::create($this->getParam("parentId"), $createValues);
+                            try {
+                                $document->save();
+                                $success = true;
+                            } catch (Exception $e) {
+                                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                            }
+                            break;
+                        } else {
+                            Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
+                        }
                         break;
                 }
             }
@@ -940,6 +952,10 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                 $tmpDocument["iconCls"] = "pimcore_icon_folder";
             }
             $tmpDocument["permissions"]["create"] = $childDocument->isAllowed("create");
+        }
+        else if(method_exists($childDocument, "getTreeNodeConfig")) {
+            $tmp = $childDocument->getTreeNodeConfig();
+            $tmpDocument = array_merge($tmpDocument, $tmp);
         }
 
         $tmpDocument["qtipCfg"] = array(
