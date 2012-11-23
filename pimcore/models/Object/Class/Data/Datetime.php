@@ -141,7 +141,7 @@ class Object_Class_Data_Datetime extends Object_Class_Data
     public function getVersionPreview($data)
     {
         if ($data instanceof Zend_Date) {
-            return $data->get(Zend_Date::DATE_FULL);
+            return $data->get(Zend_Date::DATETIME_FULL );
         }
     }
 
