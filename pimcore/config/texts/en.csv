@@ -1169,3 +1169,4 @@
 "default_value_warning","Default values are not stored in the database table definition, nor are they set in empty Object instances. They are only available in the pimcore GUI"
 "gui_default_value","Unstored default value"
 "memorize_tabs","Memorize open tabs"
+"change_type","Change type"
