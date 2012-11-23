@@ -161,6 +161,7 @@ Ext.onReady(function () {
     store.load();
 
     pimcore.globalmanager.add("document_types_store", store);
+    pimcore.globalmanager.add("document_documenttype_store", ["page","snippet","email"]);
 
     //tranlsation admin keys
     pimcore.globalmanager.add("translations_admin_missing", new Array());
