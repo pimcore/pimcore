@@ -112,11 +112,17 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
             
             echo $cacheItem["content"];
             exit;
+        } else {
+            // set headers to tell the client to not cache the contents
+            // this can/will be overwritten in $this->dispatchLoopShutdown() if the cache is enabled
+            $date = new Zend_Date(1);
+            $this->getResponse()->setHeader("Expires", $date->get(Zend_Date::RFC_1123), true);
+            $this->getResponse()->setHeader("Cache-Control", "public, max-age=" . 0, true);
         }
     }
 
     public function dispatchLoopShutdown() {
-        if ($this->enabled && $this->getResponse()->getHttpResponseCode() == 200) {
+        if ($this->enabled && $this->getResponse()->getHttpResponseCode() == 200 && !session_id()) {
             try {
 
                 if($this->lifetime && $this->addExpireHeader) {
@@ -124,7 +130,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
                     $this->getResponse()->setHeader("Cache-Control", "public, max-age=" . $this->lifetime, true);
 
                     // add expire header
-                    $this->getResponse()->setHeader("Expires", Zend_Date::now()->add($this->lifetime)->get(Zend_Date::RFC_1123));
+                    $this->getResponse()->setHeader("Expires", Zend_Date::now()->add($this->lifetime)->get(Zend_Date::RFC_1123), true);
                 }
 
                 $cacheItem = array(
