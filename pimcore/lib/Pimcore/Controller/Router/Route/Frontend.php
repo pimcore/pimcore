@@ -15,7 +15,7 @@
 
 class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Route_Abstract {
 
-    public static $directRouteTypes = array("folder", "page", "snippet", "link", "hardlink", "email");
+    public static $directRouteTypes = array("page", "snippet", "email");
 
 
     public static function addDirectRouteDocumentType($type) {
