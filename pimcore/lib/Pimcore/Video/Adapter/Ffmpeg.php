@@ -141,8 +141,14 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         }
 
         if(self::getQtfaststartCli()) {
-            $cmd = self::getQtfaststartCli() . " " . $this->getDestinationFile();
+            $tmpFile = $this->getDestinationFile() . ".tmp-qt-faststart";
+            $cmd = self::getQtfaststartCli() . " " . $this->getDestinationFile() . " " . $tmpFile;
             Pimcore_Tool_Console::exec($cmd);
+
+            if(filesize($tmpFile) >= filesize($this->getDestinationFile())) {
+                unlink($this->getDestinationFile());
+                rename($tmpFile, $this->getDestinationFile());
+            }
         } else {
             Logger::error("qtfaststart is not installed on your system, unable to move (to the beginning -> pseudo streaming) metadata in the converted mp4 file: " . $this->getDestinationFile());
         }
