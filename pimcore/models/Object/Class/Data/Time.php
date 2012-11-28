@@ -46,4 +46,11 @@ class Object_Class_Data_Time extends Object_Class_Data_Input {
             throw new Exception("Wrong time format given must be a 5 digit string (eg: 06:49) [ ".$this->getName()." ]");
         }
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 }

@@ -285,4 +285,45 @@ class Object_Class_Data_Table extends Object_Class_Data {
         } else return null;
 
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        if ($data) {
+            $html = "<table>";
+
+            foreach ($data as $row) {
+                $html .= "<tr>";
+
+                if (is_array($row)) {
+                    foreach ($row as $cell) {
+                        $html .= "<td>";
+                        $html .= $cell;
+                        $html .= "</th>";
+                    }
+                }
+                $html .= "</tr>";
+            }
+            $html .= "</table>";
+
+            $value = array();
+            $value["html"] = $html;
+            $value["type"] = "html";
+            return $value;
+        } else {
+            return "";
+        }
+    }
 }

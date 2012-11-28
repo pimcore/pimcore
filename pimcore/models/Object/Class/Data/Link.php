@@ -329,4 +329,26 @@ class Object_Class_Data_Link extends Object_Class_Data {
 
     }
 
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        if ($data) {
+           if ($data->text) {
+               return $data->text;
+           } else if ($data->direct) {
+               return $data->direct;
+           }
+        }
+    }
 }
