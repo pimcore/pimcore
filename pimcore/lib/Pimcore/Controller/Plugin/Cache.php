@@ -120,7 +120,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
             // this can/will be overwritten in $this->dispatchLoopShutdown() if the cache is enabled
             $date = new Zend_Date(1);
             $this->getResponse()->setHeader("Expires", $date->get(Zend_Date::RFC_1123), true);
-            $this->getResponse()->setHeader("Cache-Control", "public, max-age=" . 0, true);
+            $this->getResponse()->setHeader("Cache-Control", "max-age=0, no-cache", true);
         }
     }
 
