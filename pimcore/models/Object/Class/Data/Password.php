@@ -168,6 +168,47 @@ class Object_Class_Data_Password extends Object_Class_Data {
         return null;
     }
 
-    
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @return null|Pimcore_Date
+     */
+
+    public function getDiffDataFromEditmode($data, $object = null) {
+        return $data[0]["data"];
+    }
+
+
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    public function getDiffDataForEditMode($data, $object = null) {
+        $diffdata = array();
+        $diffdata["data"] = $data;
+        $diffdata["disabled"] = !($this->isDiffChangeAllowed());
+        $diffdata["field"] = $this->getName();
+        $diffdata["key"] = $this->getName();
+        $diffdata["type"] = $this->fieldtype;
+
+        if ($data) {
+            $diffdata["value"] = $this->getVersionPreview($data);
+            // $diffdata["value"] = $data;
+        }
+
+        $diffdata["title"] = !empty($this->title) ? $this->title : $this->name;
+
+        $result = array();
+        $result[] = $diffdata;
+        return $result;
+    }
 
 }

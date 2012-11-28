@@ -159,4 +159,12 @@ class Object_Class_Data_Input extends Object_Class_Data {
     public function getQueryColumnType() {
         return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
 }

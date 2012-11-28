@@ -272,6 +272,11 @@ class Object_Class_Data_Slider extends Object_Class_Data {
     }
 
 
-
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 
 }

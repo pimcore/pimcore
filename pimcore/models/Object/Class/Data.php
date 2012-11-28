@@ -795,4 +795,70 @@ abstract class Object_Class_Data
         return strlen($number) === 0 ? "" : (float)$number;
     }
 
+    public function getVersionPreview($data) {
+        return "no preview";
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return false;
+    }
+
+    /** Converts the data sent from the object merger plugin back to the internal object. Similar to
+     * getDiffDataForEditMode() an array of data elements is passed in containing the following attributes:
+     *  - "field" => the name of (this) field
+     *  - "key" => the key of the data element
+     *  - "data" => the data
+     * @param $data
+     * @param null $object
+     * @return mixed
+     */
+    public function getDiffDataFromEditmode($data, $object = null) {
+        $thedata = $this->getDataFromEditmode($data[0]["data"], $object);
+        return $thedata;
+    }
+
+
+
+    /**
+     * Returns the data for the editmode in the format expected by the object merger plugin.
+     * The return value is a list of data definitions containing the following attributes:
+     *      - "field" => the name of the object field
+     *      - "key" => a unique key identifying the data element
+     *      - "type" => the type of the data component
+     *      - "value" => the value used as preview
+     *      - "data" => the actual data which is then sent back again by the editor. Note that the data is opaque
+     *                          and will not be touched by the editor in any way.
+     *      - "disabled" => whether the data element can be edited or not
+     *      - "title" => pretty name describing the data element
+     *
+     *
+     * @param mixed $data
+     * @param null|Object_Abstract $object
+     * @return null|array
+     */
+    public function getDiffDataForEditMode($data, $object = null) {
+        $diffdata = array();
+        $diffdata["data"] = $this->getDataForEditmode($data, $object);
+        $diffdata["disabled"] = !($this->isDiffChangeAllowed());
+        $diffdata["field"] = $this->getName();
+        $diffdata["key"] = $this->getName();
+        $diffdata["type"] = $this->fieldtype;
+
+        if (method_exists($this, "getDiffVersionPreview")) {
+            $value = $this->getDiffVersionPreview($data, $object);
+        } else {
+            $value = $this->getVersionPreview($data);
+        }
+
+        $diffdata["title"] = !empty($this->title) ? $this->title : $this->name;
+        $diffdata["value"] = $value;
+
+        $result = array();
+        $result[] = $diffdata;
+        return $result;
+    }
+
 }

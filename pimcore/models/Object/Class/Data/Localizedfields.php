@@ -546,4 +546,117 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         }
     }
 
+
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    public function getDiffDataForEditmode($data, $object = null)
+    {
+        $return = array();
+
+        $myname = $this->getName();
+
+        if (!$data instanceof Object_Localizedfield) {
+            return array();
+        }
+
+        foreach ($data->getItems() as $language => $values) {
+            foreach ($this->getFieldDefinitions() as $fd) {
+                $fieldname = $fd->getName();
+
+                $subdata = $fd->getDiffDataForEditmode($values[$fieldname], $object);
+
+                foreach ($subdata as $item) {
+                    $diffdata["field"] = $this->getName();
+                    $diffdata["key"] = $this->getName() . "~" . $fieldname . "~" . $item["key"] . "~". $language;
+
+                    $diffdata["type"] = $item["type"];
+                    $diffdata["value"] = $item["value"];
+
+                    // this is not needed anymoe
+                    unset($item["type"]);
+                    unset($item["value"]);
+
+                    $diffdata["title"] = $this->getName() . " / " . $item["title"];
+                    $diffdata["lang"] = $language;
+                    $diffdata["data"] = $item;
+                    $diffdata["extData"] = array(
+                        "fieldname" => $fieldname
+                        );
+
+                    $diffdata["disabled"] = $item["disabled"];
+                    $return[] = $diffdata;
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @return null|Pimcore_Date
+     */
+
+    public function getDiffDataFromEditmode($data, $object = null)
+    {
+        $localFields = $object->{"get" . ucfirst($this->getName())}();
+        $localData = array();
+
+        // get existing data
+        if($localFields instanceof Object_Localizedfield) {
+            $localData = $localFields->getItems();
+        }
+
+        $mapping = array();
+        foreach ($data as $item) {
+            $extData = $item["extData"];
+            $fieldname = $extData["fieldname"];
+            $language = $item["lang"];
+            $values = $mapping[$fieldname];
+
+            $itemdata = $item["data"];
+
+            if ($itemdata) {
+                if (!$values) {
+                    $values = array();
+                }
+
+                $values[] = $itemdata;
+            }
+
+            $mapping[$language][$fieldname] = $values;
+        }
+
+        foreach ($mapping as $language => $fields) {
+
+            foreach ($fields as $key => $value) {
+
+                $fd = $this->getFielddefinition($key);
+                if ($fd & $fd->isDiffChangeAllowed()) {
+
+                    if ($value == null) {
+                        unset($localData[$language][$key]);
+                    } else {
+                        $localData[$language][$key] = $fd->getDiffDataFromEditmode($value);
+                    }
+                }
+            }
+        }
+
+        $localizedFields = new Object_Localizedfield($localData);
+        return $localizedFields;
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+
 }
