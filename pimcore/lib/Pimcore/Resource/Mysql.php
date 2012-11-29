@@ -149,7 +149,8 @@ class Pimcore_Resource_Mysql {
                 $db = Zend_Registry::get("Pimcore_Resource_Mysql");
 
                 if($db instanceof Pimcore_Resource_Wrapper) {
-                    Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
+                    // the following select causes an infinite loop (eg. when the connection is lost -> error handler)
+                    //Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
                     $db->closeConnection();
                     $db->closeDDLResource();
                 }
@@ -251,6 +252,7 @@ class Pimcore_Resource_Mysql {
      */
     public static function errorHandler ($method, $args, $exception) {
 
+        Logger::error($exception->getMessage());
         $lowerErrorMessage = strtolower($exception->getMessage());
 
         // check if the mysql-connection is the problem (timeout issues, ...)
