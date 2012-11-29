@@ -385,7 +385,7 @@ class Pimcore {
         }
 
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-        @ini_set("memory_limit", "1024M");
+        //@ini_set("memory_limit", "1024M");
         @ini_set("max_execution_time", $maxExecutionTime);
         @ini_set("short_open_tag", 1);
         @ini_set("magic_quotes_gpc", 0);
