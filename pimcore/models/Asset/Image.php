@@ -74,65 +74,25 @@ class Asset_Image extends Asset {
         }
     }
 
-    /**
-     * @param  $config
+     /**
+     * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
+     * @param mixed $config
      * @return Asset_Image_Thumbnail|bool|Thumbnail
      */
-    public function getThumbnailConfig ($config) {
+    public function getThumbnailConfig($config) {
 
-        if (is_string($config)) {
-            try {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByName($config);
-            }
-            catch (Exception $e) {
-                Logger::error("requested thumbnail " . $config . " is not defined");
-                return false;
-            }
-        }
-        else if (is_array($config)) {
-            // check if it is a legacy config or a new one
-            if(array_key_exists("items", $config)) {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByArrayConfig($config);
-            } else {
-                $thumbnail = Asset_Image_Thumbnail_Config::getByLegacyConfig($config);
-            }
-        }
-        else if ($config instanceof Asset_Image_Thumbnail_Config) {
-            $thumbnail = $config;
-        }
-        
-        return $thumbnail;
+        $thumbnail = $this->getThumbnail($config); 
+        return $thumbnail->getConfig();
     }
     
     /**
-     * Returns a path to a given thumbnail or an thumbnail configuration
-     *
-     * @param mixed
-     * @return string
+     * Returns a path to a given thumbnail or an thumbnail configuration.
+     * @param mixed$config 
+     * @return Asset_Image_Thumbnail
      */
-    public function getThumbnail($thumbnailName) {
+    public function getThumbnail($config) {
 
-        $thumbnail = $this->getThumbnailConfig($thumbnailName);
-        $path = "";
-
-        if($thumbnail) {
-            try {
-                $path = Asset_Image_Thumbnail_Processor::process($this, $thumbnail);
-            } catch (Exception $e) {
-                Logger::error("Couldn't create thumbnail of image " . $this->getFullPath());
-                Logger::error($e);
-                return "/pimcore/static/img/filetype-not-supported.png";
-            }
-        }
-
-        // if no thumbnail config is given return the original image
-        if(empty($path)) {
-            $fsPath = $this->getFileSystemPath();
-            $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
-            return $path;
-        }
-        
-        return $path;
+       return new Asset_Image_Thumbnail($this, $config);
     }
 
     /**
