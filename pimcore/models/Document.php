@@ -24,6 +24,13 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public static $types = array("folder", "page", "snippet", "link", "hardlink", "email");  //ck added "email"
 
+    public static function addDocumentType($type) {
+        if(!in_array($type, self::$types)) {
+            self::$types[] = $type;
+        }
+    }
+
+
     
     private static $hidePublished = false;
     public static function setHideUnpublished($hidePublished) {
@@ -320,23 +327,45 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
-        if (!Pimcore_Tool::isValidKey($this->getKey())) {
-            throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
+        if($this->getId()) {
+            // do not lock when creating a new document, this will cause a dead-lock because the cache-tag is used as key
+            // and the cache tag is different when releasing the lock later, because the document has then an id
+            Tool_Lock::acquire($this->getCacheTag());
         }
 
-        $this->correctPath();
-        // set date
-        $this->setModificationDate(time());
+        $this->beginTransaction();
 
-        if ($this->getId()) {
-            $this->update();
+        try {
+            // check for a valid key, home has no key, so omit the check
+            if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
+                throw new Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
+            }
+
+            $this->correctPath();
+            // set date
+            $this->setModificationDate(time());
+
+            if ($this->getId()) {
+                $this->update();
+            }
+            else {
+                Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
+                $this->getResource()->create();
+                Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
+                $this->update();
+            }
+
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollBack();
+
+            throw $e;
         }
-        else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
-            $this->getResource()->create();
-            Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
-            $this->update();
-        }
+
+        Tool_Lock::release($this->getCacheTag());
+
+        // empty object cache
+        $this->clearDependentCache();
     }
 
     public function correctPath() {
@@ -370,7 +399,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      *
      * @return void
      */
-    public function update() {
+    protected function update() {
 
         if (!$this->getKey() && $this->getId() != 1) {
             $this->delete();
@@ -415,17 +444,13 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             $this->getResource()->updateChildsPaths($this->_oldPath);
         }
 
-        // empty object cache
-        $this->clearDependedCache();
-
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), $this);
 
         Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
-
     }
 
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         try {
             Pimcore_Model_Cache::clearTag("document_" . $this->getId());
         }
@@ -621,7 +646,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $this->getResource()->delete();
 
         // clear cache
-        $this->clearDependedCache();
+        $this->clearDependentCache();
 
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), null);

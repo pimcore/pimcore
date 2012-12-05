@@ -22,7 +22,7 @@ class Document_Hardlink_Wrapper_Hardlink extends Document_Hardlink implements Do
         $this->raiseHardlinkError();
     }
 
-    public function update() {
+    protected function update() {
         $this->raiseHardlinkError();
     }
 
@@ -68,11 +68,11 @@ class Document_Hardlink_Wrapper_Hardlink extends Document_Hardlink implements Do
     public function getChilds() {
 
         if ($this->childs === null) {
-            $childs = parent::getChilds();
-
             $hardLink = $this->getHardLinkSource();
+            $childs = array();
 
             if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+                $childs = parent::getChilds();
                 foreach($childs as &$c) {
                     $c = Document_Hardlink_Service::wrap($c);
                     $c->setHardLinkSource($hardLink);
@@ -86,7 +86,15 @@ class Document_Hardlink_Wrapper_Hardlink extends Document_Hardlink implements Do
         return $this->childs;
     }
 
+    public function hasChilds() {
+        $hardLink = $this->getHardLinkSource();
 
+        if($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !Pimcore::inAdmin()) {
+            return parent::hasChilds();
+        }
+
+        return false;
+    }
 
     /**
      * @var Document_Hardlink

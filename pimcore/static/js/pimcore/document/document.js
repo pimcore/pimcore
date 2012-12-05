@@ -15,10 +15,11 @@
 pimcore.registerNS("pimcore.document.document");
 pimcore.document.document = Class.create(pimcore.element.abstract, {
 
+    urlprefix: "/admin/",
 
     getData: function () {        
         Ext.Ajax.request({
-            url: "/admin/" + this.getType() + "/get-data-by-id/",
+            url: this.urlprefix + this.getType() + "/get-data-by-id/",
             params: {id: this.id},
             success: this.getDataComplete.bind(this)
         });
@@ -126,7 +127,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }
 
             Ext.Ajax.request({
-                url: '/admin/' + this.getType() + '/save/task/' + task,
+                url: this.urlprefix + this.getType() + '/save/task/' + task,
                 method: "post",
                 params: saveData,
                 success: function (response) {
@@ -134,6 +135,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         var rdata = Ext.decode(response.responseText);
                         if (rdata && rdata.success) {
                             pimcore.helpers.showNotification(t("success"), t("successful_saved_document"), "success");
+                            this.resetChanges();
+
+                            if(typeof this["createScreenshot"] == "function") {
+                                this.createScreenshot();
+                            }
                         }
                         else {
                             pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error",t(rdata.message));
@@ -152,8 +158,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 }.bind(this)
             });
         }
-        
-        this.resetChanges();
     },
     
     

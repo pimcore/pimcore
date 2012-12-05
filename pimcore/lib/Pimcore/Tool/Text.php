@@ -86,7 +86,7 @@ class Pimcore_Tool_Text
                             );
                         }
 
-                        if ($styleAttr[1] && preg_match("/(width|height)/",$styleAttr[1])) {
+                        if ($styleAttr[1] && preg_match("/[^-](width|height)/",$styleAttr[1])) {
 
                             $config = array(); // reset the config if it was set already before (attributes)
 

@@ -74,6 +74,12 @@ class User extends User_UserRole {
 
 
     /**
+     * @var bool
+     */
+    public $memorizeTabs = true;
+
+
+    /**
      * @return string
      */
     public function getPassword() {
@@ -307,4 +313,23 @@ class User extends User_UserRole {
     {
         return $this->closeWarning;
     }
+
+    /**
+     * @param boolean $memorizeTabs
+     */
+    public function setMemorizeTabs($memorizeTabs)
+    {
+        $this->memorizeTabs = (bool) $memorizeTabs;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getMemorizeTabs()
+    {
+        return $this->memorizeTabs;
+    }
+
+
+
 }

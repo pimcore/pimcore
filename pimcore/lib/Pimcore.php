@@ -33,9 +33,6 @@ class Pimcore {
 
         self::setSystemRequirements();
 
-        // register shutdown function
-        Pimcore_Event::register("pimcore.shutdown", array("Pimcore", "shutdown"), array(), 999);
-
         // detect frontend (website)
         $frontend = Pimcore_Tool::isFrontend();
 
@@ -876,8 +873,12 @@ class Pimcore {
         // clear tags scheduled for the shutdown
         Pimcore_Model_Cache::clearTagsOnShutdown();
 
-        // write collected items to cache backend       
+        // write collected items to cache backend and remove the write lock
         Pimcore_Model_Cache::write();
+        Pimcore_Model_Cache::removeWriteLock();
+
+        // release all open locks from this process
+        Tool_Lock::releaseAll();
     }
 
     /**

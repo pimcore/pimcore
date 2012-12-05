@@ -478,11 +478,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         if ($asset->getType() == "image") {
             try {
-                $tmpAsset["qtipCfg"] = array(
-                    "title" => "ID: " . $asset->getId(),
-                    "text" => '<img src="/admin/asset/get-image-thumbnail/id/' . $asset->getId() . '/width/130/aspectratio/true" width="130" />',
-                    "width" => 140
-                );
+                $tmpAsset["thumbnail"] = "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/width/400/aspectratio/true";
 
                 // this is for backward-compatibilty, to calculate the dimensions if they are not there
                 if(!$asset->getCustomSetting("imageDimensionsCalculated")) {
@@ -501,11 +497,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         } else if ($asset->getType() == "video") {
             try {
                 if(Pimcore_Video::isAvailable()) {
-                    $tmpAsset["qtipCfg"] = array(
-                        "title" => "ID: " . $asset->getId(),
-                        "text" => '<img src="/admin/asset/get-video-thumbnail/id/' . $asset->getId() . '/width/130/aspectratio/true" width="130" />',
-                        "width" => 140
-                    );
+                    $tmpAsset["thumbnail"] = "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/width/400/aspectratio/true";
                 }
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
@@ -1097,6 +1089,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     }
 
 
+    /**
+     * Download the all assets contained in the folder with parameter id as ZIP file.
+     * The suggested filename is either [folder name].zip or assets.zip for the root folder.
+     */
     public function downloadAsZipAction () {
         
         $asset = Asset::getById($this->getParam("id"));
@@ -1129,12 +1125,15 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $zip->close();
             }
 
+            $suggestedFilename = $asset->getFilename();
+            if (empty($suggestedFilename)) {
+                $suggestedFilename = "assets";
+            }
+
             $this->getResponse()->setHeader("Content-Type", "application/zip", true);
-            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $asset->getFilename() . '.zip"');
+            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $suggestedFilename . '.zip"');
 
             echo file_get_contents($archive_name);
-
-
 
             unlink($archive_name);
         }

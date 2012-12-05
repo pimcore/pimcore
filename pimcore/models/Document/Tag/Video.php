@@ -34,6 +34,12 @@ class Document_Tag_Video extends Document_Tag
     public $type = "asset";
 
     /**
+     * asset ID of poster image
+     * @var int
+     */
+    public $poster;
+
+    /**
      * @see Document_Tag_Interface::getType
      * @return string
      */
@@ -48,9 +54,29 @@ class Document_Tag_Video extends Document_Tag
      */
     public function getData()
     {
+        $path = $this->id;
+        if($this->type == "asset" && ($video = Asset::getById($this->id))) {
+            $path = $video->getFullPath();
+        }
+
+        $poster = Asset::getById($this->poster);
+
         return array(
             "id" => $this->id,
-            "type" => $this->type
+            "type" => $this->type,
+            "path" => $path,
+            "poster" => $poster ? $poster->getFullPath() : ""
+        );
+    }
+
+    /**
+     *
+     */
+    public function getDataForResource() {
+        return array(
+            "id" => $this->id,
+            "type" => $this->type,
+            "poster" => $this->poster
         );
     }
 
@@ -101,6 +127,15 @@ class Document_Tag_Video extends Document_Tag
                 );
             }
         }
+
+        if($poster = Asset::getById($this->poster)) {
+            $key = "asset_" . $poster->getId();
+            $dependencies[$key] = array(
+                "id" => $poster->getId(),
+                "type" => "asset"
+            );
+        }
+
         return $dependencies;
     }
 
@@ -119,6 +154,13 @@ class Document_Tag_Video extends Document_Tag
                 $this->type = null;
             }
         }
+
+        if(!($poster = Asset::getById($this->poster))) {
+            $sane = false;
+            Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+            $this->poster = null;
+        }
+
         return $sane;
     }
 
@@ -151,6 +193,7 @@ class Document_Tag_Video extends Document_Tag
 
         $this->id = $data["id"];
         $this->type = $data["type"];
+        $this->poster = $data["poster"];
     }
 
     /**
@@ -160,10 +203,26 @@ class Document_Tag_Video extends Document_Tag
      */
     public function setDataFromEditmode($data)
     {
-        $this->id = $data["id"];
-
         if ($data["type"]) {
             $this->type = $data["type"];
+        }
+
+        // this is to be backward compatible to <= v 1.4.7
+        if($data["id"]){
+            $data["path"] = $data["id"];
+        }
+
+        $video = Asset::getByPath($data["path"]);
+        if($video instanceof Asset_Video) {
+            $this->id = $video->getId();
+        } else {
+            $this->id = $data["path"];
+        }
+
+        $this->poster = null;
+        $poster = Asset::getByPath($data["poster"]);
+        if($poster instanceof Asset_Image) {
+            $this->poster = $poster->getId();
         }
     }
 
@@ -228,7 +287,11 @@ class Document_Tag_Video extends Document_Tag
                     $imageThumbnailConf["width"] = 800;
                 }
 
-                $image = $asset->getImageThumbnail($imageThumbnailConf);
+                if($this->poster && ($poster = Asset::getById($this->poster))) {
+                    $image = $poster->getThumbnail($imageThumbnailConf);
+                } else {
+                    $image = $asset->getImageThumbnail($imageThumbnailConf);
+                }
 
                 if ($thumbnail["status"] == "finished") {
                     if($options["html5"]) {
@@ -290,7 +353,7 @@ class Document_Tag_Video extends Document_Tag
         }
 
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '">
+        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight()-1) . 'px; border:1px solid #000; background: url(/pimcore/static/img/filetype-not-supported.png) no-repeat center center #fff;">
                 ' . $message . '
             </div>
@@ -312,21 +375,30 @@ class Document_Tag_Video extends Document_Tag
         $uid = "video_" . uniqid();
 
         // get youtube id
+        $youtubeId = null;
         $parts = parse_url($this->id);
         parse_str($parts["query"], $vars);
 
-        //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-        if(strpos($this->id,'embed') !== false){
-            $explodedPath = explode('/',$parts['path']);
-            $vars['v'] = $explodedPath[array_search('embed',$explodedPath)+1];
+        if($vars["v"]) {
+            $youtubeId = $vars["v"];
         }
 
-        if (!$vars["v"] || strpos($parts["host"], "youtube.com") === false) {
+        //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
+        if(!$youtubeId && strpos($this->id,'embed') !== false){
+            $explodedPath = explode('/',$parts['path']);
+            $youtubeId = $explodedPath[array_search('embed',$explodedPath)+1];
+        }
+
+
+        if(!$youtubeId && $parts["host"] == "youtu.be") {
+            $youtubeId = trim($parts["path"]," /");
+        }
+
+        if (!$youtubeId) {
             return $this->getEmptyCode();
             //return $this->getFlowplayerCode();
         }
 
-        $youtubeId = $vars["v"];
 
         $width = "100%";
         if(array_key_exists("width", $options)) {
@@ -371,8 +443,19 @@ class Document_Tag_Video extends Document_Tag
             "theme");
         $additional_params="";
 
-        if(!empty($options["config"]["clip"])){
-            foreach($options["config"]["clip"] as $key=>$value){
+        $clipConfig = array();
+        if(is_array($options["config"]["clip"])) {
+            $clipConfig = $options["config"]["clip"];
+        }
+
+        // this is to be backward compatible to <= v 1.4.7
+        $configurations = $clipConfig;
+        if(is_array($options["youtube"])){
+            $configurations = array_merge($clipConfig, $options["youtube"]);
+        }
+
+        if(!empty($configurations)){
+            foreach($configurations as $key=>$value){
                 if(in_array($key, $valid_youtube_prams)){
                     if(is_bool($value)){
                         if($value){
@@ -387,7 +470,7 @@ class Document_Tag_Video extends Document_Tag
             }
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '">
+        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <iframe width="' . $width . '" height="' . $height . '" src="' . $this->getScheme() . '://www.youtube.com/embed/' . $youtubeId . '?wmode=transparent' . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
@@ -425,7 +508,7 @@ class Document_Tag_Video extends Document_Tag
             $height = $options["height"];
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '">
+        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <iframe src="' . $this->getScheme() . '://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
@@ -500,7 +583,7 @@ class Document_Tag_Video extends Document_Tag
             ';
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '">
+        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <a id="' . $uid . '"
             	href="'.$urls["mp4"].'"
             	class="pimcore_video_flowplayer"
@@ -528,7 +611,7 @@ class Document_Tag_Video extends Document_Tag
 
     public function getHtml5Code($urls = array(), $thumbnail = null)
     {
-        $code = '<div id="pimcore_video_' . $this->getName() . '">';
+        $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">';
         $code .= '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">';
             foreach ($urls as $type => $url) {
                 $code .= '<source type="video/' . $type . '" src="' . $url . '" />';
@@ -543,7 +626,7 @@ class Document_Tag_Video extends Document_Tag
     {
         $uid = "video_" . uniqid();
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '">
+        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <style type="text/css">
                 #' . $uid . ' {
                     position:relative;
@@ -592,7 +675,7 @@ class Document_Tag_Video extends Document_Tag
     public function getEmptyCode()
     {
         $uid = "video_" . uniqid();
-        return '<div id="pimcore_video_' . $this->getName() . '"><div class="pimcore_tag_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
+        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video"><div class="pimcore_tag_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
     }
 
     /**
@@ -638,4 +721,53 @@ class Document_Tag_Video extends Document_Tag
 
     }
 
+
+    /**
+     * @return string
+     */
+    public function getVideoType() {
+        return $this->type;
+    }
+
+    /**
+     * @return Asset
+     */
+    public function getVideoAsset() {
+        if($this->getVideoType() == "asset") {
+            return Asset::getById($this->id);
+        }
+    }
+
+    /**
+     * @return Asset
+     */
+    public function getPosterAsset() {
+        return Asset::getById($this->poster);
+    }
+
+    /**
+     * @param $config
+     * @return string
+     */
+    public function getImageThumbnail($config) {
+        if($this->poster && ($poster = Asset::getById($this->poster))) {
+            return $poster->getThumbnail($config);
+        }
+
+        if($this->getVideoAsset()) {
+            return $this->getVideoAsset()->getImageThumbnail($config);
+        }
+        return "";
+    }
+
+    /**
+     * @param $config
+     * @return array
+     */
+    public function getThumbnail($config) {
+        if($this->getVideoAsset()) {
+            return $this->getVideoAsset()->getThumbnail($config);
+        }
+        return array();
+    }
 }

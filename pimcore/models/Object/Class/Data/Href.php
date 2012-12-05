@@ -324,7 +324,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     /**
@@ -538,5 +538,12 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     public function getAssetUploadPath()
     {
         return $this->assetUploadPath;
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
     }
 }

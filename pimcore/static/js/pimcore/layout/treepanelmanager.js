@@ -85,12 +85,16 @@ pimcore.layout.treepanelmanager = {
         pimcore.layout.treepanelmanager.move(this.tree, Ext.getCmp("pimcore_panel_tree_right"), Ext.getCmp("pimcore_panel_tree_left"));
         this.tree.tools.left.hide();
         this.tree.tools.right.show();
+
+        this.position = "left";
     },
 
     toRight: function () {
         pimcore.layout.treepanelmanager.move(this.tree, Ext.getCmp("pimcore_panel_tree_left"), Ext.getCmp("pimcore_panel_tree_right"));
         this.tree.tools.right.hide();
         this.tree.tools.left.show();
+
+        this.position = "right";
     },
 
     move: function (tree, source, target) {

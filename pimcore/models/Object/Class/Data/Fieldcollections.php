@@ -510,7 +510,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function setMaxItems($maxItems)
     {
-        $this->maxItems = $maxItems;
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
     }
 
     /**
@@ -520,4 +520,64 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     {
         return $this->maxItems;
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        $html = "";
+        if ($data instanceof Object_Fieldcollection) {
+
+            $html = "<table>";
+            foreach ($data as $item) {
+                if (!$item instanceof Object_Fieldcollection_Data_Abstract) {
+                    continue;
+                }
+
+                $type = $item->getType();
+                $html .= "<tr><th><b>" . $type . "</b></th><th>&nbsp;</th><th>&nbsp;</th></tr>";
+
+                try {
+                    $collectionDef = Object_Fieldcollection_Definition::getByKey($item->getType());
+                } catch (Exception $e) {
+                    continue;
+                }
+
+                $collectionData = array();
+
+                foreach ($collectionDef->getFieldDefinitions() as $fd) {
+
+                    $title = !empty($fd->title) ? $fd->title : $fd->getName();
+                    $html .= "<tr><td>&nbsp;</td><td>" . $title . "</td><td>";
+                    $html .= $fd->getVersionPreview($item->{$fd->getName()});
+                    $html .= "</td></tr>";
+                }
+            }
+
+            $html .= "</table>";
+        }
+
+        $value = array();
+        $value["html"] = $html;
+        $value["type"] = "html";
+        return $value;
+    }
+
+    public function getDiffDataFromEditmode($data, $object = null) {
+        $result = parent::getDiffDataFromEditmode($data, $object);
+        Logger::debug("bla");
+        return $result;
+    }
+
 }

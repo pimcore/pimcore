@@ -116,6 +116,10 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public static function getById($id) {
 
+        if($id === null) {
+            throw new Exception("Class id is null");
+        }
+
         $cacheKey = "class_" . $id;
 
         try {
@@ -128,8 +132,8 @@ class Object_Class extends Pimcore_Model_Abstract {
 
             try {
                 $class = new self();
-                Zend_Registry::set($cacheKey, $class);
                 $class->getResource()->getById($id);
+                Zend_Registry::set($cacheKey, $class);
             } catch (Exception $e) {
                 Logger::error($e);
                 return null;

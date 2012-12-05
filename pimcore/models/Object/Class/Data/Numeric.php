@@ -67,7 +67,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     /**
@@ -191,4 +191,12 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
         $value = (double) str_replace(",",".",$importValue);
         return $value;
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
 }

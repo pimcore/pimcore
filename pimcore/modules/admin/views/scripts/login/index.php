@@ -72,7 +72,7 @@ $config = Pimcore_Config::getSystemConfig();
 <img src="/pimcore/static/img/loading.gif" width="1" height="1"/>
 
 <div id="vcenter">
-    <div id="content">
+    <div id="content" class="hidden">
 
         <?php if ($this->error) { ?>
             <div class="error">
@@ -134,7 +134,41 @@ $config = Pimcore_Config::getSystemConfig();
 
 
 <script type="text/javascript">
-    document.getElementById("username").focus();
+
+    // check for animation support
+    var animation = false,
+            animationstring = 'animation',
+            keyframeprefix = '',
+            elm = document.getElementById( 'content' ),
+            domPrefixes = 'Webkit Moz O ms Khtml'.split(' '),
+            pfx  = '';
+
+    if( elm.style.animationName ) { animation = true; }
+
+    if( animation === false ) {
+        for( var i = 0; i < domPrefixes.length; i++ ) {
+            if( elm.style[ domPrefixes[i] + 'AnimationName' ] !== undefined ) {
+                pfx = domPrefixes[ i ];
+                animationstring = pfx + 'Animation';
+                keyframeprefix = '-' + pfx.toLowerCase() + '-';
+                animation = true;
+                break;
+            }
+        }
+    }
+
+    if(animation) {
+        window.setTimeout(function () {
+            document.getElementById("content").className = "animated bounceInDown";
+            document.getElementById("username").focus();
+        }, 1000);
+    } else {
+        document.getElementById("content").className = "";
+        document.getElementById("username").focus();
+    }
+
+
+
 </script>
 
 <?php if ($config->general->loginscreenimageservice) { ?>

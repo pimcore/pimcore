@@ -74,7 +74,7 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     /**
@@ -82,7 +82,7 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
     }
 
 
@@ -202,6 +202,30 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
     public function preGetData ($object) {
         $key = $this->getName();
         return Pimcore_Tool_Text::wysiwygText($object->$key);
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        if ($data) {
+            $value = array();
+            $value["html"] = $data;
+            $value["type"] = "html";
+            return $value;
+        } else {
+            return "";
+        }
     }
 
 }

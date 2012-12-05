@@ -182,7 +182,19 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                         }
                         break;
                     default:
-                        Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
+                        $classname = "Document_" . ucfirst($this->getParam("type"));
+                        if(class_exists($classname)) {
+                            $document = $classname::create($this->getParam("parentId"), $createValues);
+                            try {
+                                $document->save();
+                                $success = true;
+                            } catch (Exception $e) {
+                                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                            }
+                            break;
+                        } else {
+                            Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
+                        }
                         break;
                 }
             }
@@ -941,11 +953,26 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             }
             $tmpDocument["permissions"]["create"] = $childDocument->isAllowed("create");
         }
+        else if(method_exists($childDocument, "getTreeNodeConfig")) {
+            $tmp = $childDocument->getTreeNodeConfig();
+            $tmpDocument = array_merge($tmpDocument, $tmp);
+        }
 
         $tmpDocument["qtipCfg"] = array(
             "title" => "ID: " . $childDocument->getId(),
             "text" => "Type: " . $childDocument->getType()
         );
+
+        // PREVIEWS temporary disabled, need's to be optimized some time
+        /*
+        if($childDocument instanceof Document_Page) {
+            $thumbnailFile = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $childDocument->getId() . ".jpg";
+            if(file_exists($thumbnailFile)) {
+                $thumbnailPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $thumbnailFile);
+                $tmpDocument["thumbnail"] = $thumbnailPath;
+            }
+        }
+        */
 
         $tmpDocument["cls"] = "";
         

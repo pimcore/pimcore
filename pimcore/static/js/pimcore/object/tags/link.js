@@ -94,7 +94,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
 
         this.component = this.getLayoutEdit();
         //this.layout.disable();
-        this.component.items.splice(1,1); // remove the edit buttom
+        this.button.hide();
         
         return this.component;
     },

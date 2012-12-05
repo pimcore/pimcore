@@ -43,7 +43,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      * @param string $key
      */
     public function setKey($key) {
-        $this->key = mb_strtolower($key);
+        $this->key = self::getValidTranslationKey($key);
     }
 
     /**
@@ -93,8 +93,17 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
     /**
      * @return void
      */
-    public function clearDependedCache () {
+    public static function clearDependentCache () {
         Pimcore_Model_Cache::clearTags(array("translator","translate"));
+    }
+
+    /**
+     * @static
+     * @param $key
+     * @return string
+     */
+    protected static function getValidTranslationKey($key){
+        return mb_strtolower($key);
     }
 
     /**
@@ -109,7 +118,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
          $translation = new static();
 
          try {
-             $translation->getResource()->getByKey($id);
+             $translation->getResource()->getByKey(self::getValidTranslationKey($id));
          } catch (Exception $e) {
              if (!$create) {
                  throw new Exception($e->getMessage());
@@ -168,9 +177,11 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      * @param bool $replaceExistingTranslations
      * @throws Exception
      */
-    public static function importTranslationsFromFile($file,$replaceExistingTranslations = true){
+    public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null){
         if(is_readable($file)){
-            $languages = Pimcore_Tool::getValidLanguages();
+            if(!$languages || empty($languages) || !is_array($languages)) {
+                $languages = Pimcore_Tool::getValidLanguages();
+            }
 
             //read import data
             $tmpData = file_get_contents($file);

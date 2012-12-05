@@ -92,7 +92,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     /**
@@ -107,7 +107,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
     }
 
 
@@ -123,7 +123,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setMinValue($minValue) {
-        $this->minValue = $minValue;
+        $this->minValue = $this->getAsFloatCast($minValue);
     }
 
     /**
@@ -138,7 +138,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setMaxValue($maxValue) {
-        $this->maxValue = $maxValue;
+        $this->maxValue = $this->getAsFloatCast($maxValue);
     }
 
     /**
@@ -176,7 +176,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setIncrement($increment) {
-        $this->increment = $increment;
+        $this->increment = $this->getAsFloatCast($increment);
     }
     
     
@@ -192,7 +192,7 @@ class Object_Class_Data_Slider extends Object_Class_Data {
      * @return void
      */
     public function setDecimalPrecision($decimalPrecision) {
-        $this->decimalPrecision = $decimalPrecision;
+        $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
     }
 
     /**
@@ -272,6 +272,11 @@ class Object_Class_Data_Slider extends Object_Class_Data {
     }
 
 
-
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 
 }

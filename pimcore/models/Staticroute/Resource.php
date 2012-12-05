@@ -95,7 +95,7 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
     public function delete() {
         $this->db->delete("staticroutes", $this->db->quoteInto("id = ?", $this->model->getId()));
         
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**
@@ -119,7 +119,7 @@ class Staticroute_Resource extends Pimcore_Model_Resource_Abstract {
             throw $e;
         }
         
-        $this->model->clearDependedCache();
+        $this->model->clearDependentCache();
     }
 
     /**

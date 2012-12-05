@@ -535,6 +535,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             var rdata = Ext.decode(response.responseText);
                             if (rdata && rdata.success) {
                                 pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                                this.resetChanges();
                             }
                             else {
                                 pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",t(rdata.message));
@@ -555,8 +556,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     }
                 }.bind(this)
             });
-            
-            this.resetChanges();
             
             return true;
         }

@@ -223,4 +223,11 @@ class Object_Class_Data_Geobounds extends Object_Class_Data_Geo_Abstract {
             throw new Exception("cannot get values from web service import - invalid data");
         }
     }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 }

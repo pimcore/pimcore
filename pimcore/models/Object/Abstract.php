@@ -515,7 +515,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         $this->getResource()->delete();
         
         // empty object cache
-        $this->clearDependedCache();
+        $this->clearDependentCache();
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), null);
@@ -529,27 +529,48 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function save() {
 
-        // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
-        $hideUnpublishedBackup = self::getHideUnpublished();
-        self::setHideUnpublished(false);
-
-        if(!Pimcore_Tool::isValidKey($this->getKey())){
-            throw new Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
+        if($this->getO_Id()) {
+            // do not lock when creating a new object, this will cause a dead-lock because the cache-tag is used as key
+            // and the cache tag is different when releasing the lock later, because the object has then an id
+            Tool_Lock::acquire($this->getCacheTag());
         }
 
-       $this->correctPath();
+        $this->beginTransaction();
 
-        if ($this->getO_Id()) {
-            $this->update();
-        }
-        else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
-            $this->getResource()->create();
-            Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
-            $this->update();
+        try {
+            // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
+            $hideUnpublishedBackup = self::getHideUnpublished();
+            self::setHideUnpublished(false);
+
+            if(!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1){
+                throw new Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
+            }
+
+           $this->correctPath();
+
+            if ($this->getO_Id()) {
+                $this->update();
+            }
+            else {
+                Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
+                $this->getResource()->create();
+                Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
+                $this->update();
+            }
+
+            self::setHideUnpublished($hideUnpublishedBackup);
+
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollBack();
+
+            throw $e;
         }
 
-        self::setHideUnpublished($hideUnpublishedBackup);
+        Tool_Lock::release($this->getCacheTag());
+
+        // empty object cache
+        $this->clearDependentCache();
     }
     
     
@@ -629,19 +650,13 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         if($this->_oldPath){
             $this->getResource()->updateChildsPaths($this->_oldPath);
         }
-        
-        
-        // empty object cache
-        $this->clearDependedCache();
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), $this);
-
-        
     }
 
 
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         try {
             Pimcore_Model_Cache::clearTag("object_" . $this->getO_Id());
         }

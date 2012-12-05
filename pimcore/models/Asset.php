@@ -369,21 +369,41 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function save() {
 
-        if (!Pimcore_Tool::isValidKey($this->getKey())) {
-            throw new Exception("invalid filname '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
+        if($this->getId()) {
+            // do not lock when creating a new asset, this will cause a dead-lock because the cache-tag is used as key
+            // and the cache tag is different when releasing the lock later, because the asset has then an id
+            Tool_Lock::acquire($this->getCacheTag());
         }
 
-        $this->correctPath();
+        $this->beginTransaction();
 
-        if ($this->getId()) {
-            $this->update();
+        try {
+            if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
+                throw new Exception("invalid filname '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
+            }
+
+            $this->correctPath();
+
+            if ($this->getId()) {
+                $this->update();
+            }
+            else {
+                Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
+                $this->getResource()->create();
+                Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
+                $this->update();
+            }
+
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollBack();
+
+            throw $e;
         }
-        else {
-            Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
-            $this->getResource()->create();
-            Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
-            $this->update();
-        }
+
+        $this->clearDependentCache();
+
+        Tool_Lock::release($this->getCacheTag());
     }
 
     public function correctPath() {
@@ -517,9 +537,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         if ($this->_oldPath) {
             $this->getResource()->updateChildsPaths($this->_oldPath);
         }
-
-       
-        $this->clearDependedCache();
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), $this);
@@ -707,7 +724,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $this->getResource()->delete();
 
         // empty object cache
-        $this->clearDependedCache();
+        $this->clearDependentCache();
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), null);
@@ -715,7 +732,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         Pimcore_API_Plugin_Broker::getInstance()->postDeleteAsset($this);
     }
 
-    public function clearDependedCache() {
+    public function clearDependentCache() {
         try {
             Pimcore_Model_Cache::clearTag("asset_" . $this->getId());
         }

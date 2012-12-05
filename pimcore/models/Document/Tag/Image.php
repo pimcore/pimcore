@@ -151,8 +151,14 @@ class Document_Tag_Image extends Document_Tag {
             }
 
             // add attributes to image
-            $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap", "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover", "onabort", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseup", "onkeydown", "onkeypress", "onkeyup");
-            $htmlEscapeAttributes = array("alt", "align", "border", "height", "hspace",  "longdesc", "usemap", "vspace", "width", "class", "dir", "id", "lang",  "title");
+            $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap",
+                "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover",
+                "onabort", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseup",
+                "onkeydown", "onkeypress", "onkeyup", "itemprop", "itemscope", "itemtype");
+
+            $htmlEscapeAttributes = array("alt", "align", "border", "height", "hspace",  "longdesc", "usemap",
+                "vspace", "width", "class", "dir", "id", "lang",  "title");
+
             $defaultAttributes = array(
                 "alt" => $this->alt,
                 "title" => $this->alt,

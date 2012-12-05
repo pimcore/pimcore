@@ -19,6 +19,8 @@ pimcore.asset.tree = Class.create({
 
     initialize: function(config) {
 
+        this.position = "left";
+
         if (!config) {
             this.config = {
                 rootId: 1,
@@ -119,6 +121,9 @@ pimcore.asset.tree = Class.create({
         this.tree.on("afterrender", function () {
             this.tree.loadMask = new Ext.LoadMask(this.tree.getEl(), {msg: t("please_wait")});
             this.tree.loadMask.enable();
+
+            // hadd listener to root node -> other nodes are added om the "append" event -> see this.enableHtml5Upload()
+            this.addHtml5DragListener(this.tree.getRootNode());
 
             // html5 upload
             if (window["FileList"]) {
@@ -230,6 +235,8 @@ pimcore.asset.tree = Class.create({
                 }.bind(this), true);
             }
         }.bind(this));
+
+        this.tree.on("append", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.doLayout();
@@ -765,24 +772,26 @@ pimcore.asset.tree = Class.create({
         }
         
         // timeout because there is no afterrender function
-        window.setTimeout(function (tree, parent, node, index) {
+        window.setTimeout(this.addHtml5DragListener.bind(this, node),2000)
+    },
 
-            var el = Ext.get(node.getUI().getEl()).dom;
-            try {
-                el.addEventListener("dragover", function (e) {
-                    //e.stopPropagation();
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'copy';
+    addHtml5DragListener: function (node) {
 
-                    node.select();
+        var el = Ext.get(node.getUI().getEl()).dom;
+        try {
+            el.addEventListener("dragover", function (e) {
+                //e.stopPropagation();
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
 
-                    return false;
-                }.bind(node),true);
-            }
-            catch (e) {
-                console.log(e);
-            }
-        }.bind(this, tree, parent, node, index),2000)
+                node.select();
+
+                return false;
+            }.bind(node),true);
+        }
+        catch (e) {
+            console.log(e);
+        }
     },
 
     importFromServer: function () {

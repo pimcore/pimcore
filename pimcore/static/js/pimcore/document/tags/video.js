@@ -30,7 +30,17 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
         this.setupWrapper();
 
-        var toolbar = [];
+        var element = Ext.get("pimcore_video_" + name);
+        element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>');
+
+        var button = new Ext.Button({
+            iconCls: "pimcore_icon_edit_link",
+            cls: "pimcore_edit_link_button",
+            handler: this.openEditor.bind(this)
+        });
+        button.render(Ext.get(Ext.query(".pimcore_video_edit_button", element.dom)[0]));
+
+        /*var toolbar = [];
         toolbar.push("Type");
         toolbar.push({
             xtype: "combo",
@@ -102,21 +112,146 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         }.bind(this));
 
         this.element.render(id);
+        */
+    },
+
+    openEditor: function () {
+
+        for (var i = 0; i < editables.length; i++) {
+            if (editables[i].getType() == "wysiwyg") {
+                editables[i].endCKeditor();
+            }
+        }
+
+        this.fieldPath = new Ext.form.TextField({
+            fieldLabel: t('path'),
+            value: this.data.path,
+            name: "path",
+            width: 320,
+            cls: "pimcore_droptarget_input",
+            enableKeyEvents: true,
+            listeners: {
+                keyup: function (el) {
+                    if(el.getValue().indexOf("you") >= 0 && el.getValue().indexOf("http") >= 0) {
+                        this.form.getComponent("type").setValue("youtube");
+                    } else if (el.getValue().indexOf("vim") >= 0 && el.getValue().indexOf("http") >= 0) {
+                        this.form.getComponent("type").setValue("vimeo");
+                    }
+                }.bind(this)
+            }
+        });
+
+        this.poster = new Ext.form.TextField({
+            fieldLabel: t('poster_image'),
+            value: this.data.poster,
+            name: "poster",
+            width: 320,
+            cls: "pimcore_droptarget_input",
+            enableKeyEvents: true,
+            listeners: {
+                keyup: function (el) {
+                    //el.setValue(this.data.poster)
+                }.bind(this)
+            }
+        });
+
+        var initDD = function (el) {
+            var domElement = el.getEl().dom;
+            domElement.dndOver = false;
+
+            domElement.reference = this;
+
+            dndZones.push(domElement);
+            el.getEl().on("mouseover", function (e) {
+                this.dndOver = true;
+            }.bind(domElement));
+            el.getEl().on("mouseout", function (e) {
+                this.dndOver = false;
+            }.bind(domElement));
+
+        }
+
+        this.fieldPath.on("render", initDD.bind(this));
+        this.poster.on("render", initDD.bind(this));
+
+        this.form = new Ext.FormPanel({
+            bodyStyle: "padding:10px;",
+            items: [{
+                xtype: "combo",
+                itemId: "type",
+                fieldLabel: t('type'),
+                name: 'type',
+                triggerAction: 'all',
+                editable: true,
+                mode: "local",
+                store: ["asset","youtube","vimeo"],
+                value: this.data.type
+            }, {
+                xtype: "compositefield",
+                items: [this.fieldPath, {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                }]
+            }, this.poster],
+            buttons: [
+                {
+                    text: t("cancel"),
+                    listeners:  {
+                        "click": this.cancel.bind(this)
+                    }
+                },
+                {
+                    text: t("save"),
+                    listeners: {
+                        "click": this.save.bind(this)
+                    },
+                    icon: "/pimcore/static/img/icon/tick.png"
+                }
+            ]
+        });
+
+
+        this.window = new Ext.Window({
+            modal: true,
+            width: 500,
+            height: 170,
+            title: t("video"),
+            items: [this.form],
+            layout: "fit"
+        });
+        this.window.show();
     },
 
     onNodeDrop: function (target, dd, e, data) {
 
-        if (this.dndAllowed(data)) {
-            this.data.id = data.node.attributes.id;
-            this.data.type = "asset";
+        var t = Ext.get(target);
 
-            window.setTimeout(this.reloadDocument.bind(this), 200);
-            return true;
+        if(t.getAttribute("name") == "path") {
+            if(this.dndAllowedPath(data)){
+                this.fieldPath.setValue(data.node.attributes.path);
+                this.form.getComponent("type").setValue("asset");
+                return true;
+            }
+        } else if (t.getAttribute("name") == "poster") {
+            if(this.dndAllowedPoster(data)){
+                this.poster.setValue(data.node.attributes.path);
+                return true;
+            }
         }
+
+        return false;
     },
 
     onNodeOver: function(target, dd, e, data) {
-        if (this.dndAllowed(data)) {
+
+        var t = Ext.get(target);
+        var check = "dndAllowedPath";
+        if (t.getAttribute("name") == "poster") {
+            check = "dndAllowedPoster";
+        }
+
+        if (this[check](data)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {
@@ -124,13 +259,53 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         }
     },
 
+    dndAllowedPath: function(data) {
 
-    dndAllowed: function(data) {
+        if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "video") {
+            return true;
+        }
+        return false;
+    },
 
-        if(data.node.attributes.elementType!="asset" || data.node.attributes.type!="video"){
-            return false;
-        } else return true;
+    dndAllowedPoster: function(data) {
 
+        if (data.node.attributes.elementType == "asset" && data.node.attributes.type == "image") {
+            return true;
+        }
+        return false;
+    },
+
+    openSearchEditor: function () {
+        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
+            type: ["asset"],
+            subtype: {
+                asset: ["video"]
+            }
+        });
+    },
+
+    addDataFromSelector: function (item) {
+        if (item) {
+            this.fieldPath.setValue(item.fullpath);
+            return true;
+        }
+    },
+
+    save: function () {
+
+        // close window
+        this.window.hide();
+
+        var values = this.form.getForm().getFieldValues();
+        this.data = values;
+
+
+
+        this.reloadDocument();
+    },
+
+    cancel: function () {
+        this.window.hide();
     },
 
     getValue: function () {

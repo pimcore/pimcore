@@ -89,7 +89,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);
     }
 
     /**
@@ -104,7 +104,7 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
     }
 
     /**
@@ -546,6 +546,28 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
 
         return $code;
 
+    }
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    public function getDiffDataForEditMode($data, $object = null) {
+        $defaultData = parent::getDiffDataForEditMode($data, $object);
+        $html =  $defaultData[0]["value"];
+        $value = array();
+        $value["html"] = $html;
+        $value["type"] = "html";
+        $defaultData[0]["value"] = $value;
+        return $defaultData;
     }
 
 }

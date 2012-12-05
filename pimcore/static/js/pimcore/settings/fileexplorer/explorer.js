@@ -172,11 +172,6 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     openFile: function (path) {
 
-        if(Ext.isIE8) {
-            alert(t("not_supported_by_your_browser"));
-            return;
-        }
-
         if(typeof this.openfiles[path] != "undefined") {
             this.openfiles[path].activate();
         } else {

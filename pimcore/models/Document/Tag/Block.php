@@ -231,12 +231,12 @@ class Document_Tag_Block extends Document_Tag {
     public function blockStart() {
 
         $this->outputEditmode('<div class="pimcore_block_entry ' . $this->getName() . '" key="' . $this->indices[$this->current] . '">');
-        $this->outputEditmode('<div class="pimcore_block_buttons">');
-        $this->outputEditmode('<div class="pimcore_block_amount"></div>');
-        $this->outputEditmode('<div class="pimcore_block_plus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_minus"></div>');
-        $this->outputEditmode('<div class="pimcore_block_up"></div>');
-        $this->outputEditmode('<div class="pimcore_block_down"></div>');
+        $this->outputEditmode('<div class="pimcore_block_buttons_' . $this->getName() . ' pimcore_block_buttons">');
+        $this->outputEditmode('<div class="pimcore_block_amount_' . $this->getName() . ' pimcore_block_amount"></div>');
+        $this->outputEditmode('<div class="pimcore_block_plus_' . $this->getName() . ' pimcore_block_plus"></div>');
+        $this->outputEditmode('<div class="pimcore_block_minus_' . $this->getName() . ' pimcore_block_minus"></div>');
+        $this->outputEditmode('<div class="pimcore_block_up_' . $this->getName() . ' pimcore_block_up"></div>');
+        $this->outputEditmode('<div class="pimcore_block_down_' . $this->getName() . ' pimcore_block_down"></div>');
         $this->outputEditmode('<div class="pimcore_block_clear"></div>');
         $this->outputEditmode('</div>');
 

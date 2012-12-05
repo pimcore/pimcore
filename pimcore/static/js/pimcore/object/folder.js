@@ -260,8 +260,6 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
     
     save : function (task) {
 
-        
-        
         Ext.Ajax.request({
             url: '/admin/object/save-folder/task/' + task,
             method: "post",
@@ -271,17 +269,17 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                        this.resetChanges();
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",t(rdata.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");    
+                    pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
                 }
-            }
+            }.bind(this)
         });
-        
-        this.resetChanges();
+
     },
 
 

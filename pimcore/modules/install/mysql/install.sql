@@ -226,6 +226,12 @@ CREATE TABLE `http_error_log` (
   KEY `date` (`date`)
 ) DEFAULT CHARSET=utf8;
 
+CREATE TABLE `locks` (
+  `id` varchar(150) NOT NULL DEFAULT '',
+  `date` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -475,6 +481,7 @@ CREATE TABLE `users` (
   `roles` varchar(1000) DEFAULT NULL,
   `welcomescreen` tinyint(1) DEFAULT NULL,
   `closeWarning` tinyint(1) DEFAULT NULL,
+  `memorizeTabs` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),

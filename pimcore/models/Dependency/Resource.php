@@ -123,9 +123,6 @@ class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function save() {
-
-        $this->db->beginTransaction();
-
         try {
             foreach ($this->model->getRequires() as $r) {
 
@@ -143,7 +140,6 @@ class Dependency_Resource extends Pimcore_Model_Resource_Abstract {
                     Logger::error($e);
                 }
             }
-            $this->db->commit();
         } catch (Exception $e) {
             Logger::error($e);
         }

@@ -189,6 +189,9 @@ class Object_Concrete extends Object_Abstract {
         
         Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
 
+        // this is called already in parent::update() but we have too call it here again, because there are again
+        // modifications after parent::update();, maybe this should be solved better, but for now this works fine
+        $this->clearDependentCache();
     }
 
     /**

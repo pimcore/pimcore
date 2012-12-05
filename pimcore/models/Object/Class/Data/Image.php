@@ -74,7 +74,7 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $width;
+        $this->width = $this->getAsIntegerCast($width);;
     }
 
     /**
@@ -89,7 +89,7 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return void
      */
     public function setHeight($height) {
-        $this->height = $height;
+        $this->height = $this->getAsIntegerCast($height);
     }
 
     public function getDefaultValue() {
@@ -283,5 +283,32 @@ class Object_Class_Data_Image extends Object_Class_Data {
         return $this->uploadPath;
     }
 
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        $versionPreview = null;
+        if ($data instanceof Asset_Image) {
+            $versionPreview = "/admin/asset/get-image-thumbnail/id/" . $data->getId() . "/width/150/height/150/aspectratio/true";
+        }
+
+        if ($versionPreview) {
+            $value = array();
+            $value["src"] = $versionPreview;
+            $value["type"] = "img";
+            return $value;
+        } else {
+            return "";
+        }
+    }
 }
