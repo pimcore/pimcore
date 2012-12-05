@@ -495,11 +495,15 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return array|false
      */
     function get($id)
     {
+        if (empty($id)) {
+            return false;
+        }
+
         return $this->_collection->find(array('_id' => $id));
     }
 

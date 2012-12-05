@@ -697,8 +697,10 @@ pimcore.helpers.deleteObjectCheckDependencyComplete = function (id, callback, re
     try {
         var res = Ext.decode(response.responseText);
         var message = t('delete_message');
-        if (res.hasDependencies) {
-            var message = t('delete_message_dependencies');
+        if (res.isFolder) {
+            message = t('delete_message_folder_and_objects');
+        } else if (res.hasDependencies) {
+            message = t('delete_message_dependencies');
         }
         Ext.MessageBox.show({
             title:t('delete'),

@@ -643,10 +643,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
     {
 
         $hasDependency = false;
+        $isFolder = false;
 
         try {
             $object = Object_Abstract::getById($this->getParam("id"));
             $hasDependency = $object->getDependencies()->isRequired();
+            $isFolder = $this->isObjectTypeFolder($object);
         }
         catch (Exception $e) {
             Logger::err("failed to access object with id: " . $this->getParam("id"));
@@ -705,8 +707,25 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array(
               "hasDependencies" => $hasDependency,
               "childs" => $childs,
-              "deletejobs" => $deleteJobs
+              "deletejobs" => $deleteJobs,
+              "isFolder" => $isFolder
         ));
+    }
+
+    private function isObjectTypeFolder(Object_Abstract $object)
+    {
+        $isFolder = false;
+
+        if ($object instanceof Object_Abstract) {
+
+            $objectType = $object->getType();
+
+            if ($objectType === 'folder') {
+                $isFolder = true;
+            }
+        }
+
+        return $isFolder;
     }
 
 
