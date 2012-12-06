@@ -1280,7 +1280,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->properties !== null) {
-            unset($this->_fulldump);
             $this->renewInheritedProperties();
         }
 
@@ -1291,6 +1290,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
                 $this->setFilename($originalElement->getFilename());
                 $this->setPath($originalElement->getPath());
             }
+
+            unset($this->_fulldump);
         }
     }
     
