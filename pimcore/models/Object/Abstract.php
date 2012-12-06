@@ -1251,7 +1251,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->o_properties !== null) {
-            unset($this->_fulldump);
             $this->renewInheritedProperties();
         }
 
@@ -1262,6 +1261,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                 $this->setO_key($originalElement->getO_key());
                 $this->setO_path($originalElement->getO_path());
             }
+
+            unset($this->_fulldump);
         }
     }
     

@@ -1113,7 +1113,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->properties !== null) {
-            unset($this->_fulldump);
             $this->renewInheritedProperties();
         }
 
@@ -1124,9 +1123,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getPath());
             }
+
+            unset($this->_fulldump);
         }
     }
-    
+
     public function removeInheritedProperties () {
         $myProperties = array();
         if($this->properties !== null) {
