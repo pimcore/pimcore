@@ -80,9 +80,21 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      * @return Property_Predefined
      */
     public static function getByKey($key) {
-        $property = new self();
-        $property->setKey($key);
-        $property->getResource()->getByKey();
+
+        $cacheKey = "property_predefined_" . $key;
+
+        try {
+            $property = Zend_Registry::get($cacheKey);
+            if(!$property) {
+                throw new Exception("Predefined property in registry is null");
+            }
+        } catch (Exception $e) {
+            $property = new self();
+            $property->setKey($key);
+            $property->getResource()->getByKey();
+
+            Zend_Registry::set($cacheKey, $property);
+        }
 
         return $property;
     }

@@ -137,7 +137,7 @@ class Property extends Pimcore_Model_Abstract {
         if ($this->getName() && $this->getType()) {
             $predefined = Property_Predefined::getByKey($this->getName());
 
-            if ($predefined->getType() == $this->getType()) {
+            if ($predefined && $predefined->getType() == $this->getType()) {
                 $this->config = $predefined->getConfig();
             }
         }
