@@ -508,4 +508,12 @@ class Pimcore_Tool {
 
         return $exists;
     }
+
+    /**
+     * @param $message
+     */
+    public static function exitWithError($message) {
+        header('HTTP/1.1 503 Service Temporarily Unavailable');
+        die($message);
+    }
 }

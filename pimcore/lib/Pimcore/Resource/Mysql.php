@@ -97,7 +97,7 @@ class Pimcore_Resource_Mysql {
 
             Logger::emergency($errorMessage);
             Logger::emergency($e);
-            die($errorMessage);
+            Pimcore_Tool::exitWithError($errorMessage);
         }
     }
 

@@ -399,12 +399,12 @@ class Pimcore {
         // check some system variables
         if (version_compare(PHP_VERSION, '5.3.0', "<")) {
             $m = "pimcore requires at least PHP version 5.3.0 your PHP version is: " . PHP_VERSION;
-            die($m);
+            Pimcore_Tool::exitWithError($m);
         }
 
         if (get_magic_quotes_gpc()) {
             $m = "pimcore requires magic_quotes_gpc OFF";
-            die($m);
+            Pimcore_Tool::exitWithError($m);
         }
     }
 
