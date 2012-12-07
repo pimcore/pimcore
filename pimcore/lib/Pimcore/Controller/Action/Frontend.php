@@ -352,7 +352,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                     }
                 }
                 catch (Exception $e) {
-                    die("Unable to load error document");
+                    $m = "Unable to load error document";
+                    Pimcore_Tool::exitWithError($m);
                 }
             }
         }
