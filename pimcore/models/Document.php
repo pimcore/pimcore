@@ -327,12 +327,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
-        if($this->getId()) {
-            // do not lock when creating a new document, this will cause a dead-lock because the cache-tag is used as key
-            // and the cache tag is different when releasing the lock later, because the document has then an id
-            Tool_Lock::acquire($this->getCacheTag());
-        }
-
         $this->beginTransaction();
 
         try {
@@ -361,8 +355,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
             throw $e;
         }
-
-        Tool_Lock::release($this->getCacheTag());
 
         // empty object cache
         $this->clearDependentCache();
