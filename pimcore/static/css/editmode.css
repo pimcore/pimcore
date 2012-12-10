@@ -166,7 +166,7 @@
 }
 
 /* because this causes problems with the fixed z-index of combo and window above */
-.x-shadow {
+.x-shadow, x-ie-shadow {
     display: none !important;
 }
 
