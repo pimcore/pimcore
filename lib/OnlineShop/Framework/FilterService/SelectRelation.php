@@ -53,11 +53,11 @@ class OnlineShop_Framework_FilterService_SelectRelation extends OnlineShop_Frame
 
 
         if(!empty($value)) {
-            if($isPrecondition) {
-                $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest = " . $productList->quote($value));
-            } else {
+//            if($isPrecondition) {
+//                $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest = " . $productList->quote($value));
+//            } else {
                 $productList->addRelationCondition($filterDefinition->getField(),  "dest = " . $productList->quote($value));
-            }
+//            }
 
         }
 

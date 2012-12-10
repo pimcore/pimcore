@@ -54,11 +54,11 @@ class OnlineShop_Framework_FilterService_MultiSelectRelation extends OnlineShop_
             }
             if(!empty($quotedValues)) {
 
-                if($isPrecondition) {
-                    $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest IN (" . implode(",", $quotedValues) . ")");
-                } else {
+                //if($isPrecondition) {
+                //    $productList->addRelationCondition("PRECONDITION_" . $filterDefinition->getField(),  "dest IN (" . implode(",", $quotedValues) . ")");
+                //} else {
                     $productList->addRelationCondition($filterDefinition->getField(),  "dest IN (" . implode(",", $quotedValues) . ")");
-                }
+                //}
             }
         }
         return $currentFilter;
