@@ -529,12 +529,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function save() {
 
-        if($this->getO_Id()) {
-            // do not lock when creating a new object, this will cause a dead-lock because the cache-tag is used as key
-            // and the cache tag is different when releasing the lock later, because the object has then an id
-            Tool_Lock::acquire($this->getCacheTag());
-        }
-
         $this->beginTransaction();
 
         try {
@@ -566,8 +560,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
             throw $e;
         }
-
-        Tool_Lock::release($this->getCacheTag());
 
         // empty object cache
         $this->clearDependentCache();
