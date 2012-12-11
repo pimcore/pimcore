@@ -819,7 +819,7 @@ pimcore.object.classes.klass = Class.create({
 
         var regresult = this.data["name"].match(/[a-zA-Z]+/);
 
-        if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"], this.parentPanel.forbiddennames)) {
+        if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(), this.parentPanel.forbiddennames)) {
             delete this.data.layoutDefinitions;
 
             var m = Ext.encode(this.getData());

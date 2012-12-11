@@ -174,7 +174,7 @@ pimcore.object.klass = Class.create({
 
         var regresult = value.match(/[a-zA-Z]+/);
 
-        if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, this.forbiddennames)) {
+        if (button == "ok" && value.length > 2 && regresult == value && !in_array(value.toLowerCase(), this.forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/add",
                 params: {
