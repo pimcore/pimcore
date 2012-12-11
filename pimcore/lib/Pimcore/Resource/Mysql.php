@@ -273,6 +273,10 @@ class Pimcore_Resource_Mysql {
             }
         }
 
+        if(strpos($lowerErrorMessage, "syntax error") !== false) {
+            Logger::info(array($method, $args));
+        }
+
         // no handling just log the exception and then throw it
         Logger::debug($exception);
         throw $exception;
