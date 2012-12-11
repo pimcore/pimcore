@@ -817,23 +817,29 @@ pimcore.object.classes.klass = Class.create({
 
         this.saveCurrentNode();
 
-        delete this.data.layoutDefinitions;
+        var regresult = this.data["name"].match(/[a-zA-Z]+/);
 
-        var m = Ext.encode(this.getData());
-        var n = Ext.encode(this.data);
+        if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"], this.parentPanel.forbiddennames)) {
+            delete this.data.layoutDefinitions;
 
-        if (this.getDataSuccess) {
-            Ext.Ajax.request({
-                url: "/admin/class/save",
-                method: "post",
-                params: {
-                    configuration: m,
-                    values: n,
-                    id: this.data.id
-                },
-                success: this.saveOnComplete.bind(this),
-                failure: this.saveOnError.bind(this)
-            });
+            var m = Ext.encode(this.getData());
+            var n = Ext.encode(this.data);
+
+            if (this.getDataSuccess) {
+                Ext.Ajax.request({
+                    url: "/admin/class/save",
+                    method: "post",
+                    params: {
+                        configuration: m,
+                        values: n,
+                        id: this.data.id
+                    },
+                    success: this.saveOnComplete.bind(this),
+                    failure: this.saveOnError.bind(this)
+                });
+            }
+        } else {
+            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
         }
     },
 
