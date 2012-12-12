@@ -150,7 +150,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     v.dragZone = new Ext.dd.DragZone(v.getEl(), {
                         hasOuterHandles: true,
                         getDragData: function(e) {
-                            closeCKeditors();
 
                             var sourceEl = element;
                             var proxyEl = null;
@@ -583,7 +582,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                         v.dragZone = new Ext.dd.DragZone(v.getEl(), {
                             getDragData: function(e) {
-                                closeCKeditors();
                                 var sourceEl = v.getEl().dom;
                                 if (sourceEl) {
                                     d = sourceEl.cloneNode(true);

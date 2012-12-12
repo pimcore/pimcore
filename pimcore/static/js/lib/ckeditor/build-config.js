@@ -89,7 +89,12 @@ var CKBUILDER_CONFIG = {
 		'popup' : 1,
 		'fakeobjects' : 1,
 		'richcombo' : 1,
-		'listblock' : 1
+		'listblock' : 1,
+		'autogrow' : 1,
+		'divarea' : 1,
+		'iframedialog' : 1,
+		'tableresize' : 1,
+		'placeholder' : 1
 	},
 	languages : {
 		'af' : 1,
