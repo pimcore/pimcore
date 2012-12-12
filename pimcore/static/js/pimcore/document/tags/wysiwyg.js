@@ -159,32 +159,28 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
 
             delete eConfig.width;
-            
+
             var removePluginsAdd = "";
             if(eConfig.removePlugins) {
                 removePluginsAdd = "," + eConfig.removePlugins;
             }
 
-            //eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates' + removePluginsAdd;
-            //eConfig.extraPlugins = "div";
-            //eConfig.entities = false;
-            //eConfig.entities_greek = false;
-            //eConfig.entities_latin = false;
-            //eConfig.startupFocus = true;
+
+            eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates' + removePluginsAdd;
+            eConfig.extraPlugins = "div";
+            eConfig.entities = false;
+            eConfig.entities_greek = false;
+            eConfig.entities_latin = false;
+            eConfig.startupFocus = true;
             eConfig.resize_minWidth = this.options.width - 2;
             eConfig.resize_maxWidth = this.options.width - 2;
 
-            if (typeof this.options.toolbar == "string") {
-                if (window[this.options.toolbar]) {
-                    eConfig.toolbar = window[this.options.toolbar];
-                }
-            }
 
             if(this.options["inline"] === false) {
                 if(this.options["height"]) {
-                    //eConfig.removePlugins += ",autogrow";
+                    eConfig.removePlugins += ",autogrow";
                 } else {
-                    //eConfig.autogrow = true;
+                    eConfig.autogrow = true;
                 }
                 this.ckeditor = CKEDITOR.replace(this.textarea, eConfig);
             } else {
