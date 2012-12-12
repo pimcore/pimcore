@@ -171,7 +171,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
-            eConfig.startupFocus = true;
+            //eConfig.startupFocus = true;
             eConfig.resize_minWidth = this.options.width - 2;
             eConfig.resize_maxWidth = this.options.width - 2;
 
