@@ -117,12 +117,6 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
     openEditor: function () {
 
-        for (var i = 0; i < editables.length; i++) {
-            if (editables[i].getType() == "wysiwyg") {
-                editables[i].endCKeditor();
-            }
-        }
-
         this.fieldPath = new Ext.form.TextField({
             fieldLabel: t('path'),
             value: this.data.path,
