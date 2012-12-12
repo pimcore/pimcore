@@ -178,7 +178,7 @@ class Pimcore_Placeholder
     {
         $placeholderStack = array();
 
-        $regex = "/" . self::$placeholderPrefix . "([a-z_]+)\(([a-z_0-9]]+)[\s,]*(.*?)\)" . self::$placeholderSuffix . "/is";
+        $regex = "/" . self::$placeholderPrefix . "([a-z_]+)\(([a-z_0-9]+)[\s,]*(.*?)\)" . self::$placeholderSuffix . "/is";
         preg_match_all($regex, $contentString, $matches);
 
         if (is_array($matches[1])) {

@@ -199,7 +199,7 @@ class Document_Tag_Href extends Document_Tag {
 		
 		$this->setElement();
 	
-        if ($this->element instanceof Element_Interface) {
+        if ($this->getElement() instanceof Element_Interface) {
             return false;
         }
         return true;

@@ -133,30 +133,26 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     initCkEditor: function () {
 
-        var toolbar_Full = [
-            ["close_object",'Cut','Copy','Paste','PasteText','PasteFromWord','-', 'SpellChecker'],
-            ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-            '/',
-            ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-            ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
-            ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-            ['Link','Unlink','Anchor'],
-            ['Image','Flash','Table','HorizontalRule','SpecialChar','PageBreak'],
-            '/',
-            ['Styles','Format','Font','FontSize'],
-            ['TextColor','BGColor'],
-            ['Maximize', 'ShowBlocks','Source']
-        ];
-
         var eConfig = {
             uiColor: "#f2f2f2",
-            toolbar: toolbar_Full,
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             resize_enabled: false
         };
 
-        eConfig.extraPlugins = "close_object,pimcoreimage,pimcorelink";
+
+        eConfig.toolbarGroups = [
+            { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+            { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+            { name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ] }, { name: 'forms' },
+            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
+            { name: 'links' },{ name: 'insert' }, { name: 'styles' }, { name: 'colors' }, { name: 'tools' },
+            { name: 'others' }, { name: 'about' }
+        ];
+
+        eConfig.extraPlugins = "close_object";
+        eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,autogrow,divarea';
         
         if (intval(this.fieldConfig.width) > 1) {
             eConfig.width = this.fieldConfig.width;

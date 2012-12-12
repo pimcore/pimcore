@@ -50,7 +50,7 @@ if($opts->getOption("core")) {
     );
     $output = PIMCORE_PATH . "/config/autoload-classmap.php";
 } else {
-    $paths = explode(":", get_include_path());
+    $paths = explode(PATH_SEPARATOR, get_include_path());
     $output = PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php";
 }
 

@@ -94,7 +94,7 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
      */
     public function getDataFromResource($data)
     {
-        return $data;
+        return (bool) $data;
 }
 
     /**
@@ -206,4 +206,10 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
     }
 
 
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 }

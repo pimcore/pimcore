@@ -247,5 +247,50 @@ class Object_Class_Data_Date extends Object_Class_Data
         $this->useCurrentDate = (bool)$useCurrentDate;
     }
 
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
 
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @return null|Pimcore_Date
+     */
+    public function getDiffDataFromEditmode($data, $object = null) {
+        $thedata = $data[0]["data"];
+        if ($thedata) {
+            return new Pimcore_Date($thedata);
+        } else {
+            return null;
+        }
+    }
+
+    /** See parent class.
+     * @param mixed $data
+     * @param null $object
+     * @return array|null
+     */
+    public function getDiffDataForEditMode($data, $object = null) {
+        $result = array();
+
+        $thedata = null;
+        if ($data instanceof Zend_Date) {
+            $thedata = $data->getTimestamp();
+        };
+        $diffdata = array();
+        $diffdata["field"] = $this->getName();
+        $diffdata["key"] = $this->getName();
+        $diffdata["type"] = $this->fieldtype;
+        $diffdata["value"] = $this->getVersionPreview($data);
+        $diffdata["data"] = $thedata;
+        $diffdata["title"] = !empty($this->title) ? $this->title : $this->name;
+        $diffdata["disabled"] = false;
+
+        $result[] = $diffdata;
+
+        return $result;
+    }
 }

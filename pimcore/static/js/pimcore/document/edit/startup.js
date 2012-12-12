@@ -123,16 +123,7 @@ Ext.onReady(function () {
         Ext.getBody().applyStyles("min-height:" + bodyHeight);
         // set handler
         dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(), parent.Ext.get('document_iframe_' + window.editWindow.document.id), dndZones);
-        
-        // handler for Esc
-        var mapEsc = new Ext.KeyMap(document, {
-            key: [27],
-            fn: function () {
-                closeCKeditors();
-            },
-            stopEvent: true
-        });
-    
+
         // handler for STRG+S
         var mapCtrlS = new Ext.KeyMap(document, {
             key: "s",

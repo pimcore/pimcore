@@ -24,6 +24,13 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public static $types = array("folder", "page", "snippet", "link", "hardlink", "email");  //ck added "email"
 
+    public static function addDocumentType($type) {
+        if(!in_array($type, self::$types)) {
+            self::$types[] = $type;
+        }
+    }
+
+
     
     private static $hidePublished = false;
     public static function setHideUnpublished($hidePublished) {
@@ -320,12 +327,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
-        if($this->getId()) {
-            // do not lock when creating a new document, this will cause a dead-lock because the cache-tag is used as key
-            // and the cache tag is different when releasing the lock later, because the document has then an id
-            Tool_Lock::acquire($this->getCacheTag());
-        }
-
         $this->beginTransaction();
 
         try {
@@ -354,8 +355,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
             throw $e;
         }
-
-        Tool_Lock::release($this->getCacheTag());
 
         // empty object cache
         $this->clearDependentCache();
@@ -1106,7 +1105,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->properties !== null) {
-            unset($this->_fulldump);
             $this->renewInheritedProperties();
         }
 
@@ -1117,9 +1115,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getPath());
             }
+
+            unset($this->_fulldump);
         }
     }
-    
+
     public function removeInheritedProperties () {
         $myProperties = array();
         if($this->properties !== null) {

@@ -189,9 +189,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
         // add html headers for snippets in editmode, so there is no problem with javascript
         $body = $this->getResponse()->getBody();
         if ($this->controller->editmode && strpos($body, "</body>") === false && !$request->getParam("blockAutoHtml")) {
-            $body = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-			<html xmlns="http://www.w3.org/1999/xhtml">
-			<head></head><body>' . $body . "</body></html>";
+            $body = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $body . "</body></html>";
 
             $this->getResponse()->setBody($body);
         }

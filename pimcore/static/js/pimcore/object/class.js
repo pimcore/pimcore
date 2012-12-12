@@ -15,6 +15,9 @@
 pimcore.registerNS("pimcore.object.klass");
 pimcore.object.klass = Class.create({
 
+    forbiddennames: ["abstract","class","data","folder","list","permissions","resource","concrete","interface", "service", "fieldcollection", "localizedfield", "objectbrick"],
+
+
     initialize: function () {
 
         this.getTabPanel();
@@ -170,9 +173,8 @@ pimcore.object.klass = Class.create({
     addClassComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z]+/);
-        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource","concrete","interface", "service", "fieldcollection", "localizedfield", "objectbrick"];
 
-        if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
+        if (button == "ok" && value.length > 2 && regresult == value && !in_array(value.toLowerCase(), this.forbiddennames)) {
             Ext.Ajax.request({
                 url: "/admin/class/add",
                 params: {
@@ -196,7 +198,7 @@ pimcore.object.klass = Class.create({
             return;
         }
         else {
-            Ext.Msg.alert(t('add_class'), t('problem_creating_new_class'));
+            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
         }
     },
 

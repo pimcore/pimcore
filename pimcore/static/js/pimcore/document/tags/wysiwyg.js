@@ -46,8 +46,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         this.options = options;
 
+
         var textareaId = id + "_textarea";
         this.textarea = document.createElement("div");
+        this.textarea.setAttribute("contenteditable","true");
         Ext.get(id).appendChild(this.textarea);
 
         Ext.get(id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
@@ -55,7 +57,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         this.textarea.id = textareaId;
         this.textarea.innerHTML = data;
         
-        var textareaHeight = 100;
+        var textareaHeight = 300;
         if (options.height) {
             textareaHeight = options.height;
         }
@@ -67,7 +69,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight + "px;");
-        Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
 
         // if the width is a % value get the current width of the container in px for further processing
         if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
@@ -115,6 +116,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         mask.reference = this;
 
         this.maskEl = mask;
+
+        this.startCKeditor();
     },
 
     mask: function () {
@@ -137,140 +140,54 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     startCKeditor: function () {
         
         try {
-            Ext.get(this.textarea).un("click", this.startCKeditor.bind(this));
-
-
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
 
             var eConfig = Object.clone(this.options);
 
-            if (!this.options.uiColor) {
-                eConfig.uiColor = "#f2f2f2";
-            }
-            
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible is also Basic
-            if (!this.options.toolbar) {
-                eConfig.toolbar = "Full";
+            if (!this.options["toolbar"] && !this.options["toolbarGroups"]) {
+                eConfig.toolbarGroups = [
+                	{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+                	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+                	{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ] }, { name: 'forms' },
+                	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
+                    '/',
+                	{ name: 'links' },{ name: 'insert' }, { name: 'styles' }, { name: 'colors' }, { name: 'tools' },
+                    { name: 'others' }, { name: 'about' }
+                ];
             }
-            
+
             delete eConfig.width;
-            
+
             var removePluginsAdd = "";
             if(eConfig.removePlugins) {
                 removePluginsAdd = "," + eConfig.removePlugins;
             }
+
+
             eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates' + removePluginsAdd;
-            eConfig.extraPlugins = "close,pimcoreimage,pimcorelink";
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
-            eConfig.startupFocus = true;
+            //eConfig.startupFocus = true;
             eConfig.resize_minWidth = this.options.width - 2;
             eConfig.resize_maxWidth = this.options.width - 2;
-            eConfig.autogrow = true;
-            
-            if(!this.options.height) {
-                eConfig.extraPlugins += ",autogrow";
-            }
-            
-            if(this.options.sharedtoolbar !== false) {
-                eConfig.sharedSpaces = {
-                    top : 'pimcore_wysiwyg_topbar'
-                };
-                
-                // close all editors which don't use the shared toolbar'
-                for (var i = 0; i < editables.length; i++) {
-                    if (editables[i].getType() == "wysiwyg") {
-                        if(editables[i].options.sharedtoolbar === false) {
-                             editables[i].endCKeditor();
-                        }
-                    }
-                }
-                
-                this.checkForSharedSpaces();
-            }
-            else {
-                // close all editors which use the shared toolbar'
-                for (var i = 0; i < editables.length; i++) {
-                    if (editables[i].getType() == "wysiwyg") {
-                        if(editables[i].options.sharedtoolbar !== false) {
-                             editables[i].endCKeditor();
-                        }
-                    }
-                }
-            }
-            
-            if (typeof this.options.toolbar == "string") {
-                if (window[this.options.toolbar]) {
-                    eConfig.toolbar = window[this.options.toolbar];
-                }
-            }
+            eConfig.div_wrapTable = false;
 
-            /*if (!this.initialOptions.height) {
-                var height = Ext.get(this.textarea).getHeight();
-                eConfig.height = height;
-                if (height < 10) {
-                    eConfig.height = 100;
+            if(this.options["inline"] === false) {
+                if(this.options["height"]) {
+                    eConfig.removePlugins += ",autogrow";
+                } else {
+                    eConfig.autogrow = true;
                 }
-            }*/
-
-            this.ckeditor = CKEDITOR.replace(this.textarea, eConfig);
+                this.ckeditor = CKEDITOR.replace(this.textarea, eConfig);
+            } else {
+                this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
+            }
         }
         catch (e) {
             console.log(e);
-        }
-    },
-
-    endCKeditor : function () {
-
-        this.hideSharedSpaces();
-
-        if (this.ckeditor) {
-            Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
-
-            this.data = this.ckeditor.getData();
-
-            this.ckeditor.destroy();
-            this.ckeditor = null;
-        }
-    },
-
-    checkForSharedSpaces: function () {
-        if (!Ext.get("pimcore_wysiwyg_topbar")) {
-            this.createSharedSpaces();
-        }
-        this.showSharedSpaces();
-
-        // resize
-        var width = Ext.getBody().getWidth();
-        Ext.get("pimcore_wysiwyg_topbar").setStyle({
-            width:  width + "px"
-        });
-    },
-
-    createSharedSpaces: function () {
-        Ext.getBody().insertHtml("afterBegin",'<div id="pimcore_wysiwyg_topbar"></div><div id="pimcore_wysiwyg_bottombar"></div>');
-        editWindow.layout.on("resize", this.resizeSharedSpaces)
-    },
-
-    hideSharedSpaces: function () {
-        if (Ext.get("pimcore_wysiwyg_topbar")) {
-            Ext.get("pimcore_wysiwyg_topbar").hide();
-        }
-    },
-
-    showSharedSpaces: function () {
-        if (Ext.get("pimcore_wysiwyg_topbar")) {
-            Ext.get("pimcore_wysiwyg_topbar").show();
-        }
-    },
-
-    resizeSharedSpaces: function (el, width, height, rWidth, rHeight) {
-
-        if (Ext.get("pimcore_wysiwyg_topbar")) {
-            Ext.get("pimcore_wysiwyg_topbar").setStyle({
-                width:  (width - 10) + "px"
-            });
         }
     },
 
@@ -387,7 +304,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         var value = this.data;
 
         if (this.ckeditor) {
-            //this.endCKeditor();
             value = this.ckeditor.getData();
         }
 
@@ -402,49 +318,4 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 });
 
 
-var ckeditor_closeplugin_command = {
-    exec:function(editor){
-        window.setTimeout(function () {
-           closeCKeditors();
-        },1000);
-    }
-};
-
-// add close button plugin
-var ckeditor_closeplugin_button ='close';
-CKEDITOR.plugins.add(ckeditor_closeplugin_button,{
-    init:function(editor){
-        editor.addCommand(ckeditor_closeplugin_button,ckeditor_closeplugin_command);
-        editor.ui.addButton("close",{
-            label:t('close'),
-            icon: "/pimcore/static/img/icon/cross.png",
-            command:ckeditor_closeplugin_button
-        });
-    }
-});
-
-
-function closeCKeditors() {
-    for (var i = 0; i < editables.length; i++) {
-        if (editables[i].getType() == "wysiwyg") {
-            editables[i].endCKeditor();
-        }
-    }
-}
-
-
-// add the close button to the default configurations
-CKEDITOR.config.toolbar_Full[0].items.unshift("close");
-CKEDITOR.config.toolbar_Basic[0].unshift("close");
-
-(function () {
-    var tmpToolBarFull = [];
-    for (var i=0; i<CKEDITOR.config.toolbar_Full.length; i++) {
-        if(CKEDITOR.config.toolbar_Full[i]["items"]) {
-            tmpToolBarFull.push(CKEDITOR.config.toolbar_Full[i]);
-        }
-    }
-
-    CKEDITOR.config.toolbar_Full = tmpToolBarFull;
-})();
-
+CKEDITOR.disableAutoInline = true;

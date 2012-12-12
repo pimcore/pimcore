@@ -66,7 +66,7 @@ class Document_List extends Pimcore_Model_List_Abstract implements Zend_Paginato
      * @return array
      */
     public function getDocuments() {
-        if (!$this->documents === null) {
+        if ($this->documents === null) {
             $this->load();
         }
         return $this->documents;

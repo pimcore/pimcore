@@ -721,4 +721,54 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     {
         return $this->assetUploadPath;
     }
+
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        $value = array();
+        $value["type"] = "html";
+
+        if ($data) {
+            $html = $this->getVersionPreview($data);
+            $value["html"] = $html;
+        }
+        return $value;
+    }
+
+    /** See parent class.
+     * @param $data
+     * @param null $object
+     * @return null|Pimcore_Date
+     */
+
+    public function getDiffDataFromEditmode($data, $object = null) {
+        if ($data) {
+            $tabledata = $data[0]["data"];
+
+            $result = array();
+            foreach ($tabledata as $in) {
+                $out = array();
+                $out["id"] = $in[0];
+                $out["path"] = $in[1];
+                $out["type"] = $in[2];
+                $out["subtype"] = $in[3];
+                $result[] = $out;
+            }
+
+            return $this->getDataFromEditmode($result);
+        }
+        return;
+    }
 }

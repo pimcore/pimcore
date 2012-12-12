@@ -15,6 +15,19 @@
 
 class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Route_Abstract {
 
+    public static $directRouteTypes = array("page", "snippet", "email");
+
+
+    public static function addDirectRouteDocumentType($type) {
+        if(!in_array($type, self::$directRouteTypes)) {
+            self::$directRouteTypes[] = $type;
+        }
+    }
+
+    public static function getDirectRouteDocumentTypes() {
+        return self::$directRouteTypes;
+    }
+
     /**
      * @var array
      */
@@ -203,7 +216,7 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 }
 
                 if ($document instanceof Document) {
-                    if (in_array($document->getType(), array("page","snippet","email"))) {
+                    if (in_array($document->getType(), self::getDirectRouteDocumentTypes())) {
 
                         if (Pimcore_Tool::isFrontentRequestByAdmin() || $document->isPublished() ) {
 

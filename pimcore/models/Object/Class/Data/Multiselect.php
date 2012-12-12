@@ -241,4 +241,44 @@ class Object_Class_Data_Multiselect extends Object_Class_Data {
         }
     }
 
+
+    /** True if change is allowed in edit mode.
+     * @return bool
+     */
+    public function isDiffChangeAllowed() {
+        return true;
+    }
+
+    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+     * a image URL. See the ObjectMerger plugin documentation for details
+     * @param $data
+     * @param null $object
+     * @return array|string
+     */
+    public function getDiffVersionPreview($data, $object = null) {
+        if ($data) {
+            $map = array();
+            foreach ($data as $value) {
+                $map[$value] = $value;
+            }
+
+            $html = "<ul>";
+
+            foreach ($this->options as $option) {
+                if ($map[$option["value"]]) {
+                    $value = $option["key"];
+                    $html .= "<li>" . $value . "</li>";
+                }
+            }
+
+            $html .= "</ul>";
+
+            $value = array();
+            $value["html"] = $html;
+            $value["type"] = "html";
+            return $value;
+        } else {
+            return "";
+        }
+    }
 }

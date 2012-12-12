@@ -870,7 +870,7 @@ pimcore.document.tree = Class.create({
             if (response && response.success) {
                 this.leaf = false;
                 this.expand();
-                if (response.type == "page" || response.type == "snippet" || response.type == "email") {   //ckogler
+                if(pimcore.globalmanager.get("document_documenttype_store").indexOf(response.type) >= 0) {
                     pimcore.helpers.openDocument(response.id, response.type);
                 }
             }

@@ -16,7 +16,7 @@
 pimcore.registerNS("pimcore.settings.user.user.settings");
 pimcore.settings.user.user.settings = Class.create({
 
-    initialize: function (userPanel) {
+    initialize:function (userPanel) {
         this.userPanel = userPanel;
 
 
@@ -25,7 +25,7 @@ pimcore.settings.user.user.settings = Class.create({
         this.wsenabled = this.data.wsenabled;
     },
 
-    getPanel: function () {
+    getPanel:function () {
 
         var user = pimcore.globalmanager.get("user");
         this.forceReloadOnSave = false;
@@ -33,94 +33,94 @@ pimcore.settings.user.user.settings = Class.create({
         var generalItems = [];
 
         generalItems.push({
-            xtype: "checkbox",
-            fieldLabel: t("active"),
-            name: "active",
-            disabled: user.id == this.currentUser.id,
-            checked: this.currentUser.active
+            xtype:"checkbox",
+            fieldLabel:t("active"),
+            name:"active",
+            disabled:user.id == this.currentUser.id,
+            checked:this.currentUser.active
         });
 
         generalItems.push({
-            xtype: "textfield",
-            fieldLabel: t("username"),
-            value: this.currentUser.name,
-            width: 300,
-            disabled: true
+            xtype:"textfield",
+            fieldLabel:t("username"),
+            value:this.currentUser.name,
+            width:300,
+            disabled:true
         });
         generalItems.push({
-            xtype: "textfield",
-            fieldLabel: t("password"),
-            name: "password",
-            inputType: "password",
-            width: 300
+            xtype:"textfield",
+            fieldLabel:t("password"),
+            name:"password",
+            inputType:"password",
+            width:300
         });
 
         this.apiPasswordHint = new Ext.form.DisplayField({
-            xtype: "displayfield",
-            hideLabel: true,
-            width: 600,
-            value: t("user_apikey_change_warning"),
-            cls: "pimcore_extra_label_bottom",
-            hidden: true
+            xtype:"displayfield",
+            hideLabel:true,
+            width:600,
+            value:t("user_apikey_change_warning"),
+            cls:"pimcore_extra_label_bottom",
+            hidden:true
         });
         generalItems.push(this.apiPasswordHint);
 
-        if(this.wsenabled && this.currentUser.admin){
+        if (this.wsenabled && this.currentUser.admin) {
             this.apiPasswordHint.show();
         }
 
         generalItems.push({
-            xtype: "textfield",
-            fieldLabel: t("firstname"),
-            name: "firstname",
-            value: this.currentUser.firstname,
-            width: 300
+            xtype:"textfield",
+            fieldLabel:t("firstname"),
+            name:"firstname",
+            value:this.currentUser.firstname,
+            width:300
         });
         generalItems.push({
-            xtype: "textfield",
-            fieldLabel: t("lastname"),
-            name: "lastname",
-            value: this.currentUser.lastname,
-            width: 300
+            xtype:"textfield",
+            fieldLabel:t("lastname"),
+            name:"lastname",
+            value:this.currentUser.lastname,
+            width:300
         });
         generalItems.push({
-            xtype: "textfield",
-            fieldLabel: t("email"),
-            name: "email",
-            value: this.currentUser.email,
-            width: 300
+            xtype:"textfield",
+            fieldLabel:t("email"),
+            name:"email",
+            value:this.currentUser.email,
+            width:300
         });
 
         generalItems.push({
             xtype:'combo',
-            fieldLabel: t('language'),
+            fieldLabel:t('language'),
             typeAhead:true,
-            value: this.currentUser.language,
-            mode: 'local',
-            listWidth: 100,
-            store: pimcore.globalmanager.get("pimcorelanguages"),
-            displayField: 'display',
-            valueField: 'language',
-            forceSelection: true,
-            triggerAction: 'all',
-            hiddenName: 'language',
-            listeners: {
-                change: function () {
+            value:this.currentUser.language,
+            mode:'local',
+            listWidth:100,
+            store:pimcore.globalmanager.get("pimcorelanguages"),
+            displayField:'display',
+            valueField:'language',
+            forceSelection:true,
+            triggerAction:'all',
+            hiddenName:'language',
+            listeners:{
+                change:function () {
                     this.forceReloadOnSave = true;
                 }.bind(this),
-                select: function () {
+                select:function () {
                     this.forceReloadOnSave = true;
                 }.bind(this)
             }
         });
 
         generalItems.push({
-            xtype: "checkbox",
-            fieldLabel: t("admin"),
-            name: "admin",
-            disabled: user.id == this.currentUser.id,
-            checked: this.currentUser.admin,
-            handler: function (box, checked) {
+            xtype:"checkbox",
+            fieldLabel:t("admin"),
+            name:"admin",
+            disabled:user.id == this.currentUser.id,
+            checked:this.currentUser.admin,
+            handler:function (box, checked) {
 
                 // enable / disable the permission fieldset
                 var pfs = this.permissionsSet;
@@ -155,69 +155,76 @@ pimcore.settings.user.user.settings = Class.create({
         });
 
         generalItems.push({
-            xtype: "displayfield",
-            hideLabel: true,
-            width: 600,
-            value: t("user_admin_description"),
-            cls: "pimcore_extra_label_bottom"
+            xtype:"displayfield",
+            hideLabel:true,
+            width:600,
+            value:t("user_admin_description"),
+            cls:"pimcore_extra_label_bottom"
         });
 
         this.apiKeyField = new Ext.form.DisplayField({
-            xtype: "displayfield",
-            fieldLabel: t("apikey"),
-            name: "apikey",
-            value: this.currentUser.password,
-            width: 300,
-            hidden: true
+            xtype:"displayfield",
+            fieldLabel:t("apikey"),
+            name:"apikey",
+            value:this.currentUser.password,
+            width:300,
+            hidden:true
         });
 
         this.apiKeyDescription = new Ext.form.DisplayField({
-            xtype: "displayfield",
-            hideLabel: true,
-            width: 600,
-            value: t("user_apikey_description"),
-            cls: "pimcore_extra_label_bottom",
-            hidden: true
+            xtype:"displayfield",
+            hideLabel:true,
+            width:600,
+            value:t("user_apikey_description"),
+            cls:"pimcore_extra_label_bottom",
+            hidden:true
         });
 
-        generalItems.push(this.apiKeyField );
+        generalItems.push(this.apiKeyField);
         generalItems.push(this.apiKeyDescription);
 
         generalItems.push({
-            xtype: "checkbox",
-            fieldLabel: t("show_welcome_screen"),
-            name: "welcomescreen",
-            checked: this.currentUser.welcomescreen
+            xtype:"checkbox",
+            fieldLabel:t("show_welcome_screen"),
+            name:"welcomescreen",
+            checked:this.currentUser.welcomescreen
         });
 
         generalItems.push({
-            xtype: "checkbox",
-            fieldLabel: t("show_close_warning"),
-            name: "closeWarning",
-            checked: this.currentUser.closeWarning
+            xtype:"checkbox",
+            fieldLabel:t("memorize_tabs"),
+            name:"memorizeTabs",
+            checked:this.currentUser.memorizeTabs
+        });
+
+        generalItems.push({
+            xtype:"checkbox",
+            fieldLabel:t("show_close_warning"),
+            name:"closeWarning",
+            checked:this.currentUser.closeWarning
         });
 
         this.roleField = new Ext.ux.form.MultiSelect({
-            name: "roles",
-            triggerAction: "all",
-            editable: false,
-            fieldLabel: t("roles"),
-            width : 300,
-            store: this.data.roles,
-            value: this.currentUser.roles.join(",")
+            name:"roles",
+            triggerAction:"all",
+            editable:false,
+            fieldLabel:t("roles"),
+            width:300,
+            store:this.data.roles,
+            value:this.currentUser.roles.join(",")
         });
 
         generalItems.push(this.roleField);
 
-        if(this.wsenabled && this.currentUser.admin){
+        if (this.wsenabled && this.currentUser.admin) {
             this.apiKeyField.show();
             this.apiKeyDescription.show();
             this.roleField.hide();
         }
 
         this.generalSet = new Ext.form.FieldSet({
-            title: t("general"),
-            items: [generalItems]
+            title:t("general"),
+            items:[generalItems]
         });
 
 
@@ -225,31 +232,31 @@ pimcore.settings.user.user.settings = Class.create({
         // add available permissions
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
             availPermsItems.push({
-                xtype: "checkbox",
-                fieldLabel: t(this.data.availablePermissions[i].key),
-                name: "permission_" + this.data.availablePermissions[i].key,
-                checked: this.data.permissions[this.data.availablePermissions[i].key],
-                labelStyle: "width: 200px;"
+                xtype:"checkbox",
+                fieldLabel:t(this.data.availablePermissions[i].key),
+                name:"permission_" + this.data.availablePermissions[i].key,
+                checked:this.data.permissions[this.data.availablePermissions[i].key],
+                labelStyle:"width: 200px;"
             });
         }
 
         this.permissionsSet = new Ext.form.FieldSet({
-            title: t("permissions"),
-            items: [availPermsItems],
-            disabled: this.currentUser.admin
+            title:t("permissions"),
+            items:[availPermsItems],
+            disabled:this.currentUser.admin
         });
 
         this.panel = new Ext.form.FormPanel({
-            title: t("settings"),
-            items: [this.generalSet, this.permissionsSet],
-            bodyStyle: "padding:10px;",
-            autoScroll: true
+            title:t("settings"),
+            items:[this.generalSet, this.permissionsSet],
+            bodyStyle:"padding:10px;",
+            autoScroll:true
         });
 
         return this.panel;
     },
 
-    getValues: function () {
+    getValues:function () {
         return this.panel.getForm().getFieldValues();
     }
 });

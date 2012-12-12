@@ -1089,6 +1089,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     }
 
 
+    /**
+     * Download the all assets contained in the folder with parameter id as ZIP file.
+     * The suggested filename is either [folder name].zip or assets.zip for the root folder.
+     */
     public function downloadAsZipAction () {
         
         $asset = Asset::getById($this->getParam("id"));
@@ -1121,12 +1125,15 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $zip->close();
             }
 
+            $suggestedFilename = $asset->getFilename();
+            if (empty($suggestedFilename)) {
+                $suggestedFilename = "assets";
+            }
+
             $this->getResponse()->setHeader("Content-Type", "application/zip", true);
-            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $asset->getFilename() . '.zip"');
+            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $suggestedFilename . '.zip"');
 
             echo file_get_contents($archive_name);
-
-
 
             unlink($archive_name);
         }

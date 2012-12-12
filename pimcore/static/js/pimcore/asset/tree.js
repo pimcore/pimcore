@@ -893,7 +893,11 @@ pimcore.asset.tree = Class.create({
                     success: function () {
                         win.close();
                         this.reload();
-                    }.bind(this)
+                    }.bind(this),
+                    failure: function() {
+                        win.close();
+                        this.reload();
+                    }
                 });
             }
         }.bind(this));
