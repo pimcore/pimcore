@@ -152,7 +152,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         ];
 
         eConfig.extraPlugins = "close_object";
-        eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,autogrow,div';
+        eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,autogrow,divarea';
         
         if (intval(this.fieldConfig.width) > 1) {
             eConfig.width = this.fieldConfig.width;
