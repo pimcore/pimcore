@@ -10,7 +10,7 @@ $db->query("CREATE TABLE IF NOT EXISTS `keyvalue_groups` (
     `name` VARCHAR(255) NOT NULL ,
     `description` VARCHAR(255),
     PRIMARY KEY  (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    ) DEFAULT CHARSET=utf8;");
 
 
 $db->query(
@@ -24,4 +24,4 @@ $db->query(
     `group` INT,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`group`) REFERENCES keyvalue_groups(`id`) ON DELETE SET NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+    ) DEFAULT CHARSET=utf8;");

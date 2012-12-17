@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS `keyvalue_groups` (
     `name` VARCHAR(255) NOT NULL ,
     `description` VARCHAR(255),
     PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `keyvalue_keys` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -244,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `keyvalue_keys` (
   `group` INT,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`group`) REFERENCES keyvalue_groups(`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;;
+) DEFAULT CHARSET=utf8;;
 
 
 CREATE TABLE `locks` (
