@@ -24,6 +24,25 @@ pimcore.object.helpers.edit = {
 
         var panelListenerConfig = {};
 
+        var tabpanelCorrection = function (panel) {
+            window.setTimeout(function () {
+                try {
+                    if(typeof panel["pimcoreLayoutCorrected"] == "undefined") {
+                        var parentEl = panel.body.findParent(".x-tab-panel");
+                        if(parentEl && Ext.get(parentEl).getWidth()) {
+                            panel.setWidth(Ext.get(parentEl).getWidth()-50);
+                            //panel.getEl().applyStyles("position:relative;");
+                            panel.ownerCt.doLayout();
+
+                            panel["pimcoreLayoutCorrected"] = true;
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            }, 2000);
+        };
+
         var xTypeLayoutMapping = {
             accordion: {
                 xtype: "panel",
@@ -64,21 +83,8 @@ pimcore.object.helpers.edit = {
                 hideMode: "offsets",
                 enableTabScroll: true,
                 listeners: {
-                    afterrender: function (panel) {
-                        window.setTimeout(function () {
-                            try {
-                                var parentEl = panel.body.findParent(".x-tab-panel");
-                                if(parentEl) {
-                                    panel.setWidth(Ext.get(parentEl).getWidth()-50);
-                                    //panel.getEl().applyStyles("position:relative;");
-                                    panel.ownerCt.doLayout();
-                                }
-
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }, 2000);
-                    }
+                    afterrender:tabpanelCorrection,
+                    tabchange: tabpanelCorrection
                 }
             },
             button: {
