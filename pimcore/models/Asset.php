@@ -369,6 +369,14 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function save() {
 
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateAsset($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
+        }
+
         $this->beginTransaction();
 
         try {
@@ -378,21 +386,23 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
             $this->correctPath();
 
-            if ($this->getId()) {
-                $this->update();
-            }
-            else {
-                Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
+            if (!$isUpdate) {
                 $this->getResource()->create();
-                Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
-                $this->update();
             }
+
+            $this->update();
 
             $this->commit();
         } catch (Exception $e) {
             $this->rollBack();
 
             throw $e;
+        }
+
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateAsset($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
         }
 
         $this->clearDependentCache();
@@ -428,9 +438,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     protected function update() {
-
-        Pimcore_API_Plugin_Broker::getInstance()->preUpdateAsset($this);
-
 
         if (!$this->getFilename() && $this->getId() != 1) {
             $this->setFilename("---no-valid-filename---" . $this->getId());
@@ -532,8 +539,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), $this);
-
-        Pimcore_API_Plugin_Broker::getInstance()->postUpdateAsset($this);
     }
 
 

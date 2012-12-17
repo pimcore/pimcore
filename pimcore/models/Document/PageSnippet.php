@@ -95,7 +95,7 @@ abstract class Document_PageSnippet extends Document {
         parent::update();
 
         // save version if needed
-        $this->saveVersion(false);
+        $this->saveVersion(false, false);
     }
 
     /**

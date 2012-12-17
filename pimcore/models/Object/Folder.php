@@ -42,7 +42,6 @@ class Object_Folder extends Object_Abstract {
 
         parent::update();
         $this->getResource()->update();
-        Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
     }
 
     /**

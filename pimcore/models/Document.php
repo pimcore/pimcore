@@ -327,6 +327,14 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
+        }
+
         $this->beginTransaction();
 
         try {
@@ -339,21 +347,23 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             // set date
             $this->setModificationDate(time());
 
-            if ($this->getId()) {
-                $this->update();
-            }
-            else {
-                Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
+            if (!$isUpdate) {
                 $this->getResource()->create();
-                Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
-                $this->update();
             }
+
+            $this->update();
 
             $this->commit();
         } catch (Exception $e) {
             $this->rollBack();
 
             throw $e;
+        }
+
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
         }
 
         // empty object cache
@@ -398,8 +408,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             throw new Exception("Document requires key, document with id " . $this->getId() . " deleted");
         }
 
-        Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
-
         // save properties
         $this->getProperties();
         $this->getResource()->deleteAllProperties();
@@ -438,8 +446,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), $this);
-
-        Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
     }
 
     public function clearDependentCache() {
