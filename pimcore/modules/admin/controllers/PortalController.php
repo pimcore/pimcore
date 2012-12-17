@@ -16,8 +16,6 @@
 class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
 
-    private static $defaultFeed = "http://twitter.com/statuses/user_timeline/83599668.rss";
-
     protected function getConfigDir () {
         return PIMCORE_CONFIGURATION_DIRECTORY."/portal";
     }
@@ -46,12 +44,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
                     "pimcore.layout.portlets.modifiedObjects",
                     "pimcore.layout.portlets.modifiedDocuments"
                 )
-            )/*,
-            "settings" => array(
-                "pimcore.layout.portlets.feed" => array(
-                    "url" => self::$defaultFeed
-                )
-            )*/
+            )
         );
     }
 
@@ -140,30 +133,41 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         }
 
 
-        $feedUrl = self::$defaultFeed;
+        $feedUrl = "";
         if($config["settings"]["pimcore.layout.portlets.feed"]["url"]) {
             $feedUrl = $config["settings"]["pimcore.layout.portlets.feed"]["url"];
         }
 
-        $feed = Zend_Feed_Reader::import($feedUrl);
+        $feed = null;
+        if(!empty($feedUrl)) {
+            try {
+                $feed = Zend_Feed_Reader::import($feedUrl);
+            } catch (Exception $e) {
+                Logger::error($e);
+            }
+        }
 
         $count = 0;
-        foreach ($feed as $entry) {
+        $entries = array();
 
-            // display only the latest 11 entries
-            $count++;
-            if($count > 10) {
-                break;
+        if($feed) {
+            foreach ($feed as $entry) {
+
+                // display only the latest 11 entries
+                $count++;
+                if($count > 10) {
+                    break;
+                }
+
+
+                $entries[] = array(
+                    "title" => $entry->getTitle(),
+                    "description" => $entry->getDescription(),
+                    'authors' => $entry->getAuthors(),
+                    'link' => $entry->getLink(),
+                    'content' => $entry->getContent()
+                );
             }
-
-
-            $entries[] = array(
-                "title" => $entry->getTitle(),
-                "description" => $entry->getDescription(),
-                'authors' => $entry->getAuthors(),
-                'link' => $entry->getLink(),
-                'content' => $entry->getContent()
-            );
         }
 
         $this->_helper->json(array(
@@ -291,32 +295,23 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("data" => $data));
     }
 
-    public function portletAnalyticsSidesAction() {
+    public function portletAnalyticsSitesAction() {
 
         $t = Zend_Registry::get("Zend_Translate");
 
         $sites = new Site_List();
-        $data = null;
+        $data = array(
+            array (
+                "id" => 0,
+                "site" => $t->translate("main_site")
+            )
+        );
 
         foreach ($sites->load() as $site) {
-
-            $config = Pimcore_Google_Analytics::getSiteConfig($site);
-
-            if (!is_null($config->profile) and !($config->profile == "")) {
-
-                if (is_null($data)) {
-                    $data = array(
-                        array (
-                           "id" => 0,
-                           "site" => $t->translate("main_site")
-                        )
-                    );
-                }
-
-
+            if (Pimcore_Google_Analytics::isConfigured($site)) {
                 $data[] = array(
                     "id" => $site->getId(),
-                    "site" => reset($site->getDomains())
+                    "site" => $site->getMainDomain()
                 );
             }
 
