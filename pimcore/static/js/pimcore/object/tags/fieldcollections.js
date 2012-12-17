@@ -182,8 +182,22 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
         return index;
     },
-    
+
+    closeOpenEditors: function () {
+
+        // currently just wysiwyg
+        for (var i=0; i<this.currentElements.length; i++) {
+            for(var e=0; e<this.currentElements[i]["fields"].length; e++) {
+                if(typeof this.currentElements[i]["fields"][e]["close"] == "function") {
+                    this.currentElements[i]["fields"][e].close();
+                }
+            }
+        }
+    },
+
     addBlock: function (blockElement, type) {
+
+        this.closeOpenEditors();
 
         if(this.fieldConfig.maxItems) {
             var itemAmount = 0;
@@ -208,7 +222,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
     
     removeBlock: function (blockElement) {
-        
+
+        this.closeOpenEditors();
+
         var key = blockElement.key;
         this.currentElements[key] = "deleted";
         
@@ -225,7 +241,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
     
     moveBlockUp: function (blockElement) {
-        
+
+        this.closeOpenEditors();
+
         if(blockElement) {
             index = this.detectBlockIndex(blockElement);
         }
@@ -249,6 +267,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
     
     moveBlockDown: function (blockElement) {
+
+        this.closeOpenEditors();
+
         if(blockElement) {
             index = this.detectBlockIndex(blockElement);
         }
@@ -267,7 +288,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
     
     addBlockElement: function (index, type, blockData, ignoreChange) {
-        
+
+        this.closeOpenEditors();
+
         if(!type){
             return;
         }
