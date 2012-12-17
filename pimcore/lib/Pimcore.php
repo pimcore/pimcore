@@ -474,10 +474,10 @@ class Pimcore {
                     }
 
                     $jsPaths = array();
-                    if (is_array($p['plugin']['pluginJsPaths']['path'])) {
+                    if (isset($p['plugin']['pluginJsPaths']['path']) && is_array($p['plugin']['pluginJsPaths']['path'])) {
                         $jsPaths = $p['plugin']['pluginJsPaths']['path'];
                     }
-                    else if ($p['plugin']['pluginJsPaths']['path'] != null) {
+                    else if (is_array($p['plugin']['pluginJsPaths']) && $p['plugin']['pluginJsPaths']['path'] != null) {
                         $jsPaths[0] = $p['plugin']['pluginJsPaths']['path'];
                     }
                     //manipulate path for frontend
@@ -490,10 +490,10 @@ class Pimcore {
                     }
 
                     $cssPaths = array();
-                    if (is_array($p['plugin']['pluginCssPaths']['path'])) {
+                    if (isset($p['plugin']['pluginCssPaths']['path']) && is_array($p['plugin']['pluginCssPaths']['path'])) {
                         $cssPaths = $p['plugin']['pluginCssPaths']['path'];
                     }
-                    else if ($p['plugin']['pluginCssPaths']['path'] != null) {
+                    else if (is_array($p['plugin']['pluginCssPaths']) && $p['plugin']['pluginCssPaths']['path'] != null) {
                         $cssPaths[0] = $p['plugin']['pluginCssPaths']['path'];
                     }
 
