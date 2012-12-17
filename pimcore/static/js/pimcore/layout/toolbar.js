@@ -366,6 +366,12 @@ pimcore.layout.toolbar = Class.create({
                 });
 
                 objectMenu.menu.push({
+                    text: t("keyvalue_menu_config"),
+                    iconCls: "pimcore_icon_key",
+                    handler: this.keyValueSettings
+                });
+
+                objectMenu.menu.push({
                     text: t("custom_views"),
                     iconCls: "pimcore_icon_custom_views",
                     handler: this.editCustomViews
@@ -435,15 +441,6 @@ pimcore.layout.toolbar = Class.create({
                 handler: this.reportSettings
             });
         }
-
-        if (user.isAllowed("keyvalue")) {
-            settingsItems.push({
-                text: t("keyvalue_menu_config"),
-                iconCls: "pimcore_icon_key",
-                handler: this.keyValueSettings
-            });
-        }
-
 
         // help menu
         if (settingsItems.length > 0) {
