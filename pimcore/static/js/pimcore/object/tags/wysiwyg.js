@@ -337,6 +337,21 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
         return false;
 //        return this.ckeditor.IsDirty();
+    },
+
+    close: function () {
+        try {
+            if(this.ckeditor) {
+                this.data = this.ckeditor.getData();
+                this.ckeditor.destroy();
+                this.ckeditor = null;
+                this.dirty = true;
+
+                this.getPreview();
+            }
+        } catch (e) {
+            console.log(e);
+        }
     }
 });
 
@@ -348,18 +363,7 @@ CKEDITOR.plugins.add(ckeditor_close_objectplugin_button,{
     init:function(editor){
         editor.addCommand(ckeditor_close_objectplugin_button, {
             exec:function(editor){
-                window.setTimeout(function () {
-                    try {
-                        this.data = this.ckeditor.getData();
-                        this.ckeditor.destroy();
-                        this.ckeditor = null;
-                        this.dirty = true;
-
-                        this.getPreview();
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }.bind(editor.pimcore_tag_instance), 10);
+                window.setTimeout(editor.pimcore_tag_instance.close.bind(editor.pimcore_tag_instance), 10);
             }
         });
         editor.ui.addButton("close_object",{
