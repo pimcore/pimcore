@@ -445,9 +445,9 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $table = "object_metadata_" . $classId;
         $db = Pimcore_Resource::get();
 
-        if(!empty($objectsMetadata)) {
-            $objectsMetadata[0]->getResource()->createOrUpdateTable($class);
-        }
+        //if(!empty($objectsMetadata)) {
+            //$objectsMetadata[0]->getResource()->createOrUpdateTable($class);
+        //}
 
         $db->delete($table, $db->quoteInto("o_id = ?", $objectId) . " AND " . $db->quoteInto("fieldname = ?", $this->getName()));
 
