@@ -1,8 +1,8 @@
 <?php
-class KeyValue_KeyConfig_List extends Pimcore_Model_List_Abstract {
+class Object_KeyValue_GroupConfig_List extends Pimcore_Model_List_Abstract {
 
     /**
-     * Contains the results of the list. They are all an instance of KeyValue_KeyConfig
+     * Contains the results of the list. They are all an instance of SavedSearch_Config
      *
      * @var array
      */

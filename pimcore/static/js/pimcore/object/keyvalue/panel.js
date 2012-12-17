@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.keyvalue.configpanel");
-pimcore.keyvalue.configpanel = Class.create({
+pimcore.registerNS("pimcore.object.keyvalue.configpanel");
+pimcore.object.keyvalue.configpanel = Class.create({
 
     initialize: function () {
 
@@ -56,13 +56,13 @@ pimcore.keyvalue.configpanel = Class.create({
 
 
     getGroupsPanel: function () {
-        var groupsPanel = new pimcore.keyvalue.groupspanel();
+        var groupsPanel = new pimcore.object.keyvalue.groupspanel();
         return groupsPanel.getPanel();
     },
 
 
     getPropertiesPanel: function () {
-        var propertiesPanel = new pimcore.keyvalue.propertiespanel();
+        var propertiesPanel = new pimcore.object.keyvalue.propertiespanel();
         return propertiesPanel.getPanel();
     }
 });

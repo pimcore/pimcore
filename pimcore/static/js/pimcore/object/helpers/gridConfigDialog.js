@@ -164,7 +164,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                                 if (e.dropNode.attributes.dataType == "keyValue") {
 
-                                    var ccd = new pimcore.keyvalue.columnConfigDialog();
+                                    var ccd = new pimcore.object.keyvalue.columnConfigDialog();
                                     ccd.getConfigDialog(copy, this.selectionPanel);
                                     return;
                                 }
@@ -234,7 +234,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 }
 
                 if (copy.attributes.dataType == "keyValue") {
-                    var ccd = new pimcore.keyvalue.columnConfigDialog();
+                    var ccd = new pimcore.object.keyvalue.columnConfigDialog();
                     ccd.getConfigDialog(copy, this.selectionPanel);
                 }
             }

@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.keyvalue.selectionwindow");
-pimcore.keyvalue.selectionwindow = Class.create({
+pimcore.registerNS("pimcore.object.keyvalue.selectionwindow");
+pimcore.object.keyvalue.selectionwindow = Class.create({
 
     isGroupSearch: true,
     acceptEvents: true,

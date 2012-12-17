@@ -1,6 +1,6 @@
-pimcore.registerNS("pimcore.keyvalue.columnConfigDialog");
+pimcore.registerNS("pimcore.object.keyvalue.columnConfigDialog");
 
-pimcore.keyvalue.columnConfigDialog = Class.create({
+pimcore.object.keyvalue.columnConfigDialog = Class.create({
 
     keysAdded: 0,
     requestIsPending: false,
@@ -9,7 +9,7 @@ pimcore.keyvalue.columnConfigDialog = Class.create({
         this.node = node;
         this.selectionPanel = selectionPanel;
 
-        var selectionWindow = new pimcore.keyvalue.selectionwindow(this);
+        var selectionWindow = new pimcore.object.keyvalue.selectionwindow(this);
         selectionWindow.show();
     },
 

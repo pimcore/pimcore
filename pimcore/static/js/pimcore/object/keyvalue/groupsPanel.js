@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.keyvalue.groupspanel");
-pimcore.keyvalue.groupspanel = Class.create({
+pimcore.registerNS("pimcore.object.keyvalue.groupspanel");
+pimcore.object.keyvalue.groupspanel = Class.create({
 
     initialize: function () {
 
