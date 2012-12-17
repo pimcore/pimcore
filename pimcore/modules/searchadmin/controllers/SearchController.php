@@ -116,7 +116,12 @@ class Searchadmin_SearchController extends Pimcore_Controller_Action_Admin {
 
             foreach($fields as $f) {
                 $parts = explode("~", $f);
-                if(count($parts) > 1) {
+                if (substr($f, 0, 1) == "~") {
+//                    $type = $parts[1];
+//                    $field = $parts[2];
+//                    $keyid = $parts[3];
+                    // key value, ignore for now
+                } else if(count($parts) > 1) {
                     $bricks[$parts[0]] = $parts[0];
                 }
             }

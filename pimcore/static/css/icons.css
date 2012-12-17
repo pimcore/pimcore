@@ -1205,3 +1205,19 @@
 .pimcore_icon_change_type {
     background: url(/pimcore/static/img/icon/change_type.png) left center no-repeat !important;
 }
+
+.pimcore_icon_key {
+    background: url(/pimcore/static/img/icon/key.png) left center no-repeat !important;
+}
+
+.pimcore_icon_keys {
+    background: url(/pimcore/static/img/icon/keys.png) left center no-repeat !important;
+}
+
+.pimcore_icon_keyValue  {
+    background: url(/pimcore/static/img/icon/key.png) left center no-repeat !important;
+}
+
+.pimcore_icon_cross {
+    background: url(/pimcore/static/img/icon/cross.png) center no-repeat !important;
+}
