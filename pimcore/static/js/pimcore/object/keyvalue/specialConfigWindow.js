@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.keyvalue.specialconfigwindow");
-pimcore.keyvalue.specialconfigwindow = Class.create({
+pimcore.registerNS("pimcore.object.keyvalue.specialconfigwindow");
+pimcore.object.keyvalue.specialconfigwindow = Class.create({
 
     initialize: function (data, keyid, parentPanel) {
         if (data) {

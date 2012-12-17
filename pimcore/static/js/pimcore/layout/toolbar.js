@@ -785,7 +785,7 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get("keyvalue_config").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("keyvalue_config", new pimcore.keyvalue.configpanel());
+            pimcore.globalmanager.add("keyvalue_config", new pimcore.object.keyvalue.configpanel());
         }
     },
 

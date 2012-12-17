@@ -165,7 +165,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
             // Logger::debug($property);
             $key = $property["key"];
-            $keyConfig = KeyValue_KeyConfig::getById($key);
+            $keyConfig = Object_KeyValue_KeyConfig::getById($key);
             $property["type"] = $keyConfig->getType();
             $property["possiblevalues"] = $keyConfig->getPossibleValues();
 
@@ -177,7 +177,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             $groupId = $keyConfig->getGroup();
 
             if ($groupId) {
-                $group = KeyValue_GroupConfig::getById($groupId);
+                $group = Object_KeyValue_GroupConfig::getById($groupId);
 
                 if (strlen($group->getDescription()) > 0) {
                     $groupName = $group->getDescription();
@@ -271,7 +271,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             $diffdata["data"] = $property;
 
 
-            $keyConfig = KeyValue_KeyConfig::getById($key);
+            $keyConfig = Object_KeyValue_KeyConfig::getById($key);
             $niceName = $keyConfig->getDescription();
             if ($niceName == "") {
                 $niceName = "~" . $keyConfig->getName() . "~";

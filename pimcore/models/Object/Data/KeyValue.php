@@ -127,7 +127,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
 
 
     function getKeyId($propName) {
-        $keyConfig = KeyValue_KeyConfig::getByName($propName);
+        $keyConfig = Object_KeyValue_KeyConfig::getByName($propName);
 
         if (!$keyConfig) {
             throw new Exception("key does not exist");

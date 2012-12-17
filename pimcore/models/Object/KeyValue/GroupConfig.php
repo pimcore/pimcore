@@ -1,6 +1,6 @@
 <?php
 
-class KeyValue_GroupConfig extends Pimcore_Model_Abstract {
+class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
     /**
      * @var integer
@@ -17,7 +17,7 @@ class KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
     /**
      * @param integer $id
-     * @return KeyValue_GroupConfig
+     * @return Object_KeyValue_GroupConfig
      */
     public static function getById($id) {
 
@@ -39,7 +39,7 @@ class KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
 
     /**
-     * @return KeyValue_GroupConfig
+     * @return Object_KeyValue_GroupConfig
      */
     public static function create() {
         $config = new self();

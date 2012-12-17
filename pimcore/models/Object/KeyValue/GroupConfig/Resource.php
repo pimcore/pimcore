@@ -1,7 +1,7 @@
 <?php
-class KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
+class Object_KeyValue_GroupConfig_Resource extends Pimcore_Model_Resource_Abstract {
 
-    const TABLE_NAME_KEYS = "keyvalue_keys";
+    const TABLE_NAME_GROUPS = "keyvalue_groups";
 
     /**
      * Contains all valid columns in the database table
@@ -16,7 +16,7 @@ class KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function init() {
-        $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME_KEYS);
+        $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME_GROUPS);
     }
 
     /**
@@ -31,9 +31,7 @@ class KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE id = ?", $this->model->getId());
-
-//        $data["possiblevalues"] = unserialize($data["possiblevalues"]);
+        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_GROUPS . " WHERE id = ?", $this->model->getId());
 
         $this->assignVariablesToModel($data);
     }
@@ -46,9 +44,7 @@ class KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
 
         $name = $this->model->getName();
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = ?", $name);
-
-//        $data["possiblevalues"] = unserialize($data["possiblevalues"]);
+        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_GROUPS . " WHERE name = ?", $name);
 
         if($data["id"]) {
             $this->assignVariablesToModel($data);
@@ -76,7 +72,7 @@ class KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function delete() {
-        $this->db->delete(self::TABLE_NAME_KEYS, $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->delete(self::TABLE_NAME_GROUPS, $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -101,7 +97,7 @@ class KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }
 
-            $this->db->update(self::TABLE_NAME_KEYS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->update(self::TABLE_NAME_GROUPS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         }
         catch (Exception $e) {
             throw $e;
@@ -114,7 +110,7 @@ class KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract {
      * @return boolean
      */
     public function create() {
-        $this->db->insert(self::TABLE_NAME_KEYS, array());
+        $this->db->insert(self::TABLE_NAME_GROUPS, array());
 
         $this->model->setId($this->db->lastInsertId());
 

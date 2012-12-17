@@ -473,7 +473,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
     },
 
     openSearchEditor: function () {
-        var selectionWindow = new pimcore.keyvalue.selectionwindow(this);
+        var selectionWindow = new pimcore.object.keyvalue.selectionwindow(this);
         selectionWindow.show();
     },
 

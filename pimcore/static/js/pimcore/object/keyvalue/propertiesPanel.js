@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.keyvalue.propertiespanel");
-pimcore.keyvalue.propertiespanel = Class.create({
+pimcore.registerNS("pimcore.object.keyvalue.propertiespanel");
+pimcore.object.keyvalue.propertiespanel = Class.create({
 
     initialize: function () {
     },
@@ -116,7 +116,7 @@ pimcore.keyvalue.propertiespanel = Class.create({
                             alert(t("keyvalue_define_select_values_error"));
                         } else {
 
-                            var specialConfigWindow = new pimcore.keyvalue.specialconfigwindow(
+                            var specialConfigWindow = new pimcore.object.keyvalue.specialconfigwindow(
                                 Ext.util.JSON.decode(possiblevalues), data.id, this);
                             specialConfigWindow.show();
                         }

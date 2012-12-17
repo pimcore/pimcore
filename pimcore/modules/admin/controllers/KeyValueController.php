@@ -18,7 +18,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function deletegroupAction() {
         $id = $this->_getParam("id");
 
-        $config = KeyValue_GroupConfig::getById($id);
+        $config = Object_KeyValue_GroupConfig::getById($id);
         $config->delete();
 
         $this->_helper->json(array("success" => true));
@@ -29,14 +29,14 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
         $alreadyExist = false;
 
         try {
-            $config = KeyValue_GroupConfig::getByName($name);
+            $config = Object_KeyValue_GroupConfig::getByName($name);
             $alreadyExist = true;
         } catch (Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $config = new KeyValue_GroupConfig();
+            $config = new Object_KeyValue_GroupConfig();
             $config->setName($name);
             $config->save();
         }
@@ -46,7 +46,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
 
     public function getgroupAction() {
         $id = $this->_getParam("id");
-        $config = KeyValue_GroupConfig::getByName($id);
+        $config = Object_KeyValue_GroupConfig::getByName($id);
 
         $data = array(
             "id" => $id,
@@ -65,7 +65,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
             $data = Zend_Json::decode($dataParam);
 
             $id = $data["id"];
-            $config = KeyValue_GroupConfig::getById($id);
+            $config = Object_KeyValue_GroupConfig::getById($id);
 
             foreach ($data as $key => $value) {
                 if ($key != "id") {
@@ -104,7 +104,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                 $order = "DESC";
             }
 
-            $list = new KeyValue_GroupConfig_List();
+            $list = new Object_KeyValue_GroupConfig_List();
 
             $list->setLimit($limit);
             $list->setOffset($start);
@@ -161,7 +161,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
             $data = Zend_Json::decode($dataParam);
 
             $id = $data["id"];
-            $config = KeyValue_KeyConfig::getById($id);
+            $config = Object_KeyValue_KeyConfig::getById($id);
 
             foreach ($data as $key => $value) {
                 if ($key != "id") {
@@ -202,7 +202,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                 $start = $this->_getParam("start");
             }
 
-            $list = new KeyValue_KeyConfig_List();
+            $list = new Object_KeyValue_KeyConfig_List();
 
             if ($limit > 0) {
                 $list->setLimit($limit);
@@ -271,7 +271,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                 $groupDescription = null;
                 if ($config->getGroup()) {
                     try {
-                        $group = KeyValue_GroupConfig::getById($config->getGroup());
+                        $group = Object_KeyValue_GroupConfig::getById($config->getGroup());
                         $groupDescription = $group->getDescription();
                     } catch (Exception $e) {
 
@@ -302,14 +302,14 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
         $alreadyExist = false;
 
         try {
-            $config = KeyValue_KeyConfig::getByName($name);
+            $config = Object_KeyValue_KeyConfig::getByName($name);
             $alreadyExist = true;
         } catch (Exception $e) {
             $alreadyExist = false;
         }
 
         if(!$alreadyExist) {
-            $config = new KeyValue_KeyConfig();
+            $config = new Object_KeyValue_KeyConfig();
             $config->setName($name);
             $config->setType("text");
             $config->save();
@@ -321,7 +321,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function deletepropertyAction() {
         $id = $this->_getParam("id");
 
-        $config = KeyValue_KeyConfig::getById($id);
+        $config = Object_KeyValue_KeyConfig::getById($id);
         $config->delete();
 
         $this->_helper->json(array("success" => true));
