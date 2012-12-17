@@ -529,6 +529,14 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function save() {
 
+        $isUpdate = false;
+        if ($this->getO_Id()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
+        }
+
         $this->beginTransaction();
 
         try {
@@ -542,15 +550,11 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
            $this->correctPath();
 
-            if ($this->getO_Id()) {
-                $this->update();
-            }
-            else {
-                Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
+            if (!$isUpdate) {
                 $this->getResource()->create();
-                Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
-                $this->update();
             }
+
+            $this->update();
 
             self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -559,6 +563,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             $this->rollBack();
 
             throw $e;
+        }
+
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
         }
 
         // empty object cache
@@ -597,8 +607,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     protected function update() {
 
-        Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
-        
         if(!$this->getKey() && $this->getId() != 1) {
             $this->delete();
             throw new Exception("Object requires key, object with id " . $this->getId() . " deleted");
