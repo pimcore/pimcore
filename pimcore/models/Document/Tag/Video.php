@@ -588,7 +588,7 @@ class Document_Tag_Video extends Document_Tag
             	href="'.$urls["mp4"].'"
             	class="pimcore_video_flowplayer"
             	style="background:url(' . $thumbnail . ') no-repeat center center; width:' . $this->getWidth() . 'px; height:' . $this->getHeight() . 'px;">
-            	' . (Pimcore_Video::isAvailable() ? '<span class="play">' : "") .'</span>
+            	' . (Pimcore_Video::isAvailable() ? '<span class="play"></span>' : "") .'
             </a>
         </div>';
 
@@ -601,7 +601,7 @@ class Document_Tag_Video extends Document_Tag
                 flowplayer("' . $uid . '", {
             		src: "' . $swfPath . '",
             		width: "' . $this->getWidth() . '",
-            		height: "' . $this->getHeight() . '",
+            		height: "' . $this->getHeight() . '"
             	},player_config_' . $uid . ');
             </script>
         ';
