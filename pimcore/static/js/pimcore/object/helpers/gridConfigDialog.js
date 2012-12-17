@@ -161,6 +161,13 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                     Ext.apply({}, n.attributes)
                                 );
                                 e.dropNode = copy; // assign the copy as the new dropNode
+
+                                if (e.dropNode.attributes.dataType == "keyValue") {
+
+                                    var ccd = new pimcore.keyvalue.columnConfigDialog();
+                                    ccd.getConfigDialog(copy, this.selectionPanel);
+                                    return;
+                                }
                             }
                         }
                     }.bind(this),
@@ -224,6 +231,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                 if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", copy.attributes.key)) {
                     this.selectionPanel.getRootNode().appendChild(copy);
+                }
+
+                if (copy.attributes.dataType == "keyValue") {
+                    var ccd = new pimcore.keyvalue.columnConfigDialog();
+                    ccd.getConfigDialog(copy, this.selectionPanel);
                 }
             }
         }.bind(this));

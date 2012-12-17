@@ -289,6 +289,7 @@
             "pimcore/object/classes/data/localizedfields.js",
             "pimcore/object/classes/data/countrymultiselect.js",
             "pimcore/object/classes/data/languagemultiselect.js",
+            "pimcore/object/classes/data/keyValue.js",
             "pimcore/object/classes/layout/layout.js",
             "pimcore/object/classes/layout/accordion.js",
             "pimcore/object/classes/layout/fieldset.js",
@@ -335,6 +336,7 @@
             "pimcore/object/tags/countrymultiselect.js",
             "pimcore/object/tags/languagemultiselect.js",
             "pimcore/object/tags/objectbricks.js",
+            "pimcore/object/tags/keyValue.js",
             "pimcore/object/preview.js",
             "pimcore/object/versions.js",
             "pimcore/object/variantsTab.js",
@@ -389,7 +391,16 @@
             
             "pimcore/layout/toolbar.js",
             "pimcore/layout/treepanelmanager.js",
-            "pimcore/document/seemode.js"
+            "pimcore/document/seemode.js",
+
+            // keyvalue datatype
+            "pimcore/keyvalue/panel.js",
+            "pimcore/keyvalue/groupsPanel.js",
+            "pimcore/keyvalue/propertiesPanel.js",
+            "pimcore/keyvalue/selectionWindow.js",
+            "pimcore/keyvalue/specialConfigWindow.js",
+            "pimcore/keyvalue/columnConfigDialog.js"
+
         );
 
         // they're here because they are using some pimcore core functionality like t() for i18n , ...

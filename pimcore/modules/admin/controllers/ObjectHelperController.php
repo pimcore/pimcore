@@ -176,7 +176,13 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                             "position" => $sc['position']);
                     } else {
                         $keyParts = explode("~", $key);
-                        if(count($keyParts) > 1) {
+
+                        if (substr($key, 0, 1) == "~") {
+                            // not needed for now
+//                            $type = $keyParts[1];
+//                            $field = $keyParts[2];
+//                            $keyid = $keyParts[3];
+                        } else if(count($keyParts) > 1) {
                             $brick = $keyParts[0];
                             $key = $keyParts[1];
 
@@ -758,8 +764,13 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                 $name = $this->getParam("name");
                 $parts = explode("~", $name);
 
-                // check for bricks
-                if(count($parts) > 1) {
+                if (substr($name, 0, 1) == "~") {
+                    // not needed for now
+//                            $type = $keyParts[1];
+//                            $field = $keyParts[2];
+//                            $keyid = $keyParts[3];
+                } else if(count($parts) > 1) {
+                    // check for bricks
                     $brickType = $parts[0];
                     $brickKey = $parts[1];
                     $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);

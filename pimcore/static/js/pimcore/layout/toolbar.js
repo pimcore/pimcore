@@ -436,6 +436,14 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("keyvalue")) {
+            settingsItems.push({
+                text: t("keyvalue_menu_config"),
+                iconCls: "pimcore_icon_key",
+                handler: this.keyValueSettings
+            });
+        }
+
 
         // help menu
         if (settingsItems.length > 0) {
@@ -772,6 +780,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
+        }
+    },
+
+    keyValueSettings: function () {
+        try {
+            pimcore.globalmanager.get("keyvalue_config").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("keyvalue_config", new pimcore.keyvalue.configpanel());
         }
     },
 

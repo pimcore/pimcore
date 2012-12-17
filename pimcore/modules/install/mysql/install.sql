@@ -226,6 +226,27 @@ CREATE TABLE `http_error_log` (
   KEY `date` (`date`)
 ) DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE IF NOT EXISTS `keyvalue_groups` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL ,
+    `description` VARCHAR(255),
+    PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `keyvalue_keys` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL ,
+  `description` TEXT,
+  `type` enum('bool','number','select','text') DEFAULT NULL,
+  `unit` VARCHAR(255),
+  `possiblevalues` TEXT,
+  `group` INT,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`group`) REFERENCES keyvalue_groups(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;;
+
+
 CREATE TABLE `locks` (
   `id` varchar(150) NOT NULL DEFAULT '',
   `date` int(11) unsigned DEFAULT NULL,

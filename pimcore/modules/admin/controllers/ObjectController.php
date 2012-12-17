@@ -1083,7 +1083,24 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $objectData = array();
                 foreach($data as $key => $value) {
                     $parts = explode("~", $key);
-                    if(count($parts) > 1) {
+                    if (substr($key, 0, 1) == "~") {
+                        $type = $parts[1];
+                        $field = $parts[2];
+                        $keyid = $parts[3];
+
+                        $getter = "get" . ucfirst($field);
+                        $setter = "set" . ucfirst($field);
+                        $keyValuePairs = $object->$getter();
+
+                        if (!$keyValuePairs) {
+                            $keyValuePairs = new Object_Data_KeyValue();
+                            $keyValuePairs->setObjectId($object->getId());
+                            $keyValuePairs->setClass($object->getClass());
+                        }
+
+                        $keyValuePairs->setPropertyWithId($keyid, $value);
+                        $object->$setter($keyValuePairs);
+                    } else if(count($parts) > 1) {
                         $brickType = $parts[0];
                         $brickKey = $parts[1];
                         $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);
@@ -1142,7 +1159,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
                 foreach($fields as $f) {
                     $parts = explode("~", $f);
-                    if(count($parts) > 1) {
+                    $sub = substr($f, 0, 1);
+                    if (substr($f, 0, 1) == "~") {
+//                        $type = $parts[1];
+//                        $field = $parts[2];
+//                        $keyid = $parts[3];
+                        // key value, ignore for now
+                    } else if(count($parts) > 1) {
                         $bricks[$parts[0]] = $parts[0];
                     }
                 }
@@ -1154,13 +1177,20 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             if ($this->getParam("start")) {
                 $start = $this->getParam("start");
             }
-            if ($this->getParam("sort")) {
-                if (array_key_exists($this->getParam("sort"), $colMappings)) {
-                    $orderKey = $colMappings[$this->getParam("sort")];
-                } else {
-                    $orderKey = $this->getParam("sort");
+
+            $sortParam = $this->getParam("sort");
+            if (strlen($sortParam) > 0) {
+                if (!(substr($sortParam, 0, 1 ) == "~")) {
+                    if ($this->getParam("sort")) {
+                        if (array_key_exists($this->getParam("sort"), $colMappings)) {
+                            $orderKey = $colMappings[$this->getParam("sort")];
+                        } else {
+                            $orderKey = $this->getParam("sort");
+                        }
+                    }
                 }
             }
+
             if ($this->getParam("dir")) {
                 $order = $this->getParam("dir");
             }
