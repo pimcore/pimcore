@@ -952,7 +952,7 @@
 "public","Public"
 "maximum_2_versions","You can compare max. 2 versions"
 "error","Error"
-"element_is_locked","Element is used by an other person"
+"element_is_locked","The desired element is currently opened by an other person:"
 "element_lock_message","The desired element is currently opend by an other person:"
 "element_lock_question","Would you like to open it anyway?"
 "since","Since"
