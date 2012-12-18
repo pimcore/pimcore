@@ -441,7 +441,7 @@
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
             showCloseConfirmation: true,
             debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
-            targeting_enabled: <?php echo Zend_Json::encode((bool) $this->config->general->targeting) ?>,
+            targeting_enabled: <?php echo Zend_Json::encode((bool) PIMCORE_DEVMODE) ?>,
             document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>
         };
     </script>

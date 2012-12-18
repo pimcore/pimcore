@@ -613,12 +613,6 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.redirect_to_maindomain")
                             },
                             {
-                                xtype: "checkbox",
-                                fieldLabel: t("enable_targeting"),
-                                name: "general.targeting",
-                                checked: this.getValue("general.targeting")
-                            },
-                            {
                                 xtype:'fieldset',
                                 title: t('error_pages'),
                                 collapsible: false,
