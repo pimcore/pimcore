@@ -285,7 +285,19 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public static function create($parentId, $data = array()) {
 
-        $asset = new self();
+        // create already the real class for the asset type, this is especially for images, because a system-thumbnail
+        // (tree) is generated immediately after creating an image
+        $class = "Asset";
+        if(array_key_exists("filename", $data) && array_key_exists("data", $data)) {
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . md5($data["data"]) . ".tmp";
+            file_put_contents($tmpFile, $data["data"]);
+            $mimeType = MIME_Type::autoDetect($tmpFile);
+            unlink($tmpFile);
+            $type = self::getTypeFromMimeMapping($mimeType, $data["filename"]);
+            $class = "Asset_" . ucfirst($type);
+        }
+
+        $asset = new $class();
         $asset->setParentId($parentId);
         foreach ($data as $key => $value) {
             $asset->setValue($key, $value);
@@ -317,6 +329,42 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
             return $list;
         }
+    }
+
+    /**
+     * returns the asset type of a filename and mimetype
+     * @param $mimeType
+     * @param $filename
+     * @return int|string
+     */
+    public static function getTypeFromMimeMapping ($mimeType, $filename) {
+
+        $type = "unknown";
+
+        $mappings = array(
+            "image" => array("/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"),
+            "text" => array("/text/"),
+            "audio" => array("/audio/"),
+            "video" => array("/video/"),
+            "document" => array("/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"),
+            "archive" => array("/zip/","/tar/")
+        );
+
+        foreach ($mappings as $assetType => $patterns) {
+            foreach ($patterns as $pattern) {
+                if(preg_match($pattern,$mimeType . " .". Pimcore_File::getFileExtension($filename))) {
+                    $type = $assetType;
+                    break;
+                }
+            }
+
+            // break at first match
+            if($type != "unknown") {
+                break;
+            }
+        }
+
+        return $type;
     }
 
 
@@ -541,44 +589,13 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         Zend_Registry::set("asset_" . $this->getId(), $this);
     }
 
-
     /**
      * detects the pimcore internal asset type based on the mime-type and file extension
      *
      * @return void
      */
     public function setTypeFromMapping () {
-
-        $found = false;
-
-        $mappings = array(
-            "image" => array("/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"),
-            "text" => array("/text/"),
-            "audio" => array("/audio/"),
-            "video" => array("/video/"),
-            "document" => array("/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"),
-            "archive" => array("/zip/","/tar/")
-        );
-
-        foreach ($mappings as $type => $patterns) {
-            foreach ($patterns as $pattern) {
-                if(preg_match($pattern,$this->getMimetype() . " .". Pimcore_File::getFileExtension($this->getFilename()))) {
-                    $this->setType($type);
-                    $found = true;
-                    break;
-                }
-            }
-
-            // break at first match
-            if($found) {
-                break;
-            }
-        }
-
-        // default is unknown
-        if(!$found) {
-            $this->setType("unknown");    
-        }
+        $this->setType(self::getTypeFromMimeMapping($this->getMimetype(), $this->getFilename()));
     }
 
     /**

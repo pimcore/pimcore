@@ -478,7 +478,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         if ($asset->getType() == "image") {
             try {
-                $tmpAsset["thumbnail"] = "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/width/400/aspectratio/true";
+                $tmpAsset["thumbnail"] = "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true";
 
                 // this is for backward-compatibilty, to calculate the dimensions if they are not there
                 if(!$asset->getCustomSetting("imageDimensionsCalculated")) {
@@ -497,7 +497,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         } else if ($asset->getType() == "video") {
             try {
                 if(Pimcore_Video::isAvailable()) {
-                    $tmpAsset["thumbnail"] = "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/width/400/aspectratio/true";
+                    $tmpAsset["thumbnail"] = "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/treepreview/true";
                 }
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
@@ -785,6 +785,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $format = "png";
         }
 
+        if($this->getParam("treepreview")) {
+            $thumbnail = Asset_Image_Thumbnail_Config::getPreviewConfig();
+        }
+
         if ($this->getParam("cropPercent")) {
             $thumbnail->addItemAt(0,"cropPercent", array(
                 "width" => $this->getParam("cropWidth"),
@@ -830,6 +834,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $format = "png";
         }
 
+        if($this->getParam("treepreview")) {
+            $thumbnail = Asset_Image_Thumbnail_Config::getPreviewConfig();
+        }
+
         $time = null;
         if($this->getParam("time")) {
             $time = intval($this->getParam("time"));
@@ -852,7 +860,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $video->save();
         }
 
-        $this->getResponse()->setHeader("Content-Type", "image/png", true);
+        $this->getResponse()->setHeader("Content-Type", "image/" . $format, true);
         readfile(PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time, $image));
         $this->removeViewRenderer();
     }
