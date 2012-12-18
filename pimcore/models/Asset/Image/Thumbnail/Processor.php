@@ -77,7 +77,7 @@ class Asset_Image_Thumbnail_Processor {
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
         // check for existing and still valid thumbnail
-        if (is_file($fsPath) and filemtime($fsPath) > $asset->getModificationDate()) {
+        if (is_file($fsPath) and filemtime($fsPath) >= $asset->getModificationDate()) {
             return $path;
         }
 

@@ -82,6 +82,20 @@ class Asset_Image_Thumbnail_Config {
         return $dir;
     }
 
+    public static function getPreviewConfig () {
+        $thumbnail = new self();
+        $thumbnail->setName("pimcore-system-treepreview");
+        $thumbnail->addItem("scaleByWidth", array(
+            "width" => 400
+        ));
+        $thumbnail->addItem("setBackgroundColor", array(
+            "color" => "#323232"
+        ));
+        $thumbnail->setQuality(60);
+        $thumbnail->setFormat("JPEG");
+
+        return $thumbnail;
+    }
 
     /**
      * @return void
