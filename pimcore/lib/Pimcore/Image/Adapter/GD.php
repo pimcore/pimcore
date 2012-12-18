@@ -57,6 +57,12 @@ class Pimcore_Image_Adapter_GD extends Pimcore_Image_Adapter {
             $format = "png";
         }
 
+        // progressive jpeg
+        if($format == "pjpeg") {
+            imageinterlace($this->resource, true);
+            $format = "jpeg";
+        }
+
         if($format == "jpg") {
             $format = "jpeg";
         }

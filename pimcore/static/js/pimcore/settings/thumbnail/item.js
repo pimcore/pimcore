@@ -98,7 +98,7 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.format,
                 triggerAction: 'all',
                 editable: false,
-                store: ["PNG","GIF","JPEG","TIFF", "SOURCE"],
+                store: ["PNG","GIF","JPEG","PJPEG","TIFF", "SOURCE"],
                 width: 75
             }, {
                 xtype: "spinnerfield",
