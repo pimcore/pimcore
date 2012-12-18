@@ -271,7 +271,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         $data = null;
 
         if($object instanceof Object_Concrete) {
-            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or $params["force"]) {
+            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or (array_key_exists("force", $params) && $params["force"])) {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", array($object->getO_id(), $this->getName()));
             } else {
                 return null;
