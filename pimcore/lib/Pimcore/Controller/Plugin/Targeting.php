@@ -45,7 +45,7 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
     public function routeShutdown(Zend_Controller_Request_Abstract $request) {
 
         $config = Pimcore_Config::getSystemConfig();
-        if(!Pimcore_Tool::useFrontendOutputFilters($request) || !$config->general->targeting) {
+        if(!Pimcore_Tool::useFrontendOutputFilters($request) || /*!$config->general->targeting*/ !PIMCORE_DEVMODE) {
             return $this->disable();
         }
         
