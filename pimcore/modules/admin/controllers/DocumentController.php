@@ -964,15 +964,15 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         );
 
         // PREVIEWS temporary disabled, need's to be optimized some time
-        /*
-        if($childDocument instanceof Document_Page) {
+        if($childDocument instanceof Document_Page && Pimcore_Config::getSystemConfig()->documents->generatepreview) {
             $thumbnailFile = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $childDocument->getId() . ".jpg";
-            if(file_exists($thumbnailFile)) {
+
+            // only if the thumbnail exists and isn't out of time
+            if(file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate()-20)) {
                 $thumbnailPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $thumbnailFile);
                 $tmpDocument["thumbnail"] = $thumbnailPath;
             }
         }
-        */
 
         $tmpDocument["cls"] = "";
         
