@@ -92,7 +92,7 @@ class Asset_Image_Thumbnail_Config {
             "color" => "#323232"
         ));
         $thumbnail->setQuality(60);
-        $thumbnail->setFormat("JPEG");
+        $thumbnail->setFormat("PJPEG");
 
         return $thumbnail;
     }
