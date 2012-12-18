@@ -119,7 +119,8 @@ class Install_IndexController extends Pimcore_Controller_Action {
                     ),
                     "createredirectwhenmoved" => "",
                     "allowtrailingslash" => "no",
-                    "allowcapitals" => "no"
+                    "allowcapitals" => "no",
+                    "generatepreview" => "1"
                 ),
                 "objects" => array(
                     "versions" => array(
