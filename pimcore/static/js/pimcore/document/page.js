@@ -163,6 +163,10 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
     createScreenshot: function () {
 
+        if(!pimcore.settings.document_generatepreviews) {
+            return;
+        }
+
         var date = new Date();
         var path = this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime();
 

@@ -756,6 +756,11 @@ pimcore.settings.system = Class.create({
                                 ],
                                 mode: "local",
                                 triggerAction: "all"
+                            },{
+                                fieldLabel: t("generate_previews"),
+                                xtype: "checkbox",
+                                name: "documents.generatepreview",
+                                checked: this.getValue("documents.generatepreview")
                             }
                         ]
                     },
