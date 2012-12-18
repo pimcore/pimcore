@@ -68,11 +68,11 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         if (!$this->document->isPublished()) {
             if (Pimcore_Tool::isFrontentRequestByAdmin()) {
                 if (!$user) {
-                    throw new Exception("access denied for " . $this->document->getFullPath());
+                    throw new Zend_Controller_Router_Exception("access denied for " . $this->document->getFullPath());
                 }
             }
             else {
-                throw new Exception("access denied for " . $this->document->getFullPath());
+                throw new Zend_Controller_Router_Exception("access denied for " . $this->document->getFullPath());
             }
         }
 
