@@ -169,6 +169,19 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         Pimcore_Tool_Console::exec($cmd);
     }
 
+    public function getDuration () {
+
+        $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/video-info-" . uniqid() . ".out";
+
+        $cmd = self::getFfmpegCli() . " -i " . realpath($this->file);
+        Pimcore_Tool_Console::exec($cmd, $tmpFile);
+
+        $contents = file_get_contents($tmpFile);
+        unlink($tmpFile);
+
+        return $this->extractDuration($contents);
+    }
+
     /**
      *
      */
@@ -189,6 +202,22 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     }
 
     /**
+     * @param $output
+     * @return int
+     */
+    protected function extractDuration($output) {
+        // get total video duration
+        preg_match("/Duration: ([0-9:\.]+),/", $output, $matches);
+        $durationRaw = $matches[1];
+        $durationParts = explode(":",$durationRaw);
+
+        // calculate duration in seconds
+        $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
+
+        return $duration;
+    }
+
+    /**
      *
      */
     public function getConversionStatus() {
@@ -206,13 +235,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
             return "error";
         }
 
-        // get total video duration
-        preg_match("/Duration: ([0-9:\.]+),/", $log, $matches);
-        $durationRaw = $matches[1];
-        $durationParts = explode(":",$durationRaw);
-
-        // calculate duration in seconds
-        $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
+        $duration = $this->extractDuration($log);
 
         // get conversion time
         preg_match_all("/time=([0-9:\.]+) bitrate/", $log, $matches);

@@ -390,6 +390,9 @@
 	background: url(/pimcore/static/img/icon/world_edit.png) no-repeat !important;
 }
 
+.pimcore_icon_edit_video {
+    background: url(/pimcore/static/img/icon/film_edit.png) no-repeat !important;
+}
 
 .pimcore_icon_classes {
 	background: url(/pimcore/static/img/icon/database_edit.png) left center no-repeat !important;

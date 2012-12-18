@@ -189,4 +189,14 @@ class Asset_Video extends Asset {
 
         return $path;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getDuration () {
+        $converter = Pimcore_Video::getInstance();
+        $converter->load($this->getFileSystemPath());
+
+        return $converter->getDuration();
+    }
 }
