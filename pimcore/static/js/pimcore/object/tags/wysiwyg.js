@@ -112,6 +112,11 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },
 
     initializePreview: function () {
+
+        if(!Ext.get(this.previewIframeId)) {
+            return;
+        }
+
         var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
         var iframeContent = this.data;
         iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
@@ -161,9 +166,13 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             eConfig.height = this.fieldConfig.height;
         }
 
-        Ext.get(this.editableDivId).update(this.data);
-        this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
-        this.ckeditor.pimcore_tag_instance = this;
+        try {
+            Ext.get(this.editableDivId).update(this.data);
+            this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
+            this.ckeditor.pimcore_tag_instance = this;
+        } catch (e) {
+            console.log(e);
+        }
     },
 
     mask: function () {
