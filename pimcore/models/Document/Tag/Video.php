@@ -423,7 +423,6 @@ class Document_Tag_Video extends Document_Tag
 
         if (!$this->id) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
 
         $options = $this->getOptions();
@@ -452,15 +451,7 @@ class Document_Tag_Video extends Document_Tag
 
         if (!$youtubeId) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
-
-
-        $width = "100%";
-        if(array_key_exists("width", $options)) {
-            $width = $options["width"];
-        }
-
 
         $width = "100%";
         if(array_key_exists("width", $options)) {
@@ -471,10 +462,6 @@ class Document_Tag_Video extends Document_Tag
         if(array_key_exists("height", $options)) {
             $height = $options["height"];
         }
-        /*
-       if($options["config"]["clip"]["autoPlay"]){
-           $autoPlayString = "&autoplay=1";
-       } */
 
         $valid_youtube_prams=array( "autohide",
             "autoplay",
@@ -604,7 +591,6 @@ class Document_Tag_Video extends Document_Tag
         $config["clip"]["url"] = $urls["mp4"];
         if (empty($urls)) {
             return $this->getEmptyCode();
-            //$config["clip"]["url"] = "/pimcore/static/f4v/pimcore.f4v";
         }
 
         if (!Document_Tag_Video::$playerJsEmbedded) {
