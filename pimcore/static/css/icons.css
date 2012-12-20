@@ -1224,3 +1224,11 @@
 .pimcore_icon_cross {
     background: url(/pimcore/static/img/icon/cross.png) center no-repeat !important;
 }
+
+.pimcore_icon_tv {
+    background: url(/pimcore/static/img/icon/television.png) left no-repeat !important;
+}
+
+.pimcore_icon_tablet {
+    background: url(/pimcore/static/img/icon/image.png) left no-repeat !important;
+}
