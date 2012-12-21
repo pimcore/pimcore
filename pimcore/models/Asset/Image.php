@@ -50,7 +50,7 @@ class Asset_Image extends Asset {
         // now directly create "system" thumbnails (eg. for the tree, ...)
         try {
             $path = $this->getThumbnail(Asset_Image_Thumbnail_Config::getPreviewConfig());
-            $path = PIMCORE_TEMPORARY_DIRECTORY . $path;
+            $path = PIMCORE_DOCUMENT_ROOT . $path;
 
             // set the modification time of the thumbnail to the same time from the asset
             // so that the thumbnail check doesn't fail in Asset_Image_Thumbnail_Processor::process();
