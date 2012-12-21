@@ -92,7 +92,7 @@ pimcore.document.pages.preview = Class.create({
                 tbar: tbar,
                 autoScroll: true,
                 iconCls: "pimcore_icon_tab_preview",
-                bodyStyle: "-webkit-overflow-scrolling:touch;",
+                bodyStyle: "-webkit-overflow-scrolling:touch; background:#323232;",
                 html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="document_preview_iframe_' + this.page.id + '"></iframe>'
             });
 
