@@ -41,7 +41,7 @@ class Pimcore_Resource_Wrapper {
     {
         if(!$this->DDLResource) {
             // get the Zend_Db_Adapter_Abstract not the wrapper
-            $this->DDLResource = Pimcore_Resource::getConnection()->getResource();
+            $this->DDLResource = Pimcore_Resource::getConnection(true);
         }
         return $this->DDLResource;
     }
@@ -60,8 +60,10 @@ class Pimcore_Resource_Wrapper {
     /**
      * @param $resource
      */
-    public function __construct($resource) {
-        $this->setResource($resource);
+    public function __construct($resource = false) {
+        if($resource) {
+            $this->setResource($resource);
+        }
     }
 
     /**
@@ -78,9 +80,23 @@ class Pimcore_Resource_Wrapper {
      */
     public function getResource()
     {
+        if(!$this->resource) {
+            // get the Zend_Db_Adapter_Abstract not the wrapper
+            $this->resource = Pimcore_Resource::getConnection(true);
+        }
         return $this->resource;
     }
 
+    /**
+     *
+     */
+    public function closeResource() {
+        if($this->resource) {
+            Logger::debug("closing mysql connection with ID: " . $this->resource->fetchOne("SELECT CONNECTION_ID()"));
+            $this->resource->closeConnection();
+            $this->resource = null;
+        }
+    }
     
     /**
      * @throws Exception
