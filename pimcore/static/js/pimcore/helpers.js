@@ -1091,7 +1091,8 @@ pimcore.helpers.urlToCanvas = function (url, callback) {
     iframe.setAttribute("name", frameId);
     iframe.setAttribute("id", frameId);
     iframe.setAttribute("src", url);
-    iframe.setAttribute("style","width:1280px; position:absolute; left:-10000; top:-10000px;");
+    iframe.setAttribute("allowtransparency", "false");
+    iframe.setAttribute("style","width:1280px; position:absolute; left:-10000; top:-10000px; background:#fff;");
     iframe.onload = function () {
         window.setTimeout(function () {
             html2canvas([window[frameId].document.body], {
@@ -1100,7 +1101,8 @@ pimcore.helpers.urlToCanvas = function (url, callback) {
                     if(typeof callback == "function") {
                         callback(canvas);
                     }
-                }
+                },
+                proxy: "/admin/misc/proxy/"
             })
         }, 2000);
     }
