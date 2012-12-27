@@ -461,13 +461,28 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             );
         }
 
+        //How many rows
+        $csv = new SplFileObject($file);
+        $csv->setFlags(SplFileObject::READ_CSV);
+        $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+        $rows = 0;
+        $nbFields = 0;
+        foreach ($csv as $fields) {
+            if (0 === $rows) {
+                $nbFields = count($fields);
+                $rows++;
+            } elseif ($nbFields == count($fields)) {
+                $rows++;
+            }
+        }
+
         $this->_helper->json(array(
               "success" => $success,
               "dataPreview" => $data,
               "dataFields" => array_keys($data[0]),
               "targetFields" => $availableFields,
               "mappingStore" => $mappingStore,
-              "rows" => count(file($file)),
+              "rows" => $rows,
               "cols" => $cols
         ));
     }
