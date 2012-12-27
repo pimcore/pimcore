@@ -20,7 +20,7 @@
 pimcore.registerNS("pimcore.object.helpers.grid");
 pimcore.object.helpers.grid = Class.create({
 
-    limit: 15,
+    limit: 20,
     baseParams: {},
     showSubtype: true,
     showKey: true,
