@@ -752,19 +752,20 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      * @param null $object
      * @return null|Pimcore_Date
      */
-
     public function getDiffDataFromEditmode($data, $object = null) {
         if ($data) {
             $tabledata = $data[0]["data"];
 
             $result = array();
-            foreach ($tabledata as $in) {
-                $out = array();
-                $out["id"] = $in[0];
-                $out["path"] = $in[1];
-                $out["type"] = $in[2];
-                $out["subtype"] = $in[3];
-                $result[] = $out;
+            if ($tabledata) {
+                foreach ($tabledata as $in) {
+                    $out = array();
+                    $out["id"] = $in[0];
+                    $out["path"] = $in[1];
+                    $out["type"] = $in[2];
+                    $out["subtype"] = $in[3];
+                    $result[] = $out;
+                }
             }
 
             return $this->getDataFromEditmode($result);
