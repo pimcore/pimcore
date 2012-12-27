@@ -1075,57 +1075,62 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         if ($this->getParam("data")) {
             if ($this->getParam("xaction") == "update") {
 
-                $data = Zend_Json::decode($this->getParam("data"));
-
-                // save
-                $object = Object_Abstract::getById($data["id"]);
-
-                $objectData = array();
-                foreach($data as $key => $value) {
-                    $parts = explode("~", $key);
-                    if (substr($key, 0, 1) == "~") {
-                        $type = $parts[1];
-                        $field = $parts[2];
-                        $keyid = $parts[3];
-
-                        $getter = "get" . ucfirst($field);
-                        $setter = "set" . ucfirst($field);
-                        $keyValuePairs = $object->$getter();
-
-                        if (!$keyValuePairs) {
-                            $keyValuePairs = new Object_Data_KeyValue();
-                            $keyValuePairs->setObjectId($object->getId());
-                            $keyValuePairs->setClass($object->getClass());
-                        }
-
-                        $keyValuePairs->setPropertyWithId($keyid, $value);
-                        $object->$setter($keyValuePairs);
-                    } else if(count($parts) > 1) {
-                        $brickType = $parts[0];
-                        $brickKey = $parts[1];
-                        $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);
-
-                        $fieldGetter = "get" . ucfirst($brickField);
-                        $brickGetter = "get" . ucfirst($brickType);
-                        $valueSetter = "set" . ucfirst($brickKey);
-
-                        $brick = $object->$fieldGetter()->$brickGetter();
-                        if(empty($brick)) {
-                            $classname = "Object_Objectbrick_Data_" . ucfirst($brickType);
-                            $brickSetter = "set" . ucfirst($brickType);
-                            $brick = new $classname($object);
-                            $object->$fieldGetter()->$brickSetter($brick);
-                        }
-                        $brick->$valueSetter($value);
-
-                    } else {
-                        $objectData[$key] = $value;
-                    }
-                }
-
-                $object->setValues($objectData);
-
                 try {
+                    $data = Zend_Json::decode($this->getParam("data"));
+
+                    // save
+                    $object = Object_Abstract::getById($data["id"]);
+
+                    if(!$object->isAllowed("publish")) {
+                        throw new Exception("Permission denied. You don't have the rights to save this object.");
+                    }
+
+                    $objectData = array();
+                    foreach($data as $key => $value) {
+                        $parts = explode("~", $key);
+                        if (substr($key, 0, 1) == "~") {
+                            $type = $parts[1];
+                            $field = $parts[2];
+                            $keyid = $parts[3];
+
+                            $getter = "get" . ucfirst($field);
+                            $setter = "set" . ucfirst($field);
+                            $keyValuePairs = $object->$getter();
+
+                            if (!$keyValuePairs) {
+                                $keyValuePairs = new Object_Data_KeyValue();
+                                $keyValuePairs->setObjectId($object->getId());
+                                $keyValuePairs->setClass($object->getClass());
+                            }
+
+                            $keyValuePairs->setPropertyWithId($keyid, $value);
+                            $object->$setter($keyValuePairs);
+                        } else if(count($parts) > 1) {
+                            $brickType = $parts[0];
+                            $brickKey = $parts[1];
+                            $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);
+
+                            $fieldGetter = "get" . ucfirst($brickField);
+                            $brickGetter = "get" . ucfirst($brickType);
+                            $valueSetter = "set" . ucfirst($brickKey);
+
+                            $brick = $object->$fieldGetter()->$brickGetter();
+                            if(empty($brick)) {
+                                $classname = "Object_Objectbrick_Data_" . ucfirst($brickType);
+                                $brickSetter = "set" . ucfirst($brickType);
+                                $brick = new $classname($object);
+                                $object->$fieldGetter()->$brickSetter($brick);
+                            }
+                            $brick->$valueSetter($value);
+
+                        } else {
+                            $objectData[$key] = $value;
+                        }
+                    }
+
+                    $object->setValues($objectData);
+
+
                     $object->save();
                     $this->_helper->json(array("data" => Object_Service::gridObjectData($object, $this->getParam("fields")), "success" => true));
                 } catch (Exception $e) {
