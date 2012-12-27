@@ -71,20 +71,25 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             afterrender: function () {
                 this.tabPanelAdjustIntervalCounter = 0;
                 this.tabPanelAdjustInterval = window.setInterval(function () {
-                    if(!this.fieldConfig.height && !this.fieldConfig.region) {
-                        var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
-                        var panelBody = Ext.get(panelBodies[0]);
-                        panelBody.applyStyles("height: auto;");
-                        var height = panelBody.getHeight();
-                        this.component.setHeight(height+100); // 100 is just a fixed value which seems to be ok (caused by title bar, tabs itself, ... )
-
-                        //this.tabPanel.getEl().applyStyles("position:relative;");
-                        this.component.doLayout();
-                    }
 
                     this.tabPanelAdjustIntervalCounter++;
                     if(this.tabPanelAdjustIntervalCounter > 20) {
                         clearInterval(this.tabPanelAdjustInterval);
+                    }
+
+                    if(!this.fieldConfig.height && !this.fieldConfig.region) {
+                        try {
+                            var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
+                            var panelBody = Ext.get(panelBodies[0]);
+                            panelBody.applyStyles("height: auto;");
+                            var height = panelBody.getHeight();
+                            this.component.setHeight(height+100); // 100 is just a fixed value which seems to be ok (caused by title bar, tabs itself, ... )
+
+                            //this.tabPanel.getEl().applyStyles("position:relative;");
+                            this.component.doLayout();
+                        } catch (e) {
+                            console.log(e);
+                        }
                     }
                 }.bind(this), 100);
             }.bind(this)
