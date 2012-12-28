@@ -1232,3 +1232,8 @@
 .pimcore_icon_tablet {
     background: url(/pimcore/static/img/icon/image.png) left no-repeat !important;
 }
+
+
+.pimcore_icon_bouncemail {
+    background: url(/pimcore/static/img/icon/email_error.png) left no-repeat !important;
+}

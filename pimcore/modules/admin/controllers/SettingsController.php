@@ -340,9 +340,21 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                             "password" => $smtpPassword
                         )
                     ),
-                    "debug" => array( //ckogler
+                    "debug" => array(
                         "emailaddresses" => $values["email.debug.emailAddresses"],
                     ),
+                    "bounce" => array(
+                        "type" => $values["email.bounce.type"],
+                        "maildir" => $values["email.bounce.maildir"],
+                        "mbox" => $values["email.bounce.mbox"],
+                        "imap" => array(
+                            "host" => $values["email.bounce.imap.host"],
+                            "port" => $values["email.bounce.imap.port"],
+                            "username" => $values["email.bounce.imap.username"],
+                            "password" => $values["email.bounce.imap.password"],
+                            "ssl" => $values["email.bounce.imap.ssl"]
+                        )
+                    )
                 ),
                 "webservice" => array(
                     "enabled" => $values["webservice.enabled"]
