@@ -124,7 +124,10 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             if(this.fieldConfig.cols[i].type == "number") {
                 editor = new Ext.form.NumberField({});
             } else if(this.fieldConfig.cols[i].type == "text") {
-                editor = new Ext.form.TextField({});
+                editor = new Ext.form.TextField({
+                    maxLength: 50,
+                    autoCreate: {tag: 'input', type: 'text', size: '20', maxlength: "50", autocomplete: 'off'}
+                });
             } else if(this.fieldConfig.cols[i].type == "bool") {
                 editor = new Ext.form.Checkbox();
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
