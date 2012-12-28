@@ -229,6 +229,12 @@ pimcore.layout.toolbar = Class.create({
             });
 
             extrasItems.push({
+                text: t("bounce_mail_inbox"),
+                iconCls: "pimcore_icon_bouncemail",
+                handler: this.showBounceMailInbox
+            });
+
+            extrasItems.push({
                 text: t("system_infos_and_tools"),
                 iconCls: "pimcore_icon_info",
                 hideOnClick: false,
@@ -681,6 +687,16 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("systemlog", new pimcore.settings.systemlog());
+        }
+    },
+
+    showBounceMailInbox: function () {
+
+        try {
+            pimcore.globalmanager.get("bouncemailinbox").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("bouncemailinbox", new pimcore.settings.bouncemailinbox());
         }
     },
 
