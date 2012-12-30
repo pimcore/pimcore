@@ -46,6 +46,18 @@ CREATE TABLE `classes` (
   UNIQUE KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `content_index`;
+CREATE TABLE `content_index` (
+  `id` varchar(32) NOT NULL DEFAULT '',
+  `site` int(11) DEFAULT NULL,
+  `url` varchar(2000) NOT NULL DEFAULT '',
+  `content` longtext,
+  `type` enum('document','route') DEFAULT NULL,
+  `typeReference` int(11) DEFAULT NULL,
+  `lastUpdate` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `dependencies` ;
 CREATE TABLE `dependencies` (
   `sourcetype` enum('document','asset','object') NOT NULL DEFAULT 'document',
@@ -226,15 +238,16 @@ CREATE TABLE `http_error_log` (
   KEY `date` (`date`)
 ) DEFAULT CHARSET=utf8;
 
-
-CREATE TABLE IF NOT EXISTS `keyvalue_groups` (
+DROP TABLE IF EXISTS `keyvalue_groups`;
+CREATE TABLE `keyvalue_groups` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL ,
     `description` VARCHAR(255),
     PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `keyvalue_keys` (
+DROP TABLE IF EXISTS `keyvalue_keys`;
+CREATE TABLE `keyvalue_keys` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL ,
   `description` TEXT,
