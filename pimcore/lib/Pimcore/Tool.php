@@ -417,10 +417,14 @@ class Pimcore_Tool {
             $requestType = Zend_Http_Client::POST;
         }
 
-        $response = $client->request($requestType);
+        try {
+            $response = $client->request($requestType);
 
-        if ($response->isSuccessful()) {
-            return $response->getBody();
+            if ($response->isSuccessful()) {
+                return $response->getBody();
+            }
+        } catch (Exception $e) {
+
         }
 
         return false;
