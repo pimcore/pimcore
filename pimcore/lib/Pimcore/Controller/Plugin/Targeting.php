@@ -68,7 +68,10 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
      *
      */
     public function dispatchLoopShutdown() {
-        
+
+        // temporary disabled
+        return;
+
         if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
