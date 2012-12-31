@@ -16,17 +16,32 @@
 class Pimcore_Controller_Plugin_ContentLog extends Zend_Controller_Plugin_Abstract {
 
     public function dispatchLoopShutdown() {
-        
+
+        $config = Pimcore_Config::getReportConfig()->contentanalysis;
+        if(!$config->enabled) {
+            return;
+        }
+
+        $req = $this->getRequest();
+        $url = $req->getScheme() . '://' . $req->getHttpHost() . $req->getRequestUri();
+
+        $excludePatterns = explode("\n", $config->excludePatterns);
+        if(count($excludePatterns) > 0) {
+            foreach ($excludePatterns as $pattern) {
+                if(@preg_match($pattern, $url)) {
+                    return;
+                }
+            }
+        }
+
         if(!Pimcore_Tool::isHtmlResponse($this->getResponse())) {
             return;
         }
 
         try {
-            $req = $this->getRequest();
             $db = Pimcore_Resource::get();
             $content = $this->getResponse()->getBody();
-            $url = $req->getScheme() . '://' . $req->getHttpHost() . $req->getRequestUri();
-            $id = md5($url);
+            $id = md5($url) . "." . abs(crc32($url));
 
             $site = null;
             if(Site::isSiteRequest()) {
