@@ -1084,7 +1084,7 @@ pimcore.settings.system = Class.create({
                                 mode: 'local',
                                 anchor:'100%',
                                 minChars: 2,
-                                fieldLabel: t('cache_exclude_patterns'),
+                                fieldLabel: t('exclude_patterns'),
                                 name: 'cache.excludePatterns',
                                 value: this.getValue("cache.excludePatterns"),
                                 emptyText: t("superselectbox_empty_text"),
@@ -1108,7 +1108,7 @@ pimcore.settings.system = Class.create({
                             {
                                 xtype: "displayfield",
                                 width: 600,
-                                value: t("cache_exclude_patterns_description"),
+                                value: t("exclude_patterns_description"),
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {

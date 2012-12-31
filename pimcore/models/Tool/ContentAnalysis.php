@@ -29,7 +29,6 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
         $itemCount = $instance->getTotalIndexChangedItems();
 
         for($i=0; $i<ceil($itemCount/$itemsPerCycle); $i++) {
-            Logger::emerg(implode(",", array($i*$itemsPerCycle, $itemsPerCycle)));
             $items = $instance->getIndexChangedItems($i*$itemsPerCycle, $itemsPerCycle);
 
             $data = array();
@@ -49,8 +48,12 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
                     "title" => "",
                     "description" => "",
                     "imgWithoutAlt" => 0,
-                    "imgWithAlt" => 0
+                    "imgWithAlt" => 0,
+                    "robotsTxtBlocked" => 0,
+                    "robotsMetaBlocked" => 0
                 );
+
+                $blockedRobots = false;
 
                 $html = str_get_html($item["content"]);
                 if($html) {
@@ -65,7 +68,7 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
 
                     $h1 = $html->find("h1",0);
                     if($h1) {
-                        $record["h1Text"] = strip_tags($h1->innertext);
+                        $record["h1Text"] = html_entity_decode(strip_tags($h1->innertext));
                     }
 
                     $title = $html->find("title",0);
@@ -94,15 +97,46 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
                     $record["opengraph"] = count($html->find("meta[property^=og:]"));
                     $record["twitter"] = count($html->find("meta[property^=twitter],meta[name^=twitter]"));
 
+                    $record["robotsMetaBlocked"] = (int) ((bool) $html->find("meta[content*=noindex]"));
                 }
 
+                /*
+                $html = $item["content"];
+                if (function_exists('tidy_parse_string')) {
+                    $tidy = tidy_parse_string($html, array(), 'UTF8');
+                    $tidy->cleanRepair();
+                    $html = $tidy->value;
+                }
+
+
+                $readability = new Pimcore_Tool_Text_Readability($html, $item["url"]);
+                $readability->debug = false;
+                $readability->convertLinksToFootnotes = true;
+                $result = $readability->init();
+                if ($result) {
+                    $content = $readability->getContent()->innerHTML;
+                    $content = strip_tags($content);
+                    $content = Pimcore_Tool_Text::removeLineBreaks($content);
+
+                    //echo "\n------------------\n" . $content . "\n------------------\n";
+                }
+                */
+
                 $urlParts = parse_url($item["url"]);
+                $record["host"] = $urlParts["host"];
                 if(!array_key_exists("query", $urlParts)) {
                     $urlParts["query"] = "";
                 }
                 $record["urlLength"] = strlen($urlParts["path"] . $urlParts["query"]) + (empty($urlParts["query"]) ? 0 : 1);
-
                 $record["urlParameters"] = substr_count($urlParts["query"], "=");
+
+                try {
+                    $robotsTester = new Pimcore_Helper_RobotsTxt($urlParts["scheme"] . "://" . $urlParts["host"] . (array_key_exists("port", $urlParts) ? $urlParts["port"] : ""));
+                    $record["robotsTxtBlocked"] = (int) $robotsTester->isUrlBlocked($item["url"], "Googlebot");
+                } catch (Exception $e) {
+
+                }
+
 
                 $data[$item["url"]] = $record;
                 $urls[] = $item["url"];

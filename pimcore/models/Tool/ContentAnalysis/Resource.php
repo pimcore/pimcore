@@ -23,11 +23,11 @@ class Tool_ContentAnalysis_Resource extends Pimcore_Model_Resource_Abstract {
         WHERE (content_index.lastUpdate - content_analysis.lastUpdate) > 86400 OR content_analysis.lastUpdate IS NULL");
     }
 
-    public function getIndexChangedItems($start, $limit) {
+    public function getIndexChangedItems() {
         return $this->db->fetchAll("SELECT content_index.*
         FROM content_index LEFT JOIN content_analysis ON content_analysis.id = content_index.id
         WHERE (content_index.lastUpdate - content_analysis.lastUpdate) > 86400 OR content_analysis.lastUpdate IS NULL
-        ORDER BY content_index.lastUpdate ASC LIMIT " . $start . "," . $limit);
+        ORDER BY content_index.lastUpdate ASC LIMIT 5");
     }
 
     public function update($data) {
@@ -38,6 +38,8 @@ class Tool_ContentAnalysis_Resource extends Pimcore_Model_Resource_Abstract {
         } else {
             $this->db->insert("content_analysis", $data);
         }
+
+        $this->db->update("content_index", array("content" => ""), "id = '" . $data["id"] . "'");
     }
 }
 
