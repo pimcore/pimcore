@@ -240,7 +240,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $parentAsset = Asset::getById(intval($this->getParam("parentId")));
 
-        // check for dublicate filename
+        // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
 
         if ($parentAsset->isAllowed("create")) {
@@ -480,7 +480,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             try {
                 $tmpAsset["thumbnail"] = "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true";
 
-                // this is for backward-compatibilty, to calculate the dimensions if they are not there
+                // this is for backward-compatibility, to calculate the dimensions if they are not there
                 if(!$asset->getCustomSetting("imageDimensionsCalculated")) {
                     $asset->save();
                 }
@@ -1098,7 +1098,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
 
     /**
-     * Download the all assets contained in the folder with parameter id as ZIP file.
+     * Download all assets contained in the folder with parameter id as ZIP file.
      * The suggested filename is either [folder name].zip or assets.zip for the root folder.
      */
     public function downloadAsZipAction () {
@@ -1193,7 +1193,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             throw new Exception("The filename of the asset is empty");
         }
 
-        // check for dublicate filename
+        // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
 
         if ($parentAsset->isAllowed("create")) {
@@ -1222,7 +1222,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $folder = $this->getOrCreateAssetFolderByPath(dirname($relativePath));
                 $filename = basename($file);
 
-                // check for dublicate filename
+                // check for duplicate filename
                 $filename = Pimcore_File::getValidFilename($filename);
                 $filename = $this->getSafeFilename($folder->getFullPath(), $filename);
 
