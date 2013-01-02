@@ -38,14 +38,47 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     public $label;
 
     /**
-     * @var string
-     */
-    public $value;
-
-    /**
      * @var int
      */
     public $timestamp;
+
+    /**
+     * @var string
+     */
+    public $data;
+
+    /**
+    * @param integer $id
+    * @return Tool_Tracking_Event
+    */
+    public static function getById($id) {
+        $event = new self();
+        $event->getResource()->getById(intval($id));
+
+        return $event;
+    }
+
+    /**
+     * @param $category
+     * @param $action
+     * @param $label
+     * @param $day
+     * @param $month
+     * @param $year
+     */
+    public static function getByDate($category, $action, $label, $day, $month, $year) {
+        $event = new self();
+        try {
+            $event->getResource()->getByDate($category, $action, $label, $day, $month, $year);
+        } catch (Exception $e) {
+            $event->setTimestamp(mktime(1,0,0,$month, $day, $year));
+            $event->setCategory($category);
+            $event->setAction($action);
+            $event->setLabel($label);
+        }
+
+        return $event;
+    }
 
     /**
      * @param string $action
@@ -128,19 +161,21 @@ class Tool_Tracking_Event extends Pimcore_Model_Abstract {
     }
 
     /**
-     * @param string $value
+     * @param string $data
      */
-    public function setValue($value)
+    public function setData($data)
     {
-        $this->value = $value;
+        $this->data = $data;
     }
 
     /**
      * @return string
      */
-    public function getValue()
+    public function getData()
     {
-        return $this->value;
+        return $this->data;
     }
+
+
 
 }

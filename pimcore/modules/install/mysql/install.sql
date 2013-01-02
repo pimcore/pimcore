@@ -506,10 +506,10 @@ CREATE TABLE `targeting` (
 DROP TABLE IF EXISTS `tracking_events`;
 CREATE TABLE `tracking_events` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `action` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `label` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `value` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `category` varchar(255) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `label` varchar(255) DEFAULT NULL,
+  `data` varchar(255) DEFAULT NULL,
   `timestamp` bigint(20) unsigned DEFAULT NULL,
   `year` int(5) unsigned DEFAULT NULL,
   `month` int(2) unsigned DEFAULT NULL,
@@ -534,7 +534,7 @@ CREATE TABLE `tracking_events` (
   KEY `category` (`category`),
   KEY `action` (`action`),
   KEY `label` (`label`),
-  KEY `value` (`value`)
+  KEY `data` (`data`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `translations_admin`;

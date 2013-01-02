@@ -33,13 +33,30 @@ class Tool_Tracking_Event_Resource extends Pimcore_Model_Resource_Abstract {
         $this->validColumns = $this->getValidTableColumns("tracking_events");
     }
 
+    public function getById($id) {
+        $data = $this->db->fetchRow("SELECT * FROM tracking_events WHERE id = ?", $id);
+        if (!$data["id"]) {
+            throw new Exception("there is no event for the requested id");
+        }
+        $this->assignVariablesToModel($data);
+    }
+
+
+    public function getByDate($category, $action, $label, $day, $month, $year) {
+        $data = $this->db->fetchRow("SELECT * FROM tracking_events WHERE category = ? AND action = ? AND label = ? AND day = ? AND month = ? AND year = ?", array($category, $action, $label, $day, $month, $year));
+        if (!$data["id"]) {
+            throw new Exception("there is no event for the requested id");
+        }
+        $this->assignVariablesToModel($data);
+    }
+
     public function save() {
 
         $data = array(
             "category" => $this->model->getCategory(),
             "action" => $this->model->getAction(),
             "label" => $this->model->getLabel(),
-            "value" => $this->model->getValue(),
+            "data" => $this->model->getData(),
             "timestamp" => $this->model->getTimestamp(),
             "year" => (int) date("Y", $this->model->getTimestamp()),
             "month" => (int) date("m", $this->model->getTimestamp()),

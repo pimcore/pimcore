@@ -178,5 +178,11 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
                 Pimcore::collectGarbage();
             }
         }
+
+        // save statistics data
+        $service = new Tool_ContentAnalysis_Service();
+        $overview = $service->getOverviewData();
+
+
     }
 }
