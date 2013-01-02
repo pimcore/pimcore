@@ -18,16 +18,6 @@
 class Tool_ContentAnalysis_Service extends Pimcore_Model_Abstract {
 
     public function getAggregatedOverviewData($data = null) {
-        if(!$data) {
-            $data = $this->getOverviewData();
-        }
 
-        $aggregated = array(
-            "error" => 0,
-            "warning" => 0,
-            "notice" => 0
-        );
-
-        return $aggregated;
     }
 }
