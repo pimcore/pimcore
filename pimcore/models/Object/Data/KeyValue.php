@@ -72,11 +72,9 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         $objectName = $object->getKey();
 
         foreach ($this->arr as $pair) {
-
             $pair["inherited"] = false;
             $pair["source"] = $object->getId();
             $result[] = $pair;
-
         }
 
         $parent = Object_Service::hasInheritableParentObject($object);
@@ -168,16 +166,12 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         $pair["key"] = $keyId;
         $pair["value"] = $value;
         $this->arr[] = $pair;
-
-
     }
 
     public function setProperty($propName, $value) {
         $keyId =  $this->getKeyId($propName);
         $this->setPropertyWithId($keyId, $value);
     }
-
-
 
     public function __call($name, $arguments) {
         if(substr($name, 0, 3) == "get") {
