@@ -183,6 +183,10 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
         $service = new Tool_ContentAnalysis_Service();
         $overview = $service->getOverviewData();
 
-
+        foreach ($overview as $key => $value) {
+            $event = Tool_Tracking_Event::getByDate("pimcore_content_analysis", null, $key, date("d"), date("m"), date("Y"));
+            $event->setData($value);
+            $event->save();
+        }
     }
 }

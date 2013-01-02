@@ -43,7 +43,7 @@ class Tool_Tracking_Event_Resource extends Pimcore_Model_Resource_Abstract {
 
 
     public function getByDate($category, $action, $label, $day, $month, $year) {
-        $data = $this->db->fetchRow("SELECT * FROM tracking_events WHERE category = ? AND action = ? AND label = ? AND day = ? AND month = ? AND year = ?", array($category, $action, $label, $day, $month, $year));
+        $data = $this->db->fetchRow("SELECT * FROM tracking_events WHERE category = ? AND action = ? AND label = ? AND day = ? AND month = ? AND year = ?", array((string) $category, (string) $action, (string) $label, $day, $month, $year));
         if (!$data["id"]) {
             throw new Exception("there is no event for the requested id");
         }
@@ -53,9 +53,9 @@ class Tool_Tracking_Event_Resource extends Pimcore_Model_Resource_Abstract {
     public function save() {
 
         $data = array(
-            "category" => $this->model->getCategory(),
-            "action" => $this->model->getAction(),
-            "label" => $this->model->getLabel(),
+            "category" => (string) $this->model->getCategory(),
+            "action" => (string) $this->model->getAction(),
+            "label" => (string) $this->model->getLabel(),
             "data" => $this->model->getData(),
             "timestamp" => $this->model->getTimestamp(),
             "year" => (int) date("Y", $this->model->getTimestamp()),
