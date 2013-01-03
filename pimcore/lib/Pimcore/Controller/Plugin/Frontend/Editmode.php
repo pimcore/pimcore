@@ -97,33 +97,35 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
 
+                    $pluginJsPaths = array();
                     if (is_array($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
-                        $jsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                        $pluginJsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
                     }
                     else if ($p['plugin']['pluginDocumentEditmodeJsPaths']['path'] != null) {
-                        $jsPaths[0] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                        $pluginJsPaths[] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
                     }
                     //manipulate path for frontend
-                    if (is_array($jsPaths) and count($jsPaths) > 0) {
-                        for ($i = 0; $i < count($jsPaths); $i++) {
-                            if (is_file(PIMCORE_PLUGINS_PATH . $jsPaths[$i])) {
-                                $jsPaths[$i] = "/plugins" . $jsPaths[$i];
+                    if (is_array($pluginJsPaths) and count($pluginJsPaths) > 0) {
+                        for ($i = 0; $i < count($pluginJsPaths); $i++) {
+                            if (is_file(PIMCORE_PLUGINS_PATH . $pluginJsPaths[$i])) {
+                                $jsPaths[] = "/plugins" . $pluginJsPaths[$i];
                             }
                         }
                     }
 
 
+                    $pluginCssPaths = array();
                     if (is_array($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
-                        $cssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                        $pluginCssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
                     }
                     else if ($p['plugin']['pluginDocumentEditmodeCssPaths']['path'] != null) {
-                        $cssPaths[0] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                        $pluginCssPaths[] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
                     }
                     //manipulate path for frontend
-                    if (is_array($cssPaths) and count($cssPaths) > 0) {
-                        for ($i = 0; $i < count($cssPaths); $i++) {
-                            if (is_file(PIMCORE_PLUGINS_PATH . $cssPaths[$i])) {
-                                $cssPaths[$i] = "/plugins" . $cssPaths[$i];
+                    if (is_array($pluginCssPaths) and count($pluginCssPaths) > 0) {
+                        for ($i = 0; $i < count($pluginCssPaths); $i++) {
+                            if (is_file(PIMCORE_PLUGINS_PATH . $pluginCssPaths[$i])) {
+                                $cssPaths[] = "/plugins" . $pluginCssPaths[$i];
                             }
                         }
                     }
