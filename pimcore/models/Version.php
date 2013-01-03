@@ -465,7 +465,7 @@ class Version extends Pimcore_Model_Abstract {
 
                     Logger::debug("currently checking Element-ID: " . $element->getId() . " Element-Type: " . Element_Service::getElementType($element) . " in cycle: " . $counter);
 
-                    if($element->getModificationDate() > $version->getDate()) {
+                    if($element->getModificationDate() >= $version->getDate()) {
                         // delete version if it is outdated
                         Logger::debug("delete version: " . $version->getId() . " because it is outdated");
                         $version->delete();
@@ -484,8 +484,8 @@ class Version extends Pimcore_Model_Abstract {
                 }
 
                 if($counter > 20) {
-                    Logger::debug("cycle of 20 completed, now waiting for 10 secs");
-                    sleep(10);
+                    Logger::debug("cycle of 20 completed, now waiting for 2 secs");
+                    sleep(2);
                     $counter=0;
                 }
             }
