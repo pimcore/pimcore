@@ -300,6 +300,12 @@ class Element_Service extends Pimcore_Model_Abstract {
      */
     protected static function performSanityCheck($element)
     {
+        if($latestVersion = $element->getLatestVersion()) {
+            if($latestVersion->getDate() > $element->getModificationDate()) {
+                return;
+            }
+        }
+
         $element->setUserModification(0);
         $element->save();
 
