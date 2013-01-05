@@ -1153,7 +1153,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
 pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
     if(typeof node.attributes["thumbnail"] != "undefined") {
         window.setTimeout(function (node) {
-            var el = Ext.get(node.getUI().getEl());
+            var el = Ext.get(Ext.get(node.getUI().getEl()).query(".x-tree-node-el")[0]);
             el.on("mouseenter", function (node) {
 
                 // only display thumbnails when dnd is not active
