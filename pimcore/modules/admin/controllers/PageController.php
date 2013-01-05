@@ -159,6 +159,17 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         }
     }
 
+    public function getListAction() {
+        $list = new Document_List();
+        $list->setCondition("type = ?", array("page"));
+        $data = $list->loadIdPathList();
+
+        $this->_helper->json(array(
+            "success" => true,
+            "data" => $data
+        ));
+    }
+
     public function uploadScreenshotAction() {
         if($this->getParam("data") && $this->getParam("id")) {
             $data = substr($this->getParam("data"),strpos($this->getParam("data"), ",")+1);

@@ -428,6 +428,14 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
+            if(pimcore.settings.document_generatepreviews) {
+                cacheMenu.menu.push({
+                    text: t("generate_page_previews"),
+                    iconCls: "pimcore_icon_page",
+                    handler: this.generatePagePreviews
+                });
+            }
+
             settingsItems.push(cacheMenu);
         }
 
@@ -688,6 +696,56 @@ pimcore.layout.toolbar = Class.create({
         catch (e) {
             pimcore.globalmanager.add("systemlog", new pimcore.settings.systemlog());
         }
+    },
+
+    generatePagePreviews: function ()  {
+        Ext.Ajax.request({
+            url: '/admin/page/get-list',
+            success: function (res) {
+                var data = Ext.decode(res.responseText);
+                if(data && data.success) {
+                    var items = data.data;
+                    var totalItems = items.length;
+
+                    var progressBar = new Ext.ProgressBar({
+                        text: t('initializing')
+                    });
+
+                    var progressWin = new Ext.Window({
+                        title: t("generate_page_previews"),
+                        layout:'fit',
+                        width:500,
+                        bodyStyle: "padding: 10px;",
+                        closable:false,
+                        plain: true,
+                        modal: false,
+                        items: [progressBar]
+                    });
+
+                    progressWin.show();
+
+                    var generate = function () {
+                        if(items.length > 1) {
+                            var next = items.shift();
+
+                            var date = new Date();
+                            var path = next.path + "?pimcore_preview=true&time=" + date.getTime();
+
+                            pimcore.helpers.generatePagePreview(next.id, path, function () {
+                                generate();
+                            });
+
+                            var status = (totalItems-items.length) / totalItems;
+                            progressBar.updateProgress(status, (Math.ceil(status*100) + "%"));
+                        } else {
+                            progressWin.close();
+                        }
+                    }
+
+                    generate();
+                }
+            }
+        });
     },
 
     showBounceMailInbox: function () {
