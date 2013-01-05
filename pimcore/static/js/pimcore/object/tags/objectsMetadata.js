@@ -126,6 +126,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
                     listeners = {
                         "mousedown": function (col, grid, rowIndex, event) {
+                            console.log("ddd");
                             var store = grid.getStore();
                             var record = store.getAt(rowIndex);
                             record.set(col.dataIndex, !record.data[col.dataIndex]);
@@ -189,7 +190,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
 
         this.component = new Ext.grid.EditorGridPanel({
-            //plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
+            selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
+            plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
