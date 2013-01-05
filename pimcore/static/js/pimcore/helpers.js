@@ -1092,7 +1092,7 @@ pimcore.helpers.urlToCanvas = function (url, callback) {
     iframe.setAttribute("id", frameId);
     iframe.setAttribute("src", url);
     iframe.setAttribute("allowtransparency", "false");
-    iframe.setAttribute("style","width:1280px; position:absolute; left:-10000; top:-10000px; background:#fff;");
+    iframe.setAttribute("style","width:1280px; height:1000px; position:absolute; left:-10000; top:-10000px; background:#fff;");
     iframe.onload = function () {
         window.setTimeout(function () {
             html2canvas([window[frameId].document.body], {
