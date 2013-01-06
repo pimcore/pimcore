@@ -198,6 +198,7 @@ CREATE TABLE `documents_page` (
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
+  `metaData` text,
   `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
