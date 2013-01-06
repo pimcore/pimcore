@@ -54,6 +54,19 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         }
         else {
             $this->setDocument($this->getParam("document"));
+
+            // append meta-data to the headMeta() view helper,  if it is a document-request
+            if(!Staticroute::getCurrentRoute() && ($this->getDocument() instanceof Document_Page)) {
+                if(is_array($this->getDocument()->getMetaData())) {
+                    foreach ($this->getDocument()->getMetaData() as $meta) {
+                        // only name
+                        if($meta["idName"] == "name") {
+                            $method = "append" . ucfirst($meta["idName"]);
+                            $this->view->headMeta()->$method($meta["idValue"], $meta["contentValue"]);
+                        }
+                    }
+                }
+            }
         }
 
 
