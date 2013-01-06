@@ -121,7 +121,15 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
      * @return void
      */
     protected function clearTags () {
-        $this->getDb()->delete("cache_tags");
+        //$this->getDb()->delete("cache_tags");
+        $this->getDb()->query("DROP TABLE IF EXISTS `cache_tags`;");
+        $this->getDb()->query("CREATE TABLE `cache_tags` (
+          `id` varchar(165) NOT NULL DEFAULT '',
+          `tag` varchar(165) NULL DEFAULT NULL,
+          PRIMARY KEY (`id`,`tag`),
+          INDEX `id` (`id`),
+          INDEX `tag` (`tag`)
+        ) ENGINE=MEMORY;");
     }
 
     /**
