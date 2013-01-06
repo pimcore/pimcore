@@ -97,7 +97,7 @@ pimcore.document.seopanel = Class.create({
             dataIndex: 'h1',
             width: 25
         },{
-            header: "H1 Text",
+            header: t("h1_text"),
             dataIndex: 'h1_text',
             width: 300
         },{

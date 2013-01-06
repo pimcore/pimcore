@@ -17,6 +17,29 @@
 
 class Tool_ContentAnalysis_Service_Resource extends Pimcore_Model_Resource_Abstract {
 
+    public function listData($condition, $offset, $limit, $sort, $dir) {
+
+        $sorting = "";
+        if($sort && $dir) {
+
+            if($sort == "titleLength") {
+                $sort = "LENGTH(title)";
+            } else if($sort == "descriptionLength") {
+                $sort = "LENGTH(description)";
+            }
+
+            $sorting .= " ORDER BY " . $sort . " " . $dir;
+        }
+
+        $data = $this->db->fetchAll("SELECT *, LENGTH(title) as titleLength, LENGTH(description) as descriptionLength FROM content_analysis WHERE " . $condition . " " . $sorting . " LIMIT " . $offset . "," . $limit);
+
+        return $data;
+    }
+
+    public function getTotal ($condition) {
+        return (int) $this->db->fetchOne("SELECT COUNT(*) FROM content_analysis WHERE " . $condition);
+    }
+
     public function cleanupExistingData($patterns) {
 
         foreach ($patterns as $pattern) {

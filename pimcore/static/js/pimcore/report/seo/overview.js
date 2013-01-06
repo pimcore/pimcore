@@ -110,5 +110,5 @@ pimcore.report.seo.overview = Class.create(pimcore.report.abstract, {
 });
 
 // add to report broker
-pimcore.report.broker.addGroup("seo", "SEO", "pimcore_icon_report_seo_group");
-pimcore.report.broker.addReport(pimcore.report.seo.overview, "seo");
+//pimcore.report.broker.addGroup("seo", "SEO", "pimcore_icon_report_seo_group");
+//pimcore.report.broker.addReport(pimcore.report.seo.overview, "seo");
