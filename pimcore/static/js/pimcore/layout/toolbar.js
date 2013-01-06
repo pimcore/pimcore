@@ -130,6 +130,10 @@ pimcore.layout.toolbar = Class.create({
                     text: t("http_errors"),
                     iconCls: "pimcore_icon_httperrorlog",
                     handler: this.showHttpErrorLog
+                }, {
+                    text: t("reports"),
+                    iconCls: "pimcore_icon_reports",
+                    handler: this.showReports
                 }]
             });
         }

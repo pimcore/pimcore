@@ -26,4 +26,23 @@ class Reports_SeoController extends Pimcore_Controller_Action_Admin_Reports {
         p_r($summary);
         exit;
     }
+
+    public function detailAction() {
+
+        $conditions = array("1=1");
+        if($this->getParam("site")) {
+            $conditions[] = "site = '" . $this->getParam("site") . "'";
+        }
+
+        $condition = implode(" AND ", $conditions);
+
+        $service = new Tool_ContentAnalysis_Service();
+        $list = $service->listData($condition, (int) $this->getParam("start"), (int) $this->getParam("limit"), $this->getParam("sort"), $this->getParam("dir"));
+
+        $this->_helper->json(array(
+            "success" => true,
+            "data" => $list,
+            "total" => $service->getTotal($condition)
+        ));
+    }
 }
