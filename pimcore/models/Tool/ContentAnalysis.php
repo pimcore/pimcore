@@ -179,12 +179,30 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
             }
         }
 
-        // save statistics data
+        // statistics for sites
+        $sites = new Site_List();
+        $sites = $sites->load();
+
+        foreach ($sites as $site) {
+            $service = new Tool_ContentAnalysis_Service();
+            $overview = $service->getOverviewData($site->getId());
+            self::saveAggregatedStatistics("pimcore_content_analysis_site_" . $site->getId(), $overview);
+        }
+
+        // statistics for default/main site
+        $service = new Tool_ContentAnalysis_Service();
+        $overview = $service->getOverviewData("default");
+        self::saveAggregatedStatistics("pimcore_content_analysis_default", $overview);
+
+        // save statistics data overall
         $service = new Tool_ContentAnalysis_Service();
         $overview = $service->getOverviewData();
+        self::saveAggregatedStatistics("pimcore_content_analysis", $overview);
+    }
 
+    protected static function saveAggregatedStatistics($category, $overview) {
         foreach ($overview as $key => $value) {
-            $event = Tool_Tracking_Event::getByDate("pimcore_content_analysis", null, $key, date("d"), date("m"), date("Y"));
+            $event = Tool_Tracking_Event::getByDate($category, null, $key, date("d"), date("m"), date("Y"));
             $event->setData($value);
             $event->save();
         }
