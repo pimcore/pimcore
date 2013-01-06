@@ -40,6 +40,11 @@ class Document_Page extends Document_PageSnippet {
     public $keywords = "";
 
     /**
+     * @var array
+     */
+    public $metaData = array();
+
+    /**
      * Static type of the document
      *
      * @var string
@@ -156,6 +161,22 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setTitle($title) {
         $this->title = $title;
+    }
+
+    /**
+     * @param array $metaData
+     */
+    public function setMetaData($metaData)
+    {
+        $this->metaData = $metaData;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
     }
 
     /**

@@ -77,10 +77,13 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                 $page->setPublished(true);
             }
 
+            $settings = array();
+            if($this->getParam("settings")) {
+                $settings = Zend_Json::decode($this->getParam("settings"));
+            }
+
             // check for redirects
             if($this->getUser()->isAllowed("redirects") && $this->getParam("settings")) {
-                $settings = Zend_Json::decode($this->getParam("settings"));
-
                 if(is_array($settings)) {
                     $redirectList = new Redirect_List();
                     $redirectList->setCondition("target = ?", $page->getId());
@@ -116,6 +119,19 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                     }
                 }
             }
+
+            $metaData = array();
+            for($i=1; $i<30; $i++) {
+                if(array_key_exists("metadata_idName_" . $i, $settings)) {
+                    $metaData[] = array(
+                        "idName" => $settings["metadata_idName_" . $i],
+                        "idValue" => $settings["metadata_idValue_" . $i],
+                        "contentName" => $settings["metadata_contentName_" . $i],
+                        "contentValue" => $settings["metadata_contentValue_" . $i],
+                    );
+                }
+            }
+            $page->setMetaData($metaData);
 
             // only save when publish or unpublish
             if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {

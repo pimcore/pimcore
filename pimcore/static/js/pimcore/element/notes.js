@@ -277,6 +277,7 @@ pimcore.element.notes = Class.create({
                 store: ["","content","seo","warning","notice"],
                 editable: true,
                 mode: "local",
+                triggerAction: "all",
                 width: 150
             },{
                 xtype: "textfield",
