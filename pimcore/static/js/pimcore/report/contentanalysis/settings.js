@@ -47,6 +47,25 @@ pimcore.report.contentanalysis.settings = Class.create({
                 width: 600,
                 value: t("exclude_patterns_description"),
                 cls: "pimcore_extra_label_bottom"
+            }, {
+                xtype: "button",
+                text: t("cleanup_existing_data"),
+                handler: function () {
+
+                    var waitBox = Ext.MessageBox.wait(t("please_wait"));
+
+                    Ext.Ajax.request({
+                        url: "/admin/reports/settings/cleanup-existing-content-analysis-data",
+                        params: this.getValues(),
+                        method: "post",
+                        success: function () {
+                            waitBox.hide();
+                        },
+                        failure: function () {
+                            waitBox.hide();
+                        }
+                    });
+                }.bind(this)
             }]
         });
 

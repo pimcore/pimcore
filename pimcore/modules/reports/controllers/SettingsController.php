@@ -48,4 +48,17 @@ class Reports_SettingsController extends Pimcore_Controller_Action_Admin_Reports
         } 
         $this->_helper->json(false);
     }
+
+    public function cleanupExistingContentAnalysisDataAction() {
+
+
+        $patterns = explode("\n", $this->getParam("excludePatterns"));
+
+        if(count($patterns) > 0) {
+            $service = new Tool_ContentAnalysis_Service();
+            $service->cleanupExistingData($patterns);
+        }
+
+        $this->_helper->json(array("success" => true));
+    }
 }

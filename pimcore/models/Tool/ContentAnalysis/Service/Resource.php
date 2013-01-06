@@ -17,6 +17,32 @@
 
 class Tool_ContentAnalysis_Service_Resource extends Pimcore_Model_Resource_Abstract {
 
+    public function cleanupExistingData($patterns) {
+
+        foreach ($patterns as $pattern) {
+
+            // remove delimiters
+            $delemiter = substr($pattern, 0, 1);
+            if($last = strrpos($pattern, $delemiter, 1)) {
+                $pattern = substr_replace($pattern, "", 0, 1);
+                $pattern = substr_replace($pattern, "", ($last-1));
+            }
+
+            try {
+                $this->db->delete("content_analysis", "url REGEXP(" . $this->db->quote($pattern) . ")");
+            } catch (Exception $e) {
+
+            }
+
+            try {
+                $this->db->delete("content_index", "url REGEXP(" . $this->db->quote($pattern) . ")");
+            } catch (Exception $e) {
+
+            }
+        }
+
+    }
+
     public function getOverviewData () {
 
         $summary = array();
