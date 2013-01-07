@@ -637,7 +637,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                 $diffdata["title"] = $this->getName() . " / " . $subdata["title"];
                 $brickdata = array(
-                    "brick" => strtolower(substr($getter, 3)),
+                    "brick" => substr($getter, 3),
                     "name" => $fd->getName(),
                     "subdata" => $subdata
                 );
