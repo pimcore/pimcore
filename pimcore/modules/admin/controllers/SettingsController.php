@@ -475,8 +475,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                 $data = Zend_Json::decode($this->getParam("data"));
 
-                foreach ($data as &$value) {
-                    $value = trim($value);
+                if(is_array($data)) {
+                    foreach ($data as &$value) {
+                        $value = trim($value);
+                    }
                 }
 
                 if ($this->getParam("xaction") == "destroy") {
