@@ -147,14 +147,16 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible is also Basic
             if (!this.options["toolbar"] && !this.options["toolbarGroups"]) {
                 eConfig.toolbarGroups = [
-                	{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-                	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
-                	{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ] }, { name: 'forms' },
-                	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
+                	{ name: 'clipboard', groups: [ 'clipboard', 'undo', "find" ] },
+                	{ name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
                     '/',
-                	{ name: 'links' },{ name: 'insert' }, { name: 'styles' }, { name: 'colors' }, { name: 'tools' },
-                    { name: 'others' }, { name: 'about' }
+                    { name: 'paragraph', groups: [ 'align', 'indent', 'blocks'] },
+                	{ name: 'links' },
+                    { name: 'insert' },
+                    "/",
+                    { name: 'styles' },
+                    { name: 'colors' },
+                    { name: 'tools', groups: ["tools", 'cleanup'] }
                 ];
             }
 
@@ -166,7 +168,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
 
 
-            eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates' + removePluginsAdd;
+            eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates' + removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
