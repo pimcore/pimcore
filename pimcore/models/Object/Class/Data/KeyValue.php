@@ -158,8 +158,12 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      * @return tbd
      */
     public function getDataForEditmode($data, $object = null) {
-        $properties = $data->getProperties();
         $result = array();
+        if (!$data) {
+            return $result;
+        }
+
+        $properties = $data->getProperties();
 
         foreach ($properties as $key => $property) {
 
