@@ -520,6 +520,10 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         if ($data) {
             $tabledata = $data[0]["data"];
 
+            if (!$tabledata) {
+                return;
+            }
+
             $result = array();
             foreach ($tabledata as $in) {
                 $out = array();
