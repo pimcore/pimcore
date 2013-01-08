@@ -16,15 +16,16 @@
 class Reports_SeoController extends Pimcore_Controller_Action_Admin_Reports {
 
 
-    public function overviewAction() {
+    public function socialOverviewAction() {
+
+        $site = $this->getParam("site");
+        if($site == "default") {
+            $site = null;
+        }
 
         $service = new Tool_ContentAnalysis_Service();
-        $summary = $service->getOverviewData();
-
-
-
-        p_r($summary);
-        exit;
+        $summary = $service->getSocialSummary($site);
+        $this->view->summary = $summary;
     }
 
     public function detailAction() {

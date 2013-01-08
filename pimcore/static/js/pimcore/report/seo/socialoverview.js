@@ -12,8 +12,8 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-pimcore.registerNS("pimcore.report.seo.overview");
-pimcore.report.seo.overview = Class.create(pimcore.report.abstract, {
+pimcore.registerNS("pimcore.report.seo.socialoverview");
+pimcore.report.seo.socialoverview = Class.create(pimcore.report.abstract, {
 
     matchType: function (type) {
         var types = ["global"];
@@ -28,7 +28,7 @@ pimcore.report.seo.overview = Class.create(pimcore.report.abstract, {
     },
 
     getIconCls: function () {
-        return "pimcore_icon_seo_overview";
+        return "pimcore_icon_report_social_group";
     },
 
     getPanel: function () {
@@ -105,10 +105,10 @@ pimcore.report.seo.overview = Class.create(pimcore.report.abstract, {
         var queryString = {};
         queryString.site = this.site;
 
-        Ext.get(this.iframeId).dom.setAttribute("src", "/admin/reports/seo/overview?" + Ext.urlEncode(queryString));
+        Ext.get(this.iframeId).dom.setAttribute("src", "/admin/reports/seo/social-overview?" + Ext.urlEncode(queryString));
     }
 });
 
 // add to report broker
-//pimcore.report.broker.addGroup("seo", "SEO", "pimcore_icon_report_seo_group");
-//pimcore.report.broker.addReport(pimcore.report.seo.overview, "seo");
+pimcore.report.broker.addGroup("social", "social_media", "pimcore_icon_report_social_group");
+pimcore.report.broker.addReport(pimcore.report.seo.socialoverview, "social");

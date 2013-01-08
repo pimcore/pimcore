@@ -106,4 +106,27 @@ class Tool_ContentAnalysis_Service_Resource extends Pimcore_Model_Resource_Abstr
 
         return $summary;
     }
+
+    public function getSocialSummary($site) {
+
+        $category = "pimcore_content_analysis";
+        $siteCondition = "site IS NULL OR site = ''";
+
+        if(!empty($site)) {
+            $category = "pimcore_content_analysis_site_" . $site;
+            $siteCondition = "site = '" . $site . "'";
+        }
+
+        $summary = array(
+            "timeline" => array(),
+            "top" => array()
+        );
+
+        $summary["timeline"]["facebook"] = $this->db->fetchCol("SELECT data FROM tracking_events WHERE category = '$category' AND label = 'social_facebookShares' ORDER BY id DESC LIMIT 30");
+        $summary["timeline"]["plusone"] = $this->db->fetchCol("SELECT data FROM tracking_events WHERE category = '$category' AND label = 'social_googlePlusOne' ORDER BY id DESC LIMIT 30");
+        $summary["top"]["facebook"] = $this->db->fetchAll("SELECT url,facebookShares AS shares FROM content_analysis WHERE $siteCondition ORDER BY facebookShares DESC LIMIT 5");
+        $summary["top"]["plusone"] = $this->db->fetchAll("SELECT url,googlePlusOne AS shares FROM content_analysis WHERE $siteCondition  ORDER BY googlePlusOne DESC LIMIT 5");
+
+        return $summary;
+    }
 }
