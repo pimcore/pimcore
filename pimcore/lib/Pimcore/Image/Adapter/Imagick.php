@@ -67,7 +67,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
-     * @param  $path
+     * @param $path
+     * @param null $format
+     * @param null $quality
+     * @param string $colorProfile
+     * @return Pimcore_Image_Adapter|Pimcore_Image_Adapter_Imagick
      */
     public function save ($path, $format = null, $quality = null, $colorProfile = "RGB") {
 
