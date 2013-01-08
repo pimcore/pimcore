@@ -67,7 +67,7 @@ class Pimcore_Image_Adapter_InkscapeImagick extends Pimcore_Image_Adapter_Imagic
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_svg_height_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
-        Pimcore_Tool_Console::exec(self::getBinary() . " -h " . $height . " -D -f " . $this->imagePath . " -e " . $tmpFile, "/tmp/is.log");
+        Pimcore_Tool_Console::exec(self::getBinary() . " -h " . $height . " -D -f " . $this->imagePath . " -e " . $tmpFile);
         $this->initImagick($tmpFile);
 
 
