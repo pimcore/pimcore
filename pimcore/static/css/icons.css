@@ -1245,3 +1245,8 @@
 .pimcore_icon_seo_detail {
     background: url(/pimcore/static/img/icon/chart_curve.png) left no-repeat !important;
 }
+
+.pimcore_icon_report_social_group {
+    background: url(/pimcore/static/img/icon/group.png) left no-repeat !important;
+}
+

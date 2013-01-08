@@ -367,8 +367,8 @@
             "pimcore/report/analytics/elementnavigation.js",
             "pimcore/report/webmastertools/settings.js",
             "pimcore/report/contentanalysis/settings.js",
-            "pimcore/report/seo/overview.js",
             "pimcore/report/seo/detail.js",
+            "pimcore/report/seo/socialoverview.js",
 
             "pimcore/settings/tagmanagement/panel.js",
             "pimcore/settings/tagmanagement/item.js",
