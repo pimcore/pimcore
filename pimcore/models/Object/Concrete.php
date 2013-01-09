@@ -529,7 +529,7 @@ class Object_Concrete extends Object_Abstract {
     /**
      * @return mixed
      */
-    public function getValueFromParent($key) {
+    public function getValueFromParent($key, $params = null) {
         if ($this->getO_parent() instanceof Object_Abstract) {
 
             $parent = $this->getO_parent();
@@ -541,7 +541,9 @@ class Object_Concrete extends Object_Abstract {
                 if ($parent->getO_classId() == $this->getO_classId()) {
                     $method = "get" . $key;
                     if (method_exists($parent, $method)) {
-                        return $parent->$method();
+                        if (method_exists($parent, $method)) {
+                            return call_user_func(array($parent, $method), $params);
+                        }
                     }
                 }
             }
