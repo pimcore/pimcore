@@ -502,6 +502,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function getDiffVersionPreview($data, $object = null) {
         $value = array();
         $value["type"] = "html";
+        $value["html"] = "";
 
         if ($data) {
             $html = $this->getVersionPreview($data);
