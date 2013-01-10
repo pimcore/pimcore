@@ -168,7 +168,7 @@ class Object_Class_Data_Select extends Object_Class_Data {
         $diffdata["key"] = $this->getName();
         $diffdata["type"] = $this->fieldtype;
 
-        $value = "unknown";
+        $value = "";
         foreach ($this->options as $option) {
             if ($option["value"] == $data) {
                 $value = $option["key"];
