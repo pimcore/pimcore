@@ -143,6 +143,18 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public function delete() {
 
+        // delete all childs
+        $list = new User_List();
+        $list->setCondition("parentId = ?", $this->getId());
+        $list->load();
+
+        if(is_array($list->getUsers())){
+            foreach ($list->getUsers() as $user) {
+                $user->delete();
+            }
+        }
+
+        // now delete the current user
         $this->getResource()->delete();
         Pimcore_Model_Cache::clearAll();
     }
