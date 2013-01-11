@@ -92,7 +92,7 @@ class Pimcore_Cache_Backend_Memcached extends Zend_Cache_Backend_Memcached {
                         "id" => $id,
                         "tag" => $tag
                     ));*/
-                    $this->getDb()->query("INSERT INTO cache_tags (id,tag) VALUES('" . $id . "', '" . $tag . "') ON DUPLICATE KEY UPDATE id = '" . $tag . "'");
+                    $this->getDb()->query("INSERT INTO cache_tags (id,tag) VALUES('" . $id . "', '" . $tag . "') ON DUPLICATE KEY UPDATE id = '" . $id . "'");
                 }
                 catch (Exception $e) {
                     if(strpos(strtolower($e->getMessage()), "is full") !== false) {
