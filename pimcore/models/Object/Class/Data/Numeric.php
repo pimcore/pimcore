@@ -109,6 +109,9 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return float
      */
     public function getDataFromResource($data) {
+        if(is_numeric($data)) {
+            return (float) $data;
+        }
         return $data;
     }
 
