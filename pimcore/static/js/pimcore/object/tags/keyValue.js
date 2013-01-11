@@ -417,7 +417,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             var decodedValues = Ext.util.JSON.decode(possiblevalues);
             for (var i = 0;  i < decodedValues.length; i++) {
                 var val = decodedValues[i];
-                var entry = [val.key , val.key + " - " + val.value];
+                var entry = [val.value , val.key];
                 storedata.push(entry);
             }
 
