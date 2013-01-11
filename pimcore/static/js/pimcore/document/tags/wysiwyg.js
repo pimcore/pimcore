@@ -49,7 +49,9 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         var textareaId = id + "_textarea";
         this.textarea = document.createElement("div");
-        this.textarea.setAttribute("contenteditable","true");
+        if(this.options["inline"] !== false) {
+            this.textarea.setAttribute("contenteditable","true");
+        }
         Ext.get(id).appendChild(this.textarea);
 
         Ext.get(id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
@@ -156,7 +158,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     "/",
                     { name: 'styles' },
                     { name: 'colors' },
-                    { name: 'tools', groups: ["tools", 'cleanup'] }
+                    { name: 'tools', groups: ["tools", 'cleanup', 'mode'] }
                 ];
             }
 
@@ -168,7 +170,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
 
 
-            eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates' + removePluginsAdd;
+            eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,divarea' + removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
