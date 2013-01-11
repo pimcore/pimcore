@@ -101,8 +101,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 triggerAction: "all",
                 editable: false,
                 mode: "local",
-                valueField: 'key',
-                displayField: 'value'
+                valueField: 'value',
+                displayField: 'key'
             });
 
             return new Ext.form.ComboBox(editorConfig);
@@ -378,10 +378,9 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 var decodedValues = Ext.util.JSON.decode(data.possiblevalues);
                 for (var i = 0;  i < decodedValues.length; i++) {
 
-
                     var val = decodedValues[i];
-                    if (val.key == value) {
-                        return val.key + " - " + val.value;
+                    if (val.value == value) {
+                        return val.key;
                     }
                 }
             }
