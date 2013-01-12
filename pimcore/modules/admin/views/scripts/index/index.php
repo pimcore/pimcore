@@ -452,7 +452,15 @@
     
     
     <?php // 3rd party libraries ?>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $googleMapsApiKey ?>"></script>
+    <script type="text/javascript">
+        var gmapInitialize = function () {}; // dummy callback
+        (function() {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = 'https://maps.googleapis.com/maps/api/js?sensor=false&callback=gmapInitialize&key=<?php echo $googleMapsApiKey ?>';
+            document.body.appendChild(script);
+        })();
+    </script>
 
     <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
