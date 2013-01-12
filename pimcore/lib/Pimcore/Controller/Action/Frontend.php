@@ -60,10 +60,8 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
                 if(is_array($this->getDocument()->getMetaData())) {
                     foreach ($this->getDocument()->getMetaData() as $meta) {
                         // only name
-                        if($meta["idName"] == "name") {
-                            $method = "append" . ucfirst($meta["idName"]);
-                            $this->view->headMeta()->$method($meta["idValue"], $meta["contentValue"]);
-                        }
+                        $method = "append" . ucfirst($meta["idName"]);
+                        $this->view->headMeta()->$method($meta["idValue"], $meta["contentValue"]);
                     }
                 }
             }
