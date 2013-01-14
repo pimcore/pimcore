@@ -1387,7 +1387,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function robotsTxtAction () {
 
-        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots.txt";
+        $siteSuffix = "";
+        if($this->getParam("site")) {
+            $siteSuffix = "-" . $this->getParam("site");
+        }
+
+        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
 
         if($this->getParam("data") !== null) {
             // save data
