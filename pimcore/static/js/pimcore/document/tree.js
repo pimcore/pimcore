@@ -60,7 +60,7 @@ pimcore.document.tree = Class.create({
     init: function(rootNodeConfig) {
 
         rootNodeConfig.nodeType = "async";
-        rootNodeConfig.text = "home";
+        rootNodeConfig.text = t("home");
         rootNodeConfig.draggable = true;
         rootNodeConfig.iconCls = "pimcore_icon_home";
         rootNodeConfig.expanded = true;
