@@ -378,12 +378,6 @@ pimcore.asset.tree = Class.create({
                 }));
 
             }
-
-            menu.add(new Ext.menu.Item({
-                text: t('refresh'),
-                iconCls: "pimcore_icon_reload",
-                handler: this.attributes.reference.refresh.bind(this)
-            }));
         }
 
         if (this.attributes.permissions.rename && this.id != 1 && !this.attributes.locked) {
@@ -498,6 +492,14 @@ pimcore.asset.tree = Class.create({
                     menu:lockMenu
                 }));
             }
+        }
+
+        if (this.attributes.type == "folder") {
+            menu.add(new Ext.menu.Item({
+                text: t('refresh'),
+                iconCls: "pimcore_icon_reload",
+                handler: this.attributes.reference.refresh.bind(this)
+            }));
         }
 
         menu.show(this.ui.getAnchor());
