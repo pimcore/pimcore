@@ -28,7 +28,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                     $result['fields'][$f] = (string) $object->$getter();
                 }
             }
-            
+
         } else {
             $result['success'] = false;
         }
@@ -331,8 +331,8 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         $config = new Zend_Config($settings, true);
         $writer = new Zend_Config_Writer_Xml(array(
-              "config" => $config,
-              "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/customviews.xml"
+            "config" => $config,
+            "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/customviews.xml"
         ));
         $writer->write();
 
@@ -346,8 +346,8 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $data = Pimcore_Tool::getCustomViewConfig();
 
         $this->_helper->json(array(
-              "success" => true,
-              "data" => $data
+            "success" => true,
+            "data" => $data
         ));
     }
 
@@ -477,13 +477,13 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         }
 
         $this->_helper->json(array(
-              "success" => $success,
-              "dataPreview" => $data,
-              "dataFields" => array_keys($data[0]),
-              "targetFields" => $availableFields,
-              "mappingStore" => $mappingStore,
-              "rows" => $rows,
-              "cols" => $cols
+            "success" => $success,
+            "dataPreview" => $data,
+            "dataFields" => array_keys($data[0]),
+            "targetFields" => $availableFields,
+            "mappingStore" => $mappingStore,
+            "rows" => $rows,
+            "cols" => $cols
         ));
     }
 
@@ -780,10 +780,22 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                 $parts = explode("~", $name);
 
                 if (substr($name, 0, 1) == "~") {
-                    // not needed for now
-//                            $type = $keyParts[1];
-//                            $field = $keyParts[2];
-//                            $keyid = $keyParts[3];
+                    $type = $parts[1];
+                    $field = $parts[2];
+                    $keyid = $parts[3];
+
+                    $getter = "get" . ucfirst($field);
+                    $setter = "set" . ucfirst($field);
+                    $keyValuePairs = $object->$getter();
+
+                    if (!$keyValuePairs) {
+                        $keyValuePairs = new Object_Data_KeyValue();
+                        $keyValuePairs->setObjectId($object->getId());
+                        $keyValuePairs->setClass($object->getClass());
+                    }
+
+                    $keyValuePairs->setPropertyWithId($keyid, $value);
+                    $object->$setter($keyValuePairs);
                 } else if(count($parts) > 1) {
                     // check for bricks
                     $brickType = $parts[0];

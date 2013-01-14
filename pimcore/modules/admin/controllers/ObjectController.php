@@ -93,9 +93,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         if ($this->getParam("limit")) {
             $this->_helper->json(array(
-                                      "total" => $object->getChildAmount(),
-                                      "nodes" => $objects
-                                 ));
+                "total" => $object->getChildAmount(),
+                "nodes" => $objects
+            ));
         }
         else {
             $this->_helper->json($objects);
@@ -270,7 +270,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         // check for lock
         if (Element_Editlock::isLocked($this->getParam("id"), "object")) {
             $this->_helper->json(array(
-                  "editlock" => Element_Editlock::getByElement($this->getParam("id"), "object")
+                "editlock" => Element_Editlock::getByElement($this->getParam("id"), "object")
             ));
         }
         Element_Editlock::lock($this->getParam("id"), "object");
@@ -444,7 +444,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
     private function isInheritableField(Object_Class_Data $fielddefinition) {
         if($fielddefinition instanceof Object_Class_Data_Fieldcollections ||
-           $fielddefinition instanceof Object_Class_Data_Localizedfields) {
+            $fielddefinition instanceof Object_Class_Data_Localizedfields) {
             return false;
         }
         return true;
@@ -555,17 +555,17 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         if ($success) {
             $this->_helper->json(array(
-                                      "success" => $success,
-                                      "id" => $object->getId(),
-                                      "type" => $object->getType(),
-                                      "message" => $message
-                                 ));
+                "success" => $success,
+                "id" => $object->getId(),
+                "type" => $object->getType(),
+                "message" => $message
+            ));
         }
         else {
             $this->_helper->json(array(
-                                      "success" => $success,
-                                      "message" => $message
-                                 ));
+                "success" => $success,
+                "message" => $message
+            ));
         }
     }
 
@@ -578,12 +578,12 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             if (!Object_Service::pathExists($parent->getFullPath() . "/" . $this->getParam("key"))) {
                 $folder = Object_Folder::create(array(
-                     "o_parentId" => $this->getParam("parentId"),
-                     "o_creationDate" => time(),
-                     "o_userOwner" => $this->user->getId(),
-                     "o_userModification" => $this->user->getId(),
-                     "o_key" => $this->getParam("key"),
-                     "o_published" => true
+                    "o_parentId" => $this->getParam("parentId"),
+                    "o_creationDate" => time(),
+                    "o_userOwner" => $this->user->getId(),
+                    "o_userModification" => $this->user->getId(),
+                    "o_key" => $this->getParam("key"),
+                    "o_published" => true
                 ));
 
                 $folder->setCreationDate(time());
@@ -610,7 +610,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         if ($this->getParam("type") == "childs") {
 
             $parentObject = Object_Abstract::getById($this->getParam("id"));
-            
+
             $list = new Object_List();
             $list->setCondition("o_path LIKE '" . $parentObject->getFullPath() . "/%'");
             $list->setLimit(intval($this->getParam("amount")));
@@ -626,7 +626,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             }
 
             $this->_helper->json(array("success" => true, "deleted" => $deletedItems));
-            
+
         } else if($this->getParam("id")) {
             $object = Object_Abstract::getById($this->getParam("id"));
             if ($object->isAllowed("delete")) {
@@ -703,9 +703,9 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-              "hasDependencies" => $hasDependency,
-              "childs" => $childs,
-              "deletejobs" => $deleteJobs
+            "hasDependencies" => $hasDependency,
+            "childs" => $childs,
+            "deletejobs" => $deleteJobs
         ));
     }
 
@@ -778,13 +778,13 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         } else if ($object->isAllowed("rename") &&  $values["key"] ) {
             //just rename
             try {
-                    $object->setKey($values["key"]);
-                    $object->save();
-                    $success = true;
-                } catch (Exception $e) {
-                    Logger::error($e);
-                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
-                }
+                $object->setKey($values["key"]);
+                $object->save();
+                $success = true;
+            } catch (Exception $e) {
+                Logger::error($e);
+                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+            }
         } else {
             Logger::debug("prevented update object because of missing permissions.");
         }
