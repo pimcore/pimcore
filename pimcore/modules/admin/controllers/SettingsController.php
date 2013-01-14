@@ -1091,7 +1091,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $sitesList = new Site_List();
         $sitesObjects = $sitesList->load();
-        $sites = array();
+        $sites = array(array(
+            "id" => "",
+            "rootId" => 1,
+            "domains" => "",
+            "rootPath" => "/",
+            "domain" => $this->view->translate("main_site")
+        ));
 
         foreach ($sitesObjects as $site) {
 
