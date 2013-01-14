@@ -33,9 +33,21 @@ class Pimcore_Controller_Plugin_CommonFilesFilter extends Zend_Controller_Plugin
         // error page, because this is more resource-intensive than exiting right here
         if(in_array($request->getPathInfo(), self::$files)) {
 
-            // check for configured robots.txt in pimcore
-            $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots.txt";
             if($request->getPathInfo() == "/robots.txt") {
+
+                // check for site
+                try {
+                    $domain = Pimcore_Tool::getHostname();
+                    $site = Site::getByDomain($domain);
+                } catch (Exception $e) { }
+
+                $siteSuffix = "";
+                if($site instanceof Site) {
+                    $siteSuffix = "-" . $site->getId();
+                }
+
+                // check for configured robots.txt in pimcore
+                $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
                 if(is_file($robotsPath)) {
                     header("Content-Type: text/plain; charset=utf8");
                     echo file_get_contents($robotsPath);
