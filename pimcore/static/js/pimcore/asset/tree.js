@@ -171,7 +171,7 @@ pimcore.asset.tree = Class.create({
                     for (var i=0; i<files.length; i++) {
                         file = files[i];
 
-                        if (window.FileList && file.type && file.name) {
+                        if (window.FileList && file.name) {
 
                             this.activeUploads++;
 
