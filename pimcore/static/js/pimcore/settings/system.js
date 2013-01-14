@@ -138,10 +138,12 @@ pimcore.settings.system = Class.create({
             // sites error pages
             var sitesErrorPagesFields = [];
             var sites = pimcore.globalmanager.get("sites");
-            sitesErrorPagesFields.push(this.getErrorPageFieldConfig("default", t("main_site")));
-
             sites.each(function (record) {
-                sitesErrorPagesFields.push(this.getErrorPageFieldConfig("site_" + record.data.id, record.data.domains.split(",")[0]));
+                var key = "site_" + record.data.id;
+                if(!record.data.id) {
+                    key = "default";
+                }
+                sitesErrorPagesFields.push(this.getErrorPageFieldConfig(key, record.data.domain));
             }, this);
 
             // debug
