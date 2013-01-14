@@ -40,7 +40,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                         operator = "&gt;";
                     }
                 } else if (filterData[i].data.type == "boolean") {
-                   filterData[i].value = filterData[i].data.value ? "true" : "false";
+                    filterData[i].value = filterData[i].data.value ? "true" : "false";
                 }
 
                 if(filterData[i].data.value && typeof filterData[i].data.value == "object") {
@@ -124,7 +124,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             }
 
-           var params = {
+            var params = {
                 filter: filters,
                 condition: condition,
                 classId: this.classId,
@@ -175,7 +175,21 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             return;
         }
 
-        var editor = new pimcore.object.tags[fieldInfo.layout.type](null, fieldInfo.layout.layout);
+        var tagType = fieldInfo.layout.type;
+        if (tagType == "keyValue") {
+            var gridType = fieldInfo.layout.layout.gridType;
+            if (gridType == "select") {
+                tagType ="select";
+            } else if (gridType == "number") {
+                tagType = "numeric";
+            } else if (gridType == "bool") {
+                tagType = "checkbox";
+            }  else {
+                tagType ="input";
+            }
+        }
+
+        var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
         this.batchWin = new Ext.Window({
             modal: false,
             title: t("batch_edit_field") + " " + fieldInfo.header,
@@ -322,7 +336,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     createGrid: function(columnConfig) {
 
-    }, 
+    },
 
     getGridConfig : function () {
         var config = {
