@@ -187,9 +187,11 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         // currently just wysiwyg
         for (var i=0; i<this.currentElements.length; i++) {
-            for(var e=0; e<this.currentElements[i]["fields"].length; e++) {
-                if(typeof this.currentElements[i]["fields"][e]["close"] == "function") {
-                    this.currentElements[i]["fields"][e].close();
+            if(typeof this.currentElements[i] == "object") {
+                for(var e=0; e<this.currentElements[i]["fields"].length; e++) {
+                    if(typeof this.currentElements[i]["fields"][e]["close"] == "function") {
+                        this.currentElements[i]["fields"][e].close();
+                    }
                 }
             }
         }
