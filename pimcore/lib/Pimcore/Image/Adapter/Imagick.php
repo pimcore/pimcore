@@ -49,7 +49,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         try {
             $this->resource = new Imagick();
-            if(!$this->resource->readImage($imagePath)) {
+            if(!$this->resource->readImage($imagePath."[0]")) {
                 return false;
             }
 
