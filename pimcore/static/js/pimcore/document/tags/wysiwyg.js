@@ -149,16 +149,16 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible is also Basic
             if (!this.options["toolbar"] && !this.options["toolbarGroups"]) {
                 eConfig.toolbarGroups = [
-                	{ name: 'clipboard', groups: [ 'clipboard', 'undo', "find" ] },
+                	{ name: 'clipboard', groups: [ "htmlsourceinline", 'clipboard', 'undo', "find" ] },
                 	{ name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
                     '/',
-                    { name: 'paragraph', groups: [ 'align', 'indent', 'blocks'] },
+                    { name: 'paragraph', groups: [ 'align', 'indent'] },
+                	{ name: 'blocks' },
                 	{ name: 'links' },
                     { name: 'insert' },
                     "/",
                     { name: 'styles' },
-                    { name: 'colors' },
-                    { name: 'tools', groups: ["tools", 'cleanup', 'mode'] }
+                    { name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"] }
                 ];
             }
 
@@ -169,8 +169,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 removePluginsAdd = "," + eConfig.removePlugins;
             }
 
-
-            eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,divarea' + removePluginsAdd;
+            eConfig.extraPlugins = "htmlsourceinline";
+            eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,divarea,bgcolor' + removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
