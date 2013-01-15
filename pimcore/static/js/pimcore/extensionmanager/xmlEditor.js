@@ -49,10 +49,6 @@ pimcore.extensionmanager.xmlEditor = Class.create(pimcore.settings.fileexplorer.
                 items: [this.textarea]
             });
 
-            this.editor.on("beforedestroy", function () {
-                delete this.explorer.openfiles[this.path];
-            }.bind(this));
-
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.editor);
             tabPanel.activate(this.editor);
