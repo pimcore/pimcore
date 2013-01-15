@@ -376,3 +376,11 @@
     height: 22px;
     z-index: 10;
 }
+
+.pimcore_tag_wysiwyg strong {
+    font-weight: bold;
+}
+
+.pimcore_tag_wysiwyg em {
+    font-style: italic;
+}
