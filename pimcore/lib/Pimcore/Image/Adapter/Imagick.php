@@ -56,6 +56,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->imagePath = $imagePath;
 
         } catch (Exception $e) {
+            Logger::error($e);
             return false;
         }
 
