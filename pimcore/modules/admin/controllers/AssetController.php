@@ -801,9 +801,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $thumbnail->setName("auto_" . $hash);
         }
 
-
-        header("Content-Type: image/" . $format, true);
-
         if($this->getParam("download")) {
             header('Content-Disposition: attachment; filename="' . $image->getFilename() . '"');
         }
@@ -813,12 +810,12 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);
         if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
-            header("Content-Type: image/".$fileExtension);
+            header("Content-Type: image/".$fileExtension, true);
         } else {
-            header("Content-Type: " . $image->getMimetype());
+            header("Content-Type: " . $image->getMimetype(), true);
         }
 
-        header("Content-Length: " . filesize($thumbnailFile));
+        header("Content-Length: " . filesize($thumbnailFile), true);
         echo $imageContent;
         exit;
     }
