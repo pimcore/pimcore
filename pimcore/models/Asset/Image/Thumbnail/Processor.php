@@ -57,8 +57,7 @@ class Asset_Image_Thumbnail_Processor {
                 "gif" => "gif",
                 "jpeg" => "jpeg",
                 "jpg" => "jpeg",
-                "png" => "png",
-                "tiff" => "tiff"
+                "png" => "png"
             );
 
             $fileExt = Pimcore_File::getFileExtension($asset->getFilename());
