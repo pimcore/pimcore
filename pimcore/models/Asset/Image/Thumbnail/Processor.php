@@ -38,11 +38,34 @@ class Asset_Image_Thumbnail_Processor {
     );
 
     /**
-     * @static
-     * @param Asset_Image|Asset_Video|string
-     * @param Asset_Image_Thumbnail_Config $config
-     * @param string $path
+     * @param $format
+     * @param array $allowed
+     * @param string $fallback
      * @return string
+     */
+    protected static function getAllowedFormat($format, $allowed = array(), $fallback = "png") {
+        $typeMappings = array(
+            "jpg" => "jpeg"
+        );
+
+        if(array_key_exists($format, $typeMappings)) {
+            $format = $typeMappings[$format];
+        }
+
+        if(in_array($format, $allowed)) {
+            $target = $format;
+        } else {
+            $target = $fallback;
+        }
+
+        return $target;
+    }
+
+    /**
+     * @param $asset
+     * @param Asset_Image_Thumbnail_Config $config
+     * @param null $fileSystemPath
+     * @return mixed|string
      */
     public static function process ($asset, Asset_Image_Thumbnail_Config $config, $fileSystemPath = null) {
 
@@ -51,24 +74,16 @@ class Asset_Image_Thumbnail_Processor {
             $fileSystemPath = $asset->getFileSystemPath();
         }
 
+        $fileExt = Pimcore_File::getFileExtension($asset->getFilename());
+
         // simple detection for source type if SOURCE is selected
         if($format == "source" || empty($format)) {
-            $typeMapping = array(
-                "gif" => "gif",
-                "jpeg" => "jpeg",
-                "jpg" => "jpeg",
-                "png" => "png"
-            );
-
-            $fileExt = Pimcore_File::getFileExtension($asset->getFilename());
-            if($typeMapping[$fileExt]) {
-                $format = $typeMapping[$fileExt];
-            } else {
-                // use PNG if source doesn't have a valid mapping
-                $format = "png";
-            }
+            $format = self::getAllowedFormat($fileExt, array("jpeg","gif","png"), "png");
         }
 
+        if($format == "webformat") {
+            $format = self::getAllowedFormat($fileExt, array("jpeg","png"), "png");
+        }
 
         $filename = "thumb_" . $asset->getId() . "__" . $config->getName() . "." . $format;
 
