@@ -429,7 +429,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         try {
             if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
-                throw new Exception("invalid filname '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
+                throw new Exception("invalid filename '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
             }
 
             $this->correctPath();
