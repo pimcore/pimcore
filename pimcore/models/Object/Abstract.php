@@ -1089,9 +1089,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_parent($o_parent) {
         $this->o_parent = $o_parent;
-
         if($o_parent instanceof Object_Abstract) {
-            $this->setParentId($o_parent->getId());            
+            $this->o_parentId = $o_parent->getId();
         }
     }
 
