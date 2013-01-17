@@ -45,7 +45,8 @@ class Asset_Image_Thumbnail_Processor {
      */
     protected static function getAllowedFormat($format, $allowed = array(), $fallback = "png") {
         $typeMappings = array(
-            "jpg" => "jpeg"
+            "jpg" => "jpeg",
+            "tif" => "tiff"
         );
 
         if(array_key_exists($format, $typeMappings)) {
@@ -81,8 +82,25 @@ class Asset_Image_Thumbnail_Processor {
             $format = self::getAllowedFormat($fileExt, array("jpeg","gif","png"), "png");
         }
 
-        if($format == "webformat") {
-            $format = self::getAllowedFormat($fileExt, array("jpeg","png"), "png");
+        if($format == "print") {
+            $format = self::getAllowedFormat($fileExt, array("svg","jpeg","png","tiff"), "png");
+
+            if($format == "svg") {
+                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $asset->getFilesystemPath());
+            }
+            if($format == "tiff") {
+                $transformations = $config->getItems();
+                if(is_array($transformations) && count($transformations) > 0) {
+                    foreach ($transformations as $transformation) {
+                        if(!empty($transformation)) {
+                            if($transformation["method"] == "tifforiginal") {
+                                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $asset->getFilesystemPath());
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         $filename = "thumb_" . $asset->getId() . "__" . $config->getName() . "." . $format;

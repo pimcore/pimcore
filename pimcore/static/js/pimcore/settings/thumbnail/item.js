@@ -98,7 +98,7 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.format,
                 triggerAction: 'all',
                 editable: false,
-                store: [["PNG","PNG"],["GIF","GIF"], ["JPEG","JPEG"], ["PJPEG","JPEG (progressive)"],["TIFF","TIFF"], ["SOURCE", "SOURCE"], ["WEBFORMAT","Webformats (PNG,JPEG)"]],
+                store: [["PNG","PNG"],["GIF","GIF"], ["JPEG","JPEG"], ["PJPEG","JPEG (progressive)"],["TIFF","TIFF"], ["SOURCE", "SOURCE"], ["PRINT","Print (PNG,JPG,SVG,TIFF)"]],
                 width: 180
             }, {
                 xtype: "spinnerfield",
@@ -864,6 +864,35 @@ pimcore.settings.thumbnail.items = {
                 xtype: "hidden",
                 name: "type",
                 value: "sepia"
+            }]
+        });
+
+        return item;
+    },
+
+    itemTifforiginal: function (panel, data, getName) {
+
+        var niceName = t("use_original_tiff");
+        if(typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if(typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item =  new Ext.form.FormPanel({
+            layout: "pimcoreform",
+            id: myId,
+            style: "margin: 10px 0 0 0",
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            html: t("use_original_tiff_description"),
+            items: [{
+                xtype: "hidden",
+                name: "type",
+                value: "tifforiginal"
             }]
         });
 
