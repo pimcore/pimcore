@@ -1034,8 +1034,9 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @param Document $parent
      * @return void
      */
-    public function setParent ($parent) {
+    public function setParent (Document $parent) {
         $this->parent = $parent;
+        $this->setParentId($parent->getId());
     }
 
     /**

@@ -1255,6 +1255,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setParent ($parent) {
         $this->parent = $parent;
+        $this->setParentId($parent->getId());
     }
 
     /**
