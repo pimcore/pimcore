@@ -643,6 +643,10 @@ class Pimcore_Mail extends Zend_Mail
                 if($html) {
                     $body = $html->find("body",0);
                     if($body) {
+                        $style = $body->find("style",0);
+                        if ($style){
+                             $style->clear();
+                        }
                         $htmlContent = $body->innertext;
                     }
                 }
