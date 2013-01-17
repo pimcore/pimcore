@@ -1,5 +1,5 @@
-"do_not_modify_svg","Do not raster SVG (effects that need rastering)"
-"do_not_resize_svg","Do not resize SVG"
+"use_original_tiff","Use original TIFF (only PRINT)"
+"use_original_tiff_description","Use original TIFF when source format is a TIFF image -> do not modify it."
 "home","Home"
 "sorry_no_data_available","Sorry, no data available :("
 "top_shares_pages","Top Shared Pages"
