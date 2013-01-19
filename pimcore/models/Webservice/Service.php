@@ -159,6 +159,27 @@ class Webservice_Service
             throw $e;
         }
     }
+    
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function unpublishDocument($id)
+    {
+    	try {
+    		$doc = Document::getById($id);
+    		if ($doc instanceof Document) {
+    			$doc->setPublished(false);
+    			$doc->save();
+    			return true;
+    		}
+    
+    		throw new Exception("Document with given ID (" . $id . ") does not exist.");
+    	} catch (Exception $e) {
+    		Logger::error($e);
+    		throw $e;
+    	}
+    }
 
     /**
      * @param int $id
@@ -696,6 +717,27 @@ class Webservice_Service
             Logger::error($e);
             throw $e;
         }
+    }
+    
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function unpublishObject($id)
+    {
+    	try {
+    		$object = Object_Abstract::getById($id);
+    		if ($object instanceof Object_Abstract) { 
+    			$object->setPublished(false);
+    			$object->save();
+    			return true;
+    		}
+    
+    		throw new Exception("Object with given ID (" . $id . ") does not exist.");
+    	} catch (Exception $e) {
+    		Logger::error($e);
+    		throw $e;
+    	}
     }
 
     /**
