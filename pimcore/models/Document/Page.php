@@ -56,6 +56,11 @@ class Document_Page extends Document_PageSnippet {
      */
     public $prettyUrl;
 
+    /**
+     * @var string
+     */
+    public $css = "";
+
 
     /**
      * @see Document::delete and Document_PageSnippet::delete
@@ -213,4 +218,22 @@ class Document_Page extends Document_PageSnippet {
     {
         return $this->prettyUrl;
     }
+
+    /**
+     * @param string $css
+     */
+    public function setCss($css)
+    {
+        $this->css = $css;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCss()
+    {
+        return $this->css;
+    }
+
+
 }
