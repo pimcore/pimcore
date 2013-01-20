@@ -41,7 +41,7 @@ class Pimcore_Controller_Plugin_Analytics extends Zend_Controller_Plugin_Abstrac
 
             // search for the end <head> tag, and insert the google analytics code before
             // this method is much faster than using simple_html_dom and uses less memory
-            $headEndPosition = strpos($body, "</head>");
+            $headEndPosition = stripos($body, "</head>");
             if($headEndPosition !== false) {
                 $body = substr_replace($body, $code."</head>", $headEndPosition, 7);
             }
