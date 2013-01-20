@@ -75,6 +75,7 @@ class Pimcore {
         // register general pimcore plugins for frontend
         if ($frontend) {
             $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_CustomStyles(), 806);
         }
 
         if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
