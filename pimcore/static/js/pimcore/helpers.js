@@ -1114,31 +1114,12 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
 
     var cb = callback;
 
-    pimcore.helpers.urlToCanvas(path, function (id, canvas) {
-
-        // resize canvas
-        var tempCanvas = document.createElement('canvas');
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
-
-        tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
-
-        // resize to width 400px
-        canvas.width = tempCanvas.width / 3.2;
-        canvas.height = tempCanvas.height / 3.2;
-
-        // draw temp canvas back into canvas, scaled as needed
-        canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, canvas.width, canvas.height);
-        delete tempCanvas;
-
-        var data = canvas.toDataURL('image/jpeg', 85);
-
+    if(pimcore.settings.htmltoimage) {
         Ext.Ajax.request({
-            url: '/admin/page/upload-screenshot',
-            method: "post",
+            url: '/admin/page/generate-screenshot',
+            method: "get",
             params: {
-                id: id,
-                data: data
+                id: id
             },
             success: function () {
                 if(typeof cb == "function") {
@@ -1146,8 +1127,41 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
                 }
             }
         });
-    }.bind(this, id));
+    } else {
+        pimcore.helpers.urlToCanvas(path, function (id, canvas) {
 
+            // resize canvas
+            var tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+
+            tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
+
+            // resize to width 400px
+            canvas.width = tempCanvas.width / 3.2;
+            canvas.height = tempCanvas.height / 3.2;
+
+            // draw temp canvas back into canvas, scaled as needed
+            canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, canvas.width, canvas.height);
+            delete tempCanvas;
+
+            var data = canvas.toDataURL('image/jpeg', 85);
+
+            Ext.Ajax.request({
+                url: '/admin/page/upload-screenshot',
+                method: "post",
+                params: {
+                    id: id,
+                    data: data
+                },
+                success: function () {
+                    if(typeof cb == "function") {
+                        cb();
+                    }
+                }
+            });
+        }.bind(this, id));
+    }
 }
 
 pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
