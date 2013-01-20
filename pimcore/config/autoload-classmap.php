@@ -47,6 +47,7 @@ return array (
   'Pimcore_Update' => '' . $pdr . '' . $dsp . 'pimcore' . $dsp . 'lib' . $dsp . 'Pimcore' . $dsp . 'Update.php',
   'Pimcore_Image_Matrixcode' => '' . $pdr . '' . $dsp . 'pimcore' . $dsp . 'lib' . $dsp . 'Pimcore' . $dsp . 'Image' . $dsp . 'Matrixcode.php',
   'Pimcore_Image_Adapter' => '' . $pdr . '' . $dsp . 'pimcore' . $dsp . 'lib' . $dsp . 'Pimcore' . $dsp . 'Image' . $dsp . 'Adapter.php',
+  'Pimcore_Image_HtmlToImage' => '' . $pdr . '' . $dsp . 'pimcore' . $dsp . 'lib' . $dsp . 'Pimcore' . $dsp . 'Image' . $dsp . 'HtmlToImage.php',
   'Pimcore_Image_Matrixcode_Abstract' => '' . $pdr . '' . $dsp . 'pimcore' . $dsp . 'lib' . $dsp . 'Pimcore' . $dsp . 'Image' . $dsp . 'Matrixcode' . $dsp . 'Abstract.php',
   'Pimcore_Image_Matrixcode_Renderer_Image' => '' . $pdr . '' . $dsp . 'pimcore' . $dsp . 'lib' . $dsp . 'Pimcore' . $dsp . 'Image' . $dsp . 'Matrixcode' . $dsp . 'Renderer' . $dsp . 'Image.php',
   'Pimcore_Image_Matrixcode_Renderer_Abstract' => '' . $pdr . '' . $dsp . 'pimcore' . $dsp . 'lib' . $dsp . 'Pimcore' . $dsp . 'Image' . $dsp . 'Matrixcode' . $dsp . 'Renderer' . $dsp . 'Abstract.php',
