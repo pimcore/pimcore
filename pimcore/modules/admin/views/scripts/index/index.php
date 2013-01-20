@@ -445,7 +445,8 @@
             showCloseConfirmation: true,
             debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
             targeting_enabled: <?php echo Zend_Json::encode((bool) PIMCORE_DEVMODE) ?>,
-            document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>
+            document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
+            htmltoimage: <?php echo Zend_Json::encode(Pimcore_Image_HtmlToImage::isSupported()) ?>
         };
     </script>
     

@@ -196,6 +196,35 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $this->_helper->json(array("success" => true));
     }
 
+    public function generateScreenshotAction() {
+
+        $success = false;
+        if($this->getParam("id")) {
+
+            $doc = Document::getById($this->getParam("id"));
+            $url = Pimcore_Tool::getHostUrl() . $doc->getRealFullPath();
+            $tmpFile = PIMCORE_TEMPORARY_DIRECTORY . "/screenshot_tmp_" . $doc->getId() . ".png";
+            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $doc->getId() . ".jpg";
+
+            try {
+                if(Pimcore_Image_HtmlToImage::convert($url, $tmpFile)) {
+                    $im = Pimcore_Image::getInstance();
+                    $im->load($tmpFile);
+                    $im->scaleByWidth(400);
+                    $im->save($file, "jpeg", 85);
+
+                    unlink($tmpFile);
+
+                    $success = true;
+                }
+            } catch (Exception $e) {
+                Logger::error($e);
+            }
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
     protected function setValuesToDocument(Document $page) {
 
         $this->addSettingsToDocument($page);

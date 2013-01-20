@@ -275,7 +275,9 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "createredirectwhenmoved" => $values["documents.createredirectwhenmoved"],
                     "allowtrailingslash" => $values["documents.allowtrailingslash"],
                     "allowcapitals" => $values["documents.allowcapitals"],
-                    "generatepreview" => $values["documents.generatepreview"]
+                    "generatepreview" => $values["documents.generatepreview"],
+                    "wkhtmltoimage" => $values["documents.wkhtmltoimage"],
+                    "wkhtmltopdf" => $values["documents.wkhtmltopdf"]
                 ),
                 "objects" => array(
                     "versions" => array(
