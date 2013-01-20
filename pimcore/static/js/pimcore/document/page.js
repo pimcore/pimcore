@@ -138,12 +138,13 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             }
         }
 
+        var settings = null;
+
         if (this.isAllowed("settings")) {
             // settings
             try {
                 var settings = this.settings.getValues();
                 settings.published = this.data.published;
-                parameters.settings = Ext.encode(settings);
             }
             catch (e) {
                 //console.log(e);
@@ -156,6 +157,22 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             catch (e) {
                 //console.log(e);
             }
+        }
+
+        // styles
+        try {
+            var styles = this.preview.getValues();
+            if(!settings) {
+                settings = {};
+            }
+            settings.css = styles.css;
+        }
+        catch (e) {
+            //console.log(e);
+        }
+
+        if(settings) {
+            parameters.settings = Ext.encode(settings);
         }
 
         return parameters;

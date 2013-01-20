@@ -216,5 +216,8 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                 }
             }
         }
+
+        // IE compatibility
+        $this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
     }
 }

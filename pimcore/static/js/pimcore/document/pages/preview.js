@@ -86,19 +86,51 @@ pimcore.document.pages.preview = Class.create({
                 }];
             }
 
-            this.layout = new Ext.Panel({
-                title: t('preview'),
+            this.iframeName = "document_preview_iframe_" + this.page.id;
+
+            this.framePanel = new Ext.Panel({
                 border: false,
+                region: "center",
+                bodyStyle: "-webkit-overflow-scrolling:touch; background:#323232;",
+                html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="' + this.iframeName + '" name="' + this.iframeName + '"></iframe>'
+            });
+
+            this.stylesField = new Ext.form.TextArea({
+                style: "font-family:courier",
+                value: this.page.data["css"],
+                enableKeyEvents: true,
+                listeners: {
+                    keyup: this.writeCss.bind(this),
+                    change: this.writeCss.bind(this)
+                }
+            });
+
+            this.cssPanel = new Ext.Panel({
+                border: false,
+                region: "east",
+                collapsible:true,
+                animCollapse:false,
+                collapsed: true,
+                split: true,
+                title: "CSS",
+                width: 300,
+                layout: "fit",
+                items: [this.stylesField]
+            });
+
+            this.layout = new Ext.Panel({
+                title: t('preview_and_styles'),
+                border: false,
+                layout: "border",
                 tbar: tbar,
                 autoScroll: true,
                 iconCls: "pimcore_icon_tab_preview",
-                bodyStyle: "-webkit-overflow-scrolling:touch; background:#323232;",
-                html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="document_preview_iframe_' + this.page.id + '"></iframe>'
+                items: [this.framePanel, this.cssPanel]
             });
 
-            this.layout.on("resize", this.onLayoutResize.bind(this));
             this.layout.on("activate", this.refresh.bind(this));
-            this.layout.on("afterrender", function () {
+            this.framePanel.on("resize", this.onLayoutResize.bind(this));
+            this.framePanel.on("afterrender", function () {
                 this.loadMask = new Ext.LoadMask(this.layout.getEl(), {msg: t("please_wait")});
                 this.loadMask.enable();
             }.bind(this));
@@ -108,9 +140,9 @@ pimcore.document.pages.preview = Class.create({
     },
 
     setMode: function (mode) {
-        var iframe = Ext.get("document_preview_iframe_" + this.page.id);
-        var availableWidth = this.layout.getWidth()-50;
-        var availableHeight = this.layout.getHeight()-50;
+        var iframe = Ext.get(this.iframeName);
+        var availableWidth = this.framePanel.getWidth()-50;
+        var availableHeight = this.framePanel.getHeight()-50;
         var positioningHeight = mode["height"];
         var positioningWidth = mode["width"];
 
@@ -152,15 +184,16 @@ pimcore.document.pages.preview = Class.create({
     },
 
     setLayoutFrameDimensions: function (width, height) {
-        Ext.get("document_preview_iframe_" + this.page.id).setStyle({
-            height: (height-35) + "px"
+        Ext.get(this.iframeName).setStyle({
+            height: (height-2) + "px"
         });
     },
 
     iFrameLoaded: function () {
-        var iframe = Ext.get("document_preview_iframe_" + this.page.id);
+        var iframe = Ext.get(this.iframeName);
         if(this.loadMask && iframe.getAttribute("src").indexOf("pimcore_preview") > 0){
             this.loadMask.hide();
+            this.writeCss();
         }
     },
 
@@ -171,10 +204,31 @@ pimcore.document.pages.preview = Class.create({
         path = this.page.data.path + this.page.data.key + "?pimcore_preview=true&time=" + date.getTime();
 
         try {
-            Ext.get("document_preview_iframe_" + this.page.id).dom.src = path;
+            Ext.get(this.iframeName).dom.src = path;
         }
         catch (e) {
             console.log(e);
+        }
+    },
+
+    writeCss: function () {
+        var style = null;
+        var frameDoc = window[this.iframeName].document;
+        if(!frameDoc.getElementById("pimcore_styles")) {
+            style = frameDoc.createElement("style");
+            style.type = "text/css";
+            style.id = "pimcore_styles";
+
+            frameDoc.body.appendChild(style);
+        } else {
+            style = frameDoc.getElementById("pimcore_styles");
+        }
+
+        try {
+            // IE compatibility
+            style.styleSheet.cssText = this.stylesField.getValue();
+        } catch (e) {
+            style.innerHTML = this.stylesField.getValue();
         }
     },
 
@@ -185,6 +239,20 @@ pimcore.document.pages.preview = Class.create({
                 this.preview.loadCurrentPreview();
             }
         }.bind(this.page));
+    },
+
+    getValues: function () {
+
+        if (!this.layout.rendered) {
+            throw "preview/styles not available";
+        }
+
+        var values = {
+            css: this.stylesField.getValue()
+        };
+
+
+        return values;
     }
 
 });
