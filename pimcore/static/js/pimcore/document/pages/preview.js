@@ -158,7 +158,8 @@ pimcore.document.pages.preview = Class.create({
     },
 
     iFrameLoaded: function () {
-        if(this.loadMask){
+        var iframe = Ext.get("document_preview_iframe_" + this.page.id);
+        if(this.loadMask && iframe.getAttribute("src").indexOf("pimcore_preview") > 0){
             this.loadMask.hide();
         }
     },
