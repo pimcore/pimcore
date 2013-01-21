@@ -18,6 +18,8 @@ pimcore.document.pages.preview = Class.create({
     initialize: function(page) {
         this.page = page;
         this.mode = "full";
+
+        this.editorModifications = {};
     },
 
 
@@ -100,7 +102,10 @@ pimcore.document.pages.preview = Class.create({
                 value: this.page.data["css"],
                 enableKeyEvents: true,
                 listeners: {
-                    keyup: this.writeCss.bind(this),
+                    keyup: function () {
+                        this.editorClearCurrentElement();
+                        this.writeCss();
+                    }.bind(this),
                     change: this.writeCss.bind(this)
                 }
             });
@@ -115,6 +120,7 @@ pimcore.document.pages.preview = Class.create({
                 title: t("style_editor"),
                 bodyStyle: "padding: 10px",
                 layout: "accordion",
+                autoScroll: true,
                 tbar: [{
                     xtype: "button",
                     text: t("select_element"),
@@ -280,6 +286,14 @@ pimcore.document.pages.preview = Class.create({
         }
     },
 
+    onClose: function () {
+        try {
+            window[this.iframeName].location.href = "about:blank";
+            Ext.get(this.iframeName).remove();
+            delete window[this.iframeName];
+        } catch (e) { }
+    },
+
     refresh: function () {
         this.loadMask.show();
         this.page.saveToSession(function () {
@@ -404,6 +418,8 @@ pimcore.document.pages.preview = Class.create({
 
             var editor = element.ownerDocument.styleEditor;
             editor.editorStopSelector();
+            editor.editorClearCurrentElement();
+
             editor.editorElement = element;
 
             var parent;
@@ -422,9 +438,6 @@ pimcore.document.pages.preview = Class.create({
 
             var selElement = element;
             while (parent = selElement.parent()) {
-
-                //console.log(parent);
-
                 if(!selectorFound) {
                     cssPath = editor.editorGetCssSelectorPart(parent, false) + " " + cssPath;
                 }
@@ -443,6 +456,7 @@ pimcore.document.pages.preview = Class.create({
                 }
             }
 
+            hierarchy = hierarchy.reverse().join(" ");
 
             editor.cssEditor.update("");
             editor.cssEditor.removeAll();
@@ -453,7 +467,7 @@ pimcore.document.pages.preview = Class.create({
                 bodyStyle: "padding: 10px;",
                 autoHeight: true,
                 items: [{
-                    title: hierarchy.reverse().join(" "),
+                    title: hierarchy,
                     xtype: "grid",
                     store: new Ext.data.ArrayStore({
                         fields: ['selector',"element"],
@@ -475,14 +489,17 @@ pimcore.document.pages.preview = Class.create({
                             }
                         }.bind(editor),
                         "rowdblclick": function (grid, rowIndex, e) {
-                            //editElement = null;
                             this.editorSelectElement(null, grid.getStore().getAt(rowIndex).get("element").dom);
                         }.bind(editor)
                     }
                 }]
             });
 
-            var stylesToCapture = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing", "font-style", "color"];
+            var stylesToCapture = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing",
+                "font-style", "color", "text-decoration", "text-align", "text-transform", "width", "height",
+                "padding-top", "padding-right","padding-bottom","padding-left",
+                "margin-left", "margin-right","margin-top","margin-bottom",
+                "top","left","right","bottom","position"];
             var styles = element.getStyles.apply(element, stylesToCapture);
 
             var getCssDimensionField = function  (name, label) {
@@ -531,7 +548,39 @@ pimcore.document.pages.preview = Class.create({
             };
 
             editor.cssEditor.add({
-                title: t("font"),
+                title: t("positioning"),
+                xtype: "form",
+                bodyStyle: "padding: 10px;",
+                autoHeight: true,
+                labelWidth: 100,
+                disabled: !in_array(styles["position"], ["absolute", "fixed"]),
+                items: [{
+                    xtype: "compositefield",
+                    items: getCssDimensionField("top")
+                },{
+                    xtype: "compositefield",
+                    items: getCssDimensionField("right")
+                },{
+                    xtype: "compositefield",
+                    items: getCssDimensionField("bottom")
+                },{
+                    xtype: "compositefield",
+                    items: getCssDimensionField("left")
+                }],
+                listeners: {
+                    activate: function () {
+                        var el = Ext.get(this.editorElement);
+                        el.setStyle("cursor","pointer");
+                    }.bind(editor),
+                    deactivate: function () {
+                        var el = Ext.get(this.editorElement);
+                        el.setStyle("cursor","auto");
+                    }.bind(editor)
+                }
+            });
+
+            editor.cssEditor.add({
+                title: t("text"),
                 xtype: "form",
                 bodyStyle: "padding: 10px;",
                 autoHeight: true,
@@ -596,6 +645,99 @@ pimcore.document.pages.preview = Class.create({
                     name: "color",
                     width: 100,
                     value: styles["color"]
+                },{
+                    name: "text-align",
+                    xtype: "combo",
+                    width: 100,
+                    fieldLabel: t("text-align"),
+                    mode: "local",
+                    store: [
+                        ["", "not set"],
+                        ["left", "left"],
+                        ["center", "center"],
+                        ["justify", "justify"],
+                        ["right","right"]
+                    ],
+                    triggerAction: "all",
+                    value: styles["text-align"]
+                },{
+                    name: "text-decoration",
+                    xtype: "combo",
+                    width: 100,
+                    fieldLabel: t("text-decoration"),
+                    mode: "local",
+                    store: [
+                        ["", "not set"],
+                        ["none", "none"],
+                        ["underline", "underline"],
+                        ["overline", "overline"],
+                        ["blink", "blink"],
+                        ["line-through","line-through"]
+                    ],
+                    triggerAction: "all",
+                    value: styles["text-decoration"]
+                },{
+                    name: "text-transform",
+                    xtype: "combo",
+                    width: 100,
+                    fieldLabel: t("text-transform"),
+                    mode: "local",
+                    store: [
+                        ["", "not set"],
+                        ["none", "none"],
+                        ["capitalize", "capitalize"],
+                        ["uppercase", "uppercase"],
+                        ["lowercase", "lowercase"]
+                    ],
+                    triggerAction: "all",
+                    value: styles["text-transform"]
+                }]
+            });
+
+            editor.cssEditor.add({
+                title: t("appearance"),
+                xtype: "form",
+                bodyStyle: "padding: 10px;",
+                autoHeight: true,
+                labelWidth: 100,
+                items: [{
+                    xtype: "compositefield",
+                    items: getCssDimensionField("width")
+                },{
+                    xtype: "compositefield",
+                    items: getCssDimensionField("height")
+                },{
+                    xtype: "fieldset",
+                    title: t("padding"),
+                    items: [{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("padding-top","top")
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("padding-right", "right")
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("padding-bottom", "bottom")
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("padding-left", "left")
+                    }]
+                },{
+                    xtype: "fieldset",
+                    title: t("margin"),
+                    items: [{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("margin-top", "top")
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("margin-right", "right")
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("margin-bottom", "bottom")
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("margin-left", "left")
+                    }]
                 }]
             });
 
@@ -604,8 +746,70 @@ pimcore.document.pages.preview = Class.create({
 
             // check for modifications
             editor.editorUpdateInterval = window.setInterval(function () {
+                var css = "";
+                var cssData = {};
 
-            }, 1000);
+                Ext.each(this.cssEditor.findByType("form"), function (v) {
+                    try {
+                        Ext.apply(cssData, v.getForm().getFieldValues());
+                    } catch (e) {
+                        console.log(e);
+                    }
+                });
+
+                var init  = false;
+                if(typeof this.editorModifications[hierarchy] == "undefined") {
+                    this.editorModifications[hierarchy] = {
+                        initial: cssData
+                    }
+                    init = true;
+                }
+
+                // generate css
+                Ext.iterate(cssData, function (key, value) {
+                    if( value !== this.editorModifications[hierarchy]["initial"][key] && key.indexOf("__unit") < 0 && key != "css") {
+                        // check if this field has an unit
+                        if(typeof cssData[key + "__unit"] != "undefined") {
+                            value += cssData[key + "__unit"];
+                        }
+                        css += key + ": " + value + " !important;\n";
+                    } else if (key == "css" && value) {
+                        css += "\n" + value + "\n";
+                    }
+                }.bind(this));
+
+                if(css) {
+                    css = hierarchy + " {\n" + css + "}";
+                }
+
+
+                // check if it is the initial
+                if(init) {
+                    this.editorModifications[hierarchy] = {
+                        initial: cssData,
+                        css: css
+                    }
+                } else {
+                    if(css != this.editorModifications[hierarchy]["css"]) {
+                        this.editorUnFrameElement();
+                        this.editorModifications[hierarchy]["css"] = css;
+
+                        var cssContent = this.stylesField.getValue();
+                        if(!cssContent) {
+                            cssContent = "";
+                        }
+                        cssContent = cssContent.replace(new RegExp(preg_quote(hierarchy) + "[\\s\\S]*\\}"), "");
+                        cssContent = cssContent.replace(/^\s*$[\n\r]{1,}/gm, '');
+                        cssContent = cssContent.replace(/\}/gm, "}\n");
+
+                        cssContent += css;
+                        this.stylesField.setValue(cssContent);
+                        this.writeCss();
+
+                        console.log(css);
+                    }
+                }
+            }.bind(editor), 200);
         }
 
     },

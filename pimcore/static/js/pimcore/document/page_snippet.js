@@ -83,6 +83,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 this.edit.onClose();
             }
         }
+        if (this.preview) {
+            if (typeof this.preview.onClose == "function") {
+                this.preview.onClose();
+            }
+        }
         if (this.settings) {
             if (typeof this.settings.onClose == "function") {
                 this.settings.onClose();
