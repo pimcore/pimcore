@@ -780,7 +780,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
         
         $format = strtolower($thumbnail->getFormat());
-        if ($format == "source") {
+        if ($format == "source" || $format == "print") {
             $thumbnail->setFormat("PNG");
             $format = "png";
         }

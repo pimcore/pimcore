@@ -85,10 +85,10 @@ class Asset_Image_Thumbnail_Processor {
         if($format == "print") {
             $format = self::getAllowedFormat($fileExt, array("svg","jpeg","png","tiff"), "png");
 
-            if($format == "svg") {
-                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $asset->getFilesystemPath());
-            }
-            if($format == "tiff") {
+            if(($format == "tiff" || $format == "svg") && Pimcore_Tool::isFrontentRequestByAdmin()) {
+                // return a webformat in admin -> tiff cannot be displayed in browser
+                $format = "png";
+            } else if($format == "tiff") {
                 $transformations = $config->getItems();
                 if(is_array($transformations) && count($transformations) > 0) {
                     foreach ($transformations as $transformation) {
@@ -99,8 +99,9 @@ class Asset_Image_Thumbnail_Processor {
                         }
                     }
                 }
+            } else if($format == "svg") {
+                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $asset->getFilesystemPath());
             }
-
         }
 
         $filename = "thumb_" . $asset->getId() . "__" . $config->getName() . "." . $format;
