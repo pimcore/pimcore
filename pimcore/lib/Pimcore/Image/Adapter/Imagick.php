@@ -89,6 +89,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
             $this->resource->setCompressionQuality((int) $quality);
             $this->resource->setImageCompressionQuality((int) $quality);
         }
+
+        if($format == "tiff") {
+            $this->resource->setCompression(Imagick::COMPRESSION_LZW);
+        }
         
         $this->resource->writeImage($path);
 
