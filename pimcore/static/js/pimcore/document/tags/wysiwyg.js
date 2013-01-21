@@ -169,7 +169,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 removePluginsAdd = "," + eConfig.removePlugins;
             }
 
-            eConfig.extraPlugins = "htmlsourceinline";
             eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,divarea,bgcolor' + removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
@@ -186,6 +185,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 }
                 this.ckeditor = CKEDITOR.replace(this.textarea, eConfig);
             } else {
+                eConfig.extraPlugins = "htmlsourceinline";
                 this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
             }
         }

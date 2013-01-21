@@ -384,3 +384,7 @@
 .pimcore_tag_wysiwyg em {
     font-style: italic;
 }
+
+.cke-code-editor textarea {
+    font-family: "courier new", courier !important;
+}
