@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logger>
+  <message>Generates a metrics xml log that is compatible with PHPUnit --log-metrics.</message>
+</logger>
