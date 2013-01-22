@@ -308,6 +308,7 @@ class PHPUnit_TextUI_Command
 
                             $this->arguments['coverageText'] = $option[1];
                             $this->arguments['coverageTextShowUncoveredFiles'] = FALSE;
+                            $this->arguments['coverageTextShowOnlySummary'] = FALSE;
                         }
                         break;
                     }
@@ -414,10 +415,7 @@ class PHPUnit_TextUI_Command
                 break;
 
                 case '--stderr': {
-                    $this->arguments['printer'] = new PHPUnit_TextUI_ResultPrinter(
-                      'php://stderr',
-                      isset($this->arguments['verbose']) ? $this->arguments['verbose'] : FALSE
-                    );
+                    $this->arguments['stderr'] = TRUE;
                 }
                 break;
 
@@ -509,6 +507,15 @@ class PHPUnit_TextUI_Command
                     }
                 }
             }
+        }
+
+        if (isset($this->arguments['stderr'])) {
+            $this->arguments['printer'] = new PHPUnit_TextUI_ResultPrinter(
+              'php://stderr',
+              isset($this->arguments['verbose']) ?: FALSE,
+              isset($this->arguments['colors']) ?: FALSE,
+              isset($this->arguments['debug']) ?: FALSE
+            );
         }
 
         $this->handleCustomTestSuite();

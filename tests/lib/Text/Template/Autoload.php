@@ -1,8 +1,8 @@
 <?php
 /**
- * PHPUnit
+ * Text_Template
  *
- * Copyright (c) 2010-2013, Sebastian Bergmann <sebastian@phpunit.de>.
+ * Copyright (c) 2009-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,47 +34,32 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    PHPUnit_MockObject
- * @author     Oliver Schlicht <o.schlicht@bitExpert.de>
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2010-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @category   Text
+ * @package    Template
+ * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2009-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @link       http://github.com/sebastianbergmann/phpunit-mock-objects
- * @since      File available since Release 1.0.0
+ * @link       http://github.com/sebastianbergmann/php-text-template
+ * @since      File available since Release 1.1.0
  */
 
-/**
- * Stubs a method by raising a user-defined exception.
- *
- * @package    PHPUnit_MockObject
- * @author     Oliver Schlicht <o.schlicht@bitExpert.de>
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2010-2013 Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
- * @version    Release: @package_version@
- * @link       http://github.com/sebastianbergmann/phpunit-mock-objects
- * @since      Class available since Release 1.0.0
- */
-class PHPUnit_Framework_MockObject_Stub_Exception implements PHPUnit_Framework_MockObject_Stub
-{
-    protected $exception;
+spl_autoload_register(
+  function ($class) {
+      static $classes = NULL;
+      static $path = NULL;
 
-    public function __construct(Exception $exception)
-    {
-        $this->exception = $exception;
-    }
+      if ($classes === NULL) {
+          $classes = array(
+            'text_template' => '/Template.php'
+          );
 
-    public function invoke(PHPUnit_Framework_MockObject_Invocation $invocation)
-    {
-        throw $this->exception;
-    }
+          $path = dirname(dirname(__FILE__));
+      }
 
-    public function toString()
-    {
-        return sprintf(
-          'raise user-specified exception %s',
+      $cn = strtolower($class);
 
-          PHPUnit_Util_Type::toString($this->exception)
-        );
-    }
-}
+      if (isset($classes[$cn])) {
+          require $path . $classes[$cn];
+      }
+  }
+);

@@ -233,6 +233,11 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
     private $mockObjects = array();
 
     /**
+     * @var array
+     */
+    private $mockObjectGenerator;
+
+    /**
      * @var integer
      */
     private $status;
@@ -300,8 +305,9 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
             $this->setName($name);
         }
 
-        $this->data     = $data;
-        $this->dataName = $dataName;
+        $this->data                = $data;
+        $this->dataName            = $dataName;
+        $this->mockObjectGenerator = new PHPUnit_Framework_MockObject_Generator;
     }
 
     /**
@@ -1299,7 +1305,7 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
      */
     public function getMock($originalClassName, $methods = array(), array $arguments = array(), $mockClassName = '', $callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE, $cloneArguments = FALSE)
     {
-        $mockObject = PHPUnit_Framework_MockObject_Generator::getMock(
+        $mockObject = $this->mockObjectGenerator->getMock(
           $originalClassName,
           $methods,
           $arguments,
@@ -1379,7 +1385,7 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
      */
     public function getMockForAbstractClass($originalClassName, array $arguments = array(), $mockClassName = '', $callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE, $mockedMethods = array(), $cloneArguments = FALSE)
     {
-        $mockObject = PHPUnit_Framework_MockObject_Generator::getMockForAbstractClass(
+        $mockObject = $this->mockObjectGenerator->getMockForAbstractClass(
           $originalClassName,
           $arguments,
           $mockClassName,
@@ -1416,7 +1422,7 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
 
         if (!class_exists($originalClassName)) {
           eval(
-            PHPUnit_Framework_MockObject_Generator::generateClassFromWsdl(
+            $this->mockObjectGenerator->generateClassFromWsdl(
               $wsdlFile, $originalClassName, $methods
             )
           );
@@ -1431,6 +1437,41 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
           FALSE,
           FALSE
         );
+    }
+
+    /**
+     * Returns a mock object for the specified trait with all abstract methods
+     * of the trait mocked. Concrete methods to mock can be specified with the
+     * `$mockedMethods` parameter.
+     *
+     * @param  string  $traitName
+     * @param  array   $arguments
+     * @param  string  $mockClassName
+     * @param  boolean $callOriginalConstructor
+     * @param  boolean $callOriginalClone
+     * @param  boolean $callAutoload
+     * @param  array   $mockedMethods
+     * @param  boolean $cloneArguments
+     * @return PHPUnit_Framework_MockObject_MockObject
+     * @since  Method available since Release 3.8.1
+     * @throws PHPUnit_Framework_Exception
+     */
+    public function getMockForTrait($traitName, array $arguments = array(), $mockClassName = '', $callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE, $mockedMethods = array(), $cloneArguments = FALSE)
+    {
+        $mockObject = $this->mockObjectGenerator->getMockForTrait(
+          $traitName,
+          $arguments,
+          $mockClassName,
+          $callOriginalConstructor,
+          $callOriginalClone,
+          $callAutoload,
+          $mockedMethods,
+          $cloneArguments
+        );
+
+        $this->mockObjects[] = $mockObject;
+
+        return $mockObject;
     }
 
     /**
@@ -1449,7 +1490,7 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
      */
     protected function getObjectForTrait($traitName, array $arguments = array(), $traitClassName = '', $callOriginalConstructor = TRUE, $callOriginalClone = TRUE, $callAutoload = TRUE, $cloneArguments = FALSE)
     {
-        return PHPUnit_Framework_MockObject_Generator::getObjectForTrait(
+        return $this->mockObjectGenerator->getObjectForTrait(
           $traitName,
           $arguments,
           $traitClassName,

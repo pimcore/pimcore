@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2011, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2002-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package    PHPUnit_MockObject
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2011 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2013 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://github.com/sebastianbergmann/phpunit-mock-objects
  * @since      File available since Release 1.1.0
@@ -57,6 +57,7 @@ spl_autoload_register(
             'phpunit_framework_mockobject_builder_namespace' => '/Framework/MockObject/Builder/Namespace.php',
             'phpunit_framework_mockobject_builder_parametersmatch' => '/Framework/MockObject/Builder/ParametersMatch.php',
             'phpunit_framework_mockobject_builder_stub' => '/Framework/MockObject/Builder/Stub.php',
+            'phpunit_framework_mockobject_exception' => '/Framework/MockObject/Exception.php',
             'phpunit_framework_mockobject_generator' => '/Framework/MockObject/Generator.php',
             'phpunit_framework_mockobject_invocation' => '/Framework/MockObject/Invocation.php',
             'phpunit_framework_mockobject_invocation_object' => '/Framework/MockObject/Invocation/Object.php',
