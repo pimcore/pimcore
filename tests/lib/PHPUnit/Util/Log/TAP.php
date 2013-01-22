@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,36 +34,29 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Util_Log
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.0.0
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Util/Printer.php';
-require_once 'PHPUnit/Util/Test.php';
-
-if (PHPUnit_Util_Filesystem::fileExistsInIncludePath('SymfonyComponents/YAML/sfYamlDumper.php')) {
-    require_once 'SymfonyComponents/YAML/sfYamlDumper.php';
+if (!class_exists('Symfony\\Component\\Yaml\\Dumper') &&
+    stream_resolve_include_path('Symfony/Component/Yaml/Dumper.php')) {
+    require_once 'Symfony/Component/Yaml/Dumper.php';
 }
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 /**
  * A TestListener that generates a logfile of the
  * test execution using the Test Anything Protocol (TAP).
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Util_Log
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.0.0
  */
@@ -88,7 +81,7 @@ class PHPUnit_Util_Log_TAP extends PHPUnit_Util_Printer implements PHPUnit_Frame
      * Constructor.
      *
      * @param  mixed $out
-     * @throws InvalidArgumentException
+     * @throws PHPUnit_Framework_Exception
      * @since  Method available since Release 3.3.4
      */
     public function __construct($out = NULL)
@@ -140,16 +133,14 @@ class PHPUnit_Util_Log_TAP extends PHPUnit_Util_Printer implements PHPUnit_Frame
             }
         }
 
-        if (class_exists('sfYamlDumper')) {
-            $yaml = new sfYamlDumper;
+        $yaml = new Symfony\Component\Yaml\Dumper;
 
-            $this->write(
-              sprintf(
-                "  ---\n%s  ...\n",
-                $yaml->dump($diagnostic, 2, 2)
-              )
-            );
-        }
+        $this->write(
+          sprintf(
+            "  ---\n%s  ...\n",
+            $yaml->dump($diagnostic, 2, 2)
+          )
+        );
     }
 
     /**
@@ -262,4 +253,3 @@ class PHPUnit_Util_Log_TAP extends PHPUnit_Util_Printer implements PHPUnit_Frame
         $this->testSuccessful = FALSE;
     }
 }
-?>

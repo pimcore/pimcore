@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,33 +34,78 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Framework
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @author     Bernhard Schussek <bschussek@2bepublished.at>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.0.0
  */
 
-require_once 'PHPUnit/Framework.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Abstract base class for constraints. which are placed upon any value.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Framework
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @author     Bernhard Schussek <bschussek@2bepublished.at>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Interface available since Release 3.0.0
  */
 abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framework_SelfDescribing
 {
+
+    /**
+     * Evaluates the constraint for parameter $other
+     *
+     * If $returnResult is set to FALSE (the default), an exception is thrown
+     * in case of a failure. NULL is returned otherwise.
+     *
+     * If $returnResult is TRUE, the result of the evaluation is returned as
+     * a boolean value instead: TRUE in case of success, FALSE in case of a
+     * failure.
+     *
+     * @param  mixed $other Value or object to evaluate.
+     * @param  string $description Additional information about the test
+     * @param  bool $returnResult Whether to return a result or throw an exception
+     * @return mixed
+     * @throws PHPUnit_Framework_ExpectationFailedException
+     */
+    public function evaluate($other, $description = '', $returnResult = FALSE)
+    {
+        $success = FALSE;
+
+        if ($this->matches($other)) {
+            $success = TRUE;
+        }
+
+        if ($returnResult) {
+            return $success;
+        }
+
+        if (!$success) {
+            $this->fail($other, $description);
+        }
+    }
+
+    /**
+     * Evaluates the constraint for parameter $other. Returns TRUE if the
+     * constraint is met, FALSE otherwise.
+     *
+     * This method can be overridden to implement the evaluation algorithm.
+     *
+     * @param mixed $other Value or object to evaluate.
+     * @return bool
+     */
+    protected function matches($other)
+    {
+        return FALSE;
+    }
+
     /**
      * Counts the number of constraint elements.
      *
@@ -73,128 +118,63 @@ abstract class PHPUnit_Framework_Constraint implements Countable, PHPUnit_Framew
     }
 
     /**
-     * Creates the appropriate exception for the constraint which can be caught
-     * by the unit test system. This can be called if a call to evaluate()
-     * fails.
+     * Throws an exception for the given compared value and test description
      *
-     * @param   mixed   $other The value passed to evaluate() which failed the
-     *                         constraint check.
-     * @param   string  $description A string with extra description of what was
-     *                               going on while the evaluation failed.
-     * @param   boolean $not Flag to indicate negation.
-     * @throws  PHPUnit_Framework_ExpectationFailedException
+     * @param  mixed $other Evaluated value or object.
+     * @param  string $description Additional information about the test
+     * @param  PHPUnit_Framework_ComparisonFailure $comparisonFailure
+     * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function fail($other, $description, $not = FALSE)
+    protected function fail($other, $description, PHPUnit_Framework_ComparisonFailure $comparisonFailure = NULL)
     {
-        throw new PHPUnit_Framework_ExpectationFailedException(
-          $this->failureDescription($other, $description, $not),
-          NULL
-        );
-    }
-
-    /**
-     * @param mixed   $other
-     * @param string  $description
-     * @param boolean $not
-     */
-    protected function failureDescription($other, $description, $not)
-    {
-        $failureDescription = $this->customFailureDescription(
-          $other, $description, $not
+        $failureDescription = sprintf(
+          'Failed asserting that %s.',
+          $this->failureDescription($other)
         );
 
-        if ($failureDescription === NULL) {
-            $failureDescription = sprintf(
-              'Failed asserting that %s %s.',
-
-               PHPUnit_Util_Type::toString($other),
-               $this->toString()
-            );
-        }
-
-        if ($not) {
-            $failureDescription = self::negate($failureDescription);
+        $additionalFailureDescription = $this->additionalFailureDescription($other);
+        if ($additionalFailureDescription) {
+            $failureDescription .= "\n" . $additionalFailureDescription;
         }
 
         if (!empty($description)) {
             $failureDescription = $description . "\n" . $failureDescription;
         }
 
-        return $failureDescription;
-    }
-
-    /**
-     * @param mixed   $other
-     * @param string  $description
-     * @param boolean $not
-     */
-    protected function customFailureDescription($other, $description, $not)
-    {
-    }
-
-    /**
-     * @param  string $string
-     * @return string
-     */
-    public static function negate($string)
-    {
-        return str_replace(
-          array(
-            'contains ',
-            'exists',
-            'has ',
-            'is ',
-            'matches ',
-            'starts with ',
-            'ends with '
-          ),
-          array(
-            'does not contain ',
-            'does not exist',
-            'does not have ',
-            'is not ',
-            'does not match ',
-            'starts not with ',
-            'ends not with '
-          ),
-          $string
+        throw new PHPUnit_Framework_ExpectationFailedException(
+          $failureDescription,
+          $comparisonFailure
         );
     }
 
     /**
-     * Evaluates the constraint for parameter $other. Returns TRUE if the
-     * constraint is met, FALSE otherwise.
+     * Return additional failure description where needed
      *
-     * @param mixed $other Value or object to evaluate.
-     * @return bool
+     * The function can be overridden to provide additional failure
+     * information like a diff
+     *
+     * @param  mixed $other Evaluated value or object.
+     * @return string
      */
-    abstract public function evaluate($other);
-}
+    protected function additionalFailureDescription($other)
+    {
+        return "";
+    }
 
-require_once 'PHPUnit/Framework/Constraint/And.php';
-require_once 'PHPUnit/Framework/Constraint/ArrayHasKey.php';
-require_once 'PHPUnit/Framework/Constraint/Attribute.php';
-require_once 'PHPUnit/Framework/Constraint/ClassHasAttribute.php';
-require_once 'PHPUnit/Framework/Constraint/ClassHasStaticAttribute.php';
-require_once 'PHPUnit/Framework/Constraint/IsFalse.php';
-require_once 'PHPUnit/Framework/Constraint/FileExists.php';
-require_once 'PHPUnit/Framework/Constraint/GreaterThan.php';
-require_once 'PHPUnit/Framework/Constraint/IsAnything.php';
-require_once 'PHPUnit/Framework/Constraint/IsEqual.php';
-require_once 'PHPUnit/Framework/Constraint/IsIdentical.php';
-require_once 'PHPUnit/Framework/Constraint/IsInstanceOf.php';
-require_once 'PHPUnit/Framework/Constraint/IsType.php';
-require_once 'PHPUnit/Framework/Constraint/LessThan.php';
-require_once 'PHPUnit/Framework/Constraint/Not.php';
-require_once 'PHPUnit/Framework/Constraint/IsNull.php';
-require_once 'PHPUnit/Framework/Constraint/ObjectHasAttribute.php';
-require_once 'PHPUnit/Framework/Constraint/Or.php';
-require_once 'PHPUnit/Framework/Constraint/PCREMatch.php';
-require_once 'PHPUnit/Framework/Constraint/StringContains.php';
-require_once 'PHPUnit/Framework/Constraint/StringStartsWith.php';
-require_once 'PHPUnit/Framework/Constraint/StringEndsWith.php';
-require_once 'PHPUnit/Framework/Constraint/TraversableContains.php';
-require_once 'PHPUnit/Framework/Constraint/TraversableContainsOnly.php';
-require_once 'PHPUnit/Framework/Constraint/IsTrue.php';
-require_once 'PHPUnit/Framework/Constraint/Xor.php';
-?>
+    /**
+     * Returns the description of the failure
+     *
+     * The beginning of failure messages is "Failed asserting that" in most
+     * cases. This method should return the second part of that sentence.
+     *
+     * To provide additional failure information additionalFailureDescription
+     * can be used.
+     *
+     * @param  mixed $other Evaluated value or object.
+     * @return string
+     */
+    protected function failureDescription($other)
+    {
+        return PHPUnit_Util_Type::export($other) . ' ' . $this->toString();
+    }
+}

@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,32 +34,27 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 2.0.0
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Utility class that can print to STDOUT or write to a file.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
-abstract class PHPUnit_Util_Printer
+class PHPUnit_Util_Printer
 {
     /**
      * If TRUE, flush output after every write.
@@ -87,7 +82,7 @@ abstract class PHPUnit_Util_Printer
      * Constructor.
      *
      * @param  mixed $out
-     * @throws InvalidArgumentException
+     * @throws PHPUnit_Framework_Exception
      */
     public function __construct($out = NULL)
     {
@@ -97,11 +92,16 @@ abstract class PHPUnit_Util_Printer
                     $out = explode(':', str_replace('socket://', '', $out));
 
                     if (sizeof($out) != 2) {
-                        throw new InvalidArgumentException;
+                        throw new PHPUnit_Framework_Exception;
                     }
 
                     $this->out = fsockopen($out[0], $out[1]);
                 } else {
+                    if (strpos($out, 'php://') === FALSE &&
+                        !is_dir(dirname($out))) {
+                        mkdir(dirname($out), 0777, TRUE);
+                    }
+
                     $this->out = fopen($out, 'wt');
                 }
 
@@ -113,15 +113,16 @@ abstract class PHPUnit_Util_Printer
     }
 
     /**
-     * Flush buffer, optionally tidy up HTML, and close output.
+     * Flush buffer, optionally tidy up HTML, and close output if it's not to a php stream
      */
     public function flush()
     {
-        if ($this->out !== NULL && $this->outTarget !== 'php://stderr') {
+        if ($this->out && strncmp($this->outTarget, 'php://', 6) !== 0) {
             fclose($this->out);
         }
 
-        if ($this->printsHTML === TRUE && $this->outTarget !== NULL &&
+        if ($this->printsHTML === TRUE &&
+            $this->outTarget !== NULL &&
             strpos($this->outTarget, 'php://') !== 0 &&
             strpos($this->outTarget, 'socket://') !== 0 &&
             extension_loaded('tidy')) {
@@ -145,7 +146,7 @@ abstract class PHPUnit_Util_Printer
      */
     public function incrementalFlush()
     {
-        if ($this->out !== NULL) {
+        if ($this->out) {
             fflush($this->out);
         } else {
             flush();
@@ -157,7 +158,7 @@ abstract class PHPUnit_Util_Printer
      */
     public function write($buffer)
     {
-        if ($this->out !== NULL) {
+        if ($this->out) {
             fwrite($this->out, $buffer);
 
             if ($this->autoFlush) {
@@ -205,4 +206,3 @@ abstract class PHPUnit_Util_Printer
         }
     }
 }
-?>

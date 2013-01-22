@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2010-2013, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,24 +34,16 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    PHPUnit_MockObject
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link       http://www.phpunit.de/
- * @since      File available since Release 3.0.0
+ * @copyright  2010-2013 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @link       http://github.com/sebastianbergmann/phpunit-mock-objects
+ * @since      File available since Release 1.0.0
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/Invocation.php';
-require_once 'PHPUnit/Framework/MockObject/Invocation.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
- * Main matcher which defines a full expectation using method, parameter and 
+ * Main matcher which defines a full expectation using method, parameter and
  * invocation matchers.
  * This matcher encapsulates all the other matchers and allows the builder to
  * set the specific matchers when the appropriate methods are called (once(),
@@ -59,14 +51,13 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
  *
  * All properties are public so that they can easily be accessed by the builder.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    PHPUnit_MockObject
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
- * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.0.0
+ * @copyright  2010-2013 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @version    Release: 1.2.3
+ * @link       http://github.com/sebastianbergmann/phpunit-mock-objects
+ * @since      Class available since Release 1.0.0
  */
 class PHPUnit_Framework_MockObject_Matcher implements PHPUnit_Framework_MockObject_Matcher_Invocation
 {
@@ -192,7 +183,7 @@ class PHPUnit_Framework_MockObject_Matcher implements PHPUnit_Framework_MockObje
 
                 $this->methodNameMatcher->toString(),
                 $this->invocationMatcher->toString(),
-                $e->getDescription()
+                $e->getMessage()
               ),
               $e->getComparisonFailure()
             );
@@ -264,7 +255,7 @@ class PHPUnit_Framework_MockObject_Matcher implements PHPUnit_Framework_MockObje
 
                 $this->methodNameMatcher->toString(),
                 $this->invocationMatcher->toString(),
-                $e->getDescription()
+                $e->getMessage()
               ),
               $e->getComparisonFailure()
             );
@@ -292,7 +283,12 @@ class PHPUnit_Framework_MockObject_Matcher implements PHPUnit_Framework_MockObje
         try {
             $this->invocationMatcher->verify();
 
-            if ($this->parametersMatcher !== NULL) {
+            if ($this->parametersMatcher === NULL) {
+                $this->parametersMatcher = new PHPUnit_Framework_MockObject_Matcher_AnyParameters;
+            }
+
+            $invocationIsAny = get_class($this->invocationMatcher) === 'PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount';
+            if (!$invocationIsAny) {
                 $this->parametersMatcher->verify();
             }
         }
@@ -304,20 +300,9 @@ class PHPUnit_Framework_MockObject_Matcher implements PHPUnit_Framework_MockObje
 
                 $this->methodNameMatcher->toString(),
                 $this->invocationMatcher->toString(),
-                $e->getDescription()
+                $e->getMessage()
               )
             );
         }
     }
 }
-
-require_once 'PHPUnit/Framework/MockObject/Matcher/AnyInvokedCount.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/AnyParameters.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/InvokedAtIndex.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/InvokedAtLeastOnce.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/InvokedCount.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/InvokedRecorder.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/MethodName.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/Parameters.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/StatelessInvocation.php';
-?>

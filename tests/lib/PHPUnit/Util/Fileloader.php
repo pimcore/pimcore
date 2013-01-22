@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,62 +34,48 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 2.3.0
  */
 
-require_once 'PHPUnit/Util/InvalidArgumentHelper.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Util/Filesystem.php';
-require_once 'PHPUnit/Util/PHP.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Utility methods to load PHP sourcefiles.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: @package_version@
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.3.0
  */
 class PHPUnit_Util_Fileloader
 {
     /**
-     * Checks if a PHP sourcefile is readable and is optionally checked for
-     * syntax errors through the syntaxCheck() method. The sourcefile is
-     * loaded through the load() method.
+     * Checks if a PHP sourcefile is readable.
+     * The sourcefile is loaded through the load() method.
      *
-     * @param  string  $filename
-     * @param  boolean $syntaxCheck
-     * @throws RuntimeException
+     * @param  string $filename
+     * @throws PHPUnit_Framework_Exception
      */
-    public static function checkAndLoad($filename, $syntaxCheck = FALSE)
+    public static function checkAndLoad($filename)
     {
-        if (!is_readable($filename)) {
-            $filename = './' . $filename;
-        }
+        $includePathFilename = stream_resolve_include_path($filename);
 
-        if (!is_readable($filename)) {
-            throw new RuntimeException(
+        if (!$includePathFilename || !is_readable($includePathFilename)) {
+            throw new PHPUnit_Framework_Exception(
               sprintf('Cannot open file "%s".' . "\n", $filename)
             );
         }
 
-        if ($syntaxCheck) {
-            self::syntaxCheck($filename);
-        }
+        self::load($includePathFilename);
 
-        self::load($filename);
+        return $includePathFilename;
     }
 
     /**
@@ -101,10 +87,6 @@ class PHPUnit_Util_Fileloader
      */
     public static function load($filename)
     {
-        $filename = PHPUnit_Util_Filesystem::fileExistsInIncludePath(
-          $filename
-        );
-
         $oldVariableNames = array_keys(get_defined_vars());
 
         include_once $filename;
@@ -122,28 +104,4 @@ class PHPUnit_Util_Fileloader
 
         return $filename;
     }
-
-    /**
-     * Uses a separate process to perform a syntax check on a PHP sourcefile.
-     *
-     * @param  string $filename
-     * @throws RuntimeException
-     * @since  Method available since Release 3.0.0
-     */
-    protected static function syntaxCheck($filename)
-    {
-        $command = PHPUnit_Util_PHP::getPhpBinary();
-
-        if (DIRECTORY_SEPARATOR == '\\') {
-            $command = escapeshellarg($command);
-        }
-
-        $command .= ' -l ' . escapeshellarg($filename);
-        $output   = shell_exec($command);
-
-        if (strpos($output, 'Errors parsing') !== FALSE) {
-            throw new RuntimeException($output);
-        }
-    }
 }
-?>

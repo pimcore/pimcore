@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,29 +34,30 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 2.3.0
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
+// Workaround for http://bugs.php.net/bug.php?id=47987,
+// see https://github.com/sebastianbergmann/phpunit/issues#issue/125 for details
+require_once 'PHPUnit/Framework/Error.php';
+require_once 'PHPUnit/Framework/Error/Notice.php';
+require_once 'PHPUnit/Framework/Error/Warning.php';
+require_once 'PHPUnit/Framework/Error/Deprecated.php';
 
 /**
  * Error handler that converts PHP errors and warnings to exceptions.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.3.0
  */
@@ -89,12 +90,7 @@ class PHPUnit_Util_ErrorHandler
 
         self::$errorStack[] = array($errno, $errstr, $errfile, $errline);
 
-        if (version_compare(PHP_VERSION, '5.2.5', '>=')) {
-            $trace = debug_backtrace(FALSE);
-        } else {
-            $trace = debug_backtrace();
-        }
-
+        $trace = debug_backtrace(FALSE);
         array_shift($trace);
 
         foreach ($trace as $frame) {
@@ -103,7 +99,7 @@ class PHPUnit_Util_ErrorHandler
             }
         }
 
-        if ($errno == E_NOTICE || $errno == E_STRICT) {
+        if ($errno == E_NOTICE || $errno == E_USER_NOTICE || $errno == E_STRICT) {
             if (PHPUnit_Framework_Error_Notice::$enabled !== TRUE) {
                 return FALSE;
             }
@@ -111,7 +107,7 @@ class PHPUnit_Util_ErrorHandler
             $exception = 'PHPUnit_Framework_Error_Notice';
         }
 
-        else if ($errno == E_WARNING) {
+        else if ($errno == E_WARNING || $errno == E_USER_WARNING) {
             if (PHPUnit_Framework_Error_Warning::$enabled !== TRUE) {
                 return FALSE;
             }
@@ -119,11 +115,18 @@ class PHPUnit_Util_ErrorHandler
             $exception = 'PHPUnit_Framework_Error_Warning';
         }
 
+        else if ($errno == E_DEPRECATED || $errno == E_USER_DEPRECATED) {
+            if (PHPUnit_Framework_Error_Deprecated::$enabled !== TRUE) {
+                return FALSE;
+            }
+
+            $exception = 'PHPUnit_Framework_Error_Deprecated';
+        }
+
         else {
             $exception = 'PHPUnit_Framework_Error';
         }
 
-        throw new $exception($errstr, $errno, $errfile, $errline, $trace);
+        throw new $exception($errstr, $errno, $errfile, $errline);
     }
 }
-?>
