@@ -1,5 +1,5 @@
 <?php
-require_once 'PHPUnit/Framework.php';
+//require_once 'PHPUnit/Framework.php';
 
 
 class Element_AllTests extends PHPUnit_Framework_TestSuite {

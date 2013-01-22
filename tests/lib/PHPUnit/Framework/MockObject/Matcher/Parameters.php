@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2010-2013, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,21 +34,13 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    PHPUnit_MockObject
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link       http://www.phpunit.de/
- * @since      File available since Release 3.0.0
+ * @copyright  2010-2013 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @link       http://github.com/sebastianbergmann/phpunit-mock-objects
+ * @since      File available since Release 1.0.0
  */
-
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Framework/MockObject/Matcher/StatelessInvocation.php';
-require_once 'PHPUnit/Framework/MockObject/Invocation.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 /**
  * Invocation matcher which looks for specific parameters in the invocations.
@@ -57,14 +49,13 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
  * checked against the defined constraints in $parameters. If the constraint
  * is met it will return true in matches().
  *
- * @category   Testing
- * @package    PHPUnit
+ * @package    PHPUnit_MockObject
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
- * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.0.0
+ * @copyright  2010-2013 Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
+ * @version    Release: 1.2.3
+ * @link       http://github.com/sebastianbergmann/phpunit-mock-objects
+ * @since      Class available since Release 1.0.0
  */
 class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_MockObject_Matcher_StatelessInvocation
 {
@@ -83,7 +74,7 @@ class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_
      */
     public function __construct(array $parameters)
     {
-        foreach($parameters as $parameter) {
+        foreach ($parameters as $parameter) {
             if (!($parameter instanceof PHPUnit_Framework_Constraint)) {
                 $parameter = new PHPUnit_Framework_Constraint_IsEqual(
                   $parameter
@@ -101,7 +92,7 @@ class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_
     {
         $text = 'with parameter';
 
-        foreach($this->parameters as $index => $parameter) {
+        foreach ($this->parameters as $index => $parameter) {
             if ($index > 0) {
                 $text .= ' and';
             }
@@ -126,7 +117,7 @@ class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_
 
     /**
      * Checks if the invocation $invocation matches the current rules. If it
-     * does the matcher will get the invoked() method called which should check 
+     * does the matcher will get the invoked() method called which should check
      * if an expectation is met.
      *
      * @param  PHPUnit_Framework_MockObject_Invocation $invocation
@@ -154,19 +145,16 @@ class PHPUnit_Framework_MockObject_Matcher_Parameters extends PHPUnit_Framework_
         }
 
         foreach ($this->parameters as $i => $parameter) {
-            if (!$parameter->evaluate($this->invocation->parameters[$i])) {
-                $parameter->fail(
-                  $this->invocation->parameters[$i],
-                  sprintf(
-                    'Parameter %s for invocation %s does not match expected ' .
-                    'value.',
+            $parameter->evaluate(
+              $this->invocation->parameters[$i],
+              sprintf(
+                'Parameter %s for invocation %s does not match expected ' .
+                'value.',
 
-                    $i,
-                    $this->invocation->toString()
-                  )
-                );
-            }
+                $i,
+                $this->invocation->toString()
+              )
+            );
         }
     }
 }
-?>
