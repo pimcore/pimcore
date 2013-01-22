@@ -134,6 +134,15 @@ pimcore.document.pages.preview = Class.create({
                             this.editorStopSelector();
                         }
                     }.bind(this)
+                },{
+                    xtype: "button",
+                    text: t("clear_all_styles"),
+                    iconCls: "pimcore_icon_delete",
+                    handler: function () {
+                        this.stylesField.setValue("");
+                        this.writeCss();
+                        this.editorClearCurrentElement();
+                    }.bind(this)
                 }],
                 html: '<strong style="display: block; padding: 30px 0 0; text-align: center;">' + t("no_item_selected") + "</strong>"
             });
@@ -146,6 +155,7 @@ pimcore.document.pages.preview = Class.create({
                 collapsed: true,
                 split: true,
                 width: 300,
+                hidden: !(this.page.isAllowed("save") || this.isAllowed("publish")),
                 layout: "accordion",
                 items: [this.cssEditor, this.cssSource]
             });
@@ -323,6 +333,7 @@ pimcore.document.pages.preview = Class.create({
 
     editorStartSelector: function () {
 
+        this.editorUnFrameElement();
         this.editorClearCurrentElement();
 
         Ext.each(this.getIframeBody().query("a"), function (el) {
@@ -341,11 +352,10 @@ pimcore.document.pages.preview = Class.create({
         this.getIframeDocument().styleEditor = this;
         this.getIframeBody().on("mousemove", this.editorMouseHighlightElement);
         this.getIframeBody().on("click", this.editorSelectElement);
-        //Ext.getBody().on("contextmenu", contextMenu);
-        //Ext.getBody().on("click", selectElement);
     },
 
     editorStopSelector: function () {
+
         this.getIframeBody().un("mousemove", this.editorMouseHighlightElement);
         this.getIframeBody().un("click", this.editorSelectElement);
         this.editorUnFrameElement();
@@ -379,10 +389,9 @@ pimcore.document.pages.preview = Class.create({
 
         if(el.getAttribute("id") && el.getAttribute("id").indexOf("ext-") < 0) {
             css += "#" + el.getAttribute("id");
-        }
-
-        if(el.getAttribute("class")) {
+        } else if(el.getAttribute("class")) {
             css += "." + el.getAttribute("class").replace(" ", ".");
+            css = css.replace("..", ".");
         }
 
         if(!css) {
@@ -404,7 +413,7 @@ pimcore.document.pages.preview = Class.create({
 
     },
 
-    editorSelectElement: function (e, el) {
+    editorSelectElement: function (e, el, singleElement) {
 
         var element;
 
@@ -418,398 +427,582 @@ pimcore.document.pages.preview = Class.create({
 
             var editor = element.ownerDocument.styleEditor;
             editor.editorStopSelector();
+            editor.layout.disable();
             editor.editorClearCurrentElement();
 
+            editor.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">' + t("please_wait") + "...</strong>");
             editor.editorElement = element;
 
-            var parent;
-            var parentElements = [];
-            var hierarchy = [];
-            var selectorFound = false;
-            element = Ext.get(element);
-            var cssPath = editor.editorGetCssSelectorPart(element, true);
+            window.setTimeout(function () {
+                var parent;
+                var parentElements = [];
+                var hierarchy = [];
+                var selectorFound = false;
+                element = Ext.get(element);
+                var cssPath = editor.editorGetCssSelectorPart(element, true);
 
-            parentElements.push([cssPath, element]);
-            hierarchy.push(cssPath);
+                parentElements.push([cssPath, element]);
+                hierarchy.push(cssPath);
 
-            if(cssPath.indexOf("#") < 0) {
-                selectorFound = true;
-            }
-
-            var selElement = element;
-            while (parent = selElement.parent()) {
-                if(!selectorFound) {
-                    cssPath = editor.editorGetCssSelectorPart(parent, false) + " " + cssPath;
-                }
-
-                parentElements.push([editor.editorGetCssSelectorPart(parent, true), parent]);
-                hierarchy.push(editor.editorGetCssSelectorPart(parent, true));
-
-                if(parent.getAttribute("id") && parent.getAttribute("id").indexOf("ext-") < 0) {
+                if(cssPath.indexOf("#") < 0) {
                     selectorFound = true;
                 }
 
-                selElement = parent;
+                var selElement = element;
+                while (parent = selElement.parent()) {
+                    if(!selectorFound) {
+                        cssPath = editor.editorGetCssSelectorPart(parent, false) + " " + cssPath;
+                    }
 
-                if(parent.dom.tagName.toLowerCase() == "body") {
-                    break;
+                    parentElements.push([editor.editorGetCssSelectorPart(parent, true), parent]);
+                    hierarchy.push(editor.editorGetCssSelectorPart(parent, true));
+
+                    if(parent.getAttribute("id") && parent.getAttribute("id").indexOf("ext-") < 0) {
+                        selectorFound = true;
+                    }
+
+                    selElement = parent;
+
+                    if(parent.dom.tagName.toLowerCase() == "body") {
+                        break;
+                    }
                 }
-            }
 
-            hierarchy = hierarchy.reverse().join(" ");
+                hierarchy = hierarchy.reverse().join(" ");
 
-            editor.cssEditor.update("");
-            editor.cssEditor.removeAll();
-
-            // hierarchy panel
-            editor.cssEditor.add({
-                title: t("hierarchy"),
-                bodyStyle: "padding: 10px;",
-                autoHeight: true,
-                items: [{
-                    title: hierarchy,
-                    xtype: "grid",
-                    store: new Ext.data.ArrayStore({
-                        fields: ['selector',"element"],
-                        data: parentElements
-                    }),
-                    columns: [{
-                        dataIndex: "selector",
-                        width: 220
-                    }],
-                    width: 225,
-                    autoHeight: true,
-                    sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
-                    listeners: {
-                        "rowclick": function (grid, rowIndex, e) {
-                            this.editorFrameElement(grid.getStore().getAt(rowIndex).get("element").dom);
-                            var rec = grid.getSelectionModel().getSelected();
-                            if (!rec) {
-                                this.editorUnFrameElement();
+                if(singleElement === true) {
+                    selElement = element.dom;
+                    var names = [];
+                    while (selElement.parentNode) {
+                        if (selElement.id && selElement.id.indexOf("ext-") < 0) {
+                            names.unshift('#' + selElement.id);
+                            break;
+                        } else {
+                            if (selElement == selElement.ownerDocument.documentElement) names.unshift(selElement.tagName);
+                            else {
+                                for (var c = 1, e = selElement; e.previousElementSibling; e = e.previousElementSibling, c++);
+                                names.unshift(selElement.tagName + ":nth-child(" + c + ")");
                             }
-                        }.bind(editor),
-                        "rowdblclick": function (grid, rowIndex, e) {
-                            this.editorSelectElement(null, grid.getStore().getAt(rowIndex).get("element").dom);
-                        }.bind(editor)
+                            selElement = selElement.parentNode;
+                        }
                     }
-                }]
-            });
-
-            var stylesToCapture = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing",
-                "font-style", "color", "text-decoration", "text-align", "text-transform", "width", "height",
-                "padding-top", "padding-right","padding-bottom","padding-left",
-                "margin-left", "margin-right","margin-top","margin-bottom",
-                "top","left","right","bottom","position"];
-            var styles = element.getStyles.apply(element, stylesToCapture);
-
-            var getCssDimensionField = function  (name, label) {
-                if(!label) {
-                    label = name;
+                    hierarchy = names.join(" > ");
                 }
 
-                var value = "";
-                var unitValue = "";
-                var tmpValue = styles[name];
-
-                if(tmpValue) {
-                    if(tmpValue.indexOf("px") > 0 || tmpValue.indexOf("%") > 0 || tmpValue.indexOf("em") > 0) {
-                        value = tmpValue.replace(/(px|%|em)/i,"");
-                        unitValue = tmpValue.replace(/[0-9\.]+/,"");
-                    } else if(typeof tmpValue == "number") {
-                        value = tmpValue;
-                    }
+                if(hierarchy.lastIndexOf("#") >= 0) {
+                    hierarchy = hierarchy.substring(hierarchy.lastIndexOf("#"));
                 }
 
-                return [{
-                    xtype: "spinnerfield",
-                    fieldLabel: t(label),
-                    name: name,
-                    width: 50,
-                    value: value
-                }, getCssUnitField(name, unitValue)];
-            };
+                var itemAmount = 0;
+                try {
+                    itemAmount = editor.getIframeBody().query(hierarchy).length;
+                    if(singleElement !== true) {
+                        if(itemAmount > 1) {
+                            var answer = window.confirm(t("there_are_more_than_one_items_for_the_given_selector"));
+                            if(!answer) {
+                                editor.editorSelectElement(e, el, true);
+                                return;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
 
-            var getCssUnitField = function (name, value) {
-                return {
-                    name: name + "__unit",
-                    xtype: "combo",
-                    width: 50,
-                    hideLabel: true,
-                    mode: "local",
-                    ctCls: "pimcore_css_unit_field",
-                    store: [
-                        ["px", "px"],
-                        ["em", "em"],
-                        ["%","%"]
-                    ],
-                    value: value,
-                    triggerAction: "all"
+
+                editor.cssEditor.update("");
+                editor.cssEditor.removeAll();
+
+                // hierarchy panel
+                editor.cssEditor.add({
+                    title: t("hierarchy"),
+                    bodyStyle: "padding: 10px;",
+                    autoHeight: true,
+                    items: [{
+                        title: hierarchy,
+                        xtype: "grid",
+                        store: new Ext.data.ArrayStore({
+                            fields: ['selector',"element"],
+                            data: parentElements
+                        }),
+                        columns: [{
+                            dataIndex: "selector",
+                            width: 220
+                        }],
+                        width: 225,
+                        autoHeight: true,
+                        sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+                        listeners: {
+                            "rowclick": function (grid, rowIndex, e) {
+                                this.editorFrameElement(grid.getStore().getAt(rowIndex).get("element").dom);
+                                var rec = grid.getSelectionModel().getSelected();
+                                if (!rec) {
+                                    this.editorUnFrameElement();
+                                }
+                            }.bind(editor),
+                            "rowdblclick": function (grid, rowIndex, e) {
+                                this.editorSelectElement(null, grid.getStore().getAt(rowIndex).get("element").dom);
+                            }.bind(editor)
+                        }
+                    }]
+                });
+
+                var stylesToCapture = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing",
+                    "font-style", "color", "text-decoration", "text-align", "text-transform", "width", "height",
+                    "padding-top", "padding-right","padding-bottom","padding-left",
+                    "margin-left", "margin-right","margin-top","margin-bottom",
+                    "top","left","right","bottom","position"];
+                var styles = element.getStyles.apply(element, stylesToCapture);
+
+                var getCssDimensionField = function  (name, label) {
+                    if(!label) {
+                        label = name;
+                    }
+
+                    var value = "";
+                    var unitValue = "";
+                    var tmpValue = styles[name];
+
+                    if(tmpValue) {
+                        if(tmpValue.indexOf("px") > 0 || tmpValue.indexOf("%") > 0 || tmpValue.indexOf("em") > 0) {
+                            value = tmpValue.replace(/(px|%|em)/i,"");
+                            unitValue = tmpValue.replace(/[0-9\.]+/,"");
+                        } else if(typeof tmpValue == "number") {
+                            value = tmpValue;
+                        }
+                    }
+
+                    return [{
+                        xtype: "spinnerfield",
+                        fieldLabel: t(label),
+                        itemId: name,
+                        name: name,
+                        width: 50,
+                        value: value
+                    }, getCssUnitField(name, unitValue)];
                 };
-            };
 
-            editor.cssEditor.add({
-                title: t("positioning"),
-                xtype: "form",
-                bodyStyle: "padding: 10px;",
-                autoHeight: true,
-                labelWidth: 100,
-                disabled: !in_array(styles["position"], ["absolute", "fixed"]),
-                items: [{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("top")
-                },{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("right")
-                },{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("bottom")
-                },{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("left")
-                }],
-                listeners: {
-                    activate: function () {
-                        var el = Ext.get(this.editorElement);
-                        el.setStyle("cursor","pointer");
-                    }.bind(editor),
-                    deactivate: function () {
-                        var el = Ext.get(this.editorElement);
-                        el.setStyle("cursor","auto");
-                    }.bind(editor)
-                }
-            });
+                var getCssUnitField = function (name, value) {
+                    return {
+                        name: name + "__unit",
+                        itemId: name + "__unit",
+                        xtype: "combo",
+                        width: 50,
+                        hideLabel: true,
+                        mode: "local",
+                        ctCls: "pimcore_css_unit_field",
+                        store: [
+                            ["px", "px"],
+                            ["em", "em"],
+                            ["%","%"]
+                        ],
+                        value: value ? value : "px",
+                        triggerAction: "all"
+                    };
+                };
 
-            editor.cssEditor.add({
-                title: t("text"),
-                xtype: "form",
-                bodyStyle: "padding: 10px;",
-                autoHeight: true,
-                labelWidth: 100,
-                items: [{
-                    name: "font-family",
-                    xtype: "combo",
-                    width: 100,
-                    fieldLabel: t("font-family"),
-                    mode: "local",
-                    store: [
-                        ["", "not set"],
-                        ["Arial", "Arial"],
-                        ["Lucida Sans", "Lucida Sans"],
-                        ["Times New Roman","Times New Roman"],
-                        ["Sans Serif","Sans Serif"],
-                        ["Verdana","Verdana"]
-                    ],
-                    triggerAction: "all",
-                    value: styles["font-family"]
-                },{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("font-size", "size")
-                },{
-                    name: "font-weight",
-                    xtype: "combo",
-                    width: 100,
-                    fieldLabel: t("font-weight"),
-                    mode: "local",
-                    store: [
-                        ["", "not set"],
-                        ["normal", "normal"],
-                        ["bold", "bold"],
-                        ["bolder","bolder"],
-                        ["lighter","lighter"]
-                    ],
-                    triggerAction: "all",
-                    value: styles["font-weight"]
-                },{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("line-height")
-                },{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("letter-spacing")
-                },{
-                    name: "font-style",
-                    xtype: "combo",
-                    width: 100,
-                    fieldLabel: t("font-style"),
-                    mode: "local",
-                    store: [
-                        ["", "not set"],
-                        ["normal", "normal"],
-                        ["italic", "italic"],
-                        ["oblique","oblique"]
-                    ],
-                    triggerAction: "all",
-                    value: styles["font-style"]
-                }, {
-                    fieldLabel: t("color"),
-                    xtype: "textfield",
-                    name: "color",
-                    width: 100,
-                    value: styles["color"]
-                },{
-                    name: "text-align",
-                    xtype: "combo",
-                    width: 100,
-                    fieldLabel: t("text-align"),
-                    mode: "local",
-                    store: [
-                        ["", "not set"],
-                        ["left", "left"],
-                        ["center", "center"],
-                        ["justify", "justify"],
-                        ["right","right"]
-                    ],
-                    triggerAction: "all",
-                    value: styles["text-align"]
-                },{
-                    name: "text-decoration",
-                    xtype: "combo",
-                    width: 100,
-                    fieldLabel: t("text-decoration"),
-                    mode: "local",
-                    store: [
-                        ["", "not set"],
-                        ["none", "none"],
-                        ["underline", "underline"],
-                        ["overline", "overline"],
-                        ["blink", "blink"],
-                        ["line-through","line-through"]
-                    ],
-                    triggerAction: "all",
-                    value: styles["text-decoration"]
-                },{
-                    name: "text-transform",
-                    xtype: "combo",
-                    width: 100,
-                    fieldLabel: t("text-transform"),
-                    mode: "local",
-                    store: [
-                        ["", "not set"],
-                        ["none", "none"],
-                        ["capitalize", "capitalize"],
-                        ["uppercase", "uppercase"],
-                        ["lowercase", "lowercase"]
-                    ],
-                    triggerAction: "all",
-                    value: styles["text-transform"]
-                }]
-            });
-
-            editor.cssEditor.add({
-                title: t("appearance"),
-                xtype: "form",
-                bodyStyle: "padding: 10px;",
-                autoHeight: true,
-                labelWidth: 100,
-                items: [{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("width")
-                },{
-                    xtype: "compositefield",
-                    items: getCssDimensionField("height")
-                },{
-                    xtype: "fieldset",
-                    title: t("padding"),
+                editor.cssEditor.add({
+                    title: t("positioning"),
+                    id: "pimcore_style_editor_position_" + editor.page.id,
+                    xtype: "form",
+                    bodyStyle: "padding: 10px;",
+                    autoHeight: true,
+                    labelWidth: 100,
+                    disabled: !in_array(styles["position"], ["absolute", "fixed"]) || (itemAmount > 1),
                     items: [{
                         xtype: "compositefield",
-                        items: getCssDimensionField("padding-top","top")
+                        items: getCssDimensionField("top")
                     },{
                         xtype: "compositefield",
-                        items: getCssDimensionField("padding-right", "right")
+                        items: getCssDimensionField("right")
                     },{
                         xtype: "compositefield",
-                        items: getCssDimensionField("padding-bottom", "bottom")
+                        items: getCssDimensionField("bottom")
                     },{
                         xtype: "compositefield",
-                        items: getCssDimensionField("padding-left", "left")
-                    }]
-                },{
-                    xtype: "fieldset",
-                    title: t("margin"),
-                    items: [{
-                        xtype: "compositefield",
-                        items: getCssDimensionField("margin-top", "top")
-                    },{
-                        xtype: "compositefield",
-                        items: getCssDimensionField("margin-right", "right")
-                    },{
-                        xtype: "compositefield",
-                        items: getCssDimensionField("margin-bottom", "bottom")
-                    },{
-                        xtype: "compositefield",
-                        items: getCssDimensionField("margin-left", "left")
-                    }]
-                }]
-            });
+                        items: getCssDimensionField("left")
+                    }],
+                    listeners: {
+                        activate: function () {
 
+                            var editor = this;
+                            var el = Ext.get(this.editorElement);
+                            el.setStyle("cursor","pointer");
+                            var offsets, topReference, leftReference,
+                                topPosition, leftPosition, active = false, styleClearTimeout;
 
-            editor.cssEditor.doLayout();
+                            var mousemove = function (e, element) {
+                                el.applyStyles({
+                                    bottom: "auto",
+                                    right: "auto"
+                                });
 
-            // check for modifications
-            editor.editorUpdateInterval = window.setInterval(function () {
-                var css = "";
-                var cssData = {};
+                                topPosition = e.xy[1]-topReference;
+                                leftPosition = e.xy[0]-leftReference;
 
-                Ext.each(this.cssEditor.findByType("form"), function (v) {
-                    try {
-                        Ext.apply(cssData, v.getForm().getFieldValues());
-                    } catch (e) {
-                        console.log(e);
+                                el.setTop(topPosition);
+                                el.setLeft(leftPosition);
+                            };
+
+                            var setPosition = function () {
+                                var cont = Ext.getCmp("pimcore_style_editor_position_" + editor.page.id);
+
+                                var data = {
+                                    top: topPosition,
+                                    left: leftPosition,
+                                    bottom: "",
+                                    right: ""
+                                };
+
+                                try {
+                                    Ext.each(cont.findByType("spinnerfield"), function (v) {
+                                        try {
+                                            v.setValue(data[v.getName()]);
+                                        } catch (e) {
+                                            console.log(e);
+                                        }
+                                    });
+                                } catch (e) {
+                                    editor.getIframeBody().un("mousemove", mousemove);
+                                }
+
+                                editor.writeCss();
+
+                                // remove styling attributes from element (otherwise style via styles textarea isn't possible)
+                                styleClearTimeout = window.setTimeout(function () {
+                                    var style = el.getAttribute("style");
+                                    style = style.replace(/top[^;]+;/, "");
+                                    style = style.replace(/left[^;]+;/, "");
+                                    el.dom.setAttribute("style", style);
+                                }, 1000);
+                            };
+
+                            var stopPositioning = function () {
+                                if(active) {
+                                    editor.getIframeBody().un("mousemove", mousemove);
+                                    setPosition();
+                                    active = false;
+                                }
+                            };
+
+                            el.on("mousedown", function (e) {
+
+                                if(styleClearTimeout) {
+                                    clearTimeout(styleClearTimeout);
+                                }
+
+                                active = true;
+                                offsets = el.getOffsetsTo(editor.getIframeBody());
+
+                                // this is unfortunately in jQuery => should be replaced by ExtJS but it seems that there's not method for that
+                                var parent = jQuery(el.dom).offsetParent();
+                                parent = Ext.get(parent[0]);
+
+                                var offsetParent = el.getOffsetsTo(parent);
+                                topReference = offsets[1] - offsetParent[1];
+                                leftReference = offsets[0] - offsetParent[0];
+
+                                topReference = topReference + (e.xy[1] - offsets[1]);
+                                leftReference = leftReference + (e.xy[0] - offsets[0]);
+
+                                editor.getIframeBody().on("mousemove", mousemove);
+                            });
+
+                            editor.getIframeBody().on("mouseup", stopPositioning);
+                            editor.getIframeBody().on("mouseleave", stopPositioning);
+
+                        }.bind(editor),
+                        deactivate: function () {
+                            var el = Ext.get(this.editorElement);
+                            el.setStyle("cursor","auto");
+                        }.bind(editor)
                     }
                 });
 
-                var init  = false;
-                if(typeof this.editorModifications[hierarchy] == "undefined") {
-                    this.editorModifications[hierarchy] = {
-                        initial: cssData
-                    }
-                    init = true;
-                }
+                editor.cssEditor.add({
+                    title: t("text"),
+                    xtype: "form",
+                    bodyStyle: "padding: 10px;",
+                    autoHeight: true,
+                    labelWidth: 100,
+                    items: [{
+                        name: "font-family",
+                        xtype: "combo",
+                        width: 100,
+                        fieldLabel: t("font-family"),
+                        mode: "local",
+                        store: [
+                            ["", "not set"],
+                            ["Arial", "Arial"],
+                            ["Lucida Sans", "Lucida Sans"],
+                            ["Times New Roman","Times New Roman"],
+                            ["Sans Serif","Sans Serif"],
+                            ["Verdana","Verdana"]
+                        ],
+                        triggerAction: "all",
+                        value: styles["font-family"]
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("font-size", "size")
+                    },{
+                        name: "font-weight",
+                        xtype: "combo",
+                        width: 100,
+                        fieldLabel: t("font-weight"),
+                        mode: "local",
+                        store: [
+                            ["", "not set"],
+                            ["normal", "normal"],
+                            ["bold", "bold"],
+                            ["bolder","bolder"],
+                            ["lighter","lighter"]
+                        ],
+                        triggerAction: "all",
+                        value: styles["font-weight"]
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("line-height")
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("letter-spacing")
+                    },{
+                        name: "font-style",
+                        xtype: "combo",
+                        width: 100,
+                        fieldLabel: t("font-style"),
+                        mode: "local",
+                        store: [
+                            ["", "not set"],
+                            ["normal", "normal"],
+                            ["italic", "italic"],
+                            ["oblique","oblique"]
+                        ],
+                        triggerAction: "all",
+                        value: styles["font-style"]
+                    }, {
+                        fieldLabel: t("color"),
+                        xtype: "textfield",
+                        name: "color",
+                        width: 100,
+                        value: styles["color"]
+                    },{
+                        name: "text-align",
+                        xtype: "combo",
+                        width: 100,
+                        fieldLabel: t("text-align"),
+                        mode: "local",
+                        store: [
+                            ["", "not set"],
+                            ["left", "left"],
+                            ["center", "center"],
+                            ["justify", "justify"],
+                            ["right","right"]
+                        ],
+                        triggerAction: "all",
+                        value: styles["text-align"]
+                    },{
+                        name: "text-decoration",
+                        xtype: "combo",
+                        width: 100,
+                        fieldLabel: t("text-decoration"),
+                        mode: "local",
+                        store: [
+                            ["", "not set"],
+                            ["none", "none"],
+                            ["underline", "underline"],
+                            ["overline", "overline"],
+                            ["blink", "blink"],
+                            ["line-through","line-through"]
+                        ],
+                        triggerAction: "all",
+                        value: styles["text-decoration"]
+                    },{
+                        name: "text-transform",
+                        xtype: "combo",
+                        width: 100,
+                        fieldLabel: t("text-transform"),
+                        mode: "local",
+                        store: [
+                            ["", "not set"],
+                            ["none", "none"],
+                            ["capitalize", "capitalize"],
+                            ["uppercase", "uppercase"],
+                            ["lowercase", "lowercase"]
+                        ],
+                        triggerAction: "all",
+                        value: styles["text-transform"]
+                    }]
+                });
 
-                // generate css
-                Ext.iterate(cssData, function (key, value) {
-                    if( value !== this.editorModifications[hierarchy]["initial"][key] && key.indexOf("__unit") < 0 && key != "css") {
-                        // check if this field has an unit
-                        if(typeof cssData[key + "__unit"] != "undefined") {
-                            value += cssData[key + "__unit"];
+                editor.cssEditor.add({
+                    title: t("appearance"),
+                    xtype: "form",
+                    bodyStyle: "padding: 10px;",
+                    autoHeight: true,
+                    labelWidth: 100,
+                    items: [{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("width")
+                    },{
+                        xtype: "compositefield",
+                        items: getCssDimensionField("height")
+                    },{
+                        xtype: "fieldset",
+                        title: t("padding"),
+                        items: [{
+                            xtype: "compositefield",
+                            items: getCssDimensionField("padding-top","top")
+                        },{
+                            xtype: "compositefield",
+                            items: getCssDimensionField("padding-right", "right")
+                        },{
+                            xtype: "compositefield",
+                            items: getCssDimensionField("padding-bottom", "bottom")
+                        },{
+                            xtype: "compositefield",
+                            items: getCssDimensionField("padding-left", "left")
+                        }]
+                    },{
+                        xtype: "fieldset",
+                        title: t("margin"),
+                        items: [{
+                            xtype: "compositefield",
+                            items: getCssDimensionField("margin-top", "top")
+                        },{
+                            xtype: "compositefield",
+                            items: getCssDimensionField("margin-right", "right")
+                        },{
+                            xtype: "compositefield",
+                            items: getCssDimensionField("margin-bottom", "bottom")
+                        },{
+                            xtype: "compositefield",
+                            items: getCssDimensionField("margin-left", "left")
+                        }]
+                    },{
+                        xtype: "sliderfield",
+                        name: "opacity",
+                        fieldLabel: t("opacity"),
+                        value: styles["opacity"],
+                        minValue: 0,
+                        maxValue: 1,
+                        increment: 0.05,
+                        decimalPrecision: 2
+                    }]
+                });
+
+
+                editor.cssEditor.doLayout();
+
+                // check for modifications
+                editor.editorUpdateInterval = window.setInterval(function () {
+                    var css = "";
+                    var cssData = {};
+
+                    Ext.each(this.cssEditor.findByType("form"), function (v) {
+                        try {
+                            Ext.apply(cssData, v.getForm().getFieldValues());
+                        } catch (e) {
+                            console.log(e);
                         }
-                        css += key + ": " + value + " !important;\n";
-                    } else if (key == "css" && value) {
-                        css += "\n" + value + "\n";
-                    }
-                }.bind(this));
+                    });
 
-                if(css) {
-                    css = hierarchy + " {\n" + css + "}";
-                }
-
-
-                // check if it is the initial
-                if(init) {
-                    this.editorModifications[hierarchy] = {
-                        initial: cssData,
-                        css: css
-                    }
-                } else {
-                    if(css != this.editorModifications[hierarchy]["css"]) {
-                        this.editorUnFrameElement();
-                        this.editorModifications[hierarchy]["css"] = css;
-
-                        var cssContent = this.stylesField.getValue();
-                        if(!cssContent) {
-                            cssContent = "";
+                    var init  = false;
+                    if(typeof this.editorModifications[hierarchy] == "undefined") {
+                        this.editorModifications[hierarchy] = {
+                            initial: cssData
                         }
-                        cssContent = cssContent.replace(new RegExp(preg_quote(hierarchy) + "[\\s\\S]*\\}"), "");
-                        cssContent = cssContent.replace(/^\s*$[\n\r]{1,}/gm, '');
-                        cssContent = cssContent.replace(/\}/gm, "}\n");
-
-                        cssContent += css;
-                        this.stylesField.setValue(cssContent);
-                        this.writeCss();
-
-                        console.log(css);
+                        init = true;
                     }
-                }
-            }.bind(editor), 200);
+
+                    // extract existing css for the current element, so that it can be added later again if not modified
+                    var cssContent = this.stylesField.getValue();
+                    if(!cssContent) {
+                        cssContent = "";
+                    }
+                    var existingCss = cssContent.match(new RegExp(preg_quote(hierarchy) + ".*\\{([^\\}]+)\\}"));
+                    if(!existingCss) {
+                        existingCss = ["",""];
+                    }
+                    existingCss = existingCss[1].replace(/(\r\n|\n|\r)/gm, "");
+                    existingCss = existingCss.split(";");
+
+                    var existingCssStore = {};
+                    var u;
+                    for(var i=0; i<existingCss.length; i++) {
+                        existingCss[i] = trim(existingCss[i]);
+                        if(existingCss[i]) {
+                            u = existingCss[i].split(":");
+                            if(trim(u[0]) && trim(u[1])) {
+                                existingCssStore[trim(u[0])] = existingCss[i];
+                            }
+                        }
+                    }
+
+                    // generate css
+                    Ext.iterate(cssData, function (key, value) {
+                        if( value !== this.editorModifications[hierarchy]["initial"][key] && key.indexOf("__unit") < 0 && key != "css") {
+
+                            value = String(value);
+
+                            this.editorModifications[hierarchy]["initial"][key] = value;
+
+                            if(value.length < 1) {
+                                return;
+                            }
+
+                            // remove from existing styles
+                            if(existingCssStore[key]) {
+                                delete existingCssStore[key];
+                            }
+
+                            // check if this field has an unit
+                            if(typeof cssData[key + "__unit"] != "undefined") {
+                                value += cssData[key + "__unit"];
+                            }
+                            css += key + ": " + value + ";\n";
+                        }
+                    }.bind(this));
+
+
+                    // add existing css again
+                    Ext.iterate(existingCssStore, function (key, value) {
+                        css += value + ";\n";
+                    });
+
+                    // put together
+                    if(css) {
+                        css = hierarchy + " {\n" + css + "}";
+                    }
+
+
+                    // check if it is the initial
+                    if(init) {
+                        this.editorModifications[hierarchy] = {
+                            initial: cssData,
+                            css: css
+                        }
+                    } else {
+                        if(css != this.editorModifications[hierarchy]["css"]) {
+                            this.editorUnFrameElement();
+                            this.editorModifications[hierarchy]["css"] = css;
+
+                            // remove existing rules for current element -> existing not modified styles were added already above
+                            cssContent = cssContent.replace(new RegExp(preg_quote(hierarchy) + "[\\s\\S]*\\}"), "");
+                            cssContent = cssContent.replace(/^\s*$[\n\r]{1,}/gm, '');
+                            cssContent = cssContent.replace(/\}/gm, "}\n");
+
+                            cssContent += css;
+                            this.stylesField.setValue(cssContent);
+                            this.writeCss();
+
+                            //console.log(css);
+                        }
+                    }
+                }.bind(editor), 200);
+
+                editor.layout.enable();
+
+            }, 100);
         }
 
     },
@@ -924,7 +1117,7 @@ pimcore.document.pages.preview = Class.create({
 
     editorUnFrameElement: function () {
 
-        if(this.editorActiveFrame.active) {
+        if(this.editorActiveFrame && this.editorActiveFrame.active) {
             this.editorActiveFrame.topEl.remove();
             this.editorActiveFrame.bottomEl.remove();
             this.editorActiveFrame.leftEl.remove();
