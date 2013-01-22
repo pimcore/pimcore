@@ -350,14 +350,13 @@ pimcore.document.pages.preview = Class.create({
         };
 
         this.getIframeDocument().styleEditor = this;
-        this.getIframeBody().on("mousemove", this.editorMouseHighlightElement);
         this.getIframeBody().on("click", this.editorSelectElement);
+        this.getIframeBody().on("mousemove", this.editorMouseHighlightElement);
     },
 
     editorStopSelector: function () {
 
-        this.getIframeBody().un("mousemove", this.editorMouseHighlightElement);
-        this.getIframeBody().un("click", this.editorSelectElement);
+        this.getIframeBody().removeAllListeners();
         this.editorUnFrameElement();
 
         Ext.getCmp("pimcore_style_selector_" + this.page.id).toggle(false);
@@ -375,6 +374,7 @@ pimcore.document.pages.preview = Class.create({
                 }
             }
         }
+        return false;
     },
 
     editorGetCssSelectorPart: function (el, allowTag) {
@@ -416,6 +416,11 @@ pimcore.document.pages.preview = Class.create({
     editorSelectElement: function (e, el, singleElement) {
 
         var element;
+
+        if(e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
 
         if(typeof el == "undefined") {
             element = e.getTarget();
@@ -551,7 +556,7 @@ pimcore.document.pages.preview = Class.create({
                     "font-style", "color", "text-decoration", "text-align", "text-transform", "width", "height",
                     "padding-top", "padding-right","padding-bottom","padding-left",
                     "margin-left", "margin-right","margin-top","margin-bottom",
-                    "top","left","right","bottom","position"];
+                    "top","left","right","bottom","position", "opacity"];
                 var styles = element.getStyles.apply(element, stylesToCapture);
 
                 var getCssDimensionField = function  (name, label) {
@@ -632,6 +637,7 @@ pimcore.document.pages.preview = Class.create({
                                 topPosition, leftPosition, active = false, styleClearTimeout;
 
                             var mousemove = function (e, element) {
+
                                 el.applyStyles({
                                     bottom: "auto",
                                     right: "auto"
@@ -642,6 +648,8 @@ pimcore.document.pages.preview = Class.create({
 
                                 el.setTop(topPosition);
                                 el.setLeft(leftPosition);
+
+                                return false;
                             };
 
                             var setPosition = function () {
@@ -663,7 +671,7 @@ pimcore.document.pages.preview = Class.create({
                                         }
                                     });
                                 } catch (e) {
-                                    editor.getIframeBody().un("mousemove", mousemove);
+                                    editor.getIframeBody().removeAllListeners();
                                 }
 
                                 editor.writeCss();
@@ -677,12 +685,11 @@ pimcore.document.pages.preview = Class.create({
                                 }, 1000);
                             };
 
-                            var stopPositioning = function () {
-                                if(active) {
-                                    editor.getIframeBody().un("mousemove", mousemove);
-                                    setPosition();
-                                    active = false;
-                                }
+                            var stopPositioning = function (e) {
+
+                                editor.getIframeBody().un("mousemove", mousemove);
+                                setPosition();
+                                return false;
                             };
 
                             el.on("mousedown", function (e) {
@@ -691,7 +698,6 @@ pimcore.document.pages.preview = Class.create({
                                     clearTimeout(styleClearTimeout);
                                 }
 
-                                active = true;
                                 offsets = el.getOffsetsTo(editor.getIframeBody());
 
                                 // this is unfortunately in jQuery => should be replaced by ExtJS but it seems that there's not method for that
@@ -706,16 +712,36 @@ pimcore.document.pages.preview = Class.create({
                                 leftReference = leftReference + (e.xy[0] - offsets[0]);
 
                                 editor.getIframeBody().on("mousemove", mousemove);
+
+                                return false;
                             });
+
+                            editor.getIframeDocument().onselectstart = function () { return false; };
+                            el.dom.ondragstart = function() { return false; };
 
                             editor.getIframeBody().on("mouseup", stopPositioning);
                             editor.getIframeBody().on("mouseleave", stopPositioning);
 
                         }.bind(editor),
                         deactivate: function () {
+                            var editor = this;
                             var el = Ext.get(this.editorElement);
                             el.setStyle("cursor","auto");
-                        }.bind(editor)
+
+                            el.removeAllListeners();
+                            editor.getIframeBody().removeAllListeners();
+                        }.bind(editor),
+                        beforedestroy: function () {
+                            var editor = this;
+                            var el = Ext.get(this.editorElement);
+                            if(el) {
+                                el.setStyle("cursor","auto");
+                                el.removeAllListeners();
+                            }
+                            if(editor && typeof editor.getIframeBody == "function" && editor.getIframeBody()) {
+                                editor.getIframeBody().removeAllListeners();
+                            }
+                        }
                     }
                 });
 
@@ -1004,7 +1030,7 @@ pimcore.document.pages.preview = Class.create({
 
             }, 100);
         }
-
+        return false;
     },
 
     editorFrameElement: function (el, body) {
