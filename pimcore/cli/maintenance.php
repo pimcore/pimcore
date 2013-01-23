@@ -25,14 +25,15 @@ try {
     );
 
     // dynamically add non recognized options to avoid error messages
-    $arguments = $_SERVER['argv'];
+    // @ TODO the code below doesn't check if an option is already defined in $optsConfig
+    /*$arguments = $_SERVER['argv'];
     array_shift($arguments);
     foreach ($arguments as $arg) {
         $arg = preg_match("/\-\-?([a-zA-Z0-9]+)(=| )?/", $arg, $matches);
         if(array_key_exists(1, $matches)) {
             $optsConfig[$matches[1]] = "custom parameter";
         }
-    }
+    }*/
 
     $opts = new Zend_Console_Getopt($optsConfig);
 
