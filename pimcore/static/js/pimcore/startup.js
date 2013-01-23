@@ -95,7 +95,25 @@ Ext.onReady(function () {
 
         } else {
             //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot be saved due to HTTP 500 Response)
-            pimcore.helpers.showNotification(t("error"), t("error_general"), "error", response.responseText);
+            var errorMessage = "";
+
+            try {
+                errorMessage = "Status: " + response.status + " | " + response.statusText + "\n";
+                errorMessage += "URL: " + options.url + "\n";
+                if(options["params"]) {
+                    errorMessage += "Params:\n";
+                    Ext.iterate(options.params, function (key, value) {
+                        errorMessage += ( "-> " + key + ": " + value + "\n");
+                    });
+                }
+                if(options["method"]) {
+                    errorMessage += "Method: " + options.method + "\n";
+                }
+                errorMessage += "Message: \n" + response.responseText;
+            } catch (e) {
+                errorMessage = response.responseText;
+            }
+            pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
         }
 
         xhrActive--;
