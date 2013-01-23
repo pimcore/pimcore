@@ -86,19 +86,19 @@ class Pimcore_Tool_Text
                             );
                         }
 
-                        if ($styleAttr[1] && preg_match("/[^-](width|height)/",$styleAttr[1])) {
+                        if ($styleAttr[1] && preg_match("/(width|height)/",$styleAttr[1])) {
 
                             $config = array(); // reset the config if it was set already before (attributes)
 
                             $cleanedStyle = preg_replace('#[ ]+#', '', $styleAttr[1]);
                             $styles = explode(";", $cleanedStyle);
                             foreach ($styles as $style) {
-                                if (strpos($style, "width") !== false) {
+                                if (strpos(trim($style), "width") === 0) {
                                     if (preg_match("/([0-9]+)(px)/i", $style, $match)) {
                                         $config["width"] = $match[1];
                                     }
                                 }
-                                else if (strpos($style, "height") !== false) {
+                                else if (strpos(trim($style), "height") === 0) {
                                     if (preg_match("/([0-9]+)(px)/i", $style, $match)) {
                                         $config["height"] = $match[1];
                                     }
@@ -110,11 +110,14 @@ class Pimcore_Tool_Text
                         if(!preg_match("/pimcore_disable_thumbnail=\"([^\"]+)*\"/", $oldTag)) {
                             if (!empty($config)) {
                                 $path = $element->getThumbnail($config);
-                            } else {
+                            } else if($element->getWidth() > 2000 || $element->getHeight() > 2000) {
+                                // if the image is too large, size it down to 2000px this is the max. for wysiwyg
                                 $path = $element->getThumbnail(array(
-                                    "width" => $element->getWidth(),
-                                    "height" => $element->getHeight()
+                                    "width" => 2000,
                                 ));
+                            } else {
+                                // return the original
+                                $path = $element->getFullPath();
                             }
                         }
                     }
