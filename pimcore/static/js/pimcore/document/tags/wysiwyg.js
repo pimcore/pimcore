@@ -119,7 +119,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         this.maskEl = mask;
 
-        this.startCKeditor();
+        if(this.options["inline"] === false) {
+            Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
+        } else {
+            this.startCKeditor();
+        }
     },
 
     mask: function () {
@@ -142,6 +146,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     startCKeditor: function () {
         
         try {
+            if(this.options["inline"] === false) {
+                Ext.get(this.textarea).un("click", this.startCKeditor.bind(this));
+            }
+
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
 
             var eConfig = Object.clone(this.options);
@@ -191,6 +199,18 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         }
         catch (e) {
             console.log(e);
+        }
+    },
+
+    endCKeditor : function (force) {
+
+        if (this.ckeditor && (this.options["inline"] === false || force === true)) {
+            this.data = this.ckeditor.getData();
+
+            this.ckeditor.destroy();
+            this.ckeditor = null;
+
+            Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
         }
     },
 
@@ -322,3 +342,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
 
 CKEDITOR.disableAutoInline = true;
+
+function closeCKeditors() {
+    for (var i = 0; i < editables.length; i++) {
+        if (editables[i].getType() == "wysiwyg") {
+            editables[i].endCKeditor();
+        }
+    }
+}
