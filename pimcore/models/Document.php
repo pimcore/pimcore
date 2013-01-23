@@ -807,10 +807,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setId($id) {
-        //TODO: why can't I set a document ID null through setter?
-        if ($id) {
-            $this->id = (int) $id;
-        }
+        $this->id = (int) $id;
     }
 
     /**
