@@ -276,10 +276,6 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
               $arguments['addUncoveredFilesFromWhitelist']
             );
 
-            $codeCoverage->setCheckForUnintentionallyCoveredCode(
-              $arguments['strict']
-            );
-
             $codeCoverage->setProcessUncoveredFilesFromWhitelist(
               $arguments['processUncoveredFilesFromWhitelist']
             );
@@ -416,8 +412,7 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
                   $outputStream,
                   $arguments['reportLowUpperBound'],
                   $arguments['reportHighLowerBound'],
-                  $arguments['coverageTextShowUncoveredFiles'],
-                  $arguments['coverageTextShowOnlySummary']
+                  $arguments['coverageTextShowUncoveredFiles']
                 );
 
                 $writer->process($codeCoverage, $colors);
@@ -688,11 +683,6 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
                     $arguments['coverageTextShowUncoveredFiles'] = $loggingConfiguration['coverageTextShowUncoveredFiles'];
                 } else {
                     $arguments['coverageTextShowUncoveredFiles'] = FALSE;
-                }
-                if (isset($loggingConfiguration['coverageTextShowOnlySummary'])) {
-                    $arguments['coverageTextShowOnlySummary'] = $loggingConfiguration['coverageTextShowOnlySummary'];
-                } else {
-                    $arguments['coverageTextShowOnlySummary'] = FALSE;
                 }
             }
 
