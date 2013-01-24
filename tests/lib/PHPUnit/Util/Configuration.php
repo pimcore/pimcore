@@ -440,12 +440,6 @@ class PHPUnit_Util_Configuration
                       FALSE
                     );
                 }
-                if ($log->hasAttribute('showOnlySummary')) {
-                    $result['coverageTextShowOnlySummary'] = $this->getBoolean(
-                      (string)$log->getAttribute('showOnlySummary'),
-                      FALSE
-                    );
-                }
             }
 
             $result[$type] = $target;
