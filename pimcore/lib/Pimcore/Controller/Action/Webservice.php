@@ -21,8 +21,10 @@ class Pimcore_Controller_Action_Webservice extends Pimcore_Controller_Action {
             throw new Exception("API key missing");
         }
 
+        $apikey = $this->getParam("apikey");
+
         $userList = new User_List();
-        $userList->setCondition("password = ? AND type = ?", array($this->getParam("apikey"), "user"));
+        $userList->setCondition("password = ? AND type = ?", array($apikey, "user"));
         $users = $userList->load();
 
         if(!is_array($users) or count($users)!==1){

@@ -171,6 +171,14 @@ class Pimcore {
             )
         );
 
+        $routeWebserviceRest = new Zend_Controller_Router_Route(
+            'webservice-rest/:action/*',
+            array(
+                "module" => "webservice",
+                "controller" => "rest"
+            )
+        );
+
 
         // website route => custom router which check for a suitable document
         $routeFrontend = new Pimcore_Controller_Router_Route_Frontend();
@@ -190,6 +198,7 @@ class Pimcore {
             $router->addRoute('searchadmin', $routeSearchAdmin);
             if ($conf instanceof Zend_Config and $conf->webservice and $conf->webservice->enabled) {
                     $router->addRoute('webservice', $routeWebservice);
+                    $router->addRoute('webservice-rest', $routeWebserviceRest);
             }
 
             // force the main (default) domain for "admin" requests
