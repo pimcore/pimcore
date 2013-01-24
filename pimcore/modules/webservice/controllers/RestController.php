@@ -40,18 +40,18 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
     /** end point for object related data.
      * - get object by id
-     *      GET http://[YOUR-DOMAIN]/webservice-rest/object/id/1281?apikey=[API-KEY]
+     *      GET http://[YOUR-DOMAIN]/webservice/rest/object/id/1281?apikey=[API-KEY]
      *      returns json-encoded object data.
      * - delete object by id
-     *      DELETE http://[YOUR-DOMAIN]/webservice-rest/object/id/1281?apikey=[API-KEY]
+     *      DELETE http://[YOUR-DOMAIN]/webservice/rest/object/id/1281?apikey=[API-KEY]
      *      returns json encoded success value
      * - create object
-     *      PUT or POST http://[YOUR-DOMAIN]/webservice-rest/object?apikey=[API-KEY]
+     *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/object?apikey=[API-KEY]
      *      body: json-encoded object data in the same format as returned by get object by id
      *              but with missing id field or id set to 0
      *      returns json encoded object id
      * - update object
-     *      PUT or POST http://[YOUR-DOMAIN]/webservice-rest/object?apikey=[API-KEY]
+     *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/object?apikey=[API-KEY]
      *      body: same as for create object but with object id
      *      returns json encoded success value
      * @throws Exception
@@ -125,7 +125,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     }
 
     /** end point for object metadata
-     * GET http://[YOUR-DOMAIN]/webservice-rest/object-meta/id/1281?apikey=[API-KEY]
+     * GET http://[YOUR-DOMAIN]/webservice/rest/object-meta/id/1281?apikey=[API-KEY]
      *      returns the json-encoded class definition for the given object
      *
      */
@@ -150,7 +150,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
 
     /** end point for the class definition
-     * GET http://[YOUR-DOMAIN]/webservice-rest/class/id/1281?apikey=[API-KEY]
+     * GET http://[YOUR-DOMAIN]/webservice/rest/class/id/1281?apikey=[API-KEY]
      *      returns the class definition for the given class
      *
      */
@@ -168,7 +168,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $this->encoder->encode(array("success" => false));
     }
 
-    /** GET http://[YOUR-DOMAIN]/webservice-rest/user?apikey=[API-KEY]
+    /** GET http://[YOUR-DOMAIN]/webservice/rest/user?apikey=[API-KEY]
      *      returns the json-encoded user data for the current user
      *
      */
@@ -186,18 +186,18 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
     /** end point for asset related data.
      * - get asset by id
-     *      GET http://[YOUR-DOMAIN]/webservice-rest/asset/id/1281?apikey=[API-KEY]
+     *      GET http://[YOUR-DOMAIN]/webservice/rest/asset/id/1281?apikey=[API-KEY]
      *      returns json-encoded asset data.
      * - delete asset by id
-     *      DELETE http://[YOUR-DOMAIN]/webservice-rest/asset/id/1281?apikey=[API-KEY]
+     *      DELETE http://[YOUR-DOMAIN]/webservice/rest/asset/id/1281?apikey=[API-KEY]
      *      returns json encoded success value
      * - create asset
-     *      PUT or POST http://[YOUR-DOMAIN]/webservice-rest/asset?apikey=[API-KEY]
+     *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/asset?apikey=[API-KEY]
      *      body: json-encoded asset data in the same format as returned by get asset by id
      *              but with missing id field or id set to 0
      *      returns json encoded asset id
      * - update asset
-     *      PUT or POST http://[YOUR-DOMAIN]/webservice-rest/asset?apikey=[API-KEY]
+     *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/asset?apikey=[API-KEY]
      *      body: same as for create asset but with asset id
      *      returns json encoded success value
      * @throws Exception
@@ -268,18 +268,18 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
     /** end point for document related data.
      * - get document by id
-     *      GET http://[YOUR-DOMAIN]/webservice-rest/document/id/1281?apikey=[API-KEY]
+     *      GET http://[YOUR-DOMAIN]/webservice/rest/document/id/1281?apikey=[API-KEY]
      *      returns json-encoded document data.
      * - delete document by id
-     *      DELETE http://[YOUR-DOMAIN]/webservice-rest/document/id/1281?apikey=[API-KEY]
+     *      DELETE http://[YOUR-DOMAIN]/webservice/rest/document/id/1281?apikey=[API-KEY]
      *      returns json encoded success value
      * - create document
-     *      PUT or POST http://[YOUR-DOMAIN]/webservice-rest/document?apikey=[API-KEY]
+     *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/document?apikey=[API-KEY]
      *      body: json-encoded document data in the same format as returned by get document by id
      *              but with missing id field or id set to 0
      *      returns json encoded document id
      * - update document
-     *      PUT or POST http://[YOUR-DOMAIN]/webservice-rest/document?apikey=[API-KEY]
+     *      PUT or POST http://[YOUR-DOMAIN]/webservice/rest/document?apikey=[API-KEY]
      *      body: same as for create document but with object id
      *      returns json encoded success value
      * @throws Exception
@@ -366,7 +366,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
     /** Returns a list of assets id/type pairs matching the given criteria.
      *  Example:
-     *  GET http://[YOUR-DOMAIN]/webservice-rest/asset-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
      *
      * Parameters:
      *      - condition
@@ -389,7 +389,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
     /** Returns a list of document id/type pairs matching the given criteria.
      *  Example:
-     *  GET http://[YOUR-DOMAIN]/webservice-rest/document-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/document-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
      *
      * Parameters:
      *      - condition
@@ -412,7 +412,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
     /** Returns a list of object id/type pairs matching the given criteria.
      *  Example:
-     *  GET http://[YOUR-DOMAIN]/webservice-rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
      *
      * Parameters:
      *      - condition
