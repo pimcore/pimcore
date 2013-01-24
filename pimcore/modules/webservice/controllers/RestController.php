@@ -78,7 +78,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $success = $this->service->deleteObject($id);
                 $this->encoder->encode(array("success" => $success));
                 return;
-            } else if ($this->isGet() || $this->isPut()) {
+            } else if ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
                 $data = Zend_Json::decode($data);
 
