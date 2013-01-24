@@ -1100,7 +1100,7 @@
 "successful_unpublish_object","Your object has been unpublished"
 "error_publish_object","Your object could not be published"
 "error_unpublish_object","Your object could not be unpublished"
-"error_general","Server threw exception - could not perform action"
+"error_general","Server threw exception - could not perform action. Please reload the admin interface and try again."
 "missing_permission","Missing permission for this action"
 "lazy_loading","lazy loading"
 "lazy_loading_description","Lazy loading means that related objects are not loaded initially when the object is instantiated. When accessing the object programmatically, relations are only loaded when the according get method is called."
