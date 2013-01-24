@@ -267,9 +267,9 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 // by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
-                uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
 
                 if(typeof data.node.attributes.imageWidth != "undefined") {
+                    uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
                     if(data.node.attributes.imageWidth < defaultWidth && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text), browserPossibleExtensions)) {
                         uri = data.node.attributes.path;
                         additionalAttributes += ' pimcore_disable_thumbnail="true"';
@@ -278,9 +278,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     if(data.node.attributes.imageWidth < defaultWidth) {
                         defaultWidth = data.node.attributes.imageWidth;
                     }
+
+                    additionalAttributes += ' style="width:' + defaultWidth + 'px;"'
                 }
 
-                insertEl = CKEDITOR.dom.element.createFromHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" ' + additionalAttributes + ' />');
                 this.ckeditor.insertElement(insertEl);
                 return true;
             }
