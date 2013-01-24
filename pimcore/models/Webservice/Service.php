@@ -136,13 +136,13 @@ class Webservice_Service
     {
         try {
             $list = Document::getList(array(
-                                           "condition" => $condition,
-                                           "order" => $order,
-                                           "orderKey" => $orderKey,
-                                           "offset" => $offset,
-                                           "limit" => $limit,
-                                           "groupBy" => $groupBy
-                                      ));
+                "condition" => $condition,
+                "order" => $order,
+                "orderKey" => $orderKey,
+                "offset" => $offset,
+                "limit" => $limit,
+                "groupBy" => $groupBy
+            ));
 
             $items = array();
             foreach ($list as $doc) {
@@ -159,7 +159,7 @@ class Webservice_Service
             throw $e;
         }
     }
-    
+
     /**
      * @param int $id
      * @return bool
@@ -173,7 +173,7 @@ class Webservice_Service
     			$doc->save();
     			return true;
     		}
-    
+
     		throw new Exception("Document with given ID (" . $id . ") does not exist.");
     	} catch (Exception $e) {
     		Logger::error($e);
@@ -272,6 +272,44 @@ class Webservice_Service
             throw $e;
         }
     }
+
+    /**
+     * @param Webservice_Data_Document_Hardlink_In $wsDocument
+     * @return bool
+     */
+    public function updateDocumentHardlink($wsDocument)
+    {
+        try {
+            if ($wsDocument instanceof Webservice_Data_Document_Hardlink_In) {
+                return $this->updateDocument($wsDocument);
+            } else {
+                throw new Exception("Unable to update Document Hardlink. Inappropriate Data given");
+            }
+        } catch (Exception $e) {
+            Logger::error($e);
+            throw $e;
+        }
+    }
+
+    /**
+     * @param Webservice_Data_Document_Email_In $wsDocument
+     * @return bool
+     */
+    public function updateDocumentEmail($wsDocument)
+    {
+        try {
+            if ($wsDocument instanceof Webservice_Data_Document_Email_In) {
+                return $this->updateDocument($wsDocument);
+            } else {
+                throw new Exception("Unable to update Document Email. Inappropriate Data given");
+            }
+        } catch (Exception $e) {
+            Logger::error($e);
+            throw $e;
+        }
+    }
+
+
 
     /**
      * @param Webservice_Data_Object_Folder_In $wsDocument
@@ -384,6 +422,26 @@ class Webservice_Service
             throw $e;
         }
     }
+    /**
+     * @param Webservice_Data_Document_Email_In $document
+     * @return int
+     */
+    public function createDocumentEmail($wsDocument)
+    {
+        try {
+            if ($wsDocument instanceof Webservice_Data_Document_Email_In) {
+                $wsDocument->type = "email";
+                $document = new Document_Email();
+                return $this->create($wsDocument, $document);
+            }
+
+            throw new Exception("Unable to create new Document Snippet.");
+        } catch (Exception $e) {
+            Logger::error($e);
+            throw $e;
+        }
+    }
+
 
     /**
      * @param Webservice_Data_Document_Folder_In $document
@@ -422,6 +480,26 @@ class Webservice_Service
             throw $e;
         }
     }
+
+    /**
+     * @param Webservice_Data_Document_Hardlink_In $document
+     * @return int
+     */
+    public function createDocumentHardlink($wsDocument)
+    {
+        try {
+            if ($wsDocument instanceof Webservice_Data_Document_Hardlink_In) {
+                $wsDocument->type = "hardlink";
+                $document = new Document_Hardlink();
+                return $this->create($wsDocument, $document);
+            }
+            throw new Exception("Unable to create new Document Hardlink.");
+        } catch (Exception $e) {
+            Logger::error($e);
+            throw $e;
+        }
+    }
+
 
     /**
      * @param Webservice_Data_Asset_Folder_In $object
@@ -718,7 +796,7 @@ class Webservice_Service
             throw $e;
         }
     }
-    
+
     /**
      * @param int $id
      * @return bool
@@ -727,12 +805,12 @@ class Webservice_Service
     {
     	try {
     		$object = Object_Abstract::getById($id);
-    		if ($object instanceof Object_Abstract) { 
+    		if ($object instanceof Object_Abstract) {
     			$object->setPublished(false);
     			$object->save();
     			return true;
     		}
-    
+
     		throw new Exception("Object with given ID (" . $id . ") does not exist.");
     	} catch (Exception $e) {
     		Logger::error($e);
@@ -892,6 +970,49 @@ class Webservice_Service
         }
         $element->setUserModification($user->getId());
         $element->setModificationDate(time());
+    }
+
+    /**
+     * @param int $id
+     * @return Webservice_Data_Class_Out
+     */
+    public function getClassById($id)
+    {
+        try {
+            $class = Object_Class::getById($id);
+            if ($class instanceof Object_Class) {
+                $apiFolder = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
+                return $apiFolder;
+            }
+
+            throw new Exception("Class with given ID (" . $id . ") does not exist.");
+        } catch (Exception $e) {
+            Logger::error($e);
+            throw $e;
+        }
+    }
+
+
+    /**
+     * @param int $id
+     * @return Webservice_Data_Class_Out
+     */
+    public function getObjectMetadataById($id)
+    {
+        try {
+            $object = Object_Concrete::getById($id);
+
+            if ($object instanceof Object_Concrete) {
+                // load all data (eg. lazy loaded fields like multihref, object, ...)
+                $classId = $object->getClassId();
+                return $this->getClassById($classId);
+            }
+
+            throw new Exception("Object with given ID (" . $id . ") does not exist.");
+        } catch (Exception $e) {
+            Logger::error($e);
+            throw $e;
+        }
     }
 
 
