@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
+ Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
  For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 CKEDITOR.dialog.add("form",function(a){var d={action:1,id:1,method:1,enctype:1,target:1};return{title:a.lang.forms.form.title,minWidth:350,minHeight:200,onShow:function(){delete this.form;var b=this.getParentEditor().elementPath().contains("form",1);b&&(this.form=b,this.setupContent(b))},onOk:function(){var b,a=this.form,c=!a;c&&(b=this.getParentEditor(),a=b.document.createElement("form"),!CKEDITOR.env.ie&&a.append(b.document.createElement("br")));c&&b.insertElement(a);this.commitContent(a)},onLoad:function(){function a(b){this.setValue(b.getAttribute(this.id)||
