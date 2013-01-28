@@ -155,7 +155,7 @@ pimcore.document.pages.preview = Class.create({
                 collapsed: true,
                 split: true,
                 width: 300,
-                hidden: !(this.page.isAllowed("save") || this.isAllowed("publish")),
+                hidden: (!(this.page.isAllowed("save") || this.isAllowed("publish")) || Ext.isIE8),
                 layout: "accordion",
                 items: [this.cssEditor, this.cssSource]
             });
@@ -336,11 +336,13 @@ pimcore.document.pages.preview = Class.create({
         this.editorUnFrameElement();
         this.editorClearCurrentElement();
 
-            this.getIframeWindow().pimcore = {
-                editor: this
-            };
+            if(!this.getIframeWindow()["pimcore"]) {
+                this.getIframeWindow().pimcore = {
+                    editor: this
+                };
+            }
 
-            iscope = this.getIframeWindow().pimcore;
+            var iscope = this.getIframeWindow().pimcore;
             iscope.selectorMove = function (e) {
                 if(e.target) {
                     var el = Ext.get(e.target);
@@ -367,13 +369,30 @@ pimcore.document.pages.preview = Class.create({
 
                 if(element) {
 
-                    var editor = element.ownerDocument.defaultView.pimcore.editor;
+                    var iframeWin = element.ownerDocument.defaultView;
+                    var iscopeTmp = iframeWin.pimcore;
+                    var editor = iscopeTmp.editor;
+
                     editor.editorStopSelector();
                     editor.layout.disable();
                     editor.editorClearCurrentElement();
 
                     editor.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">' + t("please_wait") + "...</strong>");
                     editor.editorElement = element;
+
+                    // check for prev. activated element in positioning module, otherwise the listeners cannot be removed
+                    if(iscopeTmp["positioningActiveElement"]) {
+                        try {
+                            var oldEl = iscopeTmp["positioningActiveElement"]
+                            oldEl.setStyle("cursor", "auto");
+                            oldEl.dom.removeEventListener("mousedown", iscopeTmp.positioningStart, false);
+                            editor.getIframeBody().dom.removeEventListener("mousemove", iscopeTmp.positioningMove, false);
+                            editor.getIframeBody().dom.removeEventListener("mouseup", iscopeTmp.positioningStop, false);
+                            editor.getIframeBody().dom.removeEventListener("mouseleave", iscopeTmp.positioningStop, false);
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }
 
                     window.setTimeout(function () {
                         var parent;
@@ -576,7 +595,9 @@ pimcore.document.pages.preview = Class.create({
                                     if(!this.getIframeWindow()["pimcore"]) {
                                         this.getIframeWindow().pimcore = {};
                                     }
+
                                     var iscope = this.getIframeWindow().pimcore;
+                                    iscope.positioningActiveElement = el;
 
                                     var setPosition = function () {
                                         var cont = Ext.getCmp("pimcore_style_editor_position_" + editor.page.id);
@@ -612,53 +633,53 @@ pimcore.document.pages.preview = Class.create({
                                     };
 
                                     // only add the events once
-                                        iscope.positioningMove = function (e, element) {
+                                    iscope.positioningMove = function (e, element) {
 
-                                            el.applyStyles({
-                                                bottom: "auto",
-                                                right: "auto"
-                                            });
+                                        el.applyStyles({
+                                            bottom: "auto",
+                                            right: "auto"
+                                        });
 
-                                            topPosition = e.clientY-topReference;
-                                            leftPosition = e.clientX-leftReference;
+                                        topPosition = e.clientY-topReference;
+                                        leftPosition = e.clientX-leftReference;
 
-                                            el.setTop(topPosition);
-                                            el.setLeft(leftPosition);
+                                        el.setTop(topPosition);
+                                        el.setLeft(leftPosition);
 
-                                            return false;
-                                        };
+                                        return false;
+                                    };
 
-                                        iscope.positioningStop = function (e) {
+                                    iscope.positioningStop = function (e) {
 
-                                            editor.getIframeBody().dom.removeEventListener("mousemove", iscope.positioningMove, false);
-                                            setPosition();
-                                            return false;
-                                        };
+                                        editor.getIframeBody().dom.removeEventListener("mousemove", iscope.positioningMove, false);
+                                        setPosition();
+                                        return false;
+                                    };
 
-                                        iscope.positioningStart = function (e) {
+                                    iscope.positioningStart = function (e) {
 
-                                            if(styleClearTimeout) {
-                                                clearTimeout(styleClearTimeout);
-                                            }
+                                        if(styleClearTimeout) {
+                                            clearTimeout(styleClearTimeout);
+                                        }
 
-                                            offsets = el.getOffsetsTo(editor.getIframeBody());
+                                        offsets = el.getOffsetsTo(editor.getIframeBody());
 
-                                            // this is unfortunately in jQuery => should be replaced by ExtJS but it seems that there's not method for that
-                                            var parent = jQuery(el.dom).offsetParent();
-                                            parent = Ext.get(parent[0]);
+                                        // this is unfortunately in jQuery => should be replaced by ExtJS but it seems that there's not method for that
+                                        var parent = jQuery(el.dom).offsetParent();
+                                        parent = Ext.get(parent[0]);
 
-                                            var offsetParent = el.getOffsetsTo(parent);
-                                            topReference = offsets[1] - offsetParent[1];
-                                            leftReference = offsets[0] - offsetParent[0];
+                                        var offsetParent = el.getOffsetsTo(parent);
+                                        topReference = offsets[1] - offsetParent[1];
+                                        leftReference = offsets[0] - offsetParent[0];
 
-                                            topReference = topReference + (e.clientY - offsets[1]);
-                                            leftReference = leftReference + (e.clientX - offsets[0]);
+                                        topReference = topReference + (e.clientY - offsets[1]);
+                                        leftReference = leftReference + (e.clientX - offsets[0]);
 
-                                            editor.getIframeBody().dom.addEventListener("mousemove", iscope.positioningMove, false);
+                                        editor.getIframeBody().dom.addEventListener("mousemove", iscope.positioningMove, false);
 
-                                            e.preventDefault();
-                                            return false;
-                                        };
+                                        e.preventDefault();
+                                        return false;
+                                    };
 
 
                                     editor.getIframeDocument().onselectstart = function () { return false; };
@@ -670,30 +691,18 @@ pimcore.document.pages.preview = Class.create({
 
                                 }.bind(editor),
                                 deactivate: function () {
-                                    var editor = this;
-                                    var el = Ext.get(this.editorElement);
-                                    el.setStyle("cursor","auto");
-
-                                    var iscope = editor.getIframeWindow().pimcore;
-                                    el.dom.removeEventListener("mousedown", iscope.positioningStart);
-                                    editor.getIframeBody().dom.removeEventListener("mousemove", iscope.positioningMove, false);
-                                    editor.getIframeBody().dom.removeEventListener("mouseup", iscope.positioningStop, false);
-                                    editor.getIframeBody().dom.removeEventListener("mouseleave", iscope.positioningStop, false);
-                                }.bind(editor),
-                                destroy: function () {
-                                    var editor = this;
-                                    var el = Ext.get(this.editorElement);
-                                    var iscope = editor.getIframeWindow().pimcore;
-
-                                    if(el) {
+                                    try {
+                                        var editor = this;
+                                        var el = Ext.get(this.editorElement);
                                         el.setStyle("cursor","auto");
-                                        el.dom.removeEventListener("mousedown", iscope.positioningStart);
-                                    }
 
-                                    if(editor.getIframeBody() && editor.getIframeBody().dom) {
+                                        var iscope = editor.getIframeWindow().pimcore;
+                                        el.dom.removeEventListener("mousedown", iscope.positioningStart, false);
                                         editor.getIframeBody().dom.removeEventListener("mousemove", iscope.positioningMove, false);
                                         editor.getIframeBody().dom.removeEventListener("mouseup", iscope.positioningStop, false);
                                         editor.getIframeBody().dom.removeEventListener("mouseleave", iscope.positioningStop, false);
+                                    } catch (e) {
+                                        console.log(e);
                                     }
                                 }.bind(editor)
                             }
@@ -858,7 +867,7 @@ pimcore.document.pages.preview = Class.create({
                                     xtype: "compositefield",
                                     items: getCssDimensionField("margin-left", "left")
                                 }]
-                            },{
+                            }/*,{
                                 xtype: "sliderfield",
                                 name: "opacity",
                                 fieldLabel: t("opacity"),
@@ -867,7 +876,7 @@ pimcore.document.pages.preview = Class.create({
                                 maxValue: 1,
                                 increment: 0.05,
                                 decimalPrecision: 2
-                            }]
+                            }*/]
                         });
 
 
@@ -966,10 +975,18 @@ pimcore.document.pages.preview = Class.create({
                                     this.editorUnFrameElement();
                                     this.editorModifications[hierarchy]["css"] = css;
 
+                                    console.log("-- START --");
+
                                     // remove existing rules for current element -> existing not modified styles were added already above
+                                    console.log(cssContent);
                                     cssContent = cssContent.replace(new RegExp(preg_quote(hierarchy) + "[\\s\\S]*\\}"), "");
+                                    console.log(cssContent);
                                     cssContent = cssContent.replace(/^\s*$[\n\r]{1,}/gm, '');
+                                    console.log(cssContent);
                                     cssContent = cssContent.replace(/\}/gm, "}\n");
+                                    console.log(cssContent);
+
+                                    console.log("----");
 
                                     cssContent += css;
                                     this.stylesField.setValue(cssContent);
@@ -992,7 +1009,7 @@ pimcore.document.pages.preview = Class.create({
             });
 
 
-        iscope = this.getIframeWindow().pimcore;
+        var iscope = this.getIframeWindow().pimcore;
 
         this.editorActiveFrame = {
             active: false,
@@ -1009,7 +1026,7 @@ pimcore.document.pages.preview = Class.create({
 
     editorStopSelector: function () {
 
-        iscope = this.getIframeWindow().pimcore;
+        var iscope = this.getIframeWindow().pimcore;
         this.getIframeBody().dom.removeEventListener("click", iscope.editorSelectElement, false);
         this.getIframeBody().dom.removeEventListener("mousemove", iscope.selectorMove, false);
         this.editorUnFrameElement();
