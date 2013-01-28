@@ -397,8 +397,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // empty cache directory
             $files = scandir(PIMCORE_CACHE_DIRECTORY);
             foreach ($files as $file) {
-                if (is_file(PIMCORE_CACHE_DIRECTORY . "/" . $file)) {
-                    unlink(PIMCORE_CACHE_DIRECTORY . "/" . $file);
+                if ($file == ".dummy") {
+                    // PIMCORE-1854 Deleting cache cleans whole folder inclusive .dummy
+                    continue;
+                }
+                $filename = PIMCORE_CACHE_DIRECTORY . "/" . $file;
+                if (is_file($filename)) {
+                    unlink($filename);
                 }
             }
 
