@@ -589,6 +589,7 @@ pimcore.document.pages.preview = Class.create({
                                     var editor = this;
                                     var el = Ext.get(this.editorElement);
                                     el.setStyle("cursor","pointer");
+
                                     var offsets, topReference, leftReference,
                                         topPosition, leftPosition, active = false, styleClearTimeout;
 
@@ -975,24 +976,14 @@ pimcore.document.pages.preview = Class.create({
                                     this.editorUnFrameElement();
                                     this.editorModifications[hierarchy]["css"] = css;
 
-                                    console.log("-- START --");
-
                                     // remove existing rules for current element -> existing not modified styles were added already above
-                                    console.log(cssContent);
-                                    cssContent = cssContent.replace(new RegExp(preg_quote(hierarchy) + "[\\s\\S]*\\}"), "");
-                                    console.log(cssContent);
+                                    cssContent = cssContent.replace(new RegExp(preg_quote(hierarchy) + "[^\\}]*\\}"), "");
                                     cssContent = cssContent.replace(/^\s*$[\n\r]{1,}/gm, '');
-                                    console.log(cssContent);
                                     cssContent = cssContent.replace(/\}/gm, "}\n");
-                                    console.log(cssContent);
-
-                                    console.log("----");
 
                                     cssContent += css;
                                     this.stylesField.setValue(cssContent);
                                     this.writeCss();
-
-                                    //console.log(css);
                                 }
                             }
                         }.bind(editor), 200);
