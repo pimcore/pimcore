@@ -634,6 +634,8 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         } else if (is_array($value)) {
             $hrefs = array();
             foreach ($value as $href) {
+                // cast is needed to make it work for both SOAP and REST
+                $href = (array) $href;
                 if (is_array($href) and key_exists("id", $href) and key_exists("type", $href)) {
 
                     $e = Element_Service::getElementById($href["type"], $href["id"]);
