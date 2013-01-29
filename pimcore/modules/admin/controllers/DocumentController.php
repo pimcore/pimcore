@@ -1206,6 +1206,21 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         $urlParts = parse_url($this->getParam("url"));
         if($urlParts["path"]) {
             $document = Document::getByPath($urlParts["path"]);
+
+            // search for a page in a site
+            if(!$document) {
+                $sitesList = new Site_List();
+                $sitesObjects = $sitesList->load();
+
+                foreach ($sitesObjects as $site) {
+                    if ($site->getRootDocument() && in_array($urlParts["host"],$site->getDomains())) {
+                        if($document = Document::getByPath($site->getRootDocument() . $urlParts["path"])) {
+                            break;
+                        }
+                    }
+                }
+            }
+
             if($document) {
                 $this->_helper->json(array(
                     "success" => true,
