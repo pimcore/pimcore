@@ -520,7 +520,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
             // check file exists
             if (!is_file($destinationPath)) {
-                throw new Exception("couldn't create new asset");
+                throw new Exception("couldn't create new asset, file " . $destinationPath . " doesn't exist");
             }
 
             // set mime type
