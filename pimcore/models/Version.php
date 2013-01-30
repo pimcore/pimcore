@@ -144,7 +144,7 @@ class Version extends Pimcore_Model_Abstract {
         // check if directory exists
         $saveDir = dirname($this->getFilePath());
         if(!is_dir($saveDir)) {
-            Pimcore_File::createDirectory($saveDir);
+            mkdir($saveDir, 0766, true);
         }
 
         // save data to filesystem

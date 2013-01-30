@@ -91,7 +91,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
         // create folder if not exist
         if(!is_dir($objectBrickFolder)) {
-            Pimcore_File::createDirectory($objectBrickFolder);
+            mkdir($objectBrickFolder);
         }
 
         $newClassDefinitions = array();
@@ -158,7 +158,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
         if(!is_dir($fieldClassFolder)) {
-            Pimcore_File::createDirectory($fieldClassFolder);
+            mkdir($fieldClassFolder,0766,true);
         }
 
         $fieldClassFile = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
@@ -336,7 +336,7 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
                 $folder = $this->getContainerClassFolder($class->getName());
                 if(!is_dir($folder)) {
-                    Pimcore_File::createDirectory($folder);
+                    mkdir($folder,0766,true);
                 }
 
                 $file = $folder . "/" . ucfirst($fieldname) . ".php";

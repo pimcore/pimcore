@@ -175,7 +175,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         
         // create folder if not exist
         if(!is_dir($fieldCollectionFolder)) {
-            Pimcore_File::createDirectory($fieldCollectionFolder);
+            mkdir($fieldCollectionFolder);
         }
         
         $serialized = Pimcore_Tool_Serialize::serialize($this);
@@ -247,7 +247,7 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
         
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data"; 
         if(!is_dir($fieldClassFolder)) {
-            Pimcore_File::createDirectory($fieldClassFolder);
+            mkdir($fieldClassFolder,0766,true);
         }
 
 

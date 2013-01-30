@@ -399,7 +399,7 @@ class Document_Email_Log extends Pimcore_Model_Abstract
     {
         $this->getResource()->update();
         if (!is_dir(PIMCORE_LOG_MAIL_PERMANENT)) {
-            Pimcore_File::createDirectory(PIMCORE_LOG_MAIL_PERMANENT);
+            mkdir(PIMCORE_LOG_MAIL_PERMANENT, 0755, true);
         }
 
         if ($html = $this->getBodyHtml()) {

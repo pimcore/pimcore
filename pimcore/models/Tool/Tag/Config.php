@@ -82,7 +82,7 @@ class Tool_Tag_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/tags";
         if(!is_dir($dir)) {
-            Pimcore_File::createDirectory($dir);
+            mkdir($dir);
         }
 
         return $dir;

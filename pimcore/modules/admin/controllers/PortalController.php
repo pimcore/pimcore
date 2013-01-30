@@ -50,7 +50,7 @@ class Admin_PortalController extends Pimcore_Controller_Action_Admin {
 
     protected function saveConfiguration ($config) {
         if(!is_dir($this->getConfigDir())) {
-            Pimcore_File::createDirectory($this->getConfigDir());
+            mkdir($this->getConfigDir());
         }
 
         file_put_contents($this->getConfigFile(), Pimcore_Tool_Serialize::serialize($config));
