@@ -51,8 +51,8 @@
 
   <exec executable="phpab">
    <arg value="--output" />
-   <arg path="${basedir}/tests/autoload.php" />
-   <arg path="${basedir}/tests" />
+   <arg path="${basedir}/tests-ng/autoload.php" />
+   <arg path="${basedir}/tests-ng" />
   </exec>
  </target>
 
@@ -83,7 +83,7 @@
    </fileset>
    
 
-   <fileset dir="${basedir}/tests">
+   <fileset dir="${basedir}/tests-ng">
     <include name="**/*.php" />
     <exclude name="**/lib/**/*.php" />
     <modified />
@@ -140,7 +140,7 @@
 
  <target name="phpcs-ci"
          description="Find coding standard violations using PHP_CodeSniffer">
-  <exec executable="phpcs" output="c:\temp\null.txt">
+  <exec executable="phpcs" output="/dev/null">
    <arg value="--report=checkstyle" />
    <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
    <arg value="--standard=${basedir}/build/phpcs.xml" />
