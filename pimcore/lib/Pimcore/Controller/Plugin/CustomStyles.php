@@ -24,7 +24,7 @@ class Pimcore_Controller_Plugin_CustomStyles extends Zend_Controller_Plugin_Abst
 
         // append custom page styles,  if it is a document-request
         $doc = $this->getRequest()->getParam("document");
-        if(!Staticroute::getCurrentRoute() && ($doc instanceof Document_Page) && $doc->getCss()) {
+        if(!Staticroute::getCurrentRoute() && ($doc instanceof Document_PageSnippet) && $doc->getCss()) {
             $body = $this->getResponse()->getBody();
 
             $code = '<style type="text/css" id="pimcore_styles">';
