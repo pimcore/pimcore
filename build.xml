@@ -49,7 +49,7 @@
  <target name="phpab" description="Generate autoloader scripts">
 
 
-  <exec executable="phpab.bat">
+  <exec executable="phpab">
    <arg value="--output" />
    <arg path="${basedir}/tests/autoload.php" />
    <arg path="${basedir}/tests" />
@@ -59,7 +59,7 @@
 
 
  <target name="phar" description="Generate PHP Archive (PHAR)">
-  <exec executable="phpab.bat">
+  <exec executable="phpab">
    <arg value="--phar" />
    <arg value="--output" />
    <arg path="${basedir}/build/kautbullinger.phar" />
@@ -92,7 +92,7 @@
  </target>
 
  <target name="phploc" description="Measure project size using PHPLOC">
-  <exec executable="phploc.bat">
+  <exec executable="phploc">
    <arg value="--log-csv" />
    <arg value="${basedir}/build/logs/phploc.csv" />
    <arg path="${basedir}/pimcore" />
@@ -101,7 +101,7 @@
 
  <target name="pdepend" depends="prepare"
          description="Calculate software metrics using PHP_Depend">
-  <exec executable="pdepend.bat">
+  <exec executable="pdepend">
    <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
    <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
    <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
@@ -111,7 +111,7 @@
 
  <target name="phpmd"
          description="Perform project mess detection using PHPMD">
-  <exec executable="phpmd.bat">
+  <exec executable="phpmd">
    <arg path="${basedir}/pimcore" />
    <arg value="text" />
    <arg value="${basedir}/build/phpmd.xml" />
@@ -120,7 +120,7 @@
 
  <target name="phpmd-ci"
          description="Perform project mess detection using PHPMD">
-  <exec executable="phpmd.bat">
+  <exec executable="phpmd">
    <arg path="${basedir}/pimcore" />
    <arg value="xml" />
    <arg value="${basedir}/build/phpmd.xml" />
@@ -131,7 +131,7 @@
 
  <target name="phpcs"
          description="Find coding standard violations using PHP_CodeSniffer">
-  <exec executable="phpcs.bat">
+  <exec executable="phpcs">
    <arg value="--standard=${basedir}/build/phpcs.xml" />
    <arg value="--ignore=autoload.php" />
    <arg path="${basedir}/pimcore" />
@@ -140,7 +140,7 @@
 
  <target name="phpcs-ci"
          description="Find coding standard violations using PHP_CodeSniffer">
-  <exec executable="phpcs.bat" output="c:\temp\null.txt">
+  <exec executable="phpcs" output="c:\temp\null.txt">
    <arg value="--report=checkstyle" />
    <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
    <arg value="--standard=${basedir}/build/phpcs.xml" />
@@ -150,7 +150,7 @@
  </target>
 
  <target name="phpcpd" description="Find duplicate code using PHPCPD">
-  <exec executable="phpcpd.bat">
+  <exec executable="phpcpd">
    <arg value="--log-pmd" />
    <arg value="${basedir}/build/logs/pmd-cpd.xml" />
    <arg path="${basedir}/pimcore" />
@@ -159,7 +159,7 @@
 
  <target name="phpdox"
          description="Generate API documentation using phpDox">
-    <exec executable="phpdoc.bat">
+    <exec executable="phpdoc">
          <arg value="-t"/>
         <arg value="phpdox"/>
     </exec>
@@ -172,14 +172,14 @@
 </target>
 
  <target name="phpunit" depends="prepare-dirs" description="Run unit tests with PHPUnit">
-     <exec executable="phpunit.bat" failonerror="false">
+     <exec executable="phpunit" failonerror="false">
          <arg value="--debug"/>
      </exec>
  </target>
 
  <target name="phpcb"
          description="Aggregate tool output with PHP_CodeBrowser">
-  <exec executable="phpcb.bat">
+  <exec executable="phpcb">
    <arg value="--log" />
    <arg path="${basedir}/build/logs" />
    <arg value="--source" />
