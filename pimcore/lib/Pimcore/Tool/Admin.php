@@ -25,7 +25,7 @@ class Pimcore_Tool_Admin {
     public static function getLanguageFile($language){
 
         //first try website languages dir, as fallback the core dir
-       $languageFile = PIMCORE_WEBSITE_PATH."/var/config/texts/" . $language . ".csv";
+       $languageFile = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $language . ".csv";
         if(!is_file($languageFile)){
             $languageFile =  PIMCORE_PATH . "/config/texts/" . $language . ".csv";
         }
@@ -42,7 +42,7 @@ class Pimcore_Tool_Admin {
     public static function getLanguages () {
 
         $languages = array();
-        $languageDirs = array(PIMCORE_PATH . "/config/texts/",PIMCORE_WEBSITE_PATH."/var/config/texts/");
+        $languageDirs = array(PIMCORE_PATH . "/config/texts/",PIMCORE_CONFIGURATION_DIRECTORY . "/texts/");
         foreach($languageDirs as $filesDir){
             if(is_dir($filesDir)){
                 $files = scandir($filesDir);

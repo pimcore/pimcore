@@ -168,11 +168,11 @@ class Pimcore_ExtensionManager {
         {
             $areaRepositories = array(
                 PIMCORE_WEBSITE_PATH . "/views/areas",
-            PIMCORE_WEBSITE_PATH . "/var/areas"
-        );
+                PIMCORE_WEBSITE_VAR . "/areas"
+            );
 
-        // get directories
-        foreach ($areaRepositories as $respository) {
+            // get directories
+            foreach ($areaRepositories as $respository) {
 
             if(is_dir($respository) && is_readable($respository)) {
                 $blockDirs = scandir($respository);
