@@ -141,7 +141,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
         $this->getResource()->save();
         
         if(!is_dir(PIMCORE_RECYCLEBIN_DIRECTORY)) {
-            mkdir(PIMCORE_RECYCLEBIN_DIRECTORY);
+            Pimcore_File::createDirectory(PIMCORE_RECYCLEBIN_DIRECTORY);
         }
         
         file_put_contents($this->getStoreageFile(),$data);

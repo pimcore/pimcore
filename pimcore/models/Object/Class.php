@@ -205,7 +205,7 @@ class Object_Class extends Pimcore_Model_Abstract {
 
         // creaste directory if not exists
         if (!is_dir(PIMCORE_CLASS_DIRECTORY . "/Object")) {
-            mkdir(PIMCORE_CLASS_DIRECTORY . "/Object");
+            Pimcore_File::createDirectory(PIMCORE_CLASS_DIRECTORY . "/Object");
         }
 
         $cd = '<?php ';
@@ -298,7 +298,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         /*$cd .= "?>";*/
 
 
-        @mkdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
+        Pimcore_File::createDirectory(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
 
         $classListFile = PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/List.php";
         if(!is_writable(dirname($classListFile)) || (is_file($classListFile) && !is_writable($classListFile))) {

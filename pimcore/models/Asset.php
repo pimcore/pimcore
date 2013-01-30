@@ -498,7 +498,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         // create foldertree
         $destinationPath = $this->getFileSystemPath();
         if (!is_dir(dirname($destinationPath))) {
-            mkdir(dirname($destinationPath), self::$chmod, true);
+            Pimcore_File::createDirectory(dirname($destinationPath));
         }
 
         if ($this->_oldPath) {

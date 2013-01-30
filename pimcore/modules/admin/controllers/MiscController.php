@@ -265,7 +265,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
             $file = PIMCORE_DOCUMENT_ROOT . $path . "/" . $this->getParam("filename");
 
             if (is_writeable(dirname($file))) {
-                mkdir($file);
+                Pimcore_File::createDirectory($file);
 
                 $success = true;
             }

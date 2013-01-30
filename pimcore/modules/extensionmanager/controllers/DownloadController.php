@@ -130,12 +130,12 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         }
 
         if(!is_dir($parentPath)) {
-            mkdir($parentPath, 0755, true);
+            Pimcore_File::createDirectory($parentPath);
         }
 
         $fileDestPath = $parentPath . $path;
         if(!is_dir(dirname($fileDestPath))) {
-            mkdir(dirname($fileDestPath), 0755, true);
+            Pimcore_File::createDirectory(dirname($fileDestPath));
         }
 
         file_put_contents($fileDestPath, base64_decode($file["content"]));
@@ -164,12 +164,12 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         }
 
         if(!is_dir($parentPath)) {
-            mkdir($parentPath, 0755, true);
+            Pimcore_File::createDirectory($parentPath);
         }
 
         $fileDestPath = $parentPath . $path;
         if(!is_dir(dirname($fileDestPath))) {
-            mkdir(dirname($fileDestPath), 0755, true);
+            Pimcore_File::createDirectory(dirname($fileDestPath));
         }
 
         @unlink($fileDestPath);
