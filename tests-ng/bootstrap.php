@@ -106,7 +106,9 @@ $setup->config(array(
     ),
 ));
 
+$var_dump($setup);
 
+print("init conf\n");
 Pimcore::initConfiguration();
 print("set up  db XXX");
 $setup->database();
