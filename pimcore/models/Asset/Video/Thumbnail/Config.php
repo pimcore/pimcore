@@ -76,7 +76,7 @@ class Asset_Video_Thumbnail_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/videopipelines";
         if(!is_dir($dir)) {
-            Pimcore_File::createDirectory($dir);
+            mkdir($dir);
         }
 
         return $dir;

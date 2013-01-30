@@ -76,7 +76,7 @@ class Pimcore_Backup {
 
         // create backup directory if not exists
         if (!is_dir(PIMCORE_BACKUP_DIRECTORY)) {
-            if (!Pimcore_File::createDirectory(PIMCORE_BACKUP_DIRECTORY)) {
+            if (!mkdir(PIMCORE_BACKUP_DIRECTORY)) {
                 Logger::err("Directory " . PIMCORE_BACKUP_DIRECTORY . " does not exists and cannot be created.");
                 exit;
             }

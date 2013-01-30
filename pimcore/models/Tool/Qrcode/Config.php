@@ -69,7 +69,7 @@ class Tool_Qrcode_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/qrcodes";
         if(!is_dir($dir)) {
-            Pimcore_File::createDirectory($dir);
+            mkdir($dir);
         }
 
         return $dir;
