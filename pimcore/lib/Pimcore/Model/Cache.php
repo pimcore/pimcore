@@ -196,7 +196,9 @@ class Pimcore_Model_Cache {
         $config["customBackendNaming"] = false;
 
         // create cache dir
-        mkdir(PIMCORE_CACHE_DIRECTORY, 0777, true);
+        if(!is_dir(PIMCORE_CACHE_DIRECTORY)) {
+            mkdir(PIMCORE_CACHE_DIRECTORY, 0777, true);
+        }
 
         return $config;
     }
