@@ -85,6 +85,8 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 
         $settings = array_replace_recursive($settings, $config);
 
+        @mkdir(PIMCORE_CONFIGURATION_DIRECTORY, 0777, true);
+
         $config = new Zend_Config($settings, true);
         $writer = new Zend_Config_Writer_Xml(array(
             "config" => $config,
