@@ -1,9 +1,11 @@
 <?php
-print("version=1");
 
 define("PIMCORE_WEBSITE_VAR",  realpath(dirname(__FILE__)). "/tmp/var");
-mkdir(PIMCORE_WEBSITE_VAR, 0777, true);
 include_once(realpath(dirname(__FILE__)) . "/../pimcore/cli/startup.php");
+
+// empty temporary var directory
+recursiveDelete(PIMCORE_WEBSITE_VAR);
+mkdir(PIMCORE_WEBSITE_VAR, 0777, true);
 
 $xml = new Zend_Config_Xml(realpath(dirname(__FILE__)) . "/config/testconfig.xml");
 $testConfig = $xml->toArray();
@@ -63,14 +65,11 @@ if ($conf instanceof Zend_Config) {
 
 
 try {
-    print("testdbConfig");
-    var_dump($testDbConfig);
-
     $db = new Zend_Db_Adapter_Pdo_Mysql($systemDbConfig);
 
     $db->getConnection()->exec("DROP database IF EXISTS " . $testDbName . ";");
     $db->getConnection()->exec("CREATE DATABASE " . $testDbName . " CHARACTER SET utf8");
-    print("testdb created");
+
     $db = new Zend_Db_Adapter_Pdo_Mysql($testDbConfig);
     $db->getConnection();
 
@@ -89,10 +88,7 @@ catch (Exception $e) {
 }
 
 
-print("create tool");
 $setup = new Tool_Setup();
-
-
 $setup->config(array(
     "database" => array(
         "adapter" => $testConfig["testdatabase"]["adapter"],
@@ -106,17 +102,14 @@ $setup->config(array(
     ),
 ));
 
-print("init conf\n");
 Pimcore::initConfiguration();
-print("set up  db XXX");
+
 $setup->database();
-print("initConf");
-print("contents");
 $setup->contents(array(
     "username" => "admin",
     "password" => "admin"
 ));
-print("clear cache");
+
 Pimcore_Model_Cache::clearAll();
 
 // disable all caching for the tests
@@ -159,7 +152,7 @@ $autoloader->registerNamespace('TestSuite');
  * It has a database, admin user and a complete config.
  * We can start running our tests against the phpunit_pimcore instance
  */
-var_dump(array(get_include_path()));
+
 
 print("done");
 
