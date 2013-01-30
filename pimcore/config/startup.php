@@ -26,7 +26,18 @@ if (!defined("PIMCORE_PLUGINS_PATH"))  define("PIMCORE_PLUGINS_PATH", PIMCORE_DO
 
 // website module specific
 if (!defined("PIMCORE_WEBSITE_PATH"))  define("PIMCORE_WEBSITE_PATH", PIMCORE_DOCUMENT_ROOT . "/" . PIMCORE_FRONTEND_MODULE);
-if (!defined("PIMCORE_WEBSITE_VAR"))  define("PIMCORE_WEBSITE_VAR", PIMCORE_WEBSITE_PATH . "/var");
+
+
+if(is_array($_SERVER)
+    && array_key_exists("HTTP_X_PIMCORE_UNIT_TEST_REQUEST", $_SERVER)
+    && in_array($_SERVER["REMOTE_ADDR"], array("127.0.0.1", $_SERVER["SERVER_ADDR"]))) {
+    // change the var directory for unit tests
+    if (!defined("PIMCORE_WEBSITE_VAR"))  define("PIMCORE_WEBSITE_VAR", PIMCORE_DOCUMENT_ROOT . "/tests-ng/tmp/var");
+} else {
+    // use the default /website/var directory
+    if (!defined("PIMCORE_WEBSITE_VAR"))  define("PIMCORE_WEBSITE_VAR", PIMCORE_WEBSITE_PATH . "/var");
+}
+
 if (!defined("PIMCORE_CONFIGURATION_DIRECTORY"))  define("PIMCORE_CONFIGURATION_DIRECTORY", PIMCORE_WEBSITE_VAR . "/config");
 if (!defined("PIMCORE_CONFIGURATION_SYSTEM"))  define("PIMCORE_CONFIGURATION_SYSTEM", PIMCORE_CONFIGURATION_DIRECTORY . "/system.xml");
 if (!defined("PIMCORE_CONFIGURATION_PLUGINS"))  define("PIMCORE_CONFIGURATION_PLUGINS", PIMCORE_CONFIGURATION_DIRECTORY . "/plugin.xml");
