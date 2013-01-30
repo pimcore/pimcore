@@ -2,7 +2,7 @@
 
 define("PIMCORE_WEBSITE_VAR",  realpath(dirname(__FILE__)). "/tmp/var");
 mkdir(PIMCORE_WEBSITE_VAR, 0777, true);
-include_once("../pimcore/cli/startup.php");
+include_once(realpath(dirname(__FILE__)) . "/../pimcore/cli/startup.php");
 
 $xml = new Zend_Config_Xml(realpath(dirname(__FILE__)) . "/config/testconfig.xml");
 $testConfig = $xml->toArray();
@@ -23,7 +23,6 @@ $testDbConfig = array(
 );
 $testDbName = $testDbConfig["dbname"];
 
-var_dump($systemDbConfig);
 
 @ini_set("display_errors", "On");
 @ini_set("display_startup_errors", "On");
