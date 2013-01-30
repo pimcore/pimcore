@@ -1,4 +1,5 @@
 <?php
+print("version=1");
 
 define("PIMCORE_WEBSITE_VAR",  realpath(dirname(__FILE__)). "/tmp/var");
 mkdir(PIMCORE_WEBSITE_VAR, 0777, true);
