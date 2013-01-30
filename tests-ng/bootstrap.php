@@ -62,12 +62,14 @@ if ($conf instanceof Zend_Config) {
 
 
 try {
-    var_dump($systemDbConfig);
+    print("testdbConfig");
+    var_dump($testDbConfig);
 
     $db = new Zend_Db_Adapter_Pdo_Mysql($systemDbConfig);
 
     $db->getConnection()->exec("DROP database IF EXISTS " . $testDbName . ";");
     $db->getConnection()->exec("CREATE DATABASE " . $testDbName . " CHARACTER SET utf8");
+    print("testdb created");
     $db = new Zend_Db_Adapter_Pdo_Mysql($testDbConfig);
     $db->getConnection();
 
@@ -86,7 +88,7 @@ catch (Exception $e) {
 }
 
 
-
+print("create tool");
 $setup = new Tool_Setup();
 
 
