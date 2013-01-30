@@ -107,10 +107,10 @@ $setup->config(array(
 ));
 
 
+Pimcore::initConfiguration();
 print("set up  db");
 $setup->database();
 print("initConf");
-Pimcore::initConfiguration();
 print("contents");
 $setup->contents(array(
     "username" => "admin",
