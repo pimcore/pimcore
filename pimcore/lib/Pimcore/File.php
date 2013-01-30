@@ -21,6 +21,16 @@ class Pimcore_File {
     private static $isIncludeableCache = array();
 
     /**
+     * @param $dir
+     */
+    public static function createDirectory($dir) {
+        if(!is_dir($dir)) {
+            return mkdir($dir, 0766, true);
+        }
+        return true;
+    }
+
+    /**
      * @static
      * @param  $name
      * @return string

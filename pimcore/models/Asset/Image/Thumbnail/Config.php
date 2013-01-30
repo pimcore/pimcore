@@ -76,7 +76,7 @@ class Asset_Image_Thumbnail_Config {
     public static function getWorkingDir () {
         $dir = PIMCORE_CONFIGURATION_DIRECTORY . "/imagepipelines";
         if(!is_dir($dir)) {
-            mkdir($dir);
+            Pimcore_File::createDirectory($dir);
         }
 
         return $dir;

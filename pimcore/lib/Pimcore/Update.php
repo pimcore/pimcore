@@ -167,17 +167,17 @@ class Pimcore_Update {
         
         $downloadDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision;
         if(!is_dir($downloadDir)) {
-            mkdir($downloadDir,0755,true);
+            Pimcore_File::createDirectory($downloadDir);
         }
         
         $filesDir = $downloadDir . "/files";
         if(!is_dir($filesDir)) {
-            mkdir($filesDir,0755,true);
+            Pimcore_File::createDirectory($filesDir);
         }
         
         $scriptsDir = $downloadDir . "/scripts";
         if(!is_dir($scriptsDir)) {
-            mkdir($scriptsDir,0755,true);
+            Pimcore_File::createDirectory($scriptsDir);
         }
         
         
@@ -218,7 +218,7 @@ class Pimcore_Update {
             if ($file["action"] == "update" || $file["action"] == "add") {
                 if (!is_dir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]))) {
                     if(!self::$dryRun) {
-                        mkdir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]), 0755, true);
+                        Pimcore_File::createDirectory(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]));
                     }
                 }
                 $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/","~~~",$file["path"]);
@@ -323,7 +323,7 @@ class Pimcore_Update {
         //directory for additional languages
         $langDir = PIMCORE_CONFIGURATION_DIRECTORY . "/texts";
         if (!is_dir($langDir)) {
-            mkdir($langDir, 0755, true);
+            Pimcore_File::createDirectory($langDir);
         }
 
         $success = is_dir($langDir);
