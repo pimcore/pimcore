@@ -149,7 +149,7 @@ $autoloader->registerNamespace('Test');
 $autoloader->registerNamespace('Rest');
 $autoloader->registerNamespace('TestSuite');
 
-
+// dummy change
 
 /**
  * bootstrap is done, phpunit_pimcore is up and running.
