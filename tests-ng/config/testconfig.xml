@@ -20,7 +20,7 @@
         <adapter>Mysqli</adapter>
         <params>
             <host>127.0.0.1</host>
-            <username>pimcore</username>
+            <username>root</username>
             <password>elements</password>
             <dbname>pimcore</dbname>
             <port></port>
