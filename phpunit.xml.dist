@@ -11,7 +11,7 @@
     <testsuites>
         <testsuite name="Models">
 
-            <directory suffix="AllTests.php">tests</directory>
+            <directory suffix="AllTests.php">tests-ng</directory>
         </testsuite>
     </testsuites>
 
