@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="tests/bootstrap-windows.php"
+<phpunit bootstrap="tests-ng/bootstrap.php"
          backupGlobals="false"
          backupStaticAttributes="false"
          strict="false"
