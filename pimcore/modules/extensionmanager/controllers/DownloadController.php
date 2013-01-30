@@ -126,7 +126,7 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         if($type == "plugin") {
             $parentPath = PIMCORE_PLUGINS_PATH;
         } else if ($type == "brick") {
-            $parentPath = PIMCORE_WEBSITE_PATH . "/var/areas";
+            $parentPath = PIMCORE_WEBSITE_VAR . "/areas";
         }
 
         if(!is_dir($parentPath)) {
@@ -160,7 +160,7 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         if($type == "plugin") {
             $parentPath = PIMCORE_PLUGINS_PATH;
         } else if ($type == "brick") {
-            $parentPath = PIMCORE_WEBSITE_PATH . "/var/areas";
+            $parentPath = PIMCORE_WEBSITE_VAR . "/areas";
         }
 
         if(!is_dir($parentPath)) {
@@ -189,7 +189,7 @@ class Extensionmanager_DownloadController extends Pimcore_Controller_Action_Admi
         if($type == "plugin") {
             $extensionPath = PIMCORE_PLUGINS_PATH . "/" . $id;
         } else if ($type = "brick") {
-            $extensionPath = PIMCORE_WEBSITE_PATH . "/var/areas/" . $id;
+            $extensionPath = PIMCORE_WEBSITE_VAR . "/areas/" . $id;
         }
 
         if(is_dir($extensionPath)) {

@@ -35,11 +35,11 @@ class Install_IndexController extends Pimcore_Controller_Action {
         $errors = array();
 
         // check permissions
-        $files = rscandir(PIMCORE_WEBSITE_PATH . "/var/");
+        $files = rscandir(PIMCORE_WEBSITE_VAR . "/");
 
         foreach ($files as $file) {
             if (is_dir($file) && !is_writable($file)) {
-                $errors[] = "Please ensure that the whole /" . PIMCORE_FRONTEND_MODULE . "/var folder is writeable (recursivly)";
+                $errors[] = "Please ensure that the whole /" . PIMCORE_WEBSITE_VAR . " folder is writeable (recursivly)";
                 break;
             }
         }
