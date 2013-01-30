@@ -85,7 +85,12 @@ class Tool_Setup extends Pimcore_Model_Abstract {
 
         $settings = array_replace_recursive($settings, $config);
 
-        @mkdir(PIMCORE_CONFIGURATION_DIRECTORY, 0777, true);
+        // create initial /website/var folder structure
+        // @TODO: should use values out of startup.php (Constants)
+        $varFolders = array("areas","assets","backup","cache","classes","config","email","log","plugins","recyclebin","search","system","tmp","versions","webdav");
+        foreach($varFolders as $folder) {
+            @mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder, 0777, true);
+        }
 
         $config = new Zend_Config($settings, true);
         $writer = new Zend_Config_Writer_Xml(array(
