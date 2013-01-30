@@ -89,6 +89,7 @@ catch (Exception $e) {
 
 $setup = new Tool_Setup();
 
+
 $setup->config(array(
     "database" => array(
         "adapter" => $testConfig["testdatabase"]["adapter"],
@@ -102,13 +103,17 @@ $setup->config(array(
     ),
 ));
 
+
+print("set up  db");
 $setup->database();
+print("initConf");
 Pimcore::initConfiguration();
+print("contents");
 $setup->contents(array(
     "username" => "admin",
     "password" => "admin"
 ));
-
+print("clear cache");
 Pimcore_Model_Cache::clearAll();
 
 // disable all caching for the tests
@@ -153,5 +158,5 @@ $autoloader->registerNamespace('TestSuite');
  */
 var_dump(array(get_include_path()));
 
-
+print("done");
 
