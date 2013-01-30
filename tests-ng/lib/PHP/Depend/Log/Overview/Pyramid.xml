@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<logger>
+  <message>Generates a chart with an Overview Pyramid for the analyzed project.</message>
+</logger>

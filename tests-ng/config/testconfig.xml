@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+    <user>1</user>
+    <downloadLink>http://www.pimcore.org/download/pimcore-build.zip</downloadLink>
+    <documentRoot>/home/pimcore_phpunit/www</documentRoot>
+    <pimcoreRoot>/home/pimcore/www</pimcoreRoot>
+    <domain>pimcorephpunit.elements.at</domain>
+    <testdatabase>
+        <adapter>Pdo_Mysql</adapter>
+        <params>
+            <host>mysql</host>
+            <username>root</username>
+            <password>elements</password>
+            <dbname>pimcore_phpunit</dbname>
+            <port></port>
+        </params>
+    </testdatabase>
+    <!-- this is the system database. do not change this if you don't know what you are doing !!! -->
+    <systemdatabase>
+        <adapter>Mysqli</adapter>
+        <params>
+            <host>127.0.0.1</host>
+            <username>pimcore</username>
+            <password>elements</password>
+            <dbname>pimcore</dbname>
+            <port></port>
+        </params>
+    </systemdatabase>
+    <webservice>
+        <wsdl>http://pimcorephpunit.elements.at/webservice/soap/endpoint?wsdl</wsdl>
+        <serviceEndpoint>http://pimcorephpunit.elements.at/webservice/soap/endpoint</serviceEndpoint>
+        <object>
+            <condition>`o_key` like '%_data%'</condition>
+        </object>
+        <asset>
+            <condition>`filename` like '%_data%'</condition>
+        </asset>
+        <document>
+            <condition>`key` like '%_data%'</condition>
+        </document>
+    </webservice> 
+
+</zend-config>
