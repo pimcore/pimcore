@@ -46,7 +46,7 @@ class Tool_Setup extends Pimcore_Model_Abstract {
                     "host" => "localhost",
                     "username" => "root",
                     "password" => "",
-                    "dbname" => "pimcore",
+                    "dbname" => "",
                     "port" => "3306",
                 )
             ),
