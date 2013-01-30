@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="tests/bootstrap-windows.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         strict="false"
+         verbose="true"
+         timeoutForSmallTests="5"
+         stopOnFailure="false"
+         syntaxCheck="false">
+    <testsuites>
+        <testsuite name="Models">
+
+            <directory suffix="AllTests.php">tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <logging>
+        <log type="coverage-html" target="build/coverage" title="BankAccount"
+             charset="UTF-8" yui="true" highlight="true"
+             lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+        <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
+    </logging>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+            <exclude>
+                <directory>src/application/testing</directory>
+                <directory>src/framework/testing</directory>
+                <file>src/application/autoload.php</file>
+                <file>src/application/bootstrap.php</file>
+                <file>src/framework/autoload.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <selenium>
+        <browser name="Firefox on localhost"
+                 browser="*chrome"
+                 host="localhost"
+                 port="4444"
+                 timeout="30000"/>
+    </selenium>
+</phpunit>
