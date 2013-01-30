@@ -8,7 +8,7 @@
     <testdatabase>
         <adapter>Pdo_Mysql</adapter>
         <params>
-            <host>mysql</host>
+            <host>127.0.0.1</host>
             <username>root</username>
             <password>elements</password>
             <dbname>pimcore_phpunit</dbname>
