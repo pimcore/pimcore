@@ -23,6 +23,7 @@ mkdir(PIMCORE_WEBSITE_VAR, 0777, true);
 
 // get default configuration for the test
 $testConfig = new Zend_Config_Xml(TESTS_PATH . "/config/testconfig.xml");
+Zend_Registry::set("pimcore_config_test", $testConfig);
 $testConfig = $testConfig->toArray();
 
 // get configuration from main project
@@ -61,15 +62,17 @@ catch (Exception $e) {
     die("Couldn't establish connection to mysql" . "\n");
 }
 
-
 $setup = new Tool_Setup();
 $setup->config(array(
     "database" => $dbConfig,
+    "webservice" => array("enabled" => 1)
 ));
 
 Pimcore::initConfiguration();
 
 $setup->database();
+
+
 $setup->contents(array(
     "username" => "admin",
     "password" => microtime()
@@ -104,5 +107,5 @@ $autoloader->registerNamespace('TestSuite');
  */
 
 
-print("done");
+print("done\n");
 
