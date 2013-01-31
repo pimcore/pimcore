@@ -326,8 +326,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         var width = image.getWidth();
         var height = image.getHeight();
 
-        console.log([width, height]);
-
         if (width > 1 && height > 1) {
 
             var dimensionError = false;
