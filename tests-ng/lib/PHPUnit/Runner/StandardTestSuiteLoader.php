@@ -127,8 +127,6 @@ class PHPUnit_Runner_StandardTestSuiteLoader implements PHPUnit_Runner_TestSuite
         if (class_exists($suiteClassName, FALSE)) {
 
             $class = new ReflectionClass($suiteClassName);
-            print("XXX " . $class->getFileName() . "\n");
-            print("XXX " . realpath($suiteClassFile) . "\n");
             if ($class->getFileName() == realpath($suiteClassFile)) {
                 return $class;
             }
