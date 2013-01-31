@@ -56,7 +56,9 @@
   </exec>
  </target>
 
-
+<target name="replace-config" description="replaces the original testconfig with the one suitable for jenkins">
+    <copy file="${basedir}/tests-ng/config/testconfig-jenkins.xml" tofile="${basedir}/tests-ng/config/testconfig.xml" overwrite="true"/>
+</target>
 
  <target name="phar" description="Generate PHP Archive (PHAR)">
   <exec executable="phpab">
@@ -176,7 +178,7 @@
     <mkdir dir="${basedir}/website/var/tmp"/>
 </target>
 
- <target name="phpunit" depends="prepare-dirs" description="Run unit tests with PHPUnit">
+ <target name="phpunit" depends="prepare-dirs,replace-config" description="Run unit tests with PHPUnit">
      <exec executable="phpunit" failonerror="false">
          <arg value="--debug"/>
      </exec>
