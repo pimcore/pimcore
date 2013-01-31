@@ -3,7 +3,7 @@
 
 
 
-class TestSuite_Rest_AllTests extends PHPUnit_Framework_TestSuite
+class TestSuite_Rest_AllTests extends Test_SuiteBase
 {
     public static function suite() {
         $suite = new TestSuite_Rest_AllTests('RestTests');

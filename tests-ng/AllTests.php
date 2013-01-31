@@ -2,7 +2,7 @@
 //require_once 'PHPUnit/Framework.php';
 
 
-class AllTests extends PHPUnit_Framework_TestSuite {
+class AllTests extends Test_SuiteBase {
 
 
     /**
@@ -70,14 +70,6 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 
         }
 
-    }
-
-    protected function setUp() {
-        $this->cleanUp();
-    }
-
-    protected function tearDown() {
-        //$this->cleanUp();
     }
 
     public static function suite() {

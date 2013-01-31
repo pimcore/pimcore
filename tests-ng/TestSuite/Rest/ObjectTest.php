@@ -7,35 +7,31 @@
  */
 
 
-class TestSuite_Rest_ObjectTest extends PHPUnit_Framework_TestCase {
+class TestSuite_Rest_ObjectTest extends Test_Base {
+
+    public function setUp() {
+        print("cleanup\n");
+        // every single rest test assumes a clean database
+        Test_Tool::cleanUp();
+    }
 
     /**
      * creates a class called "unittest" containing all Object_Class_Data Types currently available.
      * @return void
      */
-    public function testClassCreate() {
+    public function testObjectList() {
 
-        $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
-        $importData = $conf->toArray();
+        print("running testObjectList\n");
+        $list = Test_RestClient::getInstance()->getObjectList();
+        $this->assertEquals(1, count($list), "expcted 1 list item");
+        $this->assertEquals("folder", $list[0]->getType(), "expected type to be folder");
+    }
 
-        $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-
-        $class = Object_Class::create();
-        $class->setName("unittest");
-        $class->setUserOwner(1);
-        $class->save();
-
-        $id = $class->getId();
-        $this->assertTrue($id > 0);
-
-        $class = Object_Class::getById($id);
-
-        $class->setLayoutDefinitions($layout);
-
-        $class->setUserModification(1);
-        $class->setModificationDate(time());
-
-        $class->save();
+    public function testObjectGet() {
+        print("running testObjectGet\n");
+        $object = Test_RestClient::getInstance()->getObjectById(1);
+        $this->assertEquals("folder", $object->getType(), "expected type to be folder");
+        $this->assertEquals(1, $object->getId(), "wrong id");
 
     }
 
