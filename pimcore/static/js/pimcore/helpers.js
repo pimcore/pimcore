@@ -1027,6 +1027,29 @@ pimcore.helpers.selectPathInTree = function (tree, path, callback) {
     }
 }
 
+pimcore.helpers.selectElementInTree = function (type, id) {
+    try {
+        Ext.Ajax.request({
+            url: "/admin/element/get-id-path/",
+            method: "get",
+            params: {
+                id: id,
+                type: type
+            },
+            success: function (response) {
+                var res = Ext.decode(response.responseText);
+                if(res.success) {
+                    Ext.getCmp("pimcore_panel_tree_" + type + "s").expand();
+                    var tree = pimcore.globalmanager.get("layout_" + type + "_tree");
+                    pimcore.helpers.selectPathInTree(tree.tree, res.idPath);
+                }
+            }
+        });
+    } catch (e) {
+        console.log(e);
+    }
+}
+
 pimcore.helpers.getClassForIcon = function (icon) {
 
     var styleContainerId = "pimcore_dynamic_class_for_icon";

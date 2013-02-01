@@ -141,36 +141,48 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
     onContextMenu: function (e) {
 
         var menu = new Ext.menu.Menu();
-        menu.add(new Ext.menu.Item({
-            text: t('empty'),
-            iconCls: "pimcore_icon_delete",
-            handler: function () {
-                var height = this.options.height;
-                if (!height) {
-                    height = this.defaultHeight;
-                }
-                this.data = {};
-                this.getBody().update('');
-                this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-                this.getBody().addClass("pimcore_tag_snippet_empty");
-                this.getBody().setHeight(height + "px");
 
-                if (this.options.reload) {
-                    this.reloadDocument();
-                }
+        if(this.data["id"]) {
+            menu.add(new Ext.menu.Item({
+                text: t('empty'),
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
+                    var height = this.options.height;
+                    if (!height) {
+                        height = this.defaultHeight;
+                    }
+                    this.data = {};
+                    this.getBody().update('');
+                    this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+                    this.getBody().addClass("pimcore_tag_snippet_empty");
+                    this.getBody().setHeight(height + "px");
 
-            }.bind(this)
-        }));
+                    if (this.options.reload) {
+                        this.reloadDocument();
+                    }
 
-        menu.add(new Ext.menu.Item({
-            text: t('open'),
-            iconCls: "pimcore_icon_open",
-            handler: function () {
-                if(this.data.id) {
-                    pimcore.helpers.openElement(this.data.id, this.data.type, this.data.subtype);
-                }
-            }.bind(this)
-        }));
+                }.bind(this)
+            }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_open",
+                handler: function () {
+                    if(this.data.id) {
+                        pimcore.helpers.openElement(this.data.id, this.data.type, this.data.subtype);
+                    }
+                }.bind(this)
+            }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_fileexplorer",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    pimcore.helpers.selectElementInTree(this.data.type, this.data.id);
+                }.bind(this)
+            }));
+        }
         
         menu.add(new Ext.menu.Item({
             text: t('search'),

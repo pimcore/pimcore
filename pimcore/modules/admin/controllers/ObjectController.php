@@ -288,7 +288,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
             $objectData = array();
 
-            $objectData["idPath"] = Pimcore_Tool::getIdPathForElement($object);
+            $objectData["idPath"] = Element_Service::getIdPath($object);
             $objectData["previewUrl"] = $object->getClass()->getPreviewUrl();
             $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
             $this->getDataForObject($object, $objectFromVersion);
@@ -478,7 +478,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData = array();
 
             $objectData["general"] = array();
-            $objectData["idPath"] = Pimcore_Tool::getIdPathForElement($object);
+            $objectData["idPath"] = Element_Service::getIdPath($object);
 
             $allowedKeys = array("o_published", "o_key", "o_id", "o_type");
             foreach (get_object_vars($object) as $key => $value) {
