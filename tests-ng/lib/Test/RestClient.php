@@ -126,7 +126,7 @@ class Test_RestClient {
         $client->setUri($uri);
         if ($body != null && ($method == "PUT" || $method == "POST")) {
                 $client->setRawData($body);
-                print("body: " . $body);
+//                print("body: " . $body . "\n");
         }
 
         $result = $client->request();
@@ -135,8 +135,43 @@ class Test_RestClient {
         return $body;
     }
 
-   public function getObjectList($limit = 10, $decode = true) {
-         $response = $this->doRequest(self::$baseUrl .  "object-list/?apikey=" . $this->apikey . "&limit=" . $limit, "GET");
+
+    private function fillParms($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null) {
+        $params = "";
+        if ($condition) {
+            $params .= "&condition=" . urlencode($condition);
+        }
+
+        if ($order) {
+            $params .= "&order=" . $order;
+        }
+
+        if ($orderKey) {
+            $params .= "&orderKey=" . $orderKey;
+        }
+
+        if ($offset) {
+            $params .= "&offset=" . $offset;
+        }
+
+        if ($limit) {
+            $params .= "&limit=" . $limit;
+        }
+
+        if ($groupBy) {
+            $params .= "&groupBy=" . $groupBy;
+        }
+
+        if ($objectClass) {
+            $params .= "&objectClass=" . $objectClass;
+        }
+        return $params;
+    }
+
+   public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null, $decode = true) {
+        $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
+
+       $response = $this->doRequest(self::$baseUrl .  "object-list/?apikey=" . $this->apikey . $params, "GET");
 
         $result = array();
         foreach ($response as $item) {

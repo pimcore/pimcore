@@ -11,7 +11,6 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
 
     public function setUp() {
         // every single rest test assumes a clean database
-        print("######################### cleanup\n");
         Test_Tool::cleanUp();
     }
 
@@ -63,6 +62,10 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
         $objectDirect = Object_Abstract::getById($id);
         $creationDate = $objectDirect->getCreationDate();
         $this->assertTrue($creationDate >= $time, "wrong creation date");
+
+        // as the object key is unique there must be exactly one object with that key
+        $list = Test_RestClient::getInstance()->getObjectList("o_key = '" . $unsavedObject->getKey() . "'");
+        $this->assertEquals(1, count($list));
 
     }
 
