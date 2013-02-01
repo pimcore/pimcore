@@ -41,39 +41,6 @@ class Pimcore_Tool {
 
     /**
      * @static
-     * @param  $element
-     * @return string
-     */
-    public static function getIdPathForElement($element) {
-
-        $path = "";
-
-        if ($element instanceof Document) {
-            $nid = $element->getParentId();
-            $ne = Document::getById($nid);
-        }
-        else if ($element instanceof Asset) {
-            $nid = $element->getParentId();
-            $ne = Asset::getById($nid);
-        }
-        else if ($element instanceof Object_Abstract) {
-            $nid = $element->getO_parentId();
-            $ne = Object_Abstract::getById($nid);
-        }
-
-        if ($ne) {
-            $path = self::getIdPathForElement($ne, $path);
-        }
-
-        if ($element) {
-            $path = $path . "/" . $element->getId();
-        }
-
-        return $path;
-    }
-
-    /**
-     * @static
      * @param  $language
      * @return bool
      */

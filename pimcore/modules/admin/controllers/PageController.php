@@ -30,7 +30,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         
         $page->getVersions();
         $page->getScheduledTasks();
-        $page->idPath = Pimcore_Tool::getIdPathForElement($page);
+        $page->idPath = Element_Service::getIdPath($page);
         $page->userPermissions = $page->getUserPermissions();
         $page->setLocked($page->isLocked());
 

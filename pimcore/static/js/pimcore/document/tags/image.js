@@ -129,28 +129,36 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                     this.openEditWindow();
                 }.bind(this)
             }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('empty'),
+                iconCls: "pimcore_icon_delete",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+
+                    this.empty();
+
+                }.bind(this)
+            }));
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_open",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    pimcore.helpers.openAsset(this.datax.id, "image");
+                }.bind(this)
+            }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_fileexplorer",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    pimcore.helpers.selectElementInTree("asset", this.datax.id);
+                }.bind(this)
+            }));
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('empty'),
-            iconCls: "pimcore_icon_delete",
-            handler: function (item) {
-                item.parentMenu.destroy();
-
-                this.empty();
-
-            }.bind(this)
-        }));
-        menu.add(new Ext.menu.Item({
-            text: t('open'),
-            iconCls: "pimcore_icon_open",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                pimcore.helpers.openAsset(this.datax.id, "image");
-            }.bind(this)
-        }));
-        
-        
         menu.add(new Ext.menu.Item({
             text: t('search'),
             iconCls: "pimcore_icon_search",

@@ -27,6 +27,19 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
         exit;
     }
 
+    public function getIdPathAction() {
+        $id = (int) $this->getParam("id");
+        $type = $this->getParam("type");
+
+        $response = array("success" => true);
+
+        if($element = Element_Service::getElementById($type, $id)) {
+            $response["idPath"] = Element_Service::getIdPath($element);
+        }
+
+        $this->_helper->json($response);
+    }
+
     public function getSubtypeAction () {
 
         $id = (int) $this->getParam("id");

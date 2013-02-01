@@ -30,7 +30,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         $email = Document_Email::getById($this->getParam("id"));
         $email = $this->getLatestVersion($email);
         $email->getVersions();
-        $email->idPath = Pimcore_Tool::getIdPathForElement($email);
+        $email->idPath = Element_Service::getIdPath($email);
         $email->userPermissions = $email->getUserPermissions();
         $email->setLocked($email->isLocked());
 
