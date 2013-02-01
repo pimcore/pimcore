@@ -111,13 +111,24 @@ class Test_RestClient {
     }
 
 
-    private function doRequest($uri, $method = "GET") {
+    /** Does the actual request.
+     * @param $uri
+     * @param string $method
+     * @param null $body
+     * @return mixed
+     */
+    private function doRequest($uri, $method = "GET", $body = null) {
         $client = $this->client;
         $client->setMethod($method);
         if (self::loggingEnabled) {
-            print($uri . "\n");
+            print($method . " " . $uri . "\n");
         }
         $client->setUri($uri);
+        if ($body != null && ($method == "PUT" || $method == "POST")) {
+                $client->setRawData($body);
+                print("body: " . $body);
+        }
+
         $result = $client->request();
         $body = $result->getBody();
         $body = json_decode($body);
@@ -143,8 +154,6 @@ class Test_RestClient {
 
      public function getObjectById($id, $decode = true) {
          $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . $this->apikey, "GET");
-
-//         var_dump($response);
          $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
 
          if (!$decode) {
@@ -172,6 +181,17 @@ class Test_RestClient {
 
          }
 
+    }
+
+    /** Creates a new object.
+     * @param $object
+     * @return mixed json encoded success value and id
+     */
+    public function createObjectConcrete($object) {
+        $wsDocument = Webservice_Data_Mapper::map($object, "Webservice_Data_Object_Concrete_Out", "out");
+        $encodedData = json_encode($wsDocument);
+        $response = $this->doRequest(self::$baseUrl .  "object/?apikey=" . $this->apikey, "PUT", $encodedData);
+        return $response;
     }
 
 }

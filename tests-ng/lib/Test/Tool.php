@@ -397,25 +397,32 @@ class Test_Tool
 
     }
 
-    public static function createEmptyObject() {
+    public static function createEmptyObject($keyPrefix = "", $save = true) {
+        if ($keyPrefix == null) {
+            $keyPrefix = "";
+        }
         $emptyObject = new Object_Unittest();
         $emptyObject->setOmitMandatoryCheck(true);
         $emptyObject->setParentId(1);
         $emptyObject->setUserOwner(1);
         $emptyObject->setUserModification(1);
         $emptyObject->setCreationDate(time());
-        $emptyObject->setKey(uniqid() . rand(10, 99));
-        $emptyObject->save();
+        $emptyObject->setKey($keyPrefix . uniqid() . rand(10, 99));
+        if ($save) {
+            $emptyObject->save();
+        }
         return $emptyObject;
     }
 
 
     public static function cleanUp($cleanAssets = true, $cleanDocuments = true, $cleanObjects = true) {
-        if ($cleanAssets) {
+        if ($cleanObjects) {
             try {
                 $objectRoot = Object_Abstract::getById(1);
                 if ($objectRoot and $objectRoot->hasChilds()) {
                     $childs = $objectRoot->getChilds();
+                    print("number of object childs: " . count($childs) . "\n");
+                    print("hide: " . Object_Abstract::getHideUnpublished() . "\n");
                     foreach ($childs as $child) {
                         $child->delete();
                     }
@@ -423,8 +430,8 @@ class Test_Tool
             } catch (Exception $e) {
             }
         }
-
-        if ($cleanDocuments) {
+#
+        if ($cleanAssets) {
             try {
                 $assetRoot = Asset::getById(1);
                 if ($assetRoot and $assetRoot->hasChilds()) {
@@ -437,9 +444,9 @@ class Test_Tool
             }
         }
 
-        if ($cleanObjects) {
+        if ($cleanDocuments) {
             try {
-                $documentRoot = Asset::getById(1);
+                $documentRoot = Document::getById(1);
                 if ($documentRoot and $documentRoot->hasChilds()) {
                     $childs = $documentRoot->getChilds();
                     foreach ($childs as $child) {
@@ -451,5 +458,12 @@ class Test_Tool
         }
     }
 
-
+    /** Returns the total number of objects.
+     * @return int object count.
+     */
+    public static function getObjectCount() {
+        $list = new Object_List();
+        $childs = $list->load();
+        return count($childs);
+    }
 }

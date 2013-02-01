@@ -11,6 +11,7 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
 
     public function setUp() {
         // every single rest test assumes a clean database
+        print("######################### cleanup\n");
         Test_Tool::cleanUp();
     }
 
@@ -40,4 +41,29 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
         $object = Test_RestClient::getInstance()->getObjectById($id);
         $this->assertNotNull($object, "expected new object");
     }
+
+
+    public function testCreateObjectConcrete() {
+        $object = Test_RestClient::getInstance()->getObjectById(2);
+        $this->assertNull($object, "assumed empty database!!!");
+
+        $unsavedObject = Test_Tool::createEmptyObject("", false);
+        // object not saved, object count must still be one
+        $this->assertEquals(1, Test_Tool::getObjectCount());
+
+        $time = time();
+
+        $result = Test_RestClient::getInstance()->createObjectConcrete($unsavedObject);
+        $this->assertTrue($result->success, "request not successful");
+        $this->assertEquals(2, Test_Tool::getObjectCount());
+
+        $id = $result->id;
+        $this->assertTrue($id > 1, "id must be greater than 1");
+
+        $objectDirect = Object_Abstract::getById($id);
+        $creationDate = $objectDirect->getCreationDate();
+        $this->assertTrue($creationDate >= $time, "wrong creation date");
+
+    }
+
 }
