@@ -8,8 +8,14 @@ class TestSuite_Rest_AllTests extends Test_SuiteBase
     public static function suite() {
         $suite = new TestSuite_Rest_AllTests('RestTests');
 
-        $suite->addTestSuite('TestSuite_Rest_AssetTest');
-        $suite->addTestSuite('TestSuite_Rest_ObjectTest');
+        $tests = array('TestSuite_Rest_AssetTest', 'TestSuite_Rest_ObjectTest');
+        $success = shuffle($tests);
+        print("Created the following execution order:\n");
+
+        foreach ($tests as $test) {
+            print("    - " . $test . "\n");
+            $suite->addTestSuite($test);
+        }
 
         return $suite;
     }
