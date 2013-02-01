@@ -1,0 +1,55 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: Michi
+ * Date: 11.11.2010
+ * Time: 10:35:07
+ */
+
+
+class TestSuite_Rest_AssetTest extends Test_Base {
+
+    public function setUp() {
+        // every single rest test assumes a clean database
+        Test_Tool::cleanUp();
+    }
+
+
+
+    public function testCreateAssetFile() {
+        $originalContent = file_get_contents(TESTS_PATH . "/resources/assets/images/image5.jpg");
+
+        $this->assertTrue(strlen($originalContent) > 0);
+
+        $this->assertEquals(1, Test_Tool::getAssetCount());
+
+
+        $asset = Test_Tool::createImageAsset("", $originalContent, false);
+        // object not saved, asset count must still be one
+        $this->assertEquals(1, Test_Tool::getAssetCount());
+
+        $time = time();
+
+        $result = Test_RestClient::getInstance()->createAsset($asset);
+        $this->assertTrue($result->success, "request not successful");
+        $this->assertEquals(2, Test_Tool::getAssetCount());
+
+        $id = $result->id;
+        $this->assertTrue($id > 1, "id must be greater than 1");
+
+        $assetDirect = Asset::getById($id);
+        $creationDate = $assetDirect->getCreationDate();
+        $this->assertTrue($creationDate >= $time, "wrong creation date");
+
+        // as the asset key is unique there must be exactly one object with that key
+        $list = Test_RestClient::getInstance()->getAssetList("filename = '" . $asset->getKey() . "'");
+        $this->assertEquals(1, count($list));
+
+        // now check if the file exists
+        $filename = PIMCORE_ASSET_DIRECTORY . "/" . $asset->getFilename();
+
+        $savedContent = file_get_contents($filename);
+
+        $this->assertEquals($originalContent, $savedContent, "asset was not saved correctly");
+    }
+}
