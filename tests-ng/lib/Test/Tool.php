@@ -17,8 +17,6 @@
 
 class Test_Tool
 {
-
-
     public static function getSoapClient()
     {
         ini_set("soap.wsdl_cache_enabled", "0");
@@ -29,12 +27,12 @@ class Test_Tool
             throw new Exception("invalid user id");
         }
 
-
-        $client = new Zend_Soap_Client($conf->webservice->wsdl . "&username=" . $user->getUsername() . "&apikey=" . $user->getPassword(), array(
-                                                                                                                                               "cache_wsdl" => false,
-                                                                                                                                               "soap_version" => SOAP_1_2,
-                                                                                                                                               "classmap" => Webservice_Tool::createClassMappings()
-                                                                                                                                          ));
+        $client = new Zend_Soap_Client($conf->webservice->wsdl . "&username=" . $user->getUsername() . "&apikey=" . $user->getPassword(),
+            array(
+                   "cache_wsdl" => false,
+                   "soap_version" => SOAP_1_2,
+                   "classmap" => Webservice_Tool::createClassMappings()
+              ));
 
         $client->setLocation($conf->webservice->serviceEndpoint . "?username=" . $user->getUsername() . "&apikey=" . $user->getPassword());
         return $client;
@@ -127,14 +125,12 @@ class Test_Tool
      * @param  Asset $asset2
      * @return bool
      */
-    public static function assetsAreEqual($asset1, $asset2, $ignoreCopyDifferences = false, $id = false)
-    {
+    public static function assetsAreEqual($asset1, $asset2, $ignoreCopyDifferences = false, $id = false) {
 
         if ($asset1 instanceof Asset and $asset2 instanceof Asset) {
 
             $a1Hash = self::createAssetComparisonString($asset1, $ignoreCopyDifferences);
             $a2Hash = self::createAssetComparisonString($asset2, $ignoreCopyDifferences);
-
 
             if(!$id) {
                 $id = uniqid();
@@ -154,8 +150,6 @@ class Test_Tool
             return $a1Hash === $a2Hash ? true : false;
 
         } else return false;
-
-
     }
 
     /**
@@ -343,11 +337,8 @@ class Test_Tool
             if ($object instanceof Object_Concrete) {
 
                 foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
-
                     $o[$key] = self::getComparisonDataForField($key, $value, $object);
-
                 }
-
 
                 $o["published"] = $object->isPublished();
             }
@@ -383,18 +374,6 @@ class Test_Tool
 
             $id = uniqid();
 
-         /*
-            $myFile = TESTS_PATH . "/output/object1-" . $id . ".txt";
-            $fh = fopen($myFile, 'w') or die("can't open file");
-            fwrite($fh, $o1Hash);
-            fclose($fh);
-
-            $myFile = TESTS_PATH . "/output/object2-" . $id . ".txt";
-            $fh = fopen($myFile, 'w') or die("can't open file");
-            fwrite($fh, $o2Hash);
-            fclose($fh);
-*/
-
             return $o1Hash === $o2Hash ? true : false;
 
         } else return false;
@@ -418,18 +397,20 @@ class Test_Tool
 
     }
 
+    public static function createEmptyObject() {
+        $emptyObject = new Object_Unittest();
+        $emptyObject->setOmitMandatoryCheck(true);
+        $emptyObject->setParentId(1);
+        $emptyObject->setUserOwner(1);
+        $emptyObject->setUserModification(1);
+        $emptyObject->setCreationDate(time());
+        $emptyObject->setKey(uniqid() . rand(10, 99));
+        $emptyObject->save();
+        return $emptyObject;
+    }
+
+
     public static function cleanUp($cleanAssets = true, $cleanDocuments = true, $cleanObjects = true) {
-
-//        try {
-//            $class = Object_Class::getByName("unittest");
-//            if ($class instanceof Object_Class) {
-//                $class->delete();
-//            }
-//        } catch (Exception $e) {
-//        }
-//
-//
-
         if ($cleanAssets) {
             try {
                 $objectRoot = Object_Abstract::getById(1);
@@ -468,21 +449,6 @@ class Test_Tool
             } catch (Exception $e) {
             }
         }
-
-//
-//        try{
-//            $userList = new User_List();
-//            $userList->setCondition("id > 1");
-//            $users = $userList->load();
-//            if(is_array($users) and count($users)>0){
-//                foreach($users as $user){
-//                    $user->delete();
-//                }
-//            }
-//        } catch (Exception $e) {
-//
-//        }
-
     }
 
 

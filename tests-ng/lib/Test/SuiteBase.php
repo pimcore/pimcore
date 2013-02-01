@@ -12,6 +12,29 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
 
     protected function setUp() {
 
+
+        if (!Object_Class::getByName("unittest")) {
+            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
+            $importData = $conf->toArray();
+
+            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+
+            $class = Object_Class::create();
+            $class->setName("unittest");
+            $class->setUserOwner(1);
+            $class->save();
+
+            $id = $class->getId();
+            $class = Object_Class::getById($id);
+
+            $class->setLayoutDefinitions($layout);
+
+            $class->setUserModification(1);
+            $class->setModificationDate(time());
+
+            $class->save();
+        }
+
     }
 
     protected function tearDown() {

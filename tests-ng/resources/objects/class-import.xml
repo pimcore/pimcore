@@ -245,7 +245,7 @@ Please drag all related objects into this area.</tooltip>
           <title>Slider</title>
           <tooltip>&lt;b&gt;Slider&lt;/b&gt;
 Please select a value</tooltip>
-          <mandatory>1</mandatory>
+          <mandatory></mandatory>
           <noteditable></noteditable>
           <index></index>
           <locked></locked>

@@ -10,7 +10,6 @@
 class TestSuite_Rest_ObjectTest extends Test_Base {
 
     public function setUp() {
-        print("cleanup\n");
         // every single rest test assumes a clean database
         Test_Tool::cleanUp();
     }
@@ -20,20 +19,25 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
      * @return void
      */
     public function testObjectList() {
-
-        print("running testObjectList\n");
+        $this->printTestName();
         $list = Test_RestClient::getInstance()->getObjectList();
         $this->assertEquals(1, count($list), "expcted 1 list item");
         $this->assertEquals("folder", $list[0]->getType(), "expected type to be folder");
     }
 
     public function testObjectGet() {
-        print("running testObjectGet\n");
+        $this->printTestName();
         $object = Test_RestClient::getInstance()->getObjectById(1);
         $this->assertEquals("folder", $object->getType(), "expected type to be folder");
         $this->assertEquals(1, $object->getId(), "wrong id");
 
+        $object = Test_RestClient::getInstance()->getObjectById(2);
+        $this->assertNull($object, "object not created yet");
+
+        $emptyObject = Test_Tool::createEmptyObject();
+        $id = $emptyObject->getId();
+
+        $object = Test_RestClient::getInstance()->getObjectById($id);
+        $this->assertNotNull($object, "expected new object");
     }
-
-
 }
