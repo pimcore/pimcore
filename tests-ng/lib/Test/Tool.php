@@ -419,6 +419,30 @@ class Test_Tool
         return $emptyObject;
     }
 
+    /**
+     * @param string $keyPrefix
+     * @param bool $save
+     * @return Asset_Image
+     */
+    public static function createImageAsset($keyPrefix = "", $data, $save = true) {
+        if ($keyPrefix == null) {
+            $keyPrefix = "";
+        }
+        $asset = new Asset_Image();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setCreationDate(time());
+        $asset->setData($data);
+        $asset->setType("image");
+        $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . ".jpg");
+        if ($save) {
+            $asset->save();
+        }
+        return $asset;
+    }
+
+
 
     public static function cleanUp($cleanAssets = true, $cleanDocuments = true, $cleanObjects = true) {
         if ($cleanObjects) {
@@ -470,4 +494,23 @@ class Test_Tool
         $childs = $list->load();
         return count($childs);
     }
+
+    /** Returns the total number of assets.
+     * @return int object count.
+     */
+    public static function getAssetCount() {
+        $list = new Asset_List();
+        $childs = $list->load();
+        return count($childs);
+    }
+
+    /** Returns the total number of documents.
+     * @return int object count.
+     */
+    public static function getDocoumentCount() {
+        $list = new Document_List();
+        $childs = $list->load();
+        return count($childs);
+    }
+
 }

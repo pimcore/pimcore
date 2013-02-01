@@ -187,6 +187,28 @@ class Test_RestClient {
         return $result;
     }
 
+    public function getAssetList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true) {
+        $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy);
+
+        $response = $this->doRequest(self::$baseUrl .  "asset-list/?apikey=" . $this->apikey . $params, "GET");
+
+        $result = array();
+        foreach ($response as $item) {
+            $wsDocument = self::fillWebserviceData("Webservice_Data_Asset_List_Item", $item);
+            if (!$decode) {
+                $result[] = $wsDocument;
+            } else {
+                $type = $wsDocument->type;
+                $type = "Asset_" . ucfirst($type);
+                $asset = new $type();
+                $wsDocument->reverseMap($asset);
+                $result[] = $asset;
+            }
+        }
+        return $result;
+    }
+
+
      public function getObjectById($id, $decode = true) {
          $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . $this->apikey, "GET");
          $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
@@ -218,6 +240,37 @@ class Test_RestClient {
 
     }
 
+
+    public function getAssetById($id, $decode = true) {
+        $response = $this->doRequest(self::$baseUrl .  "asset/id/" . $id . "?apikey=" . $this->apikey, "GET");
+
+        var_dump("response " . $response);
+        if ($response["type"] == "folder") {
+            $wsDocument = self::fillWebserviceData("Webservice_Data_Asset_Folder_In", $response);
+            if (!$decode) {
+                return $wsDocument;
+            }
+            $asset = new Asset_Folder();
+            $wsDocument->reverseMap($asset);
+            return $asset;
+        } else {
+            $wsDocument = self::fillWebserviceData("Webservice_Data_Asset_File_In", $response);
+            if (!$decode) {
+                return $wsDocument;
+            }
+
+            $type = $wsDocument->type;
+            if (!empty($type)) {
+                $type = "Asset_" . ucfirst($type);
+                $asset = new $type();
+                $wsDocument->reverseMap($asset);
+                return $asset;
+            }
+        }
+    }
+
+
+
     /** Creates a new object.
      * @param $object
      * @return mixed json encoded success value and id
@@ -228,5 +281,23 @@ class Test_RestClient {
         $response = $this->doRequest(self::$baseUrl .  "object/?apikey=" . $this->apikey, "PUT", $encodedData);
         return $response;
     }
+
+    /** Creates a new asset.
+     * @param $object
+     * @return mixed json encoded success value and id
+     */
+    public function createAsset($asset) {
+        if ($asset->getType() == "folder") {
+            $documentType = "Webservice_Data_Asset_Folder_Out";
+        } else {
+            $documentType = "Webservice_Data_Asset_File_Out";
+        }
+        $wsDocument = Webservice_Data_Mapper::map($asset, $documentType, "out");
+        $encodedData = json_encode($wsDocument);
+        $response = $this->doRequest(self::$baseUrl .  "asset/?apikey=" . $this->apikey, "PUT", $encodedData);
+        var_dump($response);
+        return $response;
+    }
+
 
 }

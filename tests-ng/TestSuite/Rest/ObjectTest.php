@@ -43,8 +43,7 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
 
 
     public function testCreateObjectConcrete() {
-        $object = Test_RestClient::getInstance()->getObjectById(2);
-        $this->assertNull($object, "assumed empty database!!!");
+        $this->assertEquals(1, Test_Tool::getObjectCount());
 
         $unsavedObject = Test_Tool::createEmptyObject("", false);
         // object not saved, object count must still be one
