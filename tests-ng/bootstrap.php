@@ -106,6 +106,9 @@ $autoloader->registerNamespace('TestSuite');
  * We can start running our tests against the phpunit_pimcore instance
  */
 
+Test_RestClient::setBaseUrl("http://" . $testConfig["rest"]["host"] . $testConfig["rest"]["base"]);
+Test_RestClient::setHost($testConfig["rest"]["host"]);
+Test_RestClient::enableTestMode();
 
-print("done\n");
+print("bootstrap    done\n");
 

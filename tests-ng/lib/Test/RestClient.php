@@ -8,22 +8,54 @@
  */
 class Test_RestClient {
 
+    const loggingEnabled = true;
+
     static private $instance = null;
 
-    static private $sendTestHeader = true;
+    /**
+     * @var bool
+     */
+    static private $testMode = false;
+
+    static private $host;
+
+    static private $baseUrl;
+
+
+    /** Set the host name.
+     * @param $host e.g. pimcore.jenkins.elements.at
+     */
+    public static function setHost($host) {
+        self::$host = $host;
+    }
+
+    /**
+     * Set the base url
+     * @param $base e.g. http://pimcore.jenkins.elements.at/webservice/rest/
+     */
+    public static function setBaseUrl($base) {
+        self::$baseUrl = $base;
+    }
+
+    /**
+     * Enables the test mode. X-pimcore-unit-test-request=true header will be sent.
+     */
+    public static function enableTestMode() {
+        self::$testMode = true;
+    }
 
     public function __construct() {
-        $conf = Zend_Registry::get("pimcore_config_test");
-
-        $this->baseurl = "http://" . $conf->rest->host . $conf->rest->base;
+        if (!self::$host || !self::$baseUrl) {
+            throw new Exception("configuration missing");
+        }
 
         $this->client = Pimcore_Tool::getHttpClient();
-        if (self::$sendTestHeader) {
+        if (self::$testMode) {
             $this->client->setHeaders("X-pimcore-unit-test-request", "true");
         }
-        $this->client->setHeaders("Host", $conf->rest->host);
-        $cookie = new Zend_Http_Cookie("XDEBUG_SESSION", "JOSEF_PHPSTORM", $conf->rest->host);
-        $this->client->setCookie($cookie);
+        $this->client->setHeaders("Host", self::$host);
+
+        //TODO make this configurable, maybe by extracting the code and let the user provide the api key
 
         $username = "rest";
         $password = $username;
@@ -73,45 +105,72 @@ class Test_RestClient {
         return $wsData;
     }
 
-    public static function fillWebserviceData($class, $data) {
+    private static function fillWebserviceData($class, $data) {
         $wsData = new $class();
         return self::map($wsData, $data);
     }
 
 
-    public function getObjectList($limit = 10) {
+    private function doRequest($uri, $method = "GET") {
         $client = $this->client;
-        $client->setMethod("GET");
-        $uri = $this->baseurl .  "object-list/?apikey=" . $this->apikey . "&limit=" . $limit;
+        $client->setMethod($method);
+        if (self::loggingEnabled) {
+            print($uri . "\n");
+        }
         $client->setUri($uri);
         $result = $client->request();
         $body = $result->getBody();
         $body = json_decode($body);
+        return $body;
+    }
+
+   public function getObjectList($limit = 10, $decode = true) {
+         $response = $this->doRequest(self::$baseUrl .  "object-list/?apikey=" . $this->apikey . "&limit=" . $limit, "GET");
+
         $result = array();
-        foreach ($body as $item) {
+        foreach ($response as $item) {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Object_List_Item", $item);
-            $object = new Object_Abstract();
-            $wsDocument->reverseMap($object);
-            $result[] = $object;
+            if (!$decode) {
+                $result[] = $wsDocument;
+            } else {
+                $object = new Object_Abstract();
+                $wsDocument->reverseMap($object);
+                $result[] = $object;
+            }
         }
         return $result;
     }
 
-     public function getObjectById($id) {
-         $client = $this->client;
-         $client->setMethod("GET");
-         $uri = $this->baseurl .  "object/id/" . $id . "?apikey=" . $this->apikey;
-         $client->setUri($uri);
-         $result = $client->request();
-         $body = json_decode($result->getBody());
+     public function getObjectById($id, $decode = true) {
+         $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . $this->apikey, "GET");
 
-         $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $body);
+//         var_dump($response);
+         $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
+
+         if (!$decode) {
+             return $wsDocument;
+         }
 
          if ($wsDocument->type == "folder") {
              $object = new Object_Folder();
              $wsDocument->reverseMap($object);
              return $object;
-        }
+        } else if ($wsDocument->type == "object") {
+             $classname = "Object_" . ucfirst($wsDocument->className);
+             if (Pimcore_Tool::classExists($classname)) {
+                 $object = new $classname();
+
+                 if ($object instanceof Object_Concrete) {
+                     $wsDocument->reverseMap($object);
+                     return $object;
+                 } else {
+                     throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
+                 }
+             } else {
+                 throw new Exception("Unable to deocode object, class [" . $classname . "] does not exist");
+             }
+
+         }
 
     }
 

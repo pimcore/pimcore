@@ -8,11 +8,24 @@
  */
 class Test_Base extends PHPUnit_Framework_TestCase {
 
+    /** If true (default) the base will make sure that the unittest class exists
+     * @var bool
+     */
     public $needsTestClass = true;
+
+
+    public function printTestName() {
+        try {
+            throw new Exception();
+        } catch (Exception $e) {
+            $trace = $e->getTrace();
+            print("### running ...  " . $trace[1]["class"] . "::" . $trace[1]["function"] . " ... good luck!\n");
+        }
+    }
 
     public function setUp() {
         if ($this->needsTestClass) {
-            // either unit test class already exists or it must be created
+            // either unittest class already exists or it must be created
             $class = Object_Class::getByName("unittest");
             if (!$class) {
 
@@ -27,7 +40,6 @@ class Test_Base extends PHPUnit_Framework_TestCase {
                 $class->save();
 
                 $id = $class->getId();
-                // $this->assertTrue($id > 0);
 
                 $class = Object_Class::getById($id);
 
