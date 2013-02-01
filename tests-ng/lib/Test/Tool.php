@@ -397,6 +397,11 @@ class Test_Tool
 
     }
 
+    /**
+     * @param string $keyPrefix
+     * @param bool $save
+     * @return Object_Unittest
+     */
     public static function createEmptyObject($keyPrefix = "", $save = true) {
         if ($keyPrefix == null) {
             $keyPrefix = "";
@@ -421,8 +426,7 @@ class Test_Tool
                 $objectRoot = Object_Abstract::getById(1);
                 if ($objectRoot and $objectRoot->hasChilds()) {
                     $childs = $objectRoot->getChilds();
-                    print("number of object childs: " . count($childs) . "\n");
-                    print("hide: " . Object_Abstract::getHideUnpublished() . "\n");
+
                     foreach ($childs as $child) {
                         $child->delete();
                     }
