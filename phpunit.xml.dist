@@ -34,6 +34,9 @@
                 <file>src/framework/autoload.php</file>
             </exclude>
         </whitelist>
+        <blacklist>
+            <directory suffix=".php">pimcore/lib/Zend</directory>
+        </blacklist>
     </filter>
 
     <selenium>
