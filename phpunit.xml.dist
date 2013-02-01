@@ -25,14 +25,7 @@
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
-            <exclude>
-                <directory>src/application/testing</directory>
-                <directory>src/framework/testing</directory>
-                <file>src/application/autoload.php</file>
-                <file>src/application/bootstrap.php</file>
-                <file>src/framework/autoload.php</file>
-            </exclude>
+            <directory suffix=".php">.</directory>
         </whitelist>
         <blacklist>
             <directory suffix=".php">pimcore/lib/Zend</directory>
