@@ -299,7 +299,7 @@ CREATE TABLE `keyvalue_keys` (
   FOREIGN KEY (`group`) REFERENCES keyvalue_groups(`id`) ON DELETE SET NULL
 ) DEFAULT CHARSET=utf8;;
 
-
+DROP TABLE IF EXISTS `locks`;
 CREATE TABLE `locks` (
   `id` varchar(150) NOT NULL DEFAULT '',
   `date` int(11) unsigned DEFAULT NULL,
