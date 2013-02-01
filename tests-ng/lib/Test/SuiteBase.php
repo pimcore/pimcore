@@ -11,7 +11,8 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
 
 
     protected function setUp() {
-
+        // turn off frontend mode by default
+        Object_Abstract::setHideUnpublished(false);
 
         if (!Object_Class::getByName("unittest")) {
             $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
