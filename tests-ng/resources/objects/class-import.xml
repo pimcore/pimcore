@@ -1,20 +1,22 @@
 <?xml version="1.0"?>
 <zend-config xmlns:zf="http://framework.zend.com/xml/zend-config-xml/1.0/">
+  <description></description>
   <parentClass></parentClass>
   <allowInherit></allowInherit>
   <allowVariants></allowVariants>
   <layoutDefinitions>
     <fieldtype>panel</fieldtype>
     <labelWidth>100</labelWidth>
+    <layout></layout>
     <name>pimcore_root</name>
     <type></type>
     <region></region>
-    <layout></layout>
     <title></title>
     <width></width>
     <height></height>
-    <border></border>
     <collapsible></collapsible>
+    <collapsed></collapsed>
+    <bodyStyle></bodyStyle>
     <datatype>layout</datatype>
     <permissions></permissions>
     <childs>
@@ -22,31 +24,33 @@
       <name>Layout</name>
       <type></type>
       <region></region>
-      <layout></layout>
       <title></title>
       <width></width>
       <height></height>
-      <border></border>
       <collapsible></collapsible>
+      <collapsed></collapsed>
+      <bodyStyle></bodyStyle>
       <datatype>layout</datatype>
       <permissions></permissions>
       <childs>
         <fieldtype>panel</fieldtype>
         <labelWidth>100</labelWidth>
+        <layout></layout>
         <name>MyLayout</name>
         <type></type>
         <region></region>
-        <layout></layout>
         <title>MyLayout</title>
         <width></width>
         <height></height>
-        <border></border>
         <collapsible></collapsible>
+        <collapsed></collapsed>
+        <bodyStyle></bodyStyle>
         <datatype>layout</datatype>
         <permissions></permissions>
         <childs>
           <fieldtype>href</fieldtype>
           <width></width>
+          <assetUploadPath></assetUploadPath>
           <relationType>1</relationType>
           <queryColumnType>
             <id>int(11)</id>
@@ -59,7 +63,7 @@
           <documentsAllowed>1</documentsAllowed>
           <documentTypes></documentTypes>
           <lazyLoading>1</lazyLoading>
-          <classes></classes>
+          <classes/>
           <name>lazyHref</name>
           <title>Lazy Href</title>
           <tooltip></tooltip>
@@ -82,6 +86,8 @@
           <fieldtype>multihref</fieldtype>
           <width></width>
           <height></height>
+          <maxItems></maxItems>
+          <assetUploadPath></assetUploadPath>
           <queryColumnType>text</queryColumnType>
           <phpdocType>array</phpdocType>
           <relationType>1</relationType>
@@ -91,7 +97,7 @@
           <documentsAllowed>1</documentsAllowed>
           <documentTypes></documentTypes>
           <lazyLoading>1</lazyLoading>
-          <classes></classes>
+          <classes/>
           <name>lazyMultihref</name>
           <title>Lazy Multihref</title>
           <tooltip></tooltip>
@@ -111,11 +117,12 @@
           <fieldtype>objects</fieldtype>
           <width></width>
           <height></height>
+          <maxItems></maxItems>
           <queryColumnType>text</queryColumnType>
           <phpdocType>array</phpdocType>
           <relationType>1</relationType>
           <lazyLoading>1</lazyLoading>
-          <classes></classes>
+          <classes/>
           <name>lazyObjects</name>
           <title>lazy Objects</title>
           <tooltip></tooltip>
@@ -134,6 +141,7 @@
         <childs>
           <fieldtype>href</fieldtype>
           <width></width>
+          <assetUploadPath></assetUploadPath>
           <relationType>1</relationType>
           <queryColumnType>
             <id>int(11)</id>
@@ -150,7 +158,7 @@
             <documentTypes>page</documentTypes>
           </documentTypes>
           <lazyLoading></lazyLoading>
-          <classes></classes>
+          <classes/>
           <name>href</name>
           <title>Href</title>
           <tooltip>&lt;b&gt;Href&lt;/b&gt;
@@ -174,6 +182,8 @@ Please select a value</tooltip>
           <fieldtype>multihref</fieldtype>
           <width>1200</width>
           <height></height>
+          <maxItems></maxItems>
+          <assetUploadPath></assetUploadPath>
           <queryColumnType>text</queryColumnType>
           <phpdocType>array</phpdocType>
           <relationType>1</relationType>
@@ -188,7 +198,7 @@ Please select a value</tooltip>
             <documentTypes>snippet</documentTypes>
           </documentTypes>
           <lazyLoading></lazyLoading>
-          <classes></classes>
+          <classes/>
           <name>multihref</name>
           <title>Multi Href</title>
           <tooltip></tooltip>
@@ -208,11 +218,12 @@ Please select a value</tooltip>
           <fieldtype>objects</fieldtype>
           <width>1200</width>
           <height></height>
+          <maxItems></maxItems>
           <queryColumnType>text</queryColumnType>
           <phpdocType>array</phpdocType>
           <relationType>1</relationType>
           <lazyLoading></lazyLoading>
-          <classes></classes>
+          <classes/>
           <name>objects</name>
           <title>Objects</title>
           <tooltip>&lt;b&gt;Relations to other objects&lt;/b&gt;
@@ -364,6 +375,8 @@ Please select a value</tooltip>
           <queryColumnType>int(11)</queryColumnType>
           <columnType>int(11)</columnType>
           <phpdocType>Zend_Date</phpdocType>
+          <defaultValue></defaultValue>
+          <useCurrentDate></useCurrentDate>
           <name>datetime</name>
           <title>DateTime</title>
           <tooltip>&lt;b&gt;Datetime&lt;/b&gt;
@@ -385,6 +398,8 @@ Please select a value</tooltip>
           <queryColumnType>int(11)</queryColumnType>
           <columnType>int(11)</columnType>
           <phpdocType>Pimcore_Date</phpdocType>
+          <defaultValue></defaultValue>
+          <useCurrentDate></useCurrentDate>
           <name>date</name>
           <title>Date</title>
           <tooltip>&lt;b&gt;Date&lt;/b&gt;
@@ -2707,28 +2722,24 @@ Please select a value</tooltip>
           <fieldtype>language</fieldtype>
           <onlySystemLanguages>1</onlySystemLanguages>
           <options>
-            <key>Arabic</key>
-            <value>ar</value>
-          </options>
-          <options>
-            <key>Dutch</key>
-            <value>nl</value>
+            <key>Croatian</key>
+            <value>hr</value>
           </options>
           <options>
             <key>English</key>
             <value>en</value>
           </options>
           <options>
-            <key>Faroese</key>
-            <value>fo</value>
-          </options>
-          <options>
-            <key>French</key>
-            <value>fr</value>
-          </options>
-          <options>
             <key>German</key>
             <value>de</value>
+          </options>
+          <options>
+            <key>Hungarian</key>
+            <value>hu</value>
+          </options>
+          <options>
+            <key>Hungarian (Hungary)</key>
+            <value>hu_HU</value>
           </options>
           <width></width>
           <queryColumnType>varchar(255)</queryColumnType>
@@ -2754,44 +2765,152 @@ Please select a value</tooltip>
           <fieldtype>languagemultiselect</fieldtype>
           <onlySystemLanguages></onlySystemLanguages>
           <options>
-            <key>Abkhazian</key>
-            <value>ab</value>
-          </options>
-          <options>
             <key>Afar</key>
             <value>aa</value>
+          </options>
+          <options>
+            <key>Afar (Djibouti)</key>
+            <value>aa_DJ</value>
+          </options>
+          <options>
+            <key>Afar (Eritrea)</key>
+            <value>aa_ER</value>
+          </options>
+          <options>
+            <key>Afar (Ethiopia)</key>
+            <value>aa_ET</value>
           </options>
           <options>
             <key>Afrikaans</key>
             <value>af</value>
           </options>
           <options>
+            <key>Afrikaans (Namibia)</key>
+            <value>af_NA</value>
+          </options>
+          <options>
+            <key>Afrikaans (South Africa)</key>
+            <value>af_ZA</value>
+          </options>
+          <options>
             <key>Akan</key>
             <value>ak</value>
+          </options>
+          <options>
+            <key>Akan (Ghana)</key>
+            <value>ak_GH</value>
           </options>
           <options>
             <key>Albanian</key>
             <value>sq</value>
           </options>
           <options>
+            <key>Albanian (Albania)</key>
+            <value>sq_AL</value>
+          </options>
+          <options>
             <key>Amharic</key>
             <value>am</value>
+          </options>
+          <options>
+            <key>Amharic (Ethiopia)</key>
+            <value>am_ET</value>
           </options>
           <options>
             <key>Arabic</key>
             <value>ar</value>
           </options>
           <options>
-            <key>Aragonese</key>
-            <value>an</value>
+            <key>Arabic (Algeria)</key>
+            <value>ar_DZ</value>
+          </options>
+          <options>
+            <key>Arabic (Bahrain)</key>
+            <value>ar_BH</value>
+          </options>
+          <options>
+            <key>Arabic (Egypt)</key>
+            <value>ar_EG</value>
+          </options>
+          <options>
+            <key>Arabic (Iraq)</key>
+            <value>ar_IQ</value>
+          </options>
+          <options>
+            <key>Arabic (Jordan)</key>
+            <value>ar_JO</value>
+          </options>
+          <options>
+            <key>Arabic (Kuwait)</key>
+            <value>ar_KW</value>
+          </options>
+          <options>
+            <key>Arabic (Lebanon)</key>
+            <value>ar_LB</value>
+          </options>
+          <options>
+            <key>Arabic (Libya)</key>
+            <value>ar_LY</value>
+          </options>
+          <options>
+            <key>Arabic (Morocco)</key>
+            <value>ar_MA</value>
+          </options>
+          <options>
+            <key>Arabic (Oman)</key>
+            <value>ar_OM</value>
+          </options>
+          <options>
+            <key>Arabic (Qatar)</key>
+            <value>ar_QA</value>
+          </options>
+          <options>
+            <key>Arabic (Saudi Arabia)</key>
+            <value>ar_SA</value>
+          </options>
+          <options>
+            <key>Arabic (Sudan)</key>
+            <value>ar_SD</value>
+          </options>
+          <options>
+            <key>Arabic (Syria)</key>
+            <value>ar_SY</value>
+          </options>
+          <options>
+            <key>Arabic (Tunisia)</key>
+            <value>ar_TN</value>
+          </options>
+          <options>
+            <key>Arabic (United Arab Emirates)</key>
+            <value>ar_AE</value>
+          </options>
+          <options>
+            <key>Arabic (Yemen)</key>
+            <value>ar_YE</value>
           </options>
           <options>
             <key>Armenian</key>
             <value>hy</value>
           </options>
           <options>
+            <key>Armenian (Armenia)</key>
+            <value>hy_AM</value>
+          </options>
+          <options>
             <key>Assamese</key>
             <value>as</value>
+          </options>
+          <options>
+            <key>Assamese (India)</key>
+            <value>as_IN</value>
+          </options>
+          <options>
+            <key>Atsam</key>
+            <value>cch</value>
+          </options>
+          <options>
+            <key>Atsam (Nigeria)</key>
+            <value>cch_NG</value>
           </options>
           <options>
             <key>Australian English</key>
@@ -2802,60 +2921,60 @@ Please select a value</tooltip>
             <value>de_AT</value>
           </options>
           <options>
-            <key>Avaric</key>
-            <value>av</value>
-          </options>
-          <options>
-            <key>Avestan</key>
-            <value>ae</value>
-          </options>
-          <options>
-            <key>Aymara</key>
-            <value>ay</value>
-          </options>
-          <options>
             <key>Azerbaijani</key>
             <value>az</value>
           </options>
           <options>
-            <key>Bambara</key>
-            <value>bm</value>
-          </options>
-          <options>
-            <key>Bashkir</key>
-            <value>ba</value>
+            <key>Azerbaijani (Azerbaijan)</key>
+            <value>az_AZ</value>
           </options>
           <options>
             <key>Basque</key>
             <value>eu</value>
           </options>
           <options>
+            <key>Basque (Spain)</key>
+            <value>eu_ES</value>
+          </options>
+          <options>
             <key>Belarusian</key>
             <value>be</value>
+          </options>
+          <options>
+            <key>Belarusian (Belarus)</key>
+            <value>be_BY</value>
           </options>
           <options>
             <key>Bengali</key>
             <value>bn</value>
           </options>
           <options>
-            <key>Bihari</key>
-            <value>bh</value>
+            <key>Bengali (Bangladesh)</key>
+            <value>bn_BD</value>
           </options>
           <options>
-            <key>Bislama</key>
-            <value>bi</value>
+            <key>Bengali (India)</key>
+            <value>bn_IN</value>
+          </options>
+          <options>
+            <key>Blin</key>
+            <value>byn</value>
+          </options>
+          <options>
+            <key>Blin (Eritrea)</key>
+            <value>byn_ER</value>
           </options>
           <options>
             <key>Bosnian</key>
             <value>bs</value>
           </options>
           <options>
-            <key>Brazilian Portuguese</key>
-            <value>pt_BR</value>
+            <key>Bosnian (Bosnia and Herzegovina)</key>
+            <value>bs_BA</value>
           </options>
           <options>
-            <key>Breton</key>
-            <value>br</value>
+            <key>Brazilian Portuguese</key>
+            <value>pt_BR</value>
           </options>
           <options>
             <key>British English</key>
@@ -2866,8 +2985,16 @@ Please select a value</tooltip>
             <value>bg</value>
           </options>
           <options>
+            <key>Bulgarian (Bulgaria)</key>
+            <value>bg_BG</value>
+          </options>
+          <options>
             <key>Burmese</key>
             <value>my</value>
+          </options>
+          <options>
+            <key>Burmese (Myanmar [Burma])</key>
+            <value>my_MM</value>
           </options>
           <options>
             <key>Canadian English</key>
@@ -2882,64 +3009,184 @@ Please select a value</tooltip>
             <value>ca</value>
           </options>
           <options>
-            <key>Chamorro</key>
-            <value>ch</value>
-          </options>
-          <options>
-            <key>Chechen</key>
-            <value>ce</value>
+            <key>Catalan (Spain)</key>
+            <value>ca_ES</value>
           </options>
           <options>
             <key>Chinese</key>
             <value>zh</value>
           </options>
           <options>
-            <key>Church Slavic</key>
-            <value>cu</value>
+            <key>Chinese (China)</key>
+            <value>zh_CN</value>
           </options>
           <options>
-            <key>Chuvash</key>
-            <value>cv</value>
+            <key>Chinese (Hong Kong SAR China)</key>
+            <value>zh_HK</value>
+          </options>
+          <options>
+            <key>Chinese (Macau SAR China)</key>
+            <value>zh_MO</value>
+          </options>
+          <options>
+            <key>Chinese (Singapore)</key>
+            <value>zh_SG</value>
+          </options>
+          <options>
+            <key>Chinese (Taiwan)</key>
+            <value>zh_TW</value>
+          </options>
+          <options>
+            <key>Coptic</key>
+            <value>cop</value>
           </options>
           <options>
             <key>Cornish</key>
             <value>kw</value>
           </options>
           <options>
-            <key>Corsican</key>
-            <value>co</value>
-          </options>
-          <options>
-            <key>Cree</key>
-            <value>cr</value>
+            <key>Cornish (United Kingdom)</key>
+            <value>kw_GB</value>
           </options>
           <options>
             <key>Croatian</key>
             <value>hr</value>
           </options>
           <options>
+            <key>Croatian (Croatia)</key>
+            <value>hr_HR</value>
+          </options>
+          <options>
             <key>Czech</key>
             <value>cs</value>
+          </options>
+          <options>
+            <key>Czech (Czech Republic)</key>
+            <value>cs_CZ</value>
           </options>
           <options>
             <key>Danish</key>
             <value>da</value>
           </options>
           <options>
+            <key>Danish (Denmark)</key>
+            <value>da_DK</value>
+          </options>
+          <options>
             <key>Divehi</key>
             <value>dv</value>
+          </options>
+          <options>
+            <key>Divehi (Maldives)</key>
+            <value>dv_MV</value>
           </options>
           <options>
             <key>Dutch</key>
             <value>nl</value>
           </options>
           <options>
+            <key>Dutch (Netherlands)</key>
+            <value>nl_NL</value>
+          </options>
+          <options>
             <key>Dzongkha</key>
             <value>dz</value>
           </options>
           <options>
+            <key>Dzongkha (Bhutan)</key>
+            <value>dz_BT</value>
+          </options>
+          <options>
             <key>English</key>
             <value>en</value>
+          </options>
+          <options>
+            <key>English (American Samoa)</key>
+            <value>en_AS</value>
+          </options>
+          <options>
+            <key>English (Belgium)</key>
+            <value>en_BE</value>
+          </options>
+          <options>
+            <key>English (Belize)</key>
+            <value>en_BZ</value>
+          </options>
+          <options>
+            <key>English (Botswana)</key>
+            <value>en_BW</value>
+          </options>
+          <options>
+            <key>English (Guam)</key>
+            <value>en_GU</value>
+          </options>
+          <options>
+            <key>English (Hong Kong SAR China)</key>
+            <value>en_HK</value>
+          </options>
+          <options>
+            <key>English (India)</key>
+            <value>en_IN</value>
+          </options>
+          <options>
+            <key>English (Ireland)</key>
+            <value>en_IE</value>
+          </options>
+          <options>
+            <key>English (Jamaica)</key>
+            <value>en_JM</value>
+          </options>
+          <options>
+            <key>English (Malta)</key>
+            <value>en_MT</value>
+          </options>
+          <options>
+            <key>English (Marshall Islands)</key>
+            <value>en_MH</value>
+          </options>
+          <options>
+            <key>English (Namibia)</key>
+            <value>en_NA</value>
+          </options>
+          <options>
+            <key>English (New Zealand)</key>
+            <value>en_NZ</value>
+          </options>
+          <options>
+            <key>English (Northern Mariana Islands)</key>
+            <value>en_MP</value>
+          </options>
+          <options>
+            <key>English (Pakistan)</key>
+            <value>en_PK</value>
+          </options>
+          <options>
+            <key>English (Philippines)</key>
+            <value>en_PH</value>
+          </options>
+          <options>
+            <key>English (Singapore)</key>
+            <value>en_SG</value>
+          </options>
+          <options>
+            <key>English (South Africa)</key>
+            <value>en_ZA</value>
+          </options>
+          <options>
+            <key>English (Trinidad and Tobago)</key>
+            <value>en_TT</value>
+          </options>
+          <options>
+            <key>English (U.S. Minor Outlying Islands)</key>
+            <value>en_UM</value>
+          </options>
+          <options>
+            <key>English (U.S. Virgin Islands)</key>
+            <value>en_VI</value>
+          </options>
+          <options>
+            <key>English (Zimbabwe)</key>
+            <value>en_ZW</value>
           </options>
           <options>
             <key>Esperanto</key>
@@ -2950,20 +3197,44 @@ Please select a value</tooltip>
             <value>et</value>
           </options>
           <options>
+            <key>Estonian (Estonia)</key>
+            <value>et_EE</value>
+          </options>
+          <options>
             <key>Ewe</key>
             <value>ee</value>
+          </options>
+          <options>
+            <key>Ewe (Ghana)</key>
+            <value>ee_GH</value>
+          </options>
+          <options>
+            <key>Ewe (Togo)</key>
+            <value>ee_TG</value>
           </options>
           <options>
             <key>Faroese</key>
             <value>fo</value>
           </options>
           <options>
-            <key>Fijian</key>
-            <value>fj</value>
+            <key>Faroese (Faroe Islands)</key>
+            <value>fo_FO</value>
+          </options>
+          <options>
+            <key>Filipino</key>
+            <value>fil</value>
+          </options>
+          <options>
+            <key>Filipino (Philippines)</key>
+            <value>fil_PH</value>
           </options>
           <options>
             <key>Finnish</key>
             <value>fi</value>
+          </options>
+          <options>
+            <key>Finnish (Finland)</key>
+            <value>fi_FI</value>
           </options>
           <options>
             <key>Flemish</key>
@@ -2974,64 +3245,160 @@ Please select a value</tooltip>
             <value>fr</value>
           </options>
           <options>
-            <key>Fulah</key>
-            <value>ff</value>
+            <key>French (Belgium)</key>
+            <value>fr_BE</value>
+          </options>
+          <options>
+            <key>French (France)</key>
+            <value>fr_FR</value>
+          </options>
+          <options>
+            <key>French (Luxembourg)</key>
+            <value>fr_LU</value>
+          </options>
+          <options>
+            <key>French (Monaco)</key>
+            <value>fr_MC</value>
+          </options>
+          <options>
+            <key>French (Senegal)</key>
+            <value>fr_SN</value>
+          </options>
+          <options>
+            <key>Friulian</key>
+            <value>fur</value>
+          </options>
+          <options>
+            <key>Friulian (Italy)</key>
+            <value>fur_IT</value>
+          </options>
+          <options>
+            <key>Ga</key>
+            <value>gaa</value>
+          </options>
+          <options>
+            <key>Ga (Ghana)</key>
+            <value>gaa_GH</value>
           </options>
           <options>
             <key>Galician</key>
             <value>gl</value>
           </options>
           <options>
-            <key>Ganda</key>
-            <value>lg</value>
+            <key>Galician (Spain)</key>
+            <value>gl_ES</value>
+          </options>
+          <options>
+            <key>Geez</key>
+            <value>gez</value>
+          </options>
+          <options>
+            <key>Geez (Eritrea)</key>
+            <value>gez_ER</value>
+          </options>
+          <options>
+            <key>Geez (Ethiopia)</key>
+            <value>gez_ET</value>
           </options>
           <options>
             <key>Georgian</key>
             <value>ka</value>
           </options>
           <options>
+            <key>Georgian (Georgia)</key>
+            <value>ka_GE</value>
+          </options>
+          <options>
             <key>German</key>
             <value>de</value>
+          </options>
+          <options>
+            <key>German (Belgium)</key>
+            <value>de_BE</value>
+          </options>
+          <options>
+            <key>German (Germany)</key>
+            <value>de_DE</value>
+          </options>
+          <options>
+            <key>German (Liechtenstein)</key>
+            <value>de_LI</value>
+          </options>
+          <options>
+            <key>German (Luxembourg)</key>
+            <value>de_LU</value>
           </options>
           <options>
             <key>Greek</key>
             <value>el</value>
           </options>
           <options>
-            <key>Guarani</key>
-            <value>gn</value>
+            <key>Greek (Cyprus)</key>
+            <value>el_CY</value>
+          </options>
+          <options>
+            <key>Greek (Greece)</key>
+            <value>el_GR</value>
           </options>
           <options>
             <key>Gujarati</key>
             <value>gu</value>
           </options>
           <options>
-            <key>Haitian</key>
-            <value>ht</value>
+            <key>Gujarati (India)</key>
+            <value>gu_IN</value>
           </options>
           <options>
             <key>Hausa</key>
             <value>ha</value>
           </options>
           <options>
+            <key>Hausa (Ghana)</key>
+            <value>ha_GH</value>
+          </options>
+          <options>
+            <key>Hausa (Niger)</key>
+            <value>ha_NE</value>
+          </options>
+          <options>
+            <key>Hausa (Nigeria)</key>
+            <value>ha_NG</value>
+          </options>
+          <options>
+            <key>Hausa (Sudan)</key>
+            <value>ha_SD</value>
+          </options>
+          <options>
+            <key>Hawaiian</key>
+            <value>haw</value>
+          </options>
+          <options>
+            <key>Hawaiian (United States)</key>
+            <value>haw_US</value>
+          </options>
+          <options>
             <key>Hebrew</key>
             <value>he</value>
           </options>
           <options>
-            <key>Herero</key>
-            <value>hz</value>
+            <key>Hebrew (Israel)</key>
+            <value>he_IL</value>
           </options>
           <options>
             <key>Hindi</key>
             <value>hi</value>
           </options>
           <options>
-            <key>Hiri Motu</key>
-            <value>ho</value>
+            <key>Hindi (India)</key>
+            <value>hi_IN</value>
           </options>
           <options>
             <key>Hungarian</key>
             <value>hu</value>
+          </options>
+          <options>
+            <key>Hungarian (Hungary)</key>
+            <value>hu_HU</value>
           </options>
           <options>
             <key>Iberian Portuguese</key>
@@ -3046,172 +3413,276 @@ Please select a value</tooltip>
             <value>is</value>
           </options>
           <options>
-            <key>Ido</key>
-            <value>io</value>
+            <key>Icelandic (Iceland)</key>
+            <value>is_IS</value>
           </options>
           <options>
             <key>Igbo</key>
             <value>ig</value>
           </options>
           <options>
+            <key>Igbo (Nigeria)</key>
+            <value>ig_NG</value>
+          </options>
+          <options>
             <key>Indonesian</key>
             <value>id</value>
+          </options>
+          <options>
+            <key>Indonesian (Indonesia)</key>
+            <value>id_ID</value>
           </options>
           <options>
             <key>Interlingua</key>
             <value>ia</value>
           </options>
           <options>
-            <key>Interlingue</key>
-            <value>ie</value>
-          </options>
-          <options>
             <key>Inuktitut</key>
             <value>iu</value>
-          </options>
-          <options>
-            <key>Inupiaq</key>
-            <value>ik</value>
           </options>
           <options>
             <key>Irish</key>
             <value>ga</value>
           </options>
           <options>
+            <key>Irish (Ireland)</key>
+            <value>ga_IE</value>
+          </options>
+          <options>
             <key>Italian</key>
             <value>it</value>
+          </options>
+          <options>
+            <key>Italian (Italy)</key>
+            <value>it_IT</value>
+          </options>
+          <options>
+            <key>Italian (Switzerland)</key>
+            <value>it_CH</value>
           </options>
           <options>
             <key>Japanese</key>
             <value>ja</value>
           </options>
           <options>
-            <key>Javanese</key>
-            <value>jv</value>
+            <key>Japanese (Japan)</key>
+            <value>ja_JP</value>
+          </options>
+          <options>
+            <key>Jju</key>
+            <value>kaj</value>
+          </options>
+          <options>
+            <key>Jju (Nigeria)</key>
+            <value>kaj_NG</value>
           </options>
           <options>
             <key>Kalaallisut</key>
             <value>kl</value>
           </options>
           <options>
+            <key>Kalaallisut (Greenland)</key>
+            <value>kl_GL</value>
+          </options>
+          <options>
+            <key>Kamba</key>
+            <value>kam</value>
+          </options>
+          <options>
+            <key>Kamba (Kenya)</key>
+            <value>kam_KE</value>
+          </options>
+          <options>
             <key>Kannada</key>
             <value>kn</value>
           </options>
           <options>
-            <key>Kanuri</key>
-            <value>kr</value>
-          </options>
-          <options>
-            <key>Kashmiri</key>
-            <value>ks</value>
+            <key>Kannada (India)</key>
+            <value>kn_IN</value>
           </options>
           <options>
             <key>Kazakh</key>
             <value>kk</value>
           </options>
           <options>
+            <key>Kazakh (Kazakhstan)</key>
+            <value>kk_KZ</value>
+          </options>
+          <options>
             <key>Khmer</key>
             <value>km</value>
           </options>
           <options>
-            <key>Kikuyu</key>
-            <value>ki</value>
+            <key>Khmer (Cambodia)</key>
+            <value>km_KH</value>
           </options>
           <options>
             <key>Kinyarwanda</key>
             <value>rw</value>
           </options>
           <options>
+            <key>Kinyarwanda (Rwanda)</key>
+            <value>rw_RW</value>
+          </options>
+          <options>
             <key>Kirghiz</key>
             <value>ky</value>
           </options>
           <options>
-            <key>Komi</key>
-            <value>kv</value>
+            <key>Kirghiz (Kyrgyzstan)</key>
+            <value>ky_KG</value>
           </options>
           <options>
-            <key>Kongo</key>
-            <value>kg</value>
+            <key>Konkani</key>
+            <value>kok</value>
+          </options>
+          <options>
+            <key>Konkani (India)</key>
+            <value>kok_IN</value>
           </options>
           <options>
             <key>Korean</key>
             <value>ko</value>
           </options>
           <options>
-            <key>Kuanyama</key>
-            <value>kj</value>
+            <key>Korean (South Korea)</key>
+            <value>ko_KR</value>
+          </options>
+          <options>
+            <key>Koro</key>
+            <value>kfo</value>
+          </options>
+          <options>
+            <key>Koro (C&#xF4;te d&#x2019;Ivoire)</key>
+            <value>kfo_CI</value>
+          </options>
+          <options>
+            <key>Kpelle</key>
+            <value>kpe</value>
+          </options>
+          <options>
+            <key>Kpelle (Guinea)</key>
+            <value>kpe_GN</value>
+          </options>
+          <options>
+            <key>Kpelle (Liberia)</key>
+            <value>kpe_LR</value>
           </options>
           <options>
             <key>Kurdish</key>
             <value>ku</value>
           </options>
           <options>
+            <key>Kurdish (Iran)</key>
+            <value>ku_IR</value>
+          </options>
+          <options>
+            <key>Kurdish (Iraq)</key>
+            <value>ku_IQ</value>
+          </options>
+          <options>
+            <key>Kurdish (Syria)</key>
+            <value>ku_SY</value>
+          </options>
+          <options>
+            <key>Kurdish (Turkey)</key>
+            <value>ku_TR</value>
+          </options>
+          <options>
             <key>Lao</key>
             <value>lo</value>
           </options>
           <options>
-            <key>Latin</key>
-            <value>la</value>
+            <key>Lao (Laos)</key>
+            <value>lo_LA</value>
           </options>
           <options>
             <key>Latvian</key>
             <value>lv</value>
           </options>
           <options>
-            <key>Limburgish</key>
-            <value>li</value>
+            <key>Latvian (Latvia)</key>
+            <value>lv_LV</value>
           </options>
           <options>
             <key>Lingala</key>
             <value>ln</value>
           </options>
           <options>
+            <key>Lingala (Congo - Brazzaville)</key>
+            <value>ln_CG</value>
+          </options>
+          <options>
+            <key>Lingala (Congo - Kinshasa)</key>
+            <value>ln_CD</value>
+          </options>
+          <options>
             <key>Lithuanian</key>
             <value>lt</value>
           </options>
           <options>
-            <key>Luba-Katanga</key>
-            <value>lu</value>
+            <key>Lithuanian (Lithuania)</key>
+            <value>lt_LT</value>
           </options>
           <options>
-            <key>Luxembourgish</key>
-            <value>lb</value>
+            <key>Low German</key>
+            <value>nds</value>
+          </options>
+          <options>
+            <key>Low German (Germany)</key>
+            <value>nds_DE</value>
           </options>
           <options>
             <key>Macedonian</key>
             <value>mk</value>
           </options>
           <options>
-            <key>Malagasy</key>
-            <value>mg</value>
+            <key>Macedonian (Macedonia)</key>
+            <value>mk_MK</value>
           </options>
           <options>
             <key>Malay</key>
             <value>ms</value>
           </options>
           <options>
+            <key>Malay (Brunei)</key>
+            <value>ms_BN</value>
+          </options>
+          <options>
+            <key>Malay (Malaysia)</key>
+            <value>ms_MY</value>
+          </options>
+          <options>
             <key>Malayalam</key>
             <value>ml</value>
+          </options>
+          <options>
+            <key>Malayalam (India)</key>
+            <value>ml_IN</value>
           </options>
           <options>
             <key>Maltese</key>
             <value>mt</value>
           </options>
           <options>
+            <key>Maltese (Malta)</key>
+            <value>mt_MT</value>
+          </options>
+          <options>
             <key>Manx</key>
             <value>gv</value>
           </options>
           <options>
-            <key>Maori</key>
-            <value>mi</value>
+            <key>Manx (United Kingdom)</key>
+            <value>gv_GB</value>
           </options>
           <options>
             <key>Marathi</key>
             <value>mr</value>
           </options>
           <options>
-            <key>Marshallese</key>
-            <value>mh</value>
+            <key>Marathi (India)</key>
+            <value>mr_IN</value>
           </options>
           <options>
             <key>Moldavian</key>
@@ -3222,28 +3693,44 @@ Please select a value</tooltip>
             <value>mn</value>
           </options>
           <options>
-            <key>Nauru</key>
-            <value>na</value>
+            <key>Mongolian (China)</key>
+            <value>mn_CN</value>
           </options>
           <options>
-            <key>Navajo</key>
-            <value>nv</value>
-          </options>
-          <options>
-            <key>Ndonga</key>
-            <value>ng</value>
+            <key>Mongolian (Mongolia)</key>
+            <value>mn_MN</value>
           </options>
           <options>
             <key>Nepali</key>
             <value>ne</value>
           </options>
           <options>
-            <key>North Ndebele</key>
-            <value>nd</value>
+            <key>Nepali (India)</key>
+            <value>ne_IN</value>
+          </options>
+          <options>
+            <key>Nepali (Nepal)</key>
+            <value>ne_NP</value>
           </options>
           <options>
             <key>Northern Sami</key>
             <value>se</value>
+          </options>
+          <options>
+            <key>Northern Sami (Finland)</key>
+            <value>se_FI</value>
+          </options>
+          <options>
+            <key>Northern Sami (Norway)</key>
+            <value>se_NO</value>
+          </options>
+          <options>
+            <key>Northern Sotho</key>
+            <value>nso</value>
+          </options>
+          <options>
+            <key>Northern Sotho (South Africa)</key>
+            <value>nso_ZA</value>
           </options>
           <options>
             <key>Norwegian</key>
@@ -3254,48 +3741,80 @@ Please select a value</tooltip>
             <value>nb</value>
           </options>
           <options>
+            <key>Norwegian Bokm&#xE5;l (Norway)</key>
+            <value>nb_NO</value>
+          </options>
+          <options>
             <key>Norwegian Nynorsk</key>
             <value>nn</value>
+          </options>
+          <options>
+            <key>Norwegian Nynorsk (Norway)</key>
+            <value>nn_NO</value>
           </options>
           <options>
             <key>Nyanja</key>
             <value>ny</value>
           </options>
           <options>
+            <key>Nyanja (Malawi)</key>
+            <value>ny_MW</value>
+          </options>
+          <options>
             <key>Occitan</key>
             <value>oc</value>
           </options>
           <options>
-            <key>Ojibwa</key>
-            <value>oj</value>
+            <key>Occitan (France)</key>
+            <value>oc_FR</value>
           </options>
           <options>
             <key>Oriya</key>
             <value>or</value>
           </options>
           <options>
+            <key>Oriya (India)</key>
+            <value>or_IN</value>
+          </options>
+          <options>
             <key>Oromo</key>
             <value>om</value>
           </options>
           <options>
-            <key>Ossetic</key>
-            <value>os</value>
+            <key>Oromo (Ethiopia)</key>
+            <value>om_ET</value>
           </options>
           <options>
-            <key>Pali</key>
-            <value>pi</value>
+            <key>Oromo (Kenya)</key>
+            <value>om_KE</value>
           </options>
           <options>
             <key>Pashto</key>
             <value>ps</value>
           </options>
           <options>
+            <key>Pashto (Afghanistan)</key>
+            <value>ps_AF</value>
+          </options>
+          <options>
             <key>Persian</key>
             <value>fa</value>
           </options>
           <options>
+            <key>Persian (Afghanistan)</key>
+            <value>fa_AF</value>
+          </options>
+          <options>
+            <key>Persian (Iran)</key>
+            <value>fa_IR</value>
+          </options>
+          <options>
             <key>Polish</key>
             <value>pl</value>
+          </options>
+          <options>
+            <key>Polish (Poland)</key>
+            <value>pl_PL</value>
           </options>
           <options>
             <key>Portuguese</key>
@@ -3306,176 +3825,420 @@ Please select a value</tooltip>
             <value>pa</value>
           </options>
           <options>
-            <key>Quechua</key>
-            <value>qu</value>
+            <key>Punjabi (India)</key>
+            <value>pa_IN</value>
           </options>
           <options>
-            <key>Rhaeto-Romance</key>
-            <value>rm</value>
+            <key>Punjabi (Pakistan)</key>
+            <value>pa_PK</value>
           </options>
           <options>
             <key>Romanian</key>
             <value>ro</value>
           </options>
           <options>
-            <key>Rundi</key>
-            <value>rn</value>
+            <key>Romanian (Moldova)</key>
+            <value>ro_MD</value>
+          </options>
+          <options>
+            <key>Romanian (Romania)</key>
+            <value>ro_RO</value>
           </options>
           <options>
             <key>Russian</key>
             <value>ru</value>
           </options>
           <options>
-            <key>Samoan</key>
-            <value>sm</value>
+            <key>Russian (Russia)</key>
+            <value>ru_RU</value>
           </options>
           <options>
-            <key>Sango</key>
-            <value>sg</value>
+            <key>Russian (Ukraine)</key>
+            <value>ru_UA</value>
           </options>
           <options>
             <key>Sanskrit</key>
             <value>sa</value>
           </options>
           <options>
-            <key>Sardinian</key>
-            <value>sc</value>
-          </options>
-          <options>
-            <key>Scottish Gaelic</key>
-            <value>gd</value>
+            <key>Sanskrit (India)</key>
+            <value>sa_IN</value>
           </options>
           <options>
             <key>Serbian</key>
             <value>sr</value>
           </options>
           <options>
+            <key>Serbian (Bosnia and Herzegovina)</key>
+            <value>sr_BA</value>
+          </options>
+          <options>
+            <key>Serbian (Montenegro)</key>
+            <value>sr_ME</value>
+          </options>
+          <options>
+            <key>Serbian (Serbia and Montenegro)</key>
+            <value>sr_CS</value>
+          </options>
+          <options>
+            <key>Serbian (Serbia)</key>
+            <value>sr_RS</value>
+          </options>
+          <options>
             <key>Serbo-Croatian</key>
             <value>sh</value>
           </options>
           <options>
-            <key>Shona</key>
-            <value>sn</value>
+            <key>Serbo-Croatian (Bosnia and Herzegovina)</key>
+            <value>sh_BA</value>
+          </options>
+          <options>
+            <key>Serbo-Croatian (Serbia and Montenegro)</key>
+            <value>sh_CS</value>
           </options>
           <options>
             <key>Sichuan Yi</key>
             <value>ii</value>
           </options>
           <options>
-            <key>Sindhi</key>
-            <value>sd</value>
+            <key>Sichuan Yi (China)</key>
+            <value>ii_CN</value>
+          </options>
+          <options>
+            <key>Sidamo</key>
+            <value>sid</value>
+          </options>
+          <options>
+            <key>Sidamo (Ethiopia)</key>
+            <value>sid_ET</value>
           </options>
           <options>
             <key>Sinhala</key>
             <value>si</value>
           </options>
           <options>
+            <key>Sinhala (Sri Lanka)</key>
+            <value>si_LK</value>
+          </options>
+          <options>
             <key>Slovak</key>
             <value>sk</value>
+          </options>
+          <options>
+            <key>Slovak (Slovakia)</key>
+            <value>sk_SK</value>
           </options>
           <options>
             <key>Slovenian</key>
             <value>sl</value>
           </options>
           <options>
+            <key>Slovenian (Slovenia)</key>
+            <value>sl_SI</value>
+          </options>
+          <options>
             <key>Somali</key>
             <value>so</value>
+          </options>
+          <options>
+            <key>Somali (Djibouti)</key>
+            <value>so_DJ</value>
+          </options>
+          <options>
+            <key>Somali (Ethiopia)</key>
+            <value>so_ET</value>
+          </options>
+          <options>
+            <key>Somali (Kenya)</key>
+            <value>so_KE</value>
+          </options>
+          <options>
+            <key>Somali (Somalia)</key>
+            <value>so_SO</value>
           </options>
           <options>
             <key>South Ndebele</key>
             <value>nr</value>
           </options>
           <options>
+            <key>South Ndebele (South Africa)</key>
+            <value>nr_ZA</value>
+          </options>
+          <options>
             <key>Southern Sotho</key>
             <value>st</value>
+          </options>
+          <options>
+            <key>Southern Sotho (Lesotho)</key>
+            <value>st_LS</value>
+          </options>
+          <options>
+            <key>Southern Sotho (South Africa)</key>
+            <value>st_ZA</value>
           </options>
           <options>
             <key>Spanish</key>
             <value>es</value>
           </options>
           <options>
-            <key>Sundanese</key>
-            <value>su</value>
+            <key>Spanish (Argentina)</key>
+            <value>es_AR</value>
+          </options>
+          <options>
+            <key>Spanish (Bolivia)</key>
+            <value>es_BO</value>
+          </options>
+          <options>
+            <key>Spanish (Chile)</key>
+            <value>es_CL</value>
+          </options>
+          <options>
+            <key>Spanish (Colombia)</key>
+            <value>es_CO</value>
+          </options>
+          <options>
+            <key>Spanish (Costa Rica)</key>
+            <value>es_CR</value>
+          </options>
+          <options>
+            <key>Spanish (Dominican Republic)</key>
+            <value>es_DO</value>
+          </options>
+          <options>
+            <key>Spanish (Ecuador)</key>
+            <value>es_EC</value>
+          </options>
+          <options>
+            <key>Spanish (El Salvador)</key>
+            <value>es_SV</value>
+          </options>
+          <options>
+            <key>Spanish (Guatemala)</key>
+            <value>es_GT</value>
+          </options>
+          <options>
+            <key>Spanish (Honduras)</key>
+            <value>es_HN</value>
+          </options>
+          <options>
+            <key>Spanish (Mexico)</key>
+            <value>es_MX</value>
+          </options>
+          <options>
+            <key>Spanish (Nicaragua)</key>
+            <value>es_NI</value>
+          </options>
+          <options>
+            <key>Spanish (Panama)</key>
+            <value>es_PA</value>
+          </options>
+          <options>
+            <key>Spanish (Paraguay)</key>
+            <value>es_PY</value>
+          </options>
+          <options>
+            <key>Spanish (Peru)</key>
+            <value>es_PE</value>
+          </options>
+          <options>
+            <key>Spanish (Puerto Rico)</key>
+            <value>es_PR</value>
+          </options>
+          <options>
+            <key>Spanish (United States)</key>
+            <value>es_US</value>
+          </options>
+          <options>
+            <key>Spanish (Uruguay)</key>
+            <value>es_UY</value>
+          </options>
+          <options>
+            <key>Spanish (Venezuela)</key>
+            <value>es_VE</value>
           </options>
           <options>
             <key>Swahili</key>
             <value>sw</value>
           </options>
           <options>
+            <key>Swahili (Kenya)</key>
+            <value>sw_KE</value>
+          </options>
+          <options>
+            <key>Swahili (Tanzania)</key>
+            <value>sw_TZ</value>
+          </options>
+          <options>
             <key>Swati</key>
             <value>ss</value>
+          </options>
+          <options>
+            <key>Swati (South Africa)</key>
+            <value>ss_ZA</value>
+          </options>
+          <options>
+            <key>Swati (Swaziland)</key>
+            <value>ss_SZ</value>
           </options>
           <options>
             <key>Swedish</key>
             <value>sv</value>
           </options>
           <options>
+            <key>Swedish (Finland)</key>
+            <value>sv_FI</value>
+          </options>
+          <options>
+            <key>Swedish (Sweden)</key>
+            <value>sv_SE</value>
+          </options>
+          <options>
             <key>Swiss French</key>
             <value>fr_CH</value>
+          </options>
+          <options>
+            <key>Swiss German</key>
+            <value>gsw</value>
+          </options>
+          <options>
+            <key>Swiss German (Switzerland)</key>
+            <value>gsw_CH</value>
           </options>
           <options>
             <key>Swiss High German</key>
             <value>de_CH</value>
           </options>
           <options>
-            <key>Tagalog</key>
-            <value>tl</value>
+            <key>Syriac</key>
+            <value>syr</value>
           </options>
           <options>
-            <key>Tahitian</key>
-            <value>ty</value>
+            <key>Syriac (Syria)</key>
+            <value>syr_SY</value>
+          </options>
+          <options>
+            <key>Tagalog</key>
+            <value>tl</value>
           </options>
           <options>
             <key>Tajik</key>
             <value>tg</value>
           </options>
           <options>
+            <key>Tajik (Tajikistan)</key>
+            <value>tg_TJ</value>
+          </options>
+          <options>
             <key>Tamil</key>
             <value>ta</value>
+          </options>
+          <options>
+            <key>Tamil (India)</key>
+            <value>ta_IN</value>
+          </options>
+          <options>
+            <key>Taroko</key>
+            <value>trv</value>
+          </options>
+          <options>
+            <key>Taroko (Taiwan)</key>
+            <value>trv_TW</value>
           </options>
           <options>
             <key>Tatar</key>
             <value>tt</value>
           </options>
           <options>
+            <key>Tatar (Russia)</key>
+            <value>tt_RU</value>
+          </options>
+          <options>
             <key>Telugu</key>
             <value>te</value>
+          </options>
+          <options>
+            <key>Telugu (India)</key>
+            <value>te_IN</value>
           </options>
           <options>
             <key>Thai</key>
             <value>th</value>
           </options>
           <options>
+            <key>Thai (Thailand)</key>
+            <value>th_TH</value>
+          </options>
+          <options>
             <key>Tibetan</key>
             <value>bo</value>
+          </options>
+          <options>
+            <key>Tibetan (China)</key>
+            <value>bo_CN</value>
+          </options>
+          <options>
+            <key>Tibetan (India)</key>
+            <value>bo_IN</value>
+          </options>
+          <options>
+            <key>Tigre</key>
+            <value>tig</value>
+          </options>
+          <options>
+            <key>Tigre (Eritrea)</key>
+            <value>tig_ER</value>
           </options>
           <options>
             <key>Tigrinya</key>
             <value>ti</value>
           </options>
           <options>
+            <key>Tigrinya (Eritrea)</key>
+            <value>ti_ER</value>
+          </options>
+          <options>
+            <key>Tigrinya (Ethiopia)</key>
+            <value>ti_ET</value>
+          </options>
+          <options>
             <key>Tonga</key>
             <value>to</value>
+          </options>
+          <options>
+            <key>Tonga (Tonga)</key>
+            <value>to_TO</value>
           </options>
           <options>
             <key>Tsonga</key>
             <value>ts</value>
           </options>
           <options>
+            <key>Tsonga (South Africa)</key>
+            <value>ts_ZA</value>
+          </options>
+          <options>
             <key>Tswana</key>
             <value>tn</value>
+          </options>
+          <options>
+            <key>Tswana (South Africa)</key>
+            <value>tn_ZA</value>
           </options>
           <options>
             <key>Turkish</key>
             <value>tr</value>
           </options>
           <options>
-            <key>Turkmen</key>
-            <value>tk</value>
+            <key>Turkish (Turkey)</key>
+            <value>tr_TR</value>
           </options>
           <options>
-            <key>Twi</key>
-            <value>tw</value>
+            <key>Tyap</key>
+            <value>kcg</value>
+          </options>
+          <options>
+            <key>Tyap (Nigeria)</key>
+            <value>kcg_NG</value>
           </options>
           <options>
             <key>U.S. English</key>
@@ -3486,64 +4249,120 @@ Please select a value</tooltip>
             <value>ug</value>
           </options>
           <options>
+            <key>Uighur (China)</key>
+            <value>ug_CN</value>
+          </options>
+          <options>
             <key>Ukrainian</key>
             <value>uk</value>
+          </options>
+          <options>
+            <key>Ukrainian (Ukraine)</key>
+            <value>uk_UA</value>
           </options>
           <options>
             <key>Urdu</key>
             <value>ur</value>
           </options>
           <options>
+            <key>Urdu (India)</key>
+            <value>ur_IN</value>
+          </options>
+          <options>
+            <key>Urdu (Pakistan)</key>
+            <value>ur_PK</value>
+          </options>
+          <options>
             <key>Uzbek</key>
             <value>uz</value>
+          </options>
+          <options>
+            <key>Uzbek (Afghanistan)</key>
+            <value>uz_AF</value>
+          </options>
+          <options>
+            <key>Uzbek (Uzbekistan)</key>
+            <value>uz_UZ</value>
           </options>
           <options>
             <key>Venda</key>
             <value>ve</value>
           </options>
           <options>
+            <key>Venda (South Africa)</key>
+            <value>ve_ZA</value>
+          </options>
+          <options>
             <key>Vietnamese</key>
             <value>vi</value>
           </options>
           <options>
-            <key>Volap&#xFC;k</key>
-            <value>vo</value>
+            <key>Vietnamese (Vietnam)</key>
+            <value>vi_VN</value>
           </options>
           <options>
-            <key>Walloon</key>
-            <value>wa</value>
+            <key>Walamo</key>
+            <value>wal</value>
+          </options>
+          <options>
+            <key>Walamo (Ethiopia)</key>
+            <value>wal_ET</value>
           </options>
           <options>
             <key>Welsh</key>
             <value>cy</value>
           </options>
           <options>
-            <key>Western Frisian</key>
-            <value>fy</value>
+            <key>Welsh (United Kingdom)</key>
+            <value>cy_GB</value>
           </options>
           <options>
             <key>Wolof</key>
             <value>wo</value>
           </options>
           <options>
+            <key>Wolof (Senegal)</key>
+            <value>wo_SN</value>
+          </options>
+          <options>
             <key>Xhosa</key>
             <value>xh</value>
           </options>
           <options>
-            <key>Yiddish</key>
-            <value>yi</value>
+            <key>Xhosa (South Africa)</key>
+            <value>xh_ZA</value>
           </options>
           <options>
             <key>Yoruba</key>
             <value>yo</value>
           </options>
           <options>
-            <key>Zhuang</key>
-            <value>za</value>
+            <key>Yoruba (Nigeria)</key>
+            <value>yo_NG</value>
           </options>
           <options>
             <key>Zulu</key>
             <value>zu</value>
+          </options>
+          <options>
+            <key>Zulu (South Africa)</key>
+            <value>zu_ZA</value>
+          </options>
+          <options>
+            <key>in</key>
+            <value>in</value>
+          </options>
+          <options>
+            <key>iw</key>
+            <value>iw</value>
+          </options>
+          <options>
+            <key>sh_YU</key>
+            <value>sh_YU</value>
+          </options>
+          <options>
+            <key>sr_YU</key>
+            <value>sr_YU</value>
           </options>
           <width></width>
           <height></height>
@@ -3568,28 +4387,24 @@ Please select a value</tooltip>
         <childs>
           <fieldtype>user</fieldtype>
           <options>
+            <value>232</value>
+            <key></key>
+          </options>
+          <options>
             <value>1</value>
-            <key>admin</key>
+            <key>admin (Bernhard Rusch)</key>
           </options>
           <options>
-            <value>45</value>
-            <key>bernie (Bernhardsd asdf sd Rusch cdsfdf)</key>
+            <value>182</value>
+            <key>bernie (Bernie Spam)</key>
           </options>
           <options>
-            <value>46</value>
-            <key>flo</key>
+            <value>227</value>
+            <key>fash</key>
           </options>
           <options>
-            <value>180</value>
-            <key>strictuser</key>
-          </options>
-          <options>
-            <value>177</value>
-            <key>test (elements )</key>
-          </options>
-          <options>
-            <value>176</value>
-            <key>user (elements )</key>
+            <value>229</value>
+            <key>michi</key>
           </options>
           <width></width>
           <queryColumnType>varchar(255)</queryColumnType>
@@ -3636,6 +4451,7 @@ Please select a value</tooltip>
           <fieldtype>image</fieldtype>
           <width>250</width>
           <height>250</height>
+          <uploadPath></uploadPath>
           <queryColumnType>int(11)</queryColumnType>
           <columnType>int(11)</columnType>
           <phpdocType>Asset_Image</phpdocType>
@@ -3678,6 +4494,31 @@ Please select a value</tooltip>
           <visibleSearch>1</visibleSearch>
         </childs>
         <childs>
+          <fieldtype>keyValue</fieldtype>
+          <phpdocType>Object_Data_KeyValue</phpdocType>
+          <keyWidth>200</keyWidth>
+          <valueWidth>600</valueWidth>
+          <height></height>
+          <maxheight>0</maxheight>
+          <groupWidth>200</groupWidth>
+          <name>keyvaluepairs</name>
+          <title>key value pairs</title>
+          <tooltip></tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index></index>
+          <locked></locked>
+          <style></style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <columnType></columnType>
+          <queryColumnType></queryColumnType>
+          <relationType></relationType>
+          <invisible></invisible>
+          <visibleGridView></visibleGridView>
+          <visibleSearch></visibleSearch>
+        </childs>
+        <childs>
           <fieldtype>table</fieldtype>
           <width>600</width>
           <height>300</height>
@@ -3709,6 +4550,7 @@ Please select a value</tooltip>
           <phpdocType>Object_Fieldcollection</phpdocType>
           <allowedTypes>collectionA</allowedTypes>
           <lazyLoading></lazyLoading>
+          <maxItems></maxItems>
           <name>fieldcollection</name>
           <title>Field Collection</title>
           <tooltip></tooltip>
@@ -3732,12 +4574,12 @@ Please select a value</tooltip>
           <name>Layout</name>
           <type></type>
           <region></region>
-          <layout></layout>
           <title></title>
           <width></width>
           <height></height>
-          <border></border>
           <collapsible></collapsible>
+          <collapsed></collapsed>
+          <bodyStyle></bodyStyle>
           <datatype>layout</datatype>
           <permissions></permissions>
           <childs/>
@@ -3750,6 +4592,7 @@ Please select a value</tooltip>
           <fieldtype>nonownerobjects</fieldtype>
           <width></width>
           <height></height>
+          <maxItems></maxItems>
           <queryColumnType>text</queryColumnType>
           <phpdocType>array</phpdocType>
           <relationType>1</relationType>
@@ -3892,6 +4735,8 @@ Please select a value</tooltip>
             <queryColumnType>int(11)</queryColumnType>
             <columnType>int(11)</columnType>
             <phpdocType>Pimcore_Date</phpdocType>
+            <defaultValue></defaultValue>
+            <useCurrentDate></useCurrentDate>
             <name>ldate</name>
             <title>localized date</title>
             <tooltip></tooltip>
@@ -3912,6 +4757,8 @@ Please select a value</tooltip>
             <queryColumnType>int(11)</queryColumnType>
             <columnType>int(11)</columnType>
             <phpdocType>Zend_Date</phpdocType>
+            <defaultValue></defaultValue>
+            <useCurrentDate></useCurrentDate>
             <name>ldatetime</name>
             <title>localized date time</title>
             <tooltip></tooltip>
@@ -5098,44 +5945,152 @@ Please select a value</tooltip>
             <fieldtype>languagemultiselect</fieldtype>
             <onlySystemLanguages></onlySystemLanguages>
             <options>
-              <key>Abkhazian</key>
-              <value>ab</value>
-            </options>
-            <options>
               <key>Afar</key>
               <value>aa</value>
+            </options>
+            <options>
+              <key>Afar (Djibouti)</key>
+              <value>aa_DJ</value>
+            </options>
+            <options>
+              <key>Afar (Eritrea)</key>
+              <value>aa_ER</value>
+            </options>
+            <options>
+              <key>Afar (Ethiopia)</key>
+              <value>aa_ET</value>
             </options>
             <options>
               <key>Afrikaans</key>
               <value>af</value>
             </options>
             <options>
+              <key>Afrikaans (Namibia)</key>
+              <value>af_NA</value>
+            </options>
+            <options>
+              <key>Afrikaans (South Africa)</key>
+              <value>af_ZA</value>
+            </options>
+            <options>
               <key>Akan</key>
               <value>ak</value>
+            </options>
+            <options>
+              <key>Akan (Ghana)</key>
+              <value>ak_GH</value>
             </options>
             <options>
               <key>Albanian</key>
               <value>sq</value>
             </options>
             <options>
+              <key>Albanian (Albania)</key>
+              <value>sq_AL</value>
+            </options>
+            <options>
               <key>Amharic</key>
               <value>am</value>
+            </options>
+            <options>
+              <key>Amharic (Ethiopia)</key>
+              <value>am_ET</value>
             </options>
             <options>
               <key>Arabic</key>
               <value>ar</value>
             </options>
             <options>
-              <key>Aragonese</key>
-              <value>an</value>
+              <key>Arabic (Algeria)</key>
+              <value>ar_DZ</value>
+            </options>
+            <options>
+              <key>Arabic (Bahrain)</key>
+              <value>ar_BH</value>
+            </options>
+            <options>
+              <key>Arabic (Egypt)</key>
+              <value>ar_EG</value>
+            </options>
+            <options>
+              <key>Arabic (Iraq)</key>
+              <value>ar_IQ</value>
+            </options>
+            <options>
+              <key>Arabic (Jordan)</key>
+              <value>ar_JO</value>
+            </options>
+            <options>
+              <key>Arabic (Kuwait)</key>
+              <value>ar_KW</value>
+            </options>
+            <options>
+              <key>Arabic (Lebanon)</key>
+              <value>ar_LB</value>
+            </options>
+            <options>
+              <key>Arabic (Libya)</key>
+              <value>ar_LY</value>
+            </options>
+            <options>
+              <key>Arabic (Morocco)</key>
+              <value>ar_MA</value>
+            </options>
+            <options>
+              <key>Arabic (Oman)</key>
+              <value>ar_OM</value>
+            </options>
+            <options>
+              <key>Arabic (Qatar)</key>
+              <value>ar_QA</value>
+            </options>
+            <options>
+              <key>Arabic (Saudi Arabia)</key>
+              <value>ar_SA</value>
+            </options>
+            <options>
+              <key>Arabic (Sudan)</key>
+              <value>ar_SD</value>
+            </options>
+            <options>
+              <key>Arabic (Syria)</key>
+              <value>ar_SY</value>
+            </options>
+            <options>
+              <key>Arabic (Tunisia)</key>
+              <value>ar_TN</value>
+            </options>
+            <options>
+              <key>Arabic (United Arab Emirates)</key>
+              <value>ar_AE</value>
+            </options>
+            <options>
+              <key>Arabic (Yemen)</key>
+              <value>ar_YE</value>
             </options>
             <options>
               <key>Armenian</key>
               <value>hy</value>
             </options>
             <options>
+              <key>Armenian (Armenia)</key>
+              <value>hy_AM</value>
+            </options>
+            <options>
               <key>Assamese</key>
               <value>as</value>
+            </options>
+            <options>
+              <key>Assamese (India)</key>
+              <value>as_IN</value>
+            </options>
+            <options>
+              <key>Atsam</key>
+              <value>cch</value>
+            </options>
+            <options>
+              <key>Atsam (Nigeria)</key>
+              <value>cch_NG</value>
             </options>
             <options>
               <key>Australian English</key>
@@ -5146,60 +6101,60 @@ Please select a value</tooltip>
               <value>de_AT</value>
             </options>
             <options>
-              <key>Avaric</key>
-              <value>av</value>
-            </options>
-            <options>
-              <key>Avestan</key>
-              <value>ae</value>
-            </options>
-            <options>
-              <key>Aymara</key>
-              <value>ay</value>
-            </options>
-            <options>
               <key>Azerbaijani</key>
               <value>az</value>
             </options>
             <options>
-              <key>Bambara</key>
-              <value>bm</value>
-            </options>
-            <options>
-              <key>Bashkir</key>
-              <value>ba</value>
+              <key>Azerbaijani (Azerbaijan)</key>
+              <value>az_AZ</value>
             </options>
             <options>
               <key>Basque</key>
               <value>eu</value>
             </options>
             <options>
+              <key>Basque (Spain)</key>
+              <value>eu_ES</value>
+            </options>
+            <options>
               <key>Belarusian</key>
               <value>be</value>
+            </options>
+            <options>
+              <key>Belarusian (Belarus)</key>
+              <value>be_BY</value>
             </options>
             <options>
               <key>Bengali</key>
               <value>bn</value>
             </options>
             <options>
-              <key>Bihari</key>
-              <value>bh</value>
+              <key>Bengali (Bangladesh)</key>
+              <value>bn_BD</value>
             </options>
             <options>
-              <key>Bislama</key>
-              <value>bi</value>
+              <key>Bengali (India)</key>
+              <value>bn_IN</value>
+            </options>
+            <options>
+              <key>Blin</key>
+              <value>byn</value>
+            </options>
+            <options>
+              <key>Blin (Eritrea)</key>
+              <value>byn_ER</value>
             </options>
             <options>
               <key>Bosnian</key>
               <value>bs</value>
             </options>
             <options>
-              <key>Brazilian Portuguese</key>
-              <value>pt_BR</value>
+              <key>Bosnian (Bosnia and Herzegovina)</key>
+              <value>bs_BA</value>
             </options>
             <options>
-              <key>Breton</key>
-              <value>br</value>
+              <key>Brazilian Portuguese</key>
+              <value>pt_BR</value>
             </options>
             <options>
               <key>British English</key>
@@ -5210,8 +6165,16 @@ Please select a value</tooltip>
               <value>bg</value>
             </options>
             <options>
+              <key>Bulgarian (Bulgaria)</key>
+              <value>bg_BG</value>
+            </options>
+            <options>
               <key>Burmese</key>
               <value>my</value>
+            </options>
+            <options>
+              <key>Burmese (Myanmar [Burma])</key>
+              <value>my_MM</value>
             </options>
             <options>
               <key>Canadian English</key>
@@ -5226,64 +6189,184 @@ Please select a value</tooltip>
               <value>ca</value>
             </options>
             <options>
-              <key>Chamorro</key>
-              <value>ch</value>
-            </options>
-            <options>
-              <key>Chechen</key>
-              <value>ce</value>
+              <key>Catalan (Spain)</key>
+              <value>ca_ES</value>
             </options>
             <options>
               <key>Chinese</key>
               <value>zh</value>
             </options>
             <options>
-              <key>Church Slavic</key>
-              <value>cu</value>
+              <key>Chinese (China)</key>
+              <value>zh_CN</value>
             </options>
             <options>
-              <key>Chuvash</key>
-              <value>cv</value>
+              <key>Chinese (Hong Kong SAR China)</key>
+              <value>zh_HK</value>
+            </options>
+            <options>
+              <key>Chinese (Macau SAR China)</key>
+              <value>zh_MO</value>
+            </options>
+            <options>
+              <key>Chinese (Singapore)</key>
+              <value>zh_SG</value>
+            </options>
+            <options>
+              <key>Chinese (Taiwan)</key>
+              <value>zh_TW</value>
+            </options>
+            <options>
+              <key>Coptic</key>
+              <value>cop</value>
             </options>
             <options>
               <key>Cornish</key>
               <value>kw</value>
             </options>
             <options>
-              <key>Corsican</key>
-              <value>co</value>
-            </options>
-            <options>
-              <key>Cree</key>
-              <value>cr</value>
+              <key>Cornish (United Kingdom)</key>
+              <value>kw_GB</value>
             </options>
             <options>
               <key>Croatian</key>
               <value>hr</value>
             </options>
             <options>
+              <key>Croatian (Croatia)</key>
+              <value>hr_HR</value>
+            </options>
+            <options>
               <key>Czech</key>
               <value>cs</value>
+            </options>
+            <options>
+              <key>Czech (Czech Republic)</key>
+              <value>cs_CZ</value>
             </options>
             <options>
               <key>Danish</key>
               <value>da</value>
             </options>
             <options>
+              <key>Danish (Denmark)</key>
+              <value>da_DK</value>
+            </options>
+            <options>
               <key>Divehi</key>
               <value>dv</value>
+            </options>
+            <options>
+              <key>Divehi (Maldives)</key>
+              <value>dv_MV</value>
             </options>
             <options>
               <key>Dutch</key>
               <value>nl</value>
             </options>
             <options>
+              <key>Dutch (Netherlands)</key>
+              <value>nl_NL</value>
+            </options>
+            <options>
               <key>Dzongkha</key>
               <value>dz</value>
             </options>
             <options>
+              <key>Dzongkha (Bhutan)</key>
+              <value>dz_BT</value>
+            </options>
+            <options>
               <key>English</key>
               <value>en</value>
+            </options>
+            <options>
+              <key>English (American Samoa)</key>
+              <value>en_AS</value>
+            </options>
+            <options>
+              <key>English (Belgium)</key>
+              <value>en_BE</value>
+            </options>
+            <options>
+              <key>English (Belize)</key>
+              <value>en_BZ</value>
+            </options>
+            <options>
+              <key>English (Botswana)</key>
+              <value>en_BW</value>
+            </options>
+            <options>
+              <key>English (Guam)</key>
+              <value>en_GU</value>
+            </options>
+            <options>
+              <key>English (Hong Kong SAR China)</key>
+              <value>en_HK</value>
+            </options>
+            <options>
+              <key>English (India)</key>
+              <value>en_IN</value>
+            </options>
+            <options>
+              <key>English (Ireland)</key>
+              <value>en_IE</value>
+            </options>
+            <options>
+              <key>English (Jamaica)</key>
+              <value>en_JM</value>
+            </options>
+            <options>
+              <key>English (Malta)</key>
+              <value>en_MT</value>
+            </options>
+            <options>
+              <key>English (Marshall Islands)</key>
+              <value>en_MH</value>
+            </options>
+            <options>
+              <key>English (Namibia)</key>
+              <value>en_NA</value>
+            </options>
+            <options>
+              <key>English (New Zealand)</key>
+              <value>en_NZ</value>
+            </options>
+            <options>
+              <key>English (Northern Mariana Islands)</key>
+              <value>en_MP</value>
+            </options>
+            <options>
+              <key>English (Pakistan)</key>
+              <value>en_PK</value>
+            </options>
+            <options>
+              <key>English (Philippines)</key>
+              <value>en_PH</value>
+            </options>
+            <options>
+              <key>English (Singapore)</key>
+              <value>en_SG</value>
+            </options>
+            <options>
+              <key>English (South Africa)</key>
+              <value>en_ZA</value>
+            </options>
+            <options>
+              <key>English (Trinidad and Tobago)</key>
+              <value>en_TT</value>
+            </options>
+            <options>
+              <key>English (U.S. Minor Outlying Islands)</key>
+              <value>en_UM</value>
+            </options>
+            <options>
+              <key>English (U.S. Virgin Islands)</key>
+              <value>en_VI</value>
+            </options>
+            <options>
+              <key>English (Zimbabwe)</key>
+              <value>en_ZW</value>
             </options>
             <options>
               <key>Esperanto</key>
@@ -5294,20 +6377,44 @@ Please select a value</tooltip>
               <value>et</value>
             </options>
             <options>
+              <key>Estonian (Estonia)</key>
+              <value>et_EE</value>
+            </options>
+            <options>
               <key>Ewe</key>
               <value>ee</value>
+            </options>
+            <options>
+              <key>Ewe (Ghana)</key>
+              <value>ee_GH</value>
+            </options>
+            <options>
+              <key>Ewe (Togo)</key>
+              <value>ee_TG</value>
             </options>
             <options>
               <key>Faroese</key>
               <value>fo</value>
             </options>
             <options>
-              <key>Fijian</key>
-              <value>fj</value>
+              <key>Faroese (Faroe Islands)</key>
+              <value>fo_FO</value>
+            </options>
+            <options>
+              <key>Filipino</key>
+              <value>fil</value>
+            </options>
+            <options>
+              <key>Filipino (Philippines)</key>
+              <value>fil_PH</value>
             </options>
             <options>
               <key>Finnish</key>
               <value>fi</value>
+            </options>
+            <options>
+              <key>Finnish (Finland)</key>
+              <value>fi_FI</value>
             </options>
             <options>
               <key>Flemish</key>
@@ -5318,64 +6425,160 @@ Please select a value</tooltip>
               <value>fr</value>
             </options>
             <options>
-              <key>Fulah</key>
-              <value>ff</value>
+              <key>French (Belgium)</key>
+              <value>fr_BE</value>
+            </options>
+            <options>
+              <key>French (France)</key>
+              <value>fr_FR</value>
+            </options>
+            <options>
+              <key>French (Luxembourg)</key>
+              <value>fr_LU</value>
+            </options>
+            <options>
+              <key>French (Monaco)</key>
+              <value>fr_MC</value>
+            </options>
+            <options>
+              <key>French (Senegal)</key>
+              <value>fr_SN</value>
+            </options>
+            <options>
+              <key>Friulian</key>
+              <value>fur</value>
+            </options>
+            <options>
+              <key>Friulian (Italy)</key>
+              <value>fur_IT</value>
+            </options>
+            <options>
+              <key>Ga</key>
+              <value>gaa</value>
+            </options>
+            <options>
+              <key>Ga (Ghana)</key>
+              <value>gaa_GH</value>
             </options>
             <options>
               <key>Galician</key>
               <value>gl</value>
             </options>
             <options>
-              <key>Ganda</key>
-              <value>lg</value>
+              <key>Galician (Spain)</key>
+              <value>gl_ES</value>
+            </options>
+            <options>
+              <key>Geez</key>
+              <value>gez</value>
+            </options>
+            <options>
+              <key>Geez (Eritrea)</key>
+              <value>gez_ER</value>
+            </options>
+            <options>
+              <key>Geez (Ethiopia)</key>
+              <value>gez_ET</value>
             </options>
             <options>
               <key>Georgian</key>
               <value>ka</value>
             </options>
             <options>
+              <key>Georgian (Georgia)</key>
+              <value>ka_GE</value>
+            </options>
+            <options>
               <key>German</key>
               <value>de</value>
+            </options>
+            <options>
+              <key>German (Belgium)</key>
+              <value>de_BE</value>
+            </options>
+            <options>
+              <key>German (Germany)</key>
+              <value>de_DE</value>
+            </options>
+            <options>
+              <key>German (Liechtenstein)</key>
+              <value>de_LI</value>
+            </options>
+            <options>
+              <key>German (Luxembourg)</key>
+              <value>de_LU</value>
             </options>
             <options>
               <key>Greek</key>
               <value>el</value>
             </options>
             <options>
-              <key>Guarani</key>
-              <value>gn</value>
+              <key>Greek (Cyprus)</key>
+              <value>el_CY</value>
+            </options>
+            <options>
+              <key>Greek (Greece)</key>
+              <value>el_GR</value>
             </options>
             <options>
               <key>Gujarati</key>
               <value>gu</value>
             </options>
             <options>
-              <key>Haitian</key>
-              <value>ht</value>
+              <key>Gujarati (India)</key>
+              <value>gu_IN</value>
             </options>
             <options>
               <key>Hausa</key>
               <value>ha</value>
             </options>
             <options>
+              <key>Hausa (Ghana)</key>
+              <value>ha_GH</value>
+            </options>
+            <options>
+              <key>Hausa (Niger)</key>
+              <value>ha_NE</value>
+            </options>
+            <options>
+              <key>Hausa (Nigeria)</key>
+              <value>ha_NG</value>
+            </options>
+            <options>
+              <key>Hausa (Sudan)</key>
+              <value>ha_SD</value>
+            </options>
+            <options>
+              <key>Hawaiian</key>
+              <value>haw</value>
+            </options>
+            <options>
+              <key>Hawaiian (United States)</key>
+              <value>haw_US</value>
+            </options>
+            <options>
               <key>Hebrew</key>
               <value>he</value>
             </options>
             <options>
-              <key>Herero</key>
-              <value>hz</value>
+              <key>Hebrew (Israel)</key>
+              <value>he_IL</value>
             </options>
             <options>
               <key>Hindi</key>
               <value>hi</value>
             </options>
             <options>
-              <key>Hiri Motu</key>
-              <value>ho</value>
+              <key>Hindi (India)</key>
+              <value>hi_IN</value>
             </options>
             <options>
               <key>Hungarian</key>
               <value>hu</value>
+            </options>
+            <options>
+              <key>Hungarian (Hungary)</key>
+              <value>hu_HU</value>
             </options>
             <options>
               <key>Iberian Portuguese</key>
@@ -5390,172 +6593,276 @@ Please select a value</tooltip>
               <value>is</value>
             </options>
             <options>
-              <key>Ido</key>
-              <value>io</value>
+              <key>Icelandic (Iceland)</key>
+              <value>is_IS</value>
             </options>
             <options>
               <key>Igbo</key>
               <value>ig</value>
             </options>
             <options>
+              <key>Igbo (Nigeria)</key>
+              <value>ig_NG</value>
+            </options>
+            <options>
               <key>Indonesian</key>
               <value>id</value>
+            </options>
+            <options>
+              <key>Indonesian (Indonesia)</key>
+              <value>id_ID</value>
             </options>
             <options>
               <key>Interlingua</key>
               <value>ia</value>
             </options>
             <options>
-              <key>Interlingue</key>
-              <value>ie</value>
-            </options>
-            <options>
               <key>Inuktitut</key>
               <value>iu</value>
-            </options>
-            <options>
-              <key>Inupiaq</key>
-              <value>ik</value>
             </options>
             <options>
               <key>Irish</key>
               <value>ga</value>
             </options>
             <options>
+              <key>Irish (Ireland)</key>
+              <value>ga_IE</value>
+            </options>
+            <options>
               <key>Italian</key>
               <value>it</value>
+            </options>
+            <options>
+              <key>Italian (Italy)</key>
+              <value>it_IT</value>
+            </options>
+            <options>
+              <key>Italian (Switzerland)</key>
+              <value>it_CH</value>
             </options>
             <options>
               <key>Japanese</key>
               <value>ja</value>
             </options>
             <options>
-              <key>Javanese</key>
-              <value>jv</value>
+              <key>Japanese (Japan)</key>
+              <value>ja_JP</value>
+            </options>
+            <options>
+              <key>Jju</key>
+              <value>kaj</value>
+            </options>
+            <options>
+              <key>Jju (Nigeria)</key>
+              <value>kaj_NG</value>
             </options>
             <options>
               <key>Kalaallisut</key>
               <value>kl</value>
             </options>
             <options>
+              <key>Kalaallisut (Greenland)</key>
+              <value>kl_GL</value>
+            </options>
+            <options>
+              <key>Kamba</key>
+              <value>kam</value>
+            </options>
+            <options>
+              <key>Kamba (Kenya)</key>
+              <value>kam_KE</value>
+            </options>
+            <options>
               <key>Kannada</key>
               <value>kn</value>
             </options>
             <options>
-              <key>Kanuri</key>
-              <value>kr</value>
-            </options>
-            <options>
-              <key>Kashmiri</key>
-              <value>ks</value>
+              <key>Kannada (India)</key>
+              <value>kn_IN</value>
             </options>
             <options>
               <key>Kazakh</key>
               <value>kk</value>
             </options>
             <options>
+              <key>Kazakh (Kazakhstan)</key>
+              <value>kk_KZ</value>
+            </options>
+            <options>
               <key>Khmer</key>
               <value>km</value>
             </options>
             <options>
-              <key>Kikuyu</key>
-              <value>ki</value>
+              <key>Khmer (Cambodia)</key>
+              <value>km_KH</value>
             </options>
             <options>
               <key>Kinyarwanda</key>
               <value>rw</value>
             </options>
             <options>
+              <key>Kinyarwanda (Rwanda)</key>
+              <value>rw_RW</value>
+            </options>
+            <options>
               <key>Kirghiz</key>
               <value>ky</value>
             </options>
             <options>
-              <key>Komi</key>
-              <value>kv</value>
+              <key>Kirghiz (Kyrgyzstan)</key>
+              <value>ky_KG</value>
             </options>
             <options>
-              <key>Kongo</key>
-              <value>kg</value>
+              <key>Konkani</key>
+              <value>kok</value>
+            </options>
+            <options>
+              <key>Konkani (India)</key>
+              <value>kok_IN</value>
             </options>
             <options>
               <key>Korean</key>
               <value>ko</value>
             </options>
             <options>
-              <key>Kuanyama</key>
-              <value>kj</value>
+              <key>Korean (South Korea)</key>
+              <value>ko_KR</value>
+            </options>
+            <options>
+              <key>Koro</key>
+              <value>kfo</value>
+            </options>
+            <options>
+              <key>Koro (C&#xF4;te d&#x2019;Ivoire)</key>
+              <value>kfo_CI</value>
+            </options>
+            <options>
+              <key>Kpelle</key>
+              <value>kpe</value>
+            </options>
+            <options>
+              <key>Kpelle (Guinea)</key>
+              <value>kpe_GN</value>
+            </options>
+            <options>
+              <key>Kpelle (Liberia)</key>
+              <value>kpe_LR</value>
             </options>
             <options>
               <key>Kurdish</key>
               <value>ku</value>
             </options>
             <options>
+              <key>Kurdish (Iran)</key>
+              <value>ku_IR</value>
+            </options>
+            <options>
+              <key>Kurdish (Iraq)</key>
+              <value>ku_IQ</value>
+            </options>
+            <options>
+              <key>Kurdish (Syria)</key>
+              <value>ku_SY</value>
+            </options>
+            <options>
+              <key>Kurdish (Turkey)</key>
+              <value>ku_TR</value>
+            </options>
+            <options>
               <key>Lao</key>
               <value>lo</value>
             </options>
             <options>
-              <key>Latin</key>
-              <value>la</value>
+              <key>Lao (Laos)</key>
+              <value>lo_LA</value>
             </options>
             <options>
               <key>Latvian</key>
               <value>lv</value>
             </options>
             <options>
-              <key>Limburgish</key>
-              <value>li</value>
+              <key>Latvian (Latvia)</key>
+              <value>lv_LV</value>
             </options>
             <options>
               <key>Lingala</key>
               <value>ln</value>
             </options>
             <options>
+              <key>Lingala (Congo - Brazzaville)</key>
+              <value>ln_CG</value>
+            </options>
+            <options>
+              <key>Lingala (Congo - Kinshasa)</key>
+              <value>ln_CD</value>
+            </options>
+            <options>
               <key>Lithuanian</key>
               <value>lt</value>
             </options>
             <options>
-              <key>Luba-Katanga</key>
-              <value>lu</value>
+              <key>Lithuanian (Lithuania)</key>
+              <value>lt_LT</value>
             </options>
             <options>
-              <key>Luxembourgish</key>
-              <value>lb</value>
+              <key>Low German</key>
+              <value>nds</value>
+            </options>
+            <options>
+              <key>Low German (Germany)</key>
+              <value>nds_DE</value>
             </options>
             <options>
               <key>Macedonian</key>
               <value>mk</value>
             </options>
             <options>
-              <key>Malagasy</key>
-              <value>mg</value>
+              <key>Macedonian (Macedonia)</key>
+              <value>mk_MK</value>
             </options>
             <options>
               <key>Malay</key>
               <value>ms</value>
             </options>
             <options>
+              <key>Malay (Brunei)</key>
+              <value>ms_BN</value>
+            </options>
+            <options>
+              <key>Malay (Malaysia)</key>
+              <value>ms_MY</value>
+            </options>
+            <options>
               <key>Malayalam</key>
               <value>ml</value>
+            </options>
+            <options>
+              <key>Malayalam (India)</key>
+              <value>ml_IN</value>
             </options>
             <options>
               <key>Maltese</key>
               <value>mt</value>
             </options>
             <options>
+              <key>Maltese (Malta)</key>
+              <value>mt_MT</value>
+            </options>
+            <options>
               <key>Manx</key>
               <value>gv</value>
             </options>
             <options>
-              <key>Maori</key>
-              <value>mi</value>
+              <key>Manx (United Kingdom)</key>
+              <value>gv_GB</value>
             </options>
             <options>
               <key>Marathi</key>
               <value>mr</value>
             </options>
             <options>
-              <key>Marshallese</key>
-              <value>mh</value>
+              <key>Marathi (India)</key>
+              <value>mr_IN</value>
             </options>
             <options>
               <key>Moldavian</key>
@@ -5566,28 +6873,44 @@ Please select a value</tooltip>
               <value>mn</value>
             </options>
             <options>
-              <key>Nauru</key>
-              <value>na</value>
+              <key>Mongolian (China)</key>
+              <value>mn_CN</value>
             </options>
             <options>
-              <key>Navajo</key>
-              <value>nv</value>
-            </options>
-            <options>
-              <key>Ndonga</key>
-              <value>ng</value>
+              <key>Mongolian (Mongolia)</key>
+              <value>mn_MN</value>
             </options>
             <options>
               <key>Nepali</key>
               <value>ne</value>
             </options>
             <options>
-              <key>North Ndebele</key>
-              <value>nd</value>
+              <key>Nepali (India)</key>
+              <value>ne_IN</value>
+            </options>
+            <options>
+              <key>Nepali (Nepal)</key>
+              <value>ne_NP</value>
             </options>
             <options>
               <key>Northern Sami</key>
               <value>se</value>
+            </options>
+            <options>
+              <key>Northern Sami (Finland)</key>
+              <value>se_FI</value>
+            </options>
+            <options>
+              <key>Northern Sami (Norway)</key>
+              <value>se_NO</value>
+            </options>
+            <options>
+              <key>Northern Sotho</key>
+              <value>nso</value>
+            </options>
+            <options>
+              <key>Northern Sotho (South Africa)</key>
+              <value>nso_ZA</value>
             </options>
             <options>
               <key>Norwegian</key>
@@ -5598,48 +6921,80 @@ Please select a value</tooltip>
               <value>nb</value>
             </options>
             <options>
+              <key>Norwegian Bokm&#xE5;l (Norway)</key>
+              <value>nb_NO</value>
+            </options>
+            <options>
               <key>Norwegian Nynorsk</key>
               <value>nn</value>
+            </options>
+            <options>
+              <key>Norwegian Nynorsk (Norway)</key>
+              <value>nn_NO</value>
             </options>
             <options>
               <key>Nyanja</key>
               <value>ny</value>
             </options>
             <options>
+              <key>Nyanja (Malawi)</key>
+              <value>ny_MW</value>
+            </options>
+            <options>
               <key>Occitan</key>
               <value>oc</value>
             </options>
             <options>
-              <key>Ojibwa</key>
-              <value>oj</value>
+              <key>Occitan (France)</key>
+              <value>oc_FR</value>
             </options>
             <options>
               <key>Oriya</key>
               <value>or</value>
             </options>
             <options>
+              <key>Oriya (India)</key>
+              <value>or_IN</value>
+            </options>
+            <options>
               <key>Oromo</key>
               <value>om</value>
             </options>
             <options>
-              <key>Ossetic</key>
-              <value>os</value>
+              <key>Oromo (Ethiopia)</key>
+              <value>om_ET</value>
             </options>
             <options>
-              <key>Pali</key>
-              <value>pi</value>
+              <key>Oromo (Kenya)</key>
+              <value>om_KE</value>
             </options>
             <options>
               <key>Pashto</key>
               <value>ps</value>
             </options>
             <options>
+              <key>Pashto (Afghanistan)</key>
+              <value>ps_AF</value>
+            </options>
+            <options>
               <key>Persian</key>
               <value>fa</value>
             </options>
             <options>
+              <key>Persian (Afghanistan)</key>
+              <value>fa_AF</value>
+            </options>
+            <options>
+              <key>Persian (Iran)</key>
+              <value>fa_IR</value>
+            </options>
+            <options>
               <key>Polish</key>
               <value>pl</value>
+            </options>
+            <options>
+              <key>Polish (Poland)</key>
+              <value>pl_PL</value>
             </options>
             <options>
               <key>Portuguese</key>
@@ -5650,176 +7005,420 @@ Please select a value</tooltip>
               <value>pa</value>
             </options>
             <options>
-              <key>Quechua</key>
-              <value>qu</value>
+              <key>Punjabi (India)</key>
+              <value>pa_IN</value>
             </options>
             <options>
-              <key>Rhaeto-Romance</key>
-              <value>rm</value>
+              <key>Punjabi (Pakistan)</key>
+              <value>pa_PK</value>
             </options>
             <options>
               <key>Romanian</key>
               <value>ro</value>
             </options>
             <options>
-              <key>Rundi</key>
-              <value>rn</value>
+              <key>Romanian (Moldova)</key>
+              <value>ro_MD</value>
+            </options>
+            <options>
+              <key>Romanian (Romania)</key>
+              <value>ro_RO</value>
             </options>
             <options>
               <key>Russian</key>
               <value>ru</value>
             </options>
             <options>
-              <key>Samoan</key>
-              <value>sm</value>
+              <key>Russian (Russia)</key>
+              <value>ru_RU</value>
             </options>
             <options>
-              <key>Sango</key>
-              <value>sg</value>
+              <key>Russian (Ukraine)</key>
+              <value>ru_UA</value>
             </options>
             <options>
               <key>Sanskrit</key>
               <value>sa</value>
             </options>
             <options>
-              <key>Sardinian</key>
-              <value>sc</value>
-            </options>
-            <options>
-              <key>Scottish Gaelic</key>
-              <value>gd</value>
+              <key>Sanskrit (India)</key>
+              <value>sa_IN</value>
             </options>
             <options>
               <key>Serbian</key>
               <value>sr</value>
             </options>
             <options>
+              <key>Serbian (Bosnia and Herzegovina)</key>
+              <value>sr_BA</value>
+            </options>
+            <options>
+              <key>Serbian (Montenegro)</key>
+              <value>sr_ME</value>
+            </options>
+            <options>
+              <key>Serbian (Serbia and Montenegro)</key>
+              <value>sr_CS</value>
+            </options>
+            <options>
+              <key>Serbian (Serbia)</key>
+              <value>sr_RS</value>
+            </options>
+            <options>
               <key>Serbo-Croatian</key>
               <value>sh</value>
             </options>
             <options>
-              <key>Shona</key>
-              <value>sn</value>
+              <key>Serbo-Croatian (Bosnia and Herzegovina)</key>
+              <value>sh_BA</value>
+            </options>
+            <options>
+              <key>Serbo-Croatian (Serbia and Montenegro)</key>
+              <value>sh_CS</value>
             </options>
             <options>
               <key>Sichuan Yi</key>
               <value>ii</value>
             </options>
             <options>
-              <key>Sindhi</key>
-              <value>sd</value>
+              <key>Sichuan Yi (China)</key>
+              <value>ii_CN</value>
+            </options>
+            <options>
+              <key>Sidamo</key>
+              <value>sid</value>
+            </options>
+            <options>
+              <key>Sidamo (Ethiopia)</key>
+              <value>sid_ET</value>
             </options>
             <options>
               <key>Sinhala</key>
               <value>si</value>
             </options>
             <options>
+              <key>Sinhala (Sri Lanka)</key>
+              <value>si_LK</value>
+            </options>
+            <options>
               <key>Slovak</key>
               <value>sk</value>
+            </options>
+            <options>
+              <key>Slovak (Slovakia)</key>
+              <value>sk_SK</value>
             </options>
             <options>
               <key>Slovenian</key>
               <value>sl</value>
             </options>
             <options>
+              <key>Slovenian (Slovenia)</key>
+              <value>sl_SI</value>
+            </options>
+            <options>
               <key>Somali</key>
               <value>so</value>
+            </options>
+            <options>
+              <key>Somali (Djibouti)</key>
+              <value>so_DJ</value>
+            </options>
+            <options>
+              <key>Somali (Ethiopia)</key>
+              <value>so_ET</value>
+            </options>
+            <options>
+              <key>Somali (Kenya)</key>
+              <value>so_KE</value>
+            </options>
+            <options>
+              <key>Somali (Somalia)</key>
+              <value>so_SO</value>
             </options>
             <options>
               <key>South Ndebele</key>
               <value>nr</value>
             </options>
             <options>
+              <key>South Ndebele (South Africa)</key>
+              <value>nr_ZA</value>
+            </options>
+            <options>
               <key>Southern Sotho</key>
               <value>st</value>
+            </options>
+            <options>
+              <key>Southern Sotho (Lesotho)</key>
+              <value>st_LS</value>
+            </options>
+            <options>
+              <key>Southern Sotho (South Africa)</key>
+              <value>st_ZA</value>
             </options>
             <options>
               <key>Spanish</key>
               <value>es</value>
             </options>
             <options>
-              <key>Sundanese</key>
-              <value>su</value>
+              <key>Spanish (Argentina)</key>
+              <value>es_AR</value>
+            </options>
+            <options>
+              <key>Spanish (Bolivia)</key>
+              <value>es_BO</value>
+            </options>
+            <options>
+              <key>Spanish (Chile)</key>
+              <value>es_CL</value>
+            </options>
+            <options>
+              <key>Spanish (Colombia)</key>
+              <value>es_CO</value>
+            </options>
+            <options>
+              <key>Spanish (Costa Rica)</key>
+              <value>es_CR</value>
+            </options>
+            <options>
+              <key>Spanish (Dominican Republic)</key>
+              <value>es_DO</value>
+            </options>
+            <options>
+              <key>Spanish (Ecuador)</key>
+              <value>es_EC</value>
+            </options>
+            <options>
+              <key>Spanish (El Salvador)</key>
+              <value>es_SV</value>
+            </options>
+            <options>
+              <key>Spanish (Guatemala)</key>
+              <value>es_GT</value>
+            </options>
+            <options>
+              <key>Spanish (Honduras)</key>
+              <value>es_HN</value>
+            </options>
+            <options>
+              <key>Spanish (Mexico)</key>
+              <value>es_MX</value>
+            </options>
+            <options>
+              <key>Spanish (Nicaragua)</key>
+              <value>es_NI</value>
+            </options>
+            <options>
+              <key>Spanish (Panama)</key>
+              <value>es_PA</value>
+            </options>
+            <options>
+              <key>Spanish (Paraguay)</key>
+              <value>es_PY</value>
+            </options>
+            <options>
+              <key>Spanish (Peru)</key>
+              <value>es_PE</value>
+            </options>
+            <options>
+              <key>Spanish (Puerto Rico)</key>
+              <value>es_PR</value>
+            </options>
+            <options>
+              <key>Spanish (United States)</key>
+              <value>es_US</value>
+            </options>
+            <options>
+              <key>Spanish (Uruguay)</key>
+              <value>es_UY</value>
+            </options>
+            <options>
+              <key>Spanish (Venezuela)</key>
+              <value>es_VE</value>
             </options>
             <options>
               <key>Swahili</key>
               <value>sw</value>
             </options>
             <options>
+              <key>Swahili (Kenya)</key>
+              <value>sw_KE</value>
+            </options>
+            <options>
+              <key>Swahili (Tanzania)</key>
+              <value>sw_TZ</value>
+            </options>
+            <options>
               <key>Swati</key>
               <value>ss</value>
+            </options>
+            <options>
+              <key>Swati (South Africa)</key>
+              <value>ss_ZA</value>
+            </options>
+            <options>
+              <key>Swati (Swaziland)</key>
+              <value>ss_SZ</value>
             </options>
             <options>
               <key>Swedish</key>
               <value>sv</value>
             </options>
             <options>
+              <key>Swedish (Finland)</key>
+              <value>sv_FI</value>
+            </options>
+            <options>
+              <key>Swedish (Sweden)</key>
+              <value>sv_SE</value>
+            </options>
+            <options>
               <key>Swiss French</key>
               <value>fr_CH</value>
+            </options>
+            <options>
+              <key>Swiss German</key>
+              <value>gsw</value>
+            </options>
+            <options>
+              <key>Swiss German (Switzerland)</key>
+              <value>gsw_CH</value>
             </options>
             <options>
               <key>Swiss High German</key>
               <value>de_CH</value>
             </options>
             <options>
-              <key>Tagalog</key>
-              <value>tl</value>
+              <key>Syriac</key>
+              <value>syr</value>
             </options>
             <options>
-              <key>Tahitian</key>
-              <value>ty</value>
+              <key>Syriac (Syria)</key>
+              <value>syr_SY</value>
+            </options>
+            <options>
+              <key>Tagalog</key>
+              <value>tl</value>
             </options>
             <options>
               <key>Tajik</key>
               <value>tg</value>
             </options>
             <options>
+              <key>Tajik (Tajikistan)</key>
+              <value>tg_TJ</value>
+            </options>
+            <options>
               <key>Tamil</key>
               <value>ta</value>
+            </options>
+            <options>
+              <key>Tamil (India)</key>
+              <value>ta_IN</value>
+            </options>
+            <options>
+              <key>Taroko</key>
+              <value>trv</value>
+            </options>
+            <options>
+              <key>Taroko (Taiwan)</key>
+              <value>trv_TW</value>
             </options>
             <options>
               <key>Tatar</key>
               <value>tt</value>
             </options>
             <options>
+              <key>Tatar (Russia)</key>
+              <value>tt_RU</value>
+            </options>
+            <options>
               <key>Telugu</key>
               <value>te</value>
+            </options>
+            <options>
+              <key>Telugu (India)</key>
+              <value>te_IN</value>
             </options>
             <options>
               <key>Thai</key>
               <value>th</value>
             </options>
             <options>
+              <key>Thai (Thailand)</key>
+              <value>th_TH</value>
+            </options>
+            <options>
               <key>Tibetan</key>
               <value>bo</value>
+            </options>
+            <options>
+              <key>Tibetan (China)</key>
+              <value>bo_CN</value>
+            </options>
+            <options>
+              <key>Tibetan (India)</key>
+              <value>bo_IN</value>
+            </options>
+            <options>
+              <key>Tigre</key>
+              <value>tig</value>
+            </options>
+            <options>
+              <key>Tigre (Eritrea)</key>
+              <value>tig_ER</value>
             </options>
             <options>
               <key>Tigrinya</key>
               <value>ti</value>
             </options>
             <options>
+              <key>Tigrinya (Eritrea)</key>
+              <value>ti_ER</value>
+            </options>
+            <options>
+              <key>Tigrinya (Ethiopia)</key>
+              <value>ti_ET</value>
+            </options>
+            <options>
               <key>Tonga</key>
               <value>to</value>
+            </options>
+            <options>
+              <key>Tonga (Tonga)</key>
+              <value>to_TO</value>
             </options>
             <options>
               <key>Tsonga</key>
               <value>ts</value>
             </options>
             <options>
+              <key>Tsonga (South Africa)</key>
+              <value>ts_ZA</value>
+            </options>
+            <options>
               <key>Tswana</key>
               <value>tn</value>
+            </options>
+            <options>
+              <key>Tswana (South Africa)</key>
+              <value>tn_ZA</value>
             </options>
             <options>
               <key>Turkish</key>
               <value>tr</value>
             </options>
             <options>
-              <key>Turkmen</key>
-              <value>tk</value>
+              <key>Turkish (Turkey)</key>
+              <value>tr_TR</value>
             </options>
             <options>
-              <key>Twi</key>
-              <value>tw</value>
+              <key>Tyap</key>
+              <value>kcg</value>
+            </options>
+            <options>
+              <key>Tyap (Nigeria)</key>
+              <value>kcg_NG</value>
             </options>
             <options>
               <key>U.S. English</key>
@@ -5830,64 +7429,120 @@ Please select a value</tooltip>
               <value>ug</value>
             </options>
             <options>
+              <key>Uighur (China)</key>
+              <value>ug_CN</value>
+            </options>
+            <options>
               <key>Ukrainian</key>
               <value>uk</value>
+            </options>
+            <options>
+              <key>Ukrainian (Ukraine)</key>
+              <value>uk_UA</value>
             </options>
             <options>
               <key>Urdu</key>
               <value>ur</value>
             </options>
             <options>
+              <key>Urdu (India)</key>
+              <value>ur_IN</value>
+            </options>
+            <options>
+              <key>Urdu (Pakistan)</key>
+              <value>ur_PK</value>
+            </options>
+            <options>
               <key>Uzbek</key>
               <value>uz</value>
+            </options>
+            <options>
+              <key>Uzbek (Afghanistan)</key>
+              <value>uz_AF</value>
+            </options>
+            <options>
+              <key>Uzbek (Uzbekistan)</key>
+              <value>uz_UZ</value>
             </options>
             <options>
               <key>Venda</key>
               <value>ve</value>
             </options>
             <options>
+              <key>Venda (South Africa)</key>
+              <value>ve_ZA</value>
+            </options>
+            <options>
               <key>Vietnamese</key>
               <value>vi</value>
             </options>
             <options>
-              <key>Volap&#xFC;k</key>
-              <value>vo</value>
+              <key>Vietnamese (Vietnam)</key>
+              <value>vi_VN</value>
             </options>
             <options>
-              <key>Walloon</key>
-              <value>wa</value>
+              <key>Walamo</key>
+              <value>wal</value>
+            </options>
+            <options>
+              <key>Walamo (Ethiopia)</key>
+              <value>wal_ET</value>
             </options>
             <options>
               <key>Welsh</key>
               <value>cy</value>
             </options>
             <options>
-              <key>Western Frisian</key>
-              <value>fy</value>
+              <key>Welsh (United Kingdom)</key>
+              <value>cy_GB</value>
             </options>
             <options>
               <key>Wolof</key>
               <value>wo</value>
             </options>
             <options>
+              <key>Wolof (Senegal)</key>
+              <value>wo_SN</value>
+            </options>
+            <options>
               <key>Xhosa</key>
               <value>xh</value>
             </options>
             <options>
-              <key>Yiddish</key>
-              <value>yi</value>
+              <key>Xhosa (South Africa)</key>
+              <value>xh_ZA</value>
             </options>
             <options>
               <key>Yoruba</key>
               <value>yo</value>
             </options>
             <options>
-              <key>Zhuang</key>
-              <value>za</value>
+              <key>Yoruba (Nigeria)</key>
+              <value>yo_NG</value>
             </options>
             <options>
               <key>Zulu</key>
               <value>zu</value>
+            </options>
+            <options>
+              <key>Zulu (South Africa)</key>
+              <value>zu_ZA</value>
+            </options>
+            <options>
+              <key>in</key>
+              <value>in</value>
+            </options>
+            <options>
+              <key>iw</key>
+              <value>iw</value>
+            </options>
+            <options>
+              <key>sh_YU</key>
+              <value>sh_YU</value>
+            </options>
+            <options>
+              <key>sr_YU</key>
+              <value>sr_YU</value>
             </options>
             <width></width>
             <height></height>
@@ -5938,6 +7593,7 @@ Please select a value</tooltip>
             <fieldtype>image</fieldtype>
             <width></width>
             <height></height>
+            <uploadPath></uploadPath>
             <queryColumnType>int(11)</queryColumnType>
             <columnType>int(11)</columnType>
             <phpdocType>Asset_Image</phpdocType>
