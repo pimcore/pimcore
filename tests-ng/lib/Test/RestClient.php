@@ -121,12 +121,12 @@ class Test_RestClient {
         $client = $this->client;
         $client->setMethod($method);
         if (self::loggingEnabled) {
-            print($method . " " . $uri . "\n");
+            print("    " . $method . " " . $uri . "\n");
         }
         $client->setUri($uri);
         if ($body != null && ($method == "PUT" || $method == "POST")) {
                 $client->setRawData($body);
-//                print("body: " . $body . "\n");
+//                print("    body: " . $body . "\n");
         }
 
         $result = $client->request();
@@ -295,7 +295,6 @@ class Test_RestClient {
         $wsDocument = Webservice_Data_Mapper::map($asset, $documentType, "out");
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest(self::$baseUrl .  "asset/?apikey=" . $this->apikey, "PUT", $encodedData);
-        var_dump($response);
         return $response;
     }
 
