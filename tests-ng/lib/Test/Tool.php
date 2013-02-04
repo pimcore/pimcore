@@ -482,7 +482,7 @@ class Test_Tool
             } catch (Exception $e) {
             }
         }
-#
+
         if ($cleanAssets) {
             try {
                 $assetRoot = Asset::getById(1);

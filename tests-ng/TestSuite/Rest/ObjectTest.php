@@ -86,5 +86,34 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
         $this->assertTrue($savedObject == null, "object still exists");
     }
 
+    public function testFolder() {
+        $this->printTestName();
+
+        // create folder but don't save it
+        $folder = Test_Tool::createEmptyObject("myfolder", false);
+        $folder->setType("folder");
+
+        $fitem = Object_Abstract::getById($folder->getId());
+        $this->assertNull($fitem);
+
+        $response = Test_RestClient::getInstance()->createObjectFolder($folder);
+        $this->assertTrue($response->success, "request wasn't successful");
+
+        $id = $response->id;
+        $this->assertTrue($id > 1, "id not set");
+
+        $folderDirect = Object_Abstract::getById($id);
+        $this->assertTrue($folderDirect->getType() == "folder");
+
+        $folderRest = Test_RestClient::getInstance()->getObjectById($id);
+        $this->assertTrue(Test_Tool::objectsAreEqual($folderRest, $folderDirect, false), "objects are not equal");
+
+        Test_RestClient::getInstance()->deleteObject($id);
+
+        Pimcore::collectGarbage();
+        $folderDirect = Object_Abstract::getById($id);
+        $this->assertNull($folderDirect, "folder still exists");
+    }
+
 
 }

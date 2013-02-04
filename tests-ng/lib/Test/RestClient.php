@@ -240,12 +240,46 @@ class Test_RestClient {
 
     }
 
+    /** Gets a document by id.
+     * @param $id id.
+     * @param bool
+     * @return Document_Folder
+     */
+    public function getDocumentById($id, $decode = true) {
+        $response = $this->doRequest(self::$baseUrl .  "document/id/" . $id . "?apikey=" . $this->apikey, "GET");
+
+        if ($response->type == "folder") {
+            $wsDocument = self::fillWebserviceData("Webservice_Data_Document_Folder_In", $response);
+            if (!$decode) {
+                return $wsDocument;
+            }
+            $doc = new Document_Folder();
+            $wsDocument->reverseMap($doc);
+            return $doc;
+        } else {
+            $type = ucfirst($response->type);
+            $class = "Webservice_Data_Document_" . $type . "_In";
+
+            $wsDocument = self::fillWebserviceData($class, $response);
+            if (!$decode) {
+                return $wsDocument;
+            }
+
+            if (!empty($type)) {
+                $type = "Document_" . ucfirst($wsDocument->type);
+                $document = new $type();
+                $wsDocument->reverseMap($document);
+                return $document;
+            }
+        }
+    }
+
 
     public function getAssetById($id, $decode = true) {
         $response = $this->doRequest(self::$baseUrl .  "asset/id/" . $id . "?apikey=" . $this->apikey, "GET");
 
-        var_dump("response " . $response);
-        if ($response["type"] == "folder") {
+
+        if ($response->type == "folder") {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Asset_Folder_In", $response);
             if (!$decode) {
                 return $wsDocument;
@@ -271,12 +305,33 @@ class Test_RestClient {
 
 
 
+    /** Creates a new document.
+     * @param $document
+     * @return mixed json encoded success value and id
+     */
+    public function createDocument($document) {
+        $type = $document->getType();
+        $typeUpper = ucfirst($type);
+        $className = "Webservice_Data_Document_" . $typeUpper . "_In";
+
+        $wsDocument = Webservice_Data_Mapper::map($document, $className, "out");
+        $encodedData = json_encode($wsDocument);
+        $response = $this->doRequest(self::$baseUrl .  "document/?apikey=" . $this->apikey, "PUT", $encodedData);
+        return $response;
+    }
+
+
     /** Creates a new object.
      * @param $object
      * @return mixed json encoded success value and id
      */
     public function createObjectConcrete($object) {
-        $wsDocument = Webservice_Data_Mapper::map($object, "Webservice_Data_Object_Concrete_Out", "out");
+        if ($object->getType() == "folder") {
+            $documentType = "Webservice_Data_Object_Folder_Out";
+        } else {
+            $documentType = "Webservice_Data_Object_Concrete_Out";
+        }
+        $wsDocument = Webservice_Data_Mapper::map($object, $documentType, "out");
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest(self::$baseUrl .  "object/?apikey=" . $this->apikey, "PUT", $encodedData);
         return $response;
@@ -325,6 +380,30 @@ class Test_RestClient {
         return $response;
     }
 
+    /** Creates a new object folder.
+     * @param $objectFolder object folder.
+     * @return mixed
+     */
+    public function createObjectFolder($objectFolder) {
+        return $this->createObjectConcrete($objectFolder);
+    }
 
+
+    /** Creates a new document folder.
+     * @param $objectFolder document folder.
+     * @return mixed
+     */
+    public function createDocumentFolder($documentFolder) {
+        return $this->createDocument($documentFolder);
+    }
+
+
+    /** Creates a new asset folder.
+     * @param $assetFolder document folder.
+     * @return mixed
+     */
+    public function createAssetFolder($assetFolder) {
+        return $this->createAsset($assetFolder);
+    }
 
 }

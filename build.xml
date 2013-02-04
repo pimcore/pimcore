@@ -179,9 +179,10 @@
 </target>
 
  <target name="phpunit" depends="prepare-dirs,replace-config" description="Run unit tests with PHPUnit">
-     <exec executable="phpunit" failonerror="false">
+     <exec executable="phpunit" failonerror="true">
          <arg value="--debug"/>
      </exec>
+     <echo message="hello"/>
  </target>
 
  <target name="phpcb"

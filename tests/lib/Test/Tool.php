@@ -330,7 +330,7 @@ class Test_Tool
 
     /**
      * @param  Object_Abstract $object
-     * @return string
+     * @return string#
      */
     protected static function createObjectComparisonString($object, $ignoreCopyDifferences)
     {
