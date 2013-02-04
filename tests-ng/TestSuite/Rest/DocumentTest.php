@@ -32,4 +32,35 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
         // do not use assertNull, otherwise phpunit will dump the entire bloody object
         $this->assertTrue($dd == null, "document still exists");
     }
+
+
+    public function testFolder() {
+        $this->printTestName();
+
+        // create folder but don't save it
+        $folder = Test_Tool::createEmptyDocumentPage("myfolder", false);
+        $folder->setType("folder");
+
+        $fitem = Document::getById($folder->getId());
+        $this->assertNull($fitem);
+
+        $response = Test_RestClient::getInstance()->createDocumentFolder($folder);
+        $this->assertTrue($response->success, "request wasn't successful");
+
+        $id = $response->id;
+        $this->assertTrue($id > 1, "id not set");
+
+        $folderDirect = Document::getById($id);
+        $this->assertTrue($folderDirect->getType() == "folder");
+
+        $folderRest = Test_RestClient::getInstance()->getDocumentById($id);
+        $this->assertTrue(Test_Tool::documentsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
+
+        Test_RestClient::getInstance()->deleteDocument($id);
+
+        Pimcore::collectGarbage();
+        $folderDirect = Document::getById($id);
+        $this->assertNull($folderDirect, "folder still exists");
+    }
+
 }

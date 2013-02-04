@@ -73,4 +73,34 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $savedAsset = Asset::getById($savedAsset->getId());
         $this->assertTrue($savedAsset == null, "asset still exists");
     }
+
+    public function testFolder() {
+        $this->printTestName();
+
+        // create folder but don't save it
+        $folder = Test_Tool::createImageAsset("myfolder", null, false);
+        $folder->setType("folder");
+
+        $fitem = Asset::getById($folder->getId());
+        $this->assertNull($fitem);
+
+        $response = Test_RestClient::getInstance()->createAssetFolder($folder);
+        $this->assertTrue($response->success, "request wasn't successful");
+
+        $id = $response->id;
+        $this->assertTrue($id > 1, "id not set");
+
+        $folderDirect = Asset::getById($id);
+        $this->assertTrue($folderDirect->getType() == "folder");
+
+        $folderRest = Test_RestClient::getInstance()->getAssetById($id);
+        $this->assertTrue(Test_Tool::assetsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
+
+        Test_RestClient::getInstance()->deleteAsset($id);
+
+        Pimcore::collectGarbage();
+        $folderDirect = Asset::getById($id);
+        $this->assertNull($folderDirect, "folder still exists");
+    }
+
 }
