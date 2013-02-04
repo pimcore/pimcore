@@ -11,8 +11,39 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
 
     public function setUp() {
 //        // every single rest test assumes a clean database
-//        Test_Tool::cleanUp();
+        Test_Tool::cleanUp();
     }
+
+    public function testCreate() {
+        $this->printTestName();
+        $this->assertEquals(1, Test_Tool::getDocoumentCount());
+
+        $unsavedObject = Test_Tool::createEmptyDocumentPage("", false);
+        // object not saved, object count must still be one
+        $this->assertEquals(1, Test_Tool::getDocoumentCount());
+
+        $time = time();
+
+        $result = Test_RestClient::getInstance()->createDocument($unsavedObject);
+        $this->assertTrue($result->success, "request not successful");
+        $this->assertEquals(2, Test_Tool::getDocoumentCount());
+
+        $id = $result->id;
+        $this->assertTrue($id > 1, "id must be greater than 1");
+
+        $objectDirect = Document::getById($id);
+        $creationDate = $objectDirect->getCreationDate();
+        $this->assertTrue($creationDate >= $time, "wrong creation date");
+
+
+        // as the object key is unique there must be exactly one document with that key
+        $list = Test_RestClient::getInstance()->getDocumentList("`key` = '" . $unsavedObject->getKey() . "'");
+
+
+        $this->assertEquals(1, count($list));
+    }
+
+
 
     public function testDelete() {
         $this->printTestName();
