@@ -37,7 +37,7 @@ if(is_file($systemConfigFile)) {
 $includePathBak = get_include_path();
 $includePaths = array(get_include_path());
 $includePaths[] = TESTS_PATH . "/TestSuite";
-$includePaths[] = TESTS_PATH . "/lib";
+array_unshift($includePaths, "/lib");
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
 try {
@@ -110,5 +110,6 @@ Test_RestClient::setBaseUrl("http://" . $testConfig["rest"]["host"] . $testConfi
 Test_RestClient::setHost($testConfig["rest"]["host"]);
 Test_RestClient::enableTestMode();
 
+print("include path: " . get_include_path() . "\n");
 print("bootstrap    done\n");
 
