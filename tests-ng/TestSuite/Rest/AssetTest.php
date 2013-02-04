@@ -17,6 +17,8 @@ class TestSuite_Rest_AssetTest extends Test_Base {
 
 
     public function testCreateAssetFile() {
+        $this->printTestName();
+
         $originalContent = file_get_contents(TESTS_PATH . "/resources/assets/images/image5.jpg");
 
         $this->assertTrue(strlen($originalContent) > 0);
@@ -51,5 +53,24 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $savedContent = file_get_contents($filename);
 
         $this->assertEquals($originalContent, $savedContent, "asset was not saved correctly");
+    }
+
+    public function testDelete() {
+        $this->printTestName();
+
+        $originalContent = file_get_contents(TESTS_PATH . "/resources/assets/images/image5.jpg");
+        $savedAsset = Test_Tool::createImageAsset("", $originalContent, true);
+
+        $savedAsset = Asset::getById($savedAsset->getId());
+        $this->assertNotNull($savedAsset);
+
+        $response = Test_RestClient::getInstance()->deleteAsset($savedAsset->getId());
+        $this->assertTrue($response->success, "request wasn't successful");
+
+        // this will wipe our local cache
+        Pimcore::collectGarbage();
+
+        $savedAsset = Asset::getById($savedAsset->getId());
+        $this->assertTrue($savedAsset == null, "asset still exists");
     }
 }

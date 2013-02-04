@@ -43,6 +43,7 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
 
 
     public function testCreateObjectConcrete() {
+        $this->printTestName();
         $this->assertEquals(1, Test_Tool::getObjectCount());
 
         $unsavedObject = Test_Tool::createEmptyObject("", false);
@@ -65,7 +66,25 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
         // as the object key is unique there must be exactly one object with that key
         $list = Test_RestClient::getInstance()->getObjectList("o_key = '" . $unsavedObject->getKey() . "'");
         $this->assertEquals(1, count($list));
-
     }
+
+    public function testDelete() {
+        $this->printTestName();
+
+        $savedObject = Test_Tool::createEmptyObject();
+
+        $savedObject = Object_Abstract::getById($savedObject->getId());
+        $this->assertNotNull($savedObject);
+
+        $response = Test_RestClient::getInstance()->deleteObject($savedObject->getId());
+        $this->assertTrue($response->success, "request wasn't successful");
+
+        // this will wipe our local cache
+        Pimcore::collectGarbage();
+
+        $savedObject = Object_Abstract::getById($savedObject->getId());
+        $this->assertTrue($savedObject == null, "object still exists");
+    }
+
 
 }
