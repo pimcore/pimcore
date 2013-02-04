@@ -422,6 +422,30 @@ class Test_Tool
     /**
      * @param string $keyPrefix
      * @param bool $save
+     * @return Document_Page
+     */
+    public static function createEmptyDocumentPage($keyPrefix = "", $save = true) {
+        if ($keyPrefix == null) {
+            $keyPrefix = "";
+        }
+        $document = new Document_Page();
+        $document->setType("page");
+        $document->setParentId(1);
+        $document->setUserOwner(1);
+        $document->setUserModification(1);
+        $document->setCreationDate(time());
+        $document->setKey($keyPrefix . uniqid() . rand(10, 99));
+        if ($save) {
+            $document->save();
+        }
+        return $document;
+    }
+
+
+
+    /**
+     * @param string $keyPrefix
+     * @param bool $save
      * @return Asset_Image
      */
     public static function createImageAsset($keyPrefix = "", $data, $save = true) {

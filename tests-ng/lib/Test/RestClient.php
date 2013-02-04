@@ -298,5 +298,33 @@ class Test_RestClient {
         return $response;
     }
 
+    /** Delete object.
+     * @param $objectId
+     * @return mixed json encoded success value and id
+     */
+    public function deleteObject($objectId) {
+        $response = $this->doRequest(self::$baseUrl .  "object/id/" . $objectId . "?apikey=" . $this->apikey, "DELETE");
+        return $response;
+    }
+
+    /** Delete asset.
+     * @param $assetId
+     * @return mixed json encoded success value and id
+     */
+    public function deleteAsset($assetId) {
+        $response = $this->doRequest(self::$baseUrl .  "asset/id/" . $assetId . "?apikey=" . $this->apikey, "DELETE");
+        return $response;
+    }
+
+    /** Delete document.
+     * @param $documentId
+     * @return mixed json encoded success value and id
+     */
+    public function deleteDocument($documentId) {
+        $response = $this->doRequest(self::$baseUrl .  "document/id/" . $documentId . "?apikey=" . $this->apikey, "DELETE");
+        return $response;
+    }
+
+
 
 }
