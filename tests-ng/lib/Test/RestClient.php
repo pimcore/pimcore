@@ -225,7 +225,6 @@ class Test_RestClient {
 
         $response = $this->doRequest(self::$baseUrl .  "document-list/?apikey=" . $this->apikey . $params, "GET");
 
-        var_dump($response);
         $result = array();
         foreach ($response as $item) {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Document_List_Item", $item);
@@ -440,5 +439,47 @@ class Test_RestClient {
     public function createAssetFolder($assetFolder) {
         return $this->createAsset($assetFolder);
     }
+
+
+    /** Returns class information for the class with the given id.
+     * @param $id
+     * @param bool $decode
+     * @return Object_Concrete|Object_Folder
+     * @throws Exception
+     */
+    public function getClassById($id, $decode = true) {
+        $response = $this->doRequest(self::$baseUrl .  "class/id/" . $id . "?apikey=" . $this->apikey, "GET");
+        $wsDocument = self::fillWebserviceData("Webservice_Data_Class_In", $response);
+
+        if (!$decode) {
+            return $wsDocument;
+        }
+
+        $class = new Object_Class();
+        $wsDocument->reverseMap($class);
+        return $class;
+    }
+
+
+    /** Returns class information for the class with the given id.
+     * @param $id
+     * @param bool $decode
+     * @return Object_Concrete|Object_Folder
+     * @throws Exception
+     */
+    public function getObjectMetaById($id, $decode = true) {
+        $response = $this->doRequest(self::$baseUrl .  "object-meta/id/" . $id . "?apikey=" . $this->apikey, "GET");
+
+        $wsDocument = self::fillWebserviceData("Webservice_Data_Class_In", $response);
+
+        if (!$decode) {
+            return $wsDocument;
+        }
+
+        $class = new Object_Class();
+        $wsDocument->reverseMap($class);
+        return $class;
+    }
+
 
 }

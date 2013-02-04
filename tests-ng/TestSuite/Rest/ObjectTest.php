@@ -12,6 +12,7 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
     public function setUp() {
         // every single rest test assumes a clean database
         Test_Tool::cleanUp();
+        parent::setUp();
     }
 
     /**
