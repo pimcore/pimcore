@@ -420,8 +420,6 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
                 $writer->process($codeCoverage, $colors);
             }
         }
-        print("### DO RUN DONE\n");
-
         return $result;
     }
 
