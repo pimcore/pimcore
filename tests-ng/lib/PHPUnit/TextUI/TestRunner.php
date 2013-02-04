@@ -136,6 +136,8 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
      */
     public function doRun(PHPUnit_Framework_Test $suite, array $arguments = array())
     {
+
+        print("### DO RUN\n");
         $this->handleConfiguration($arguments);
 
         if (isset($arguments['bootstrap'])) {
@@ -418,6 +420,7 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
                 $writer->process($codeCoverage, $colors);
             }
         }
+        print("### DO RUN DONE\n");
 
         return $result;
     }
