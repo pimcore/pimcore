@@ -61,7 +61,10 @@ abstract class Webservice_Data {
             }
         }
 
-        $object->setProperties(null);
+        if ($object instanceof Object_Abstract) {
+            // Classes do not have properties
+            $object->setProperties(null);
+        }
         if (is_array($this->properties)) {
             foreach ($this->properties as $propertyWs) {
 
