@@ -12,6 +12,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
     public function setUp() {
 //        // every single rest test assumes a clean database
         Test_Tool::cleanUp();
+        parent::setUp();
     }
 
     public function testCreate() {
