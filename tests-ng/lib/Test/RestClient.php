@@ -130,6 +130,7 @@ class Test_RestClient {
         }
 
         $result = $client->request();
+
         $body = $result->getBody();
         $body = json_decode($body);
         return $body;
@@ -187,6 +188,16 @@ class Test_RestClient {
         return $result;
     }
 
+    /**
+     * @param null $condition
+     * @param null $order
+     * @param null $orderKey
+     * @param null $offset
+     * @param null $limit
+     * @param null $groupBy
+     * @param bool $decode
+     * @return array
+     */
     public function getAssetList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true) {
         $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy);
 
@@ -207,6 +218,30 @@ class Test_RestClient {
         }
         return $result;
     }
+
+
+    public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $decode = true) {
+        $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy);
+
+        $response = $this->doRequest(self::$baseUrl .  "document-list/?apikey=" . $this->apikey . $params, "GET");
+
+        var_dump($response);
+        $result = array();
+        foreach ($response as $item) {
+            $wsDocument = self::fillWebserviceData("Webservice_Data_Document_List_Item", $item);
+            if (!$decode) {
+                $result[] = $wsDocument;
+            } else {
+                $type = $wsDocument->type;
+                $type = "Document_" . ucfirst($type);
+                $asset = new $type();
+                $wsDocument->reverseMap($asset);
+                $result[] = $asset;
+            }
+        }
+        return $result;
+    }
+
 
 
      public function getObjectById($id, $decode = true) {

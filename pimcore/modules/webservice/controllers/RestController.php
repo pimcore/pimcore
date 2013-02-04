@@ -400,6 +400,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      - group by key
      */
     public function documentListAction() {
+        Logger::debug("################################### DOCUMENT LIST \n\n\n\n\n");
         $condition = $this->getParam("condition");
         $order = $this->getParam("order");
         $orderKey = $this->getParam("orderKey");
