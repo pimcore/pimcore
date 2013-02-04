@@ -45,9 +45,8 @@ if (strpos('@php_bin@', '@php_bin') === 0) {
 
 // add the tests, which still reside in the original development unit, not in pimcore_phpunit to the include path
 $includePaths = array(
-    get_include_path(),
-    realpath(dirname(__FILE__)) . "/lib"
-
+    realpath(dirname(__FILE__)) . "/lib",
+    get_include_path()
 );
 
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
