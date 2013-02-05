@@ -8,6 +8,7 @@
  */
 class Test_Data
 {
+    const IMAGE = "sampleimage.jpg";
 
     private function getObjectList() {
         $list = new Object_List();
@@ -125,6 +126,30 @@ class Test_Data
         $value = $object->$getter();
         $expected = 7 + ($seed % 3);
         if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
+    public static function fillImage($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+
+        $asset = Asset::getByPath("/". self::IMAGE);
+        if (!$asset) {
+            $asset = Test_Tool::createImageAsset("", null, false);
+            $asset->setFilename(self::IMAGE);
+            $asset->save();
+        }
+
+        $object->$setter($asset);
+    }
+
+    public static function assertImage($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+        $expected = Asset::getByPath("/" . self::IMAGE);
+        if ($expected != $value) {
             print("   expected " . $expected . " but was " . $value);
             return false;
         }
