@@ -10,7 +10,6 @@
         <cartmanager class="OnlineShop_Framework_Impl_MultiCartManager">
             <config>
                 <cart class="OnlineShop_Framework_Impl_Cart"/>
-                <!--<cart class="OnlineShop_Framework_Impl_Cart"/>-->
 
                 <pricecalcualtor class="OnlineShop_Framework_Impl_CartPriceCalculator">
                     <config>
@@ -23,12 +22,12 @@
         </cartmanager>
 
         <pricesystems>
+            <!-- Define one or more price systems. The products getPriceSystemName method need to return a name here defined -->
             <pricesystem name="default" class="OnlineShop_Framework_Impl_AttributePriceSystem"/>
-            <!--<pricesystem name="boeschSet" class="OnlineShop_Boesch_SetPriceSystem"/>-->
         </pricesystems>
         <availablitysystems>
+            <!-- Define one or more availability systems. The products getAvailabilitySystemName method need to return a name here defined -->
             <availablitysystem name="default" class="OnlineShop_Framework_Impl_AttributeAvailabilitySystem"/>
-            <!--<pricesystem name="boeschSet" class="OnlineShop_Boesch_SetPriceSystem"/>-->
         </availablitysystems>
         <checkoutmanager class="OnlineShop_Framework_Impl_CheckoutManager">
             <config>

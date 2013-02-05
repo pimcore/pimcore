@@ -241,4 +241,10 @@ class OnlineShop_Framework_Impl_SessionCartItem extends Pimcore_Model_Abstract i
     }
 
 
+    /**
+     * @return OnlineShop_Framework_IPrice
+     */
+    public function getTotalPrice() {
+        return $this->getPriceInfo()->getTotalPrice();
+    }
 }

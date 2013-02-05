@@ -56,8 +56,7 @@ class OnlineShop_Framework_AbstractProduct extends Object_Concrete {
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @return string
      */
-    public function  getAvailabilitySystemName() {
-        //default
+    public function getAvailabilitySystemName() {
         return "default";
     }
 

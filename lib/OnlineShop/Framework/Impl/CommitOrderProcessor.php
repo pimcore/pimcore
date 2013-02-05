@@ -63,8 +63,10 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
-        $customer = CustomerDb_Customer::getById($env->getCurrentUserId());
-        $order->setCustomer($customer);
+        if(class_exists("Object_Customer")) {
+            $customer = Object_Customer::getById($env->getCurrentUserId());
+            $order->setCustomer($customer);
+        }
 
         $order->save();
 
@@ -97,20 +99,11 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
 
         $order->setItems($orderItems);
 
-        $event = new CustomerDb_Events_OrderEvent();
-        $event->setCustomer($env->getCurrentUserId());
-        $event->setUser(0);
-        $event->setTitle("Order: " . $order->getOrdernumber());
-        $event->setOrderObject($order);
-        $event->setTimestamp(time());
-        $event->save();
-
         try {
             $this->processOrder($cart, $order);
             $order->save();
         } catch(Exception $e) {
             $order->delete();
-            $event->delete();
             throw $e;
         }
 

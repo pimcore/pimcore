@@ -10,6 +10,7 @@ class OnlineShop_Framework_Impl_Checkout_DeliveryAddress extends OnlineShop_Fram
     const LINE6 = "delivery_address_line6";
     const LINE7 = "delivery_address_line7";
     const LINE8 = "delivery_address_line8";
+    const IS_ALTERNATIVE = "is_alternative";
 
     /**
      * @return string
