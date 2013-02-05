@@ -10,6 +10,8 @@ class Test_Data
 {
     const IMAGE = "sampleimage.jpg";
 
+    const HOTSPOT_IMAGE = "hotspot.jpg";
+
     private function getObjectList() {
         $list = new Object_List();
         $list->setOrderKey("o_id");
@@ -155,6 +157,93 @@ class Test_Data
         }
         return true;
     }
+
+    private static function createHotspots() {
+        $result = array();
+        $hotspot = new stdClass();
+        $hotspot->name = "hotspot1";
+        $hotspot->width = "10";
+        $hotspot->height = "20";
+        $hotspot->top  = "30";
+        $hotspot->left = "40";
+        $result[] = $hotspot;
+        $hotspot->width = "10";
+        $hotspot->height = "50";
+        $hotspot->top  = "20";
+        $hotspot->left = "40";
+        $result[] = $hotspot;
+        return $result;
+    }
+
+    public static function fillHotspotImage($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+
+        $asset = Asset::getByPath("/". self::HOTSPOT_IMAGE);
+        if (!$asset) {
+            $asset = Test_Tool::createImageAsset("", null, false);
+            $asset->setFilename(self::HOTSPOT_IMAGE);
+            $asset->save();
+        }
+
+        $hotspots = self::createHotspots();
+        $hotspotImage = new Object_Data_Hotspotimage($asset, $hotspots);
+        $object->$setter($hotspotImage);
+    }
+
+    public static function assertHotspotImage($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+        $hotspots = $value->getHotspots();
+        if (count($hotspots)  != 2) {
+            print("hotspot count is " . count($hotspots));
+            return false;
+        }
+        $asset = Asset::getByPath("/" . self::HOTSPOT_IMAGE);
+        $hotspots = self::createHotspots();
+        $expected = new Object_Data_Hotspotimage($asset, $hotspots);
+
+        $value = Test_Tool::createAssetComparisonString($value->getImage);
+        $expected = Test_Tool::createAssetComparisonString($expected->getImage);
+
+        if ($expected != $value) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
+    public static function fillLanguage($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        $object->$setter("de");
+    }
+
+    public static function assertLanguage($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+        $expected = "de";
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
+    public static function fillCountry($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        $object->$setter("AU");
+    }
+
+    public static function assertCountry($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+        $expected = "AU";
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
 
 
 }

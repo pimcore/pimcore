@@ -48,6 +48,29 @@
         <datatype>layout</datatype>
         <permissions></permissions>
         <childs>
+          <fieldtype>date</fieldtype>
+          <queryColumnType>int(11)</queryColumnType>
+          <columnType>int(11)</columnType>
+          <phpdocType>Pimcore_Date</phpdocType>
+          <defaultValue></defaultValue>
+          <useCurrentDate></useCurrentDate>
+          <name>date</name>
+          <title>Date</title>
+          <tooltip>&lt;b&gt;Date&lt;/b&gt;
+Please select a value</tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index>1</index>
+          <locked></locked>
+          <style>border-right:1px solid green;</style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <relationType></relationType>
+          <invisible></invisible>
+          <visibleGridView>1</visibleGridView>
+          <visibleSearch>1</visibleSearch>
+        </childs>
+        <childs>
           <fieldtype>href</fieldtype>
           <width></width>
           <assetUploadPath></assetUploadPath>
@@ -252,7 +275,7 @@ Please drag all related objects into this area.</tooltip>
           <title>Slider</title>
           <tooltip>&lt;b&gt;Slider&lt;/b&gt;
 Please select a value</tooltip>
-          <mandatory></mandatory>
+          <mandatory>1</mandatory>
           <noteditable></noteditable>
           <index></index>
           <locked></locked>
@@ -380,29 +403,6 @@ Please select a value</tooltip>
           <mandatory></mandatory>
           <noteditable></noteditable>
           <index></index>
-          <locked></locked>
-          <style>border-right:1px solid green;</style>
-          <permissions></permissions>
-          <datatype>data</datatype>
-          <relationType></relationType>
-          <invisible></invisible>
-          <visibleGridView>1</visibleGridView>
-          <visibleSearch>1</visibleSearch>
-        </childs>
-        <childs>
-          <fieldtype>date</fieldtype>
-          <queryColumnType>int(11)</queryColumnType>
-          <columnType>int(11)</columnType>
-          <phpdocType>Pimcore_Date</phpdocType>
-          <defaultValue></defaultValue>
-          <useCurrentDate></useCurrentDate>
-          <name>date</name>
-          <title>Date</title>
-          <tooltip>&lt;b&gt;Date&lt;/b&gt;
-Please select a value</tooltip>
-          <mandatory></mandatory>
-          <noteditable></noteditable>
-          <index>1</index>
           <locked></locked>
           <style>border-right:1px solid green;</style>
           <permissions></permissions>
@@ -4440,6 +4440,35 @@ Please select a value</tooltip>
           <invisible></invisible>
           <visibleGridView>1</visibleGridView>
           <visibleSearch>1</visibleSearch>
+        </childs>
+        <childs>
+          <fieldtype>hotspotimage</fieldtype>
+          <queryColumnType>
+            <image>int(11)</image>
+            <hotspots>text</hotspots>
+          </queryColumnType>
+          <columnType>
+            <image>int(11)</image>
+            <hotspots>text</hotspots>
+          </columnType>
+          <phpdocType>Object_Data_Hotspotimage</phpdocType>
+          <width></width>
+          <height></height>
+          <uploadPath></uploadPath>
+          <name>hotspotimage</name>
+          <title></title>
+          <tooltip></tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index></index>
+          <locked></locked>
+          <style></style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <relationType></relationType>
+          <invisible></invisible>
+          <visibleGridView></visibleGridView>
+          <visibleSearch></visibleSearch>
         </childs>
         <childs>
           <fieldtype>checkbox</fieldtype>
