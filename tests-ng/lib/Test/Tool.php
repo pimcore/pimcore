@@ -500,6 +500,9 @@ class Test_Tool
         if ($keyPrefix == null) {
             $keyPrefix = "";
         }
+        if (!$data) {
+            $data = file_get_contents(TESTS_PATH . "/resources/assets/images/image5.jpg");
+        }
         $asset = new Asset_Image();
         $asset->setParentId(1);
         $asset->setUserOwner(1);
@@ -524,10 +527,12 @@ class Test_Tool
                     $childs = $objectRoot->getChilds();
 
                     foreach ($childs as $child) {
+                        print("   delete object " . $child->getId());
                         $child->delete();
                     }
                 }
             } catch (Exception $e) {
+                print($e);
             }
         }
 
@@ -541,6 +546,7 @@ class Test_Tool
                     }
                 }
             } catch (Exception $e) {
+                print($e);
             }
         }
 
@@ -554,8 +560,10 @@ class Test_Tool
                     }
                 }
             } catch (Exception $e) {
+                print($e);
             }
         }
+        Pimcore::collectGarbage();
     }
 
     /** Returns the total number of objects.
