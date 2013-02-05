@@ -84,6 +84,36 @@ class Test_Data
     }
 
 
+    public static function fillMultihref($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        $objects = self::getObjectList();
+        $objects = array_slice($objects,0,4);
+
+        $object->$setter($objects);
+    }
+
+    public static function assertMultihref($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+        $objects = self::getObjectList();
+        $expectedArray = array_slice($objects,0,4);
+
+        if (count($expectedArray) != count($value)) {
+            print("count is different  " . count($expectedArray) . " != " . count($value) . "\n");
+            return false;
+        }
+
+        for ($i = 0; $i < count($expectedArray); $i++) {
+            if ($value[$i] != $expectedArray[$i]) {
+                print("   expected " . $expectedArray[$i]->getId() . " but was " . $value[$i]->getId());
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
 
     public static function fillSlider($object, $field, $seed = 1) {
         $setter = "set" . ucfirst($field);

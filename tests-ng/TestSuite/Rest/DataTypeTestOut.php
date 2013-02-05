@@ -19,13 +19,8 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
         // every single rest test assumes a clean database
         Test_Tool::cleanUp();
 
-
-
         // this will create a couple of objects which can be used for references
         Test_Tool::createEmptyObjects();
-
-
-
 
         self::$seed = 1;
         self::$localObject = Test_Tool::createFullyFledgedObject("local", true, self::$seed);
@@ -62,6 +57,11 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
     public function testHref() {
         $this->printTestName();
         $this->assertTrue(Test_Data::assertHref(self::$restObject, "href", self::$seed));
+    }
+
+    public function testMultiHref() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertMultihref(self::$restObject, "multihref", self::$seed));
     }
 
 }
