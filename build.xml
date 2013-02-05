@@ -187,7 +187,6 @@
      <exec executable="phpunit" failonerror="true">
          <arg value="--debug"/>
      </exec>
-     <echo message="hello"/>
  </target>
 
  <target name="phpcb"
