@@ -32,12 +32,11 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
         $this->assertEquals("folder", $object->getType(), "expected type to be folder");
         $this->assertEquals(1, $object->getId(), "wrong id");
 
-        $object = Test_RestClient::getInstance()->getObjectById(2);
-        $this->assertNull($object, "object not created yet");
+        $originalCount = Test_Tool::getObjectCount();
 
         $emptyObject = Test_Tool::createEmptyObject();
         $id = $emptyObject->getId();
-
+        $this->assertTrue(Test_Tool::getObjectCount() == $originalCount + 1);
         $object = Test_RestClient::getInstance()->getObjectById($id);
         $this->assertNotNull($object, "expected new object");
     }
