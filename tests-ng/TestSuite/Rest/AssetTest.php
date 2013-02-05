@@ -95,7 +95,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $this->assertTrue($folderDirect->getType() == "folder");
 
         $folderRest = Test_RestClient::getInstance()->getAssetById($id);
-        $this->assertTrue(Test_Tool::assetsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
+        $this->assertTrue(Test_Tool::assetsAreEqual($folderRest, $folderDirect, false), "assets are not equal");
 
         Test_RestClient::getInstance()->deleteAsset($id);
 
