@@ -118,7 +118,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             }
         } catch (Exception $e) {
             Logger::error($e);
-            $this->encoder->encode(array("success" => false, "message" => $e));
+            $this->encoder->encode(array("success" => false, "msg" => $e));
         }
 
         throw new Exception("not implemented");
