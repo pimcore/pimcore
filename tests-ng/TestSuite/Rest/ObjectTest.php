@@ -22,7 +22,7 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
     public function testObjectList() {
         $this->printTestName();
         $list = Test_RestClient::getInstance()->getObjectList();
-        $this->assertEquals(1, count($list), "expcted 1 list item");
+        $this->assertEquals(1, count($list), "expected 1 list item");
         $this->assertEquals("folder", $list[0]->getType(), "expected type to be folder");
     }
 
