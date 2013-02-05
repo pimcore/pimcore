@@ -452,6 +452,7 @@ class Test_Tool
             Test_Data::fillTextarea($object, "textarea", $seed);
             Test_Data::fillSlider($object, "slider", $seed);
             Test_Data::fillHref($object, "href", $seed);
+            Test_Data::fillMultihref($object, "multihref", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 
