@@ -419,6 +419,53 @@ class Test_Tool
         return $emptyObject;
     }
 
+    public static function createEmptyObjects($keyPrefix = "", $save = true, $count = 10) {
+        $result = array();
+        for ($i = 0; $i < $count; $i++) {
+            $result[] = self::createEmptyObject($keyPrefix, $save);
+        }
+        return $result;
+    }
+
+
+    /**
+     * @param string $keyPrefix
+     * @param bool $save
+     * @return Object_Unittest
+     */
+    public static function createFullyFledgedObject($keyPrefix = "", $save = true, $seed = 1) {
+        if ($keyPrefix == null) {
+            $keyPrefix = "";
+        }
+        $object = new Object_Unittest();
+        $object->setOmitMandatoryCheck(true);
+        $object->setParentId(1);
+        $object->setUserOwner(1);
+        $object->setUserModification(1);
+        $object->setCreationDate(time());
+        $object->setKey($keyPrefix . uniqid() . rand(10, 99));
+
+
+        try {
+            Test_Data::fillInput($object, "input", $seed);
+            Test_Data::fillNumber($object, "number", $seed);
+            Test_Data::fillTextarea($object, "textarea", $seed);
+            Test_Data::fillSlider($object, "slider", $seed);
+            Test_Data::fillHref($object, "href", $seed);
+        } catch (Exception $e) {
+            print($e . "\n");
+
+        }
+
+        if ($save) {
+            $object->save();
+        }
+
+        return $object;
+    }
+
+
+
     /**
      * @param string $keyPrefix
      * @param bool $save

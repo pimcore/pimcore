@@ -1,0 +1,64 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: Michi
+ * Date: 11.11.2010
+ * Time: 10:35:07
+ */
+
+
+class TestSuite_Rest_DataTypeTestIn extends Test_Base {
+
+    static $seed;
+
+    static $localObject;
+
+
+    public static function setUpBeforeClass() {
+        // every single rest test assumes a clean database
+        Test_Tool::cleanUp();
+
+
+        self::$seed = 1;
+
+        $tmpObject = Test_Tool::createFullyFledgedObject("local", false, self::$seed);
+        $response = Test_RestClient::getInstance()->createObjectConcrete($tmpObject);
+        if (!$response->success) {
+            throw new Exception("could not create test object");
+        }
+        self::$localObject = Object_Abstract::getById($response->id);
+
+    }
+
+    public function setUp() {
+        parent::setUp();
+
+    }
+
+    public function testInput() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertInput(self::$localObject, "input", self::$seed));
+    }
+
+    public function testNumber() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertNumber(self::$localObject, "number", self::$seed));
+    }
+
+    public function testTextarea() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertTextarea(self::$localObject, "textarea", self::$seed));
+    }
+
+    public function testSlider() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertSlider(self::$localObject, "slider", self::$seed));
+    }
+
+    public function testHref() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertHref(self::$localObject, "href", self::$seed));
+    }
+
+
+}
