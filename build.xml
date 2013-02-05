@@ -172,6 +172,11 @@
     <move file="${basedir}/plugins_example" tofile="${basedir}/plugins"/>
 </target>
 
+    <target name="move-no-coverage">
+        <move file="${basedir}/phpunit-no-coverage.xml.dist" tofile="${basedir}/phpunit.xml.dist"/>
+    </target>
+
+
 <target name="prepare-dirs" description="Creates website directories">
     <mkdir dir="${basedir}/website/var/cache"/>
     <mkdir dir="${basedir}/website/var/system"/>
