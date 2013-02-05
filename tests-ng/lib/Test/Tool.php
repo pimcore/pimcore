@@ -81,7 +81,7 @@ class Test_Tool
      * @param  Asset $asset
      * @return string
      */
-    protected static function createAssetComparisonString($asset, $ignoreCopyDifferences = false)
+    public static function createAssetComparisonString($asset, $ignoreCopyDifferences = false)
     {
 
         if ($asset instanceof Asset) {
@@ -454,6 +454,9 @@ class Test_Tool
             Test_Data::fillHref($object, "href", $seed);
             Test_Data::fillMultihref($object, "multihref", $seed);
             Test_Data::fillImage($object, "image", $seed);
+            Test_Data::fillHotspotImage($object, "hotspotimage", $seed);
+            Test_Data::fillLanguage($object, "languagex", $seed);
+            Test_Data::fillCountry($object, "country", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 

@@ -72,5 +72,14 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $this->assertTrue(Test_Data::assertImage(self::$localObject, "image", self::$seed));
     }
 
+    public function testLanguage() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertLanguage(self::$localObject, "languagex", self::$seed));
+    }
+
+    public function testCountry() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertCountry(self::$localObject, "country", self::$seed));
+    }
 
 }

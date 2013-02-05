@@ -71,4 +71,21 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
         $this->assertTrue(Test_Data::assertImage(self::$restObject, "image", self::$seed));
     }
 
+    public function testHotspotImage() {
+        $this->printTestName();
+        $this->assertNotNull(self::$localObject->getHotspotImage());
+        $this->assertNotNull(self::$restObject->getHotspotImage());
+        $this->assertTrue(Test_Data::assertHotspotImage(self::$restObject, "hotspotimage", self::$seed));
+    }
+
+    public function testLanguage() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertLanguage(self::$restObject, "languagex", self::$seed));
+    }
+
+    public function testCountry() {
+        $this->printTestName();
+        $this->assertNotNull(self::$restObject->getCountry());
+        $this->assertTrue(Test_Data::assertCountry(self::$restObject, "country", self::$seed));
+    }
 }
