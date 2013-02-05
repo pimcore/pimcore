@@ -453,6 +453,7 @@ class Test_Tool
             Test_Data::fillSlider($object, "slider", $seed);
             Test_Data::fillHref($object, "href", $seed);
             Test_Data::fillMultihref($object, "multihref", $seed);
+            Test_Data::fillImage($object, "image", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 
@@ -564,6 +565,7 @@ class Test_Tool
             }
         }
         Pimcore::collectGarbage();
+        print("\n");
     }
 
     /** Returns the total number of objects.

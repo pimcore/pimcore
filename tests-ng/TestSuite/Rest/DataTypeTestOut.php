@@ -64,4 +64,11 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
         $this->assertTrue(Test_Data::assertMultihref(self::$restObject, "multihref", self::$seed));
     }
 
+    public function testImage() {
+        $this->printTestName();
+        $this->assertNotNull(self::$localObject->getImage());
+        $this->assertNotNull(self::$restObject->getImage());
+        $this->assertTrue(Test_Data::assertImage(self::$restObject, "image", self::$seed));
+    }
+
 }
