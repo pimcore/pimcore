@@ -5,7 +5,7 @@
    depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
    
    <target name="build"
-   depends="prepare, phpunit, phploc,phpcs-ci,phpcpd,phpdox,phpcb"/>
+   depends="prepare, phpunit, phploc,phpcs-ci,phpcpd,phpdox"/>
 
     <target name="dummy"/>
 
