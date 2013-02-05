@@ -20,12 +20,10 @@
     </logging>
 
     <filter>
-        <blacklist>
-            <directory suffix=".php">pimcore/lib/Zend</directory>
-        </blacklist>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">.</directory>
-        </whitelist>
+            <directory suffix=".php">pimcore/lib/Zend/</directory>
+            <directory suffix=".php">tests/</directory>
+            <directory suffix=".php">tests-ng/</directory>
+            <directory suffix=".php">update/</directory>
     </filter>
 
     <selenium>

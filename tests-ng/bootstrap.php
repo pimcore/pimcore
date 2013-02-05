@@ -18,7 +18,7 @@ define("PIMCORE_WEBSITE_VAR",  TESTS_PATH . "/tmp/var");
 include_once(realpath(dirname(__FILE__)) . "/../pimcore/cli/startup.php");
 
 // empty temporary var directory
-recursiveDelete(PIMCORE_WEBSITE_VAR);
+//recursiveDelete(PIMCORE_WEBSITE_VAR);
 mkdir(PIMCORE_WEBSITE_VAR, 0777, true);
 
 // get default configuration for the test
