@@ -150,13 +150,9 @@
           <phpdocType>Document_Page | Document_Snippet | Document | Asset | Object_Abstract</phpdocType>
           <objectsAllowed>1</objectsAllowed>
           <assetsAllowed>1</assetsAllowed>
-          <assetTypes>
-            <assetTypes>image</assetTypes>
-          </assetTypes>
+          <assetTypes></assetTypes>
           <documentsAllowed>1</documentsAllowed>
-          <documentTypes>
-            <documentTypes>page</documentTypes>
-          </documentTypes>
+          <documentTypes></documentTypes>
           <lazyLoading></lazyLoading>
           <classes/>
           <name>href</name>
@@ -423,6 +419,7 @@ Please select a value</tooltip>
           <queryColumnType>varchar</queryColumnType>
           <columnType>varchar</columnType>
           <phpdocType>string</phpdocType>
+          <trimString></trimString>
           <name>time</name>
           <title>Time</title>
           <tooltip></tooltip>
@@ -445,6 +442,7 @@ Please select a value</tooltip>
           <columnType>varchar</columnType>
           <columnLength>20</columnLength>
           <phpdocType>string</phpdocType>
+          <trimString></trimString>
           <name>input</name>
           <title>Input</title>
           <tooltip>&lt;b&gt;Input&lt;/b&gt;
@@ -2722,24 +2720,12 @@ Please select a value</tooltip>
           <fieldtype>language</fieldtype>
           <onlySystemLanguages>1</onlySystemLanguages>
           <options>
-            <key>Croatian</key>
-            <value>hr</value>
-          </options>
-          <options>
             <key>English</key>
             <value>en</value>
           </options>
           <options>
             <key>German</key>
             <value>de</value>
-          </options>
-          <options>
-            <key>Hungarian</key>
-            <value>hu</value>
-          </options>
-          <options>
-            <key>Hungarian (Hungary)</key>
-            <value>hu_HU</value>
           </options>
           <width></width>
           <queryColumnType>varchar(255)</queryColumnType>
@@ -4387,24 +4373,8 @@ Please select a value</tooltip>
         <childs>
           <fieldtype>user</fieldtype>
           <options>
-            <value>232</value>
-            <key></key>
-          </options>
-          <options>
-            <value>1</value>
-            <key>admin (Bernhard Rusch)</key>
-          </options>
-          <options>
-            <value>182</value>
-            <key>bernie (Bernie Spam)</key>
-          </options>
-          <options>
-            <value>227</value>
-            <key>fash</key>
-          </options>
-          <options>
-            <value>229</value>
-            <key>michi</key>
+            <value>2</value>
+            <key>admin (adminfirst adminlast)</key>
           </options>
           <width></width>
           <queryColumnType>varchar(255)</queryColumnType>
@@ -4494,31 +4464,6 @@ Please select a value</tooltip>
           <visibleSearch>1</visibleSearch>
         </childs>
         <childs>
-          <fieldtype>keyValue</fieldtype>
-          <phpdocType>Object_Data_KeyValue</phpdocType>
-          <keyWidth>200</keyWidth>
-          <valueWidth>600</valueWidth>
-          <height></height>
-          <maxheight>0</maxheight>
-          <groupWidth>200</groupWidth>
-          <name>keyvaluepairs</name>
-          <title>key value pairs</title>
-          <tooltip></tooltip>
-          <mandatory></mandatory>
-          <noteditable></noteditable>
-          <index></index>
-          <locked></locked>
-          <style></style>
-          <permissions></permissions>
-          <datatype>data</datatype>
-          <columnType></columnType>
-          <queryColumnType></queryColumnType>
-          <relationType></relationType>
-          <invisible></invisible>
-          <visibleGridView></visibleGridView>
-          <visibleSearch></visibleSearch>
-        </childs>
-        <childs>
           <fieldtype>table</fieldtype>
           <width>600</width>
           <height>300</height>
@@ -4548,7 +4493,7 @@ Please select a value</tooltip>
         <childs>
           <fieldtype>fieldcollections</fieldtype>
           <phpdocType>Object_Fieldcollection</phpdocType>
-          <allowedTypes>collectionA</allowedTypes>
+          <allowedTypes/>
           <lazyLoading></lazyLoading>
           <maxItems></maxItems>
           <name>fieldcollection</name>
@@ -4587,7 +4532,7 @@ Please select a value</tooltip>
         </childs>
         <childs>
           <ownerClassName>allfields</ownerClassName>
-          <ownerFieldName>objects</ownerFieldName>
+          <ownerFieldName></ownerFieldName>
           <lazyLoading>1</lazyLoading>
           <fieldtype>nonownerobjects</fieldtype>
           <width></width>
@@ -4598,7 +4543,7 @@ Please select a value</tooltip>
           <relationType>1</relationType>
           <classes></classes>
           <name>nonowner</name>
-          <title>nonowner objects</title>
+          <title></title>
           <tooltip></tooltip>
           <mandatory></mandatory>
           <noteditable></noteditable>
@@ -4622,6 +4567,7 @@ Please select a value</tooltip>
             <columnType>varchar</columnType>
             <columnLength>255</columnLength>
             <phpdocType>string</phpdocType>
+            <trimString></trimString>
             <name>linput</name>
             <title>localized input</title>
             <tooltip></tooltip>
@@ -4781,6 +4727,7 @@ Please select a value</tooltip>
             <queryColumnType>varchar</queryColumnType>
             <columnType>varchar</columnType>
             <phpdocType>string</phpdocType>
+            <trimString></trimString>
             <name>ltime</name>
             <title>localized time</title>
             <tooltip></tooltip>

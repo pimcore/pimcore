@@ -136,8 +136,6 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
      */
     public function doRun(PHPUnit_Framework_Test $suite, array $arguments = array())
     {
-
-        print("### DO RUN\n");
         $this->handleConfiguration($arguments);
 
         if (isset($arguments['bootstrap'])) {

@@ -54,7 +54,7 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
         $time = time();
 
         $result = Test_RestClient::getInstance()->createObjectConcrete($unsavedObject);
-        $this->assertTrue($result->success, "request not successful");
+        $this->assertTrue($result->success, "request not successful . " . $result->msg);
         $this->assertEquals(2, Test_Tool::getObjectCount());
 
         $id = $result->id;

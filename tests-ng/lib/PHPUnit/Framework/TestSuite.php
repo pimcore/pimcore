@@ -652,7 +652,12 @@ class PHPUnit_Framework_TestSuite implements PHPUnit_Framework_Test, PHPUnit_Fra
                     // The method_exists() triggers an autoload call that causes issues with die()ing autoloaders.
                     class_exists($this->name, false) &&
                     method_exists($this->name, 'setUpBeforeClass')) {
-                    call_user_func(array($this->name, 'setUpBeforeClass'));
+                    try {
+                        call_user_func(array($this->name, 'setUpBeforeClass'));
+                    } catch (Exception $e) {
+                        print($e);
+                        throw $e;
+                    }
                 }
             }
 
