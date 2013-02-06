@@ -150,4 +150,14 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
         $this->assertTrue(Test_Data::assertGeopoint(self::$restObject, "point", self::$seed));
     }
 
+    public function testGeobounds() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertGeobounds(self::$restObject, "bounds", self::$localObject, self::$seed));
+    }
+
+    public function testGeopolygon() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertGeopolygon(self::$restObject, "poly", self::$localObject, self::$seed));
+    }
+
 }

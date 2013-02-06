@@ -420,7 +420,7 @@ class Test_Data
         $longitude = 2.2008440814678;
         $latitude = 102.25112915039;
         $point = new Object_Data_Geopoint($longitude,$latitude);
-        $object->setPoint($point);
+        $object->$setter($point);
     }
 
     public static function assertGeopoint($object, $field, $seed = 1) {
@@ -437,6 +437,44 @@ class Test_Data
         }
         return true;
     }
+
+    public static function fillGeobounds($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        $bounds = new Object_Data_Geobounds(new Object_Data_Geopoint(150.96588134765625, -33.704920213014425), new Object_Data_Geopoint(150.60333251953125, -33.893217379440884));
+        $object->$setter($bounds);
+    }
+
+    public static function assertGeobounds($object, $field, $comparisonObject, $seed = 1) {
+        $fd = $object->getClass()->getFieldDefinition($field);
+        $value = Test_Tool::getComparisonDataForField($field, $fd, $object);
+        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+
+
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
+    public static function fillGeopolygon($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        $polygon  = array(new Object_Data_Geopoint(150.54428100585938, -33.464671118242684), new Object_Data_Geopoint(150.73654174804688, -33.913733814316245), new Object_Data_Geopoint(151.2542724609375, -33.9946115848146));
+        $object->$setter($polygon);
+    }
+
+    public static function assertGeopolygon($object, $field, $comparisonObject, $seed = 1) {
+        $fd = $object->getClass()->getFieldDefinition($field);
+        $value = Test_Tool::getComparisonDataForField($field, $fd, $object);
+        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
 
 
 }

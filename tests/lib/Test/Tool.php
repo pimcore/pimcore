@@ -249,7 +249,7 @@ class Test_Tool
     }
 
 
-    protected static function getComparisonDataForField($key, $value, $object)
+    public static function getComparisonDataForField($key, $value, $object)
     {
 
         // omit password, this one we don't get through WS,

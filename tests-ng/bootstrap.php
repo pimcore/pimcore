@@ -1,4 +1,6 @@
 <?php
+$date = date('m/d/Y h:i:s a', time());
+print($date . "\n");
 
 @ini_set("display_errors", "On");
 @ini_set("display_startup_errors", "On");

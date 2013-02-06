@@ -243,14 +243,14 @@ class Test_Tool
     }
 
 
-    protected static function getComparisonDataForField($key, $value, $object)
+    public static function getComparisonDataForField($key, $fd, $object)
     {
 
         // omit password, this one we don't get through WS,
         // omit non owner objects, they don't get through WS,
         // plus omit fields which don't have get method
         $getter = "get" . ucfirst($key);
-        if (method_exists($object, $getter) and $value instanceof Object_Class_Data_Fieldcollections) {
+        if (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Fieldcollections) {
 
             if ($object->$getter()) {
 
@@ -269,7 +269,7 @@ class Test_Tool
 
                             if ($v instanceof Object_Class_Data_Link) {
                                 $fieldValue = serialize($v);
-                            } else if ($v instanceof Object_Class_Data_Password or $value instanceof Object_Class_Data_Nonownerobjects) {
+                            } else if ($v instanceof Object_Class_Data_Password or $fd instanceof Object_Class_Data_Nonownerobjects) {
                                 $fieldValue=null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
@@ -285,7 +285,7 @@ class Test_Tool
                 }
 
             }
-        } else if (method_exists($object, $getter) and $value instanceof Object_Class_Data_Localizedfields) {
+        } else if (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Localizedfields) {
 
             $data = $object->$getter();
             $lData = array();
@@ -301,7 +301,7 @@ class Test_Tool
             }
 
             foreach ($data->getItems() as $language => $values) {
-                foreach ($value->getFieldDefinitions() as $fd) {
+                foreach ($fd->getFieldDefinitions() as $fd) {
 
                     Zend_Registry::set("Zend_Locale", new Zend_Locale($language));
 
@@ -315,10 +315,10 @@ class Test_Tool
 
             return serialize($lData);
 
-        } else if (method_exists($object, $getter) and $value instanceof Object_Class_Data_Link) {
-            return serialize($value);
-        } else if (method_exists($object, $getter) and !$value instanceof Object_Class_Data_Password and !$value instanceof Object_Class_Data_Nonownerobjects) {
-            return $value->getForCsvExport($object);
+        } else if (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Link) {
+            return serialize($fd);
+        } else if (method_exists($object, $getter) and !$fd instanceof Object_Class_Data_Password and !$fd instanceof Object_Class_Data_Nonownerobjects) {
+            return $fd->getForCsvExport($object);
         }
     }
 
@@ -469,6 +469,8 @@ class Test_Tool
             Test_Data::fillMultiSelect($object, "countries", $seed);
             Test_Data::fillMultiSelect($object, "languages", $seed);
             Test_Data::fillGeopoint($object, "point", $seed);
+            Test_Data::fillGeobounds($object, "bounds", $seed);
+            Test_Data::fillGeopolygon($object, "poly", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 
