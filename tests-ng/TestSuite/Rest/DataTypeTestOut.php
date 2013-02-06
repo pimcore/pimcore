@@ -88,4 +88,60 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
         $this->assertNotNull(self::$restObject->getCountry());
         $this->assertTrue(Test_Data::assertCountry(self::$restObject, "country", self::$seed));
     }
+
+    public function testDate() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertDate(self::$restObject, "date", self::$seed));
+    }
+
+    public function testDateTime() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertDate(self::$restObject, "datetime", self::$seed));
+    }
+
+
+    public function testSelect() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertSelect(self::$restObject, "select", self::$seed));
+    }
+
+    public function testMultiSelect() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertMultiSelect(self::$restObject, "multiselect", self::$seed));
+    }
+
+    public function testUser() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertUser(self::$restObject, "user", self::$seed));
+    }
+
+    public function testCheckbox() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertCheckbox(self::$restObject, "checkbox", self::$seed));
+    }
+
+    public function testTime() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertTime(self::$restObject, "time", self::$seed));
+    }
+
+    public function testWysiwyg() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertWysiwyg(self::$restObject, "wysiwyg", self::$seed));
+    }
+
+    public function testPassword() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertPassword(self::$restObject, "password", self::$seed));
+    }
+
+    public function testCountryMultiSelect() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertCountryMultiSelect(self::$restObject, "countries", self::$seed));
+    }
+
+    public function testLanguageMultiSelect() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertCountryMultiSelect(self::$restObject, "languages", self::$seed));
+    }
 }

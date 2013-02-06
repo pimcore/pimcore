@@ -26,6 +26,7 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $tmpObject = Test_Tool::createFullyFledgedObject("local", false, self::$seed);
         $response = Test_RestClient::getInstance()->createObjectConcrete($tmpObject);
         if (!$response->success) {
+            var_dump($response);
             throw new Exception("could not create test object");
         }
         self::$localObject = Object_Abstract::getById($response->id);
@@ -80,6 +81,57 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
     public function testCountry() {
         $this->printTestName();
         $this->assertTrue(Test_Data::assertCountry(self::$localObject, "country", self::$seed));
+    }
+
+    public function testDate() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertDate(self::$localObject, "date", self::$seed));
+    }
+
+    public function testDateTime() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertDate(self::$localObject, "datetime", self::$seed));
+    }
+
+
+    public function testSelect() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertSelect(self::$localObject, "select", self::$seed));
+    }
+
+    public function testMultiSelect() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertMultiSelect(self::$localObject, "multiselect", self::$seed));
+    }
+
+    public function testUser() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertUser(self::$localObject, "user", self::$seed));
+    }
+
+    public function testCheckbox() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertCheckbox(self::$localObject, "checkbox", self::$seed));
+    }
+
+    public function testTime() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertTime(self::$localObject, "time", self::$seed));
+    }
+
+    public function testWysiwyg() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertWysiwyg(self::$localObject, "wysiwyg", self::$seed));
+    }
+
+    public function testCountryMultiSelect() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertCountryMultiSelect(self::$localObject, "countries", self::$seed));
+    }
+
+    public function testLanguageMultiSelect() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertCountryMultiSelect(self::$localObject, "languages", self::$seed));
     }
 
 }
