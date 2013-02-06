@@ -316,15 +316,17 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         $key = $this->getName();
         $getter = "get" . ucfirst($key);
         $data = $object->$getter();
-        $result = array();
-        foreach ($data->arr as $item) {
-            $resultItem = array(
-                "key" => $item["key"],
-                "value" => $item["value"]
-            );
-            $result[] = $resultItem;
+        if ($data) {
+            $result = array();
+            foreach ($data->arr as $item) {
+                $resultItem = array(
+                    "key" => $item["key"],
+                    "value" => $item["value"]
+                );
+                $result[] = $resultItem;
+            }
+            return $result;
         }
-        return $result;
     }
 
     /**
@@ -334,18 +336,20 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public function getFromWebserviceImport($value, $object = null)
     {
-        $pairs = array();
-        foreach ($value as $property) {
-            $property = (array) $property;
+        if ($value) {
+            $pairs = array();
+            foreach ($value as $property) {
+                $property = (array) $property;
 
-            if (key_exists("key", $property)) {
-                $pairs[] = $property;
+                if (key_exists("key", $property)) {
+                    $pairs[] = $property;
+                }
             }
-        }
 
-        $keyValueData = new Object_Data_KeyValue();
-        $keyValueData->setProperties($pairs);
-        return ($keyValueData);
+            $keyValueData = new Object_Data_KeyValue();
+            $keyValueData->setProperties($pairs);
+            return ($keyValueData);
+        }
     }
 
 }
