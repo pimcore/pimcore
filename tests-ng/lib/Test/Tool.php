@@ -568,6 +568,7 @@ class Test_Tool
             }
         }
         Pimcore::collectGarbage();
+        print("    number of objects is " . Test_Tool::getObjectCount() . "\n");
         print("\n");
     }
 
