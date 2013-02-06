@@ -116,10 +116,14 @@ class Document_Tag_Image extends Document_Tag {
         if ($this->image instanceof Asset) {
 
             $thumbnailInUse = false;
-            if ($this->options["thumbnail"]) {
+            if ($this->options["thumbnail"] || $this->cropPercent) {
                 // create a thumbnail first
 
                 $thumbConfig = $this->image->getThumbnailConfig($this->options["thumbnail"]);
+                if(!$thumbConfig && $this->cropPercent) {
+                    $thumbConfig = new Asset_Image_Thumbnail_Config();
+                }
+
                 if($this->cropPercent) {
                     $thumbConfig->addItemAt(0,"cropPercent", array(
                         "width" => $this->cropWidth,
