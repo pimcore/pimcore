@@ -457,6 +457,17 @@ class Test_Tool
             Test_Data::fillHotspotImage($object, "hotspotimage", $seed);
             Test_Data::fillLanguage($object, "languagex", $seed);
             Test_Data::fillCountry($object, "country", $seed);
+            Test_Data::fillDate($object, "date", $seed);
+            Test_Data::fillDate($object, "datetime", $seed);
+            Test_Data::fillTime($object, "time", $seed);
+            Test_Data::fillSelect($object, "select", $seed);
+            Test_Data::fillMultiSelect($object, "multiselect", $seed);
+            Test_Data::fillUser($object, "user", $seed);
+            Test_Data::fillCheckbox($object, "checkbox", $seed);
+            Test_Data::fillWysiwyg($object, "wysiwyg", $seed);
+            Test_Data::fillPassword($object, "password", $seed);
+            Test_Data::fillMultiSelect($object, "countries", $seed);
+            Test_Data::fillMultiSelect($object, "languages", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 

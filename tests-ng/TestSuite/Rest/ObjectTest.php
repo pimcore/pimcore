@@ -22,6 +22,9 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
     public function testObjectList() {
         $this->printTestName();
         $list = Test_RestClient::getInstance()->getObjectList();
+        if (count($list) > 1) {
+            var_dump($list);
+        }
         $this->assertEquals(1, count($list), "expected 1 list item");
         $this->assertEquals("folder", $list[0]->getType(), "expected type to be folder");
     }
@@ -53,6 +56,7 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
         $time = time();
 
         $result = Test_RestClient::getInstance()->createObjectConcrete($unsavedObject);
+        var_dump($result);
         $this->assertTrue($result->success, "request not successful . " . $result->msg);
         $this->assertEquals(2, Test_Tool::getObjectCount());
 
