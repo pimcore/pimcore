@@ -303,4 +303,49 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         return $result;
     }
 
+
+
+    /**
+     * converts data to be exposed via webservices
+     * @param string $object
+     * @return mixed
+     */
+    public function getForWebserviceExport($object)
+    {
+
+        $key = $this->getName();
+        $getter = "get" . ucfirst($key);
+        $data = $object->$getter();
+        $result = array();
+        foreach ($data->arr as $item) {
+            $resultItem = array(
+                "key" => $item["key"],
+                "value" => $item["value"]
+            );
+            $result[] = $resultItem;
+        }
+        return $result;
+    }
+
+    /**
+     * converts data to be imported via webservices
+     * @param mixed $value
+     * @return mixed
+     */
+    public function getFromWebserviceImport($value, $object = null)
+    {
+        $pairs = array();
+        foreach ($value as $property) {
+            $property = (array) $property;
+
+            if (key_exists("key", $property)) {
+                $pairs[] = $property;
+            }
+        }
+
+        $keyValueData = new Object_Data_KeyValue();
+        $keyValueData->setProperties($pairs);
+        return ($keyValueData);
+    }
+
 }
