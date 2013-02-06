@@ -198,10 +198,13 @@ class Object_Class_Data_Geopoint extends Object_Class_Data_Geo_Abstract {
     public function getFromWebserviceImport ($value) {
         if(empty($value)){
             return null;   
-        }else if($value["longitude"] !== null && $value["latitude"] !== null ) {
-            return new Object_Data_Geopoint($value["longitude"], $value["latitude"]);
         } else {
-            throw new Exception("cannot get values from web service import - invalid data");
+            $value = (array) $value;
+            if($value["longitude"] !== null && $value["latitude"] !== null ) {
+                return new Object_Data_Geopoint($value["longitude"], $value["latitude"]);
+            } else {
+                throw new Exception("cannot get values from web service import - invalid data");
+            }
         }
     }
 

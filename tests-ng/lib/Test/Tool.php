@@ -468,6 +468,7 @@ class Test_Tool
             Test_Data::fillPassword($object, "password", $seed);
             Test_Data::fillMultiSelect($object, "countries", $seed);
             Test_Data::fillMultiSelect($object, "languages", $seed);
+            Test_Data::fillGeopoint($object, "point", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 
