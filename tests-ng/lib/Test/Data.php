@@ -414,5 +414,29 @@ class Test_Data
         return true;
     }
 
+    public static function fillGeopoint($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+
+        $longitude = 2.2008440814678;
+        $latitude = 102.25112915039;
+        $point = new Object_Data_Geopoint($longitude,$latitude);
+        $object->setPoint($point);
+    }
+
+    public static function assertGeopoint($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+
+        $longitude = 2.2008440814678;
+        $latitude = 102.25112915039;
+        $expected = new Object_Data_Geopoint($longitude,$latitude);
+
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
 
 }

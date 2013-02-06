@@ -144,4 +144,10 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
         $this->printTestName();
         $this->assertTrue(Test_Data::assertCountryMultiSelect(self::$restObject, "languages", self::$seed));
     }
+
+    public function testGeopoint() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertGeopoint(self::$restObject, "point", self::$seed));
+    }
+
 }
