@@ -46,7 +46,9 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
             else if ($this->conf->outputfilters->javascriptminifyalgorithm == "yuicompressor") {
                 Minify_YUICompressor::$tempDir = PIMCORE_TEMPORARY_DIRECTORY;
                 Minify_YUICompressor::$jarFile = PIMCORE_PATH . "/lib/Minify/yuicompressor-2.4.2.jar";
-                $js = Minify_YUICompressor::minifyJs($js);
+                $js = Minify_YUICompressor::minifyJs($js,array(
+                    'charset'=>'utf8'
+                ));
             }
             else {
                 $js = JSMin::minify($js);
