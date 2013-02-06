@@ -104,7 +104,13 @@ class OnlineShop_Framework_FilterService_Helper
 
         $string = "?";
         foreach($params as $k => $p) {
-            $string .= $k . "=" . urlencode($p) . "&";
+            if(is_array($p)) {
+                foreach($p as $subKey => $subValue) {
+                    $string .= $k . "[" . $subKey . "]" . "=" . urlencode($subValue) . "&";
+                }
+            } else {
+                $string .= $k . "=" . urlencode($p) . "&";
+            }
         }
         return $string;
     }
