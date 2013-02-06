@@ -4560,6 +4560,31 @@ Please select a value</tooltip>
           <locked></locked>
         </childs>
         <childs>
+          <fieldtype>keyValue</fieldtype>
+          <phpdocType>Object_Data_KeyValue</phpdocType>
+          <keyWidth></keyWidth>
+          <valueWidth></valueWidth>
+          <height></height>
+          <maxheight></maxheight>
+          <groupWidth></groupWidth>
+          <name>keyvaluepairs</name>
+          <title></title>
+          <tooltip></tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index></index>
+          <locked></locked>
+          <style></style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <columnType></columnType>
+          <queryColumnType></queryColumnType>
+          <relationType></relationType>
+          <invisible></invisible>
+          <visibleGridView>1</visibleGridView>
+          <visibleSearch>1</visibleSearch>
+        </childs>
+        <childs>
           <ownerClassName>allfields</ownerClassName>
           <ownerFieldName></ownerFieldName>
           <lazyLoading>1</lazyLoading>
