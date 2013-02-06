@@ -13,6 +13,8 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
 
     static $localObject;
 
+    static $restObject;
+
 
     public static function setUpBeforeClass() {
         // every single rest test assumes a clean database
@@ -30,6 +32,7 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
             throw new Exception("could not create test object");
         }
         self::$localObject = Object_Abstract::getById($response->id);
+        self::$restObject = $tmpObject;
 
     }
 
@@ -137,6 +140,16 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
     public function testGeopoint() {
         $this->printTestName();
         $this->assertTrue(Test_Data::assertGeopoint(self::$localObject, "point", self::$seed));
+    }
+
+    public function testGeobounds() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertGeobounds(self::$localObject, "bounds", self::$restObject, self::$seed));
+    }
+
+    public function testGeopolygon() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertGeopolygon(self::$localObject, "poly", self::$restObject, self::$seed));
     }
 
 }
