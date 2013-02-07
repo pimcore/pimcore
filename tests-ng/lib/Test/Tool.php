@@ -472,6 +472,8 @@ class Test_Tool
             Test_Data::fillGeobounds($object, "bounds", $seed);
             Test_Data::fillGeopolygon($object, "poly", $seed);
             Test_Data::fillTable($object, "table", $seed);
+            Test_Data::fillLink($object, "link", $seed);
+            Test_Data::fillStructuredTable($object, "structuredtable", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 
@@ -539,6 +541,8 @@ class Test_Tool
 
 
     public static function cleanUp($cleanAssets = true, $cleanDocuments = true, $cleanObjects = true) {
+        Pimcore::collectGarbage();
+
         if ($cleanObjects) {
             try {
                 $objectRoot = Object_Abstract::getById(1);

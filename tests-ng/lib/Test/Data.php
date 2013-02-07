@@ -10,7 +10,20 @@ class Test_Data
 {
     const IMAGE = "sampleimage.jpg";
 
+    const DOCUMENT = "sampledocument.txt";
+
     const HOTSPOT_IMAGE = "hotspot.jpg";
+
+    private static function createRandomProperties() {
+        $properties = array();
+
+            // object property
+        $property = new Property();
+        $property->setType("object");
+        $property->setName("object");
+        $property->setInheritable(true);
+        $properties["bla"] = $property;
+    }
 
     private function getObjectList() {
         $list = new Object_List();
@@ -488,16 +501,74 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value . "\n");
-            print("object: \n");
-            var_dump($object->getTable());
-            print("cmparisonobject: \n");
-            var_dump($comparisonObject->getTable());
-
             return false;
         }
         return true;
     }
 
 
+    public static function fillLink($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
 
+
+        $doc = Document::getByPath("/" . self::DOCUMENT . $seed);
+        if (!$doc) {
+            $doc = Test_Tool::createEmptyDocumentPage(null, false);
+            $doc->setKey(self::DOCUMENT . $seed);
+            $doc->setParentId(1);
+            $doc->save();
+        }
+
+        $object->$setter("content" . $seed);
+    }
+
+    public static function assertLink($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+
+        $expected = Document::getByPath("/" . self::DOCUMENT . $seed);
+
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
+    private static function getStructuredTableData($seed = 1) {
+        $data['row1']['col1'] = 1 + $seed;
+        $data['row2']['col1'] = 2 + $seed;
+        $data['row3']['col1'] = 3 + $seed;
+
+        $data['row1']['col2'] = "text_a_" . $seed;
+        $data['row2']['col2'] = "text_b_" . $seed;
+        $data['row3']['col2'] = "text_c_" . $seed;
+    }
+
+
+
+
+    public static function fillStructuredtable($object, $field, $comparisonObject, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+
+        $data = new Object_Data_StructuredTable();
+        $tabledata = self::getStructuredTableData($seed);
+        $data->setData($tabledata);
+        $object->$setter($data);
+    }
+
+    public static function assertStructuredTable($object, $field, $comparisonObject, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+
+        $fd = $object->getClass()->getFieldDefinition($field);
+        $value = Test_Tool::getComparisonDataForField($field, $fd, $object);
+        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
 }

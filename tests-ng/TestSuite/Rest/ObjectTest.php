@@ -24,8 +24,18 @@ class TestSuite_Rest_ObjectTest extends Test_Base {
         $list = Test_RestClient::getInstance()->getObjectList();
         if (count($list) > 1) {
             var_dump($list);
+            $id1 = $list[0]->getId();
+            $id2 = $list[1]->getId();
+            print($id1 . "\n");
+            print($id2 . "\n");
+            $object1 = Object_Abstract::getById($id1);
+            $object2 = Object_Abstract::getById($id2);
+            print($object1->getKey() . "\n");
+            print($object2->getKey() . "\n");
+            die("check the db!");
         }
         $this->assertEquals(1, count($list), "expected 1 list item");
+
         $this->assertEquals("folder", $list[0]->getType(), "expected type to be folder");
     }
 
