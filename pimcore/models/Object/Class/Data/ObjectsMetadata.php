@@ -371,6 +371,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                         $getter = "get" . ucfirst($c['key']);
                         $item[$c['key']] = $metaObject->$getter();
                     }
+                    $items[] = $item;
                 }
             }
             return $items;
