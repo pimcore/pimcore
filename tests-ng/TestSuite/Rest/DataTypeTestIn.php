@@ -157,4 +157,14 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $this->assertTrue(Test_Data::assertTable(self::$localObject, "table", self::$restObject, self::$seed));
     }
 
+    public function testLink() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertLink(self::$localObject, "link", self::$restObject, self::$seed));
+    }
+
+    public function testStructuredTable() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertStructuredTable(self::$localObject, "structuredtable", self::$restObject, self::$seed));
+    }
+
 }

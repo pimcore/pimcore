@@ -48,6 +48,31 @@
         <datatype>layout</datatype>
         <permissions></permissions>
         <childs>
+          <fieldtype>keyValue</fieldtype>
+          <phpdocType>Object_Data_KeyValue</phpdocType>
+          <keyWidth></keyWidth>
+          <valueWidth></valueWidth>
+          <height></height>
+          <maxheight></maxheight>
+          <groupWidth></groupWidth>
+          <name>keyvaluepairs</name>
+          <title></title>
+          <tooltip></tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index></index>
+          <locked></locked>
+          <style></style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <columnType></columnType>
+          <queryColumnType></queryColumnType>
+          <relationType></relationType>
+          <invisible></invisible>
+          <visibleGridView>1</visibleGridView>
+          <visibleSearch>1</visibleSearch>
+        </childs>
+        <childs>
           <fieldtype>date</fieldtype>
           <queryColumnType>int(11)</queryColumnType>
           <columnType>int(11)</columnType>
@@ -4520,6 +4545,58 @@ Please select a value</tooltip>
           <visibleSearch>1</visibleSearch>
         </childs>
         <childs>
+          <fieldtype>structuredTable</fieldtype>
+          <width></width>
+          <height></height>
+          <labelWidth></labelWidth>
+          <labelFirstCell></labelFirstCell>
+          <cols>
+            <position>1</position>
+            <key>col1</key>
+            <label>collabel1</label>
+            <type>number</type>
+            <width></width>
+          </cols>
+          <cols>
+            <type>text</type>
+            <position>2</position>
+            <key>col2</key>
+            <label>collabel2</label>
+          </cols>
+          <rows>
+            <position>1</position>
+            <key>row1</key>
+            <label>rowlabel1</label>
+          </rows>
+          <rows>
+            <position>2</position>
+            <key>row2</key>
+            <label>rowlabel2</label>
+          </rows>
+          <rows>
+            <position>3</position>
+            <key>row3</key>
+            <label>rowlabel3</label>
+          </rows>
+          <queryColumnType></queryColumnType>
+          <columnType></columnType>
+          <phpdocType>array</phpdocType>
+          <name>structuredtable</name>
+          <title></title>
+          <tooltip></tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index></index>
+          <locked></locked>
+          <style></style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <relationType></relationType>
+          <invisible></invisible>
+          <visibleGridView></visibleGridView>
+          <visibleSearch></visibleSearch>
+        </childs>
+        <childs>
           <fieldtype>fieldcollections</fieldtype>
           <phpdocType>Object_Fieldcollection</phpdocType>
           <allowedTypes/>
@@ -4558,31 +4635,6 @@ Please select a value</tooltip>
           <permissions></permissions>
           <childs/>
           <locked></locked>
-        </childs>
-        <childs>
-          <fieldtype>keyValue</fieldtype>
-          <phpdocType>Object_Data_KeyValue</phpdocType>
-          <keyWidth></keyWidth>
-          <valueWidth></valueWidth>
-          <height></height>
-          <maxheight></maxheight>
-          <groupWidth></groupWidth>
-          <name>keyvaluepairs</name>
-          <title></title>
-          <tooltip></tooltip>
-          <mandatory></mandatory>
-          <noteditable></noteditable>
-          <index></index>
-          <locked></locked>
-          <style></style>
-          <permissions></permissions>
-          <datatype>data</datatype>
-          <columnType></columnType>
-          <queryColumnType></queryColumnType>
-          <relationType></relationType>
-          <invisible></invisible>
-          <visibleGridView>1</visibleGridView>
-          <visibleSearch>1</visibleSearch>
         </childs>
         <childs>
           <ownerClassName>allfields</ownerClassName>

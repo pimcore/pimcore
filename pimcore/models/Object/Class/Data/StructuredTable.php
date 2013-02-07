@@ -423,18 +423,23 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
     public function getFromWebserviceImport ($value) {
         if(empty($value)){
             return null;
-        } else if(is_array($value)){
-            $dataArray = array();
-            foreach($this->getRows() as $r) {
-                foreach($this->getCols() as $c) {
-                    $name = $r['key'] . "#" . $c['key'];
-                    $dataArray[$r['key']][$c['key']] = $value[$name];
-                }
-            }
-
-            return new Object_Data_StructuredTable($dataArray);
         } else {
-            throw new Exception("cannot get values from web service import - invalid data");
+            if ($value instanceof stdClass) {
+                $value = (array) $value;
+            }
+            if(is_array($value)){
+                $dataArray = array();
+                foreach($this->getRows() as $r) {
+                    foreach($this->getCols() as $c) {
+                        $name = $r['key'] . "#" . $c['key'];
+                        $dataArray[$r['key']][$c['key']] = $value[$name];
+                    }
+                }
+
+                return new Object_Data_StructuredTable($dataArray);
+            } else {
+                throw new Exception("cannot get values from web service import - invalid data");
+            }
         }
     }
 
