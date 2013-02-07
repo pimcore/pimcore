@@ -16,6 +16,7 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
     static $restObject;
 
     public static function setUpBeforeClass() {
+        print("### setUpBeforeClass " . __FILE__);
         // every single rest test assumes a clean database
         Test_Tool::cleanUp();
 
@@ -24,9 +25,7 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
 
         self::$seed = 1;
         self::$localObject = Test_Tool::createFullyFledgedObject("local", true, self::$seed);
-
-            self::$restObject = Test_RestClient::getInstance()->getObjectById(self::$localObject->getId());
-
+        self::$restObject = Test_RestClient::getInstance()->getObjectById(self::$localObject->getId());
     }
 
     public function setUp() {
@@ -173,6 +172,11 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
     public function testStructuredTable() {
         $this->printTestName();
         $this->assertTrue(Test_Data::assertStructuredTable(self::$restObject, "structuredtable", self::$localObject, self::$seed));
+    }
+
+    public function testObjects() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertObjects(self::$restObject, "objects", self::$localObject, self::$seed));
     }
 
 }

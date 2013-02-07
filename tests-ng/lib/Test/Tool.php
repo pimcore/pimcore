@@ -474,6 +474,7 @@ class Test_Tool
             Test_Data::fillTable($object, "table", $seed);
             Test_Data::fillLink($object, "link", $seed);
             Test_Data::fillStructuredTable($object, "structuredtable", $seed);
+            Test_Data::fillObjects($object, "objects", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 
