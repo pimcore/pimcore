@@ -29,6 +29,9 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
             data = {};
         }
 
+        // cast array to object
+        this.options = Ext.apply({}, this.options);
+
         // height management                
         this.defaultHeight = 100;
         if (this.options.defaultHeight) {
