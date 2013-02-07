@@ -248,6 +248,10 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
         if (is_array($data)) {
             foreach ($data as $objectMetadata) {
+                if (!($objectMetadata instanceof Object_Data_ObjectMetadata)) {
+                    throw new Exception("Expected Object_Data_ObjectMetadata");
+                }
+
                 $o = $objectMetadata->getObject();
 
                 $allowClass = $this->allowObjectRelation($o);
@@ -390,6 +394,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
            return null;
         } else if(is_array($value)){
             foreach($value as $key => $item){
+                $item = (array) $item;
                 $dest = Object_Abstract::getById($item['id']);
                 if($dest instanceof Object_Abstract) {
 
