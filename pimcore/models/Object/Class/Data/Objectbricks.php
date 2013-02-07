@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -359,6 +359,11 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
     }
 
+    private function casttoclass($class, $object)
+    {
+        return unserialize(preg_replace('/^O:\d+:"[^"]++"/', 'O:' . strlen($class) . ':"' . $class . '"', serialize($object)));
+    }
+
     /**
      * @param mixed $value
      * @return mixed
@@ -370,6 +375,11 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
+                if ($collectionRaw instanceof stdClass) {
+                    $class = "Webservice_Data_Object_Element";
+                    $collectionRaw = $this->casttoclass($class, $collectionRaw);
+                }
+
                 if($collectionRaw != null) {
                     if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
@@ -386,6 +396,10 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         foreach ($collectionRaw->value as $field) {
+                            if ($field instanceof stdClass) {
+                                $class = "Webservice_Data_Object_Element";
+                                $field = $this->casttoclass($class, $field);
+                            }
                             if (!$field instanceof Webservice_Data_Object_Element) {
                                 throw new Exception("invalid data in objectbricks [" . $this->getName() . "]");
                             } else if ($field->name == $fd->getName()) {
