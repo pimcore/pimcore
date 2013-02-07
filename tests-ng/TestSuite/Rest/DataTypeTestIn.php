@@ -152,4 +152,9 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $this->assertTrue(Test_Data::assertGeopolygon(self::$localObject, "poly", self::$restObject, self::$seed));
     }
 
+    public function testTable() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertTable(self::$localObject, "table", self::$restObject, self::$seed));
+    }
+
 }

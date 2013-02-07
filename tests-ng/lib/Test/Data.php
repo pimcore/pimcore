@@ -458,10 +458,10 @@ class Test_Data
     }
 
     public static function fillGeopolygon($object, $field, $seed = 1) {
-        $setter = "set" . ucfirst($field);
-        $polygon  = array(new Object_Data_Geopoint(150.54428100585938, -33.464671118242684), new Object_Data_Geopoint(150.73654174804688, -33.913733814316245), new Object_Data_Geopoint(151.2542724609375, -33.9946115848146));
-        $object->$setter($polygon);
-    }
+    $setter = "set" . ucfirst($field);
+    $polygon  = array(new Object_Data_Geopoint(150.54428100585938, -33.464671118242684), new Object_Data_Geopoint(150.73654174804688, -33.913733814316245), new Object_Data_Geopoint(151.2542724609375, -33.9946115848146));
+    $object->$setter($polygon);
+}
 
     public static function assertGeopolygon($object, $field, $comparisonObject, $seed = 1) {
         $fd = $object->getClass()->getFieldDefinition($field);
@@ -470,6 +470,29 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
+    public static function fillTable($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        $tabledata  = array(array("eins", "zwei", "drei"), array($seed, 2, 3), array("a", "b", "c"));
+        $object->$setter($tabledata);
+    }
+
+    public static function assertTable($object, $field, $comparisonObject, $seed = 1) {
+        $fd = $object->getClass()->getFieldDefinition($field);
+        $value = Test_Tool::getComparisonDataForField($field, $fd, $object);
+        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value . "\n");
+            print("object: \n");
+            var_dump($object->getTable());
+            print("cmparisonobject: \n");
+            var_dump($comparisonObject->getTable());
+
             return false;
         }
         return true;
