@@ -173,4 +173,9 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $this->assertTrue(Test_Data::assertObjects(self::$localObject, "objects", self::$restObject, self::$seed));
     }
 
+    public function testObjectsWithMetadata() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertObjectsWithmetadata(self::$localObject, "objectswithmetadata", self::$restObject, self::$seed));
+    }
+
 }

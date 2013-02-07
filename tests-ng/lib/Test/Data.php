@@ -603,4 +603,43 @@ class Test_Data
         return true;
     }
 
+    public static function fillObjectsWithMetadata($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        $objects = self::getObjectList("o_type = 'object'");
+        $objects = array_slice($objects,0,4);
+
+        $metaobjects = array();
+        foreach ($objects as $o) {
+            $mo = new Object_Data_ObjectMetadata($field, array("meta1", "meta2"), $o);
+            $mo->setMeta1("value1" . $seed);
+            $mo->setMeta2("value2" . $seed);
+            $metaobjects[] = $mo;
+        }
+
+        $object->$setter($metaobjects);
+    }
+
+    public static function assertObjectsWithMetadata($object, $field, $comparisonObject, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+
+        $fd = $object->getClass()->getFieldDefinition($field);
+        $valueForField = Test_Tool::getComparisonDataForField($field, $fd, $object);
+        $expected = Test_Tool::getComparisonDataForField($field, $fd, $comparisonObject);
+
+        if ($valueForField != $expected) {
+            print("   expected " . $expected . " but was " . $valueForField);
+            return false;
+        }
+
+        $rel1 = $value[0];
+        $meta = $rel1->getMeta1();
+        if ($meta != ("value1".$seed))
+        {
+            print("sample value does not match");
+            return false;
+        }
+        return true;
+    }
+
 }

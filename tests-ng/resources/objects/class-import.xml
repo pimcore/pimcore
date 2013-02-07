@@ -287,6 +287,45 @@ Please drag all related objects into this area.</tooltip>
           <visibleSearch>1</visibleSearch>
         </childs>
         <childs>
+          <allowedClassId>80</allowedClassId>
+          <visibleFields></visibleFields>
+          <columns>
+            <type>text</type>
+            <position>1</position>
+            <key>meta1</key>
+          </columns>
+          <columns>
+            <type>text</type>
+            <position>2</position>
+            <key>meta2</key>
+          </columns>
+          <fieldtype>objectsMetadata</fieldtype>
+          <phpdocType>Object_Data_ObjectMetadata[]</phpdocType>
+          <width></width>
+          <height></height>
+          <maxItems></maxItems>
+          <queryColumnType>text</queryColumnType>
+          <relationType>1</relationType>
+          <lazyLoading></lazyLoading>
+          <classes></classes>
+          <name>objectswithmetadata</name>
+          <title></title>
+          <tooltip></tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index></index>
+          <locked></locked>
+          <style></style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <columnType></columnType>
+          <invisible></invisible>
+          <visibleGridView></visibleGridView>
+          <visibleSearch></visibleSearch>
+          <columnKeys>meta1</columnKeys>
+          <columnKeys>meta2</columnKeys>
+        </childs>
+        <childs>
           <fieldtype>slider</fieldtype>
           <width>400</width>
           <height></height>
