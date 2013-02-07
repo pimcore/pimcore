@@ -471,6 +471,7 @@ class Test_Tool
             Test_Data::fillGeopoint($object, "point", $seed);
             Test_Data::fillGeobounds($object, "bounds", $seed);
             Test_Data::fillGeopolygon($object, "poly", $seed);
+            Test_Data::fillTable($object, "table", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 

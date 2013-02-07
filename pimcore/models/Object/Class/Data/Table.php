@@ -326,4 +326,26 @@ class Object_Class_Data_Table extends Object_Class_Data {
             return "";
         }
     }
+
+
+    /** converts data to be imported via webservices
+     * @param mixed $value
+     * @param null $object
+     * @return array|mixed
+     */
+    public function getFromWebserviceImport($value, $object = null)
+    {
+        if ($value && is_array($value)) {
+            $result = array();
+            foreach ($value as $item) {
+                $item = (array) $item;
+                $result[] = $item;
+            }
+
+            return $result;
+        }
+
+        return $value;
+    }
+
 }
