@@ -17,6 +17,7 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
 
 
     public static function setUpBeforeClass() {
+        print("### setUpBeforeClass " . __FILE__);
         // every single rest test assumes a clean database
         Test_Tool::cleanUp();
 
@@ -165,6 +166,11 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
     public function testStructuredTable() {
         $this->printTestName();
         $this->assertTrue(Test_Data::assertStructuredTable(self::$localObject, "structuredtable", self::$restObject, self::$seed));
+    }
+
+    public function testObjects() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertObjects(self::$localObject, "objects", self::$restObject, self::$seed));
     }
 
 }

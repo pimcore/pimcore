@@ -267,7 +267,9 @@ Please select a value</tooltip>
           <phpdocType>array</phpdocType>
           <relationType>1</relationType>
           <lazyLoading></lazyLoading>
-          <classes/>
+          <classes>
+            <classes>unittest</classes>
+          </classes>
           <name>objects</name>
           <title>Objects</title>
           <tooltip>&lt;b&gt;Relations to other objects&lt;/b&gt;
@@ -4558,10 +4560,11 @@ Please select a value</tooltip>
             <width></width>
           </cols>
           <cols>
-            <type>text</type>
             <position>2</position>
             <key>col2</key>
             <label>collabel2</label>
+            <type>text</type>
+            <width></width>
           </cols>
           <rows>
             <position>1</position>

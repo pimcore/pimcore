@@ -407,6 +407,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
            return null;  
         } else if(is_array($value)){
             foreach($value as $key => $item){
+                $item = (array) $item;
                 $object = Object_Abstract::getById($item['id']);
                 if($object instanceof Object_Abstract){
                     $objects[] = $object;

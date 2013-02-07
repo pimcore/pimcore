@@ -25,9 +25,10 @@ class Test_Data
         $properties["bla"] = $property;
     }
 
-    private function getObjectList() {
+    private function getObjectList($condition = null) {
         $list = new Object_List();
         $list->setOrderKey("o_id");
+        $list->setCondition($condition);
         $objects = $list->load();
         return $objects;
     }
@@ -512,8 +513,10 @@ class Test_Data
 
 
         $doc = Document::getByPath("/" . self::DOCUMENT . $seed);
+
         if (!$doc) {
             $doc = Test_Tool::createEmptyDocumentPage(null, false);
+            $doc->setProperties(self::createRandomProperties());
             $doc->setKey(self::DOCUMENT . $seed);
             $doc->setParentId(1);
             $doc->save();
@@ -571,4 +574,33 @@ class Test_Data
         }
         return true;
     }
+
+    public static function fillObjects($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        $objects = self::getObjectList("o_type = 'object'");
+        $objects = array_slice($objects,0,4);
+
+        $object->$setter($objects);
+    }
+
+    public static function assertObjects($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+        $objects = self::getObjectList("o_type = 'object'");
+        $expectedArray = array_slice($objects,0,4);
+
+        if (count($expectedArray) != count($value)) {
+            print("count is different  " . count($expectedArray) . " != " . count($value) . "\n");
+            return false;
+        }
+
+        for ($i = 0; $i < count($expectedArray); $i++) {
+            if ($value[$i] != $expectedArray[$i]) {
+                print("   expected " . $expectedArray[$i]->getId() . " but was " . $value[$i]->getId());
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
