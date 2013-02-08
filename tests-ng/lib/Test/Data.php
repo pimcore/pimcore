@@ -773,4 +773,39 @@ class Test_Data
     }
 
 
+    public static function fillFieldCollection($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+
+        $fc = new Object_Fieldcollection_Data_Unittestfieldcollection();
+        $fc->setFieldinput1("field1" . $seed);
+        $fc->setFieldinput2("field2" . $seed);
+
+        $object->$setter(array($fc));
+    }
+
+    public static function assertFieldCollection($object, $field, $seed = 1) {
+
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+
+        $fc = new Object_Fieldcollection_Data_Unittestfieldcollection();
+        $fc->setFieldinput1("field1" . $seed);
+        $fc->setFieldinput2("field2" . $seed);
+        $expected = $fc;
+        var_dump($expected);
+        print("\n\n");
+        var_dump($value);
+
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        if($value->getFieldInput1() != "field1" . $seed) {
+            print("field1" . $seed . " but was " . $value->getFieldInput1());
+            return false;
+        }
+
+        return true;
+    }
+
 }

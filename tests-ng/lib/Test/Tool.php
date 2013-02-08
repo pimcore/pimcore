@@ -482,6 +482,7 @@ class Test_Tool
             Test_Data::fillObjects($object, "lobjects", $seed, "en");
             Test_Data::fillKeyValue($object, "keyvaluepairs", $seed);
             Test_Data::fillBricks($object, "mybricks", $seed);
+            Test_Data::fillFieldCollection($object, "myfieldcollection", $seed);
         } catch (Exception $e) {
             print($e . "\n");
 

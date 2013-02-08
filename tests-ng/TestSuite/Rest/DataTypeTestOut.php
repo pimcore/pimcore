@@ -205,4 +205,10 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
         $this->printTestName();
         $this->assertTrue(Test_Data::assertBricks(self::$restObject, "mybricks", self::$seed));
     }
+
+    public function testFieldCollection() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertFieldCollection(self::$restObject, "myfieldcollection", self::$seed));
+    }
+
 }

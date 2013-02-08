@@ -4708,6 +4708,29 @@ Please select a value</tooltip>
           <visibleSearch></visibleSearch>
         </childs>
         <childs>
+          <fieldtype>fieldcollections</fieldtype>
+          <phpdocType>Object_Fieldcollection</phpdocType>
+          <allowedTypes>unittestfieldcollection</allowedTypes>
+          <lazyLoading></lazyLoading>
+          <maxItems></maxItems>
+          <name>myfieldcollection</name>
+          <title>myfieldcollection</title>
+          <tooltip></tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index></index>
+          <locked></locked>
+          <style></style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <columnType></columnType>
+          <queryColumnType></queryColumnType>
+          <relationType></relationType>
+          <invisible></invisible>
+          <visibleGridView></visibleGridView>
+          <visibleSearch></visibleSearch>
+        </childs>
+        <childs>
           <fieldtype>localizedfields</fieldtype>
           <phpdocType>array</phpdocType>
           <childs>

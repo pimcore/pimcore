@@ -84,9 +84,23 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             try {
                 $objectBrick->save();
             } catch (Exception $e) {
-                print($e . "############# " . $unittestClass->getId());
                 throw $e;
             }
+        }
+
+        $collectionName = "unittestfieldcollection";
+        try {
+            Object_Fieldcollection_Definition::getByKey($collectionName);
+        } catch (Exception $e) {
+            $fieldCollection = new Object_Fieldcollection_Definition();
+            $fieldCollection->setKey("$collectionName");
+
+            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/fieldcollection-import.xml");
+            $importData = $conf->toArray();
+
+            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+            $fieldCollection->setLayoutDefinitions($layout);
+            $fieldCollection->save();
         }
 
     }
