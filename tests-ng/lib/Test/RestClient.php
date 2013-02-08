@@ -132,7 +132,6 @@ class Test_RestClient {
         $result = $client->request();
 
         $body = $result->getBody();
-        print($body . "\n");
         $body = json_decode($body);
         return $body;
     }
