@@ -399,7 +399,6 @@ class Test_Data
         $expected = null;
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value . "\n");
-            var_dump($value);
             return false;
         }
         return true;
@@ -780,7 +779,8 @@ class Test_Data
         $fc->setFieldinput1("field1" . $seed);
         $fc->setFieldinput2("field2" . $seed);
 
-        $object->$setter(array($fc));
+        $items = new Object_Fieldcollection(array($fc), $field);
+        $object->$setter($items);
     }
 
     public static function assertFieldCollection($object, $field, $seed = 1) {
@@ -788,22 +788,23 @@ class Test_Data
         $getter = "get" . ucfirst($field);
         $value = $object->$getter();
 
-        $fc = new Object_Fieldcollection_Data_Unittestfieldcollection();
-        $fc->setFieldinput1("field1" . $seed);
-        $fc->setFieldinput2("field2" . $seed);
-        $expected = $fc;
-        var_dump($expected);
-        print("\n\n");
-        var_dump($value);
-
-        if ($value != $expected) {
-            print("   expected " . $expected . " but was " . $value);
+        if ($value->getCount() != 1) {
+            print("    expected 1 item");
             return false;
         }
-        if($value->getFieldInput1() != "field1" . $seed) {
+
+        $value = $value->getItems();
+        $value = $value[0];
+        if($value->getFieldinput1() != "field1" . $seed) {
             print("field1" . $seed . " but was " . $value->getFieldInput1());
             return false;
         }
+
+        if($value->getFieldInput2() != "field2" . $seed) {
+            print("field2" . $seed . " but was " . $value->getFieldInput2());
+            return false;
+        }
+
 
         return true;
     }
