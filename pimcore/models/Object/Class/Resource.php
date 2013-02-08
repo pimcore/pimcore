@@ -191,7 +191,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
         $columnsToRemove = $existingColumns;
         $datastoreColumnsToRemove = $existingDatastoreColumns;
-        
+
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
@@ -279,6 +279,7 @@ class Object_Class_Resource extends Pimcore_Model_Resource_Abstract {
 
         if ($existingColName === null) {
             $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->resetValidTableColumnsCache($table);
         } else {
             $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         }
