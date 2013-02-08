@@ -33,17 +33,27 @@ class Test_Data
         return $objects;
     }
 
-    public static function fillInput($object, $field, $seed = 1) {
+    public static function fillInput($object, $field, $seed = 1, $language = null) {
         $setter = "set" . ucfirst($field);
-        $object->$setter("content" . $seed);
+        if ($language) {
+            $object->$setter($language . "content" . $seed, $language);
+        } else {
+            $object->$setter("content" . $seed);
+        }
     }
 
-    public static function assertInput($object, $field, $seed = 1) {
+    public static function assertInput($object, $field, $seed = 1, $language = null) {
         $getter = "get" . ucfirst($field);
-        $value = $object->$getter();
-        $expected = "content" . $seed;
+        if ($language) {
+            $value = $object->$getter($language);
+        } else {
+            $value = $object->$getter();
+        }
+        $expected = $language . "content" . $seed;
+
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+            die();
             return false;
         }
         return true;
@@ -575,19 +585,37 @@ class Test_Data
         return true;
     }
 
-    public static function fillObjects($object, $field, $seed = 1) {
+    public static function fillObjects($object, $field, $seed = 1, $language = null) {
         $setter = "set" . ucfirst($field);
         $objects = self::getObjectList("o_type = 'object'");
-        $objects = array_slice($objects,0,4);
-
-        $object->$setter($objects);
+        if ($language) {
+            if ($language == "de") {
+                $objects = array_slice($objects,0,6);
+            } else {
+                $objects = array_slice($objects,0,5);
+            }
+            $object->$setter($objects, $language);
+        } else {
+            $objects = array_slice($objects,0,4);
+            $object->$setter($objects);
+        }
     }
 
-    public static function assertObjects($object, $field, $seed = 1) {
+    public static function assertObjects($object, $field, $comparisonObject = null, $seed = 1, $language = null) {
         $getter = "get" . ucfirst($field);
-        $value = $object->$getter();
+
         $objects = self::getObjectList("o_type = 'object'");
-        $expectedArray = array_slice($objects,0,4);
+        if ($language) {
+            if ($language == "de") {
+                $expectedArray = array_slice($objects,0,6);
+            } else {
+                $expectedArray = array_slice($objects,0,5);
+            }
+            $value = $object->$getter($language);
+        } else {
+            $expectedArray = array_slice($objects,0,4);
+            $value = $object->$getter();
+        }
 
         if (count($expectedArray) != count($value)) {
             print("count is different  " . count($expectedArray) . " != " . count($value) . "\n");

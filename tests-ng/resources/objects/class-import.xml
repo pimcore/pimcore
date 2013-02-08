@@ -293,11 +293,13 @@ Please drag all related objects into this area.</tooltip>
             <type>text</type>
             <position>1</position>
             <key>meta1</key>
+            <label>label1</label>
           </columns>
           <columns>
             <type>text</type>
             <position>2</position>
             <key>meta2</key>
+            <label>label2</label>
           </columns>
           <fieldtype>objectsMetadata</fieldtype>
           <phpdocType>Object_Data_ObjectMetadata[]</phpdocType>
@@ -7744,6 +7746,31 @@ Please select a value</tooltip>
             <permissions></permissions>
             <datatype>data</datatype>
             <relationType></relationType>
+            <invisible></invisible>
+            <visibleGridView></visibleGridView>
+            <visibleSearch></visibleSearch>
+          </childs>
+          <childs>
+            <fieldtype>objects</fieldtype>
+            <width></width>
+            <height></height>
+            <maxItems></maxItems>
+            <queryColumnType>text</queryColumnType>
+            <phpdocType>array</phpdocType>
+            <relationType>1</relationType>
+            <lazyLoading></lazyLoading>
+            <classes/>
+            <name>lobjects</name>
+            <title></title>
+            <tooltip></tooltip>
+            <mandatory></mandatory>
+            <noteditable></noteditable>
+            <index></index>
+            <locked></locked>
+            <style></style>
+            <permissions></permissions>
+            <datatype>data</datatype>
+            <columnType></columnType>
             <invisible></invisible>
             <visibleGridView></visibleGridView>
             <visibleSearch></visibleSearch>

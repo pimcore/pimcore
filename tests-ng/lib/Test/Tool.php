@@ -476,6 +476,10 @@ class Test_Tool
             Test_Data::fillStructuredTable($object, "structuredtable", $seed);
             Test_Data::fillObjects($object, "objects", $seed);
             Test_Data::fillObjectsWithMetadata($object, "objectswithmetadata", $seed);
+            Test_Data::fillInput($object, "linput", $seed, "de");
+            Test_Data::fillInput($object, "linput", $seed, "en");
+            Test_Data::fillObjects($object, "lobjects", $seed, "de");
+            Test_Data::fillObjects($object, "lobjects", $seed, "en");
         } catch (Exception $e) {
             print($e . "\n");
 

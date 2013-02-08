@@ -67,7 +67,8 @@ catch (Exception $e) {
 $setup = new Tool_Setup();
 $setup->config(array(
     "database" => $dbConfig,
-    "webservice" => array("enabled" => 1)
+    "webservice" => array("enabled" => 1),
+    "general" => array("validLanguages" => "en,de")
 ));
 
 Pimcore::initConfiguration();
