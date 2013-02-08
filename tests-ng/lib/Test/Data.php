@@ -746,4 +746,31 @@ class Test_Data
     }
 
 
+    public static function fillBricks($object, $field, $seed = 1) {
+        $setter = "get" . ucfirst($field);
+
+        $brick = new Object_Objectbrick_Data_UnittestBrick($object);
+        $brick->setBrickInput("brickinput" . $seed);
+        $objectbricks = $object->$setter();
+        $objectbricks->setUnittestBrick($brick);
+
+    }
+
+    public static function assertBricks($object, $field, $seed = 1) {
+
+        $getter = "get" . ucfirst($field);
+        $value = $object->$getter();
+        $value = $value->getUnittestBrick();
+        $value = $value->getBrickinput();
+
+        $expected = "brickinput" . $seed;
+
+        if ($value != $expected) {
+            print("   expected " . $expected . " but was " . $value);
+            return false;
+        }
+        return true;
+    }
+
+
 }

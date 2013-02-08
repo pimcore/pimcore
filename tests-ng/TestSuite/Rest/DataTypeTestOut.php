@@ -200,4 +200,9 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
         $this->printTestName();
         $this->assertTrue(Test_Data::assertKeyValue(self::$restObject, "keyvaluepairs", self::$seed));
     }
+
+    public function testBricks() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertBricks(self::$restObject, "mybricks", self::$seed));
+    }
 }
