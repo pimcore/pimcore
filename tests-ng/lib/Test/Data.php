@@ -53,7 +53,6 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
-            die();
             return false;
         }
         return true;
@@ -669,5 +668,82 @@ class Test_Data
         }
         return true;
     }
+
+    private static function setupKeyValueConig() {
+        if (!Object_KeyValue_KeyConfig::getByName("unittest_key1")) {
+            $config = new Object_KeyValue_KeyConfig();
+            $config->setName("unittest_key1");
+            $config->setType("text");
+            $config->save();
+        }
+
+        if (!Object_KeyValue_KeyConfig::getByName("unittest_key2")) {
+            $config = new Object_KeyValue_KeyConfig();
+            $config->setName("unittest_key2");
+            $config->setType("select");
+
+            $options = array(
+                array("key" => "option1", "value" => "1"),
+                array("key" => "option2", "value" => "2")
+            );
+            $config->setPossibleValues(json_encode($options));
+
+            $config->save();
+        }
+    }
+
+    private static function createPairs($seed = 1) {
+
+        $keyConfig1 = Object_KeyValue_KeyConfig::getByName("unittest_key1");
+        $keyConfig2 = Object_KeyValue_KeyConfig::getByName("unittest_key2");
+
+        $pair = array();
+        $pair["key"] = $keyConfig1->getId();
+        $pair["value"] = "text1_" . $seed;
+
+        $pair = array();
+        $pair["key"] = $keyConfig2->getId();
+        $pair["value"] = 1 + ($seed % 2);
+
+        $pairs[] = $pair;
+        return $pairs;
+    }
+
+    public static function fillKeyValue($object, $field, $seed = 1) {
+        $setter = "set" . ucfirst($field);
+        self::setupKeyValueConig();
+
+        $keyvalue = new Object_Data_KeyValue();
+        $pairs = self::createPairs();
+        $keyvalue->setProperties($pairs);
+        $keyvalue->setObjectId($object->getId());
+        $object->$setter($keyvalue);
+    }
+
+    public static function assertKeyValue($object, $field, $seed = 1) {
+        $getter = "get" . ucfirst($field);
+
+        $value = $object->$getter();
+        $expected = self::createPairs($seed);
+
+        $properties = $value->getProperties();
+
+        if (count($expected) != count($properties)) {
+            print("    number of properties do not match\n");
+            return false;
+        }
+
+        for ($i = 0; $i < count($expected); $i++) {
+            $p1 = $expected[i];
+            $p2 = $properties[i];
+            if ($p1["key"] != $p2["key"] || $p1["value"] != $p2["value"]) {
+                print("    property does not match\n");
+                return false;
+            }
+
+        }
+        return true;
+    }
+
 
 }

@@ -71,21 +71,29 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      * @return Object_KeyValue_KeyConfig
      */
     public static function getById($id) {
+        try {
 
-        $config = new self();
-        $config->setId(intval($id));
-        $config->getResource()->getById();
+            $config = new self();
+            $config->setId(intval($id));
+            $config->getResource()->getById();
 
-        return $config;
+            return $config;
+        } catch (Exception $e) {
+
+        }
     }
 
 
     public static function getByName ($name) {
-        $config = new self();
-        $config->setName($name);
-        $config->getResource()->getByName();
+        try {
+            $config = new self();
+            $config->setName($name);
+            $config->getResource()->getByName();
 
-        return $config;
+            return $config;
+        } catch (Exception $e) {
+
+        }
     }
 
 

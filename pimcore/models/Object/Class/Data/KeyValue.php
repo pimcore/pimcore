@@ -348,6 +348,8 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
             $keyValueData = new Object_Data_KeyValue();
             $keyValueData->setProperties($pairs);
+            $keyValueData->setClass($object->getClass());
+            $keyValueData->setObjectId($object->getId());
             return ($keyValueData);
         }
     }

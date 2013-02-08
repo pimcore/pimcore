@@ -39,7 +39,15 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
     }
 
     public function __toString() {
-        return Object_Data_KeyValue . " TODO implement __toString()";
+        $str = "Object_Data_KeyValue oid=" . $this->objectId . "\n";
+        $props = $this->getInternalProperties();
+
+        if (is_array($props)) {
+            foreach($props as $prop) {
+                $str .= "    " . $prop["key"] . "=>" . $prop["value"] . "\n";
+            }
+        }
+        return $str;
     }
 
     public function getObjectId() {
