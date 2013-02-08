@@ -13,6 +13,22 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
         // turn off frontend mode by default
         Object_Abstract::setHideUnpublished(false);
 
+
+        $collectionName = "unittestfieldcollection";
+        try {
+            Object_Fieldcollection_Definition::getByKey($collectionName);
+        } catch (Exception $e) {
+            $fieldCollection = new Object_Fieldcollection_Definition();
+            $fieldCollection->setKey("$collectionName");
+
+            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/fieldcollection-import.xml");
+            $importData = $conf->toArray();
+
+            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+            $fieldCollection->setLayoutDefinitions($layout);
+            $fieldCollection->save();
+        }
+
         $unittestClass = Object_Class::getByName("unittest");
         if (!Object_Class::getByName("unittest")) {
             $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
@@ -88,20 +104,6 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             }
         }
 
-        $collectionName = "unittestfieldcollection";
-        try {
-            Object_Fieldcollection_Definition::getByKey($collectionName);
-        } catch (Exception $e) {
-            $fieldCollection = new Object_Fieldcollection_Definition();
-            $fieldCollection->setKey("$collectionName");
-
-            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/fieldcollection-import.xml");
-            $importData = $conf->toArray();
-
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-            $fieldCollection->setLayoutDefinitions($layout);
-            $fieldCollection->save();
-        }
 
     }
 
