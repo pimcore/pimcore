@@ -200,4 +200,9 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $this->assertTrue(Test_Data::assertBricks(self::$localObject, "mybricks", self::$seed));
     }
 
+    public function testFieldCollection() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertFieldCollection(self::$localObject, "myfieldcollection", self::$seed));
+    }
+
 }
