@@ -190,4 +190,9 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $this->assertTrue(Test_Data::assertObjects(self::$localObject, "lobjects", self::$restObject, self::$seed, "de"));
     }
 
+    public function testKeyValue() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertKeyValue(self::$localObject, "keyvaluepairs", self::$seed));
+    }
+
 }
