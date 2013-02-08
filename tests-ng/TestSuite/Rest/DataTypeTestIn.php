@@ -178,4 +178,16 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $this->assertTrue(Test_Data::assertObjectsWithmetadata(self::$localObject, "objectswithmetadata", self::$restObject, self::$seed));
     }
 
+    public function testLInput() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertInput(self::$localObject, "linput", self::$seed, "en"));
+        $this->assertTrue(Test_Data::assertInput(self::$localObject, "linput", self::$seed, "de"));
+    }
+
+    public function testLObjects() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertObjects(self::$localObject, "lobjects", self::$restObject, self::$seed, "en"));
+        $this->assertTrue(Test_Data::assertObjects(self::$localObject, "lobjects", self::$restObject, self::$seed, "de"));
+    }
+
 }

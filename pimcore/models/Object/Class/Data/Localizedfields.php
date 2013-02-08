@@ -219,6 +219,9 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
             $data = array();
             foreach ($value as $field) {
+                    if ($field instanceof stdClass) {
+                        $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
+                    }
 
                     if(!$field instanceof Webservice_Data_Object_Element){
                         throw new Exception("Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]");
