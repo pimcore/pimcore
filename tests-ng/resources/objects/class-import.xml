@@ -309,7 +309,7 @@ Please drag all related objects into this area.</tooltip>
           <queryColumnType>text</queryColumnType>
           <relationType>1</relationType>
           <lazyLoading></lazyLoading>
-          <classes></classes>
+          <classes/>
           <name>objectswithmetadata</name>
           <title></title>
           <tooltip></tooltip>
@@ -7795,6 +7795,27 @@ Please select a value</tooltip>
           <invisible></invisible>
           <visibleGridView>1</visibleGridView>
           <visibleSearch>1</visibleSearch>
+        </childs>
+        <childs>
+          <fieldtype>objectbricks</fieldtype>
+          <phpdocType>Object_Objectbrick</phpdocType>
+          <allowedTypes>testbrick</allowedTypes>
+          <name>mybricks</name>
+          <title></title>
+          <tooltip></tooltip>
+          <mandatory></mandatory>
+          <noteditable></noteditable>
+          <index></index>
+          <locked></locked>
+          <style></style>
+          <permissions></permissions>
+          <datatype>data</datatype>
+          <columnType></columnType>
+          <queryColumnType></queryColumnType>
+          <relationType></relationType>
+          <invisible></invisible>
+          <visibleGridView></visibleGridView>
+          <visibleSearch></visibleSearch>
         </childs>
         <locked></locked>
       </childs>

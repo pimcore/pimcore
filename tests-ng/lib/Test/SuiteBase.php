@@ -13,6 +13,7 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
         // turn off frontend mode by default
         Object_Abstract::setHideUnpublished(false);
 
+        $unittestClass = Object_Class::getByName("unittest");
         if (!Object_Class::getByName("unittest")) {
             $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
             $importData = $conf->toArray();
@@ -33,6 +34,7 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             $class->setModificationDate(time());
 
             $class->save();
+            $unittestClass = $class;
         }
 
         if (!Object_Class::getByName("allfields")) {
@@ -55,6 +57,36 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             $class->setModificationDate(time());
 
             $class->save();
+        }
+
+        $brickname = "unittestBrick";
+
+        try {
+            Object_Objectbrick_Definition::getByKey($brickname);
+        } catch (Exception $e) {
+            $objectBrick = new Object_Objectbrick_Definition();
+            $objectBrick->setKey($brickname);
+
+            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/brick-import.xml");
+            $importData = $conf->toArray();
+
+            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+            $objectBrick->setLayoutDefinitions($layout);
+            $clDef = $importData["classDefinitions"];
+            $newClassDef = array("classname" => $unittestClass->getId(),
+                            "fieldname" => $clDef["fieldname"]);
+
+
+            $objectBrick->setClassDefinitions(array(
+                    $newClassDef)
+
+            );
+            try {
+                $objectBrick->save();
+            } catch (Exception $e) {
+                print($e . "############# " . $unittestClass->getId());
+                throw $e;
+            }
         }
 
     }

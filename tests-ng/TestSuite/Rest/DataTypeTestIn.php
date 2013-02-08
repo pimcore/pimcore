@@ -195,4 +195,9 @@ class TestSuite_Rest_DataTypeTestIn extends Test_Base {
         $this->assertTrue(Test_Data::assertKeyValue(self::$localObject, "keyvaluepairs", self::$seed));
     }
 
+    public function testBricks() {
+        $this->printTestName();
+        $this->assertTrue(Test_Data::assertBricks(self::$localObject, "mybricks", self::$seed));
+    }
+
 }
