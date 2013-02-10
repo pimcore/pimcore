@@ -577,6 +577,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
         // empty object cache
         $this->clearDependentCache();
+        return $this;
     }
     
     
