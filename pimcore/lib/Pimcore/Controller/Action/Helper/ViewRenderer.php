@@ -86,6 +86,7 @@ class Pimcore_Controller_Action_Helper_ViewRenderer extends Zend_Controller_Acti
     public function setIsInitialized($isInitialized)
     {
         $this->isInitialized = $isInitialized;
+        return $this;
     }
 
     /**

@@ -70,6 +70,7 @@ class Object_Class_Data_Input extends Object_Class_Data {
      */
     public function setWidth($width) {
         $this->width = $width;
+        return $this;
     }
 
     /**
@@ -144,6 +145,7 @@ class Object_Class_Data_Input extends Object_Class_Data {
         if($columnLength) {
             $this->columnLength = $columnLength;
         }
+        return $this;
     }
     
     /**

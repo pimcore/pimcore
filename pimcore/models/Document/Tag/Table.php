@@ -74,6 +74,7 @@ class Document_Tag_Table extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->data = Pimcore_Tool_Serialize::unserialize($data);
+        return $this;
     }
 
     /**
@@ -83,6 +84,7 @@ class Document_Tag_Table extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->data = $data;
+        return $this;
     }
 
     /**

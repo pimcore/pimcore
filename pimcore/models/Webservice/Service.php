@@ -970,6 +970,7 @@ class Webservice_Service
         }
         $element->setUserModification($user->getId());
         $element->setModificationDate(time());
+        return $this;
     }
 
     /**

@@ -43,6 +43,7 @@ class Pimcore_Image_Matrixcode_Renderer_Pdf extends Pimcore_Image_Matrixcode_Ren
 	public function setFootnote($note)
 	{
 		$this->_footnote = $note;
+        return $this;
 	}
 	
 	/**

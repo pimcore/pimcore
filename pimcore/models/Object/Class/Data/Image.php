@@ -74,7 +74,8 @@ class Object_Class_Data_Image extends Object_Class_Data {
      * @return void
      */
     public function setWidth($width) {
-        $this->width = $this->getAsIntegerCast($width);;
+        $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -90,6 +91,7 @@ class Object_Class_Data_Image extends Object_Class_Data {
      */
     public function setHeight($height) {
         $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     public function getDefaultValue() {
@@ -273,6 +275,7 @@ class Object_Class_Data_Image extends Object_Class_Data {
     public function setUploadPath($uploadPath)
     {
         $this->uploadPath = $uploadPath;
+        return $this;
     }
 
     /**

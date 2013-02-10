@@ -96,6 +96,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO__loadedLazyFields(array $o___loadedLazyFields) {
         $this->o___loadedLazyFields = $o___loadedLazyFields;
+        return $this;
     }
 
     /**
@@ -303,6 +304,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_versions($o_versions) {
         $this->o_versions = $o_versions;
+        return $this;
     }
 
     /**
@@ -311,6 +313,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setVersions ($o_versions) {
         $this->setO_versions($o_versions);
+        return $this;
     }
 
 
@@ -366,6 +369,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_class($o_class) {
         $this->o_class = $o_class;
+        return $this;
     }
 
     /**
@@ -374,6 +378,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setClass($o_class) {
         $this->setO_class($o_class);
+        return $this;
     }
 
     /**
@@ -413,6 +418,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_classId($o_classId) {
         $this->o_classId = (int) $o_classId;
+        return $this;
     }
 
     /**
@@ -421,6 +427,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setClassId($o_classId) {
         $this->setO_classId($o_classId);
+        return $this;
     }
 
     /**
@@ -436,6 +443,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_className($o_className) {
         $this->o_className = $o_className;
+        return $this;
     }
 
     /**
@@ -451,6 +459,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setClassName($o_className) {
         $this->setO_className($o_className);
+        return $this;
     }
 
 
@@ -481,6 +490,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_published($o_published) {
         $this->o_published = (bool) $o_published;
+        return $this;
     }
 
     /**
@@ -489,6 +499,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setPublished($o_published) {
         $this->setO_published($o_published);
+        return $this;
     }
 
     /**
@@ -496,7 +507,8 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setOmitMandatoryCheck($omitMandatoryCheck)
     {
-        $this->omitMandatoryCheck = $omitMandatoryCheck; 
+        $this->omitMandatoryCheck = $omitMandatoryCheck;
+        return $this;
     }
 
     /**
@@ -524,6 +536,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setScheduledTasks($scheduledTasks) {
         $this->scheduledTasks = $scheduledTasks;
+        return $this;
     }
 
     /**

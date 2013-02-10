@@ -141,6 +141,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -148,6 +149,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
      */
     public function setCid($cid) {
         $this->cid = (int) $cid;
+        return $this;
     }
 
     /**
@@ -155,6 +157,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
      */
     public function setCtype($ctype) {
         $this->ctype = $ctype;
+        return $this;
     }
 
     /**
@@ -162,6 +165,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
      */
     public function setDate($date) {
         $this->date = (int) $date;
+        return $this;
     }
 
     /**
@@ -169,6 +173,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
      */
     public function setAction($action) {
         $this->action = $action;
+        return $this;
     }
 
     /**
@@ -176,6 +181,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
      */
     public function setVersion($version) {
         $this->version = $version;
+        return $this;
     }
 
     /**
@@ -193,6 +199,7 @@ class Schedule_Task extends Pimcore_Model_Abstract {
             $active = false;
         }
         $this->active = (bool) $active;
+        return $this;
     }
 
 }

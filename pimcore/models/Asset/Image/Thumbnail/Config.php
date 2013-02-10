@@ -203,6 +203,7 @@ class Asset_Image_Thumbnail_Config {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -219,6 +220,7 @@ class Asset_Image_Thumbnail_Config {
     public function setItems($items)
     {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -235,6 +237,7 @@ class Asset_Image_Thumbnail_Config {
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -251,6 +254,7 @@ class Asset_Image_Thumbnail_Config {
     public function setFormat($format)
     {
         $this->format = $format;
+        return $this;
     }
 
     /**
@@ -269,6 +273,7 @@ class Asset_Image_Thumbnail_Config {
         if($quality) {
             $this->quality = (int) $quality;
         }
+        return $this;
     }
 
     /**

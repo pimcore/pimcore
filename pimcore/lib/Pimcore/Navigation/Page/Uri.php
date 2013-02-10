@@ -44,6 +44,7 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     public function setTabindex($tabindex)
     {
         $this->_tabindex = $tabindex;
+        return $this;
     }
 
     /**
@@ -61,6 +62,7 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     public function setAccesskey($accesskey)
     {
         $this->_accesskey = $accesskey;
+        return $this;
     }
 
     /**
@@ -78,6 +80,7 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     public function setRelation($relation)
     {
         $this->_relation = $relation;
+        return $this;
     }
 
     /**
@@ -94,6 +97,7 @@ class Pimcore_Navigation_Page_Uri extends Zend_Navigation_Page_Uri
     public function setDocument($document)
     {
         $this->_document = $document;
+        return $this;
     }
 
     /**

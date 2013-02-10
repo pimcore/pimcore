@@ -93,6 +93,7 @@ class Property extends Pimcore_Model_Abstract {
             // plain text
             $this->data = $data;
         }
+        return $this;
     }
 
     /**
@@ -126,6 +127,7 @@ class Property extends Pimcore_Model_Abstract {
             // plain text
             $this->data = $data;
         }
+        return $this;
     }
 
     /**
@@ -141,6 +143,7 @@ class Property extends Pimcore_Model_Abstract {
                 $this->config = $predefined->getConfig();
             }
         }
+        return $this;
     }
 
     /**
@@ -184,6 +187,7 @@ class Property extends Pimcore_Model_Abstract {
      */
     public function setCid($cid) {
         $this->cid = (int) $cid;
+        return $this;
     }
 
     /**
@@ -192,6 +196,7 @@ class Property extends Pimcore_Model_Abstract {
      */
     public function setCtype($ctype) {
         $this->ctype = $ctype;
+        return $this;
     }
 
     /**
@@ -200,6 +205,7 @@ class Property extends Pimcore_Model_Abstract {
      */
     public function setData($data) {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -209,6 +215,7 @@ class Property extends Pimcore_Model_Abstract {
     public function setName($name) {
         $this->name = $name;
         $this->setConfigFromPredefined();
+        return $this;
     }
 
     /**
@@ -218,6 +225,7 @@ class Property extends Pimcore_Model_Abstract {
     public function setType($type) {
         $this->type = $type;
         $this->setConfigFromPredefined();
+        return $this;
     }
 
     /**
@@ -249,6 +257,7 @@ class Property extends Pimcore_Model_Abstract {
      */
     public function setCpath($cpath) {
         $this->cpath = $cpath;
+        return $this;
     }
 
     /**
@@ -257,6 +266,7 @@ class Property extends Pimcore_Model_Abstract {
      */
     public function setInherited($inherited) {
         $this->inherited = (bool) $inherited;
+        return $this;
     }
 
     /**
@@ -272,6 +282,7 @@ class Property extends Pimcore_Model_Abstract {
      */
     public function setInheritable($inheritable) {
         $this->inheritable = (bool) $inheritable;
+        return $this;
     }
     
     /**

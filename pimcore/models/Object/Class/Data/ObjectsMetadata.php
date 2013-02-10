@@ -502,6 +502,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
     public function setAllowedClassId($allowedClassId) {
         $this->allowedClassId = $allowedClassId;
+        return $this;
     }
 
     public function getAllowedClassId() {
@@ -510,6 +511,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
     public function setVisibleFields($visibleFields) {
         $this->visibleFields = $visibleFields;
+        return $this;
     }
 
     public function getVisibleFields() {
@@ -528,7 +530,8 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             $c['key'] = strtolower($c['key']);
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
-        } 
+        }
+        return $this;
     }
 
     public function getColumns() {

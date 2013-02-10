@@ -99,6 +99,7 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -114,6 +115,7 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public function setParentId($parentId) {
         $this->parentId = $parentId;
+        return $this;
     }
 
     /**
@@ -129,6 +131,7 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -165,5 +168,6 @@ class User_Abstract extends Pimcore_Model_Abstract {
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
     }
 }

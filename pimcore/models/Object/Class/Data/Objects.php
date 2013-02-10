@@ -243,6 +243,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      */
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -258,6 +259,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      */
     public function setHeight($height) {
         $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     /**
@@ -461,6 +463,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function setFieldtype($fieldtype)
     {
         $this->fieldtype = $fieldtype;
+        return $this;
     }
 
     /**
@@ -477,6 +480,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**

@@ -260,6 +260,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setChilds($childs)
     {
         $this->childs = $childs;
+        return $this;
     }
 
     /**
@@ -297,6 +298,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 }
             }
         }
+        return $this;
     }
 
 
@@ -468,6 +470,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     public function getHeight()
@@ -478,6 +481,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setLayout($layout)
     {
         $this->layout = $layout;
+        return $this;
     }
 
     public function getLayout()
@@ -488,6 +492,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     public function getName()
@@ -498,6 +503,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setRegion($region)
     {
         $this->region = $region;
+        return $this;
     }
 
     public function getRegion()
@@ -508,6 +514,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     public function getTitle()
@@ -518,6 +525,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     public function getWidth()

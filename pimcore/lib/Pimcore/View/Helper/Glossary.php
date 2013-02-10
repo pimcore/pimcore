@@ -265,6 +265,7 @@ class Pimcore_View_Helper_Glossary_Controller {
     public function setView($view)
     {
         $this->view = $view;
+        return $this;
     }
 
     /**

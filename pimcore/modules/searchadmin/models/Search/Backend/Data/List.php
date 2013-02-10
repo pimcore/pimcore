@@ -48,6 +48,7 @@ class Search_Backend_Data_List extends Pimcore_Model_List_Abstract {
      */
     public function setEntries($entries){
         $this->entries = $entries;
+        return $this;
     }
 
     /**

@@ -155,6 +155,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
     public function setLifetime($lifetime)
     {
         $this->lifetime = $lifetime;
+        return $this;
     }
 
     public function getLifetime()

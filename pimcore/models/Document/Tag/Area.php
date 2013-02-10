@@ -219,7 +219,7 @@ class Document_Tag_Area extends Document_Tag {
      * @return void
      */
     public function setDataFromResource($data) {
-
+        return $this;
     }
 
     /**
@@ -228,7 +228,7 @@ class Document_Tag_Area extends Document_Tag {
      * @return void
      */
     public function setDataFromEditmode($data) {
-
+        return $this;
     }
 
     /**

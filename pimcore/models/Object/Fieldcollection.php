@@ -53,6 +53,7 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
      */
     public function setItems ($items) {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -68,6 +69,7 @@ class Object_Fieldcollection extends Pimcore_Model_Abstract implements Iterator 
      */
     public function setFieldname ($fieldname) {
         $this->fieldname = $fieldname;
+        return $this;
     }
 
     /**

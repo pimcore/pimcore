@@ -47,5 +47,6 @@ class Translation_Abstract_List extends Pimcore_Model_List_Abstract {
      */
     public function setTranslations($translations) {
         $this->translations = $translations;
+        return $this;
     }
 }

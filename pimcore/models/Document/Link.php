@@ -176,6 +176,7 @@ class Document_Link extends Document
     public function setTarget($target)
     {
         $this->setProperty("navigation_target", "text", $target, false);
+        return $this;
     }
 
     /**
@@ -214,7 +215,6 @@ class Document_Link extends Document
      */
     public function setInternal($internal)
     {
-
         if (!empty($internal)) {
             $this->internal = (int) $internal;
             $this->setObjectFromId();
@@ -222,6 +222,7 @@ class Document_Link extends Document
         else {
             $this->internal = null;
         }
+        return $this;
     }
 
     /**
@@ -231,6 +232,7 @@ class Document_Link extends Document
     public function setDirect($direct)
     {
         $this->direct = $direct;
+        return $this;
     }
 
     /**
@@ -240,6 +242,7 @@ class Document_Link extends Document
     public function setLinktype($linktype)
     {
         $this->linktype = $linktype;
+        return $this;
     }
 
     /**
@@ -263,6 +266,7 @@ class Document_Link extends Document
     public function setName($name)
     {
         $this->setProperty("navigation_name", "text", $name, false);
+        return $this;
     }
 
     /**
@@ -281,6 +285,7 @@ class Document_Link extends Document
     public function setInternalType($type)
     {
         $this->internalType = $type;
+        return $this;
     }
 
     /**
@@ -305,6 +310,7 @@ class Document_Link extends Document
     public function setObject($object)
     {
         $this->object = $object;
+        return $this;
     }
 
     /**
@@ -342,6 +348,7 @@ class Document_Link extends Document
     public function setParameters($parameters)
     {
         $this->setProperty("navigation_parameters", "text", $parameters, false);
+        return $this;
     }
 
     /**
@@ -364,6 +371,7 @@ class Document_Link extends Document
     public function setAnchor($anchor)
     {
         $this->setProperty("navigation_anchor", "text", $anchor, false);
+        return $this;
     }
 
     /**
@@ -380,6 +388,7 @@ class Document_Link extends Document
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -402,6 +411,7 @@ class Document_Link extends Document
     public function setAccesskey($accesskey)
     {
         $this->setProperty("accesskey", "text", $accesskey, false);
+        return $this;
     }
 
     /**
@@ -424,6 +434,7 @@ class Document_Link extends Document
     public function setRel($rel)
     {
         $this->setProperty("navigation_relation", "text", $rel, false);
+        return $this;
     }
 
     /**
@@ -446,6 +457,7 @@ class Document_Link extends Document
     public function setTabindex($tabindex)
     {
         $this->setProperty("navigation_tabindex", "text", $tabindex, false);
+        return $this;
     }
 
     /**

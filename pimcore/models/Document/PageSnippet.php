@@ -230,6 +230,7 @@ abstract class Document_PageSnippet extends Document {
      */
     public function setAction($action) {
         $this->action = $action;
+        return $this;
     }
 
     /**
@@ -238,6 +239,7 @@ abstract class Document_PageSnippet extends Document {
      */
     public function setController($controller) {
         $this->controller = $controller;
+        return $this;
     }
 
     /**
@@ -246,6 +248,7 @@ abstract class Document_PageSnippet extends Document {
      */
     public function setTemplate($template) {
         $this->template = $template;
+        return $this;
     }
 
     /**
@@ -254,6 +257,7 @@ abstract class Document_PageSnippet extends Document {
     public function setModule($module)
     {
         $this->module = $module;
+        return $this;
     }
 
     /**
@@ -285,6 +289,7 @@ abstract class Document_PageSnippet extends Document {
         catch (Exception $e) {
             Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getRealFullPath());
         }
+        return $this;
     }
 
     /**
@@ -296,6 +301,7 @@ abstract class Document_PageSnippet extends Document {
      */
     public function setElement($name, $data) {
         $this->elements[$name] = $data;
+        return $this;
     }
 
 
@@ -342,6 +348,7 @@ abstract class Document_PageSnippet extends Document {
         }
 
         $this->contentMasterDocumentId = $contentMasterDocumentId;
+        return $this;
     }
 
     /**
@@ -368,6 +375,7 @@ abstract class Document_PageSnippet extends Document {
         } else {
             $this->setContentMasterDocumentId(null);
         }
+        return $this;
     }
 
     /**
@@ -395,6 +403,7 @@ abstract class Document_PageSnippet extends Document {
      */
     public function setElements($elements) {
         $this->elements = $elements;
+        return $this;
     }
 
     /**
@@ -413,6 +422,7 @@ abstract class Document_PageSnippet extends Document {
      */
     public function setVersions($versions) {
         $this->versions = $versions;
+        return $this;
     }
 
     /**
@@ -440,6 +450,7 @@ abstract class Document_PageSnippet extends Document {
      */
     public function setScheduledTasks($scheduledTasks) {
         $this->scheduledTasks = $scheduledTasks;
+        return $this;
     }
     
     

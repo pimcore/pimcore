@@ -117,6 +117,7 @@ class Pimcore_Mail extends Zend_Mail
 
     public function setHostUrl($url){
         $this->hostUrl = $url;
+        return $this;
     }
 
     public function getHostUrl(){
@@ -217,6 +218,7 @@ class Pimcore_Mail extends Zend_Mail
      */
     public function setIgnoreDebugMode($value){
         $this->ignoreDebugMode = (bool)$value;
+        return $this;
     }
 
     /**
@@ -237,6 +239,7 @@ class Pimcore_Mail extends Zend_Mail
      */
     public function setEnableLayoutOnPlaceholderRendering($value){
         $this->enableLayoutOnPlaceholderRendering = (bool)$value;
+        return $this;
     }
 
     /**

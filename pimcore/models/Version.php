@@ -282,6 +282,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setCid($cid) {
         $this->cid = (int) $cid;
+        return $this;
     }
 
     /**
@@ -290,6 +291,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setDate($date) {
         $this->date = (int) $date;
+        return $this;
     }
 
     /**
@@ -298,6 +300,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -306,6 +309,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setNote($note) {
         $this->note = (string) $note;
+        return $this;
     }
 
     /**
@@ -320,6 +324,7 @@ class Version extends Pimcore_Model_Abstract {
                 $this->setUser($user);
             }
         }
+        return $this;
     }
 
     /**
@@ -338,6 +343,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setData($data) {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -353,6 +359,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setSerialized($serialized) {
         $this->serialized = (bool) $serialized;
+        return $this;
     }
 
     /**
@@ -368,6 +375,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setCtype($ctype) {
         $this->ctype = (string) $ctype;
+        return $this;
     }
 
     /**
@@ -383,6 +391,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setUser($user) {
         $this->user = $user;
+        return $this;
     }
 
     /**
@@ -405,6 +414,7 @@ class Version extends Pimcore_Model_Abstract {
      */
     public function setPublic($public) {
         $this->public = (bool) $public;
+        return $this;
     }
     
 

@@ -206,6 +206,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             $this->document = $document;
             $this->view->document = $document;
         }
+        return $this;
     }
 
     public function getDocument() {

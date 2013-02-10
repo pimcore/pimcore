@@ -596,6 +596,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setTypeFromMapping () {
         $this->setType(self::getTypeFromMimeMapping($this->getMimetype(), $this->getFilename()));
+        return $this;
     }
 
     /**
@@ -668,6 +669,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setLocked($locked){
         $this->locked = $locked;
+        return $this;
     }
 
     /**
@@ -857,6 +859,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setCreationDate($creationDate) {
         $this->creationDate = (int) $creationDate;
+        return $this;
     }
 
     /**
@@ -865,6 +868,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -878,6 +882,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
         $this->filename = $filename;
+        return $this;
     }
 
     /**
@@ -886,6 +891,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setModificationDate($modificationDate) {
         $this->modificationDate = (int) $modificationDate;
+        return $this;
     }
 
     /**
@@ -897,6 +903,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
         $this->parentId = (int) $parentId;
+        return $this;
     }
 
     /**
@@ -905,6 +912,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setPath($path) {
         $this->path = $path;
+        return $this;
     }
 
     /**
@@ -913,6 +921,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setType($type) {
         $this->type = $type;
+        return $this;
     }
 
     /**
@@ -932,6 +941,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public function setData($data) {
         $this->data = $data;
         $this->_dataChanged = true;
+        return $this;
     }
 
     /**
@@ -958,6 +968,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setProperties($properties) {
         $this->properties = $properties;
+        return $this;
     }
 
     /**
@@ -1008,6 +1019,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $property->setInherited($inherited);
 
         $this->properties[$name] = $property;
+        return $this;
     }
 
     /**
@@ -1030,6 +1042,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setUserOwner($userOwner) {
         $this->userOwner = $userOwner;
+        return $this;
     }
 
     /**
@@ -1038,6 +1051,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setUserModification($userModification) {
         $this->userModification = $userModification;
+        return $this;
     }
 
     /**
@@ -1056,6 +1070,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setVersions($versions) {
         $this->versions = $versions;
+        return $this;
     }
 
     /**
@@ -1081,6 +1096,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setCustomSetting($key, $value) {
         $this->customSettings[$key] = $value;
+        return $this;
     }
 
     /**
@@ -1115,6 +1131,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         }
 
         $this->customSettings = $customSettings;
+        return $this;
     }
 
     /**
@@ -1130,6 +1147,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setMimetype($mimetype) {
         $this->mimetype = $mimetype;
+        return $this;
     }
 
     /**
@@ -1185,6 +1203,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setScheduledTasks($scheduledTasks) {
         $this->scheduledTasks = $scheduledTasks;
+        return $this;
     }
 
     /**
@@ -1258,6 +1277,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         if($parent instanceof Asset) {
             $this->parentId = $parent->getId();
         }
+        return $this;
     }
 
     /**

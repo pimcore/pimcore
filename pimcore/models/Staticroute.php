@@ -94,6 +94,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public static function setCurrentRoute($route) {
         self::$_currentRoute = $route;
+        return self;
     }
 
     /**
@@ -251,6 +252,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -259,6 +261,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setPattern($pattern) {
         $this->pattern = $pattern;
+        return $this;
     }
 
     /**
@@ -267,6 +270,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setModule($module) {
         $this->module = $module;
+        return $this;
     }
 
 
@@ -276,6 +280,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setController($controller) {
         $this->controller = $controller;
+        return $this;
     }
 
     /**
@@ -284,6 +289,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setAction($action) {
         $this->action = $action;
+        return $this;
     }
 
     /**
@@ -292,6 +298,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setVariables($variables) {
         $this->variables = $variables;
+        return $this;
     }
 
     /**
@@ -300,6 +307,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setDefaults($defaults) {
         $this->defaults = $defaults;
+        return $this;
     }
 
     /**
@@ -308,6 +316,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setPriority($priority) {
         $this->priority = (int) $priority;
+        return $this;
     }
 
     /**
@@ -323,6 +332,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -338,6 +348,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setReverse($reverse) {
         $this->reverse = $reverse;
+        return $this;
     }
 
     /**
@@ -353,6 +364,7 @@ class Staticroute extends Pimcore_Model_Abstract {
     public function setSiteId($siteId)
     {
         $this->siteId = $siteId ? (int) $siteId : null;
+        return $this;
     }
 
     /**

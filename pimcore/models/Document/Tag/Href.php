@@ -128,6 +128,7 @@ class Document_Tag_Href extends Document_Tag {
         $this->subtype = $data["subtype"];
 
         $this->setElement();
+        return $this;
     }
 
     /**
@@ -142,7 +143,7 @@ class Document_Tag_Href extends Document_Tag {
         $this->subtype = $data["subtype"];
 
         $this->setElement();
-
+        return $this;
     }
 
     /**
@@ -154,6 +155,7 @@ class Document_Tag_Href extends Document_Tag {
 		if(!$this->element) {
 			$this->element = Element_Service::getElementById($this->type, $this->id);
 		}
+        return $this;
     }
 
     /**

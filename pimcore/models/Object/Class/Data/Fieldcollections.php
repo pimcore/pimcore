@@ -61,6 +61,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function setLazyLoading($lazyLoading){
         $this->lazyLoading = $lazyLoading;
+        return $this;
     }
 
     /**
@@ -228,6 +229,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+        return $this;
     }
 
     /**
@@ -517,6 +519,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**

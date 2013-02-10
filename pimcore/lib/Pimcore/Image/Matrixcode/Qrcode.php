@@ -118,6 +118,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
                 'Invalid value for the ECC level'
             );
     	}
+        return $this;
     }
     
     /**
@@ -144,6 +145,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
                 'The version of a QR code should be between 0 and '.Pimcore_Image_Matrixcode_Qrcode_Qrspecs::QR_VERSION_MAX
             );
     	}
+        return $this;
     }
     
     /**
@@ -169,6 +171,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
                 'The parity of a QR code should be between 0 and 255'
             );
     	}
+        return $this;
     }
     
     /**
@@ -190,6 +193,7 @@ class Pimcore_Image_Matrixcode_Qrcode extends Pimcore_Image_Matrixcode_Abstract
     	if(is_string($path)) {
     		$this->_resourcesBasePath = $path;
     	}
+        return $this;
     }
     
     /**

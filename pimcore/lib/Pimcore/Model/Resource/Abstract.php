@@ -33,6 +33,7 @@ abstract class Pimcore_Model_Resource_Abstract implements Pimcore_Model_Resource
      */
     public function setModel($model) {
         $this->model = $model;
+        return $this;
     }
 
     /**

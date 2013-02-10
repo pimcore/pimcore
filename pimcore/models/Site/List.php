@@ -47,5 +47,6 @@ class Site_List extends Pimcore_Model_List_Abstract {
      */
     public function setSites($sites) {
         $this->sites = $sites;
+        return $this;
     }
 }

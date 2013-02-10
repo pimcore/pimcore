@@ -121,6 +121,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -136,6 +137,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setFullPath($fullpath) {
         $this->fullPath = $fullpath;
+        return $this;
     }
 
     /**
@@ -151,6 +153,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setType($type) {
         $this->type = $type;
+        return $this;
     }
 
 
@@ -167,6 +170,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setSubtype($subtype) {
         $this->subtype = $subtype;
+        return $this;
     }
 
     /**
@@ -178,6 +182,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
 
     public function setCreationDate($creationDate) {
         $this->creationDate = $creationDate;
+        return $this;
     }
 
 
@@ -194,6 +199,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setModificationDate($modificationDate) {
         $this->modificationDate = $modificationDate;
+        return $this;
     }
 
     /**
@@ -209,6 +215,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setUserModification($userModification) {
         $this->userModification = $userModification;
+        return $this;
     }
 
     /**
@@ -224,6 +231,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setUserOwner($userOwner) {
         $this->userOwner = $userOwner;
+        return $this;
     }
 
     /**
@@ -246,6 +254,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setPublished($published) {
         $this->published = (bool) $published;
+        return $this;
     }
 
     /**
@@ -261,6 +270,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setData($data){
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -276,6 +286,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
      */
     public function setProperties($properties){
         $this->properties = $properties;
+        return $this;
     }
 
 
@@ -429,7 +440,7 @@ class Search_Backend_Data extends Pimcore_Model_Abstract {
             $this->data = "ID: " . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->cleanupData($this->data);
         }
 
-
+        return $this;
     }
 
     /**
