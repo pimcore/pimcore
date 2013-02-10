@@ -95,9 +95,7 @@ class Document_Service extends Element_Service {
                 $layout->{$layout->getContentKey()} = $content;
                 if (is_array($params)) {
                     foreach ($params as $key => $value) {
-                        if (!$layout->getView()->$key) { //otherwise we could overwrite e.g. controller, content...
                             $layout->getView()->$key = $value;
-                        }
                     }
                 }
 
