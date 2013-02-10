@@ -352,6 +352,7 @@ class Element_Import_Service
         }
         $element->setUserModification($user->getId());
         $element->setModificationDate(time());
+        return $this;
     }
 
 

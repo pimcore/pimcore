@@ -76,6 +76,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public function setKeyWidth($width) {
         $this->keyWidth = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -84,6 +85,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public function setGroupWidth($width) {
         $this->groupWidth = $this->getAsIntegerCast($width);
+        return $this;
     }
 
 
@@ -100,6 +102,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public function setMaxheight($maxheight) {
         $this->maxheight = $this->getAsIntegerCast($maxheight);
+        return $this;
     }
 
 
@@ -126,6 +129,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public function setValueWidth($width) {
         $this->valueWidth = $this->getAsIntegerCast($width);
+        return $this;
     }
 
 

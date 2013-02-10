@@ -186,6 +186,7 @@ class Pimcore_Translate extends Zend_Translate_Adapter {
     public static function setBackend($backend)
     {
         static::$backend = $backend;
+        return self;
     }
 
     /**

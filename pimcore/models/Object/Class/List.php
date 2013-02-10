@@ -48,5 +48,6 @@ class Object_Class_List extends Pimcore_Model_List_Abstract {
      */
     function setClasses($classes) {
         $this->classes = $classes;
+        return $this;
     }
 }

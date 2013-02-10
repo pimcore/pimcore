@@ -73,6 +73,7 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
      */
     public function setObjects($objects) {
         $this->objects = $objects;
+        return $this;
     }
     
     /**
@@ -87,6 +88,7 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
      */
     public function setUnpublished($unpublished) {
         $this->unpublished = (bool) $unpublished;
+        return $this;
     }
 
     /**
@@ -95,6 +97,7 @@ class Object_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_
      */
     public function setObjectTypes($objectTypes) {
         $this->objectTypes = $objectTypes;
+        return $this;
     }
 
     /**

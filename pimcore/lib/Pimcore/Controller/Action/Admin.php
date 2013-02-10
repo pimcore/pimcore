@@ -153,6 +153,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         Zend_Registry::set("pimcore_user", $this->user);
 
         $this->setLanguage($this->user->getLanguage());
+        return $this;
     }
 
     public function getLanguage() {
@@ -191,7 +192,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
         $this->language = (string) $locale;
         $this->view->language = $this->getLanguage();
-
+        return $this;
     }
 
     /**
@@ -232,6 +233,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
     public function setTranslator(Zend_Translate $t) {
         $this->translator = $t;
+        return $this;
     }
 
     public function getTranslator() {

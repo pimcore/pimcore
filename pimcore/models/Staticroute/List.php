@@ -47,6 +47,7 @@ class Staticroute_List extends Pimcore_Model_List_Abstract {
      */
     public function setRoutes($routes) {
         $this->routes = $routes;
+        return $this;
     }
 
 }

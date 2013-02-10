@@ -278,6 +278,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public function setProcessId($processId)
     {
         $this->processId = $processId;
+        return $this;
     }
 
     /**
@@ -300,12 +301,14 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         parent::setVideoBitrate($videoBitrate);
 
         $this->addArgument("videoBitrate", "-vb " . $videoBitrate . "k");
+        return $this;
     }
 
     public function setAudioBitrate($audioBitrate) {
         parent::setAudioBitrate($audioBitrate);
 
         $this->addArgument("audioBitrate", "-ab " . $audioBitrate . "k");
+        return $this;
     }
 
     public function resize ($width, $height) {

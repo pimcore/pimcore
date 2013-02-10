@@ -246,7 +246,7 @@
 		* Set the name of the browser
 		* @param $browser The name of the Browser
 		*/
-		public function setBrowser($browser) { return $this->_browser_name = $browser; }
+		public function setBrowser($browser) { return $this->_browser_name = $browser; return $this;}
 		/**
 		* The name of the platform.  All return types are from the class contants
 		* @return string Name of the browser
@@ -256,7 +256,7 @@
 		* Set the name of the platform
 		* @param $platform The name of the Platform
 		*/
-		public function setPlatform($platform) { return $this->_platform = $platform; }
+		public function setPlatform($platform) { return $this->_platform = $platform; return $this;}
 		/**
 		* The version of the browser.
 		* @return string Version of the browser (will only contain alpha-numeric characters and a period)
@@ -266,7 +266,7 @@
 		* Set the version of the browser
 		* @param $version The version of the Browser
 		*/
-		public function setVersion($version) { $this->_version = preg_replace('/[^0-9,.,a-z,A-Z-]/','',$version); }
+		public function setVersion($version) { $this->_version = preg_replace('/[^0-9,.,a-z,A-Z-]/','',$version); return $this;}
 		/**
 		* The version of AOL.
 		* @return string Version of AOL (will only contain alpha-numeric characters and a period)
@@ -276,7 +276,7 @@
 		* Set the version of AOL
 		* @param $version The version of AOL
 		*/
-		public function setAolVersion($version) { $this->_aol_version = preg_replace('/[^0-9,.,a-z,A-Z]/','',$version); }
+		public function setAolVersion($version) { $this->_aol_version = preg_replace('/[^0-9,.,a-z,A-Z]/','',$version); return $this;}
 		/**
 		* Is the browser from AOL?
 		* @return boolean True if the browser is from AOL otherwise false
@@ -296,17 +296,17 @@
 		* Set the browser to be from AOL
 		* @param $isAol
 		*/
-		public function setAol($isAol) { $this->_is_aol = $isAol; }
+		public function setAol($isAol) { $this->_is_aol = $isAol; return $this;}
 		/**
 		 * Set the Browser to be mobile
 		 * @param boolean $value is the browser a mobile brower or not
 		 */
-		protected function setMobile($value=true) { $this->_is_mobile = $value; }
+		protected function setMobile($value=true) { $this->_is_mobile = $value;  return $this;}
 		/**
 		 * Set the Browser to be a robot
 		 * @param boolean $value is the browser a robot or not
 		 */
-		protected function setRobot($value=true) { $this->_is_robot = $value; }
+		protected function setRobot($value=true) { $this->_is_robot = $value; return $this; }
 		/**
 		* Get the user agent value in use to determine the browser
 		* @return string The user agent from the HTTP header
@@ -320,6 +320,7 @@
 			$this->reset();
 			$this->_agent = $agent_string;
 			$this->determine();
+            return $this;
 		}
 		/**
 		 * Used to determine if the browser is actually "chromeframe"

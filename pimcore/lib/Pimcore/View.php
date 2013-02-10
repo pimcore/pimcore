@@ -253,6 +253,7 @@ class Pimcore_View extends Zend_View {
      */
     public function setRequest(Zend_Controller_Request_Abstract $request) {
         $this->request = $request;
+        return $this;
     }
 
     /**

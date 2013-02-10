@@ -130,6 +130,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setCid($cid) {
         $this->cid = (int) $cid;
+        return $this;
     }
 
     /**
@@ -138,6 +139,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -151,6 +153,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
                 $this->setUser($user);
             }
         }
+        return $this;
     }
 
     /**
@@ -166,6 +169,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setCtype($ctype) {
         $this->ctype = (string) $ctype;
+        return $this;
     }
 
     /**
@@ -181,6 +185,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setSessionId($sessionId) {
         $this->sessionId = (string) $sessionId;
+        return $this;
     }
 
     /**
@@ -196,6 +201,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setUser($user) {
         $this->user = $user;
+        return $this;
     }
 
     /**
@@ -211,6 +217,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
      */
     public function setDate($date) {
         $this->date = (int) $date;
+        return $this;
     }
 
     /**
@@ -219,6 +226,7 @@ class Element_Editlock extends Pimcore_Model_Abstract {
     public function setCpath($cpath)
     {
         $this->cpath = $cpath;
+        return $this;
     }
 
     /**

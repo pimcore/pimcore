@@ -63,6 +63,7 @@ class User_UserRole extends User_Abstract {
      */
     public function setAllAclToFalse() {
         $this->permissions = array();
+        return $this;
     }
 
     /**
@@ -77,6 +78,7 @@ class User_UserRole extends User_Abstract {
             $position = array_search($permissionName, $this->permissions);
             array_splice($this->permissions, $position, 1);
         }
+        return $this;
     }
 
     /**
@@ -128,6 +130,7 @@ class User_UserRole extends User_Abstract {
         } else if (is_array($permissions)) {
             $this->permissions = $permissions;
         }
+        return $this;
     }
 
     /**
@@ -136,6 +139,7 @@ class User_UserRole extends User_Abstract {
     public function setWorkspacesAsset($workspacesAsset)
     {
         $this->workspacesAsset = $workspacesAsset;
+        return $this;
     }
 
     /**
@@ -152,6 +156,7 @@ class User_UserRole extends User_Abstract {
     public function setWorkspacesDocument($workspacesDocument)
     {
         $this->workspacesDocument = $workspacesDocument;
+        return $this;
     }
 
     /**
@@ -168,6 +173,7 @@ class User_UserRole extends User_Abstract {
     public function setWorkspacesObject($workspacesObject)
     {
         $this->workspacesObject = $workspacesObject;
+        return $this;
     }
 
     /**

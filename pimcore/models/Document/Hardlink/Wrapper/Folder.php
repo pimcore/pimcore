@@ -116,6 +116,7 @@ class Document_Hardlink_Wrapper_Folder extends Document_Folder implements Docume
     public function setHardLinkSource($hardLinkSource)
     {
         $this->hardLinkSource = $hardLinkSource;
+        return $this;
     }
 
     /**

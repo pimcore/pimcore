@@ -78,6 +78,7 @@ class Document_List extends Pimcore_Model_List_Abstract implements Zend_Paginato
      */
     public function setDocuments($documents) {
         $this->documents = $documents;
+        return $this;
     }
     
     /**
@@ -92,6 +93,7 @@ class Document_List extends Pimcore_Model_List_Abstract implements Zend_Paginato
      */
     public function setUnpublished($unpublished) {
         $this->unpublished = (bool) $unpublished;
+        return $this;
     }
     
     /**

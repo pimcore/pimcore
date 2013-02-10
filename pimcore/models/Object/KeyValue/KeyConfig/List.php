@@ -31,6 +31,7 @@ class Object_KeyValue_KeyConfig_List extends Pimcore_Model_List_Abstract {
      */
     public function setList($theList) {
         $this->list = $theList;
+        return $this;
     }
 
 }

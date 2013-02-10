@@ -91,6 +91,7 @@ class Document_Tag_Date extends Document_Tag {
         if($data) {
             $this->date = new Pimcore_Date($data);
         }
+        return $this;
     }
 
     /**
@@ -109,6 +110,7 @@ class Document_Tag_Date extends Document_Tag {
             // set default timezone
             date_default_timezone_set(Pimcore_Config::getSystemConfig()->general->timezone);
         }
+        return $this;
     }
     
     /**

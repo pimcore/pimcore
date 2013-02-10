@@ -33,6 +33,7 @@ class User_Workspace_Object extends User_Workspace_Abstract {
     public function setSave($save)
     {
         $this->save = $save;
+        return $this;
     }
 
     /**
@@ -49,6 +50,7 @@ class User_Workspace_Object extends User_Workspace_Abstract {
     public function setUnpublish($unpublish)
     {
         $this->unpublish = $unpublish;
+        return $this;
     }
 
     /**

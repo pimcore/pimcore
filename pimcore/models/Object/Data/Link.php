@@ -84,6 +84,7 @@ class Object_Data_Link {
     
     public function setText ($text) {
         $this->text = $text;
+        return $this;
     }
     
     public function getInternalType() {
@@ -92,6 +93,7 @@ class Object_Data_Link {
     
     public function setInternalType ($internalType) {
         $this->internalType = $internalType;
+        return $this;
     }
     
     public function getInternal() {
@@ -103,6 +105,7 @@ class Object_Data_Link {
         if (!empty($internal)) {
             $this->setObjectFromId();
         }
+        return $this;
     }
     
     public function getDirect() {
@@ -111,6 +114,7 @@ class Object_Data_Link {
     
     public function setDirect ($direct) {
         $this->direct = $direct;
+        return $this;
     }
     
     public function getLinktype() {
@@ -119,6 +123,7 @@ class Object_Data_Link {
     
     public function setLinktype ($linktype) {
         $this->linktype = $linktype;
+        return $this;
     }
     
     public function getTarget() {
@@ -127,6 +132,7 @@ class Object_Data_Link {
     
     public function setTarget ($target) {
         $this->target = $target;
+        return $this;
     }
     
     public function getParameters() {
@@ -135,6 +141,7 @@ class Object_Data_Link {
     
     public function setParameters ($parameters) {
         $this->parameters = $parameters;
+        return $this;
     }
     
     public function getAnchor() {
@@ -143,6 +150,7 @@ class Object_Data_Link {
     
     public function setAnchor ($anchor) {
         $this->anchor = $anchor;
+        return $this;
     }
     
     public function getTitle() {
@@ -151,6 +159,7 @@ class Object_Data_Link {
     
     public function setTitle ($title) {
         $this->title = $title;
+        return $this;
     }
     
     public function getAccesskey() {
@@ -159,6 +168,7 @@ class Object_Data_Link {
     
     public function setAccesskey ($accesskey) {
         $this->accesskey = $accesskey;
+        return $this;
     }
     
     public function getRel() {
@@ -167,6 +177,7 @@ class Object_Data_Link {
     
     public function setRel ($rel) {
         $this->rel = $rel;
+        return $this;
     }
     
     public function getTabindex() {
@@ -175,6 +186,7 @@ class Object_Data_Link {
     
     public function setTabindex ($tabindex) {
         $this->tabindex = $tabindex;
+        return $this;
     }
     
     
@@ -195,6 +207,7 @@ class Object_Data_Link {
                 $this->direct = $path;
             }
         }
+        return $this;
     }
     
     public function getPath () {
@@ -258,6 +271,7 @@ class Object_Data_Link {
      */
     public function setObject($object) {
         $this->object = $object;
+        return $this;
     }
 
     /**
@@ -301,7 +315,6 @@ class Object_Data_Link {
     }
     
     public function setValues($data = array()) {
-
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
                 $method = "set" . $key;
@@ -310,6 +323,7 @@ class Object_Data_Link {
                 }
             }
         }
+        return $this;
     }
     
     public function __toString() {

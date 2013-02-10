@@ -124,6 +124,7 @@ class Pimcore_Google_Analytics {
     public static function setDefaultPath($defaultPath)
     {
         self::$defaultPath = $defaultPath;
+        return self;
     }
 
     public static function getDefaultPath()

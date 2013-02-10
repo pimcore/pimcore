@@ -36,6 +36,7 @@ class Element_AdminStyle {
 
     public function setElementCssClass($elementCssClass) {
         $this->elementCssClass = $elementCssClass;
+        return $this;
     }
 
     public function getElementCssClass() {
@@ -44,6 +45,7 @@ class Element_AdminStyle {
 
     public function setElementIcon($elementIcon) {
         $this->elementIcon = $elementIcon;
+        return $this;
     }
 
     public function getElementIcon() {
@@ -52,6 +54,7 @@ class Element_AdminStyle {
 
     public function setElementIconClass($elementIconClass) {
         $this->elementIconClass = $elementIconClass;
+        return $this;
     }
 
     public function getElementIconClass() {

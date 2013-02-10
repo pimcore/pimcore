@@ -39,7 +39,6 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      *
      */
     public function setElements() {
-
         if(empty($this->elements)) {
             $this->elements = array();
             foreach ($this->elementIds as $elementId) {
@@ -49,6 +48,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
                 }
             }
         }
+        return $this;
     }
 
     /**
@@ -124,6 +124,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
         if($data = Pimcore_Tool_Serialize::unserialize($data)) {
             $this->setDataFromEditmode($data);
         }
+        return $this;
     }
 
     /**
@@ -132,10 +133,10 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
      * @return void
      */
     public function setDataFromEditmode($data) {
-
         if(is_array($data)) {
             $this->elementIds = $data;
         }
+        return $this;
     }
 
     /**

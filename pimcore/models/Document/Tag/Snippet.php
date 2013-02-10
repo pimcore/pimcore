@@ -100,6 +100,7 @@ class Document_Tag_Snippet extends Document_Tag {
             $this->id = $data;
             $this->snippet = Document_Snippet::getById($this->id);
         }
+        return $this;
     }
 
     /**
@@ -112,6 +113,7 @@ class Document_Tag_Snippet extends Document_Tag {
             $this->id = $data;
             $this->snippet = Document_Snippet::getById($this->id);
         }
+        return $this;
     }
     
     /**

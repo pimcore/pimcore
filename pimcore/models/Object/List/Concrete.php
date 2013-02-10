@@ -84,6 +84,7 @@ abstract class Object_List_Concrete extends Object_List {
      */
     public function setClassId($classId) {
         $this->classId = $classId;
+        return $this;
     }
 
     /**
@@ -91,6 +92,7 @@ abstract class Object_List_Concrete extends Object_List {
      */
     public function setClassName($className) {
         $this->className = $className;
+        return $this;
     }
 
     /**
@@ -108,6 +110,7 @@ abstract class Object_List_Concrete extends Object_List {
     public function setLocale($locale)
     {
         $this->locale = $locale;
+        return $this;
     }
 
     /**
@@ -125,6 +128,7 @@ abstract class Object_List_Concrete extends Object_List {
     public function setIgnoreLocale($ignoreLocale)
     {
         $this->ignoreLocale = $ignoreLocale;
+        return $this;
     }
 
     /**
@@ -142,6 +146,7 @@ abstract class Object_List_Concrete extends Object_List {
     public function setIgnoreLocalizedFields($ignoreLocalizedFields)
     {
         $this->ignoreLocalizedFields = $ignoreLocalizedFields;
+        return $this;
     }
 
     /**
@@ -181,6 +186,7 @@ abstract class Object_List_Concrete extends Object_List {
         foreach($fieldCollections as $fc) {
             $this->addFieldCollection($fc['type'], $fc['fieldname']);
         }
+        return $this;
     }
 
     /**
@@ -222,6 +228,7 @@ abstract class Object_List_Concrete extends Object_List {
                 $this->addObjectbrick($ob);
             }
         }
+        return $this;
     }
 
     /**

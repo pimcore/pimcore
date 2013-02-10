@@ -55,6 +55,7 @@ class Document_Tag_Video extends Document_Tag
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -71,6 +72,7 @@ class Document_Tag_Video extends Document_Tag
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -242,6 +244,7 @@ class Document_Tag_Video extends Document_Tag
         $this->poster = $data["poster"];
         $this->title = $data["title"];
         $this->description = $data["description"];
+        return $this;
     }
 
     /**
@@ -280,6 +283,7 @@ class Document_Tag_Video extends Document_Tag
         if($poster instanceof Asset_Image) {
             $this->poster = $poster->getId();
         }
+        return $this;
     }
 
 

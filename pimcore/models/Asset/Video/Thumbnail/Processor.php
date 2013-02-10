@@ -314,6 +314,7 @@ class Asset_Video_Thumbnail_Processor {
     public function setProcessId($processId)
     {
         $this->processId = $processId;
+        return $this;
     }
 
     /**
@@ -330,6 +331,7 @@ class Asset_Video_Thumbnail_Processor {
     public function setAssetId($assetId)
     {
         $this->assetId = $assetId;
+        return $this;
     }
 
     /**
@@ -346,6 +348,7 @@ class Asset_Video_Thumbnail_Processor {
     public function setConfig($config)
     {
         $this->config = $config;
+        return $this;
     }
 
     /**
@@ -362,6 +365,7 @@ class Asset_Video_Thumbnail_Processor {
     public function setQueue($queue)
     {
         $this->queue = $queue;
+        return $this;
     }
 
     /**
@@ -378,6 +382,7 @@ class Asset_Video_Thumbnail_Processor {
     public function setStatus($status)
     {
         $this->status = $status;
+        return $this;
     }
 
     /**

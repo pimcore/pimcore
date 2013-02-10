@@ -200,6 +200,7 @@ class Tool_Tag_Config {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -216,6 +217,7 @@ class Tool_Tag_Config {
     public function setItems($items)
     {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -232,6 +234,7 @@ class Tool_Tag_Config {
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -248,6 +251,7 @@ class Tool_Tag_Config {
     public function setHttpMethod($httpMethod)
     {
         $this->httpMethod = $httpMethod;
+        return $this;
     }
 
     /**
@@ -264,6 +268,7 @@ class Tool_Tag_Config {
     public function setUrlPattern($urlPattern)
     {
         $this->urlPattern = $urlPattern;
+        return $this;
     }
 
     /**
@@ -280,6 +285,7 @@ class Tool_Tag_Config {
     public function setParams($params)
     {
         $this->params = $params;
+        return $this;
     }
 
     /**
@@ -296,6 +302,7 @@ class Tool_Tag_Config {
     public function setTextPattern($textPattern)
     {
         $this->textPattern = $textPattern;
+        return $this;
     }
 
     /**

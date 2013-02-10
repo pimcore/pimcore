@@ -139,6 +139,7 @@ class Pimcore_Resource_Mysql {
 
         // register globally
         Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
+        return self;
     }
 
     /**

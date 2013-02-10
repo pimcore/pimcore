@@ -218,6 +218,7 @@ class Document_Tag_Image extends Document_Tag {
         }
         catch (Exception $e) {
         }
+        return $this;
     }
 
     /**
@@ -235,6 +236,7 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropLeft = $data["cropLeft"];
 
         $this->image = Asset_Image::getById($this->id);
+        return $this;
     }
 
     /*
@@ -373,6 +375,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropHeight($cropHeight)
     {
         $this->cropHeight = $cropHeight;
+        return $this;
     }
 
     /**
@@ -389,6 +392,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropLeft($cropLeft)
     {
         $this->cropLeft = $cropLeft;
+        return $this;
     }
 
     /**
@@ -405,6 +409,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropPercent($cropPercent)
     {
         $this->cropPercent = $cropPercent;
+        return $this;
     }
 
     /**
@@ -421,6 +426,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropTop($cropTop)
     {
         $this->cropTop = $cropTop;
+        return $this;
     }
 
     /**
@@ -437,6 +443,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropWidth($cropWidth)
     {
         $this->cropWidth = $cropWidth;
+        return $this;
     }
 
     /**

@@ -63,6 +63,7 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -78,6 +79,7 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -93,5 +95,6 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
     public function setDescription($description) {
         $this->description = $description;
+        return $this;
     }
 }

@@ -92,6 +92,7 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -108,6 +109,7 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public function setText($text) {
         $this->text = $text;
+        return $this;
     }
 
     /**
@@ -123,6 +125,7 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public function setLink($link) {
         $this->link = $link;
+        return $this;
     }
 
     /**
@@ -139,6 +142,7 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public function setAbbr($abbr) {
         $this->abbr = $abbr;
+        return $this;
     }
 
     /**
@@ -155,6 +159,7 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public function setAcronym($acronym) {
         $this->acronym = $acronym;
+        return $this;
     }
 
     /**
@@ -171,6 +176,7 @@ class Glossary extends Pimcore_Model_Abstract {
      */
     public function setLanguage($language) {
         $this->language = $language;
+        return $this;
     }
 
     /**
@@ -186,6 +192,7 @@ class Glossary extends Pimcore_Model_Abstract {
     public function setCasesensitive($casesensitive)
     {
         $this->casesensitive = (bool) $casesensitive;
+        return $this;
     }
 
     /**
@@ -202,6 +209,7 @@ class Glossary extends Pimcore_Model_Abstract {
     public function setExactmatch($exactmatch)
     {
         $this->exactmatch = (bool) $exactmatch;
+        return $this;
     }
 
     /**
@@ -221,6 +229,7 @@ class Glossary extends Pimcore_Model_Abstract {
             $site = $site->getId();
         }
         $this->site = (int) $site;
+        return $this;
     }
 
     /**

@@ -95,6 +95,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         if (intval($limit) > 0) {
             $this->limit = intval($limit);
         }
+        return $this;
     }
 
     /**
@@ -105,6 +106,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         if (intval($offset) > 0) {
             $this->offset = intval($offset);
         }
+        return $this;
     }
 
     /**
@@ -130,6 +132,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
                 }
             }
         }
+        return $this;
     }
 
     /**
@@ -168,6 +171,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
             }
             $this->orderKey = $tmpKeys;
         }
+        return $this;
     }
 
     /**
@@ -190,6 +194,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
         } else if ($conditionVariables !== null) {
             $this->setConditionVariables(array($conditionVariables));
         }
+        return $this;
     }
 
     /**
@@ -217,6 +222,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
                 $this->groupBy = "`" . $this->groupBy . "`";
             }
         }
+        return $this;
     }
 
     /**
@@ -224,6 +230,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
      */
     public function setValidOrders($validOrders) {
         $this->validOrders = $validOrders;
+        return $this;
     }
 
     /**
@@ -241,6 +248,7 @@ abstract class Pimcore_Model_List_Abstract extends Pimcore_Model_Abstract {
     public function setConditionVariables($conditionVariables)
     {
         $this->conditionVariables = $conditionVariables;
+        return $this;
     }
 
     /**

@@ -49,6 +49,7 @@ abstract class Pimcore_Video_Adapter {
     public function setAudioBitrate($audioBitrate)
     {
         $this->audioBitrate = $audioBitrate;
+        return $this;
     }
 
     /**
@@ -65,6 +66,7 @@ abstract class Pimcore_Video_Adapter {
     public function setVideoBitrate($videoBitrate)
     {
         $this->videoBitrate = $videoBitrate;
+        return $this;
     }
 
     /**
@@ -115,6 +117,7 @@ abstract class Pimcore_Video_Adapter {
     public function setFormat($format)
     {
         $this->format = $format;
+        return $this;
     }
 
     /**
@@ -131,6 +134,7 @@ abstract class Pimcore_Video_Adapter {
     public function setDestinationFile($destinationFile)
     {
         $this->destinationFile = $destinationFile;
+        return $this;
     }
 
     /**
@@ -147,6 +151,7 @@ abstract class Pimcore_Video_Adapter {
     public function setLength($length)
     {
         $this->length = $length;
+        return $this;
     }
 
     /**

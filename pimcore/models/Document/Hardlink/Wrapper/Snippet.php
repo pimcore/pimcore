@@ -116,6 +116,7 @@ class Document_Hardlink_Wrapper_Snippet extends Document_Snippet implements Docu
     public function setHardLinkSource($hardLinkSource)
     {
         $this->hardLinkSource = $hardLinkSource;
+        return $this;
     }
 
     /**

@@ -28,6 +28,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
     public function setClass(Object_Class $class)
     {
         $this->class = $class;
+        return $this;
     }
 
     /**
@@ -56,6 +57,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
 
     public function setObjectId($objectId) {
         $this->objectId = $objectId;
+        return $this;
     }
 
     public function setProperties($arr) {
@@ -68,6 +70,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         }
 
         $this->arr = $newProperties;
+        return $this;
     }
 
     public function getInternalProperties() {
@@ -174,6 +177,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         $pair["key"] = $keyId;
         $pair["value"] = $value;
         $this->arr[] = $pair;
+        return $this;
     }
 
     public function setProperty($propName, $value) {

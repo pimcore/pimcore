@@ -26,6 +26,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     public function setUnit($unit)
     {
         $this->unit = $unit;
+        return $this;
     }
 
     public function getUnit()
@@ -36,6 +37,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     public function setPossibleValues($values)
     {
         $this->possiblevalues = $values;
+        return $this;
     }
 
     public function getPossibleValues()
@@ -48,6 +50,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
     }
 
     public function getType()
@@ -58,6 +61,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     public function setGroup($group)
     {
         $this->group = $group;
+        return $this;
     }
 
     public function getGroup()
@@ -114,6 +118,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -129,6 +134,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -144,5 +150,6 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
 
     public function setDescription($description) {
         $this->description = $description;
+        return $this;
     }
 }

@@ -121,6 +121,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setName($name) {
         $this->setProperty("navigation_name","text",$name,false);
+        return $this;
     }
 
     /**
@@ -150,6 +151,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setDescription($description) {
         $this->description = str_replace("\n"," ",$description);
+        return $this;
     }
 
     /**
@@ -158,6 +160,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setKeywords($keywords) {
         $this->keywords = str_replace("\n"," ",$keywords);
+        return $this;
     }
 
     /**
@@ -166,6 +169,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setTitle($title) {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -174,6 +178,7 @@ class Document_Page extends Document_PageSnippet {
     public function setMetaData($metaData)
     {
         $this->metaData = $metaData;
+        return $this;
     }
 
     /**
@@ -209,6 +214,7 @@ class Document_Page extends Document_PageSnippet {
     public function setPrettyUrl($prettyUrl)
     {
         $this->prettyUrl = rtrim($prettyUrl, " /");
+        return $this;
     }
 
     /**
@@ -225,6 +231,7 @@ class Document_Page extends Document_PageSnippet {
     public function setCss($css)
     {
         $this->css = $css;
+        return $this;
     }
 
     /**

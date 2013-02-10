@@ -70,6 +70,7 @@ class Document_Tag_Block extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->indices = Pimcore_Tool_Serialize::unserialize($data);
+        return $this;
     }
 
     /**
@@ -79,6 +80,7 @@ class Document_Tag_Block extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->indices = $data;
+        return $this;
     }
 
     /**
@@ -90,6 +92,7 @@ class Document_Tag_Block extends Document_Tag {
                 $this->indices[$i] = $i + 1;
             }
         }
+        return $this;
     }
 
     /**
@@ -306,6 +309,7 @@ class Document_Tag_Block extends Document_Tag {
         }
 
         $this->options = $options;
+        return $this;
     }
 
     /**

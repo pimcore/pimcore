@@ -37,6 +37,7 @@ abstract class Pimcore_Image_Adapter {
     public function setHeight($height)
     {
         $this->height = $height;
+        return $this;
     }
 
     /**
@@ -53,6 +54,7 @@ abstract class Pimcore_Image_Adapter {
     public function setWidth($width)
     {
         $this->width = $width;
+        return $this;
     }
 
     /**
@@ -243,7 +245,6 @@ abstract class Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function setBackgroundColor ($color) {
-
         return $this;
     }
 

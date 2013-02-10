@@ -41,6 +41,7 @@ class Element_Sanitycheck extends Pimcore_Model_Abstract {
      */
     public function setId($id){
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -56,6 +57,7 @@ class Element_Sanitycheck extends Pimcore_Model_Abstract {
      */
     public function setType($type){
         $this->type = $type;
+        return $this;
     }
 
 

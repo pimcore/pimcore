@@ -103,6 +103,7 @@ class Pimcore_Placeholder
     public static function setWebsiteClassPrefix($string)
     {
         self::addPlaceholderClassPrefix($string);
+        return self;
     }
 
     /**
@@ -128,6 +129,7 @@ class Pimcore_Placeholder
     public static function setPlaceholderPrefix($prefix)
     {
         self::addPlaceholderClassPrefix($prefix);
+        return self;
     }
 
     /**
@@ -163,6 +165,7 @@ class Pimcore_Placeholder
             throw new Exception("\$suffix mustn'n be empty");
         }
         self::$placeholderSuffix = $suffix;
+        return self;
     }
 
 

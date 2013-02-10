@@ -95,6 +95,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -111,6 +112,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function setId($id)
     {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -127,6 +129,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -143,6 +146,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function setDocumentId($documentId)
     {
         $this->documentId = (int) $documentId;
+        return $this;
     }
 
     /**
@@ -162,6 +166,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
             $actions = new Tool_Targeting_Actions();
         }
         $this->actions = $actions;
+        return $this;
     }
 
     /**
@@ -181,6 +186,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
             $conditions = array();
         }
         $this->conditions = $conditions;
+        return $this;
     }
 
     /**

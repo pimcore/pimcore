@@ -15,19 +15,22 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-class Asset_Folder extends Asset {
+class Asset_Folder extends Asset
+{
 
     /**
-        * set the children of the document
-        *
-        * @return array
-        */
-       public function setChilds($childs) {
-           $this->childs=$childs;
-           if(is_array($childs) and count($childs>0)){
-               $this->hasChilds=true;
-           } else {
-               $this->hasChilds=false;
-           }
+     * set the children of the document
+     *
+     * @return array
+     */
+    public function setChilds($childs)
+    {
+        $this->childs = $childs;
+        if (is_array($childs) and count($childs > 0)) {
+            $this->hasChilds = true;
+        } else {
+            $this->hasChilds = false;
+        }
+        return $this;
     }
 }

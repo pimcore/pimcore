@@ -32,6 +32,7 @@ class Pimcore_Resource_Wrapper {
     public function setDDLResource($DDLResource)
     {
         $this->DDLResource = $DDLResource;
+        return $this;
     }
 
     /**
@@ -73,6 +74,7 @@ class Pimcore_Resource_Wrapper {
     public function setResource($resource)
     {
         $this->resource = $resource;
+        return $this;
     }
 
     /**

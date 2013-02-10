@@ -43,6 +43,7 @@ abstract class Document_Tag_Area_Abstract {
      */
     public function setView ($view) {
         $this->view = $view;
+        return $this;
     }
 
     /**
@@ -58,6 +59,7 @@ abstract class Document_Tag_Area_Abstract {
      */
     public function setConfig ($config) {
         $this->config = $config;
+        return $this;
     }
 
     /**
@@ -117,6 +119,7 @@ abstract class Document_Tag_Area_Abstract {
      */
     public function setParams ($params) {
         $this->params = $params;
+        return $this;
     }
 
     /**
@@ -125,6 +128,7 @@ abstract class Document_Tag_Area_Abstract {
     public function setBrick($brick)
     {
         $this->brick = $brick;
+        return $this;
     }
 
     /**

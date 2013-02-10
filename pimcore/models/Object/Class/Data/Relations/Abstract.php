@@ -49,6 +49,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
      */
     public function setClasses($classes) {
         $this->classes = $this->correctClasses($classes);
+        return $this;
     }
 
     /**
@@ -92,6 +93,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
      */
     public function setLazyLoading($lazyLoading){
         $this->lazyLoading = $lazyLoading;
+        return $this;
     }
 
     /**

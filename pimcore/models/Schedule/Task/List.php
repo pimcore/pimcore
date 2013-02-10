@@ -47,5 +47,6 @@ class Schedule_Task_List extends Pimcore_Model_List_Abstract {
      */
     public function setTasks($tasks) {
         $this->tasks = $tasks;
+        return $this;
     }
 }

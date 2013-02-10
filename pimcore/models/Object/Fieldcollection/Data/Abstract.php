@@ -50,6 +50,7 @@ abstract class Object_Fieldcollection_Data_Abstract extends Pimcore_Model_Abstra
      */
     public function setIndex ($index) {
         $this->index = (int) $index;
+        return $this;
     }
 
     /**
@@ -65,6 +66,7 @@ abstract class Object_Fieldcollection_Data_Abstract extends Pimcore_Model_Abstra
      */
     public function setFieldname ($fieldname) {
         $this->fieldname = $fieldname;
+        return $this;
     }
 
     /**
@@ -89,6 +91,7 @@ abstract class Object_Fieldcollection_Data_Abstract extends Pimcore_Model_Abstra
     public function setObject($object)
     {
         $this->object = $object;
+        return $this;
     }
 
     /**

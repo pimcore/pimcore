@@ -70,6 +70,7 @@ abstract class Pimcore_Placeholder_Abstract
     public function setPlaceholderString($string)
     {
         $this->placeholderString = $string;
+        return $this;
     }
 
     /*
@@ -88,6 +89,7 @@ abstract class Pimcore_Placeholder_Abstract
     public function setPlaceholderKey($key)
     {
         $this->placeholderKey = $key;
+        return $this;
     }
 
     /**
@@ -108,6 +110,7 @@ abstract class Pimcore_Placeholder_Abstract
     public function setPlaceholderConfig(Zend_Config_Json $config)
     {
         $this->placeholderConfig = $config;
+        return $this;
     }
 
     /**
@@ -130,6 +133,7 @@ abstract class Pimcore_Placeholder_Abstract
         if (is_array($params)) {
             $this->params = $params;
         }
+        return $this;
     }
 
     /**
@@ -163,6 +167,7 @@ abstract class Pimcore_Placeholder_Abstract
         if (is_string($contentString)) {
             $this->contentString = $contentString;
         }
+        return $this;
     }
 
     /**
@@ -195,6 +200,7 @@ abstract class Pimcore_Placeholder_Abstract
         if ($document instanceof Document) {
             $this->document = $document;
         }
+        return $this;
     }
 
     /**
@@ -249,6 +255,7 @@ abstract class Pimcore_Placeholder_Abstract
                 }
             }
         }
+        return $this;
     }
 
     /**
