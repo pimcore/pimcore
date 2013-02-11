@@ -98,7 +98,8 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.format,
                 triggerAction: 'all',
                 editable: false,
-                store: [["PNG","PNG"],["GIF","GIF"], ["JPEG","JPEG"], ["PJPEG","JPEG (progressive)"],["TIFF","TIFF"], ["SOURCE", "SOURCE"], ["PRINT","Print (PNG,JPG,SVG,TIFF)"]],
+                store: [["PNG","PNG"],["GIF","GIF"], ["JPEG","JPEG"], ["PJPEG","JPEG (progressive)"],["TIFF","TIFF"],
+                        ["SOURCE", "SOURCE"], ["PRINT","Print (PNG,JPG,SVG,TIFF)"]],
                 width: 180
             }, {
                 xtype: "spinnerfield",
@@ -510,7 +511,8 @@ pimcore.settings.thumbnail.items = {
                 value: data.positioning,
                 triggerAction: 'all',
                 editable: false,
-                store: ["center","topleft","topright","bottomleft","bottomright","centerleft","centerright","topcenter","bottomcenter"],
+                store: ["center","topleft","topright","bottomleft","bottomright","centerleft","centerright",
+                            "topcenter","bottomcenter"],
                 width: 150
             },{
                 xtype: "hidden",

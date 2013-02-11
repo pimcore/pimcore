@@ -44,7 +44,9 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
                     this.getTabPanel();
                 }
                 catch (e) {
-                    Ext.MessageBox.alert(t('error'), t('translations_are_not_configured') + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">' + t("read_more_here") + '</a>');
+                    Ext.MessageBox.alert(t('error'), t('translations_are_not_configured')
+                        + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">'
+                        + t("read_more_here") + '</a>');
                 }
             }.bind(this)
         });
