@@ -236,23 +236,23 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         try {
             data.properties = Ext.encode(this.properties.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e1) {
+            //console.log(e1);
         }
 
 
         try {
             data.general = Ext.encode(this.data.general);
         }
-        catch (e) {
-            //console.log(e);
+        catch (e2) {
+            //console.log(e2);
         }
         
         try {
             data.gridconfig = Ext.encode(this.search.getGridConfig());
             data.class_id = this.search.currentClass;
-        } catch (e) {
-            //console.log(e);
+        } catch (e3) {
+            //console.log(e3);
         }
         
         return data;

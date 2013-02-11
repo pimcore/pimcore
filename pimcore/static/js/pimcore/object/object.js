@@ -412,31 +412,31 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         try {
             data.data = Ext.encode(this.edit.getValues(omitMandatoryCheck));
         }
-        catch (e) {
-            //console.log(e)
+        catch (e1) {
+            //console.log(e1)
         }
 
         // properties
         try {
             data.properties = Ext.encode(this.properties.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e2) {
+            //console.log(e2);
         }
 
         try {
             data.general = Ext.encode(this.data.general);
         }
-        catch (e) {
-            //console.log(e);
+        catch (e3) {
+            //console.log(e3);
         }
 
         // scheduler
         try {
             data.scheduler = Ext.encode(this.scheduler.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e4) {
+            //console.log(e4);
         }
 
 
@@ -469,8 +469,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             // remove class in tree panel
             try {
-                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI().removeClass("pimcore_unpublished");
-            } catch (e) { };
+                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
+                                                            .removeClass("pimcore_unpublished");
+            } catch (e) { }
         }
 
         return state;
@@ -486,8 +487,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     
             // set class in tree panel
             try {
-                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI().addClass("pimcore_unpublished");
-            } catch (e) {};
+                pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id).getUI()
+                                                        .addClass("pimcore_unpublished");
+            } catch (e) {}
         }
     },
 
