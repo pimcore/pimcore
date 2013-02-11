@@ -32,7 +32,7 @@ if(is_array($_SERVER)
     && array_key_exists("HTTP_X_PIMCORE_UNIT_TEST_REQUEST", $_SERVER)
     && in_array($_SERVER["REMOTE_ADDR"], array("127.0.0.1", $_SERVER["SERVER_ADDR"]))) {
     // change the var directory for unit tests
-    if (!defined("PIMCORE_WEBSITE_VAR"))  define("PIMCORE_WEBSITE_VAR", PIMCORE_DOCUMENT_ROOT . "/tests-ng/tmp/var");
+    if (!defined("PIMCORE_WEBSITE_VAR"))  define("PIMCORE_WEBSITE_VAR", PIMCORE_DOCUMENT_ROOT . "/tests/tmp/var");
 } else {
     // use the default /website/var directory
     if (!defined("PIMCORE_WEBSITE_VAR"))  define("PIMCORE_WEBSITE_VAR", PIMCORE_WEBSITE_PATH . "/var");
