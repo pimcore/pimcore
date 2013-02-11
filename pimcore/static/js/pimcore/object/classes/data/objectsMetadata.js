@@ -32,7 +32,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
+                                                                "visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },
@@ -138,7 +139,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             editable: false,
             fieldLabel: t("objectsMetadata_visible_fields"),
             store: this.fieldStore,
-            width: 'auto',
+//            width: 'auto',
             value: this.datax.visibleFields,
             displayField: "key",
             valueField: "key",
@@ -191,7 +192,13 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                 value = trim(value);
                 var regresult = value.match(/[a-zA-Z0-9_]+/);
 
-                if (value.length > 1 && regresult == value && in_array(value.toLowerCase(), ["id","key","path","type","index","classname","creationdate","userowner","value","class","list","fullpath","childs","values","cachetag","cachetags","parent","published","valuefromparent","userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data","versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource","parentClass","definition","locked","language"]) == false) {
+                if (value.length > 1 && regresult == value
+                        && in_array(value.toLowerCase(), ["id","key","path","type","index","classname",
+                            "creationdate","userowner","value","class","list","fullpath","childs","values","cachetag",
+                            "cachetags","parent","published","valuefromparent","userpermissions","dependencies",
+                            "modificationdate","usermodification","byid","bypath","data","versions","properties",
+                            "permissions","permissionsforuser","childamount","apipluginbroker","resource",
+                            "parentClass","definition","locked","language"]) == false) {
                     return true;
                 } else {
                     return t("objectsMetadata_invalid_key");
@@ -225,17 +232,21 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                         'value',
                         'label'
                     ],
-                    data: [['number', types.number], ['text', types.text], ['select', types.select], ['bool', types.bool]]
+                    data: [['number', types.number], ['text', types.text], ['select', types.select],
+                                                                                        ['bool', types.bool]]
                 }),
                 valueField: 'value',
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), width: 30, sortable: true, dataIndex: 'type', editor: typeComboBox, renderer: function(value) {
+            typesColumns.push({header: t("type"), width: 30, sortable: true, dataIndex: 'type', editor: typeComboBox,
+                                                            renderer: function(value) {
                 return types[value];
             }});
-            typesColumns.push({header: t("value"), width: 100, sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({})});
-            typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width', editor: new Ext.form.NumberField({})});
+            typesColumns.push({header: t("value"), width: 100, sortable: true, dataIndex: 'value',
+                                                            editor: new Ext.form.TextField({})});
+            typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width',
+                                                            editor: new Ext.form.NumberField({})});
 
 
         }
