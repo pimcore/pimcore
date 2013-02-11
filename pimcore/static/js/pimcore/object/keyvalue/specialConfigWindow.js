@@ -138,8 +138,10 @@ pimcore.object.keyvalue.specialconfigwindow = Class.create({
         }
 
         var gridColumns = [];
-        gridColumns.push({header: t("key"), width: 275, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})});
-        gridColumns.push({header: t("value"), width: 275, sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("key"), width: 275, sortable: true, dataIndex: 'key',
+                                                                                editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("value"), width: 275, sortable: true, dataIndex: 'value',
+                                                                                editor: new Ext.form.TextField({})});
 
         gridColumns.push({
             xtype: 'actioncolumn',
