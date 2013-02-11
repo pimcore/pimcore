@@ -19,25 +19,32 @@ pimcore.settings.update = Class.create({
 
         
         
-        Ext.MessageBox.confirm("CONFIRMATION", 'You are about to update the system. <br />Please do not update this pimcore installation unless your are not sure what you are doing.<br /><b style="color:red;"><u>Updates should be performed only by developers!</u></b><br />Please read the <a href="http://www.pimcore.org/wiki/display/PIMCORE/Upgrade+Notes" target="_blank">upgrade notes</a> before you start the update.<br /><br />Are you sure?', function (buttonValue) {
-            if (buttonValue == "yes") {
-                
-                this.window = new Ext.Window({
-                    layout:'fit',
-                    width:500,
-                    height:310,
-                    autoScroll: true,
-                    closeAction:'close',
-                    modal: true
-                });
-        
-                pimcore.viewport.add(this.window);
-        
-                this.window.show();
-                
-                // start
-                this.checkFilePermissions();
-            }
+        Ext.MessageBox.confirm("CONFIRMATION",
+                      'You are about to update the system. <br />'
+                    + 'Please do not update this pimcore installation unless your are not sure what you are doing.<br/>'
+                    + '<b style="color:red;"><u>Updates should be performed only by developers!</u></b><br />'
+                    + 'Please read the'
+                    + '<a href="http://www.pimcore.org/wiki/display/PIMCORE/Upgrade+Notes" target="_blank">'
+                    + 'upgrade notes</a> before you start the update.<br /><br />Are you sure?',
+                                function (buttonValue) {
+                                    if (buttonValue == "yes") {
+
+                                        this.window = new Ext.Window({
+                                            layout:'fit',
+                                            width:500,
+                                            height:310,
+                                            autoScroll: true,
+                                            closeAction:'close',
+                                            modal: true
+                                        });
+
+                                        pimcore.viewport.add(this.window);
+
+                                        this.window.show();
+
+                                        // start
+                                        this.checkFilePermissions();
+                                    }
         }.bind(this));
         
         
@@ -387,7 +394,8 @@ pimcore.settings.update = Class.create({
                             if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
                                 response = response.responseText;
                             }
-                            this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + this.formatError(response) );
+                            this.showErrorMessage("Install of update fails, see debug.log for more details.<br />"
+                                        + "<br />Error-Message:<br /><hr />" + this.formatError(response) );
                         }
                         
                         this.proceduralJobsFinished++;
@@ -407,7 +415,8 @@ pimcore.settings.update = Class.create({
                         if(typeof response.responseText != "undefined" && !empty(response.responseText)) {
                             response = response.responseText;
                         }
-                        this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><hr />" + this.formatError(response) );
+                        this.showErrorMessage("Install of update fails, see debug.log for more details.<br /><hr />"
+                                    + this.formatError(response) );
                     }.bind(this),
                     params: this.jobs.procedural[this.proceduralJobsStarted]
                 });

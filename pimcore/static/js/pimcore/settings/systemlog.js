@@ -54,7 +54,6 @@ pimcore.settings.systemlog = Class.create({
                 border: false,
                 layout: "fit",
                 closable:true,
-                layout: "fit",
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
                 html: '<iframe src="about:blank" frameborder="0" width="100%" id="pimcore_systemlog_frame"></iframe>',
                 tbar: [this.startButton, this.stopButton, "-", this.reloadButton]
@@ -127,9 +126,9 @@ pimcore.settings.systemlog = Class.create({
         try {
             this.lastScrollposition = this.getScrollPosition();
         }
-        catch (e) {
+        catch (e1) {
             clearInterval(this.interval);
-            console.log(e);
+            console.log(e1);
         }
 
         try {
@@ -137,9 +136,9 @@ pimcore.settings.systemlog = Class.create({
             var d = new Date();
             Ext.get("pimcore_systemlog_frame").dom.src = "/admin/settings/systemlog?_dc=" + d.getTime();
         }
-        catch (e) {
+        catch (e2) {
             clearInterval(this.interval);
-            console.log(e);
+            console.log(e2);
         }
     },
 
