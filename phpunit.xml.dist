@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="tests-ng/bootstrap.php"
+<phpunit bootstrap="tests/bootstrap.php"
          backupGlobals="false"
          backupStaticAttributes="false"
          strict="false"
@@ -11,7 +11,7 @@
     <testsuites>
         <testsuite name="Models">
 
-            <directory suffix="AllTests.php">tests-ng</directory>
+            <directory suffix="AllTests.php">tests</directory>
         </testsuite>
     </testsuites>
 
@@ -29,7 +29,6 @@
             <exclude>
                 <directory suffix=".php">pimcore/lib/Zend/</directory>
                 <directory suffix=".php">tests/</directory>
-                <directory suffix=".php">tests-ng/</directory>
                 <directory suffix=".php">update/</directory>
             </exclude>
         </whitelist>

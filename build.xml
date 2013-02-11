@@ -51,13 +51,13 @@
 
   <exec executable="phpab">
    <arg value="--output" />
-   <arg path="${basedir}/tests-ng/autoload.php" />
-   <arg path="${basedir}/tests-ng" />
+   <arg path="${basedir}/tests/autoload.php" />
+   <arg path="${basedir}/tests" />
   </exec>
  </target>
 
 <target name="replace-config" description="replaces the original testconfig with the one suitable for jenkins">
-    <copy file="${basedir}/tests-ng/config/testconfig-jenkins.xml" tofile="${basedir}/tests-ng/config/testconfig.xml" overwrite="true"/>
+    <copy file="${basedir}/tests/config/testconfig-jenkins.xml" tofile="${basedir}/tests/config/testconfig.xml" overwrite="true"/>
 </target>
 
  <target name="phar" description="Generate PHP Archive (PHAR)">
@@ -85,7 +85,7 @@
    </fileset>
    
 
-   <fileset dir="${basedir}/tests-ng">
+   <fileset dir="${basedir}/tests">
     <include name="**/*.php" />
     <exclude name="**/lib/**/*.php" />
     <modified />

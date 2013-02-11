@@ -22,7 +22,6 @@
     <filter>
             <directory suffix=".php">pimcore/lib/Zend/</directory>
             <directory suffix=".php">tests/</directory>
-            <directory suffix=".php">tests-ng/</directory>
             <directory suffix=".php">update/</directory>
     </filter>
 
