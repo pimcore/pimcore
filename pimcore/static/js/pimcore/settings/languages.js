@@ -42,10 +42,12 @@ pimcore.settings.languages = Class.create({
             store: this.availableStore,
             columns: [
                 {header: "", sortable: true, dataIndex: 'key', editable: false, width: 40},
-                {header: "", sortable: true, dataIndex: 'icon', editable: false, width: 40, renderer: function(data){ return '<img src="'+data+'" alt="" />'}},
+                {header: "", sortable: true, dataIndex: 'icon', editable: false, width: 40,
+                                renderer: function(data){ return '<img src="'+data+'" alt="" />'}},
 
                 {header: "", sortable: true, dataIndex: 'name', editable: false, width: 200},
-                {header: "", sortable: true, dataIndex: 'percent', editable: false, width: 150, renderer: function(data){ return data+'% '+t('language_translation_percentage')}},
+                {header: "", sortable: true, dataIndex: 'percent', editable: false, width: 150,
+                                renderer: function(data){ return data+'% '+t('language_translation_percentage')}},
                 {
                     xtype: 'actioncolumn',
                     width: 30,
