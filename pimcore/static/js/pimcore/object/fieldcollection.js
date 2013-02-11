@@ -158,13 +158,15 @@ pimcore.object.fieldcollection = Class.create({
     },
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_fieldcollection'), t('enter_the_name_of_the_new_fieldcollection'), this.addFieldComplete.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('add_fieldcollection'), t('enter_the_name_of_the_new_fieldcollection'),
+                                                        this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z]+/);
-        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource","concrete","interface"];
+        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource",
+                                                        "concrete","interface"];
 
         if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
             Ext.Ajax.request({
