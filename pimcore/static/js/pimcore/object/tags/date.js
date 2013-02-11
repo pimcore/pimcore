@@ -31,7 +31,8 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig:function (field) {
-        return {header:ts(field.label), width:150, sortable:false, dataIndex:field.key, renderer:function (key, value, metaData, record) {
+        return {header:ts(field.label), width:150, sortable:false, dataIndex:field.key,
+                                                            renderer:function (key, value, metaData, record) {
             if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                 metaData.css += " grid_value_inherited";
             }
@@ -103,8 +104,9 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
             if (!this.component.rendered) {
                 if(!this.fieldConfig.defaultValue && !this.fieldConfig.useCurrentDate){
                     return false;
-                } else return true;
-
+                } else {
+                    return true;
+                }
             } else {
                 dirty = this.component.isDirty();
 

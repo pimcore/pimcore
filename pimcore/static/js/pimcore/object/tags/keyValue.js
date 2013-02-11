@@ -175,7 +175,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 renderer = this.getCellRenderer.bind(this);
                 listeners =  {
                     "dblclick": this.keycellMousedown.bind(this)
-                }
+                };
             }
 
             if (col == "group") {
@@ -189,7 +189,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 renderer = this.getCellRenderer.bind(this);
                 listeners =  {
                     "mousedown": this.cellMousedown.bind(this)
-                }
+                };
             }
 
             gridWidth += colWidth;
@@ -534,7 +534,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
                 }.bind(this, field.key)
             });        } else {
-            var renderer = function (key, value, metaData, record) {
+            renderer = function (key, value, metaData, record) {
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.css += " grid_value_inherited";
                 }
@@ -542,7 +542,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
             }.bind(this, field.key);
 
-            return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer, editor:this.getGridColumnEditor(field)};
+            return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+                                                                editor:this.getGridColumnEditor(field)};
 
         }
  }

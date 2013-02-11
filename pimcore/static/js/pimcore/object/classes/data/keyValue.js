@@ -33,7 +33,8 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
 
         this.initData(initData);
 
-        this.availableSettingsFields = ["title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","index","style"];
+        this.availableSettingsFields = ["title","tooltip","mandatory","noteditable","invisible","visibleGridView",
+                                                                    "visibleSearch","index","style"];
 
         this.treeNode = treeNode;
     },
