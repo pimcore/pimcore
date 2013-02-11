@@ -41,7 +41,7 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
             items: [resultPanel],
             listeners: {
                 beforeclose: function() {
-                    this.parent.handleSelectionWindowClosed.call(this.parent)
+                    this.parent.handleSelectionWindowClosed.call(this.parent);
                 }.bind(this)
             },
             bbar: [//this.searchfield,
@@ -68,9 +68,9 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
                             this.addGroups(groupIds);
                         } else {
                             var keyIds = [];
-                            var selected = this.gridPanel.getSelectionModel().getSelections();
-                            for (var i = 0; i < selected.length; i++) {
-                                var keyId = selected[i].id;
+                            var selectedKeys = this.gridPanel.getSelectionModel().getSelections();
+                            for (var i = 0; i < selectedKeys.length; i++) {
+                                var keyId = selectedKeys[i].id;
                                 keyIds.push(keyId);
                             }
                             this.addKeys(keyIds);
