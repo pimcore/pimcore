@@ -7,6 +7,7 @@ class AllTests extends Test_SuiteBase {
 
     public static function suite() {
         $suite = new AllTests('Models');
+        $suite->addTest(TestSuite_Datatypes_AllTests::suite());
         $suite->addTest(TestSuite_Rest_AllTests::suite());
         return $suite;
     }}

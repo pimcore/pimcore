@@ -156,7 +156,8 @@ pimcore.settings.bouncemailinbox = Class.create({
             height: 430,
             modal: true,
             bodyStyle: "background:#fff;",
-            html: '<iframe src="/admin/misc/bounce-mail-inbox-detail?id=' + id + '" frameborder="0" width="100%" height="390"></iframe>'
+            html: '<iframe src="/admin/misc/bounce-mail-inbox-detail?id=' + id
+                                    + '" frameborder="0" width="100%" height="390"></iframe>'
         });
         win.show();
     },
