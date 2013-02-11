@@ -262,6 +262,10 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
     public function getDiffDataForEditMode($data, $object = null) {
 
+        if (!$data) {
+            return array();
+        }
+
         $properties = $data->getProperties();
         $result = array();
 
