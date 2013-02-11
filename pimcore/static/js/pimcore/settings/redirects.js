@@ -163,7 +163,8 @@ pimcore.settings.redirects = Class.create({
         var typesColumns = [
             {header: t("source"), width: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
             sourceEntireUrlCheck,
-            {header: t("source_site"), width: 200, sortable:true, dataIndex: "sourceSite", editor: new Ext.form.ComboBox({
+            {header: t("source_site"), width: 200, sortable:true, dataIndex: "sourceSite",
+                editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
                 displayField: "domain",
@@ -175,8 +176,11 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {header: t("target"), width: 200, sortable: false, dataIndex: 'target', editor: new Ext.form.TextField({}), css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
-            {header: t("target_site"), width: 200, sortable:true, dataIndex: "targetSite", editor: new Ext.form.ComboBox({
+            {header: t("target"), width: 200, sortable: false, dataIndex: 'target',
+                editor: new Ext.form.TextField({}),
+                css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
+            {header: t("target_site"), width: 200, sortable:true, dataIndex: "targetSite",
+                editor: new Ext.form.ComboBox({
                 store: pimcore.globalmanager.get("sites"),
                 valueField: "id",
                 displayField: "domain",

@@ -74,7 +74,8 @@ pimcore.settings.httpErrorLog = Class.create({
             {header: "Code", width: 60, sortable: true, dataIndex: 'code'},
             {header: t("path"), id: "path", width: 400, sortable: true, dataIndex: 'path'},
             {header: t("amount"), width: 60, sortable: true, dataIndex: 'amount'},
-            {header: t("date"), id: "extension_description", width: 200, sortable: true, dataIndex: 'date', renderer: function(d) {
+            {header: t("date"), id: "extension_description", width: 200, sortable: true, dataIndex: 'date',
+                                                                    renderer: function(d) {
                 var date = new Date(d * 1000);
                 return date.format("Y-m-d H:i:s");
             }},
@@ -164,7 +165,8 @@ pimcore.settings.httpErrorLog = Class.create({
                         height: 430,
                         modal: true,
                         bodyStyle: "background:#fff;",
-                        html: '<iframe src="/admin/misc/http-error-log-detail?id=' + data.get("id") + '" frameborder="0" width="100%" height="390"></iframe>'
+                        html: '<iframe src="/admin/misc/http-error-log-detail?id=' + data.get("id")
+                                            + '" frameborder="0" width="100%" height="390"></iframe>'
                     });
                     win.show();
                 }
