@@ -16,6 +16,8 @@ define("PIMCORE_DEBUG", true);
 define("PIMCORE_DEVMODE", true);
 define("PIMCORE_WEBSITE_VAR",  TESTS_PATH . "/tmp/var");
 
+@mkdir(TESTS_PATH . "/output", 0777, true);
+
 // include pimcore bootstrap
 include_once(realpath(dirname(__FILE__)) . "/../pimcore/cli/startup.php");
 
