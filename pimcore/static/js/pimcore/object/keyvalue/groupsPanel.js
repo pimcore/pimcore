@@ -84,7 +84,8 @@ pimcore.object.keyvalue.groupspanel = Class.create({
 
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name'});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description',
+                                                                            editor: new Ext.form.TextField({})});
 
         gridColumns.push({
             hideable: false,
@@ -190,7 +191,8 @@ pimcore.object.keyvalue.groupspanel = Class.create({
     },
 
     onAdd: function () {
-        Ext.MessageBox.prompt(t('keyvalue_mbx_entergroup_title'), t('keyvalue_mbx_entergroup_prompt'), this.addFieldComplete.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('keyvalue_mbx_entergroup_title'), t('keyvalue_mbx_entergroup_prompt'),
+                                                this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {

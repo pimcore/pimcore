@@ -89,8 +89,10 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
 
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name'});
-        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description', editor: new Ext.form.TextField({})});
-        gridColumns.push({header: t("type"), width: 100, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
+        gridColumns.push({header: t("description"), width: 200, sortable: true, dataIndex: 'description',
+                                                                            editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("type"), width: 100, sortable: true, dataIndex: 'type',
+                                                                            editor: new Ext.form.ComboBox({
             triggerAction: 'all',
             editable: false,
             store: ["text","number","bool","select"]
@@ -126,11 +128,11 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             ]
         });
 
-        gridColumns.push({header: t("keyvalue_unit"), width: 100, sortable: true, dataIndex: 'unit', editor: new Ext.form.TextField({})});
+        gridColumns.push({header: t("keyvalue_unit"), width: 100, sortable: true, dataIndex: 'unit',
+                                                            editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("keyvalue_col_groupid"), width: 40, sortable: true, dataIndex: 'group'});
-        gridColumns.push({header: t("keyvalue_col_groupdescription"), width: 200, sortable: false, dataIndex: 'groupdescription' /*, editor: new Ext.form.TextField({})*/});
-
-//        gridColumns.push({header: t("values"), width: 100, sortable: true, dataIndex: 'possiblevalues'});
+        gridColumns.push({header: t("keyvalue_col_groupdescription"), width: 200, sortable: false,
+                                                            dataIndex: 'groupdescription'});
 
         gridColumns.push({
             hideable: false,
@@ -260,7 +262,8 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
     },
 
     onAdd: function () {
-        Ext.MessageBox.prompt(t('keyvalue_mbx_enterkey_title'), t('keyvalue_mbx_enterkey_prompt'), this.addFieldComplete.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('keyvalue_mbx_enterkey_title'), t('keyvalue_mbx_enterkey_prompt'),
+                                                                this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
