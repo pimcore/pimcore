@@ -19,7 +19,19 @@ class Pimcore_Version {
 
     public static $revision = 2493;
 
+    public static $svnInfo = array();
+
     public static function getVersion() {
         return self::$version;
+    }
+
+    public static function getRevision()
+    {
+        return self::$revision;
+    }
+
+    public static function getSvnInfo()
+    {
+        return self::$svnInfo;
     }
 }
