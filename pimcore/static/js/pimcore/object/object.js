@@ -338,7 +338,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             // version notification
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
-                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;' + t("this_is_a_newer_not_published_version"),
+                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
+                                                            + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });
@@ -512,7 +513,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             omitMandatoryCheck = true;
         }
 
-        var callback = callback;
+//        var callback = callback;
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
         if (saveData.data != false && saveData.data != "false") {
@@ -536,11 +537,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         try{
                             var rdata = Ext.decode(response.responseText);
                             if (rdata && rdata.success) {
-                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
+                                                            "success");
                                 this.resetChanges();
                             }
                             else {
-                                pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",t(rdata.message));
+                                pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
+                                                            "error",t(rdata.message));
                             }
                         } catch(e){
                             pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");

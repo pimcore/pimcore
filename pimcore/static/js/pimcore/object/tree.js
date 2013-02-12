@@ -398,7 +398,7 @@ pimcore.object.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateObject(this.attributes.id, {locked: null}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                 } else {
@@ -408,7 +408,7 @@ pimcore.object.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateObject(this.attributes.id, {locked: "self"}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                     
@@ -419,7 +419,7 @@ pimcore.object.tree = Class.create({
                             this.attributes.reference.updateObject(this.attributes.id, {locked: "propagate"},
                                             function () {
                                                 this.attributes.reference.tree.getRootNode().reload();
-                                            }.bind(this))
+                                            }.bind(this));
                             }.bind(this)
                     });
                 }
@@ -768,7 +768,8 @@ pimcore.object.tree = Class.create({
                         if (pimcore.globalmanager.exists("object_" + this.id)) {
                             // reload versions
                             if (pimcore.globalmanager.get("object_" + this.id).versions) {
-                                if (typeof pimcore.globalmanager.get("object_" + this.id).versions.reload == "function") {
+                                if (typeof pimcore.globalmanager.get("object_" + this.id).versions.reload
+                                    == "function") {
                                     pimcore.globalmanager.get("object_" + this.id).versions.reload();
                                 }
                             }
