@@ -60,11 +60,11 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
         };
 
         if (this.datax.defaultValue) {
-
+            var tmpDate;
             if(typeof this.datax.defaultValue === 'object'){
-                var tmpDate = this.datax.defaultValue;
+                tmpDate = this.datax.defaultValue;
             } else {
-                var tmpDate = new Date(this.datax.defaultValue * 1000);
+                tmpDate = new Date(this.datax.defaultValue * 1000);
             }
 
             date.value = tmpDate;
