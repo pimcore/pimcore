@@ -32,7 +32,8 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","style"];
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
+                                        "visibleGridView","visibleSearch","style"];
 
         this.treeNode = treeNode;
     },
