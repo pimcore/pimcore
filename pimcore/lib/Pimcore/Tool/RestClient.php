@@ -6,7 +6,7 @@
  * Time: 10:50
  * To change this template use File | Settings | File Templates.
  */
-class Test_RestClient {
+class Pimcore_Tool_RestClient {
 
     const loggingEnabled = true;
 
