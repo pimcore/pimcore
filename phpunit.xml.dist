@@ -25,14 +25,14 @@
 
     <filter>
         <blacklist>
-            <directory suffix=".php">/pimcore/lib/Zend/</directory>
+            <directory suffix=".php">pimcore/lib/Zend/</directory>
         </blacklist>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">/pimcore/</directory>
             <exclude>
-                <directory suffix=".php">/pimcore/lib/Zend/</directory>
-                <directory suffix=".php">/tests/</directory>
-                <directory suffix=".php">/update/</directory>
+                <directory suffix=".php">pimcore/lib/Zend/</directory>
+                <directory suffix=".php">tests/</directory>
+                <directory suffix=".php">update/</directory>
             </exclude>
         </whitelist>
 
