@@ -488,4 +488,71 @@ class Pimcore_Tool {
         header('HTTP/1.1 503 Service Temporarily Unavailable');
         die($message);
     }
+
+    /**
+     * Creates Object/Document/Asset folders by a path
+     *
+     * @param string $path
+     * @param Object | Document | Asset $type
+     * @param array $options
+     * @throws Exception
+     */
+    public static function createFolderByPath($path, $type, $options = array()) {
+        $validFolderTypes = array('Object', 'Document', 'Asset');
+        $folderType = $type . '_Folder';
+
+        if (!in_array($type, $validFolderTypes)) {
+            throw new Exception("$type is not a valid folder type");
+        }
+
+        $lastFolder = null;
+        $pathsArray = array();
+        if (!$folderType::getByPath($path)) {
+            $parts = explode('/', $path);
+            $parts = array_filter($parts);
+            foreach ($parts as $part) {
+                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . $part;
+            }
+            for ($i = 0; $i < count($pathsArray); $i++) {
+                $currentPath = $pathsArray[$i];
+                if (!$folderType::getByPath($currentPath) instanceof $folderType) {
+                    $parentFolder = $folderType::getByPath($pathsArray[$i - 1]);
+
+                    $folder = new $folderType();
+                    $folder->setParent($parentFolder);
+                    if ($parentFolder) {
+                        $folder->setParentId($parentFolder->getId());
+                    }
+
+                    $key = substr($currentPath, strrpos($currentPath, '/') + 1, strlen($currentPath));
+
+                    if (method_exists($folder, 'setKey')) {
+                        $folder->setKey($key);
+                    }
+
+                    if (method_exists($folder, 'setFilename')) {
+                        $folder->setFilename($key);
+                    }
+
+                    if (method_exists($folder, 'setType')) {
+                        $folder->setType('folder');
+                    }
+
+                    $folder->setPath($currentPath);
+                    $folder->setUserModification(0);
+                    $folder->setUserOwner(1);
+                    $folder->setCreationDate(time());
+                    $folder->setModificationDate(time());
+                    if ($options['locked']) {
+                        $folder->setLocked(true);
+                    }
+                    $folder->save();
+                    $lastFolder = $folder;
+                }
+            }
+        } else {
+            return $folderType::getByPath($path);
+        }
+        return $lastFolder;
+    }
 }
