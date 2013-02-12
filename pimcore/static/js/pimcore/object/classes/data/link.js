@@ -32,7 +32,8 @@ pimcore.object.classes.data.link = Class.create(pimcore.object.classes.data.data
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","visibleGridView","visibleSearch","style"];
+        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","visibleGridView",
+                                        "visibleSearch","style"];
 
         this.treeNode = treeNode;
     },

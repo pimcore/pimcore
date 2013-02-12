@@ -78,8 +78,10 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
             columns: [
-                {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}), width: 200},
-                {header: t("value"), sortable: false, dataIndex: 'value', editor: new Ext.form.TextField({}), width: 200},
+                {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                                                    width: 200},
+                {header: t("value"), sortable: false, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                                                    width: 200},
                 {
                     xtype: 'actioncolumn',
                     width: 30,

@@ -64,7 +64,8 @@ pimcore.document.pages.preview = Class.create({
 
                 for(var i=0; i<previewModes.length; i++) {
                     menues[previewModes[i]["type"]].push({
-                        text: previewModes[i]["name"] + " (" + previewModes[i]["width"] + "x" + previewModes[i]["height"] + ")",
+                        text: previewModes[i]["name"] + " (" + previewModes[i]["width"] + "x"
+                                                                            + previewModes[i]["height"] + ")",
                         handler: this.setMode.bind(this, previewModes[i])
                     });
                 }
@@ -94,7 +95,8 @@ pimcore.document.pages.preview = Class.create({
                 border: false,
                 region: "center",
                 bodyStyle: "-webkit-overflow-scrolling:touch; background:#323232;",
-                html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="' + this.iframeName + '" name="' + this.iframeName + '"></iframe>'
+                html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="'
+                                            + this.iframeName + '" name="' + this.iframeName + '"></iframe>'
             });
 
             this.stylesField = new Ext.form.TextArea({
@@ -193,7 +195,7 @@ pimcore.document.pages.preview = Class.create({
         var positioningHeight = mode["height"];
         var positioningWidth = mode["width"];
 
-        zoom = 1;
+        var zoom = 1;
 
         if(mode["width"] > availableWidth || mode["height"] > availableHeight) {
             if(mode["height"] > availableHeight) {
@@ -386,9 +388,12 @@ pimcore.document.pages.preview = Class.create({
                             var oldEl = iscopeTmp["positioningActiveElement"]
                             oldEl.setStyle("cursor", "auto");
                             oldEl.dom.removeEventListener("mousedown", iscopeTmp.positioningStart, false);
-                            editor.getIframeBody().dom.removeEventListener("mousemove", iscopeTmp.positioningMove, false);
-                            editor.getIframeBody().dom.removeEventListener("mouseup", iscopeTmp.positioningStop, false);
-                            editor.getIframeBody().dom.removeEventListener("mouseleave", iscopeTmp.positioningStop, false);
+                            editor.getIframeBody().dom.removeEventListener("mousemove", iscopeTmp.positioningMove,
+                                                                                                            false);
+                            editor.getIframeBody().dom.removeEventListener("mouseup", iscopeTmp.positioningStop,
+                                                                                                            false);
+                            editor.getIframeBody().dom.removeEventListener("mouseleave", iscopeTmp.positioningStop,
+                                                                                                            false);
                         } catch (e) {
                             console.log(e);
                         }
@@ -665,7 +670,8 @@ pimcore.document.pages.preview = Class.create({
 
                                         offsets = el.getOffsetsTo(editor.getIframeBody());
 
-                                        // this is unfortunately in jQuery => should be replaced by ExtJS but it seems that there's not method for that
+                                        // this is unfortunately in jQuery => should be replaced by ExtJS but it seems
+                                        // that there's not method for that
                                         var parent = jQuery(el.dom).offsetParent();
                                         parent = Ext.get(parent[0]);
 

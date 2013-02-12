@@ -312,7 +312,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
     onRowContextmenu: function (grid, rowIndex, event) {
         
-        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
+        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( {
+                                                            backgroundColor: '#fff' }, 400);
         
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
@@ -337,7 +338,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                         console.log(e);
                     }
 
-                } catch (e) { console.log(e); }
+                } catch (e2) { console.log(e2); }
             }.bind(grid, data)
         }));
         menu.add(new Ext.menu.Item({

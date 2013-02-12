@@ -43,7 +43,8 @@ pimcore.report.analytics.settings = Class.create({
                     xtype: "displayfield",
                     width: 300,
                     hideLabel: true,
-                    value: "&nbsp;<br />" + t("analytics_settings_description") + "<br /><br />" + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
+                    value: "&nbsp;<br />" + t("analytics_settings_description") + "<br /><br />"
+                                           + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
                     cls: "pimcore_extra_label"
                 },
                 {
@@ -184,7 +185,8 @@ pimcore.report.analytics.settings = Class.create({
                 profile: Ext.getCmp("report_settings_analytics_profile_" + id).getValue(),
                 trackid: Ext.getCmp("report_settings_analytics_trackid_" + id).getValue(),
                 additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + id).getValue(),
-                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + id).getValue(),
+                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + id)
+                                                                                        .getValue(),
                 accountid: Ext.getCmp("report_settings_analytics_accountid_" + id).getValue(),
                 internalid: Ext.getCmp("report_settings_analytics_internalid_" + id).getValue(),
                 advanced: Ext.getCmp("report_settings_analytics_advanced_" + id).getValue()

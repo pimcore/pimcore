@@ -259,8 +259,10 @@ pimcore.settings.targeting.item = Class.create({
         // add logic for brackets
         item.on("afterrender", function (el) {
             el.getEl().applyStyles({position: "relative", "min-height": "40px"});
-            var leftBracket = el.getEl().insertHtml("beforeEnd", '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
-            var rightBracket = el.getEl().insertHtml("beforeEnd", '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
+            var leftBracket = el.getEl().insertHtml("beforeEnd",
+                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
+            var rightBracket = el.getEl().insertHtml("beforeEnd",
+                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
 
             if(data["bracketLeft"]){
                 leftBracket.addClass("pimcore_targeting_bracket_active");
@@ -295,7 +297,8 @@ pimcore.settings.targeting.item = Class.create({
         saveData["actions"]["redirect.enabled"] = !this.actionsForm.getComponent("actions_redirect").collapsed;
         saveData["actions"]["event.enabled"] = !this.actionsForm.getComponent("actions_event").collapsed;
         saveData["actions"]["codesnippet.enabled"] = !this.actionsForm.getComponent("actions_codesnippet").collapsed;
-        saveData["actions"]["programmatically.enabled"] = !this.actionsForm.getComponent("actions_programmatically").collapsed;
+        saveData["actions"]["programmatically.enabled"] = !this.actionsForm.getComponent("actions_programmatically")
+                                                                                                    .collapsed;
 
         var conditionsData = [];
         var condition, tb, operator;
@@ -315,8 +318,10 @@ pimcore.settings.targeting.item = Class.create({
             condition["operator"] = operator;
 
             // get the brackets
-            condition["bracketLeft"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_left")[0]).hasClass("pimcore_targeting_bracket_active");
-            condition["bracketRight"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_right")[0]).hasClass("pimcore_targeting_bracket_active");
+            condition["bracketLeft"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_left")[0])
+                                                                .hasClass("pimcore_targeting_bracket_active");
+            condition["bracketRight"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_right")[0])
+                                                                .hasClass("pimcore_targeting_bracket_active");
 
             conditionsData.push(condition);
         }
@@ -848,7 +853,8 @@ pimcore.document.pages.target.conditions = {
                         if (angle < 0) {
                           angle += 360;
                         }
-                        var zoom = Math.round(Math.log(searchWindow.body.getWidth() * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+                        var zoom = Math.round(Math.log(searchWindow.body.getWidth()
+                                                                            * 360 / angle / GLOBE_WIDTH) / Math.LN2);
                         gmap.setZoom(zoom-1);
                     });
 
@@ -1188,7 +1194,8 @@ pimcore.document.pages.target.conditions = {
                 fieldLabel: t('operating_system'),
                 name: "system",
                 disableKeyFilter: true,
-                store: [["",t("all")],["windows","Windows"],["macos", "Mac OS"], ["linux", "Linux"], ["android","Android"], ["ios", "iOS"]],
+                store: [["",t("all")],["windows","Windows"],["macos", "Mac OS"], ["linux", "Linux"],
+                                                                ["android","Android"], ["ios", "iOS"]],
                 triggerAction: "all",
                 mode: "local",
                 width: 250,

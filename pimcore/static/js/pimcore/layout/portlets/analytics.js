@@ -83,7 +83,7 @@ pimcore.layout.portlets.analytics = Class.create(pimcore.layout.portlets.abstrac
                         }
                    }
                 }
-            ]
+            ];
         }
 
         var panel = new Ext.Panel({

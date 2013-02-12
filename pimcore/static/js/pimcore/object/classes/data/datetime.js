@@ -71,10 +71,11 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
 
 
         if (this.datax.defaultValue) {
+            var tmpDate;
             if(typeof this.datax.defaultValue === 'object'){
-                var tmpDate = this.datax.defaultValue;
+                tmpDate = this.datax.defaultValue;
             } else {
-                var tmpDate = new Date(this.datax.defaultValue * 1000);
+                tmpDate = new Date(this.datax.defaultValue * 1000);
             }
 
             date.value = tmpDate;
@@ -115,7 +116,8 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
                     check:this.toggleDefaultDate.bind(this)
                 }
             },
-            new Ext.form.DisplayField({hideLabel:true,html:'<span class="object_field_setting_warning">'+t('default_value_warning')+'</span>'})
+            new Ext.form.DisplayField({hideLabel:true,html:'<span class="object_field_setting_warning">'
+                                        +t('default_value_warning')+'</span>'})
         ]);
 
         return this.layout;
@@ -135,7 +137,9 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
 
             this.defaultValue.setValue((Date.parseDate(dateString, "Y-m-d H:i").getTime())/1000);
 
-        } else  this.defaultValue.setValue(null);
+        } else {
+            this.defaultValue.setValue(null);
+        }
     },
 
     toggleDefaultDate:function (checkbox, checked) {

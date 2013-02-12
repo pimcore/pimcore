@@ -52,7 +52,8 @@ pimcore.object.classes.data.data = Class.create({
         }
 
         // per default all settings are available
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible","visibleGridView","visibleSearch","index","style"];
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
+                                        "visibleGridView","visibleSearch","index","style"];
     },
 
     getGroup: function () {

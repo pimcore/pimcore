@@ -44,7 +44,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
 
                 if(filterData[i].data.value && typeof filterData[i].data.value == "object") {
-                    filterStringConfig.push(filterData[i].field + " " + operator + " (" + filterData[i].data.value.join(" OR ") + ")");
+                    filterStringConfig.push(filterData[i].field + " " + operator + " ("
+                                    + filterData[i].data.value.join(" OR ") + ")");
                 } else {
                     filterStringConfig.push(filterData[i].field + " " + operator + " " + filterData[i].data.value);
                 }
@@ -154,7 +155,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var fieldInfo = this.grid.getColumnModel().config[columnIndex+1];
 
-        // HACK: typemapping for published (systemfields) because they have no edit masks, so we use them from the data-types
+        // HACK: typemapping for published (systemfields) because they have no edit masks, so we use them from the
+        // data-types
         if(fieldInfo.dataIndex == "published") {
             fieldInfo.layout = {
                 layout: {
@@ -162,7 +164,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     name: "published"
                 },
                 type: "checkbox"
-            }
+            };
         }
         // HACK END
 

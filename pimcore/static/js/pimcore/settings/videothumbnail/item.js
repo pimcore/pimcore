@@ -71,7 +71,7 @@ pimcore.settings.videothumbnail.item = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             border: false,
-            layout: "fit",
+//            layout: "fit",
             closable: true,
             autoScroll: true,
             layout: "pimcoreform",
