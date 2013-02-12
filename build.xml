@@ -90,7 +90,7 @@
     <exclude name="**/lib/**/*.php" />
     <modified />
    </fileset>
-  </apply>
+  </apply>x
  </target>
 
  <target name="phploc" description="Measure project size using PHPLOC">
@@ -156,9 +156,9 @@
    <arg value="--log-pmd" />
    <arg value="${basedir}/build/logs/pmd-cpd.xml" />
       <arg value="--exclude" />
-      <arg value="${basedir}/pimcore/lib/Zend/" />
+      <arg value="pimcore/lib/Zend/" />
       <arg value="--exclude" />
-      <arg value="${basedir}/pimcore/lib/PEAR/" />
+      <arg value="pimcore/lib/PEAR/" />
       <arg path="${basedir}/pimcore" />
   </exec>
  </target>
