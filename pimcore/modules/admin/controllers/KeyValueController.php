@@ -333,7 +333,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function exportAction() {
         $this->removeViewRenderer();
 
-        $helper = Object_KeyValue_Helper();
+        $helper = new Object_KeyValue_Helper();
         $data = $helper->export();
         header("Content-type: application/xml");
         header("Content-Disposition: attachment; filename=\"keyvalue_export.xml\"");
