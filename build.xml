@@ -156,7 +156,9 @@
    <arg value="--log-pmd" />
    <arg value="${basedir}/build/logs/pmd-cpd.xml" />
       <arg value="--exclude" />
-      <arg value="${basedir}/pimcore/lib/Zend" />
+      <arg value="${basedir}/pimcore/lib/Zend/" />
+      <arg value="--exclude" />
+      <arg value="${basedir}/pimcore/lib/PEAR/" />
       <arg path="${basedir}/pimcore" />
   </exec>
  </target>
