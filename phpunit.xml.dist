@@ -26,6 +26,7 @@
     <filter>
         <blacklist>
             <directory suffix=".php">pimcore/lib/Zend/</directory>
+            <directory suffix=".php">pimcore/lib/PEAR/</directory>
         </blacklist>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">/pimcore/</directory>
