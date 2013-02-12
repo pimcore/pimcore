@@ -130,8 +130,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                 // type button
                 typebuttontext = "<b>"  + this.elements[i].type + "</b>";
-                if(typeNameMappings[this.elements[i].type] && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
-                    typebuttontext = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> " + typeNameMappings[this.elements[i].type].description
+                if(typeNameMappings[this.elements[i].type]
+                                        && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
+                    typebuttontext = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> "
+                                                + typeNameMappings[this.elements[i].type].description
                 }
 
                 typeDiv = Ext.get(this.elements[i]).query(".pimcore_block_type_" + this.name)[0];
@@ -542,7 +544,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var bricksInThisArea = [];
         var itemCount = 0;
 
-        if(pimcore.document.tags[this.toolbarGlobalVar] != false && pimcore.document.tags[this.toolbarGlobalVar].itemCount) {
+        if(pimcore.document.tags[this.toolbarGlobalVar] != false
+                                                && pimcore.document.tags[this.toolbarGlobalVar].itemCount) {
             itemCount = pimcore.document.tags[this.toolbarGlobalVar].itemCount;
         }
 
@@ -565,9 +568,12 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
             if(!brick.icon) {
                 // this contains fallback-icons
-                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey","flag_orange","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
-                    "award_star_bronze_1","award_star_bronze_2","award_star_bronze_3","award_star_gold_1","award_star_gold_1","award_star_gold_1","award_star_silver_1","award_star_silver_2","award_star_silver_3",
-                    "medal_bronze_1","medal_bronze_2","medal_bronze_3","medal_gold_1","medal_gold_1","medal_gold_1","medal_silver_1","medal_silver_2","medal_silver_3"];
+                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey",
+                    "flag_orange","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
+                    "award_star_bronze_1","award_star_bronze_2","award_star_bronze_3","award_star_gold_1",
+                    "award_star_gold_1","award_star_gold_1","award_star_silver_1","award_star_silver_2",
+                    "award_star_silver_3","medal_bronze_1","medal_bronze_2","medal_bronze_3","medal_gold_1",
+                    "medal_gold_1","medal_gold_1","medal_silver_1","medal_silver_2","medal_silver_3"];
                 brick.icon = "/pimcore/static/img/icon/" + iconStore[itemCount] + ".png";
             }
 
@@ -576,7 +582,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 xtype: "button",
                 tooltip: "<b>" + brick.name + "</b><br />" + brick.description,
                 icon: brick.icon,
-                text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..." : brick.name,
+                text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
+                                                                                                : brick.name,
                 width: areaBlockToolbarSettings.buttonWidth,
                 listeners: {
                     "afterrender": function (brick, v) {
@@ -669,7 +676,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             };
         } else {
             pimcore.document.tags[this.toolbarGlobalVar].toolbar.add(buttons);
-            pimcore.document.tags[this.toolbarGlobalVar].bricks = array_merge(pimcore.document.tags[this.toolbarGlobalVar].bricks, bricksInThisArea);
+            pimcore.document.tags[this.toolbarGlobalVar].bricks =
+                                    array_merge(pimcore.document.tags[this.toolbarGlobalVar].bricks, bricksInThisArea);
             pimcore.document.tags[this.toolbarGlobalVar].itemCount += buttons.length;
             pimcore.document.tags[this.toolbarGlobalVar].areablocks.push(this);
             pimcore.document.tags[this.toolbarGlobalVar].toolbar.doLayout();

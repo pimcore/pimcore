@@ -70,7 +70,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         }
 
         Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
-        Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight + "px;");
+        Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
+                                                                                                + "px;");
 
         // if the width is a % value get the current width of the container in px for further processing
         if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
@@ -87,7 +88,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         });
 
         
-        // create mask for dnd, this is done here (in initialize) because we have to register the dom node in dndZones which is used in startup.js
+        // create mask for dnd, this is done here (in initialize) because we have to register the dom node in
+        // dndZones which is used in startup.js
         var mask = document.createElement("div");
         Ext.getBody().appendChild(mask);
         mask = Ext.get(mask);
@@ -154,15 +156,16 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             var eConfig = Object.clone(this.options);
 
-            // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible is also Basic
+            // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
+            // is also Basic
             if (!this.options["toolbar"] && !this.options["toolbarGroups"]) {
                 eConfig.toolbarGroups = [
-                	{ name: 'clipboard', groups: [ "htmlsourceinline", 'clipboard', 'undo', "find" ] },
-                	{ name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
+                    { name: 'clipboard', groups: [ "htmlsourceinline", 'clipboard', 'undo', "find" ] },
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
                     '/',
                     { name: 'paragraph', groups: [ 'align', 'indent'] },
-                	{ name: 'blocks' },
-                	{ name: 'links' },
+                    { name: 'blocks' },
+                    { name: 'links' },
                     { name: 'insert' },
                     "/",
                     { name: 'styles' },
@@ -263,14 +266,16 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         if (data.node.attributes.elementType == "asset") {
             if (data.node.attributes.type == "image" && textIsSelected == false) {
-                // images bigger than 600px or formats which cannot be displayed by the browser directly will be converted
-                // by the pimcore thumbnailing service so that they can be displayed in the editor
+                // images bigger than 600px or formats which cannot be displayed by the browser directly will be
+                // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
 
                 if(typeof data.node.attributes.imageWidth != "undefined") {
                     uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
-                    if(data.node.attributes.imageWidth < defaultWidth && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text), browserPossibleExtensions)) {
+                    if(data.node.attributes.imageWidth < defaultWidth
+                            && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text),
+                                        browserPossibleExtensions)) {
                         uri = data.node.attributes.path;
                         additionalAttributes += ' pimcore_disable_thumbnail="true"';
                     }
@@ -282,18 +287,21 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     additionalAttributes += ' style="width:' + defaultWidth + 'px;"'
                 }
 
-                insertEl = CKEDITOR.dom.element.createFromHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" ' + additionalAttributes + ' />');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<img src="'
+                            + uri + '" pimcore_type="asset" pimcore_id="' + id + '" ' + additionalAttributes + ' />');
                 this.ckeditor.insertElement(insertEl);
                 return true;
             }
             else {
-                insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" target="_blank" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri
+                            + '" target="_blank" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
                 this.ckeditor.insertElement(insertEl);
                 return true;
             }
         }
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
+                            || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
             insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="' + id + '">' + wrappedText + '</a>');
             this.ckeditor.insertElement(insertEl);
             return true;
@@ -313,7 +321,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
+                            || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
             return true;
         } else if (data.node.attributes.elementType=="asset" && data.node.attributes.type != "folder"){
             return true;

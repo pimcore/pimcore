@@ -32,7 +32,7 @@ pimcore.settings.fileexplorer.file = Class.create({
     },
 
     loadFileContentsComplete: function (response) {
-        var response = Ext.decode(response.responseText);
+        response = Ext.decode(response.responseText);
         if(response.success) {
 
             var toolbarItems = [];
@@ -81,7 +81,8 @@ pimcore.settings.fileexplorer.file = Class.create({
                 try{
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("success"), t("file_explorer_saved_file_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("file_explorer_saved_file_success"),
+                                                                    "success");
                     }
                     else {
                         pimcore.helpers.showNotification(t("error"), t("file_explorer_saved_file_error"), "error");
