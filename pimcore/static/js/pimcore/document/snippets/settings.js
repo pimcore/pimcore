@@ -118,7 +118,8 @@ pimcore.document.snippets.settings = Class.create({
                                     "focus": function (el) {
                                         el.getStore().reload({
                                             params: {
-                                                controllerName: Ext.getCmp("pimcore_document_settings_controller_" + this.snippet.id).getValue()
+                                                controllerName: Ext.getCmp("pimcore_document_settings_controller_"
+                                                                        + this.snippet.id).getValue()
                                             }
                                         });
                                     }.bind(this)
@@ -224,17 +225,20 @@ pimcore.document.snippets.settings = Class.create({
                                         iconCls:"pimcore_icon_apply",
                                         autoWidth:true,
                                         handler:function () {
-                                            Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
-                                                if (buttonValue == "yes") {
-                                                    Ext.Ajax.request({
-                                                        url:"/admin/snippet/change-master-document/id/" + this.snippet.id,
-                                                        params:{
-                                                            contentMasterDocumentPath:Ext.getCmp("contentMasterDocumentPath_" + this.snippet.id).getValue()
-                                                        },
-                                                        success:function () {
-                                                            this.snippet.reload();
-                                                        }.bind(this)
-                                                    });
+                                            Ext.MessageBox.confirm(t("are_you_sure"),
+                                                                   t("all_content_will_be_lost"),
+                                                function (buttonValue) {
+                                                    if (buttonValue == "yes") {
+                                                        Ext.Ajax.request({
+                                                            url:"/admin/snippet/change-master-document/id/"
+                                                                                            + this.snippet.id,
+                                                            params:{
+                                                                contentMasterDocumentPath:Ext.getCmp("contentMasterDocumentPath_" + this.snippet.id).getValue()
+                                                            },
+                                                            success:function () {
+                                                                this.snippet.reload();
+                                                            }.bind(this)
+                                                        });
                                                 }
                                             }.bind(this));
                                         }.bind(this)
@@ -244,20 +248,22 @@ pimcore.document.snippets.settings = Class.create({
                                         iconCls:"pimcore_icon_delete",
                                         autoWidth:true,
                                         handler:function () {
-                                            Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
-                                                if (buttonValue == "yes") {
-                                                    Ext.getCmp("contentMasterDocumentPath_" + this.snippet.id).setValue("");
-                                                    Ext.Ajax.request({
-                                                        url:"/admin/snippet/change-master-document/id/" + this.snippet.id,
-                                                        params:{
-                                                            contentMasterDocumentPath:""
-                                                        },
-                                                        success:function () {
-                                                            this.snippet.reload();
-                                                        }.bind(this)
-                                                    });
-                                                }
-                                            }.bind(this));
+                                            Ext.MessageBox.confirm(t("are_you_sure"),
+                                                t("all_content_will_be_lost"),
+                                                function (buttonValue) {
+                                                    if (buttonValue == "yes") {
+                                                        Ext.getCmp("contentMasterDocumentPath_" + this.snippet.id).setValue("");
+                                                        Ext.Ajax.request({
+                                                            url:"/admin/snippet/change-master-document/id/" + this.snippet.id,
+                                                            params:{
+                                                                contentMasterDocumentPath:""
+                                                            },
+                                                            success:function () {
+                                                                this.snippet.reload();
+                                                            }.bind(this)
+                                                        });
+                                                    }
+                                                }.bind(this));
                                         }.bind(this)
                                     }
                                 ]

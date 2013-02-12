@@ -1008,7 +1008,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo", "pimcore_icon_php", "PHP Info"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo",
+                                                                "pimcore_icon_php", "PHP Info"));
         }
 
     },
@@ -1021,7 +1022,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/linfo/index.php", "pimcore_icon_server_info", "Server Info"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
+                            "/pimcore/modules/3rdparty/linfo/index.php", "pimcore_icon_server_info", "Server Info"));
         }
 
     },
@@ -1034,7 +1036,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/install/check/", "pimcore_icon_systemrequirements", "System-Requirements Check"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/install/check/",
+                                                    "pimcore_icon_systemrequirements", "System-Requirements Check"));
         }
 
     },
@@ -1047,7 +1050,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/adminer/index.php", "pimcore_icon_mysql", "Database Admin"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
+                            "/pimcore/modules/3rdparty/adminer/index.php", "pimcore_icon_mysql", "Database Admin"));
         }
 
     }

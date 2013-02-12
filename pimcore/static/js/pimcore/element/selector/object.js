@@ -51,7 +51,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var filterStore = [];
         var selectedStore = [];
         for (var i=0; i<possibleRestrictions.length; i++) {
-           if(this.parent.restrictions.subtype.object && in_array(possibleRestrictions[i], this.parent.restrictions.subtype.object )) {
+           if(this.parent.restrictions.subtype.object && in_array(possibleRestrictions[i],
+                                    this.parent.restrictions.subtype.object )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
            }
@@ -70,7 +71,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             filterStore.splice(0,0,[selectedValue, t("all_types")]);
         }
         
-        if(!this.parent.initialRestrictions.specific || (!this.parent.initialRestrictions.specific.classes || this.parent.initialRestrictions.specific.classes.length < 1)) {
+        if(!this.parent.initialRestrictions.specific || (!this.parent.initialRestrictions.specific.classes
+                            || this.parent.initialRestrictions.specific.classes.length < 1)) {
             // only add the subtype filter if there is no class restriction
             compositeConfig.items.push({
                 xtype: "combo",
@@ -279,9 +281,11 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         });
         
         var columns = [
-            {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
-            }},
+            {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                }
+            },
             {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
             {header: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
             {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'},
