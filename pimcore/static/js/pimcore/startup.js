@@ -94,7 +94,8 @@ Ext.onReady(function () {
             }
 
         } else {
-            //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot be saved due to HTTP 500 Response)
+            //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
+            // be saved due to HTTP 500 Response)
             var errorMessage = "";
 
             try {

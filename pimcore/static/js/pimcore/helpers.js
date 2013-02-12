@@ -95,7 +95,7 @@ pimcore.helpers.closeObject = function (id) {
 
     pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
     pimcore.globalmanager.remove("object_" + id);
-}
+};
 
 
 pimcore.helpers.openElement = function (id, type, subtype) {
@@ -121,7 +121,7 @@ pimcore.helpers.openElement = function (id, type, subtype) {
                 if(res.success) {
                     pimcore.helpers.openElement(res.id, res.type, res.subtype);
                 } else {
-                    Ext.MessageBox.alert(t("error"), t("element_not_found"))
+                    Ext.MessageBox.alert(t("error"), t("element_not_found"));
                 }
             }
         });
@@ -148,7 +148,7 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
     catch (e) {
         console.log(e);
     }
-}
+};
 
 pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
     // remove loading indicator on treenode
@@ -168,7 +168,7 @@ pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
     }
     catch (e) {
     }
-}
+};
 
 pimcore.helpers.openSeemode = function () {
     if (pimcore.globalmanager.exists("pimcore_seemode")) {
@@ -177,7 +177,7 @@ pimcore.helpers.openSeemode = function () {
     else {
         pimcore.globalmanager.add("pimcore_seemode", new pimcore.document.seemode());
     }
-}
+};
 
 pimcore.helpers.dndMaskFrames = function () {
     var tabpanel = Ext.getCmp("pimcore_panel_tabs");
@@ -340,20 +340,21 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
     lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
     lockDetails += "<br /><br />" + t("element_lock_question");
 
-    Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails, function (lock, buttonValue) {
-        if (buttonValue == "yes") {
-            Ext.Ajax.request({
-                url: "/admin/element/unlock-element",
-                params: {
-                    id: lock[0],
-                    type:  lock[1]
-                },
-                success: function () {
-                    pimcore.helpers.openElement(lock[0], lock[1], lock[2]);
-                }
-            });
-        }
-    }.bind(this, arguments));
+    Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails,
+        function (lock, buttonValue) {
+            if (buttonValue == "yes") {
+                Ext.Ajax.request({
+                    url: "/admin/element/unlock-element",
+                    params: {
+                        id: lock[0],
+                        type:  lock[1]
+                    },
+                    success: function () {
+                        pimcore.helpers.openElement(lock[0], lock[1], lock[2]);
+                    }
+                });
+            }
+        }.bind(this, arguments));
 };
 
 
@@ -370,15 +371,15 @@ pimcore.helpers.closeAllElements = function () {
 
 pimcore.helpers.loadingShow = function () {
     pimcore.globalmanager.get("loadingmask").show();
-}
+};
 
 pimcore.helpers.loadingHide = function () {
     pimcore.globalmanager.get("loadingmask").hide();
-}
+};
 
 pimcore.helpers.itemselector = function (muliselect, callback, restrictions, config) {
     var itemselector = new pimcore.element.selector.selector(muliselect, callback, restrictions, config);
-}
+};
 
 
 pimcore.helpers.activateMaintenance = function () {
@@ -390,7 +391,7 @@ pimcore.helpers.activateMaintenance = function () {
     if(!Ext.getCmp("pimcore_maintenance_disable_button")) {
         pimcore.helpers.showMaintenanceDisableButton();
     }
-}
+};
 
 pimcore.helpers.deactivateMaintenance = function () {
 
@@ -416,7 +417,7 @@ pimcore.helpers.showMaintenanceDisableButton = function () {
 
     toolbar.insertButton(5, [deactivateButton]);
     toolbar.doLayout();
-}
+};
 
 pimcore.helpers.download = function (url) {
     pimcore.settings.showCloseConfirmation = false;
@@ -425,12 +426,12 @@ pimcore.helpers.download = function (url) {
     },1000);
 
     location.href = url;
-}
+};
 
 pimcore.helpers.getFileExtension = function (filename) {
     var extensionP = filename.split("\.");
     return extensionP[extensionP.length - 1];
-}
+};
 
 
 pimcore.helpers.deleteAsset = function (id, callback) {
@@ -814,7 +815,7 @@ pimcore.helpers.getOpenTab = function () {
     }
 
     return openTabs;
-}
+};
 
 pimcore.helpers.rememberOpenTab = function (item) {
     var openTabs = pimcore.helpers.getOpenTab();
@@ -829,7 +830,7 @@ pimcore.helpers.rememberOpenTab = function (item) {
     openTabs.reverse();
 
     localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
-}
+};
 
 pimcore.helpers.forgetOpenTab = function (item) {
 
@@ -839,7 +840,7 @@ pimcore.helpers.forgetOpenTab = function (item) {
     openTabs.splice(pos, 1);
 
     localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
-}
+};
 
 pimcore.helpers.openMemorizedTabs = function () {
     var openTabs = pimcore.helpers.getOpenTab();
@@ -864,7 +865,7 @@ pimcore.helpers.openMemorizedTabs = function () {
             openedTabs.push(openTabs[i]);
         }
     }
-}
+};
 
 pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure) {
 
@@ -1025,7 +1026,7 @@ pimcore.helpers.selectPathInTree = function (tree, path, callback) {
         delete pimcore.helpers.selectPathInTreeActiveSelections[hash];
         console.log(e);
     }
-}
+};
 
 pimcore.helpers.selectElementInTree = function (type, id) {
     try {
@@ -1048,14 +1049,15 @@ pimcore.helpers.selectElementInTree = function (type, id) {
     } catch (e) {
         console.log(e);
     }
-}
+};
 
 pimcore.helpers.getClassForIcon = function (icon) {
 
     var styleContainerId = "pimcore_dynamic_class_for_icon";
     var styleContainer = Ext.get(styleContainerId);
     if(!styleContainer) {
-        styleContainer = Ext.getBody().insertHtml("beforeEnd", '<style type="text/css" id="' + styleContainerId + '"></style>', true);
+        styleContainer = Ext.getBody().insertHtml("beforeEnd", '<style type="text/css" id="'
+                                        + styleContainerId + '"></style>', true);
     }
 
     var content = styleContainer.dom.innerHTML;
@@ -1064,7 +1066,7 @@ pimcore.helpers.getClassForIcon = function (icon) {
     styleContainer.dom.innerHTML = content;
 
     return classname;
-}
+};
 
 
 pimcore.helpers.openElementByIdDialog = function (type) {
@@ -1073,7 +1075,7 @@ pimcore.helpers.openElementByIdDialog = function (type) {
             pimcore.helpers.openElement(value, type);
         }
     });
-}
+};
 
 pimcore.helpers.openDocumentByPathDialog = function () {
     Ext.MessageBox.prompt(t("open_document_by_url"), t("path_or_url_incl_http"), function (button, value, object) {
@@ -1095,12 +1097,12 @@ pimcore.helpers.openDocumentByPathDialog = function () {
             });
         }
     });
-}
+};
 
 pimcore.helpers.isCanvasSupported = function () {
     var elem = document.createElement('canvas');
     return !!(elem.getContext && elem.getContext('2d'));
-}
+};
 
 pimcore.helpers.urlToCanvas = function (url, callback) {
 
@@ -1131,7 +1133,7 @@ pimcore.helpers.urlToCanvas = function (url, callback) {
     }
 
     document.body.appendChild(iframe);
-}
+};
 
 pimcore.helpers.generatePagePreview = function (id, path, callback) {
 
@@ -1185,7 +1187,7 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
             });
         }.bind(this, id));
     }
-}
+};
 
 pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) {
     if(typeof node.attributes["thumbnail"] != "undefined") {
@@ -1228,5 +1230,5 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
             }.bind(this));
         }.bind(this, node), 200);
     }
-}
+};
 
