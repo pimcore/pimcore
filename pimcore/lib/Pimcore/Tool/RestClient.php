@@ -21,6 +21,8 @@ class Pimcore_Tool_RestClient {
 
     static private $baseUrl;
 
+    static private $user;
+
 
     /** Set the host name.
      * @param $host e.g. pimcore.jenkins.elements.at
@@ -44,34 +46,40 @@ class Pimcore_Tool_RestClient {
         self::$testMode = true;
     }
 
+    public static function setUser($user) {
+        self::$user = $user;
+    }
+
     public function __construct() {
         if (!self::$host || !self::$baseUrl) {
             throw new Exception("configuration missing");
         }
 
         $this->client = Pimcore_Tool::getHttpClient();
+        $user = self::$user;
+
         if (self::$testMode) {
             $this->client->setHeaders("X-pimcore-unit-test-request", "true");
+
+            if ($user) {
+                $username = "rest";
+                $password = $username;
+
+                $user = User::getByName("$username");
+
+                if (!$user) {
+                    $user = User::create(array(
+                        "parentId" => 0,
+                        "username" => "rest",
+                        "password" => Pimcore_Tool_Authentication::getPasswordHash($username, $username),
+                        "active" => true
+                    ));
+                    $user->setAdmin(true);
+                    $user->save();
+                }
+            }
         }
         $this->client->setHeaders("Host", self::$host);
-
-        //TODO make this configurable, maybe by extracting the code and let the user provide the api key
-
-        $username = "rest";
-        $password = $username;
-
-        $user = User::getByName("$username");
-
-        if (!$user) {
-            $user = User::create(array(
-                "parentId" => 0,
-                "username" => "rest",
-                "password" => Pimcore_Tool_Authentication::getPasswordHash($username, $username),
-                "active" => true
-            ));
-            $user->setAdmin(true);
-            $user->save();
-        }
 
         $this->apikey = $user->getPassword();
     }
