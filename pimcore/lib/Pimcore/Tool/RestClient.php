@@ -8,7 +8,7 @@
  */
 class Pimcore_Tool_RestClient {
 
-    const loggingEnabled = true;
+    static private $loggingEnabled = false;
 
     static private $instance = null;
 
@@ -129,7 +129,7 @@ class Pimcore_Tool_RestClient {
     private function doRequest($uri, $method = "GET", $body = null) {
         $client = $this->client;
         $client->setMethod($method);
-        if (self::loggingEnabled) {
+        if (self::$loggingEnabled) {
             print("    " . $method . " " . $uri . "\n");
         }
         $client->setUri($uri);
@@ -143,6 +143,11 @@ class Pimcore_Tool_RestClient {
         $body = $result->getBody();
         $body = json_decode($body);
         return $body;
+    }
+
+    public static function setLoggingEnabled($loggingEnabled)
+    {
+        self::$loggingEnabled = $loggingEnabled;
     }
 
 
