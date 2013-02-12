@@ -33,7 +33,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
 
         $time = time();
 
-        $result = Test_RestClient::getInstance()->createAsset($asset);
+        $result = Pimcore_Tool_RestClient::getInstance()->createAsset($asset);
         $this->assertTrue($result->success, "request not successful");
         $this->assertEquals(2, Test_Tool::getAssetCount());
 
@@ -45,7 +45,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $this->assertTrue($creationDate >= $time, "wrong creation date");
 
         // as the asset key is unique there must be exactly one object with that key
-        $list = Test_RestClient::getInstance()->getAssetList("filename = '" . $asset->getKey() . "'");
+        $list = Pimcore_Tool_RestClient::getInstance()->getAssetList("filename = '" . $asset->getKey() . "'");
         $this->assertEquals(1, count($list));
 
         // now check if the file exists
@@ -65,7 +65,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $savedAsset = Asset::getById($savedAsset->getId());
         $this->assertNotNull($savedAsset);
 
-        $response = Test_RestClient::getInstance()->deleteAsset($savedAsset->getId());
+        $response = Pimcore_Tool_RestClient::getInstance()->deleteAsset($savedAsset->getId());
         $this->assertTrue($response->success, "request wasn't successful");
 
         // this will wipe our local cache
@@ -85,7 +85,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $fitem = Asset::getById($folder->getId());
         $this->assertNull($fitem);
 
-        $response = Test_RestClient::getInstance()->createAssetFolder($folder);
+        $response = Pimcore_Tool_RestClient::getInstance()->createAssetFolder($folder);
         $this->assertTrue($response->success, "request wasn't successful");
 
         $id = $response->id;
@@ -94,10 +94,10 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $folderDirect = Asset::getById($id);
         $this->assertTrue($folderDirect->getType() == "folder");
 
-        $folderRest = Test_RestClient::getInstance()->getAssetById($id);
+        $folderRest = Pimcore_Tool_RestClient::getInstance()->getAssetById($id);
         $this->assertTrue(Test_Tool::assetsAreEqual($folderRest, $folderDirect, false), "assets are not equal");
 
-        Test_RestClient::getInstance()->deleteAsset($id);
+        Pimcore_Tool_RestClient::getInstance()->deleteAsset($id);
 
         Pimcore::collectGarbage();
         $folderDirect = Asset::getById($id);

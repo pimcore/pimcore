@@ -25,7 +25,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
 
         $time = time();
 
-        $result = Test_RestClient::getInstance()->createDocument($unsavedObject);
+        $result = Pimcore_Tool_RestClient::getInstance()->createDocument($unsavedObject);
         $this->assertTrue($result->success, "request not successful");
         $this->assertEquals(2, Test_Tool::getDocoumentCount());
 
@@ -38,7 +38,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
 
 
         // as the object key is unique there must be exactly one document with that key
-        $list = Test_RestClient::getInstance()->getDocumentList("`key` = '" . $unsavedObject->getKey() . "'");
+        $list = Pimcore_Tool_RestClient::getInstance()->getDocumentList("`key` = '" . $unsavedObject->getKey() . "'");
 
 
         $this->assertEquals(1, count($list));
@@ -53,7 +53,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
         $savedDocument = Document::getById($document->getId());
         $this->assertNotNull($savedDocument);
 
-        $response = Test_RestClient::getInstance()->deleteDocument($document->getId());
+        $response = Pimcore_Tool_RestClient::getInstance()->deleteDocument($document->getId());
         $this->assertTrue($response->success, "request wasn't successful");
 
         // this will wipe our local cache
@@ -76,7 +76,7 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
         $fitem = Document::getById($folder->getId());
         $this->assertNull($fitem);
 
-        $response = Test_RestClient::getInstance()->createDocumentFolder($folder);
+        $response = Pimcore_Tool_RestClient::getInstance()->createDocumentFolder($folder);
         $this->assertTrue($response->success, "request wasn't successful");
 
         $id = $response->id;
@@ -85,10 +85,10 @@ class TestSuite_Rest_DocumentTest extends Test_Base {
         $folderDirect = Document::getById($id);
         $this->assertTrue($folderDirect->getType() == "folder");
 
-        $folderRest = Test_RestClient::getInstance()->getDocumentById($id);
+        $folderRest = Pimcore_Tool_RestClient::getInstance()->getDocumentById($id);
         $this->assertTrue(Test_Tool::documentsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
 
-        Test_RestClient::getInstance()->deleteDocument($id);
+        Pimcore_Tool_RestClient::getInstance()->deleteDocument($id);
 
         Pimcore::collectGarbage();
         $folderDirect = Document::getById($id);

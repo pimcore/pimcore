@@ -25,7 +25,7 @@ class TestSuite_Rest_DataTypeTestOut extends Test_Base {
 
         self::$seed = 1;
         self::$localObject = Test_Tool::createFullyFledgedObject("local", true, self::$seed);
-        self::$restObject = Test_RestClient::getInstance()->getObjectById(self::$localObject->getId());
+        self::$restObject = Pimcore_Tool_RestClient::getInstance()->getObjectById(self::$localObject->getId());
     }
 
     public function setUp() {
