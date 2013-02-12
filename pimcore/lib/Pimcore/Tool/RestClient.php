@@ -21,7 +21,7 @@ class Pimcore_Tool_RestClient {
 
     static private $baseUrl;
 
-    static private $user;
+    static private $apikey;
 
 
     /** Set the host name.
@@ -46,8 +46,8 @@ class Pimcore_Tool_RestClient {
         self::$testMode = true;
     }
 
-    public static function setUser($user) {
-        self::$user = $user;
+    public static function setApiKey($apikey) {
+        self::$apikey = $apikey;
     }
 
     public function __construct() {
@@ -56,12 +56,12 @@ class Pimcore_Tool_RestClient {
         }
 
         $this->client = Pimcore_Tool::getHttpClient();
-        $user = self::$user;
+        $apikey = self::$apikey;
 
         if (self::$testMode) {
             $this->client->setHeaders("X-pimcore-unit-test-request", "true");
 
-            if ($user) {
+            if (!$apikey) {
                 $username = "rest";
                 $password = $username;
 
@@ -77,11 +77,12 @@ class Pimcore_Tool_RestClient {
                     $user->setAdmin(true);
                     $user->save();
                 }
+                $apikey = $user->getPassword();
             }
         }
         $this->client->setHeaders("Host", self::$host);
 
-        $this->apikey = $user->getPassword();
+        $this->apikey = $apikey;;
     }
 
 
