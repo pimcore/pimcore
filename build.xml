@@ -90,7 +90,7 @@
     <exclude name="**/lib/**/*.php" />
     <modified />
    </fileset>
-  </apply>x
+  </apply>
  </target>
 
  <target name="phploc" description="Measure project size using PHPLOC">
