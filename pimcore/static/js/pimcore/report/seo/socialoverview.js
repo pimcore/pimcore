@@ -105,7 +105,8 @@ pimcore.report.seo.socialoverview = Class.create(pimcore.report.abstract, {
         var queryString = {};
         queryString.site = this.site;
 
-        Ext.get(this.iframeId).dom.setAttribute("src", "/admin/reports/seo/social-overview?" + Ext.urlEncode(queryString));
+        Ext.get(this.iframeId).dom.setAttribute("src", "/admin/reports/seo/social-overview?"
+                                                                    + Ext.urlEncode(queryString));
     }
 });
 

@@ -14,7 +14,8 @@
 
 
 /**
- * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection, pimcore.object.tags.localizedfields
+ * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection,
+ * pimcore.object.tags.localizedfields
  */
 
 pimcore.registerNS("pimcore.object.helpers.grid");
@@ -90,7 +91,8 @@ pimcore.object.helpers.grid = Class.create({
             listeners.write = function(store, action, result, response, rs) {};
             listeners.exception = function (conn, mode, action, request, response, store) {
                 if(action == "update") {
-                    Ext.MessageBox.alert(t('error'), t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
+                    Ext.MessageBox.alert(t('error'),
+                                         t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
                     this.store.rejectChanges();
                 }
             }.bind(this);
@@ -151,7 +153,9 @@ pimcore.object.helpers.grid = Class.create({
             var field = fields[i];
 //            console.log(field);
             if(field.key == "subtype") {
-                gridColumns.push({header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', hidden: !this.showSubtype, renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                gridColumns.push({header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+                                        hidden: !this.showSubtype,
+                                        renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }});
             } else if(field.key == "id") {
@@ -168,18 +172,23 @@ pimcore.object.helpers.grid = Class.create({
                     }.bind(this, field.key)
                 }));
             } else if(field.key == "fullpath") {
-                gridColumns.push({header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'/*, hidden: !propertyVisibility.path*/});
+                gridColumns.push({header: t("path"), width: 200, sortable: true,
+                                  dataIndex: 'fullpath'/*, hidden: !propertyVisibility.path*/});
             } else if(field.key == "filename") {
-                gridColumns.push({header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: !showKey});
+                gridColumns.push({header: t("filename"), width: 200, sortable: true,
+                                  dataIndex: 'filename', hidden: !showKey});
             } else if(field.key == "classname") {
-                gridColumns.push({header: t("class"), width: 200, sortable: true, dataIndex: 'classname',renderer: function(v){return ts(v);}/*, hidden: true*/});
+                gridColumns.push({header: t("class"), width: 200, sortable: true,
+                                  dataIndex: 'classname',renderer: function(v){return ts(v);}/*, hidden: true*/});
             } else if(field.key == "creationDate") {
-                gridColumns.push({header: t("creationdate") + " (System)", width: 200, sortable: true, dataIndex: "creationDate", editable: false, renderer: function(d) {
+                gridColumns.push({header: t("creationdate") + " (System)", width: 200, sortable: true,
+                                    dataIndex: "creationDate", editable: false, renderer: function(d) {
                                     var date = new Date(d * 1000);
                                     return date.format("Y-m-d H:i:s");
                                 }/*, hidden: !propertyVisibility.creationDate*/});
             } else if(field.key == "modificationDate") {  
-                gridColumns.push({header: t("modificationdate") + " (System)", width: 200, sortable: true, dataIndex: "modificationDate", editable: false, renderer: function(d) {
+                gridColumns.push({header: t("modificationdate") + " (System)", width: 200, sortable: true,
+                                    dataIndex: "modificationDate", editable: false, renderer: function(d) {
                                     var date = new Date(d * 1000);
                                     return date.format("Y-m-d H:i:s");
                                 }/*, hidden: !propertyVisibility.modificationDate*/});
@@ -205,8 +214,9 @@ pimcore.object.helpers.grid = Class.create({
         var fields = this.fields;
         for (var i = 0; i < fields.length; i++) {
 
-            if(fields[i].key != "id" && fields[i].key != "published" && fields[i].key != "fullpath" && fields[i].key != "filename" &&
-               fields[i].key != "classname" && fields[i].key != "creationDate" && fields[i].key != "modificationDate") {
+            if(fields[i].key != "id" && fields[i].key != "published" && fields[i].key != "fullpath"
+                                && fields[i].key != "filename" && fields[i].key != "classname"
+                                && fields[i].key != "creationDate" && fields[i].key != "modificationDate") {
                 
                 var filter = pimcore.object.tags[fields[i].type].prototype.getGridColumnFilter(fields[i]);
                 if(filter) {

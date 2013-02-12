@@ -16,7 +16,7 @@ pimcore.registerNS("pimcore.settings.targeting.panel");
 pimcore.settings.targeting.panel= Class.create({
 
     initialize: function(page) {
-        this.treeDataUrl = '/admin/reports/targeting/list/'
+        this.treeDataUrl = '/admin/reports/targeting/list/';
     },
 
 
@@ -99,7 +99,8 @@ pimcore.settings.targeting.panel= Class.create({
     },
 
     addTarget: function () {
-        Ext.MessageBox.prompt(t('add_target'), t('enter_the_name_of_the_new_target'), this.addTargetComplete.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('add_target'), t('enter_the_name_of_the_new_target'),
+                                                this.addTargetComplete.bind(this), null, null, "");
     },
 
     addTargetComplete: function (button, value, object) {

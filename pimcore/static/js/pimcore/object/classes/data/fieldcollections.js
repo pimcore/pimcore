@@ -77,7 +77,7 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                 editable: false,
                 fieldLabel: t("allowed_types"),
                 store: this.store,
-                width: 'auto',
+//                width: 'auto',
                 value: this.datax.allowedTypes,
                 displayField: "key",
                 valueField: "key",

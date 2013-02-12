@@ -14,7 +14,8 @@
 
 
 /**
- * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection, pimcore.object.tags.localizedfields
+ * NOTE: This helper-methods are added to the classes pimcore.object.edit, pimcore.object.fieldcollection,
+ * pimcore.object.tags.localizedfields
  */
 
 pimcore.registerNS("pimcore.object.helpers.edit");
@@ -100,7 +101,8 @@ pimcore.object.helpers.edit = {
             }
         };
 
-        var validKeys = ["xtype","title","layout","items","region","width","height","name","text","html","handler","labelWidth","collapsible","collapsed","bodyStyle"];
+        var validKeys = ["xtype","title","layout","items","region","width","height","name","text","html","handler",
+                                        "labelWidth","collapsible","collapsed","bodyStyle"];
 
         var tmpItems;
 
@@ -190,9 +192,9 @@ pimcore.object.helpers.edit = {
                     if (typeof this.getMetaDataForField(l.name) != "function") {
                         metaData = this.getMetaDataForField(l.name);
                     }
-                } catch (e) {
+                } catch (e2) {
                     metaData = null;
-                    console.log(e);
+                    console.log(e2);
                 }
 
                 // add asterisk to mandatory field
@@ -222,7 +224,8 @@ pimcore.object.helpers.edit = {
                     dLayout = field.getLayoutEdit();
                 }
 
-                // set title back to original (necessary for localized fields because they use the same config several times, for each language )
+                // set title back to original (necessary for localized fields because they use the same config several
+                // times, for each language )
                 l.title = l.titleOriginal;
 
 

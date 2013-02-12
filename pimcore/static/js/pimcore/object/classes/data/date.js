@@ -86,7 +86,8 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
                     check:this.toggleDefaultDate.bind(this)
                 }
             },
-            new Ext.form.DisplayField({hideLabel:true,html:'<span class="object_field_setting_warning">'+t('default_value_warning')+'</span>'})
+            new Ext.form.DisplayField({hideLabel:true,html:'<span class="object_field_setting_warning">'
+                                                        +t('default_value_warning')+'</span>'})
 
         ]);
 
@@ -98,7 +99,7 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
             this.component.setValue(null);
             this.component.setDisabled(true);
         } else {
-            this.component.enable()
+            this.component.enable();
         }
 
 

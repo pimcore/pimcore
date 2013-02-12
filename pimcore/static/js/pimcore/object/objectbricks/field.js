@@ -68,7 +68,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         var items = [{xtype: 'tbtext', text: ""}];
         if(this.availableClasses[classDefinitionData.classname]) {
-            var items = [{xtype: 'tbtext', text: this.availableClasses[classDefinitionData.classname].data.translatedText}];
+            items = [{xtype: 'tbtext', text: this.availableClasses[classDefinitionData.classname].data.translatedText}];
         }
 
         items.push({
@@ -172,7 +172,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         var fieldCombo = new Ext.form.ComboBox({
             allowBlank: false,
-            name: 'objects' ,
+//            name: 'objects' ,
             value: currentData.fieldname,
             store: fieldComboStore,
             displayField: 'key',
@@ -204,7 +204,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             readOnly: true
         });
 
-        return comp = new Ext.form.CompositeField({
+        return new Ext.form.CompositeField({
             xtype: 'compositefield',
             fieldLabel: t('allowed_class_field'),
             combineErrors: false,

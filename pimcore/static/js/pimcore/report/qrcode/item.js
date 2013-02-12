@@ -52,12 +52,14 @@ pimcore.report.qrcode.item = Class.create({
         }); 
 
 
-        fieldListeners = {
+        var fieldListeners = {
             "keyup": this.generateCode.bind(this)
         };
 
+        var store;
+
         if(pimcore.settings.google_analytics_enabled) {
-            var store = new Ext.data.JsonStore({
+            store = new Ext.data.JsonStore({
                 autoDestroy: true,
                 autoLoad: true,
                 url: '/admin/reports/analytics/chartmetricdata',
@@ -69,15 +71,13 @@ pimcore.report.qrcode.item = Class.create({
                 fields: ['timestamp','datetext','visits']
             });
         } else {
-            var store = new Ext.data.ArrayStore({
+            store = new Ext.data.ArrayStore({
                 autoDestroy: true,
                 autoLoad: true,
                 data: [],
                 fields: ['timestamp','datetext','visits']
             });
         }
-
-
 
         this.analytics = new Ext.form.FieldSet({
             hidden: !this.getAnalyticsVisiblity(),
@@ -103,7 +103,8 @@ pimcore.report.qrcode.item = Class.create({
                 iconCls: "pimcore_icon_analytics",
                 handler: function () {
                     var analyticsUrl = "#report/trafficsources-campaigns/a{accountId}w{internalWebPropertyId}p{id}/"
-                        + "%3F_r.drilldown%3Danalytics.campaign%3A" + this.data.name + "%2Canalytics.sourceMedium%3AQR-Code/";
+                        + "%3F_r.drilldown%3Danalytics.campaign%3A" + this.data.name
+                                                                    + "%2Canalytics.sourceMedium%3AQR-Code/";
                     window.open("/admin/reports/analytics/deeplink?url=" + encodeURIComponent(analyticsUrl));
                 }.bind(this)
             }]
