@@ -7,7 +7,7 @@
          verbose="true"
          timeoutForSmallTests="5"
          stopOnFailure="false"
-         syntaxCheck="false">
+         syntaxCheck="true">
     <testsuites>
         <testsuite name="Models">
 
@@ -27,9 +27,9 @@
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">/pimcore/</directory>
             <exclude>
-                <directory suffix=".php">pimcore/lib/Zend/</directory>
-                <directory suffix=".php">tests/</directory>
-                <directory suffix=".php">update/</directory>
+                <directory suffix=".php">/pimcore/lib/Zend/</directory>
+                <directory suffix=".php">/tests/</directory>
+                <directory suffix=".php">/update/</directory>
             </exclude>
         </whitelist>
 
