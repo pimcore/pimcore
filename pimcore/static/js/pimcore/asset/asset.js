@@ -57,7 +57,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     addLoadingPanel : function () {
 
-        // DEPRECIATED loadingpanel not active
+        // DEPRECATED loadingpanel not active
         return;
 
         window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
@@ -287,7 +287,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         try {
             parameters.properties = Ext.encode(this.properties.getValues());
         }
-        catch (e) {
+        catch (e2) {
             //console.log(e);
         }
 
@@ -297,7 +297,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 parameters.scheduler = Ext.encode(this.scheduler.getValues());
             }
         }
-        catch (e) {
+        catch (e3) {
             //console.log(e);
         }
 
@@ -345,7 +345,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     upload: function () {
 
-        pimcore.helpers.uploadDialog('/admin/asset/replace-asset/?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.data.id, "Filedata", function() {
+        pimcore.helpers.uploadDialog('/admin/asset/replace-asset/?pimcore_admin_sid='
+                                    + pimcore.settings.sessionId + "&id=" + this.data.id, "Filedata", function() {
             this.reload();
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));

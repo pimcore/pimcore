@@ -136,7 +136,7 @@ pimcore.asset.tree = Class.create({
                         if(!this.tree.getSelectionModel().getSelectedNode()) {
                             return true;
                         }
-                    }catch (e) {
+                    }catch (e2) {
                         return true;
                     }
 
@@ -178,7 +178,7 @@ pimcore.asset.tree = Class.create({
                             var reader = new FileReader();
                             reader.onload = function(file, node, win, e) {
 
-                                var boundary = '------multipartformboundary' + (new Date).getTime();
+                                var boundary = '------multipartformboundary' + (new Date()).getTime();
                                 var dashdash = '--';
                                 var crlf     = '\r\n';
 
@@ -214,7 +214,8 @@ pimcore.asset.tree = Class.create({
                                 builder += dashdash;
                                 builder += crlf;
 
-                                xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid=" + pimcore.settings.sessionId + "&parentId=" + node.id, true);
+                                xhr.open("POST", "/admin/asset/add-asset/?pimcore_admin_sid="
+                                                        + pimcore.settings.sessionId + "&parentId=" + node.id, true);
                                 xhr.setRequestHeader('content-type', 'multipart/form-data; boundary='
                                     + boundary);
                                 xhr.sendAsBinary(builder);
@@ -300,7 +301,8 @@ pimcore.asset.tree = Class.create({
                 }
                 else {
                     tree.loadMask.hide();
-                    pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error",t(rdata.message));
+                    pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
+                                                                                "error",t(rdata.message));
                     oldParent.reload();
                     newParent.reload();
                 }
@@ -407,7 +409,8 @@ pimcore.asset.tree = Class.create({
 
 
         //paste
-        if (this.attributes.reference.cacheDocumentId && (this.attributes.permissions.create || this.attributes.permissions.publish)) {
+        if (this.attributes.reference.cacheDocumentId
+                                && (this.attributes.permissions.create || this.attributes.permissions.publish)) {
             var pasteMenu = [];
 
             if (this.attributes.type == "folder") {
@@ -426,12 +429,14 @@ pimcore.asset.tree = Class.create({
             }
         }
 
-        if (this.attributes.type == "folder" && this.attributes.reference.cutAsset && (this.attributes.permissions.create || this.attributes.permissions.publish)) {
+        if (this.attributes.type == "folder" && this.attributes.reference.cutAsset
+                                    && (this.attributes.permissions.create || this.attributes.permissions.publish)) {
             menu.add(new Ext.menu.Item({
                 text: t('paste_cut_element'),
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
-                    this.attributes.reference.pasteCutAsset(this.attributes.reference.cutAsset, this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                    this.attributes.reference.pasteCutAsset(this.attributes.reference.cutAsset,
+                                    this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
                     this.attributes.reference.cutParentNode = null;
                     this.attributes.reference.cutAsset = null;
                 }.bind(this)
@@ -477,9 +482,10 @@ pimcore.asset.tree = Class.create({
                             text: t('lock_and_propagate_to_childs'),
                             iconCls: "pimcore_icon_lock_add_propagate",
                             handler: function () {
-                                this.attributes.reference.updateAsset(this.attributes.id, {locked: "propagate"}, function () {
-                                    this.attributes.reference.tree.getRootNode().reload();
-                                }.bind(this))
+                                this.attributes.reference.updateAsset(this.attributes.id, {locked: "propagate"},
+                                    function () {
+                                        this.attributes.reference.tree.getRootNode().reload();
+                                    }.bind(this))
                             }.bind(this)
                         });
                     }
@@ -532,7 +538,8 @@ pimcore.asset.tree = Class.create({
                 }
                 else {
                     tree.loadMask.hide();
-                    pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error",t(rdata.message));
+                    pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
+                                                                            "error",t(rdata.message));
                 }
             } catch(e){
                  tree.loadMask.hide();
@@ -642,7 +649,8 @@ pimcore.asset.tree = Class.create({
     },
 
     addFolder : function () {
-        Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_folder'), this.attributes.reference.addFolderCreate.bind(this));
+        Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_folder'),
+                                                                this.attributes.reference.addFolderCreate.bind(this));
     },
 
     addFolderCreate: function (button, value, object) {
@@ -668,7 +676,8 @@ pimcore.asset.tree = Class.create({
                 this.expand();
             }
             else {
-                pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_creating_a_folder"), "error",t(rdata.message));
+                pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_creating_a_folder"),
+                                                                                        "error",t(rdata.message));
             }
         } catch(e){
             pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_creating_a_folder"), "error");
@@ -915,7 +924,8 @@ pimcore.asset.tree = Class.create({
     },
 
     editAssetFilename: function () {
-        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), this.attributes.reference.editAssetFilenameComplete.bind(this), null, null, this.text);
+        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
+                            this.attributes.reference.editAssetFilenameComplete.bind(this), null, null, this.text);
     },
 
     editAssetFilenameComplete: function (button, value, object) {
@@ -955,10 +965,12 @@ pimcore.asset.tree = Class.create({
                             pimcore.helpers.openAsset(this.id, this.attributes.type);
                         }
                         else {
-                            pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_renaming_a_folder"), "error",t(rdata.message));
+                            pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_renaming_a_folder"),
+                                                                        "error",t(rdata.message));
                         }
                     } catch (e){
-                        pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_renaming_a_folder"), "error");   
+                        pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_renaming_a_folder"),
+                                                                        "error");
                     }
                 }
             }.bind(this));

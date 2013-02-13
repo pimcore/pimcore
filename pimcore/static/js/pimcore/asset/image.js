@@ -93,7 +93,8 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                         }.bind(this)
                     }
                 ],
-                html: '<iframe src="' + this.getEditUrlPixlr("express") + '" frameborder="0" id="asset_image_edit_' + this.id + '"></iframe>',
+                html: '<iframe src="' + this.getEditUrlPixlr("express") + '" frameborder="0" id="asset_image_edit_'
+                                                                            + this.id + '"></iframe>',
                 iconCls: "pimcore_icon_tab_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
@@ -117,9 +118,16 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             imageType = "png";
         }
 
-        var imageUrl = document.location.protocol + "//" + window.location.hostname + "/admin/asset/get-image-thumbnail/id/" + this.id + "/width/1000/aspectratio/true/pimcore_admin_sid/" + pimcore.settings.sessionId + "/" + this.data.filename;
-        var targetUrl = document.location.protocol + "//" + window.location.hostname + "/admin/asset/save-image-pixlr/?pimcore_admin_sid=" + pimcore.settings.sessionId + "&id=" + this.id;
-        var editorUrl = "https://www.pixlr.com/" + type + "/?image=" + escape(imageUrl) + "&title=" + this.data.filename + "&locktitle=true&locktarget=true&locktype=" + imageType + "&wmode=transparent&target=" + escape(targetUrl);
+        var imageUrl = document.location.protocol + "//" + window.location.hostname
+                                                  + "/admin/asset/get-image-thumbnail/id/"
+                                                  + this.id + "/width/1000/aspectratio/true/pimcore_admin_sid/"
+                                                  + pimcore.settings.sessionId + "/" + this.data.filename;
+        var targetUrl = document.location.protocol + "//" + window.location.hostname
+                                                   + "/admin/asset/save-image-pixlr/?pimcore_admin_sid="
+                                                   + pimcore.settings.sessionId + "&id=" + this.id;
+        var editorUrl = "https://www.pixlr.com/" + type + "/?image=" + escape(imageUrl) + "&title="
+                                                 + this.data.filename + "&locktitle=true&locktarget=true&locktype="
+                                                 + imageType + "&wmode=transparent&target=" + escape(targetUrl);
 
         if (type == "editor") {
             editorUrl = editorUrl + "&redirect=false";
@@ -182,7 +190,8 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     iconCls: "pimcore_icon_download",
                     handler: function () {
                         var config = this.downloadBox.getForm().getFieldValues();
-                        pimcore.helpers.download("/admin/asset/get-image-thumbnail/id/" + this.id + "/download/true?config=" + Ext.encode(config));
+                        pimcore.helpers.download("/admin/asset/get-image-thumbnail/id/" + this.id
+                                                                    + "/download/true?config=" + Ext.encode(config));
                     }.bind(this)
                 }]
             });
@@ -226,7 +235,8 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 items: [{
                     region: "center",
                     html: '&nbsp;',
-                    bodyStyle: "background: url(/admin/asset/get-image-thumbnail/id/" + this.id + "/width/400/aspectratio/true/?_dc=" + dc + ") center center no-repeat;"
+                    bodyStyle: "background: url(/admin/asset/get-image-thumbnail/id/" + this.id
+                                            + "/width/400/aspectratio/true/?_dc=" + dc + ") center center no-repeat;"
                 },{
                     title: t("image_details"),
                     region: "east",
