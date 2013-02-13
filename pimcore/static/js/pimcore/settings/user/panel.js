@@ -139,7 +139,8 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                 }));
             }
 
-            if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined" && menu.items.items.length > 0) {
+            if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined"
+                                                                && menu.items.items.length > 0) {
                 menu.show(this.ui.getAnchor());
             }
         }
@@ -155,7 +156,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             }
 
         } catch(e){
-             pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error")
+             pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error");
         }
     },
 

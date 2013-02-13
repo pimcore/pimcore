@@ -216,12 +216,14 @@ pimcore.document.emails.logs = Class.create({
                                     if(data.type == 'simple'){
                                         return data.value;
                                     }else{
-                                        //when the objectPath is set -> the object is still available otherwise it was deleted in the meantime
+                                        //when the objectPath is set -> the object is still available otherwise it was
+                                        // deleted in the meantime
                                         if(data.objectPath){
                                             var subtype = data.objectClassSubType.toLowerCase();
                                             return '<span onclick="pimcore.helpers.open'
                                                 + data.objectClassBase + '(' + data.objectId + ', \''
-                                                + subtype + '\');" class="input_drop_target" style="display: block;">' + data.objectPath + '</span>';
+                                                + subtype + '\');" class="input_drop_target" style="display: block;">'
+                                                                + data.objectPath + '</span>';
                                         }else{
                                             return '"' + data.objectClass + '" with Id: '
                                                 + data.objectId + ' (deleted)';
