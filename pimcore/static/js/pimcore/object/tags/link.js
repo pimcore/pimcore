@@ -271,7 +271,8 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         });
         this.window.show();
 
-        // this is because of underlying activated wysiwyg, which will also catch the drop event, when the panel is not disabled
+        // this is because of underlying activated wysiwyg, which will also catch the drop event, when the panel
+        // is not disabled
         this.getObject().edit.disableFieldMasks();
     },
 

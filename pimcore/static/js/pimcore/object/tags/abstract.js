@@ -65,7 +65,8 @@ pimcore.object.tags.abstract = Class.create({
 
         }.bind(this, field.key);
 
-        return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer, editor:this.getGridColumnEditor(field)};
+        return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+                                                            editor:this.getGridColumnEditor(field)};
     },
 
     getGridColumnFilter:function (field) {
@@ -77,7 +78,8 @@ pimcore.object.tags.abstract = Class.create({
             return this.component.getEl()
         }
 
-        throw "the component `" + this.getName() + "´ doesn't implement the method getEl() and is not standard-compliant!";
+        throw "the component `" + this.getName()
+                                        + "´ doesn't implement the method getEl() and is not standard-compliant!";
     },
 
     unmarkInherited:function () {
@@ -173,7 +175,8 @@ pimcore.object.tags.abstract = Class.create({
             return this.component.rendered;
         }
 
-        throw "it seems that the field -" + this.getName() + "- does not implement the isRendered() method and doesn't contain this.component";
+        throw "it seems that the field -" + this.getName()
+                                + "- does not implement the isRendered() method and doesn't contain this.component";
     },
 
     isDirty:function () {

@@ -40,7 +40,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 return bounds;
-            }
+            };
         }
 
 
@@ -83,7 +83,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
 
         this.component.on("afterrender", function () {
             this.updatePreviewImage();
-        }.bind(this))
+        }.bind(this));
     
         return this.component; 
     },
@@ -284,7 +284,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
             }
             
             this.geocoder = new google.maps.Geocoder();
-        }.bind(this))
+        }.bind(this));
 
         this.searchWindow.on("beforeclose", function () {
             delete this.polygon;

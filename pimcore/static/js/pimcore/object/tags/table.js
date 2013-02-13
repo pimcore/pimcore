@@ -57,26 +57,27 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                renderer: function (key, value, metaData, record) {
+                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                                metaData.css += " grid_value_inherited";
+                            }
 
 
-            if (value && value.length > 0) {
-                var table = '<table cellpadding="2" cellspacing="0" border="1">';
-                for (var i = 0; i < value.length; i++) {
-                    table += '<tr>';
-                    for (var c = 0; c < value[i].length; c++) {
-                        table += '<td>' + value[i][c] + '</td>';
-                    }
-                    table += '</tr>';
-                }
-                table += '</table>';
-                return table;
-            }
-            return "";
-        }.bind(this, field.key)};
+                            if (value && value.length > 0) {
+                                var table = '<table cellpadding="2" cellspacing="0" border="1">';
+                                for (var i = 0; i < value.length; i++) {
+                                    table += '<tr>';
+                                    for (var c = 0; c < value[i].length; c++) {
+                                        table += '<td>' + value[i][c] + '</td>';
+                                    }
+                                    table += '</tr>';
+                                }
+                                table += '</table>';
+                                return table;
+                            }
+                            return "";
+                        }.bind(this, field.key)};
     },
 
     getLayoutEdit: function () {
@@ -253,7 +254,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         for (var i = 0; i < data.items.length; i++) {
             tmData = [];
 
-            keys = Object.keys(data.items[i].data);
+            var keys = Object.keys(data.items[i].data);
             for (var u = 0; u < keys.length; u++) {
                 tmData.push(data.items[i].data[keys[u]]);
             }

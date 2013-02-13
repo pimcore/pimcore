@@ -64,41 +64,42 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, field, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
-            var rows = Object.keys(value);
-            if (rows && rows.length > 0) {
-                var table = '<table cellpadding="2" cellspacing="0" border="1">';
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            renderer: function (key, field, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
+                        var rows = Object.keys(value);
+                        if (rows && rows.length > 0) {
+                            var table = '<table cellpadding="2" cellspacing="0" border="1">';
 
-                var row = value[rows[0]];
-                var cols = Object.keys(row);
-                //column headlines
-                table += '<tr>';
-                table += '<td></td>';
-                for (var c = 0; c < cols.length; c++) {
-                    table += '<td>' + ts(field.layout.cols[c].label) + '</td>';
-                }
-                table += '</tr>';
+                            var row = value[rows[0]];
+                            var cols = Object.keys(row);
+                            //column headlines
+                            table += '<tr>';
+                            table += '<td></td>';
+                            for (var c = 0; c < cols.length; c++) {
+                                table += '<td>' + ts(field.layout.cols[c].label) + '</td>';
+                            }
+                            table += '</tr>';
 
-                //row values
-                for (var i = 0; i < rows.length; i++) {
-                    var row = value[rows[i]];
-                    var cols = Object.keys(row);
+                            //row values
+                            for (var i = 0; i < rows.length; i++) {
+                                var row = value[rows[i]];
+                                var cols = Object.keys(row);
 
-                    table += '<tr>';
-                    table += '<td>' + ts(field.layout.rows[i].label) + '</td>';
-                    for (var c = 0; c < cols.length; c++) {
-                        table += '<td>' + row[cols[c]] + '</td>';
-                    }
-                    table += '</tr>';
-                }
-                table += '</table>';
-                return table;
-            }
-            return "";
-        }.bind(this, field.key, field)};
+                                table += '<tr>';
+                                table += '<td>' + ts(field.layout.rows[i].label) + '</td>';
+                                for (var c = 0; c < cols.length; c++) {
+                                    table += '<td>' + row[cols[c]] + '</td>';
+                                }
+                                table += '</tr>';
+                            }
+                            table += '</table>';
+                            return table;
+                        }
+                        return "";
+                    }.bind(this, field.key, field)};
     },
 
     getLayoutEdit: function () {
@@ -109,7 +110,8 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         }
 
         var columns = [
-            {header: this.fieldConfig.labelFirstCell, width: this.fieldConfig.labelWidth, sortable: false, dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
+            {header: this.fieldConfig.labelFirstCell, width: this.fieldConfig.labelWidth, sortable: false,
+                                dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
                     metaData.css = 'x-grid3-hd-row';
                     return ts(value);
                }
@@ -132,7 +134,8 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                 editor = new Ext.form.Checkbox();
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     metaData.css += ' x-grid3-check-col-td';
-                    return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+                    return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>',
+                                                                                    value ? '-on' : '');
                 };
                 listeners = {
                     "mousedown": function (col, grid, rowIndex, event) {
@@ -203,15 +206,17 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
         var cls = 'object_field';
 
         var columns = [
-            {header: "", width: 80, sortable: false, dataIndex: '__row_label', editor: null, renderer: function(value, metaData) {
-                    metaData.css = 'x-grid3-hd-row';
-                    return ts(value);
-               }
+            {header: "", width: 80, sortable: false, dataIndex: '__row_label', editor: null,
+                renderer: function(value, metaData) {
+                                metaData.css = 'x-grid3-hd-row';
+                                return ts(value);
+                           }
             }
         ];
 
         for(var i = 0; i < this.fieldConfig.cols.length; i++) {
-            columns.push({header: ts(this.fieldConfig.cols[i].label), width: 120, sortable: false, dataIndex: this.fieldConfig.cols[i].key, editor: null});
+            columns.push({header: ts(this.fieldConfig.cols[i].label), width: 120, sortable: false,
+                                                dataIndex: this.fieldConfig.cols[i].key, editor: null});
         }
 
         this.component = new Ext.grid.EditorGridPanel({
@@ -264,7 +269,8 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
 
         this.store.each(function(record) {
             for(var j = 0; j < this.fieldConfig.cols.length; j++) {
-                if(record.data[this.fieldConfig.cols[j].key] != null && record.data[this.fieldConfig.cols[j].key] != "") {
+                if(record.data[this.fieldConfig.cols[j].key] != null
+                                                        && record.data[this.fieldConfig.cols[j].key] != "") {
                     empty = false;
                 }
             }
