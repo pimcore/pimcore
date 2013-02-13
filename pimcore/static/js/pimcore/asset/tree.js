@@ -783,7 +783,7 @@ pimcore.asset.tree = Class.create({
         }
         
         // timeout because there is no afterrender function
-        window.setTimeout(this.addHtml5DragListener.bind(this, node),2000)
+        window.setTimeout(this.addHtml5DragListener.bind(this, node),2000);
     },
 
     addHtml5DragListener: function (node) {

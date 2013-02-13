@@ -148,7 +148,11 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                                             el.setValue(data.node.attributes.path);
 
                                             var date = new Date();
-                                            Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id).update('<img align="center" src="/admin/asset/get-video-thumbnail/id/' + this.id  + '/width/265/aspectratio/true/image/' + data.node.attributes.id  + '/setimage/true/?_dc=' + date.getTime() + '" />');
+                                            Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id)
+                                                .update('<img align="center" src="/admin/asset/get-video-thumbnail/id/'
+                                                                + this.id  + '/width/265/aspectratio/true/image/'
+                                                                + data.node.attributes.id  + '/setimage/true/?_dc='
+                                                                + date.getTime() + '" />');
 
                                             return true;
                                         }
