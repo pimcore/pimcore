@@ -216,6 +216,8 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                         } else if(record.get("data") == systemValues[name]) {
                             unchanged=true;
                         }
+                    } else if (systemValues[name]) {
+                        addProperty = true;
                     }
                 } else {
                     addProperty = true;
