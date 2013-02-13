@@ -502,7 +502,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         }
 
         if ($this->_oldPath) {
-            rename(PIMCORE_ASSET_DIRECTORY . $this->_oldPath, $this->getFileSystemPath());
+            @rename(PIMCORE_ASSET_DIRECTORY . $this->_oldPath, $this->getFileSystemPath());
         }
 
         if ($this->getType() != "folder") {
