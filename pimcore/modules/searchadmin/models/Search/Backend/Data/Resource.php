@@ -66,9 +66,9 @@ class Search_Backend_Data_Resource extends Pimcore_Model_Resource_Abstract {
             );
 
             try {
-                $this->db->update("search_backend_data", $data, "id='" . $data["id"] . "' AND maintype ='" . $data["maintype"] . "'");
-            } catch (Exception $e) {
                 $this->db->insert("search_backend_data", $data);
+            } catch (Exception $e) {
+                $this->db->update("search_backend_data", $data, "id='" . $data["id"] . "' AND maintype ='" . $data["maintype"] . "'");
             }
         } catch (Exception $e) {
             Logger::error($e);
