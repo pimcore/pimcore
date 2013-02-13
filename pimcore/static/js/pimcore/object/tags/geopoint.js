@@ -24,23 +24,26 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                renderer: function (key, value, metaData, record) {
+                    if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                        metaData.css += " grid_value_inherited";
+                    }
 
-            if (value) {
-                if (value.latitude && value.longitude) {
+                    if (value) {
+                        if (value.latitude && value.longitude) {
 
-                    var width = 140;
-                    var mapZoom = 10;
+                            var width = 140;
+                            var mapZoom = 10;
 
-                    var mapUrl = "https://maps.google.com/staticmap?center=" + value.latitude + "," + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers=" + value.latitude + "," + value.longitude + ",red&sensor=false";
+                            var mapUrl = "https://maps.google.com/staticmap?center=" + value.latitude + ","
+                                    + value.longitude + "&zoom=" + mapZoom + "&size=" + width + "x80&markers="
+                                    + value.latitude + "," + value.longitude + ",red&sensor=false";
 
-                    return '<img src="' + mapUrl + '" />';
-                }
-            }
-        }.bind(this, field.key)};
+                            return '<img src="' + mapUrl + '" />';
+                        }
+                    }
+                }.bind(this, field.key)};
     },
 
     getLayoutEdit: function () {
@@ -78,7 +81,9 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
             height: 370,
             width: 490,
             cls: "object_field",
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"><img align="center" width="300" height="300" src="' + this.getMapUrl(this.data.latitude, this.data.longitude) + '" /></div>',
+            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
+                  + '<img align="center" width="300" height="300" src="'
+                  + this.getMapUrl(this.data.latitude, this.data.longitude) + '" /></div>',
             bbar: [t("latitude"), this.latitude, "-", t("longitude"), this.longitude, "-", " ", "-", {
                 xtype: "button",
                 text: t("open_search_editor"),
@@ -113,7 +118,8 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
             window.setTimeout(this.updatePreviewImage.bind(this), 1000);
         }
 
-        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="' + width + '" height="300" src="' + this.getMapUrl(data.latitude, data.longitude, width) + '" />';
+        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="'
+                    + width + '" height="300" src="' + this.getMapUrl(data.latitude, data.longitude, width) + '" />';
     },
 
     getMapUrl: function (latitude, longitude, width) {
@@ -131,7 +137,9 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
             width = 300;
         }
 
-        var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitudeMap + "," + longitudeMap + "&zoom=" + mapZoom + "&size=" + width + "x300&markers=color:red|" + latitudeMap + "," + longitudeMap + "&sensor=false";
+        var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitudeMap + ","
+                            + longitudeMap + "&zoom=" + mapZoom + "&size=" + width + "x300&markers=color:red|"
+                            + latitudeMap + "," + longitudeMap + "&sensor=false";
         return mapUrl;
     },
 
@@ -266,7 +274,8 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
     isInvalidMandatory: function () {
 
-        // no render check is necessary because the input compontent returns the right values even if it is not rendered
+        // no render check is necessary because the input compontent returns the right values even if it is not
+        // rendered
         var value = this.getValue();
         if (value.longitude && value.latitude) {
             return false;
