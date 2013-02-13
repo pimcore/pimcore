@@ -12,6 +12,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+/*global google */
 pimcore.registerNS("pimcore.object.tags.geopolygon");
 pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
 
@@ -46,9 +47,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            return t("not_supported");
-        }.bind(this, field.key)};
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            renderer: function (key, value, metaData, record) {
+                return t("not_supported");
+            }.bind(this, field.key)};
     },
 
     getLayoutEdit: function () {
@@ -60,7 +62,8 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
             height: 370,
             width: 490,
             cls: "object_field",
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"><img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
+            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
+                            + '<img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
             bbar: [{
                 xtype: "button",
                 text: t("empty"),
@@ -104,7 +107,8 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
             window.setTimeout(this.updatePreviewImage.bind(this), 1000);
         }
         
-        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="' + width + '" height="300" src="' + this.getMapUrl(width) + '" />';
+        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="'
+                                            + width + '" height="300" src="' + this.getMapUrl(width) + '" />';
     },
 
     getMapUrl: function (width) {
@@ -150,10 +154,13 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 mapZoom = Math.min(Math.floor(xZoom), Math.floor(yZoom));
                 
                 var path = "color:0xff0000ff|weight:2|" + pointConfig.join("|");
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.lat() + "," + center.lng() + "&zoom=" + mapZoom + "&size=" + px + "x" + py + "&path=" + path + "&sensor=false";
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.lat() + ","
+                                + center.lng() + "&zoom=" + mapZoom + "&size=" + px + "x" + py
+                                + "&path=" + path + "&sensor=false";
             }
             else {
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size=" + px + "x" + py + "&sensor=false";
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size="
+                                + px + "x" + py + "&sensor=false";
             }
         }
         catch (e) {

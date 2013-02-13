@@ -12,6 +12,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+/*global google */
 pimcore.registerNS("pimcore.object.tags.geopoint");
 pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
@@ -94,7 +95,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
 
         this.component.on("afterrender", function () {
             this.updatePreviewImage();
-        }.bind(this))
+        }.bind(this));
 
         return this.component;
     },

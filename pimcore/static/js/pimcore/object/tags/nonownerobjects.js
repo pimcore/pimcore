@@ -32,15 +32,16 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                         lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
                         lockDetails += "<br /><br />" + t("element_implicit_edit_question");
 
-                        Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails, function (lock, buttonValue) {
-                            if (buttonValue == "yes") {
-                                this.getStore().removeAt(index);
-                                if (item != null) {
-                                    item.parentMenu.destroy();
-                                }
+                        Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails,
+                                function (lock, buttonValue) {
+                                    if (buttonValue == "yes") {
+                                        this.getStore().removeAt(index);
+                                        if (item != null) {
+                                            item.parentMenu.destroy();
+                                        }
 
-                            }
-                        }.bind(this, arguments));
+                                    }
+                                }.bind(this, arguments));
 
                     } else {
                         Ext.Ajax.request({
@@ -59,12 +60,13 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
             var lockDetails = "<br /><br />" + t("element_implicit_edit_question");
 
-            Ext.MessageBox.confirm(t("element_is_open"), t("element_open_message") + lockDetails, function (lock, buttonValue) {
-                if (buttonValue == "yes") {
-                    this.getStore().removeAt(index);
-                    item.parentMenu.destroy();
-                }
-            }.bind(this, arguments));
+            Ext.MessageBox.confirm(t("element_is_open"), t("element_open_message") + lockDetails,
+                    function (lock, buttonValue) {
+                        if (buttonValue == "yes") {
+                            this.getStore().removeAt(index);
+                            item.parentMenu.destroy();
+                        }
+                    }.bind(this, arguments));
         }
 
     },
@@ -161,7 +163,9 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
             bbar: {
                 items: [{
                     xtype: "tbtext",
-                    text: ' <span class="warning">' + t('nonownerobject_warning') + " | " + t('owner_class') + ':<b>' + ts(className) + "</b> " + t('owner_field') + ': <b>' + ts(this.fieldConfig.ownerFieldName) + '</b></span>'
+                    text: ' <span class="warning">' + t('nonownerobject_warning') + " | " + t('owner_class')
+                                    + ':<b>' + ts(className) + "</b> " + t('owner_field') + ': <b>'
+                                    + ts(this.fieldConfig.ownerFieldName) + '</b></span>'
                 }],
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"
@@ -207,8 +211,12 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                         if (!this.objectAlreadyExists(initData.id) && initData.id != this.object.id) {
                             this.addObject(initData);
                             return true;
-                        } else return false;
-                    } else return false;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
                 }.bind(this)
             });
         }.bind(this));
@@ -284,15 +292,16 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                         lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
                         lockDetails += "<br /><br />" + t("element_implicit_edit_question");
 
-                        Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails, function (lock, buttonValue) {
-                            if (buttonValue == "yes") {
-                                this.store.add(new this.store.recordType({
-                                    id: item.id,
-                                    path: item.fullpath,
-                                    type: item.classname
-                                }, this.store.getCount() + 1));
-                            }
-                        }.bind(this, arguments));
+                        Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails,
+                                function (lock, buttonValue) {
+                                    if (buttonValue == "yes") {
+                                        this.store.add(new this.store.recordType({
+                                            id: item.id,
+                                            path: item.fullpath,
+                                            type: item.classname
+                                        }, this.store.getCount() + 1));
+                                    }
+                                }.bind(this, arguments));
 
                     } else {
                         Ext.Ajax.request({
@@ -312,16 +321,17 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
             var lockDetails = "<br /><br />" + t("element_implicit_edit_question");
 
-            Ext.MessageBox.confirm(t("element_is_open"), t("element_open_message") + lockDetails, function (item, buttonValue) {
-                if (buttonValue == "yes") {
-                    this.store.add(new this.store.recordType({
-                        id: item.id,
-                        path: item.fullpath,
-                        type: item.classname
-                    }, this.store.getCount() + 1));
+            Ext.MessageBox.confirm(t("element_is_open"), t("element_open_message") + lockDetails,
+                    function (item, buttonValue) {
+                        if (buttonValue == "yes") {
+                            this.store.add(new this.store.recordType({
+                                id: item.id,
+                                path: item.fullpath,
+                                type: item.classname
+                            }, this.store.getCount() + 1));
 
-                }
-            }.bind(this, item));
+                        }
+                    }.bind(this, item));
         }
     },
 

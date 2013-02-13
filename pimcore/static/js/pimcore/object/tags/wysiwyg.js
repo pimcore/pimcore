@@ -261,7 +261,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                 textIsSelected = true;
             }
         }
-        catch (e) {
+        catch (e2) {
         }
 
 
@@ -286,7 +286,9 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                 uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
 
                 if(typeof data.node.attributes.imageWidth != "undefined") {
-                    if(data.node.attributes.imageWidth < defaultWidth && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text), browserPossibleExtensions)) {
+                    if(data.node.attributes.imageWidth < defaultWidth
+                                && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text),
+                                                                        browserPossibleExtensions)) {
                         uri = data.node.attributes.path;
                         additionalAttributes += ' pimcore_disable_thumbnail="true"';
                     }
@@ -296,17 +298,20 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
 
-                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
+                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id
+                                + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
                 return true;
             }
             else {
-                this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
+                this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="'
+                                + id + '">' + wrappedText + '</a>');
                 return true;
             }
         }
 
         if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
-            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="' + id + '">' + wrappedText + '</a>');
+            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
+                                + id + '">' + wrappedText + '</a>');
             return true;
         }
 

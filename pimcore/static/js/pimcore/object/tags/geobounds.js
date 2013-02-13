@@ -72,7 +72,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
 
         this.component.on("afterrender", function () {
             this.updatePreviewImage();
-        }.bind(this))
+        }.bind(this));
 
 
 
