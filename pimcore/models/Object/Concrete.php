@@ -615,20 +615,26 @@ class Object_Concrete extends Object_Abstract {
 
             list($value, $limit, $offset) = $arguments;
 
+            $defaultCondition = $propertyName . " = '" . $value . "' ";
             $listConfig = array(
-                "condition" => $propertyName . " = '" . $value . "'"
+                "condition" => $defaultCondition
             );
 
-            if($limit) {
-                $listConfig["limit"] = $limit;
-            }
-            if($offset) {
-                $listConfig["offset"] = $offset;
+            if(!is_array($arguments[1])){
+                if($limit) {
+                    $listConfig["limit"] = $limit;
+                }
+                if($offset) {
+                    $listConfig["offset"] = $offset;
+                }
+            }else{
+                $listConfig = array_merge($listConfig,$arguments[1]);
+                $listConfig['condition'] = $defaultCondition . $arguments[1]['condition'];
             }
 
             $list = static::getList($listConfig);
 
-            if($limit == 1) {
+            if($listConfig['limit'] == 1) {
                 $elements = $list->getObjects();
                 return $elements[0];
             }
