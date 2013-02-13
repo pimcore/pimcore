@@ -382,10 +382,11 @@ pimcore.document.pages.preview = Class.create({
                     editor.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">' + t("please_wait") + "...</strong>");
                     editor.editorElement = element;
 
-                    // check for prev. activated element in positioning module, otherwise the listeners cannot be removed
+                    // check for prev. activated element in positioning module, otherwise the listeners cannot be
+                    // removed
                     if(iscopeTmp["positioningActiveElement"]) {
                         try {
-                            var oldEl = iscopeTmp["positioningActiveElement"]
+                            var oldEl = iscopeTmp["positioningActiveElement"];
                             oldEl.setStyle("cursor", "auto");
                             oldEl.dom.removeEventListener("mousedown", iscopeTmp.positioningStart, false);
                             editor.getIframeBody().dom.removeEventListener("mousemove", iscopeTmp.positioningMove,
@@ -394,8 +395,8 @@ pimcore.document.pages.preview = Class.create({
                                                                                                             false);
                             editor.getIframeBody().dom.removeEventListener("mouseleave", iscopeTmp.positioningStop,
                                                                                                             false);
-                        } catch (e) {
-                            console.log(e);
+                        } catch (e2) {
+                            console.log(e2);
                         }
                     }
 
@@ -444,9 +445,10 @@ pimcore.document.pages.preview = Class.create({
                                     names.unshift('#' + selElement.id);
                                     break;
                                 } else {
-                                    if (selElement == selElement.ownerDocument.documentElement) names.unshift(selElement.tagName);
-                                    else {
-                                        for (var c = 1, e = selElement; e.previousElementSibling; e = e.previousElementSibling, c++);
+                                    if (selElement == selElement.ownerDocument.documentElement) {
+                                        names.unshift(selElement.tagName);
+                                    } else {
+                                        for (var c = 1, e = selElement; e.previousElementSibling;e = e.previousElementSibling, c++);
                                         names.unshift(selElement.tagName + ":nth-child(" + c + ")");
                                     }
                                     selElement = selElement.parentNode;
@@ -629,7 +631,8 @@ pimcore.document.pages.preview = Class.create({
 
                                         editor.writeCss();
 
-                                        // remove styling attributes from element (otherwise style via styles textarea isn't possible)
+                                        // remove styling attributes from element (otherwise style via styles textarea
+                                        // isn't possible)
                                         styleClearTimeout = window.setTimeout(function () {
                                             var style = el.getAttribute("style");
                                             style = style.replace(/top[^;]+;/, "");

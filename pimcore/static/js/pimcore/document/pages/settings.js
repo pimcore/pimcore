@@ -390,7 +390,8 @@ pimcore.document.pages.settings = Class.create({
                                     "focus": function (el) {
                                         el.getStore().reload({
                                             params: {
-                                                controllerName: Ext.getCmp("pimcore_document_settings_controller_" + this.page.id).getValue()
+                                                controllerName: Ext.getCmp("pimcore_document_settings_controller_"
+                                                                                    + this.page.id).getValue()
                                             }
                                         });
                                     }.bind(this)
@@ -497,33 +498,14 @@ pimcore.document.pages.settings = Class.create({
                                     iconCls:"pimcore_icon_apply",
                                     autoWidth:true,
                                     handler:function () {
-                                        Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
-                                            if (buttonValue == "yes") {
-                                                Ext.Ajax.request({
-                                                    url:"/admin/page/change-master-document/id/" + this.page.id,
-                                                    params:{
-                                                        contentMasterDocumentPath:Ext.getCmp("contentMasterDocumentPath_" + this.page.id).getValue()
-                                                    },
-                                                    success:function () {
-                                                        this.page.reload();
-                                                    }.bind(this)
-                                                });
-                                            }
-                                        }.bind(this));
-                                    }.bind(this)
-                                },
-                                    {
-                                        text:t("delete_master_document"),
-                                        iconCls:"pimcore_icon_delete",
-                                        autoWidth:true,
-                                        handler:function () {
-                                            Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"), function (buttonValue) {
+                                        Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
+                                            function (buttonValue) {
                                                 if (buttonValue == "yes") {
-                                                    Ext.getCmp("contentMasterDocumentPath_" + this.page.id).setValue("");
                                                     Ext.Ajax.request({
                                                         url:"/admin/page/change-master-document/id/" + this.page.id,
                                                         params:{
-                                                            contentMasterDocumentPath:""
+                                                            contentMasterDocumentPath:Ext.getCmp(
+                                                                "contentMasterDocumentPath_" + this.page.id).getValue()
                                                         },
                                                         success:function () {
                                                             this.page.reload();
@@ -531,6 +513,28 @@ pimcore.document.pages.settings = Class.create({
                                                     });
                                                 }
                                             }.bind(this));
+                                    }.bind(this)
+                                },
+                                    {
+                                        text:t("delete_master_document"),
+                                        iconCls:"pimcore_icon_delete",
+                                        autoWidth:true,
+                                        handler:function () {
+                                            Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
+                                                function (buttonValue) {
+                                                    if (buttonValue == "yes") {
+                                                        Ext.getCmp("contentMasterDocumentPath_" + this.page.id).setValue("");
+                                                        Ext.Ajax.request({
+                                                            url:"/admin/page/change-master-document/id/" + this.page.id,
+                                                            params:{
+                                                                contentMasterDocumentPath:""
+                                                            },
+                                                            success:function () {
+                                                                this.page.reload();
+                                                            }.bind(this)
+                                                        });
+                                                    }
+                                                }.bind(this));
                                         }.bind(this)
                                     }]
                             }
