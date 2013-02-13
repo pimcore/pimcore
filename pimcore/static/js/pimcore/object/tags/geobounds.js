@@ -11,7 +11,7 @@
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-
+/*global google */
 pimcore.registerNS("pimcore.object.tags.geobounds");
 pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
 
@@ -26,9 +26,10 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            return t("not_supported");
-        }.bind(this, field.key)};
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                    renderer: function (key, value, metaData, record) {
+                        return t("not_supported");
+                    }.bind(this, field.key)};
     },
 
     getLayoutEdit: function () {
@@ -49,7 +50,9 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
             height: 370,
             width: 490,
             cls: "object_field",
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"><img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
+            html: '<div id="google_maps_container_' + this.mapImageID
+                    + '" align="center"><img align="center" width="300" height="300" src="' + this.getMapUrl()
+                    + '" /></div>',
             bbar: [{
                 xtype: "button",
                 text: t("empty"),
@@ -95,7 +98,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
             window.setTimeout(this.updatePreviewImage.bind(this), 1000);
         }
         
-        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="' + width + '" height="300" src="' + this.getMapUrl(width) + '" />';
+        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="'
+                                        + width + '" height="300" src="' + this.getMapUrl(width) + '" />';
     },
 
     getMapUrl: function (width) {
@@ -120,14 +124,22 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
                 // calculate zoom level without using the gmap2-object       
                 var s = 1.35; 
                 var xZoom = -(Math.log((this.data.ne.lng() - this.data.sw.lng())/(px*s))/Math.log(2));
-                var yZoom = -(Math.log(((this.data.ne.lat() - this.data.sw.lat())*Math.sec( center.y*Math.PI/180))/(py*s))/Math.log(2));
+                var yZoom = -(Math.log(((this.data.ne.lat()
+                                    - this.data.sw.lat())*Math.sec( center.y*Math.PI/180))/(py*s))/Math.log(2));
                 mapZoom = Math.min(Math.floor(xZoom), Math.floor(yZoom));
                 
-                var path = "color:0xff0000ff|weight:2|" + this.data.ne.lat() + "," + this.data.ne.lng() + "|" + this.data.sw.lat() + "," + this.data.ne.lng() + "|" + this.data.sw.lat() + "," + this.data.sw.lng() + "|" + this.data.ne.lat() + "," + this.data.sw.lng() + "|" + this.data.ne.lat() + "," + this.data.ne.lng();
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.y + "," + center.x + "&zoom=" + mapZoom + "&size=" + px + "x" + py + "&path=" + path + "&sensor=false";
+                var path = "color:0xff0000ff|weight:2|" + this.data.ne.lat() + "," + this.data.ne.lng()
+                                        + "|" + this.data.sw.lat() + "," + this.data.ne.lng() + "|"
+                                        + this.data.sw.lat() + "," + this.data.sw.lng() + "|" + this.data.ne.lat()
+                                        + "," + this.data.sw.lng() + "|" + this.data.ne.lat() + ","
+                                        + this.data.ne.lng();
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.y + ","
+                                        + center.x + "&zoom=" + mapZoom + "&size=" + px + "x" + py
+                                        + "&path=" + path + "&sensor=false";
             }
             else {
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size=" + px + "x" + py + "&sensor=false";
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size=" + px + "x" + py
+                                        + "&sensor=false";
             }
         }
         catch (e) {
@@ -175,8 +187,10 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
                 icon: "/pimcore/static/img/icon/tick.png",
                 handler: function () {
                     
-                    this.data.ne = new google.maps.LatLng(this.NWmarker.getPosition().lat(),this.SEmarker.getPosition().lng());
-                    this.data.sw = new google.maps.LatLng(this.SEmarker.getPosition().lat(),this.NWmarker.getPosition().lng());
+                    this.data.ne = new google.maps.LatLng(this.NWmarker.getPosition().lat(),
+                                                                            this.SEmarker.getPosition().lng());
+                    this.data.sw = new google.maps.LatLng(this.SEmarker.getPosition().lat(),
+                                                                            this.NWmarker.getPosition().lng());
                     this.dirty = true;
                     
                     this.updatePreviewImage();
@@ -217,7 +231,7 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
             
             google.maps.event.addListener(this.gmap,"click",this.createOnClickMarker.bind(this));
 
-        }.bind(this))
+        }.bind(this));
 
         this.searchWindow.on("beforeclose", function () {
             delete this.gmap;
@@ -283,18 +297,22 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
     observePosition: function (positionType) {
         if(positionType == "nw") {
             if(this.NWmarker.getPosition().lng() >= this.SEmarker.getPosition().lng()) {
-                this.NWmarker.setPosition(new google.maps.LatLng(this.NWmarker.getPosition().lat(),this.SEmarker.getPosition().lng()));
+                this.NWmarker.setPosition(new google.maps.LatLng(this.NWmarker.getPosition().lat(),
+                                                                    this.SEmarker.getPosition().lng()));
             }
             if(this.NWmarker.getPosition().lat() <= this.SEmarker.getPosition().lat()) {
-                this.NWmarker.setPosition(new google.maps.LatLng(this.SEmarker.getPosition().lat(),this.NWmarker.getPosition().lng()));
+                this.NWmarker.setPosition(new google.maps.LatLng(this.SEmarker.getPosition().lat(),
+                                                                    this.NWmarker.getPosition().lng()));
             }
         }
         else {
             if(this.SEmarker.getPosition().lng() <= this.NWmarker.getPosition().lng()) {
-                this.SEmarker.setPosition(new google.maps.LatLng(this.SEmarker.getPosition().lat(),this.NWmarker.getPosition().lng()));
+                this.SEmarker.setPosition(new google.maps.LatLng(this.SEmarker.getPosition().lat(),
+                                                                    this.NWmarker.getPosition().lng()));
             }
             if(this.SEmarker.getPosition().y >= this.NWmarker.getPosition().y) {
-                this.SEmarker.setPosition(new google.maps.LatLng(this.NWmarker.getPosition().lat(),this.SEmarker.getPosition().lng()));
+                this.SEmarker.setPosition(new google.maps.LatLng(this.NWmarker.getPosition().lat(),
+                                                                    this.SEmarker.getPosition().lng()));
             }
         }
         
@@ -307,7 +325,8 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.abstract, {
             this.polygon.setMap(null);
         }
 
-        if( typeof this.NWmarker != "undefined" && this.NWmarker != null && typeof this.SEmarker != "undefined" && this.SEmarker != null ) {
+        if( typeof this.NWmarker != "undefined" && this.NWmarker != null && typeof this.SEmarker != "undefined"
+                                                                                && this.SEmarker != null ) {
             this.polygon = new google.maps.Polygon({
                 paths: this.getRectanglePoints(this.NWmarker.getPosition(),this.SEmarker.getPosition()),
                 strokeColor: "#f33f00",

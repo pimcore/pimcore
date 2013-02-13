@@ -34,16 +34,17 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            return t("not_supported");
-        }.bind(this, field.key)};
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                renderer: function (key, value, metaData, record) {
+                    return t("not_supported");
+                }.bind(this, field.key)};
     },
 
     loadFieldDefinitions: function () {
 
         var allowedTypes = this.fieldConfig.allowedTypes;
         if(!allowedTypes) {
-            allowedTypes = []
+            allowedTypes = [];
         }
 
         this.fieldstore = new Ext.data.JsonStore({
@@ -455,7 +456,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 for (var u=0; u<element.fields.length; u++) {
                     if(element.fields[u].isMandatory()) {
                         if(element.fields[u].isInvalidMandatory()) {
-                            invalidMandatoryFields.push(element.fields[u].getTitle() + " (" + element.fields[u].getName() + ")");
+                            invalidMandatoryFields.push(element.fields[u].getTitle() + " ("
+                                                                    + element.fields[u].getName() + ")");
                             isInvalid = true;
                         }
                     }
