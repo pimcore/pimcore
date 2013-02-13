@@ -80,7 +80,8 @@ pimcore.asset.versions = Class.create({
                 title: t("preview"),
                 region: "center",
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
-                html: '<iframe src="about:blank" frameborder="0" id="asset_version_iframe_' + this.asset.id + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" id="asset_version_iframe_'
+                                                                    + this.asset.id + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
