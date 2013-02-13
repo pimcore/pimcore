@@ -188,7 +188,10 @@ class Pimcore_Tool_RestClient {
 
        $response = $this->doRequest(self::$baseUrl .  "object-list/?apikey=" . $this->apikey . $params, "GET");
 
-        $result = array();
+       if (!$response) {
+            throw new Exception("response is empty");
+       }
+       $result = array();
         foreach ($response as $item) {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Object_List_Item", $item);
             if (!$decode) {
@@ -217,6 +220,10 @@ class Pimcore_Tool_RestClient {
 
         $response = $this->doRequest(self::$baseUrl .  "asset-list/?apikey=" . $this->apikey . $params, "GET");
 
+        if (!$response) {
+            throw new Exception("response is empty");
+        }
+
         $result = array();
         foreach ($response as $item) {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Asset_List_Item", $item);
@@ -238,6 +245,10 @@ class Pimcore_Tool_RestClient {
         $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy);
 
         $response = $this->doRequest(self::$baseUrl .  "document-list/?apikey=" . $this->apikey . $params, "GET");
+
+        if (!$response) {
+            throw new Exception("response is empty");
+        }
 
         $result = array();
         foreach ($response as $item) {
