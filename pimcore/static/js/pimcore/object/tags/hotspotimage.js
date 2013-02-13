@@ -41,15 +41,17 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     getGridColumnConfig: function(field) {
 
-        return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
+        return {header: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+                    renderer: function (key, value, metaData, record) {
+                        if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                            metaData.css += " grid_value_inherited";
+                        }
 
-            if (value && value.id) {
-                return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id + '/width/88/height/88/frame/true" />';
-            }
-        }.bind(this, field.key)};
+                        if (value && value.id) {
+                            return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id
+                                                                                + '/width/88/height/88/frame/true" />';
+                        }
+                    }.bind(this, field.key)};
     },
 
     getLayoutEdit: function () {
@@ -148,10 +150,13 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     updateImage: function (initialLoad) {
-        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20) + "/height/" + (this.fieldConfig.height - 40) + "/aspectratio/true";
+        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + (this.fieldConfig.width - 20)
+                                        + "/height/" + (this.fieldConfig.height - 40) + "/aspectratio/true";
         var name = this.getName();
         this.panel.getEl().update(
-            '<img id="' + name + this.uniqeFieldId + '_selectorImage" style="margin: ' + this.marginTop + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="' + path + '" />',
+            '<img id="' + name + this.uniqeFieldId + '_selectorImage" style="margin: ' + this.marginTop
+                               + 'px 0;margin-left:' + this.marginLeft + 'px" class="pimcore_droptarget_image" src="'
+                               + path + '" />',
             false,
             this.loadHotspots.bind(this, initialLoad)
         );
@@ -177,7 +182,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     addSelector: function() {
         if(this.data) {
-            Ext.MessageBox.prompt(t('hotspotimage_add_selector'), t('hotspotimage_enter_name_of_new_hotspot'), this.completeAddSelector.bind(this), null, null, "");
+            Ext.MessageBox.prompt(t('hotspotimage_add_selector'), t('hotspotimage_enter_name_of_new_hotspot'),
+                                                this.completeAddSelector.bind(this), null, null, "");
         } else {
             Ext.MessageBox.alert(t("hotspotimage_no_image"));
         }
@@ -247,7 +253,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             this.handleSelectorChanged(number);
         }.bind(this, number));
 
-        Ext.get('selector' + number + this.uniqeFieldId).on("contextmenu", this.onSelectorContextMenu.bind(this, number));
+        Ext.get('selector' + number + this.uniqeFieldId).on("contextmenu",
+                                                            this.onSelectorContextMenu.bind(this, number));
 
         this.updateSelectorBody(number);
     },

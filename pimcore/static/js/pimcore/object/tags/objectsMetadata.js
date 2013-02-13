@@ -78,13 +78,14 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         columns.push({header: 'ID', dataIndex: 'id', width: 50});
 
         for(var i = 0; i < visibleFields.length; i++) {
-            columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null, renderer: renderer});
+            columns.push({header: ts(visibleFields[i]), dataIndex: visibleFields[i], width: 100, editor: null,
+                                                                    renderer: renderer});
         }
 
         for(var i = 0; i < this.fieldConfig.columns.length; i++) {
             var width = 100;
             if(this.fieldConfig.columns[i].width) {
-                width = this.fieldConfig.columns[i].width
+                width = this.fieldConfig.columns[i].width;
             }
 
             var editor = null;
@@ -140,7 +141,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     if(!value || value == "0") {
                         value = false;
                     }
-                    return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+                    return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>',
+                                                                                        value ? '-on' : '');
                 };
 
             }

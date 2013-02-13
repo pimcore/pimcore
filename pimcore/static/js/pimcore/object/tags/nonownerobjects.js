@@ -251,9 +251,9 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
         if (this.fieldConfig.ownerClassName == name) {
             return true;
-        } else return false;
-
-
+        } else {
+            return false;
+        }
     },
 
     openSearchEditor: function () {

@@ -24,15 +24,16 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                renderer: function (key, value, metaData, record) {
+                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                                metaData.css += " grid_value_inherited";
+                            }
 
-            if (value && value.length > 0) {
-                return value.join(",");
-            }
-        }.bind(this, field.key)};
+                            if (value && value.length > 0) {
+                                return value.join(",");
+                            }
+                        }.bind(this, field.key)};
     },
 
     getGridColumnFilter: function(field) {

@@ -233,7 +233,9 @@ pimcore.document.snippets.settings = Class.create({
                                                             url:"/admin/snippet/change-master-document/id/"
                                                                                             + this.snippet.id,
                                                             params:{
-                                                                contentMasterDocumentPath:Ext.getCmp("contentMasterDocumentPath_" + this.snippet.id).getValue()
+                                                                contentMasterDocumentPath:
+                                                                    Ext.getCmp("contentMasterDocumentPath_"
+                                                                                        + this.snippet.id).getValue()
                                                             },
                                                             success:function () {
                                                                 this.snippet.reload();
@@ -252,9 +254,11 @@ pimcore.document.snippets.settings = Class.create({
                                                 t("all_content_will_be_lost"),
                                                 function (buttonValue) {
                                                     if (buttonValue == "yes") {
-                                                        Ext.getCmp("contentMasterDocumentPath_" + this.snippet.id).setValue("");
+                                                        Ext.getCmp("contentMasterDocumentPath_" + this.snippet.id)
+                                                                                                .setValue("");
                                                         Ext.Ajax.request({
-                                                            url:"/admin/snippet/change-master-document/id/" + this.snippet.id,
+                                                            url:"/admin/snippet/change-master-document/id/"
+                                                                                        + this.snippet.id,
                                                             params:{
                                                                 contentMasterDocumentPath:""
                                                             },

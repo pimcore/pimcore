@@ -69,8 +69,8 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
                         } else {
                             var keyIds = [];
                             var selectedKeys = this.gridPanel.getSelectionModel().getSelections();
-                            for (var i = 0; i < selectedKeys.length; i++) {
-                                var keyId = selectedKeys[i].id;
+                            for (var ki = 0; ki < selectedKeys.length; ki++) {
+                                var keyId = selectedKeys[ki].id;
                                 keyIds.push(keyId);
                             }
                             this.addKeys(keyIds);
