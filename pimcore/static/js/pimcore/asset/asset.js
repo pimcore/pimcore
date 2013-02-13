@@ -60,18 +60,19 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         // DEPRECATED loadingpanel not active
         return;
 
-        window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
-
-        this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
-
-        this.loadingPanel = new Ext.Panel({
-            title: t("loading"),
-            closable:false,
-            html: "",
-            iconCls: "pimcore_icon_loading"
-        });
-
-        this.tabPanel.add(this.loadingPanel);
+// commented this out as JSLINT would complain
+//        window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
+//
+//        this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
+//
+//        this.loadingPanel = new Ext.Panel({
+//            title: t("loading"),
+//            closable:false,
+//            html: "",
+//            iconCls: "pimcore_icon_loading"
+//        });
+//
+//        this.tabPanel.add(this.loadingPanel);
     },
 
     removeLoadingPanel: function () {

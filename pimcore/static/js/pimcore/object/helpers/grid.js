@@ -48,7 +48,7 @@ pimcore.object.helpers.grid = Class.create({
 
         var fieldParam = [];
         for(var i = 0; i < fields.length; i++) {
-            fieldParam.push(fields[i].key)
+            fieldParam.push(fields[i].key);
         }
 
         this.baseParams['fields[]'] = fieldParam;
@@ -156,10 +156,12 @@ pimcore.object.helpers.grid = Class.create({
                 gridColumns.push({header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                                         hidden: !this.showSubtype,
                                         renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                        return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="'
+                                                    + t(record.data.subtype) + '">&nbsp;</div>';
                     }});
             } else if(field.key == "id") {
-                gridColumns.push({header: 'ID', width: 40, sortable: true, dataIndex: 'id'/*, hidden: !propertyVisibility.id*/});
+                gridColumns.push({header: 'ID', width: 40, sortable: true,
+                                                dataIndex: 'id'/*, hidden: !propertyVisibility.id*/});
             } else if(field.key == "published") {
                 gridColumns.push(new Ext.grid.CheckColumn({
                     header: t("published"),

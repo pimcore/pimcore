@@ -236,9 +236,9 @@ pimcore.object.helpers.edit = {
                         }
                     }.bind(field, metaData));
                 }
-                catch (e) {
+                catch (e2) {
                     console.log(l.name + " event render not supported (tag type: " + l.fieldtype + ")");
-                    console.log(e);
+                    console.log(e2);
                 }
 
                 // set styling
