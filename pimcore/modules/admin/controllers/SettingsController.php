@@ -247,7 +247,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "username" => $values["general.http_auth.username"],
                         "password" => $values["general.http_auth.password"]
                     ),
-                    "firephp" => $values["general.firephp"],
+                    "custom_php_logfile" => $values["general.custom_php_logfile"],
                     "loglevel" => array(
                         "debug" => $values["general.loglevel.debug"],
                         "info" => $values["general.loglevel.info"],

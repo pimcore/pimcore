@@ -38,7 +38,8 @@ class Tool_Setup extends Pimcore_Model_Abstract {
                     "critical" => "1",
                     "alert" => "1",
                     "emergency" => "1"
-                )
+                ),
+                "custom_php_logfile" => "1"
             ),
             "database" => array(
                 "adapter" => "Mysqli",

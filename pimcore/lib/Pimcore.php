@@ -291,14 +291,11 @@ class Pimcore {
         $conf = Pimcore_Config::getSystemConfig();
 
         if($conf) {
-            //firephp logger
-            if($conf->general->firephp) {
-                $writerFirebug = new Zend_Log_Writer_Firebug();
-                $loggerFirebug = new Zend_Log($writerFirebug);
-                Logger::addLogger($loggerFirebug);
+            // redirect php error_log to /website/var/log/php.log
+            if($conf->general->custom_php_logfile) {
+                ini_set("error_log", PIMCORE_LOG_DIRECTORY . "/php.log");
             }
         }
-
 
         if(!is_file(PIMCORE_LOG_DEBUG)) {
             if(is_writable(dirname(PIMCORE_LOG_DEBUG))) {
