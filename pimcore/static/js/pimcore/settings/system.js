@@ -330,10 +330,10 @@ pimcore.settings.system = Class.create({
                                 value: "<b>" + t("logger") + "</b>"
                             },
                             {
-                                fieldLabel: "FirePHP (Firebug/Wildfire)",
+                                fieldLabel: "PHP error_log = /website/var/log/php.log",
                                 xtype: "checkbox",
-                                name: "general.firephp",
-                                checked: this.getValue("general.firephp")
+                                name: "general.custom_php_logfile",
+                                checked: this.getValue("general.custom_php_logfile")
                             },
                             {
                                 fieldLabel: t('log_messages_user_mail_recipient'),
