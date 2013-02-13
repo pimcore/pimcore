@@ -12,6 +12,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+/*global google */
 pimcore.registerNS("pimcore.settings.targeting.item");
 pimcore.settings.targeting.item = Class.create({
 

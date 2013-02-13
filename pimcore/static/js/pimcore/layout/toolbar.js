@@ -354,7 +354,7 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: "pimcore_icon_object",
                 hideOnClick: false,
                 menu: []
-            }
+            };
 
             if (user.isAllowed("classes")) {
                 objectMenu.menu.push({
@@ -406,7 +406,7 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: "pimcore_icon_menu_clear_cache",
                 hideOnClick: false,
                 menu: []
-            }
+            };
 
             if (user.isAllowed("clear_cache")) {
                 cacheMenu.menu.push({
@@ -744,7 +744,7 @@ pimcore.layout.toolbar = Class.create({
                         } else {
                             progressWin.close();
                         }
-                    }
+                    };
 
                     generate();
                 }
