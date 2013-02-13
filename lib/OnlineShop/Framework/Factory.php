@@ -98,7 +98,7 @@ class OnlineShop_Framework_Factory {
             $priceSystemConfigs = array($priceSystemConfigs);
         }
 
-
+        $this->priceSystems = new stdClass();
         if(!empty($priceSystemConfigs)) {
             foreach ($priceSystemConfigs as $priceSystemConfig) {
                 if (empty($priceSystemConfig->class)) {
@@ -136,7 +136,7 @@ class OnlineShop_Framework_Factory {
             $availabilitySystemConfigs = array($availabilitySystemConfigs);
         }
 
-
+        $this->availabilitySystems = new stdClass();
         if(!empty($availabilitySystemConfigs)) {
             foreach ($availabilitySystemConfigs as $availabilitySystemConfig) {
                 if (empty($availabilitySystemConfig->class)) {
