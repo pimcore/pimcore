@@ -84,7 +84,7 @@ class Object_Class_Service  {
 
                     $item->setValues($array, array("childs"));
 
-                    if($array["childs"]["datatype"]){
+                    if(is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]){
                          $childO = self::generateLayoutTreeFromArray($array["childs"]);
                             $item->addChild($childO);
                     } else if (is_array($array["childs"]) && count($array["childs"]) > 0) {
