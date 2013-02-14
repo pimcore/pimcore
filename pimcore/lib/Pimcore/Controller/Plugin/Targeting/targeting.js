@@ -27,7 +27,8 @@
         },
 
         country: function (params) {
-            if(util.toString(params["country"]).toLowerCase() == util.toString(user["location"]["country"]).toLowerCase()) {
+            if(util.toString(params["country"]).toLowerCase()
+                                                    == util.toString(user["location"]["country"]).toLowerCase()) {
                 return true;
             }
             return false;
@@ -53,7 +54,8 @@
         },
 
         geopoint: function (params) {
-            if(util.geoDistance(user["location"]["latitude"], user["location"]["longitude"], params["latitude"], params["longitude"]) < params["radius"]) {
+            if(util.geoDistance(user["location"]["latitude"], user["location"]["longitude"], params["latitude"],
+                                                                            params["longitude"]) < params["radius"]) {
                 return true;
             }
             return false;
@@ -174,10 +176,10 @@
         executeInsertedScripts: function (domelement) {
             var scripts = [];
 
-
-            ret = domelement.childNodes;
+            var ret = domelement.childNodes;
             for (var i = 0; ret[i]; i++) {
-                if (scripts && util.nodeName(ret[i], "script") && (!ret[i].type || ret[i].type.toLowerCase() === "text/javascript")) {
+                if (scripts && util.nodeName(ret[i], "script")
+                                            && (!ret[i].type || ret[i].type.toLowerCase() === "text/javascript")) {
                     scripts.push(ret[i].parentNode ? ret[i].parentNode.removeChild(ret[i]) : ret[i]);
                 }
             }
@@ -369,8 +371,11 @@
             // redirects
             try {
                 var regexp = new RegExp("_ptr=" + target.id);
-                if(actions["redirectEnabled"] && actions["redirectUrl"].length > 0 && !regexp.test(window.location.href)) {
-                    window.location.href = actions["redirectUrl"] + (actions["redirectUrl"].indexOf("?") < 0 ? "?" : "&") + "_ptr=" + target.id;
+                if(actions["redirectEnabled"] && actions["redirectUrl"].length > 0
+                                              && !regexp.test(window.location.href)) {
+                    window.location.href = actions["redirectUrl"]
+                                            + (actions["redirectUrl"].indexOf("?") < 0 ? "?" : "&")
+                                            + "_ptr=" + target.id;
                 }
             } catch (e) {
                 util.log(e);

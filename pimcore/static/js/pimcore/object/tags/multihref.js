@@ -49,23 +49,25 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                renderer: function (key, value, metaData, record) {
+                                if(record.data.inheritedFields[key]
+                                                        && record.data.inheritedFields[key].inherited == true) {
+                                    metaData.css += " grid_value_inherited";
+                                }
 
-            if (value && value.length > 0) {
+                                if (value && value.length > 0) {
 
-                // only show 10 relations in the grid
-                var maxAmount = 10;
-                if(value.length > maxAmount) {
-                    value.splice(maxAmount, (value.length - maxAmount) );
-                    value.push("...");
-                }
+                                    // only show 10 relations in the grid
+                                    var maxAmount = 10;
+                                    if(value.length > maxAmount) {
+                                        value.splice(maxAmount, (value.length - maxAmount) );
+                                        value.push("...");
+                                    }
 
-                return value.join("<br />");
-            }
-        }.bind(this, field.key)};
+                                    return value.join("<br />");
+                                }
+                            }.bind(this, field.key)};
     },
 
     getLayoutEdit: function() {

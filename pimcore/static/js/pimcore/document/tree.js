@@ -222,7 +222,9 @@ pimcore.document.tree = Class.create({
 
         var menu = new Ext.menu.Menu();
         //ckogler added "email"
-        if ((this.attributes.type == "page" || this.attributes.type == "email" || this.attributes.type == "folder" || this.attributes.type == "link" || this.attributes.type == "hardlink") && this.attributes.permissions.create) {
+        if ((this.attributes.type == "page" || this.attributes.type == "email" || this.attributes.type == "folder"
+                                    || this.attributes.type == "link" || this.attributes.type == "hardlink")
+                                    && this.attributes.permissions.create) {
 
             var document_types = pimcore.globalmanager.get("document_types_store");
 
@@ -233,7 +235,8 @@ pimcore.document.tree = Class.create({
                 ref: this
             };
 
-            document_types.sort([ { field : 'priority', direction: 'DESC' }, { field : 'name', direction: 'ASC' } ],'DESC');
+            document_types.sort([ { field : 'priority', direction: 'DESC' },
+                                  { field : 'name', direction: 'ASC' } ],'DESC');
 
             document_types.each(function(record) {
                 if (record.get("type") == "page") {
@@ -532,7 +535,7 @@ pimcore.document.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateDocument(this.attributes.id, {locked: null}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                 } else {
@@ -542,7 +545,7 @@ pimcore.document.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateDocument(this.attributes.id, {locked: "self"}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                     
@@ -551,9 +554,10 @@ pimcore.document.tree = Class.create({
                             text: t('lock_and_propagate_to_childs'),
                             iconCls: "pimcore_icon_lock_add_propagate",
                             handler: function () {
-                                this.attributes.reference.updateDocument(this.attributes.id, {locked: "propagate"}, function () {
-                                    this.attributes.reference.tree.getRootNode().reload();
-                                }.bind(this))
+                                this.attributes.reference.updateDocument(this.attributes.id, {locked: "propagate"},
+                                    function () {
+                                        this.attributes.reference.tree.getRootNode().reload();
+                                    }.bind(this));
                             }.bind(this)
                         });
                     }
@@ -724,7 +728,9 @@ pimcore.document.tree = Class.create({
     },
 
     useAsSite: function () {
-        Ext.MessageBox.prompt(t('use_this_as_document_root_for_new_site'), t('please_enter_the_domains_for_the_new_site'), this.attributes.reference.useAsSiteCreate.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('use_this_as_document_root_for_new_site'),
+                              t('please_enter_the_domains_for_the_new_site'),
+                              this.attributes.reference.useAsSiteCreate.bind(this), null, null, "");
     },
 
     useAsSiteCreate: function (button, value, object) {
@@ -765,7 +771,9 @@ pimcore.document.tree = Class.create({
     },
 
     editSite: function () {
-        Ext.MessageBox.prompt(t('edit_site_domains'), t('please_enter_the_domains_for_the_site'), this.attributes.reference.editSiteSave.bind(this), null, null, this.attributes.site.domains.join(","));
+        Ext.MessageBox.prompt(t('edit_site_domains'), t('please_enter_the_domains_for_the_site'),
+                              this.attributes.reference.editSiteSave.bind(this), null, null,
+                              this.attributes.site.domains.join(","));
     },
 
     editSiteSave: function (button, value, object) {
@@ -787,7 +795,8 @@ pimcore.document.tree = Class.create({
     },
 
     addDocument : function (type, docTypeId) {
-        Ext.MessageBox.prompt(t('add_document'), t('please_enter_the_name_of_the_new_document'), this.attributes.reference.addDocumentCreate.bind(this, type, docTypeId));
+        Ext.MessageBox.prompt(t('add_document'), t('please_enter_the_name_of_the_new_document'),
+                            this.attributes.reference.addDocumentCreate.bind(this, type, docTypeId));
     },
 
     publishDocument: function (type, id, task) {
@@ -822,16 +831,19 @@ pimcore.document.tree = Class.create({
                         if (pimcore.globalmanager.exists("document_" + this.id)) {
                             // reload versions
                             if (pimcore.globalmanager.get("document_" + this.id).versions) {
-                                if (typeof pimcore.globalmanager.get("document_" + this.id).versions.reload == "function") {
+                                if (typeof pimcore.globalmanager.get("document_" + this.id).versions.reload
+                                                                                                == "function") {
                                     pimcore.globalmanager.get("document_" + this.id).versions.reload();
                                 }
                             }
                         }
 
-                        pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_document"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_document"),
+                                                                                                        "success");
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"), "error", t(rdata.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"),
+                                                                                            "error", t(rdata.message));
                     }
                 } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"), "error");
@@ -875,7 +887,8 @@ pimcore.document.tree = Class.create({
                 }
             }
             else {
-                pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error", t(response.message));
+                pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error",
+                                                                                            t(response.message));
             }
         } catch(e) {
             pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error");
@@ -884,7 +897,8 @@ pimcore.document.tree = Class.create({
     },
 
     editDocumentKey : function () {
-        Ext.MessageBox.prompt(t('edit_key'), t('please_enter_the_new_key'), this.attributes.reference.editDocumentKeyComplete.bind(this), null, null, this.text);
+        Ext.MessageBox.prompt(t('edit_key'), t('please_enter_the_new_key'),
+                                this.attributes.reference.editDocumentKeyComplete.bind(this), null, null, this.text);
     },
 
     editDocumentKeyComplete: function (button, value, object) {
@@ -920,7 +934,8 @@ pimcore.document.tree = Class.create({
                         }
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error", t(rdata.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
+                                                                                        t(rdata.message));
                         this.parentNode.reload();
                     }
                 } catch(e) {
@@ -937,7 +952,8 @@ pimcore.document.tree = Class.create({
         var parentChilds = parentNode.childNodes;
         for (var i = 0; i < parentChilds.length; i++) {
             if (parentChilds[i].text == key && node != parentChilds[i]) {
-                Ext.MessageBox.alert(t('edit_key'), t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                Ext.MessageBox.alert(t('edit_key'),
+                                            t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
                 return true;
             }
         }
