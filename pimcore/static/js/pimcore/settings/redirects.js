@@ -226,7 +226,8 @@ pimcore.settings.redirects = Class.create({
                 forceSelection: true,
                 triggerAction: "all"
             })},
-            {header: t("expiry"), width: 60, sortable:true, dataIndex: "expiry", editor: new Ext.form.DateField(),renderer: function(d) {
+            {header: t("expiry"), width: 60, sortable:true, dataIndex: "expiry", editor: new Ext.form.DateField(),
+                                                                            renderer: function(d) {
                 if(d instanceof Date) {
                     return d.format("Y-m-d");
                 }

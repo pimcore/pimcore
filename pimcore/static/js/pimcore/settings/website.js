@@ -192,7 +192,8 @@ pimcore.settings.website = Class.create({
                     return;
                 }
                 
-                $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
+                $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
+                                                                    .animate( { backgroundColor: '#fff' }, 400);
 
                 var menu = new Ext.menu.Menu();
 
@@ -260,7 +261,8 @@ pimcore.settings.website = Class.create({
 
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
 
-        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
+        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="' + record.data.name
+                                                                                + '">&nbsp;</div>';
     },
 
     getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
@@ -272,7 +274,9 @@ pimcore.settings.website = Class.create({
             return '<div class="pimcore_property_droptarget">' + value + '</div>';
         } else if (type == "bool") {
             metaData.css += ' x-grid3-check-col-td';
-            return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+            return String.format(
+                    '<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>',
+                    value ? '-on' : '');
         }
 
         return value;

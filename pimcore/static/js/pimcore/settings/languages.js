@@ -88,10 +88,14 @@ pimcore.settings.languages = Class.create({
                         '<ul>',
                         '<tpl for=".">',
                         '<li class="language">',
-                        '<div class="language-key">{key}</div><img src="{icon}" /><div class="language-name">{name}</div><div class="language-percent">{percent}% {[t(\'language_translation_percentage\')]}</div>',
+                        '<div class="language-key">{key}</div><img src="{icon}" /><div class="language-name">{name}'
+                                    + '</div><div class="language-percent">{percent}%'
+                                    + '{[t(\'language_translation_percentage\')]}</div>',
                         '<div class="buttons">',
-                        '<tpl if="exists"><input type="button" class="settings" name="update" value="{[t(\'update\')]}"/></tpl>',
-                        '<tpl if="!exists"><input type="button" class="settings" name="download" value="{[t(\'download\')]}"/></tpl>',
+                        '<tpl if="exists"><input type="button" class="settings" '
+                        + 'name="update" value="{[t(\'update\')]}"/></tpl>',
+                        '<tpl if="!exists"><input type="button" class="settings" '
+                        + 'name="download" value="{[t(\'download\')]}"/></tpl>',
                         '</div>',
                         '</li>',
                         '</tpl>',

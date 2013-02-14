@@ -99,8 +99,10 @@ pimcore.settings.update = Class.create({
 
         this.window.removeAll();
 
+        var availableUpdates;
+
         try {
-            var availableUpdates = Ext.decode(response.responseText);
+            availableUpdates = Ext.decode(response.responseText);
         }
         catch (e) {
             this.window.add(new Ext.Panel({
@@ -303,7 +305,7 @@ pimcore.settings.update = Class.create({
                     success: function (response) {
                         
                         try {
-                            var response = Ext.decode(response.responseText);
+                            response = Ext.decode(response.responseText);
                             if(!response.success) {
                                 // if the download fails, stop all activity
                                 throw response;
@@ -413,7 +415,7 @@ pimcore.settings.update = Class.create({
                         
                         try {
                             this.progressBar.updateProgress(status, percent + "%");
-                        } catch (e) {}
+                        } catch (e2) {}
                                                 
                     }.bind(this),
                     failure: function (response) {
