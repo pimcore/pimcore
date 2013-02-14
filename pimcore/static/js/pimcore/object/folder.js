@@ -272,7 +272,8 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                         this.resetChanges();
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error",t(rdata.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
+                                                                                "error",t(rdata.message));
                     }
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");

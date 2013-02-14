@@ -122,13 +122,15 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
 
     addField: function () {
-        Ext.MessageBox.prompt(t('add_objectbrick'), t('enter_the_name_of_the_new_objectbrick'), this.addFieldComplete.bind(this), null, null, "");
+        Ext.MessageBox.prompt(t('add_objectbrick'), t('enter_the_name_of_the_new_objectbrick'),
+                                                    this.addFieldComplete.bind(this), null, null, "");
     },
 
     addFieldComplete: function (button, value, object) {
 
         var regresult = value.match(/[a-zA-Z]+[a-zA-Z1-9]*/);
-        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource","concrete","interface"];
+        var forbiddennames = ["abstract","class","data","folder","list","permissions","resource","concrete",
+                                                                                                        "interface"];
 
         if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
             Ext.Ajax.request({

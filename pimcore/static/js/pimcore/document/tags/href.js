@@ -148,6 +148,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
     dndAllowed: function(data) {
 
         var i;
+        var found;
 
         //only is legacy
         if (this.options.only && !this.options.types) {
@@ -170,7 +171,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
         //subtype check  (folder,page,snippet ... )
         if (this.options.subtypes) {
-            var found = false;
+            found = false;
             var typeKeys = Object.keys(this.options.subtypes);
             for (var st = 0; st < typeKeys.length; st++) {
                 for (i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
@@ -187,7 +188,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
         //object class check
         if (data.node.attributes.elementType == "object" && this.options.classes) {
-            var found = false;
+            found = false;
             for (i = 0; i < this.options.classes.length; i++) {
                 if (this.options.classes[i] == data.node.attributes.className) {
                     found = true;

@@ -144,7 +144,8 @@ pimcore.object.versions = Class.create({
 
     onRowContextmenu: function (grid, rowIndex, event) {
 
-        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
+        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
+                                                .animate( { backgroundColor: '#fff' }, 400);
 
         var menu = new Ext.menu.Menu();
 

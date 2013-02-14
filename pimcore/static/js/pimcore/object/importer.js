@@ -27,7 +27,8 @@ pimcore.object.importer = Class.create({
 
     showUpload: function () {
 
-        pimcore.helpers.uploadDialog('/admin/object-helper/import-upload/?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.importId, "Filedata", function(res) {
+        pimcore.helpers.uploadDialog('/admin/object-helper/import-upload/?pimcore_admin_sid='
+                        + pimcore.settings.sessionId + "&id=" + this.importId, "Filedata", function(res) {
             this.getFileInfo();
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));
@@ -111,7 +112,6 @@ pimcore.object.importer = Class.create({
                                 this.importJobTotal = data.rows;
                                 this.settingsForm.getForm().findField('skipHeadRow').setValue(false);
                                 for (var i = 0; i < headRecord.fields.items.length; i++) {
-                                    ;
                                     dataGrid.getColumnModel().setColumnHeader(i, "field_" + i);
                                 }
                             }
