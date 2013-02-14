@@ -34,6 +34,11 @@ class Tool_Tag_Config {
     public $description = "";
 
     /**
+     * @var int
+     */
+    public $siteId;
+
+    /**
      * @var string
      */
     public $urlPattern = "";
@@ -277,6 +282,22 @@ class Tool_Tag_Config {
     public function getUrlPattern()
     {
         return $this->urlPattern;
+    }
+
+    /**
+     * @param int $siteId
+     */
+    public function setSiteId($siteId)
+    {
+        $this->siteId = $siteId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSiteId()
+    {
+        return $this->siteId;
     }
 
     /**
