@@ -16,7 +16,7 @@ function t(key) {
         return pimcore.system_i18n[key];
     }
     return "~" + key + "~";
-};
+}
 
 function ts(key) {
 
@@ -58,7 +58,7 @@ function ts(key) {
     } else {
         return originalKey;
     }
-};
+}
 
 Math.sec = function(x) {
     return 1 / Math.cos(x);
@@ -68,7 +68,9 @@ Math.sec = function(x) {
 
 function RealTypeOf(v) {
   if (typeof(v) == "object") {
-    if (v === null) return "null";
+    if (v === null) {
+        return "null";
+    }
     if (v.constructor == (new Array).constructor) {
         return "array";
     }
@@ -212,7 +214,7 @@ function array_map (callback) {
     }
 
     return tmp_ar;
-};
+}
 
 
 
@@ -236,7 +238,7 @@ function is_numeric(mixed_var) {
     // *     returns 4: false
 
     return (typeof(mixed_var) === 'number' || typeof(mixed_var) === 'string') && mixed_var !== '' && !isNaN(mixed_var);
-};
+}
 
 
 function ucfirst(str) {
@@ -363,7 +365,8 @@ function empty (mixed_var) {
     // *     returns 5: false
     var key;
 
-    if (mixed_var === "" || mixed_var === 0 || mixed_var === "0" || mixed_var === null || mixed_var === false || typeof mixed_var === 'undefined') {
+    if (mixed_var === "" || mixed_var === 0 || mixed_var === "0" || mixed_var === null || mixed_var === false
+                                                            || typeof mixed_var === 'undefined') {
         return true;
     }
 

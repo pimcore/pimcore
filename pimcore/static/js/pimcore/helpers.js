@@ -340,20 +340,21 @@ pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
     lockDetails += "<b>" + t("since") + ": </b>" + Ext.util.Format.date(lockDate);
     lockDetails += "<br /><br />" + t("element_lock_question");
 
-    Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails, function (lock, buttonValue) {
-        if (buttonValue == "yes") {
-            Ext.Ajax.request({
-                url: "/admin/element/unlock-element",
-                params: {
-                    id: lock[0],
-                    type:  lock[1]
-                },
-                success: function () {
-                    pimcore.helpers.openElement(lock[0], lock[1], lock[2]);
+    Ext.MessageBox.confirm(t("element_is_locked"), t("element_lock_message") + lockDetails,
+            function (lock, buttonValue) {
+                if (buttonValue == "yes") {
+                    Ext.Ajax.request({
+                        url: "/admin/element/unlock-element",
+                        params: {
+                            id: lock[0],
+                            type:  lock[1]
+                        },
+                        success: function () {
+                            pimcore.helpers.openElement(lock[0], lock[1], lock[2]);
+                        }
+                    });
                 }
-            });
-        }
-    }.bind(this, arguments));
+            }.bind(this, arguments));
 };
 
 
