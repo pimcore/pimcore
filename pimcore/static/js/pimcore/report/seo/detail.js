@@ -36,7 +36,8 @@ pimcore.report.seo.detail = Class.create(pimcore.report.abstract, {
         this.site = "default";
 
         //id,host,site,url,type,typeReference,facebookShares,googlePlusOne,links,linksExternal,h1,h2,h3,h4,h5,h6,
-        // h1Text,imgWithoutAlt,imgWithAlt,title,description,urlLength,urlParameters,microdata,opengraph,twitter,robotsTxtBlocked,robotsMetaBlocked,lastUpdate
+        // h1Text,imgWithoutAlt,imgWithAlt,title,description,urlLength,urlParameters,microdata,opengraph,twitter,
+        // robotsTxtBlocked,robotsMetaBlocked,lastUpdate
 
         this.store = new Ext.data.JsonStore({
             autoDestroy: true,

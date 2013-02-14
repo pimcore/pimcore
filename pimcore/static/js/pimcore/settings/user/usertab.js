@@ -90,8 +90,8 @@ pimcore.settings.user.usertab = Class.create({
 
         try {
             data.workspaces = Ext.encode(this.workspaces.getValues());
-        } catch (e) {
-            console.log(e);
+        } catch (e2) {
+            console.log(e2);
         }
 
         Ext.Ajax.request({

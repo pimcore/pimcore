@@ -64,7 +64,8 @@ pimcore.settings.translations = Class.create({
 
         for (var i = 0; i < languages.length; i++) {
             readerFields.push({name: languages[i]});
-            typesColumns.push({header: languages[i].toUpperCase(), sortable: false, dataIndex: languages[i], editor: new Ext.form.TextField({})});
+            typesColumns.push({header: languages[i].toUpperCase(), sortable: false, dataIndex: languages[i],
+                                                                                editor: new Ext.form.TextField({})});
         }
 
         typesColumns.push({header: t("date"), sortable: true, dataIndex: 'date', editable: false, renderer: function(d) {

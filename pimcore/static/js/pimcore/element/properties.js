@@ -31,20 +31,21 @@ pimcore.element.properties = Class.create({
  
             var predefinedProperiesStore = new Ext.data.JsonStore({
                 url: '/admin/' + this.type + '/get-predefined-properties',
-                fields: ["id","name","description","key","type","data","config","inheritable",{name:"translatedName",convert: function(v, rec){
+                fields: ["id","name","description","key","type","data","config","inheritable",
+                                            {   name:"translatedName",convert: function(v, rec){
 
-                    return ts(rec.name);
+                        return ts(rec.name);
 
-                    /*
-                    var text = "<b>" + ts(rec.name) + "</b>";
-                    if(!empty(rec.description)) {
-                        text += ts(rec.description);
-                    }
-                    return text;
-                    */
-                }}],
-                root: "properties"
-            });
+                        /*
+                        var text = "<b>" + ts(rec.name) + "</b>";
+                        if(!empty(rec.description)) {
+                            text += ts(rec.description);
+                        }
+                        return text;
+                        */
+                    }}],
+                    root: "properties"
+                });
 
             var predefinedcombo = new Ext.form.ComboBox({
                 name: "type",
@@ -244,12 +245,14 @@ pimcore.element.properties = Class.create({
                                         pimcore.helpers.openElement(pData.all.data.id, pData.type, pData.all.data.type);
                                     }
                                     else if (pData.all.data.o_id) {
-                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type, pData.all.data.o_type);
+                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type,
+                                                                                        pData.all.data.o_type);
                                     }
                                 }
                             }.bind(this),
                             getClass: function(v, meta, rec) {  // Or return a class from a function
-                                if(rec.get('type') != "object" && rec.get('type') != "document" && rec.get('type') != "asset") {
+                                if(rec.get('type') != "object" && rec.get('type') != "document"
+                                                                            && rec.get('type') != "asset") {
                                     return "pimcore_hidden";
                                 }
                             }
@@ -319,7 +322,8 @@ pimcore.element.properties = Class.create({
                                         pimcore.helpers.openElement(pData.all.data.id, pData.type, pData.all.data.type);
                                     }
                                     else if (pData.all.data.o_id) {
-                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type, pData.all.data.o_type);
+                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type,
+                                                                                                pData.all.data.o_type);
                                     }
                                 }
                             }.bind(this, grid, rowIndex)
@@ -345,7 +349,8 @@ pimcore.element.properties = Class.create({
  
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
  
-        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
+        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="'
+                                                                        + record.data.name + '">&nbsp;</div>';
     },
  
     getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {

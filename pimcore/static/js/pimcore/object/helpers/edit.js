@@ -236,9 +236,9 @@ pimcore.object.helpers.edit = {
                         }
                     }.bind(field, metaData));
                 }
-                catch (e2) {
+                catch (e3) {
                     console.log(l.name + " event render not supported (tag type: " + l.fieldtype + ")");
-                    console.log(e2);
+                    console.log(e3);
                 }
 
                 // set styling
@@ -251,8 +251,8 @@ pimcore.object.helpers.edit = {
                                 if(!el.hasClass("object_field")) {
                                     el = el.parent(".object_field");
                                 }
-                            } catch (e) {
-                                console.log(e);
+                            } catch (e4) {
+                                console.log(e4);
                                 return;
                             }
 
@@ -266,8 +266,8 @@ pimcore.object.helpers.edit = {
                             if(field.style) {
                                 try {
                                     el.applyStyles(field.style);
-                                } catch (e) {
-                                    console.log(e);
+                                } catch (e5) {
+                                    console.log(e5);
                                 }
                             }
 
@@ -282,15 +282,15 @@ pimcore.object.helpers.edit = {
                                         trackMouse:true,
                                         showDelay: 200
                                     });
-                                } catch (e) {
-                                    console.log(e);
+                                } catch (e6) {
+                                    console.log(e6);
                                 }
                             }
                         }.bind(dLayout, l));
                     }
-                    catch (e) {
+                    catch (e7) {
                         console.log(l.name + " event render not supported (tag type: " + l.fieldtype + ")");
-                        console.log(e);
+                        console.log(e7);
                     }
                 }
 

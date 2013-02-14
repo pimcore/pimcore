@@ -134,7 +134,8 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
                 }
             }));
 
-            if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined" && menu.items.items.length > 0) {
+            if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined"
+                                                                        && menu.items.items.length > 0) {
                 menu.show(this.ui.getAnchor());
             }
         }
@@ -150,7 +151,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
             }
 
         } catch(e){
-             pimcore.helpers.showNotification(t("error"), t("role_creation_error"), "error")
+             pimcore.helpers.showNotification(t("error"), t("role_creation_error"), "error");
         }
     },
 

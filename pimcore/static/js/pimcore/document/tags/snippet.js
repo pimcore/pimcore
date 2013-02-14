@@ -118,12 +118,14 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
 
         if (data.node.attributes.type != "snippet") {
             return false;
-        } else return true;
-
+        } else {
+            return true;
+        }
     },
 
     getBody: function () {
-        // get the id from the body element of the panel because there is no method to set body's html (only in configure)
+        // get the id from the body element of the panel because there is no method to set body's html
+        // (only in configure)
         var bodyId = Ext.get(this.element.getEl().dom).query(".x-panel-body")[0].getAttribute("id");
         return Ext.get(bodyId);
     },

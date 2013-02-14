@@ -900,4 +900,4 @@ pimcore.settings.thumbnail.items = {
 
         return item;
     }
-}
+};

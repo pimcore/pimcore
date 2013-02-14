@@ -291,4 +291,4 @@ pimcore.settings.videothumbnail.items = {
 
         return item;
     }
-}
+};

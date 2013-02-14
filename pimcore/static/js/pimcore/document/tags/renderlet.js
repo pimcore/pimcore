@@ -110,7 +110,8 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
     },
 
     getBody: function () {
-        // get the id from the body element of the panel because there is no method to set body's html (only in configure)
+        // get the id from the body element of the panel because there is no method to set body's html
+        // (only in configure)
         var bodyId = this.element.getEl().query(".x-panel-body")[0].getAttribute("id");
         return Ext.get(bodyId);
     },
