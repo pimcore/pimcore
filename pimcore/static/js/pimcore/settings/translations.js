@@ -68,7 +68,8 @@ pimcore.settings.translations = Class.create({
                                                                                 editor: new Ext.form.TextField({})});
         }
 
-        typesColumns.push({header: t("date"), sortable: true, dataIndex: 'date', editable: false, renderer: function(d) {
+        typesColumns.push({header: t("date"), sortable: true, dataIndex: 'date', editable: false,
+                                                                                renderer: function(d) {
             var date = new Date(d * 1000);
             return date.format("Y-m-d H:i:s");
         }});

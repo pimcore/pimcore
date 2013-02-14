@@ -59,7 +59,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         var filterStore = [];
         var selectedStore = [];
         for (var i=0; i<possibleRestrictions.length; i++) {
-           if(this.parent.restrictions.subtype.asset && in_array(possibleRestrictions[i], this.parent.restrictions.subtype.asset )) {
+           if(this.parent.restrictions.subtype.asset && in_array(possibleRestrictions[i],
+                                                                    this.parent.restrictions.subtype.asset )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
            }

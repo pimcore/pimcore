@@ -21,6 +21,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
 
         this.fieldConfig = fieldConfig;
+        var i;
 
         if (!data) {
             data = [
