@@ -87,11 +87,11 @@ class Pimcore_Tool_RestClient {
 
 
     static public function getInstance() {
-         if (null === self::$instance) {
-               self::$instance = new self;
-         }
-         return self::$instance;
-     }
+        if (null === self::$instance) {
+            self::$instance = new self;
+        }
+        return self::$instance;
+    }
 
     private static function map($wsData, $data) {
         foreach($data as $key => $value) {
@@ -134,7 +134,7 @@ class Pimcore_Tool_RestClient {
         }
         $client->setUri($uri);
         if ($body != null && ($method == "PUT" || $method == "POST")) {
-                $client->setRawData($body);
+            $client->setRawData($body);
 //                print("    body: " . $body . "\n");
         }
 
@@ -183,15 +183,15 @@ class Pimcore_Tool_RestClient {
         return $params;
     }
 
-   public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null, $decode = true) {
+    public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null, $decode = true) {
         $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
 
-       $response = $this->doRequest(self::$baseUrl .  "object-list/?apikey=" . $this->apikey . $params, "GET");
+        $response = $this->doRequest(self::$baseUrl .  "object-list/?apikey=" . $this->apikey . $params, "GET");
 
-       if (!$response) {
+        if (!is_array($response)) {
             throw new Exception("response is empty");
-       }
-       $result = array();
+        }
+        $result = array();
         foreach ($response as $item) {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Object_List_Item", $item);
             if (!$decode) {
@@ -220,7 +220,7 @@ class Pimcore_Tool_RestClient {
 
         $response = $this->doRequest(self::$baseUrl .  "asset-list/?apikey=" . $this->apikey . $params, "GET");
 
-        if (!$response) {
+        if (!is_array($response)) {
             throw new Exception("response is empty");
         }
 
@@ -246,7 +246,7 @@ class Pimcore_Tool_RestClient {
 
         $response = $this->doRequest(self::$baseUrl .  "document-list/?apikey=" . $this->apikey . $params, "GET");
 
-        if (!$response) {
+        if (!is_array($response)) {
             throw new Exception("response is empty");
         }
 
@@ -268,34 +268,34 @@ class Pimcore_Tool_RestClient {
 
 
 
-     public function getObjectById($id, $decode = true) {
-         $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . $this->apikey, "GET");
-         $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
+    public function getObjectById($id, $decode = true) {
+        $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . $this->apikey, "GET");
+        $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
 
-         if (!$decode) {
-             return $wsDocument;
-         }
+        if (!$decode) {
+            return $wsDocument;
+        }
 
-         if ($wsDocument->type == "folder") {
-             $object = new Object_Folder();
-             $wsDocument->reverseMap($object);
-             return $object;
+        if ($wsDocument->type == "folder") {
+            $object = new Object_Folder();
+            $wsDocument->reverseMap($object);
+            return $object;
         } else if ($wsDocument->type == "object") {
-             $classname = "Object_" . ucfirst($wsDocument->className);
-             if (Pimcore_Tool::classExists($classname)) {
-                 $object = new $classname();
+            $classname = "Object_" . ucfirst($wsDocument->className);
+            if (Pimcore_Tool::classExists($classname)) {
+                $object = new $classname();
 
-                 if ($object instanceof Object_Concrete) {
-                     $wsDocument->reverseMap($object);
-                     return $object;
-                 } else {
-                     throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
-                 }
-             } else {
-                 throw new Exception("Unable to deocode object, class [" . $classname . "] does not exist");
-             }
+                if ($object instanceof Object_Concrete) {
+                    $wsDocument->reverseMap($object);
+                    return $object;
+                } else {
+                    throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
+                }
+            } else {
+                throw new Exception("Unable to deocode object, class [" . $classname . "] does not exist");
+            }
 
-         }
+        }
 
     }
 
