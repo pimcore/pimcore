@@ -163,7 +163,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
                 this.dndOver = false;
             }.bind(domElement));
 
-        }
+        };
 
         this.fieldPath.on("render", initDD.bind(this));
         this.poster.on("render", initDD.bind(this));
