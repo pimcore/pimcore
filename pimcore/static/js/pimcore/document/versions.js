@@ -101,7 +101,8 @@ pimcore.document.versions = Class.create({
                 title: t("preview"),
                 region: "center",
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
-                html: '<iframe src="about:blank" frameborder="0" id="document_version_iframe_' + this.document.id + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" id="document_version_iframe_'
+                                                                            + this.document.id + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -144,7 +145,7 @@ pimcore.document.versions = Class.create({
                     this.compareVersions(displayRecords.get(0).data.id, displayRecords.get(1).data.id);
                 }
                 else {
-                    Ext.MessageBox.alert(t("error"), t("maximum_2_versions"))
+                    Ext.MessageBox.alert(t("error"), t("maximum_2_versions"));
                 }
             }
         }
@@ -162,7 +163,8 @@ pimcore.document.versions = Class.create({
 
     onRowContextmenu: function (grid, rowIndex, event) {
         
-        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
+        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
+                                                                    .animate( { backgroundColor: '#fff' }, 400);
         
         var menu = new Ext.menu.Menu();
 

@@ -264,10 +264,12 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
     },
 
     handleSelectorChanged: function(selectorNumber) {
-        var dimensions = Ext.get("selector" + selectorNumber + this.uniqeFieldId).getStyles("top","left","width","height");
+        var dimensions = Ext.get("selector" + selectorNumber + this.uniqeFieldId)
+                                                                        .getStyles("top","left","width","height");
         var box = Ext.get(this.getName() + this.uniqeFieldId + '_selectorImage').getBox();
         this.hotspots[selectorNumber].top = this.convertToRelative(intval(dimensions.top) - this.marginTop, box.height);
-        this.hotspots[selectorNumber].left = this.convertToRelative(intval(dimensions.left) - this.marginLeft, box.width);
+        this.hotspots[selectorNumber].left = this.convertToRelative(intval(dimensions.left)
+                                                                        - this.marginLeft, box.width);
         this.hotspots[selectorNumber].width = this.convertToRelative(intval(dimensions.width), box.width);
         this.hotspots[selectorNumber].height = this.convertToRelative(intval(dimensions.height), box.height);
 
@@ -284,7 +286,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
     updateSelectorBody: function (selectorNumber) {
         // update selector body dimensions
-        var dimensions = Ext.get("selector" + selectorNumber + this.uniqeFieldId).getStyles("top","left","width","height");
+        var dimensions = Ext.get("selector" + selectorNumber + this.uniqeFieldId)
+                                                                            .getStyles("top","left","width","height");
         Ext.get('selectorbody' + selectorNumber + this.uniqeFieldId).applyStyles({
             width: dimensions.width,
             height: (intval(dimensions.height)-5) + "px"

@@ -221,7 +221,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             index = this.detectBlockIndex(blockElement);
         }
         
-        this.addBlockElement(index, type)
+        this.addBlockElement(index, type);
     },
     
     removeBlock: function (blockElement) {

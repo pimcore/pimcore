@@ -124,8 +124,8 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         try {
             parameters.data = Ext.encode(this.edit.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e2) {
+            //console.log(e2);
         }
 
         if (this.isAllowed("properties")) {
@@ -133,8 +133,8 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             try {
                 parameters.properties = Ext.encode(this.properties.getValues());
             }
-            catch (e) {
-                //console.log(e);
+            catch (e3) {
+                //console.log(e3);
             }
         }
 
@@ -146,16 +146,16 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
                 var settings = this.settings.getValues();
                 settings.published = this.data.published;
             }
-            catch (e) {
-                //console.log(e);
+            catch (e4) {
+                //console.log(e4);
             }
 
             // scheduler
             try {
                 parameters.scheduler = Ext.encode(this.scheduler.getValues());
             }
-            catch (e) {
-                //console.log(e);
+            catch (e5) {
+                //console.log(e5);
             }
         }
 
@@ -167,8 +167,8 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             }
             settings.css = styles.css;
         }
-        catch (e) {
-            //console.log(e);
+        catch (e6) {
+            //console.log(e6);
         }
 
         if(settings) {
