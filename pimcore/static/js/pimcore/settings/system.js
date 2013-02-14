@@ -50,7 +50,7 @@ pimcore.settings.system = Class.create({
                         root: 'languages',
                         fields: ['language', 'display']
                     });
-                } catch(e) {
+                } catch(e2) {
                     this.languagesStore = new Ext.data.JsonStore({
                         autoDestroy: true,
                         fields: ['language', 'display']
@@ -65,7 +65,7 @@ pimcore.settings.system = Class.create({
                         root: 'emaildebugaddressesArray',
                         fields: ['value']
                     });
-                } catch(e) {
+                } catch(e3) {
                     this.emailDebugAddressesStore = new Ext.data.JsonStore({
                         autoDestroy: true,
                         fields: ['value']
@@ -80,7 +80,7 @@ pimcore.settings.system = Class.create({
                         root: 'excludePatternsArray',
                         fields: ['value']
                     });
-                } catch(e) {
+                } catch(e4) {
                     this.cacheExcludeStore = new Ext.data.JsonStore({
                         autoDestroy: true,
                         fields: ['value']
@@ -281,7 +281,8 @@ pimcore.settings.system = Class.create({
                                     check: function (el, checked) {
                                         // set the current client ip to the debug ip field
                                         if(checked) {
-                                            Ext.getCmp("system.settings.general.debug_ip").setValue(this.data.config.client_ip);
+                                            Ext.getCmp("system.settings.general.debug_ip")
+                                                                            .setValue(this.data.config.client_ip);
                                         }
                                     }.bind(this)
                                 }
@@ -1010,7 +1011,12 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: this.data.config.google_private_key_exists ? t("google_api_private_key_installed") : ('<span style="color:red;">' + t("google_api_key_missing") + " <br />" + this.data.config.google_private_key_path + '</span>'),
+                                value: this.data.config.google_private_key_exists ?
+                                                            t("google_api_private_key_installed")
+                                                            : ('<span style="color:red;">'
+                                                                + t("google_api_key_missing")
+                                                                + " <br />" + this.data.config.google_private_key_path
+                                                                + '</span>'),
                                 cls: "pimcore_extra_label"
                             },{
                                 xtype: "displayfield",
@@ -1336,7 +1342,8 @@ pimcore.settings.system = Class.create({
                             }
                         }.bind(this));
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error", t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"),
+                                                                "error", t(res.message));
                     }
                 } catch(e) {
                     pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error");

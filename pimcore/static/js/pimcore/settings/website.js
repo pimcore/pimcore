@@ -213,7 +213,7 @@ pimcore.settings.website = Class.create({
                 }));
 
                 event.stopEvent();
-                menu.showAt(event.getXY())
+                menu.showAt(event.getXY());
             }.bind(this));
 
             this.eastLayout = new Ext.Panel({
@@ -444,13 +444,14 @@ pimcore.settings.website = Class.create({
         var records = store.getRange();
 
         for (var i = 0; i < records.length; i++) {
-            currentData = records[i];
+            var currentData = records[i];
             if (currentData) {
                 if (!currentData.data.inherited) {
                     values[currentData.data.name] = {
                         data: currentData.data.data,
                         type: currentData.data.type,
-                        siteId : typeof(currentData.data.siteId) != 'undefined' ? currentData.data.siteId : '' //empty string because we want to have the siteId tag in the xml file
+                        siteId : typeof(currentData.data.siteId) != 'undefined' ? currentData.data.siteId
+                                        : '' //empty string because we want to have the siteId tag in the xml file
                     };
                 }
             }

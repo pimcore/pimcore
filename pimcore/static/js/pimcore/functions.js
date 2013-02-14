@@ -11,13 +11,12 @@
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-
 function t(key) {
     if (pimcore && pimcore.system_i18n && pimcore.system_i18n[key]) {
         return pimcore.system_i18n[key];
     }
     return "~" + key + "~";
-}
+};
 
 function ts(key) {
 
@@ -59,9 +58,11 @@ function ts(key) {
     } else {
         return originalKey;
     }
-}
+};
 
-Math.sec = function(x) { return 1 / Math.cos(x); }
+Math.sec = function(x) {
+    return 1 / Math.cos(x);
+};
 
 
 

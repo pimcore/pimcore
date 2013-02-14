@@ -84,7 +84,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
                 this.dndOver = false;
             }.bind(domElement));
 
-        }
+        };
 
         this.fieldPath.on("render", initDD.bind(this));
 
@@ -246,7 +246,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
             text = this.data.text;
         }
         if (this.data.path) {
-            return '<a href="' + this.data.path + '">' + text + '</a>'
+            return '<a href="' + this.data.path + '">' + text + '</a>';
         }
         return text;
     },
@@ -256,7 +256,9 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         if(this.dndAllowed(data)){
             this.fieldPath.setValue(data.node.attributes.path);
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     },
 
     onNodeOver: function(target, dd, e, data) {
@@ -272,7 +274,9 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
 
         if (data.node.attributes.elementType == "asset" && data.node.attributes.type != "folder") {
             return true;
-        } else if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        } else if (data.node.attributes.elementType == "document"
+                            && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink"
+                                                                            || data.node.attributes.type=="link")){
             return true;
         }
         return false;

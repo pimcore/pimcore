@@ -30,7 +30,7 @@ pimcore.edithelpers.frame = {
     rightEl: null,
     leftEl: null,
     timeout: null
-}
+};
 
 pimcore.edithelpers.frameElement = function (el, body) {
 
@@ -55,7 +55,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         var borderWidth = 5;
 
         if(typeof body == "undefined") {
-            var body = document.body;
+            body = document.body;
         }
     } catch (e) {
         return;
@@ -128,7 +128,7 @@ pimcore.edithelpers.frameElement = function (el, body) {
         right.animate( { opacity: {to: 0, from: 1} },  animDuration,  null,  'easeOut' );
     }, 500);
 
-}
+};
 
 
 pimcore.edithelpers.unFrameElement = function () {
@@ -144,5 +144,5 @@ pimcore.edithelpers.unFrameElement = function () {
 
         pimcore.edithelpers.frame.active = false;
     }
-}
+};
 

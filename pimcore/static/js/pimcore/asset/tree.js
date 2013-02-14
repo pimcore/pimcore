@@ -473,7 +473,7 @@ pimcore.asset.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateAsset(this.attributes.id, {locked: "self"}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                     
@@ -485,7 +485,7 @@ pimcore.asset.tree = Class.create({
                                 this.attributes.reference.updateAsset(this.attributes.id, {locked: "propagate"},
                                     function () {
                                         this.attributes.reference.tree.getRootNode().reload();
-                                    }.bind(this))
+                                    }.bind(this));
                             }.bind(this)
                         });
                     }

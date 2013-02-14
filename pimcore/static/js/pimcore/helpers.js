@@ -121,7 +121,7 @@ pimcore.helpers.openElement = function (id, type, subtype) {
                 if(res.success) {
                     pimcore.helpers.openElement(res.id, res.type, res.subtype);
                 } else {
-                    Ext.MessageBox.alert(t("error"), t("element_not_found"))
+                    Ext.MessageBox.alert(t("error"), t("element_not_found"));
                 }
             }
         });
@@ -810,7 +810,8 @@ pimcore.helpers.getOpenTab = function () {
     if(!openTabs) {
         openTabs = [];
     } else {
-        openTabs = JSON.parse(openTabs); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
+        // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
+        openTabs = JSON.parse(openTabs);
     }
 
     return openTabs;
@@ -828,7 +829,8 @@ pimcore.helpers.rememberOpenTab = function (item) {
     openTabs.splice(10, 1000);
     openTabs.reverse();
 
-    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
+    // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
+    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs));
 };
 
 pimcore.helpers.forgetOpenTab = function (item) {
@@ -838,7 +840,8 @@ pimcore.helpers.forgetOpenTab = function (item) {
     var pos = array_search(item, openTabs);
     openTabs.splice(pos, 1);
 
-    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs)); // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
+    // using native JSON functionalities here because of /admin/login/deeplink -> No ExtJS should be loaded
+    localStorage.setItem("pimcore_opentabs", JSON.stringify(openTabs));
 };
 
 pimcore.helpers.openMemorizedTabs = function () {
@@ -969,8 +972,8 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
                         url: url,
                         waitMsg: t("please_wait"),
                         success: function (el, res) {
-                            // content-type in response has to be text/html, otherwise (when application/json is sent) chrome will complain in
-                            // Ext.form.Action.Submit and mark the submission as failed
+                            // content-type in response has to be text/html, otherwise (when application/json is sent)
+                            // chrome will complain in Ext.form.Action.Submit and mark the submission as failed
                             success(res);
                             uploadWindowCompatible.close();
                         },
@@ -1055,7 +1058,8 @@ pimcore.helpers.getClassForIcon = function (icon) {
     var styleContainerId = "pimcore_dynamic_class_for_icon";
     var styleContainer = Ext.get(styleContainerId);
     if(!styleContainer) {
-        styleContainer = Ext.getBody().insertHtml("beforeEnd", '<style type="text/css" id="' + styleContainerId + '"></style>', true);
+        styleContainer = Ext.getBody().insertHtml("beforeEnd", '<style type="text/css" id="' + styleContainerId
+                                                                                        + '"></style>', true);
     }
 
     var content = styleContainer.dom.innerHTML;
@@ -1068,11 +1072,12 @@ pimcore.helpers.getClassForIcon = function (icon) {
 
 
 pimcore.helpers.openElementByIdDialog = function (type) {
-    Ext.MessageBox.prompt(t('open_' + type + '_by_id'), t('please_enter_the_id_of_the_' + type), function (button, value, object) {
-        if(button == "ok") {
-            pimcore.helpers.openElement(value, type);
-        }
-    });
+    Ext.MessageBox.prompt(t('open_' + type + '_by_id'), t('please_enter_the_id_of_the_' + type),
+        function (button, value, object) {
+            if(button == "ok") {
+                pimcore.helpers.openElement(value, type);
+            }
+        });
 };
 
 pimcore.helpers.openDocumentByPathDialog = function () {
@@ -1165,7 +1170,8 @@ pimcore.helpers.generatePagePreview = function (id, path, callback) {
             canvas.height = tempCanvas.height / 3.2;
 
             // draw temp canvas back into canvas, scaled as needed
-            canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, canvas.width, canvas.height);
+            canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0,
+                                                                                    canvas.width, canvas.height);
             delete tempCanvas;
 
             var data = canvas.toDataURL('image/jpeg', 85);
@@ -1215,7 +1221,8 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
                         container.show();
                         container.applyStyles(styles);
                     } else {
-                        Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview" style="' + styles + '">' + imageHtml + '</div>');
+                        Ext.getBody().insertHtml("beforeEnd", '<div id="pimcore_tree_preview" style="' + styles + '">'
+                                                                                            + imageHtml + '</div>');
                     }
                 }
             }.bind(this, node));

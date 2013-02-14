@@ -94,7 +94,8 @@ Ext.onReady(function () {
             }
 
         } else {
-            //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot be saved due to HTTP 500 Response)
+            //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
+            // be saved due to HTTP 500 Response)
             var errorMessage = "";
 
             try {
@@ -285,7 +286,8 @@ Ext.onReady(function () {
     }
 
     statusbar.add("->");
-    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
+    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">pimcore</a> - Version: '
+                                + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
     if (!empty(pimcore.settings.liveconnectToken)) {
         pimcore.settings.liveconnect.setToken(pimcore.settings.liveconnectToken);
@@ -592,4 +594,4 @@ pimcore.layout.refresh = function () {
 // garbage collector
 pimcore.helpers.unload = function () {
 
-}
+};

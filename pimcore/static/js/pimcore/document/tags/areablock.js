@@ -28,7 +28,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.createToolBar();
         }
 
-        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv, typebuttontext, editDiv, editButton;
+        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv,
+                                                                        typebuttontext, editDiv, editButton;
         this.elements = Ext.get(id).query("div." + name + "[key]");
 
         // reload or not => default not
@@ -133,11 +134,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 if(typeNameMappings[this.elements[i].type]
                                         && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
                     typebuttontext = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> "
-                                                + typeNameMappings[this.elements[i].type].description
+                                                + typeNameMappings[this.elements[i].type].description;
                 }
 
                 typeDiv = Ext.get(this.elements[i]).query(".pimcore_block_type_" + this.name)[0];
-                typeButton = new Ext.Button({
+                var typeButton = new Ext.Button({
                     cls: "pimcore_block_button_type",
                     text: typebuttontext,
                     handleMouseEvents: false,
@@ -175,7 +176,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                                     sourceEl: sourceEl,
                                     repairXY: Ext.fly(sourceEl).getXY(),
                                     ddel: d
-                                }
+                                };
                             }
                         },
 

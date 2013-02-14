@@ -104,7 +104,8 @@ pimcore.report.analytics.elementnavigation = Class.create(pimcore.report.abstrac
             formValues = this.filterPanel.getForm().getFieldValues();
         } catch (e) {}
         
-        return "/admin/reports/analytics/navigation?path=" + path + "&id=" + id + "&type=" + type + "&dateFrom=" + formValues.dateFrom + "&dateTo=" + formValues.dateTo + "&site=" + formValues.site;  
+        return "/admin/reports/analytics/navigation?path=" + path + "&id=" + id + "&type=" + type + "&dateFrom="
+                            + formValues.dateFrom + "&dateTo=" + formValues.dateTo + "&site=" + formValues.site;
     },
     
     getFilterPanel: function () {

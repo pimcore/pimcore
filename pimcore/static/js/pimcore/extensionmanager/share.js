@@ -74,7 +74,7 @@ pimcore.extensionmanager.share = Class.create({
                 var icon = "";
                 if(value == "plugin") {
                     icon = "cog.png";
-                } else if (value = "brick") {
+                } else if (value == "brick") {
                     icon = "bricks.png";
                 }
                 return '<img src="/pimcore/static/img/icon/' + icon + '" alt="'+ t("value") +'" title="'
@@ -406,7 +406,7 @@ pimcore.extensionmanager.share = Class.create({
 
                         try {
                             this.progressBar.updateProgress(status, percent + "%");
-                        } catch (e) {}
+                        } catch (e2) {}
 
                     }.bind(this),
                     failure: function () {
