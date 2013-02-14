@@ -51,6 +51,14 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
             $method = strtolower($tag->getHttpMethod());
             $pattern = $tag->getUrlPattern();
             $textPattern = $tag->getTextPattern();
+
+            // site check
+            if(Site::isSiteRequest() && $tag->getSiteId()) {
+                if(Site::getCurrentSite()->getId() != $tag->getSiteId()) {
+                    break;
+                }
+            }
+
             if( ($method == strtolower($this->getRequest()->getMethod()) || empty($method)) &&
                 (empty($pattern) || @preg_match($pattern, $this->getRequest()->getRequestUri())) &&
                 (empty($textPattern) || strpos($body,$textPattern) !== false)
