@@ -379,7 +379,8 @@ pimcore.document.pages.preview = Class.create({
                     editor.layout.disable();
                     editor.editorClearCurrentElement();
 
-                    editor.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">' + t("please_wait") + "...</strong>");
+                    editor.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">'
+                                                                            + t("please_wait") + "...</strong>");
                     editor.editorElement = element;
 
                     // check for prev. activated element in positioning module, otherwise the listeners cannot be
@@ -466,15 +467,16 @@ pimcore.document.pages.preview = Class.create({
                             itemAmount = editor.getIframeBody().query(hierarchy).length;
                             if(singleElement !== true) {
                                 if(itemAmount > 1) {
-                                    var answer = window.confirm(t("there_are_more_than_one_items_for_the_given_selector"));
+                                    var answer = window.confirm(
+                                                        t("there_are_more_than_one_items_for_the_given_selector"));
                                     if(!answer) {
                                         editor.getIframeWindow().pimcore.editorSelectElement(e, el, true);
                                         return;
                                     }
                                 }
                             }
-                        } catch (e) {
-                            console.log(e);
+                        } catch (e2) {
+                            console.log(e2);
                         }
 
 
@@ -509,15 +511,16 @@ pimcore.document.pages.preview = Class.create({
                                         }
                                     }.bind(editor),
                                     "rowdblclick": function (grid, rowIndex, e) {
-                                        editor.getIframeWindow().pimcore.editorSelectElement(null, grid.getStore().getAt(rowIndex).get("element").dom);
+                                        editor.getIframeWindow().pimcore.editorSelectElement(null,
+                                                            grid.getStore().getAt(rowIndex).get("element").dom);
                                     }.bind(editor)
                                 }
                             }]
                         });
 
-                        var stylesToCapture = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing",
-                            "font-style", "color", "text-decoration", "text-align", "text-transform", "width", "height",
-                            "padding-top", "padding-right","padding-bottom","padding-left",
+                        var stylesToCapture = ["font-family", "font-size", "font-weight", "line-height",
+                            "letter-spacing", "font-style", "color", "text-decoration", "text-align", "text-transform",
+                            "width", "height", "padding-top", "padding-right","padding-bottom","padding-left",
                             "margin-left", "margin-right","margin-top","margin-bottom",
                             "top","left","right","bottom","position", "opacity"];
                         var styles = element.getStyles.apply(element, stylesToCapture);
@@ -909,11 +912,12 @@ pimcore.document.pages.preview = Class.create({
                             if(typeof this.editorModifications[hierarchy] == "undefined") {
                                 this.editorModifications[hierarchy] = {
                                     initial: cssData
-                                }
+                                };
                                 init = true;
                             }
 
-                            // extract existing css for the current element, so that it can be added later again if not modified
+                            // extract existing css for the current element, so that it can be added later again
+                            // if not modified
                             var cssContent = this.stylesField.getValue();
                             if(!cssContent) {
                                 cssContent = "";
@@ -939,7 +943,8 @@ pimcore.document.pages.preview = Class.create({
 
                             // generate css
                             Ext.iterate(cssData, function (key, value) {
-                                if( value !== this.editorModifications[hierarchy]["initial"][key] && key.indexOf("__unit") < 0 && key != "css") {
+                                if( value !== this.editorModifications[hierarchy]["initial"][key]
+                                                                    && key.indexOf("__unit") < 0 && key != "css") {
 
                                     value = String(value);
 
@@ -985,8 +990,10 @@ pimcore.document.pages.preview = Class.create({
                                     this.editorUnFrameElement();
                                     this.editorModifications[hierarchy]["css"] = css;
 
-                                    // remove existing rules for current element -> existing not modified styles were added already above
-                                    cssContent = cssContent.replace(new RegExp(preg_quote(hierarchy) + "[^\\}]*\\}"), "");
+                                    // remove existing rules for current element -> existing not modified styles
+                                    // were added already above
+                                    cssContent = cssContent.replace(new RegExp(preg_quote(hierarchy)
+                                                                                                  + "[^\\}]*\\}"), "");
                                     cssContent = cssContent.replace(/^\s*$[\n\r]{1,}/gm, '');
                                     cssContent = cssContent.replace(/\}/gm, "}\n");
 

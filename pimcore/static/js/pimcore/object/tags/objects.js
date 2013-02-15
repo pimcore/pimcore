@@ -612,7 +612,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         var classname = data.node.attributes.className;
         var isAllowedClass = false;
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
-            for (i = 0; i < this.fieldConfig.classes.length; i++) {
+            for (var i = 0; i < this.fieldConfig.classes.length; i++) {
                 if (this.fieldConfig.classes[i].classes == classname) {
                     isAllowedClass = true;
                     break;

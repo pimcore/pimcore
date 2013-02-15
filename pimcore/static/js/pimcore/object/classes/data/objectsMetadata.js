@@ -208,7 +208,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
 
 
         var typesColumns = [
-            {header: t("position"), width: 10, sortable: true, dataIndex: 'position', editor: new Ext.form.NumberField({})},
+            {header: t("position"), width: 10, sortable: true, dataIndex: 'position',
+                                                                            editor: new Ext.form.NumberField({})},
             {header: t("key"), width: 40, sortable: true, dataIndex: 'key', editor: keyTextField},
             {header: t("label"), width: 60, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
         ];

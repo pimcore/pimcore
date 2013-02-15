@@ -219,7 +219,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.abstract, {
                 draggable: true
             });
 
-            this.reverseGeocodeInterval = window.setInterval(this.reverseGeocode.bind(this), 500)
+            this.reverseGeocodeInterval = window.setInterval(this.reverseGeocode.bind(this), 500);
 
         }.bind(this));
 
