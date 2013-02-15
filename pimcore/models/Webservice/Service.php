@@ -56,9 +56,9 @@ class Webservice_Service
     }
 
     /**
-     * @param int $id
-     * @return Webservice_Data_Document_Link_Out
-     */
+ * @param int $id
+ * @return Webservice_Data_Document_Link_Out
+ */
     public function getDocumentLinkById($id)
     {
         try {
@@ -70,6 +70,48 @@ class Webservice_Service
             }
 
             throw new Exception("Document Link with given ID (" . $id . ") does not exist.");
+        } catch (Exception $e) {
+            Logger::error($e);
+            throw $e;
+        }
+    }
+
+    /**
+     * @param int $id
+     * @return Webservice_Data_Document_HardLink_Out
+     */
+    public function getDocumentHardLinkById($id)
+    {
+        try {
+            $link = Document::getById($id);
+            if ($link instanceof Document_Hardlink) {
+                $className = Webservice_Data_Mapper::findWebserviceClass($link, "out");
+                $apiLink = Webservice_Data_Mapper::map($link, $className, "out");
+                return $apiLink;
+            }
+
+            throw new Exception("Document Hardlink with given ID (" . $id . ") does not exist.");
+        } catch (Exception $e) {
+            Logger::error($e);
+            throw $e;
+        }
+    }
+
+    /**
+     * @param int $id
+     * @return Webservice_Data_Document_HardLink_Out
+     */
+    public function getDocumentEmailById($id)
+    {
+        try {
+            $link = Document::getById($id);
+            if ($link instanceof Document_Email) {
+                $className = Webservice_Data_Mapper::findWebserviceClass($link, "out");
+                $apiLink = Webservice_Data_Mapper::map($link, $className, "out");
+                return $apiLink;
+            }
+
+            throw new Exception("Document Email with given ID (" . $id . ") does not exist.");
         } catch (Exception $e) {
             Logger::error($e);
             throw $e;
