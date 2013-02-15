@@ -292,20 +292,29 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
             if ($this->isGet()) {
                 $doc = Document::getById($id);
-                if ($doc instanceof Document_Link) {
-                    $object = $this->service->getDocumentLinkById($id);
-                }
 
-                if ($doc instanceof Document_Snippet) {
-                    $object = $this->service->getDocumentSnippedById($id);
-                }
+                if ($doc) {
+                    $type = $doc->getType();
+                    $getter = "getDocument" . ucfirst($type) . "ById";
 
-                if ($doc instanceof Document_Page) {
-                    $object = $this->service->getDocumentPageById($id);
-                }
+                    $object = $this->service->$getter($id);
 
-                if ($doc instanceof Document_Folder) {
-                    $object = $this->service->getDocumentFolderById($id);
+//
+//                    if ($doc instanceof Document_Link) {
+//                        $object = $this->service->getDocumentLinkById($id);
+//                    }
+//
+//                    if ($doc instanceof Document_Snippet) {
+//                        $object = $this->service->getDocumentSnippedById($id);
+//                    }
+//
+//                    if ($doc instanceof Document_Page) {
+//                        $object = $this->service->getDocumentPageById($id);
+//                    }
+//
+//                    if ($doc instanceof Document_Folder) {
+//                        $object = $this->service->getDocumentFolderById($id);
+//                    }
                 }
 
                 if (!$object) {
@@ -401,8 +410,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      - group by key
      */
     public function documentListAction() {
-        Logger::debug("################################### DOCUMENT LIST \n\n\n\n\n");
-        $condition = $this->getParam("condition");
+        $condition = urldecode($this->getParam("condition"));
         $order = $this->getParam("order");
         $orderKey = $this->getParam("orderKey");
         $offset = $this->getParam("offset");
@@ -427,7 +435,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *          not exist the filter criteria will be ignored!
      */
     public function objectListAction() {
-        $condition = $this->getParam("condition");
+        $condition = urldecode($this->getParam("condition"));
         $order = $this->getParam("order");
         $orderKey = $this->getParam("orderKey");
         $offset = $this->getParam("offset");
