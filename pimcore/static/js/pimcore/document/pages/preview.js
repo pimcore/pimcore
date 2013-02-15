@@ -146,7 +146,8 @@ pimcore.document.pages.preview = Class.create({
                         this.editorClearCurrentElement();
                     }.bind(this)
                 }],
-                html: '<strong style="display: block; padding: 30px 0 0; text-align: center;">' + t("no_item_selected") + "</strong>"
+                html: '<strong style="display: block; padding: 30px 0 0; text-align: center;">'
+                                                                    + t("no_item_selected") + "</strong>"
             });
 
             this.cssPanel = new Ext.Panel({
@@ -475,8 +476,8 @@ pimcore.document.pages.preview = Class.create({
                                     }
                                 }
                             }
-                        } catch (e2) {
-                            console.log(e2);
+                        } catch (e3) {
+                            console.log(e3);
                         }
 
 
@@ -663,7 +664,8 @@ pimcore.document.pages.preview = Class.create({
 
                                     iscope.positioningStop = function (e) {
 
-                                        editor.getIframeBody().dom.removeEventListener("mousemove", iscope.positioningMove, false);
+                                        editor.getIframeBody().dom.removeEventListener("mousemove",
+                                                                                iscope.positioningMove, false);
                                         setPosition();
                                         return false;
                                     };
@@ -688,7 +690,8 @@ pimcore.document.pages.preview = Class.create({
                                         topReference = topReference + (e.clientY - offsets[1]);
                                         leftReference = leftReference + (e.clientX - offsets[0]);
 
-                                        editor.getIframeBody().dom.addEventListener("mousemove", iscope.positioningMove, false);
+                                        editor.getIframeBody().dom.addEventListener("mousemove",
+                                                                                    iscope.positioningMove, false);
 
                                         e.preventDefault();
                                         return false;
@@ -699,8 +702,10 @@ pimcore.document.pages.preview = Class.create({
                                     el.dom.ondragstart = function() { return false; };
 
                                     el.dom.addEventListener("mousedown", iscope.positioningStart, false);
-                                    editor.getIframeBody().dom.addEventListener("mouseup", iscope.positioningStop, false);
-                                    editor.getIframeBody().dom.addEventListener("mouseleave", iscope.positioningStop, false);
+                                    editor.getIframeBody().dom.addEventListener("mouseup",
+                                                                                    iscope.positioningStop, false);
+                                    editor.getIframeBody().dom.addEventListener("mouseleave",
+                                                                                    iscope.positioningStop, false);
 
                                 }.bind(editor),
                                 deactivate: function () {
@@ -711,9 +716,12 @@ pimcore.document.pages.preview = Class.create({
 
                                         var iscope = editor.getIframeWindow().pimcore;
                                         el.dom.removeEventListener("mousedown", iscope.positioningStart, false);
-                                        editor.getIframeBody().dom.removeEventListener("mousemove", iscope.positioningMove, false);
-                                        editor.getIframeBody().dom.removeEventListener("mouseup", iscope.positioningStop, false);
-                                        editor.getIframeBody().dom.removeEventListener("mouseleave", iscope.positioningStop, false);
+                                        editor.getIframeBody().dom.removeEventListener("mousemove",
+                                                                                    iscope.positioningMove, false);
+                                        editor.getIframeBody().dom.removeEventListener("mouseup",
+                                                                                    iscope.positioningStop, false);
+                                        editor.getIframeBody().dom.removeEventListener("mouseleave",
+                                                                                    iscope.positioningStop, false);
                                     } catch (e) {
                                         console.log(e);
                                     }

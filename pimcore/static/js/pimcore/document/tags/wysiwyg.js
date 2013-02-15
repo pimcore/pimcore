@@ -12,6 +12,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+/*global CKEDITOR*/
 pimcore.registerNS("pimcore.document.tags.wysiwyg");
 pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
@@ -284,7 +285,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                         defaultWidth = data.node.attributes.imageWidth;
                     }
 
-                    additionalAttributes += ' style="width:' + defaultWidth + 'px;"'
+                    additionalAttributes += ' style="width:' + defaultWidth + 'px;"';
                 }
 
                 insertEl = CKEDITOR.dom.element.createFromHtml('<img src="'
@@ -302,7 +303,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
                             || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
-            insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="' + id + '">' + wrappedText + '</a>');
+            insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
+                                                                        + id + '">' + wrappedText + '</a>');
             this.ckeditor.insertElement(insertEl);
             return true;
         }

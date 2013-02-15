@@ -164,7 +164,8 @@ pimcore.document.pages.settings = Class.create({
                         style: "float:left;margin-right:5px;"
                     },{
                         xtype: "combo",
-                        store: ["","og:title","og:type","og:url","og:image","og:description","og:locale","twitter:card","twitter:site","twitter:creator"],
+                        store: ["","og:title","og:type","og:url","og:image","og:description","og:locale",
+                                                                "twitter:card","twitter:site","twitter:creator"],
                         value: idValue,
                         editable: true,
                         mode: "local",
@@ -523,9 +524,11 @@ pimcore.document.pages.settings = Class.create({
                                             Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
                                                 function (buttonValue) {
                                                     if (buttonValue == "yes") {
-                                                        Ext.getCmp("contentMasterDocumentPath_" + this.page.id).setValue("");
+                                                        Ext.getCmp("contentMasterDocumentPath_"
+                                                                                        + this.page.id).setValue("");
                                                         Ext.Ajax.request({
-                                                            url:"/admin/page/change-master-document/id/" + this.page.id,
+                                                            url:"/admin/page/change-master-document/id/"
+                                                                                        + this.page.id,
                                                             params:{
                                                                 contentMasterDocumentPath:""
                                                             },
