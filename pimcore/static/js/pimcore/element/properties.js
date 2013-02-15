@@ -297,7 +297,8 @@ pimcore.element.properties = Class.create({
                     return;
                 }
  
-                $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
+                $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
+                                                            .animate( { backgroundColor: '#fff' }, 400);
                 
                 var menu = new Ext.menu.Menu();
  
@@ -332,7 +333,7 @@ pimcore.element.properties = Class.create({
                 }
  
                 event.stopEvent();
-                menu.showAt(event.getXY())
+                menu.showAt(event.getXY());
             }.bind(this));
 
             this.layout = new Ext.Panel({
@@ -367,7 +368,8 @@ pimcore.element.properties = Class.create({
             }
         } else if (type == "bool" && data.inherited == false) {
             metaData.css += ' x-grid3-check-col-td';
-            return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+            return String.format('<div class="x-grid3-check-col{0}" '
+                        + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
         }
  
         return value;
@@ -503,7 +505,8 @@ pimcore.element.properties = Class.create({
             Ext.MessageBox.alert(t("error"), t("name_is_not_allowed"));
         }
 
-        this.add(selectedData.key, selectedData.type, selectedData.data, selectedData.config, false, selectedData.inheritable);
+        this.add(selectedData.key, selectedData.type, selectedData.data, selectedData.config, false,
+                                                                                    selectedData.inheritable);
     },
  
     addSetFromUserDefined: function (customKey, customType) {
@@ -589,7 +592,7 @@ pimcore.element.properties = Class.create({
         var records = store.getRange();
  
         for (var i = 0; i < records.length; i++) {
-            currentData = records[i];
+            var currentData = records[i];
             if (currentData) {
                 if (!currentData.data.inherited) {
                     values[currentData.data.name] = {
