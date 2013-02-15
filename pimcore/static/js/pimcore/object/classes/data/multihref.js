@@ -57,11 +57,12 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         this.specificPanel.removeAll();
 
         this.uniqeFieldId = uniqid();
+        var i;
 
         var allowedClasses = [];
         if(typeof this.datax.classes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.classes.length; i++) {
+            for(i=0; i<this.datax.classes.length; i++) {
                 allowedClasses.push(this.datax.classes[i]["classes"]);
             }
         } else if(typeof this.datax.classes == "string") {
@@ -72,7 +73,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         var allowedDocuments = [];
         if(typeof this.datax.documentTypes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.documentTypes.length; i++) {
+            for(i=0; i<this.datax.documentTypes.length; i++) {
                 allowedDocuments.push(this.datax.documentTypes[i]["documentTypes"]);
             }
         } else if(typeof this.datax.documentTypes == "string") {
@@ -83,7 +84,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
         var allowedAssets = [];
         if(typeof this.datax.assetTypes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.assetTypes.length; i++) {
+            for(i=0; i<this.datax.assetTypes.length; i++) {
                 allowedAssets.push(this.datax.assetTypes[i]["assetTypes"]);
             }
         } else if(typeof this.datax.assetTypes == "string") {

@@ -21,13 +21,14 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
+        var i;
 
         if (!data) {
             data = [];
         }
         if(data.length == 0) {
 
-            for(var i = 0; i < fieldConfig.rows.length; i++) {
+            for(i = 0; i < fieldConfig.rows.length; i++) {
                 var dataRow = {};
                 dataRow.__row_identifyer = fieldConfig.rows[i].key;
                 dataRow.__row_label = fieldConfig.rows[i].label;
@@ -45,7 +46,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             "__row_label"
         ];
 
-        for(var i = 0; i < fieldConfig.cols.length; i++) {
+        for(i = 0; i < fieldConfig.cols.length; i++) {
             var field = {name:fieldConfig.cols[i].key};
             if(fieldConfig.cols[i].type == "number") {
                 field.type = "float";
@@ -144,7 +145,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
                         record.set(col.dataIndex, !record.data[col.dataIndex]);
                         this.dataChanged = true;
                     }.bind(this)
-                }
+                };
             }
 
             columns.push({

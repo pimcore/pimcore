@@ -28,12 +28,12 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                 [" "]
             ];
             if (this.fieldConfig.cols) {
-                for (var i = 0; i < (this.fieldConfig.cols - 1); i++) {
+                for (i = 0; i < (this.fieldConfig.cols - 1); i++) {
                     data[0].push(" ");
                 }
             }
             if (this.fieldConfig.rows) {
-                for (var i = 0; i < (this.fieldConfig.rows - 1); i++) {
+                for (i = 0; i < (this.fieldConfig.rows - 1); i++) {
                     data.push(data[0]);
                 }
             }
@@ -41,7 +41,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                 try {
                     var dataRows = this.fieldConfig.data.split("\n");
                     var dataGrid = [];
-                    for (var i = 0; i < dataRows.length; i++) {
+                    for (i = 0; i < dataRows.length; i++) {
                         dataGrid.push(dataRows[i].split("|"));
                     }
 

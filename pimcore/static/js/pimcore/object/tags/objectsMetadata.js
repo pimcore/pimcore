@@ -35,11 +35,13 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         fields.push("id");
 
-        for(var i = 0; i < visibleFields.length; i++) {
+        var i;
+
+        for(i = 0; i < visibleFields.length; i++) {
             fields.push(visibleFields[i]);
         }
 
-        for(var i = 0; i < this.fieldConfig.columns.length; i++) {
+        for(i = 0; i < this.fieldConfig.columns.length; i++) {
             fields.push(this.fieldConfig.columns[i].key);
         }
 

@@ -75,7 +75,7 @@ pimcore.object.tags.abstract = Class.create({
 
     getEl:function () {
         if (this.component) {
-            return this.component.getEl()
+            return this.component.getEl();
         }
 
         throw "the component `" + this.getName()

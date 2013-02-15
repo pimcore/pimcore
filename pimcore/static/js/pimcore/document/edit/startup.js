@@ -122,7 +122,8 @@ Ext.onReady(function () {
         var bodyHeight = parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px";
         Ext.getBody().applyStyles("min-height:" + bodyHeight);
         // set handler
-        dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(), parent.Ext.get('document_iframe_' + window.editWindow.document.id), dndZones);
+        dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
+                                parent.Ext.get('document_iframe_' + window.editWindow.document.id), dndZones);
 
         // handler for Esc
         var mapEsc = new Ext.KeyMap(document, {

@@ -481,6 +481,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     dndAllowed: function(data) {
 
+        var i;
+
         // check if data is a treenode, if not allow drop because of the reordering
         if (!this.sourceIsTreeNode(data)) {
             return true;
@@ -491,7 +493,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         if (type == "object" && this.fieldConfig.objectsAllowed) {
 
             var classname = data.node.attributes.className;
-            var isAllowed = false;
+            isAllowed = false;
             if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
                 for (i = 0; i < this.fieldConfig.classes.length; i++) {
                     if (this.fieldConfig.classes[i].classes == classname) {

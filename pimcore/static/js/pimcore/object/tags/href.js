@@ -235,6 +235,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
+        var i;
         
         if (this.fieldConfig.objectsAllowed) {
             allowedTypes.push("object");

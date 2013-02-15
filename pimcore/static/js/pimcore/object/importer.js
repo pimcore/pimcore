@@ -99,11 +99,12 @@ pimcore.object.importer = Class.create({
                     fieldLabel: t("importFileHasHeadRow"),
                     listeners: {
                         check: function(headRecord, dataGrid, checkbox, checked) {
+                            var i;
                             if (checked) {
                                 dataGrid.store.remove(headRecord);
                                 this.importJobTotal = data.rows - 1;
                                 this.settingsForm.getForm().findField('skipHeadRow').setValue(true);
-                                for (var i = 0; i < headRecord.fields.items.length; i++) {
+                                for (i = 0; i < headRecord.fields.items.length; i++) {
                                     var value = headRecord.get("field_" + i);
                                     dataGrid.getColumnModel().setColumnHeader(i, value);
                                 }
@@ -111,7 +112,7 @@ pimcore.object.importer = Class.create({
                                 dataGrid.store.insert(0, headRecord);
                                 this.importJobTotal = data.rows;
                                 this.settingsForm.getForm().findField('skipHeadRow').setValue(false);
-                                for (var i = 0; i < headRecord.fields.items.length; i++) {
+                                for (i = 0; i < headRecord.fields.items.length; i++) {
                                     dataGrid.getColumnModel().setColumnHeader(i, "field_" + i);
                                 }
                             }
