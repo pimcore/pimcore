@@ -294,6 +294,7 @@ class Pimcore {
             // redirect php error_log to /website/var/log/php.log
             if($conf->general->custom_php_logfile) {
                 ini_set("error_log", PIMCORE_LOG_DIRECTORY . "/php.log");
+                ini_set("log_errors", "1");
             }
         }
 
