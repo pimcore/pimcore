@@ -38,12 +38,21 @@ class OnlineShop_Framework_ProductList_Resource {
 
         if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             if($orderBy) {
-                $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY o_virtualProductId, priceSystemName" . $orderBy . " " . $limit;
+                $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM "
+                    . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                    . $this->model->getCurrentTenantConfig()->getJoins()
+                    . $condition . " GROUP BY o_virtualProductId, priceSystemName" . $orderBy . " " . $limit;
             } else {
-                $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " " . $limit;
+                $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM "
+                    . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                    . $this->model->getCurrentTenantConfig()->getJoins()
+                    . $condition . " " . $limit;
             }
         } else {
-            $query = "SELECT o_id, priceSystemName FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+            $query = "SELECT a.o_id, priceSystemName FROM "
+                . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                . $this->model->getCurrentTenantConfig()->getJoins()
+                . $condition . $orderBy . " " . $limit;
         }
         Logger::log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchAll($query);
@@ -59,9 +68,15 @@ class OnlineShop_Framework_ProductList_Resource {
 
         if($countValues) {
             if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                $query = "SELECT TRIM(`$fieldname`) as `value`, count(DISTINCT o_virtualProductId) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
+                $query = "SELECT TRIM(`$fieldname`) as `value`, count(DISTINCT o_virtualProductId) as `count` FROM "
+                    . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                    . $this->model->getCurrentTenantConfig()->getJoins()
+                    . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
             } else {
-                $query = "SELECT TRIM(`$fieldname`) as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
+                $query = "SELECT TRIM(`$fieldname`) as `value`, count(*) as `count` FROM "
+                    . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                    . $this->model->getCurrentTenantConfig()->getJoins()
+                    . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
             }
 
             Logger::log("Query: " . $query, Zend_Log::INFO);
@@ -69,7 +84,10 @@ class OnlineShop_Framework_ProductList_Resource {
             Logger::log("Query done.", Zend_Log::INFO);
             return $result;
         } else {
-            $query = "SELECT `$fieldname` FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . " GROUP BY `" . $fieldname . "`";
+            $query = "SELECT `$fieldname` FROM "
+                . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                . $this->model->getCurrentTenantConfig()->getJoins()
+                . $condition . " GROUP BY `" . $fieldname . "`";
             Logger::log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchCol($query);
             Logger::log("Query done.", Zend_Log::INFO);
@@ -85,20 +103,36 @@ class OnlineShop_Framework_ProductList_Resource {
 
         if($countValues) {
             if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                $query = "SELECT dest as `value`, count(DISTINCT src_virtualProductId) as `count` FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
+                $query = "SELECT dest as `value`, count(DISTINCT src_virtualProductId) as `count` FROM "
+                    . $this->model->getCurrentTenantConfig()->getRelationTablename() . " a "
+                    . "WHERE fieldname = " . $this->quote($fieldname);
             } else {
-                $query = "SELECT dest as `value`, count(*) as `count` FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
+                $query = "SELECT dest as `value`, count(*) as `count` FROM "
+                    . $this->model->getCurrentTenantConfig()->getRelationTablename() . " a "
+                    . "WHERE fieldname = " . $this->quote($fieldname);
             }
 
-            $query .= " AND src IN (SELECT o_id FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . ") GROUP BY dest";
+            $subquery = "SELECT a.o_id FROM "
+                . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                . $this->model->getCurrentTenantConfig()->getJoins()
+                . $condition;
+
+            $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
             Logger::log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchAll($query);
             Logger::log("Query done.", Zend_Log::INFO);
             return $result;
         } else {
-            $query = "SELECT dest FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE fieldname = " . $this->quote($fieldname);
-            $query .= " AND src IN (SELECT o_id FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . ") GROUP BY dest";
+            $query = "SELECT dest FROM " . $this->model->getCurrentTenantConfig()->getRelationTablename() . " a "
+                . "WHERE fieldname = " . $this->quote($fieldname);
+
+            $subquery = "SELECT a.o_id FROM "
+                . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                . $this->model->getCurrentTenantConfig()->getJoins()
+                . $condition;
+
+            $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
             Logger::log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchCol($query);
@@ -125,9 +159,15 @@ class OnlineShop_Framework_ProductList_Resource {
         }
 
         if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            $query = "SELECT count(DISTINCT o_virtualProductId) FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+            $query = "SELECT count(DISTINCT o_virtualProductId) FROM "
+                . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                . $this->model->getCurrentTenantConfig()->getJoins()
+                . $condition . $orderBy . " " . $limit;
         } else {
-            $query = "SELECT count(*) FROM " . OnlineShop_Framework_IndexService::TABLENAME . " " . $condition . $orderBy . " " . $limit;
+            $query = "SELECT count(*) FROM "
+                . $this->model->getCurrentTenantConfig()->getTablename() . " a "
+                . $this->model->getCurrentTenantConfig()->getJoins()
+                . $condition . $orderBy . " " . $limit;
         }
         Logger::log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchOne($query);
@@ -159,12 +199,12 @@ class OnlineShop_Framework_ProductList_Resource {
                 $maxFieldString .= "MAX(" . $this->db->quoteIdentifier($f->getField()) . ") as " . $this->db->quoteIdentifier($f->getField());
             }
 
-            $query = "SELECT " . $fieldString . " FROM " . OnlineShop_Framework_IndexService::TABLENAME . " WHERE o_id = ?;";
+            $query = "SELECT " . $fieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a WHERE a.o_id = ?;";
             Logger::log("Query: " . $query, Zend_Log::INFO);
             $objectValues = $this->db->fetchRow($query, $objectId);
             Logger::log("Query done.", Zend_Log::INFO);
 
-            $query = "SELECT " . $maxFieldString . " FROM " . OnlineShop_Framework_IndexService::TABLENAME;
+            $query = "SELECT " . $maxFieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a";
             Logger::log("Query: " . $query, Zend_Log::INFO);
             $maxObjectValues = $this->db->fetchRow($query);
             Logger::log("Query done.", Zend_Log::INFO);

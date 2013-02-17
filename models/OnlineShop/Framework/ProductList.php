@@ -322,6 +322,11 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
             $preCondition .= " AND inProductList = 1";
         }
 
+        $tenantCondition = $this->getCurrentTenantConfig()->getCondition();
+        if($tenantCondition) {
+            $preCondition .= " AND " . $tenantCondition;
+        }
+
         if($this->getCategory()) {
             $preCondition .= " AND parentCategoryIds LIKE '%," . $this->getCategory()->getId() . ",%'";
         }
@@ -428,6 +433,12 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         return $this->resource->quote($value);
     }
 
+    /**
+     * @return OnlineShop_Framework_IndexService_Tenant_DefaultConfig
+     */
+    public function getCurrentTenantConfig() {
+        return $this->indexService->getCurrentTenantConfig();
+    }
 
     /**
      * returns order by statement for simularity calculations based on given fields and object ids

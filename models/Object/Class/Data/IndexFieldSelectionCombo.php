@@ -27,6 +27,7 @@ class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Selec
 
     public $specificPriceField = false;
     public $showAllFields = false;
+    public $considerTenants = false;
 
 
 
@@ -77,5 +78,12 @@ class Object_Class_Data_IndexFieldSelectionCombo extends Object_Class_Data_Selec
         return $this->showAllFields;
     }
 
+    public function setConsiderTenants($considerTenants) {
+        $this->considerTenants = $considerTenants;
+    }
+
+    public function getConsiderTenants() {
+        return $this->considerTenants;
+    }
 
 }

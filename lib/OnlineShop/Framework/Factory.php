@@ -19,6 +19,11 @@ class OnlineShop_Framework_Factory {
     private $checkoutManagers;
 
     /**
+     * @var string[]
+     */
+    private $allTenants;
+
+    /**
      * @var OnlineShop_Framework_IEnvironment
      */
     private $environment;
@@ -257,6 +262,19 @@ class OnlineShop_Framework_Factory {
             $this->indexService = new OnlineShop_Framework_IndexService($this->config->onlineshop->productindex);
         }
         return $this->indexService;
+    }
+
+
+    /**
+     * @return string[]
+     */
+    public function getAllTenants() {
+        if(empty($this->allTenants) && $this->config->onlineshop->productindex->tenants) {
+            foreach($this->config->onlineshop->productindex->tenants as $name => $tenant) {
+                $this->allTenants[$name] = $name;
+            }
+        }
+        return $this->allTenants;
     }
 
     public function getFilterService(Zend_View $view) {

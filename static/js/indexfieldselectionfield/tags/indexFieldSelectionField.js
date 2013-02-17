@@ -16,12 +16,22 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
             fields: ['key','name'],
             listeners: {
                 load: function() {
-                    if(this.component) {
-                        this.component.setValue(this.data);
+                    if(this.fieldsCombobox) {
+                        this.fieldsCombobox.setValue(this.data);
                     }
                 }.bind(this)
             }
         });
+
+        if(this.fieldConfig.considerTenants) {
+            this.tenantStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                autoLoad: true,
+                url: '/plugin/OnlineShop/index/get-all-tenants',
+                root: 'data',
+                fields: ['key', 'name']
+            });
+        }
 
     },
 
@@ -53,21 +63,55 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
             conf.value = this.data;
         }
 
-        this.component = new Ext.ux.form.SuperBoxSelect(conf);
+        this.fieldsCombobox = new Ext.ux.form.SuperBoxSelect(conf);
+
+
+        if(this.fieldConfig.considerTenants) {
+            var tenantCombobox = new Ext.form.ComboBox({
+                triggerAction: "all",
+                editable: false,
+                store: this.tenantStore,
+                valueField: 'key',
+                displayField: 'name',
+                itemCls: "object_field",
+                width: 150,
+                listeners: {
+                    select: function(combo, record) {
+                        this.fieldsCombobox.setValue("");
+
+                        this.store.setBaseParam("tenant", record.data.key);
+                        this.store.reload({params: {tenant: record.data.key}});
+                    }.bind(this)
+                }
+            });
+
+            this.component = new Ext.form.CompositeField({
+                xtype: 'compositefield',
+                fieldLabel: this.fieldConfig.title,
+                items: [
+                    tenantCombobox,
+                    this.fieldsCombobox
+                ]
+            });
+
+        } else {
+            this.component = this.fieldsCombobox;
+        }
+
         return this.component;
     },
 
 
     getLayoutShow: function () {
 
-        this.component = this.getLayoutEdit();
-        this.component.disable();
+        this.fieldsCombobox = this.getLayoutEdit();
+        this.fieldsCombobox.disable();
 
-        return this.component;
+        return this.fieldsCombobox;
     },
 
     getValue: function () {
-        return this.component.getValue();
+        return this.fieldsCombobox.getValue();
     },
 
     getName: function () {

@@ -152,7 +152,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
     }
 
     /**
-     * implemtation-specific processing of order, must be implemented in subclass (e.g. sending order to ERP-system)
+     * implementation-specific processing of order, must be implemented in subclass (e.g. sending order to ERP-system)
      * @abstract
      * @param Object_OnlineShopOrder $order
      * @return void

@@ -4,7 +4,6 @@ abstract class OnlineShop_Framework_FilterService_AbstractFilterType {
 
     const EMPTY_STRING = '$$EMPTY$$';
 
-
     protected $view;
     protected $script;
     protected $config;

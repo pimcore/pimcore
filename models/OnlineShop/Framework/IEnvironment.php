@@ -67,4 +67,26 @@ interface OnlineShop_Framework_IEnvironment extends OnlineShop_Framework_ICompon
      * @return mixed
      */
     public function clearEnvironment();
+
+    /**
+     * @param $tenant string
+     * @return mixed
+     */
+    public function setCurrentTenant($tenant);
+
+    /**
+     * @return string
+     */
+    public function getCurrentTenant();
+
+    /**
+     * @param $tenant string
+     * @return mixed
+     */
+    public function setCurrentSubTenant($tenant);
+
+    /**
+     * @return string
+     */
+    public function getCurrentSubTenant();
 }
