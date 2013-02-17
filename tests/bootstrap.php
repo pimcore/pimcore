@@ -111,7 +111,6 @@ $autoloader->registerNamespace('TestSuite');
  * We can start running our tests against the phpunit_pimcore instance
  */
 
-Pimcore_Tool_RestClient::setLoggingEnabled(true);
 Pimcore_Tool_RestClient::setBaseUrl("http://" . $testConfig["rest"]["host"] . $testConfig["rest"]["base"]);
 Pimcore_Tool_RestClient::setHost($testConfig["rest"]["host"]);
 Pimcore_Tool_RestClient::enableTestMode();
