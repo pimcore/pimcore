@@ -79,7 +79,8 @@ pimcore.document.edit.dnd = Class.create({
     
     setIframeOffset: function () {
         try {
-            this.iframeOffset = parent.Ext.get('document_iframe_' + window.editWindow.document.id).getOffsetsTo(parent.Ext.getBody());
+            this.iframeOffset = parent.Ext.get('document_iframe_'
+                                                    + window.editWindow.document.id).getOffsetsTo(parent.Ext.getBody());
         } catch (e) {
             
         }

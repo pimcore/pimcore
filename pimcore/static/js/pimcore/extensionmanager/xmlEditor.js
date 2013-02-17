@@ -25,9 +25,7 @@ pimcore.extensionmanager.xmlEditor = Class.create(pimcore.settings.fileexplorer.
 
     loadFileContentsComplete: function (response) {
         var response = Ext.decode(response.responseText);
-
         if(response.success) {
-
             var toolbarItems = [];
             if(response.writeable) {
                 toolbarItems.push({
@@ -37,35 +35,19 @@ pimcore.extensionmanager.xmlEditor = Class.create(pimcore.settings.fileexplorer.
                 });
             }
 
-            this.panelId = "pimcore_extension_" + this.id + "_" + this.type;
-            this.editorId = this.panelId + "_editor";
-            this.editorMode = "xml";
+            this.textarea = new Ext.form.TextArea({
+                value: response.content,
+                style: "font-family:courier"
+            });
 
             this.editor = new Ext.Panel({
-                title: t('settings') + ' - ' + this.id,
-                id : this.panelId,
+                title: response.path,
                 closable: true,
                 layout: "fit",
                 tbar: toolbarItems,
                 bodyStyle: "position:relative;",
-                html: '<pre id="' + this.editorId + '"></pre>'
+                items: [this.textarea]
             });
-
-
-            this.editor.on("resize", function (el, width, height) {
-                if(this.aceEditor) {
-                    Ext.get(this.editorId).setWidth(width);
-                    Ext.get(this.editorId).setHeight(height-12);
-                    this.aceEditor.resize();
-                }
-            }.bind(this));
-
-            this.editor.on("afterrender", function () {
-                this.aceEditor = ace.edit(this.editorId);
-                this.aceEditor.setTheme("ace/theme/chrome");
-                this.aceEditor.getSession().setMode("ace/mode/" + this.editorMode);
-                this.aceEditor.getSession().setValue(response.content);
-            }.bind(this));
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.editor);
@@ -76,6 +58,6 @@ pimcore.extensionmanager.xmlEditor = Class.create(pimcore.settings.fileexplorer.
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_extension_" + id + "_" + type);
+        tabPanel.activate("pimcore_extension_" + this.id + "_" + type);
     }
 });

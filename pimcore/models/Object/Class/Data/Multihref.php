@@ -114,6 +114,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setObjectsAllowed($objectsAllowed)
     {
         $this->objectsAllowed = $objectsAllowed;
+        return $this;
     }
 
     /**
@@ -131,6 +132,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setDocumentsAllowed($documentsAllowed)
     {
         $this->documentsAllowed = $documentsAllowed;
+        return $this;
     }
 
 
@@ -158,6 +160,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         }
 
         $this->documentTypes = $documentTypes;
+        return $this;
     }
 
     /**
@@ -177,6 +180,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setAssetsAllowed($assetsAllowed)
     {
         $this->assetsAllowed = $assetsAllowed;
+        return $this;
     }
 
     /**
@@ -203,6 +207,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         }
 
         $this->assetTypes = $assetTypes;
+        return $this;
     }
 
 
@@ -426,6 +431,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -443,6 +449,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
 
@@ -634,6 +641,8 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
         } else if (is_array($value)) {
             $hrefs = array();
             foreach ($value as $href) {
+                // cast is needed to make it work for both SOAP and REST
+                $href = (array) $href;
                 if (is_array($href) and key_exists("id", $href) and key_exists("type", $href)) {
 
                     $e = Element_Service::getElementById($href["type"], $href["id"]);
@@ -696,6 +705,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**
@@ -712,6 +722,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function setAssetUploadPath($assetUploadPath)
     {
         $this->assetUploadPath = $assetUploadPath;
+        return $this;
     }
 
     /**
@@ -739,6 +750,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
     public function getDiffVersionPreview($data, $object = null) {
         $value = array();
         $value["type"] = "html";
+        $value["html"] = "";
 
         if ($data) {
             $html = $this->getVersionPreview($data);
@@ -752,19 +764,20 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      * @param null $object
      * @return null|Pimcore_Date
      */
-
     public function getDiffDataFromEditmode($data, $object = null) {
         if ($data) {
             $tabledata = $data[0]["data"];
 
             $result = array();
-            foreach ($tabledata as $in) {
-                $out = array();
-                $out["id"] = $in[0];
-                $out["path"] = $in[1];
-                $out["type"] = $in[2];
-                $out["subtype"] = $in[3];
-                $result[] = $out;
+            if ($tabledata) {
+                foreach ($tabledata as $in) {
+                    $out = array();
+                    $out["id"] = $in[0];
+                    $out["path"] = $in[1];
+                    $out["type"] = $in[2];
+                    $out["subtype"] = $in[3];
+                    $result[] = $out;
+                }
             }
 
             return $this->getDataFromEditmode($result);

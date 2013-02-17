@@ -243,6 +243,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      */
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -258,6 +259,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      */
     public function setHeight($height) {
         $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     /**
@@ -407,6 +409,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
            return null;  
         } else if(is_array($value)){
             foreach($value as $key => $item){
+                $item = (array) $item;
                 $object = Object_Abstract::getById($item['id']);
                 if($object instanceof Object_Abstract){
                     $objects[] = $object;
@@ -460,6 +463,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function setFieldtype($fieldtype)
     {
         $this->fieldtype = $fieldtype;
+        return $this;
     }
 
     /**
@@ -476,6 +480,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**
@@ -502,6 +507,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function getDiffVersionPreview($data, $object = null) {
         $value = array();
         $value["type"] = "html";
+        $value["html"] = "";
 
         if ($data) {
             $html = $this->getVersionPreview($data);
@@ -519,6 +525,10 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function getDiffDataFromEditmode($data, $object = null) {
         if ($data) {
             $tabledata = $data[0]["data"];
+
+            if (!$tabledata) {
+                return;
+            }
 
             $result = array();
             foreach ($tabledata as $in) {

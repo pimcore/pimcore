@@ -68,6 +68,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      */
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -87,6 +88,7 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
         if(strlen(strval($defaultValue)) > 0) {
             $this->defaultValue = $defaultValue;
         }
+        return $this;
     }
 
     /**
@@ -109,6 +111,9 @@ class Object_Class_Data_Numeric extends Object_Class_Data {
      * @return float
      */
     public function getDataFromResource($data) {
+        if(is_numeric($data)) {
+            return (float) $data;
+        }
         return $data;
     }
 

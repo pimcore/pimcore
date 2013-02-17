@@ -96,6 +96,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO__loadedLazyFields(array $o___loadedLazyFields) {
         $this->o___loadedLazyFields = $o___loadedLazyFields;
+        return $this;
     }
 
     /**
@@ -186,8 +187,6 @@ class Object_Concrete extends Object_Abstract {
         $this->saveScheduledTasks();
         $this->saveVersion(false, false);
         $this->saveChilds();
-        
-        Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
 
         // this is called already in parent::update() but we have too call it here again, because there are again
         // modifications after parent::update();, maybe this should be solved better, but for now this works fine
@@ -305,6 +304,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_versions($o_versions) {
         $this->o_versions = $o_versions;
+        return $this;
     }
 
     /**
@@ -313,6 +313,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setVersions ($o_versions) {
         $this->setO_versions($o_versions);
+        return $this;
     }
 
 
@@ -368,6 +369,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_class($o_class) {
         $this->o_class = $o_class;
+        return $this;
     }
 
     /**
@@ -376,6 +378,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setClass($o_class) {
         $this->setO_class($o_class);
+        return $this;
     }
 
     /**
@@ -415,6 +418,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_classId($o_classId) {
         $this->o_classId = (int) $o_classId;
+        return $this;
     }
 
     /**
@@ -423,6 +427,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setClassId($o_classId) {
         $this->setO_classId($o_classId);
+        return $this;
     }
 
     /**
@@ -438,6 +443,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_className($o_className) {
         $this->o_className = $o_className;
+        return $this;
     }
 
     /**
@@ -453,6 +459,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setClassName($o_className) {
         $this->setO_className($o_className);
+        return $this;
     }
 
 
@@ -483,6 +490,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setO_published($o_published) {
         $this->o_published = (bool) $o_published;
+        return $this;
     }
 
     /**
@@ -491,6 +499,7 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setPublished($o_published) {
         $this->setO_published($o_published);
+        return $this;
     }
 
     /**
@@ -498,7 +507,8 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setOmitMandatoryCheck($omitMandatoryCheck)
     {
-        $this->omitMandatoryCheck = $omitMandatoryCheck; 
+        $this->omitMandatoryCheck = $omitMandatoryCheck;
+        return $this;
     }
 
     /**
@@ -526,12 +536,13 @@ class Object_Concrete extends Object_Abstract {
      */
     public function setScheduledTasks($scheduledTasks) {
         $this->scheduledTasks = $scheduledTasks;
+        return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getValueFromParent($key) {
+    public function getValueFromParent($key, $params = null) {
         if ($this->getO_parent() instanceof Object_Abstract) {
 
             $parent = $this->getO_parent();
@@ -543,7 +554,9 @@ class Object_Concrete extends Object_Abstract {
                 if ($parent->getO_classId() == $this->getO_classId()) {
                     $method = "get" . $key;
                     if (method_exists($parent, $method)) {
-                        return $parent->$method();
+                        if (method_exists($parent, $method)) {
+                            return call_user_func(array($parent, $method), $params);
+                        }
                     }
                 }
             }
@@ -602,20 +615,26 @@ class Object_Concrete extends Object_Abstract {
 
             list($value, $limit, $offset) = $arguments;
 
+            $defaultCondition = $propertyName . " = '" . $value . "' ";
             $listConfig = array(
-                "condition" => $propertyName . " = '" . $value . "'"
+                "condition" => $defaultCondition
             );
 
-            if($limit) {
-                $listConfig["limit"] = $limit;
-            }
-            if($offset) {
-                $listConfig["offset"] = $offset;
+            if(!is_array($arguments[1])){
+                if($limit) {
+                    $listConfig["limit"] = $limit;
+                }
+                if($offset) {
+                    $listConfig["offset"] = $offset;
+                }
+            }else{
+                $listConfig = array_merge($listConfig,$arguments[1]);
+                $listConfig['condition'] = $defaultCondition . $arguments[1]['condition'];
             }
 
             $list = static::getList($listConfig);
 
-            if($limit == 1) {
+            if($listConfig['limit'] == 1) {
                 $elements = $list->getObjects();
                 return $elements[0];
             }

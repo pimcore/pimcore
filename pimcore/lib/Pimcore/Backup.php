@@ -31,6 +31,7 @@ class Pimcore_Backup {
     
     protected function setFilesToBackup ($files) {
         $this->filesToBackup = $files;
+        return $this;
     }
     
     public function getFileAmount () {
@@ -39,6 +40,7 @@ class Pimcore_Backup {
     
     protected function setFileAmount ($fileAmount) {
         $this->fileAmount = $fileAmount;
+        return $this;
     }
     
     public function getBackupFile () {
@@ -51,6 +53,7 @@ class Pimcore_Backup {
 
     public function setAdditionalExcludePatterns ($additionalExcludePatterns) {
         $this->additionalExcludePatterns = $additionalExcludePatterns;
+        return $this;
     }
 
     protected function getFormattedFilesize () {

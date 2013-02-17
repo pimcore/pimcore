@@ -146,7 +146,7 @@ pimcore.object.helpers.classTree = Class.create({
 
             var text = ts(initData.title);
             if(showFieldname) {
-                text = text + " (" + key.replace("~", ".") + ")"
+                text = text + " (" + key.replace("~", ".") + ")";
             }
             var newNode = new Ext.tree.TreeNode({
                 text: text,

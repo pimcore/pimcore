@@ -71,7 +71,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
 
             $updateable = false;
             
-            $revisionFile = PIMCORE_WEBSITE_PATH . "/var/areas/" . $id . "/.pimcore_extension_revision";
+            $revisionFile = PIMCORE_WEBSITE_VAR . "/areas/" . $id . "/.pimcore_extension_revision";
             if(is_file($revisionFile)) {
                 $updateable = true;
             }

@@ -12,6 +12,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+/*global google */
 pimcore.registerNS("pimcore.object.tags.geopolygon");
 pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
 
@@ -22,12 +23,34 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
         this.data = data;
         this.fieldConfig = fieldConfig;
 
+        // extend google maps to support the getBounds() method
+        if (!google.maps.Polygon.prototype.getBounds) {
+
+            google.maps.Polygon.prototype.getBounds = function(latLng) {
+
+                var bounds = new google.maps.LatLngBounds();
+                var paths = this.getPaths();
+                var path;
+
+                for (var p = 0; p < paths.getLength(); p++) {
+                    path = paths.getAt(p);
+                    for (var i = 0; i < path.getLength(); i++) {
+                        bounds.extend(path.getAt(i));
+                    }
+                }
+
+                return bounds;
+            };
+        }
+
+
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            return t("not_supported");
-        }.bind(this, field.key)};
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            renderer: function (key, value, metaData, record) {
+                return t("not_supported");
+            }.bind(this, field.key)};
     },
 
     getLayoutEdit: function () {
@@ -39,7 +62,8 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
             height: 370,
             width: 490,
             cls: "object_field",
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"><img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
+            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
+                            + '<img align="center" width="300" height="300" src="' + this.getMapUrl() + '" /></div>',
             bbar: [{
                 xtype: "button",
                 text: t("empty"),
@@ -59,7 +83,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
 
         this.component.on("afterrender", function () {
             this.updatePreviewImage();
-        }.bind(this))
+        }.bind(this));
     
         return this.component; 
     },
@@ -83,7 +107,8 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
             window.setTimeout(this.updatePreviewImage.bind(this), 1000);
         }
         
-        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="' + width + '" height="300" src="' + this.getMapUrl(width) + '" />';
+        Ext.get("google_maps_container_" + this.mapImageID).dom.innerHTML = '<img align="center" width="'
+                                            + width + '" height="300" src="' + this.getMapUrl(width) + '" />';
     },
 
     getMapUrl: function (width) {
@@ -129,10 +154,13 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 mapZoom = Math.min(Math.floor(xZoom), Math.floor(yZoom));
                 
                 var path = "color:0xff0000ff|weight:2|" + pointConfig.join("|");
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.lat() + "," + center.lng() + "&zoom=" + mapZoom + "&size=" + px + "x" + py + "&path=" + path + "&sensor=false";
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + center.lat() + ","
+                                + center.lng() + "&zoom=" + mapZoom + "&size=" + px + "x" + py
+                                + "&path=" + path + "&sensor=false";
             }
             else {
-                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size=" + px + "x" + py + "&sensor=false";
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=0,0&zoom=1&size="
+                                + px + "x" + py + "&sensor=false";
             }
         }
         catch (e) {
@@ -242,30 +270,21 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
                 for (var i=0; i<this.data.length; i++) {
                     this.polygonPoints.push(new google.maps.LatLng(this.data[i].latitude, this.data[i].longitude));
                 }
-            } else {
-                this.polygonPoints = new google.maps.MVCArray;
             }
 
-            this.polygon = new google.maps.Polygon({
-                paths: new google.maps.MVCArray([this.polygonPoints]),
-                strokeColor: "#f33f00",
-                strokeOpacity: 1,
-                strokeWeight: 2,
-                fillColor: "#ff0000",
-                fillOpacity: 0.2,
-                map: this.gmap
-            });
+            this.polygonPoints = new google.maps.MVCArray(this.polygonPoints);
 
-            //this.polygon.enableEditing({onEvent: "mouseover"});
-            //this.polygon.disableEditing({onEvent: "mouseout"});
-           
+            if(this.polygonPoints.length > 0) {
+                this.renderPolygon();
+            }
+
             if(this.data) {
                 this.gmap.fitBounds(this.polygon.getBounds());
                 this.gmap.setCenter(this.polygon.getBounds().getCenter());
             }
             
             this.geocoder = new google.maps.Geocoder();
-        }.bind(this))
+        }.bind(this));
 
         this.searchWindow.on("beforeclose", function () {
             delete this.polygon;
@@ -276,30 +295,26 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
         this.searchWindow.show();
     },
 
+    renderPolygon: function () {
+
+        this.polygon = new google.maps.Polygon({
+            paths: this.polygonPoints,
+            strokeColor: "#f33f00",
+            strokeOpacity: 1,
+            strokeWeight: 2,
+            fillColor: "#ff0000",
+            fillOpacity: 0.2,
+            map: this.gmap,
+            editable: true
+        });
+    },
+
     addPoint : function (event) {
         this.polygonPoints.insertAt(this.polygonPoints.length, event.latLng);
 
-        var marker = new google.maps.Marker({
-          position: event.latLng,
-          map: this.gmap,
-          draggable: true
-        });
-        this.markers.push(marker);
-        marker.setTitle("#" + this.polygonPoints.length);
-
-        google.maps.event.addListener(marker, 'click', function() {
-          marker.setMap(null);
-          for (var i = 0, I = this.markers.length; i < I && this.markers[i] != marker; ++i);
-          this.markers.splice(i, 1);
-          this.polygonPoints.removeAt(i);
-          }.bind(this)
-        );
-
-        google.maps.event.addListener(marker, 'dragend', function() {
-          for (var i = 0, I = this.markers.length; i < I && this.markers[i] != marker; ++i);
-          this.polygonPoints.setAt(i, marker.getPosition());
-          }.bind(this)
-        );
+        if(this.polygonPoints.length == 1) {
+            this.renderPolygon();
+        }
     },
 
     geocode: function () {
@@ -342,7 +357,4 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.abstract, {
         return this.dirty;
     }    
 });
-
-
-
 

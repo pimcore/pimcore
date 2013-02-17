@@ -86,6 +86,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      */
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -101,6 +102,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      */
     public function setHeight($height) {
         $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     /**
@@ -116,6 +118,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      */
     public function setCols($cols) {
         $this->cols = $this->getAsIntegerCast($cols);
+        return $this;
     }
 
     /**
@@ -131,6 +134,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      */
     public function setRows($rows) {
         $this->rows = $this->getAsIntegerCast($rows);
+        return $this;
     }
 
 
@@ -147,6 +151,7 @@ class Object_Class_Data_Table extends Object_Class_Data {
      */
     public function setData($data) {
         $this->data = $data;
+        return $this;
     }
 
 
@@ -326,4 +331,26 @@ class Object_Class_Data_Table extends Object_Class_Data {
             return "";
         }
     }
+
+
+    /** converts data to be imported via webservices
+     * @param mixed $value
+     * @param null $object
+     * @return array|mixed
+     */
+    public function getFromWebserviceImport($value, $object = null)
+    {
+        if ($value && is_array($value)) {
+            $result = array();
+            foreach ($value as $item) {
+                $item = (array) $item;
+                $result[] = $item;
+            }
+
+            return $result;
+        }
+
+        return $value;
+    }
+
 }

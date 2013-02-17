@@ -31,20 +31,21 @@ pimcore.element.properties = Class.create({
  
             var predefinedProperiesStore = new Ext.data.JsonStore({
                 url: '/admin/' + this.type + '/get-predefined-properties',
-                fields: ["id","name","description","key","type","data","config","inheritable",{name:"translatedName",convert: function(v, rec){
+                fields: ["id","name","description","key","type","data","config","inheritable",
+                                            {   name:"translatedName",convert: function(v, rec){
 
-                    return ts(rec.name);
+                        return ts(rec.name);
 
-                    /*
-                    var text = "<b>" + ts(rec.name) + "</b>";
-                    if(!empty(rec.description)) {
-                        text += ts(rec.description);
-                    }
-                    return text;
-                    */
-                }}],
-                root: "properties"
-            });
+                        /*
+                        var text = "<b>" + ts(rec.name) + "</b>";
+                        if(!empty(rec.description)) {
+                            text += ts(rec.description);
+                        }
+                        return text;
+                        */
+                    }}],
+                    root: "properties"
+                });
 
             var predefinedcombo = new Ext.form.ComboBox({
                 name: "type",
@@ -244,12 +245,14 @@ pimcore.element.properties = Class.create({
                                         pimcore.helpers.openElement(pData.all.data.id, pData.type, pData.all.data.type);
                                     }
                                     else if (pData.all.data.o_id) {
-                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type, pData.all.data.o_type);
+                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type,
+                                                                                        pData.all.data.o_type);
                                     }
                                 }
                             }.bind(this),
                             getClass: function(v, meta, rec) {  // Or return a class from a function
-                                if(rec.get('type') != "object" && rec.get('type') != "document" && rec.get('type') != "asset") {
+                                if(rec.get('type') != "object" && rec.get('type') != "document"
+                                                                            && rec.get('type') != "asset") {
                                     return "pimcore_hidden";
                                 }
                             }
@@ -294,7 +297,8 @@ pimcore.element.properties = Class.create({
                     return;
                 }
  
-                $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
+                $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
+                                                            .animate( { backgroundColor: '#fff' }, 400);
                 
                 var menu = new Ext.menu.Menu();
  
@@ -319,7 +323,8 @@ pimcore.element.properties = Class.create({
                                         pimcore.helpers.openElement(pData.all.data.id, pData.type, pData.all.data.type);
                                     }
                                     else if (pData.all.data.o_id) {
-                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type, pData.all.data.o_type);
+                                        pimcore.helpers.openElement(pData.all.data.o_id, pData.type,
+                                                                                                pData.all.data.o_type);
                                     }
                                 }
                             }.bind(this, grid, rowIndex)
@@ -328,7 +333,7 @@ pimcore.element.properties = Class.create({
                 }
  
                 event.stopEvent();
-                menu.showAt(event.getXY())
+                menu.showAt(event.getXY());
             }.bind(this));
 
             this.layout = new Ext.Panel({
@@ -345,7 +350,8 @@ pimcore.element.properties = Class.create({
  
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
  
-        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
+        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="'
+                                                                        + record.data.name + '">&nbsp;</div>';
     },
  
     getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
@@ -362,7 +368,8 @@ pimcore.element.properties = Class.create({
             }
         } else if (type == "bool" && data.inherited == false) {
             metaData.css += ' x-grid3-check-col-td';
-            return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+            return String.format('<div class="x-grid3-check-col{0}" '
+                        + 'style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
         }
  
         return value;
@@ -498,7 +505,8 @@ pimcore.element.properties = Class.create({
             Ext.MessageBox.alert(t("error"), t("name_is_not_allowed"));
         }
 
-        this.add(selectedData.key, selectedData.type, selectedData.data, selectedData.config, false, selectedData.inheritable);
+        this.add(selectedData.key, selectedData.type, selectedData.data, selectedData.config, false,
+                                                                                    selectedData.inheritable);
     },
  
     addSetFromUserDefined: function (customKey, customType) {
@@ -584,7 +592,7 @@ pimcore.element.properties = Class.create({
         var records = store.getRange();
  
         for (var i = 0; i < records.length; i++) {
-            currentData = records[i];
+            var currentData = records[i];
             if (currentData) {
                 if (!currentData.data.inherited) {
                     values[currentData.data.name] = {

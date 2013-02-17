@@ -39,10 +39,16 @@ class Pimcore_Resource_Mysql {
     }
 
     /**
-     * @static
-     * @return Zend_Db_Adapter_Abstract
+     * @param bool $raw
+     * @return Pimcore_Resource_Wrapper|Zend_Db_Adapter_Abstract
      */
-    public static function getConnection () {
+    public static function getConnection ($raw = false) {
+
+        // just return the wrapper (for compatibility reasons)
+        // the wrapper itself get's then the connection using $raw = true
+        if(!$raw) {
+            return new Pimcore_Resource_Wrapper();
+        }
 
         $charset = "UTF8";
 
@@ -67,9 +73,6 @@ class Pimcore_Resource_Mysql {
             $db->setProfiler($profiler);
         }
 
-        // put the connection into a wrapper to handle connection timeouts, ...
-        $db = new Pimcore_Resource_Wrapper($db);
-
         Logger::debug("Successfully established connection to MySQL-Server");
 
         return $db;
@@ -84,21 +87,7 @@ class Pimcore_Resource_Mysql {
         // close old connections
         self::close();
 
-        // get new connection
-        try {
-            $db = self::getConnection();
-            self::set($db);
-
-            return $db;
-        }
-        catch (Exception $e) {
-
-            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log. \nReason: " . $e->getMessage();
-
-            Logger::emergency($errorMessage);
-            Logger::emergency($e);
-            die($errorMessage);
-        }
+        return self::get();
     }
 
     /**
@@ -119,7 +108,20 @@ class Pimcore_Resource_Mysql {
             Logger::error($e);
         }
 
-        return self::reset();
+        // get new connection
+        try {
+            $db = self::getConnection();
+            self::set($db);
+            return $db;
+        }
+        catch (Exception $e) {
+
+            $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.xml, for details see the debug.log. \nReason: " . $e->getMessage();
+
+            Logger::emergency($errorMessage);
+            Logger::emergency($e);
+            Pimcore_Tool::exitWithError($errorMessage);
+        }
     }
 
     /**
@@ -137,6 +139,7 @@ class Pimcore_Resource_Mysql {
 
         // register globally
         Zend_Registry::set("Pimcore_Resource_Mysql", $connection);
+        return self;
     }
 
     /**
@@ -149,13 +152,11 @@ class Pimcore_Resource_Mysql {
                 $db = Zend_Registry::get("Pimcore_Resource_Mysql");
 
                 if($db instanceof Pimcore_Resource_Wrapper) {
-                    Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
-                    $db->closeConnection();
+                    // the following select causes an infinite loop (eg. when the connection is lost -> error handler)
+                    //Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
+                    $db->closeResource();
                     $db->closeDDLResource();
                 }
-
-                // set it explicit to null to be sure it can be removed by the GC
-                self::set("Pimcore_Resource_Mysql", null);
             }
         } catch (Exception $e) {
             Logger::error($e);
@@ -251,6 +252,7 @@ class Pimcore_Resource_Mysql {
      */
     public static function errorHandler ($method, $args, $exception) {
 
+        Logger::error($exception->getMessage());
         $lowerErrorMessage = strtolower($exception->getMessage());
 
         // check if the mysql-connection is the problem (timeout issues, ...)
@@ -269,6 +271,10 @@ class Pimcore_Resource_Mysql {
                 Logger::debug($e);
                 throw $e;
             }
+        }
+
+        if(strpos($lowerErrorMessage, "syntax error") !== false) {
+            Logger::info(array($method, $args));
         }
 
         // no handling just log the exception and then throw it

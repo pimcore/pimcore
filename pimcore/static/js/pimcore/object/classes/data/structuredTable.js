@@ -127,7 +127,13 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 value = trim(value);
                 var regresult = value.match(/[a-zA-Z0-9_]+/);
 
-                if (value.length > 1 && regresult == value && in_array(value.toLowerCase(), ["id","key","path","type","index","classname","creationdate","userowner","value","class","list","fullpath","childs","values","cachetag","cachetags","parent","published","valuefromparent","userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data","versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource","parentClass","definition","locked","language"]) == false) {
+                if (value.length > 1 && regresult == value && in_array(value.toLowerCase(),
+                                    ["id","key","path","type","index","classname","creationdate","userowner",
+                                     "value","class","list","fullpath","childs","values","cachetag","cachetags",
+                                     "parent","published","valuefromparent","userpermissions","dependencies",
+                                     "modificationdate","usermodification","byid","bypath","data","versions",
+                                     "properties","permissions","permissionsforuser","childamount","apipluginbroker",
+                                     "resource","parentClass","definition","locked","language"]) == false) {
                     return true; 
                 } else {
                     return t("structuredtable_invalid_key");
@@ -137,9 +143,12 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
 
 
         var typesColumns = [
-            {header: t("position"), width: 10, sortable: true, dataIndex: 'position', editor: new Ext.form.NumberField({})},
-            {header: t("key"), width: 50, sortable: true, dataIndex: 'key', editor: keyTextField},
-            {header: t("label"), width: 150, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
+            {header: t("position"), width: 10, sortable: true, dataIndex: 'position',
+                                    editor: new Ext.form.NumberField({})},
+            {header: t("key"), width: 50, sortable: true, dataIndex: 'key',
+                                    editor: keyTextField},
+            {header: t("label"), width: 150, sortable: true, dataIndex: 'label',
+                                    editor: new Ext.form.TextField({})}
         ];
 
         if(hasType) {
@@ -166,11 +175,13 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
                 displayField: 'label'
             });
 
-            typesColumns.push({header: t("type"), width: 50, sortable: true, dataIndex: 'type', editor: typeComboBox, renderer: function(value) {
+            typesColumns.push({header: t("type"), width: 50, sortable: true, dataIndex: 'type',
+                                        editor: typeComboBox, renderer: function(value) {
                 return types[value];
             }});
 
-            typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width', editor: new Ext.form.NumberField({})});
+            typesColumns.push({header: t("width"), width: 10, sortable: true, dataIndex: 'width',
+                                        editor: new Ext.form.NumberField({})});
 
         }
 

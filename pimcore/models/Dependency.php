@@ -121,6 +121,7 @@ class Dependency extends Pimcore_Model_Abstract {
      */
     public function setSourceId($sourceId) {
         $this->sourceId = (int) $sourceId;
+        return $this;
     }
 
     /**
@@ -129,6 +130,7 @@ class Dependency extends Pimcore_Model_Abstract {
      */
     public function setRequires($requires) {
         $this->requires = $requires;
+        return $this;
     }
 
     /**
@@ -137,6 +139,7 @@ class Dependency extends Pimcore_Model_Abstract {
      */
     public function setRequiredBy($requiredBy) {
         $this->requiredBy = $requiredBy;
+        return $this;
     }
 
     /**
@@ -152,6 +155,7 @@ class Dependency extends Pimcore_Model_Abstract {
      */
     public function setSourceType($sourceType) {
         $this->sourceType = $sourceType;
+        return $this;
     }
 
     /**

@@ -49,23 +49,25 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                renderer: function (key, value, metaData, record) {
+                                if(record.data.inheritedFields[key]
+                                                        && record.data.inheritedFields[key].inherited == true) {
+                                    metaData.css += " grid_value_inherited";
+                                }
 
-            if (value && value.length > 0) {
+                                if (value && value.length > 0) {
 
-                // only show 10 relations in the grid
-                var maxAmount = 10;
-                if(value.length > maxAmount) {
-                    value.splice(maxAmount, (value.length - maxAmount) );
-                    value.push("...");
-                }
+                                    // only show 10 relations in the grid
+                                    var maxAmount = 10;
+                                    if(value.length > maxAmount) {
+                                        value.splice(maxAmount, (value.length - maxAmount) );
+                                        value.push("...");
+                                    }
 
-                return value.join("<br />");
-            }
-        }.bind(this, field.key)};
+                                    return value.join("<br />");
+                                }
+                            }.bind(this, field.key)};
     },
 
     getLayoutEdit: function() {
@@ -335,6 +337,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
+        var i;
 
         if (this.fieldConfig.objectsAllowed) {
             allowedTypes.push("object");
@@ -478,6 +481,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     dndAllowed: function(data) {
 
+        var i;
+
         // check if data is a treenode, if not allow drop because of the reordering
         if (!this.sourceIsTreeNode(data)) {
             return true;
@@ -488,7 +493,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         if (type == "object" && this.fieldConfig.objectsAllowed) {
 
             var classname = data.node.attributes.className;
-            var isAllowed = false;
+            isAllowed = false;
             if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
                 for (i = 0; i < this.fieldConfig.classes.length; i++) {
                     if (this.fieldConfig.classes[i].classes == classname) {

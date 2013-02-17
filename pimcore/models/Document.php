@@ -33,9 +33,12 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
     
     private static $hidePublished = false;
+
     public static function setHideUnpublished($hidePublished) {
         self::$hidePublished = $hidePublished;
+        return self;
     }
+
     public static function doHideUnpublished() {
         return self::$hidePublished;
     }
@@ -327,10 +330,12 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function save() {
 
-        if($this->getId()) {
-            // do not lock when creating a new document, this will cause a dead-lock because the cache-tag is used as key
-            // and the cache tag is different when releasing the lock later, because the document has then an id
-            Tool_Lock::acquire($this->getCacheTag());
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
         }
 
         $this->beginTransaction();
@@ -345,15 +350,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             // set date
             $this->setModificationDate(time());
 
-            if ($this->getId()) {
-                $this->update();
-            }
-            else {
-                Pimcore_API_Plugin_Broker::getInstance()->preAddDocument($this);
+            if (!$isUpdate) {
                 $this->getResource()->create();
-                Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
-                $this->update();
             }
+
+            $this->update();
 
             $this->commit();
         } catch (Exception $e) {
@@ -362,7 +363,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             throw $e;
         }
 
-        Tool_Lock::release($this->getCacheTag());
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddDocument($this);
+        }
 
         // empty object cache
         $this->clearDependentCache();
@@ -406,8 +411,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             throw new Exception("Document requires key, document with id " . $this->getId() . " deleted");
         }
 
-        Pimcore_API_Plugin_Broker::getInstance()->preUpdateDocument($this);
-
         // save properties
         $this->getProperties();
         $this->getResource()->deleteAllProperties();
@@ -446,8 +449,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
 
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), $this);
-
-        Pimcore_API_Plugin_Broker::getInstance()->postUpdateDocument($this);
     }
 
     public function clearDependentCache() {
@@ -539,6 +540,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         } else {
             $this->hasChilds=false;
         }
+        return $this;
     }
 
     /**
@@ -602,6 +604,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setLocked($locked){
         $this->locked = $locked;
+        return $this;
     }
 
     /**
@@ -802,6 +805,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setCreationDate($creationDate) {
         $this->creationDate = (int) $creationDate;
+        return $this;
     }
 
     /**
@@ -809,10 +813,8 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setId($id) {
-        //TODO: why can't I set a document ID null through setter?
-        if ($id) {
-            $this->id = (int) $id;
-        }
+        $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -825,7 +827,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
         $this->key = $key;
-
+        return $this;
     }
 
 
@@ -835,6 +837,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setModificationDate($modificationDate) {
         $this->modificationDate = (int) $modificationDate;
+        return $this;
     }
 
 
@@ -848,6 +851,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
         $this->parentId = (int) $parentId;
+        return $this;
     }
 
     /**
@@ -856,6 +860,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setPath($path) {
         $this->path = $path;
+        return $this;
     }
 
     /**
@@ -871,6 +876,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setIndex($index) {
         $this->index = (int) $index;
+        return $this;
     }
 
     /**
@@ -886,6 +892,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setType($type) {
         $this->type = $type;
+        return $this;
     }
 
     /**
@@ -908,6 +915,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setUserModification($userModification) {
         $this->userModification = (int) $userModification;
+        return $this;
     }
 
     /**
@@ -916,6 +924,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setUserOwner($userOwner) {
         $this->userOwner = (int) $userOwner;
+        return $this;
     }
 
     /**
@@ -938,6 +947,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setPublished($published) {
         $this->published = (bool) $published;
+        return $this;
     }
 
     /**
@@ -966,6 +976,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setProperties($properties) {
         $this->properties = $properties;
+        return $this;
     }
 
     /**
@@ -1018,6 +1029,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $property->setInheritable($inheritable);
 
         $this->properties[$name] = $property;
+        return $this;
     }
 
     /**
@@ -1038,6 +1050,10 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      */
     public function setParent ($parent) {
         $this->parent = $parent;
+        if($parent instanceof Document) {
+            $this->parentId = $parent->getId();
+        }
+        return $this;
     }
 
     /**
@@ -1113,7 +1129,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->properties !== null) {
-            unset($this->_fulldump);
             $this->renewInheritedProperties();
         }
 
@@ -1124,9 +1139,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 $this->setKey($originalElement->getKey());
                 $this->setPath($originalElement->getPath());
             }
+
+            unset($this->_fulldump);
         }
     }
-    
+
     public function removeInheritedProperties () {
         $myProperties = array();
         if($this->properties !== null) {

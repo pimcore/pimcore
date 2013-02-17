@@ -195,6 +195,11 @@ class Pimcore_Model_Cache {
         );
         $config["customBackendNaming"] = false;
 
+        // create cache dir
+        if(!is_dir(PIMCORE_CACHE_DIRECTORY)) {
+            mkdir(PIMCORE_CACHE_DIRECTORY, 0777, true);
+        }
+
         return $config;
     }
     
@@ -405,6 +410,7 @@ class Pimcore_Model_Cache {
             self::$writeLockTimestamp = time();
             self::save(self::$writeLockTimestamp, "system_cache_write_lock", array(), 30, 0, true);
         }
+        return self;
     }
 
     /**
@@ -596,6 +602,7 @@ class Pimcore_Model_Cache {
     public static function setForceImmediateWrite($forceImmediateWrite)
     {
         self::$forceImmediateWrite = $forceImmediateWrite;
+        return self;
     }
 
     /**

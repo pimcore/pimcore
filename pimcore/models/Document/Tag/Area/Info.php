@@ -44,6 +44,7 @@ class Document_Tag_Area_Info {
     public function setConfig($config)
     {
         $this->config = $config;
+        return $this;
     }
 
     /**
@@ -60,6 +61,7 @@ class Document_Tag_Area_Info {
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -76,6 +78,7 @@ class Document_Tag_Area_Info {
     public function setIndex($index)
     {
         $this->index = $index;
+        return $this;
     }
 
     /**
@@ -92,6 +95,7 @@ class Document_Tag_Area_Info {
     public function setPath($path)
     {
         $this->path = $path;
+        return $this;
     }
 
     /**

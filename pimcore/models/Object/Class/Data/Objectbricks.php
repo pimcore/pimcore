@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -308,6 +308,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+        return $this;
     }
 
     /**
@@ -370,6 +371,11 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
+                if ($collectionRaw instanceof stdClass) {
+                    $class = "Webservice_Data_Object_Element";
+                    $collectionRaw = Pimcore_Tool_Cast::castToClass($class, $collectionRaw);
+                }
+
                 if($collectionRaw != null) {
                     if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
@@ -386,6 +392,10 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         foreach ($collectionRaw->value as $field) {
+                            if ($field instanceof stdClass) {
+                                $class = "Webservice_Data_Object_Element";
+                                $field = Pimcore_Tool_Cast::castToClass($class, $field);
+                            }
                             if (!$field instanceof Webservice_Data_Object_Element) {
                                 throw new Exception("invalid data in objectbricks [" . $this->getName() . "]");
                             } else if ($field->name == $fd->getName()) {
@@ -637,7 +647,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                 $diffdata["title"] = $this->getName() . " / " . $subdata["title"];
                 $brickdata = array(
-                    "brick" => strtolower(substr($getter, 3)),
+                    "brick" => substr($getter, 3),
                     "name" => $fd->getName(),
                     "subdata" => $subdata
                 );

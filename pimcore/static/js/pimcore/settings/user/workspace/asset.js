@@ -33,7 +33,9 @@ pimcore.settings.user.workspace.asset = Class.create({
         var storeFields = ["path"];
 
         var typesColumns = [
-            {header: t("path"), id: "path", width: 200, sortable: false, dataIndex: 'path', editor: new Ext.form.TextField({}), css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"}
+            {header: t("path"), id: "path", width: 200, sortable: false, dataIndex: 'path',
+                        editor: new Ext.form.TextField({}),
+                        css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"}
         ];
 
         var check;
@@ -164,7 +166,7 @@ pimcore.settings.user.workspace.asset = Class.create({
 
         var records = this.store.getRange();
         for (var i = 0; i < records.length; i++) {
-            currentData = records[i];
+            var currentData = records[i];
             if (currentData) {
                     values.push(currentData.data);
             }

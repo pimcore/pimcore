@@ -94,8 +94,27 @@ Ext.onReady(function () {
             }
 
         } else {
-            //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot be saved due to HTTP 500 Response)
-            pimcore.helpers.showNotification(t("error"), t("error_general"), "error", response.responseText);
+            //do not remove notification, otherwise user is never informed about server exception (e.g. element cannot
+            // be saved due to HTTP 500 Response)
+            var errorMessage = "";
+
+            try {
+                errorMessage = "Status: " + response.status + " | " + response.statusText + "\n";
+                errorMessage += "URL: " + options.url + "\n";
+                if(options["params"]) {
+                    errorMessage += "Params:\n";
+                    Ext.iterate(options.params, function (key, value) {
+                        errorMessage += ( "-> " + key + ": " + value + "\n");
+                    });
+                }
+                if(options["method"]) {
+                    errorMessage += "Method: " + options.method + "\n";
+                }
+                errorMessage += "Message: \n" + response.responseText;
+            } catch (e) {
+                errorMessage = response.responseText;
+            }
+            pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
         }
 
         xhrActive--;
@@ -267,7 +286,8 @@ Ext.onReady(function () {
     }
 
     statusbar.add("->");
-    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
+    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">pimcore</a> - Version: '
+                                + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
     if (!empty(pimcore.settings.liveconnectToken)) {
         pimcore.settings.liveconnect.setToken(pimcore.settings.liveconnectToken);
@@ -574,4 +594,4 @@ pimcore.layout.refresh = function () {
 // garbage collector
 pimcore.helpers.unload = function () {
 
-}
+};

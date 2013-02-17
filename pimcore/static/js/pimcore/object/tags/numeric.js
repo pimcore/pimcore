@@ -100,7 +100,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         if (this.isRendered()) {
             return this.component.getValue().toString();
         } else if (this.fieldConfig.defaultValue) {
-            return this.fieldConfig.defaultValue
+            return this.fieldConfig.defaultValue;
         }
         return null;
     },
@@ -130,7 +130,9 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
             if (!this.component.rendered) {
                 if (!this.fieldConfig.defaultValue) {
                     return false;
-                } else return true;
+                } else {
+                    return true;
+                }
 
             } else {
                 dirty = this.component.isDirty();

@@ -61,25 +61,31 @@ abstract class Webservice_Data {
             }
         }
 
-        $object->setProperties(null);
+        if ($object instanceof Element_Interface) {
+            // Classes do not have properties
+            $object->setProperties(null);
+        }
+
         if (is_array($this->properties)) {
             foreach ($this->properties as $propertyWs) {
 
-                $dat = $propertyWs->data;
-                $type = $propertyWs->type;
+                $propertyWs = (array) $propertyWs;
+
+                $dat = $propertyWs["data"];
+                $type = $propertyWs["type"];
                 if (in_array($type, array("object", "document", "asset"))) {
-                    $dat = Element_Service::getElementById($propertyWs->type, $propertyWs->data);
-                    if (is_numeric($propertyWs->data) and !$dat) {
-                        throw new Exception("cannot import property [ " . $propertyWs->name . " ] because it references unknown " . $propertyWs->type);
+                    $dat = Element_Service::getElementById($propertyWs["type"], $propertyWs["data"]);
+                    if (is_numeric($propertyWs["data"]) and !$dat) {
+                        throw new Exception("cannot import property [ " . $propertyWs["name"] . " ] because it references unknown " . $propertyWs["type"]);
                     }
                 } else if ($type == "date"){
-                    $dat = new Pimcore_Date(strtotime($propertyWs->data));
+                    $dat = new Pimcore_Date(strtotime($propertyWs["data"]));
                 } else {
-                    $dat = $propertyWs->data;
+                    $dat = $propertyWs["data"];
                 }
 
 
-                $object->setProperty($propertyWs->name, $propertyWs->type, $dat, $propertyWs->inherited);
+                $object->setProperty($propertyWs["name"], $propertyWs["type"], $dat, $propertyWs["inherited"]);
             }
         }
 

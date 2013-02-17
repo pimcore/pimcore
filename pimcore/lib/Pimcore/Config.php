@@ -32,7 +32,8 @@ class Pimcore_Config {
             } catch (Exception $e) {
                 Logger::emergency("Cannot find system configuration, should be located at: " . PIMCORE_CONFIGURATION_SYSTEM);
                 if(is_file(PIMCORE_CONFIGURATION_SYSTEM)) {
-                    die("Your system.xml located at " . PIMCORE_CONFIGURATION_SYSTEM . " is invalid, please check and correct it manually!");
+                    $m = "Your system.xml located at " . PIMCORE_CONFIGURATION_SYSTEM . " is invalid, please check and correct it manually!";
+                    Pimcore_Tool::exitWithError($m);
                 }
             }
         }
@@ -47,6 +48,7 @@ class Pimcore_Config {
      */
     public static function setSystemConfig (Zend_Config $config) {
         Zend_Registry::set("pimcore_config_system", $config);
+        return self;
     }
 
     /**
@@ -127,6 +129,7 @@ class Pimcore_Config {
      */
     public static function setWebsiteConfig (Zend_Config $config) {
         Zend_Registry::set("pimcore_config_website", $config);
+        return self;
     }
 
 
@@ -158,6 +161,7 @@ class Pimcore_Config {
      */
     public static function setReportConfig (Zend_Config $config) {
         Zend_Registry::set("pimcore_config_report", $config);
+        return self;
     }
 
 
@@ -193,5 +197,6 @@ class Pimcore_Config {
      */
     public static function setModelClassMappingConfig (Zend_Config $config) {
         Zend_Registry::set("pimcore_config_model_classmapping", $config);
+        return self;
     }
 }

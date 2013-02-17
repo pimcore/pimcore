@@ -40,11 +40,12 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                         operator = "&gt;";
                     }
                 } else if (filterData[i].data.type == "boolean") {
-                   filterData[i].value = filterData[i].data.value ? "true" : "false";
+                    filterData[i].value = filterData[i].data.value ? "true" : "false";
                 }
 
                 if(filterData[i].data.value && typeof filterData[i].data.value == "object") {
-                    filterStringConfig.push(filterData[i].field + " " + operator + " (" + filterData[i].data.value.join(" OR ") + ")");
+                    filterStringConfig.push(filterData[i].field + " " + operator + " ("
+                                    + filterData[i].data.value.join(" OR ") + ")");
                 } else {
                     filterStringConfig.push(filterData[i].field + " " + operator + " " + filterData[i].data.value);
                 }
@@ -124,7 +125,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             }
 
-           var params = {
+            var params = {
                 filter: filters,
                 condition: condition,
                 classId: this.classId,
@@ -154,7 +155,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var fieldInfo = this.grid.getColumnModel().config[columnIndex+1];
 
-        // HACK: typemapping for published (systemfields) because they have no edit masks, so we use them from the data-types
+        // HACK: typemapping for published (systemfields) because they have no edit masks, so we use them from the
+        // data-types
         if(fieldInfo.dataIndex == "published") {
             fieldInfo.layout = {
                 layout: {
@@ -162,7 +164,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     name: "published"
                 },
                 type: "checkbox"
-            }
+            };
         }
         // HACK END
 
@@ -175,7 +177,21 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             return;
         }
 
-        var editor = new pimcore.object.tags[fieldInfo.layout.type](null, fieldInfo.layout.layout);
+        var tagType = fieldInfo.layout.type;
+        if (tagType == "keyValue") {
+            var gridType = fieldInfo.layout.layout.gridType;
+            if (gridType == "select") {
+                tagType ="select";
+            } else if (gridType == "number") {
+                tagType = "numeric";
+            } else if (gridType == "bool") {
+                tagType = "checkbox";
+            }  else {
+                tagType ="input";
+            }
+        }
+
+        var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
         this.batchWin = new Ext.Window({
             modal: false,
             title: t("batch_edit_field") + " " + fieldInfo.header,
@@ -322,7 +338,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     createGrid: function(columnConfig) {
 
-    }, 
+    },
 
     getGridConfig : function () {
         var config = {

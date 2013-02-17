@@ -102,6 +102,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      */
     public function setObjectsAllowed($objectsAllowed) {
         $this->objectsAllowed = $objectsAllowed;
+        return $this;
     }
     
     /**
@@ -117,6 +118,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      */
     public function setDocumentsAllowed($documentsAllowed) {
         $this->documentsAllowed = $documentsAllowed;
+        return $this;
     }
 
 
@@ -143,6 +145,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         }
 
         $this->documentTypes = $documentTypes;
+        return $this;
     }
 
     /**
@@ -160,6 +163,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      */
     public function setAssetsAllowed($assetsAllowed) {
         $this->assetsAllowed = $assetsAllowed;
+        return $this;
     }
 
     /**
@@ -185,6 +189,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         }
 
         $this->assetTypes = $assetTypes;
+        return $this;
     }
 
     /**
@@ -325,6 +330,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      */
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -481,14 +487,17 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     public function getFromWebserviceImport ($value) {
         if(empty($value)){
             return null;        
-        } else if(is_array($value) and key_exists("id",$value) and key_exists("type",$value)){
-            $el =  $this->getDataFromEditmode($value);
-            if(!empty($value['id']) and !$el instanceof Element_Interface){
-                throw new Exception("cannot get values from web service import - invalid href relation");
+        } else  {
+            $value = (array) $value;
+            if(key_exists("id",$value) and key_exists("type",$value)){
+                $el =  $this->getDataFromEditmode($value);
+                if(!empty($value['id']) and !$el instanceof Element_Interface){
+                    throw new Exception("cannot get values from web service import - invalid href relation");
+                }
+                return $el;
+            } else {
+                throw new Exception("cannot get values from web service import - invalid data");
             }
-            return $el;
-        } else {
-            throw new Exception("cannot get values from web service import - invalid data");
         }
     }
 
@@ -530,6 +539,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
     public function setAssetUploadPath($assetUploadPath)
     {
         $this->assetUploadPath = $assetUploadPath;
+        return $this;
     }
 
     /**

@@ -45,6 +45,7 @@ class Object_Class_Layout_Panel extends Object_Class_Layout {
         if(!empty($labelWidth)) {
             $this->labelWidth = intval($labelWidth);
         }
+        return $this;
     }
 
     /**
@@ -61,6 +62,7 @@ class Object_Class_Layout_Panel extends Object_Class_Layout {
     public function setLayout($layout)
     {
         $this->layout = $layout;
+        return $this;
     }
 
     /**

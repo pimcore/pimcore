@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,30 +34,25 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Framework_Constraint
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @author     Bernhard Schussek <bschussek@2bepublished.at>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.0.0
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Util/Type.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Logical OR.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Framework_Constraint
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @author     Bernhard Schussek <bschussek@2bepublished.at>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.0.0
  */
@@ -75,7 +70,7 @@ class PHPUnit_Framework_Constraint_Or extends PHPUnit_Framework_Constraint
     {
         $this->constraints = array();
 
-        foreach($constraints as $key => $constraint) {
+        foreach ($constraints as $key => $constraint) {
             if (!($constraint instanceof PHPUnit_Framework_Constraint)) {
                 $constraint = new PHPUnit_Framework_Constraint_IsEqual(
                   $constraint
@@ -87,21 +82,40 @@ class PHPUnit_Framework_Constraint_Or extends PHPUnit_Framework_Constraint
     }
 
     /**
-     * Evaluates the constraint for parameter $other. Returns TRUE if the
-     * constraint is met, FALSE otherwise.
+     * Evaluates the constraint for parameter $other
      *
-     * @param mixed $other Value or object to evaluate.
-     * @return bool
+     * If $returnResult is set to FALSE (the default), an exception is thrown
+     * in case of a failure. NULL is returned otherwise.
+     *
+     * If $returnResult is TRUE, the result of the evaluation is returned as
+     * a boolean value instead: TRUE in case of success, FALSE in case of a
+     * failure.
+     *
+     * @param  mixed $other Value or object to evaluate.
+     * @param  string $description Additional information about the test
+     * @param  bool $returnResult Whether to return a result or throw an exception
+     * @return mixed
+     * @throws PHPUnit_Framework_ExpectationFailedException
      */
-    public function evaluate($other)
+    public function evaluate($other, $description = '', $returnResult = FALSE)
     {
-        foreach($this->constraints as $constraint) {
-            if ($constraint->evaluate($other)) {
-                return TRUE;
+        $success = FALSE;
+        $constraint = NULL;
+
+        foreach ($this->constraints as $constraint) {
+            if ($constraint->evaluate($other, $description, TRUE)) {
+                $success = TRUE;
+                break;
             }
         }
 
-        return FALSE;
+        if ($returnResult) {
+            return $success;
+        }
+
+        if (!$success) {
+            $this->fail($other, $description);
+        }
     }
 
     /**
@@ -113,7 +127,7 @@ class PHPUnit_Framework_Constraint_Or extends PHPUnit_Framework_Constraint
     {
         $text = '';
 
-        foreach($this->constraints as $key => $constraint) {
+        foreach ($this->constraints as $key => $constraint) {
             if ($key > 0) {
                 $text .= ' or ';
             }
@@ -132,7 +146,7 @@ class PHPUnit_Framework_Constraint_Or extends PHPUnit_Framework_Constraint
      */
     public function count()
     {
-        $count = 1;
+        $count = 0;
 
         foreach ($this->constraints as $constraint) {
             $count += count($constraint);
@@ -141,4 +155,3 @@ class PHPUnit_Framework_Constraint_Or extends PHPUnit_Framework_Constraint
         return $count;
     }
 }
-?>

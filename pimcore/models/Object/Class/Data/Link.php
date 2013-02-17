@@ -292,7 +292,7 @@ class Object_Class_Data_Link extends Object_Class_Data {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value) {
+    public function getFromWebserviceImport($value, $object = null) {
         if (empty($value)) {
             return null;
         } else if (is_array($value) and !empty($value['text']) and !empty($value['direct'])) {

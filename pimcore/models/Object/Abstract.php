@@ -52,6 +52,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public static function setHideUnpublished($hidePublished) {
         self::$hidePublished = $hidePublished;
+        return self;
     }
 
     /**
@@ -69,6 +70,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public static function setGetInheritedValues($getInheritedValues) {
         self::$getInheritedValues = $getInheritedValues;
+        return self;
     }
 
     /**
@@ -424,6 +426,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_locked($o_locked){
         $this->o_locked = $o_locked;
+        return $this;
     }
     
     /**
@@ -440,6 +443,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setLocked($o_locked){
         $this->o_locked = $o_locked;
+        return $this;
     }
     
     /**
@@ -529,10 +533,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function save() {
 
-        if($this->getO_Id()) {
-            // do not lock when creating a new object, this will cause a dead-lock because the cache-tag is used as key
-            // and the cache tag is different when releasing the lock later, because the object has then an id
-            Tool_Lock::acquire($this->getCacheTag());
+        $isUpdate = false;
+        if ($this->getO_Id()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
         }
 
         $this->beginTransaction();
@@ -548,15 +554,11 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
            $this->correctPath();
 
-            if ($this->getO_Id()) {
-                $this->update();
-            }
-            else {
-                Pimcore_API_Plugin_Broker::getInstance()->preAddObject($this);
+            if (!$isUpdate) {
                 $this->getResource()->create();
-                Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
-                $this->update();
             }
+
+            $this->update();
 
             self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -567,10 +569,15 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             throw $e;
         }
 
-        Tool_Lock::release($this->getCacheTag());
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateObject($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddObject($this);
+        }
 
         // empty object cache
         $this->clearDependentCache();
+        return $this;
     }
     
     
@@ -605,8 +612,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     protected function update() {
 
-        Pimcore_API_Plugin_Broker::getInstance()->preUpdateObject($this);
-        
         if(!$this->getKey() && $this->getId() != 1) {
             $this->delete();
             throw new Exception("Object requires key, object with id " . $this->getId() . " deleted");
@@ -874,6 +879,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_id($o_id) {
         $this->o_id = (int) $o_id;
+        return $this;
     }
 
     /**
@@ -882,6 +888,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setId($o_id) {
         $this->setO_id($o_id);
+        return $this;
     }
 
     /**
@@ -900,6 +907,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         }
         catch (Exception $e) {
         }
+        return $this;
     }
 
     /**
@@ -908,7 +916,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setParentId($o_parentId) {
         $this->setO_parentId($o_parentId);
-
+        return $this;
     }
 
     /**
@@ -917,6 +925,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_type($o_type) {
         $this->o_type = $o_type;
+        return $this;
     }
 
     /**
@@ -925,6 +934,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setType($o_type) {
         $this->setO_type($o_type);
+        return $this;
     }
 
     /**
@@ -937,6 +947,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             $this->_oldPath=$this->getResource()->getCurrentFullPath();
         }
         $this->o_key = $o_key;
+        return $this;
     }
 
     /**
@@ -945,6 +956,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setKey($o_key) {
         $this->setO_key($o_key);
+        return $this;
     }
 
     /**
@@ -953,6 +965,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_path($o_path) {
         $this->o_path = $o_path;
+        return $this;
     }
     
     /**
@@ -961,6 +974,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setPath($o_path) {
         $this->setO_path($o_path);
+        return $this;
     }
 
     /**
@@ -969,6 +983,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_index($o_index) {
         $this->o_index = (int) $o_index;
+        return $this;
     }
 
     /**
@@ -977,6 +992,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setIndex($o_index) {
         $this->setO_index($o_index);
+        return $this;
     }
 
     /**
@@ -985,6 +1001,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_creationDate($o_creationDate) {
         $this->o_creationDate = (int) $o_creationDate;
+        return $this;
     }
 
     /**
@@ -993,6 +1010,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setCreationDate($o_creationDate) {
         $this->setO_creationDate($o_creationDate);
+        return $this;
     }
 
     /**
@@ -1001,6 +1019,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_modificationDate($o_modificationDate) {
         $this->o_modificationDate = (int) $o_modificationDate;
+        return $this;
     }
 
     /**
@@ -1009,6 +1028,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setModificationDate($o_modificationDate) {
         $this->setO_modificationDate($o_modificationDate);
+        return $this;
     }
 
     /**
@@ -1017,6 +1037,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_userOwner($o_userOwner) {
         $this->o_userOwner = (int) $o_userOwner;
+        return $this;
     }
 
     /**
@@ -1025,6 +1046,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setUserOwner($o_userOwner) {
         $this->setO_userOwner($o_userOwner);
+        return $this;
     }
 
     /**
@@ -1033,6 +1055,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_userModification($o_userModification) {
         $this->o_userModification = (int) $o_userModification;
+        return $this;
     }
 
     /**
@@ -1041,6 +1064,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setUserModification($o_userModification) {
         $this->setO_userModification($o_userModification);
+        return $this;
     }
 
     /**
@@ -1054,6 +1078,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         } else {
              $this->o_hasChilds=false;   
         }
+        return $this;
     }
 
     /**
@@ -1062,6 +1087,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setChilds($o_childs) {
         $this->setO_childs($o_childs);
+        return $this;
     }
 
     /**
@@ -1089,10 +1115,10 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_parent($o_parent) {
         $this->o_parent = $o_parent;
-
         if($o_parent instanceof Object_Abstract) {
-            $this->setParentId($o_parent->getId());            
+            $this->o_parentId = $o_parent->getId();
         }
+        return $this;
     }
 
     /**
@@ -1101,6 +1127,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setParent($o_parent) {
         $this->setO_parent($o_parent);
+        return $this;
     }   
 
     /**
@@ -1134,6 +1161,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setO_properties($o_properties) {
         $this->o_properties = $o_properties;
+        return $this;
     }
 
     /**
@@ -1142,6 +1170,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public function setProperties($o_properties) {
         $this->setO_properties($o_properties);
+        return $this;
     }
     
     /**
@@ -1192,6 +1221,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         $property->setInherited($inherited);
         
         $this->o_properties[$name] = $property;
+        return $this;
     }
 
     /**
@@ -1251,7 +1281,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->o_properties !== null) {
-            unset($this->_fulldump);
             $this->renewInheritedProperties();
         }
 
@@ -1262,6 +1291,8 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                 $this->setO_key($originalElement->getO_key());
                 $this->setO_path($originalElement->getO_path());
             }
+
+            unset($this->_fulldump);
         }
     }
     

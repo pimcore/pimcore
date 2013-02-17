@@ -34,16 +34,17 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            return t("not_supported");
-        }.bind(this, field.key)};
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                renderer: function (key, value, metaData, record) {
+                    return t("not_supported");
+                }.bind(this, field.key)};
     },
 
     loadFieldDefinitions: function () {
 
         var allowedTypes = this.fieldConfig.allowedTypes;
         if(!allowedTypes) {
-            allowedTypes = []
+            allowedTypes = [];
         }
 
         this.fieldstore = new Ext.data.JsonStore({
@@ -182,8 +183,24 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
         return index;
     },
-    
+
+    closeOpenEditors: function () {
+
+        // currently just wysiwyg
+        for (var i=0; i<this.currentElements.length; i++) {
+            if(typeof this.currentElements[i] == "object") {
+                for(var e=0; e<this.currentElements[i]["fields"].length; e++) {
+                    if(typeof this.currentElements[i]["fields"][e]["close"] == "function") {
+                        this.currentElements[i]["fields"][e].close();
+                    }
+                }
+            }
+        }
+    },
+
     addBlock: function (blockElement, type) {
+
+        this.closeOpenEditors();
 
         if(this.fieldConfig.maxItems) {
             var itemAmount = 0;
@@ -204,11 +221,13 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             index = this.detectBlockIndex(blockElement);
         }
         
-        this.addBlockElement(index, type)
+        this.addBlockElement(index, type);
     },
     
     removeBlock: function (blockElement) {
-        
+
+        this.closeOpenEditors();
+
         var key = blockElement.key;
         this.currentElements[key] = "deleted";
         
@@ -225,7 +244,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
     
     moveBlockUp: function (blockElement) {
-        
+
+        this.closeOpenEditors();
+
         if(blockElement) {
             index = this.detectBlockIndex(blockElement);
         }
@@ -249,6 +270,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
     
     moveBlockDown: function (blockElement) {
+
+        this.closeOpenEditors();
+
         if(blockElement) {
             index = this.detectBlockIndex(blockElement);
         }
@@ -267,7 +291,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     },
     
     addBlockElement: function (index, type, blockData, ignoreChange) {
-        
+
+        this.closeOpenEditors();
+
         if(!type){
             return;
         }
@@ -430,7 +456,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 for (var u=0; u<element.fields.length; u++) {
                     if(element.fields[u].isMandatory()) {
                         if(element.fields[u].isInvalidMandatory()) {
-                            invalidMandatoryFields.push(element.fields[u].getTitle() + " (" + element.fields[u].getName() + ")");
+                            invalidMandatoryFields.push(element.fields[u].getTitle() + " ("
+                                                                    + element.fields[u].getName() + ")");
                             isInvalid = true;
                         }
                     }

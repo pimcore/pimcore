@@ -40,6 +40,11 @@ class Document_Page extends Document_PageSnippet {
     public $keywords = "";
 
     /**
+     * @var array
+     */
+    public $metaData = array();
+
+    /**
      * Static type of the document
      *
      * @var string
@@ -50,6 +55,11 @@ class Document_Page extends Document_PageSnippet {
      * @var string
      */
     public $prettyUrl;
+
+    /**
+     * @var string
+     */
+    public $css = "";
 
 
     /**
@@ -111,6 +121,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setName($name) {
         $this->setProperty("navigation_name","text",$name,false);
+        return $this;
     }
 
     /**
@@ -140,6 +151,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setDescription($description) {
         $this->description = str_replace("\n"," ",$description);
+        return $this;
     }
 
     /**
@@ -148,6 +160,7 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setKeywords($keywords) {
         $this->keywords = str_replace("\n"," ",$keywords);
+        return $this;
     }
 
     /**
@@ -156,6 +169,24 @@ class Document_Page extends Document_PageSnippet {
      */
     public function setTitle($title) {
         $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @param array $metaData
+     */
+    public function setMetaData($metaData)
+    {
+        $this->metaData = $metaData;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
     }
 
     /**
@@ -183,6 +214,7 @@ class Document_Page extends Document_PageSnippet {
     public function setPrettyUrl($prettyUrl)
     {
         $this->prettyUrl = rtrim($prettyUrl, " /");
+        return $this;
     }
 
     /**
@@ -192,4 +224,23 @@ class Document_Page extends Document_PageSnippet {
     {
         return $this->prettyUrl;
     }
+
+    /**
+     * @param string $css
+     */
+    public function setCss($css)
+    {
+        $this->css = $css;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCss()
+    {
+        return $this->css;
+    }
+
+
 }

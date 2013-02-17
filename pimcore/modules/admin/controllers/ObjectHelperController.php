@@ -28,7 +28,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                     $result['fields'][$f] = (string) $object->$getter();
                 }
             }
-            
+
         } else {
             $result['success'] = false;
         }
@@ -176,7 +176,13 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                             "position" => $sc['position']);
                     } else {
                         $keyParts = explode("~", $key);
-                        if(count($keyParts) > 1) {
+
+                        if (substr($key, 0, 1) == "~") {
+                            // not needed for now
+//                            $type = $keyParts[1];
+//                            $field = $keyParts[2];
+//                            $keyid = $keyParts[3];
+                        } else if(count($keyParts) > 1) {
                             $brick = $keyParts[0];
                             $key = $keyParts[1];
 
@@ -325,8 +331,8 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
 
         $config = new Zend_Config($settings, true);
         $writer = new Zend_Config_Writer_Xml(array(
-              "config" => $config,
-              "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/customviews.xml"
+            "config" => $config,
+            "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/customviews.xml"
         ));
         $writer->write();
 
@@ -340,8 +346,8 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
         $data = Pimcore_Tool::getCustomViewConfig();
 
         $this->_helper->json(array(
-              "success" => true,
-              "data" => $data
+            "success" => true,
+            "data" => $data
         ));
     }
 
@@ -455,14 +461,29 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
             );
         }
 
+        //How many rows
+        $csv = new SplFileObject($file);
+        $csv->setFlags(SplFileObject::READ_CSV);
+        $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
+        $rows = 0;
+        $nbFields = 0;
+        foreach ($csv as $fields) {
+            if (0 === $rows) {
+                $nbFields = count($fields);
+                $rows++;
+            } elseif ($nbFields == count($fields)) {
+                $rows++;
+            }
+        }
+
         $this->_helper->json(array(
-              "success" => $success,
-              "dataPreview" => $data,
-              "dataFields" => array_keys($data[0]),
-              "targetFields" => $availableFields,
-              "mappingStore" => $mappingStore,
-              "rows" => count(file($file)),
-              "cols" => $cols
+            "success" => $success,
+            "dataPreview" => $data,
+            "dataFields" => array_keys($data[0]),
+            "targetFields" => $availableFields,
+            "mappingStore" => $mappingStore,
+            "rows" => $rows,
+            "cols" => $cols
         ));
     }
 
@@ -758,8 +779,25 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                 $name = $this->getParam("name");
                 $parts = explode("~", $name);
 
-                // check for bricks
-                if(count($parts) > 1) {
+                if (substr($name, 0, 1) == "~") {
+                    $type = $parts[1];
+                    $field = $parts[2];
+                    $keyid = $parts[3];
+
+                    $getter = "get" . ucfirst($field);
+                    $setter = "set" . ucfirst($field);
+                    $keyValuePairs = $object->$getter();
+
+                    if (!$keyValuePairs) {
+                        $keyValuePairs = new Object_Data_KeyValue();
+                        $keyValuePairs->setObjectId($object->getId());
+                        $keyValuePairs->setClass($object->getClass());
+                    }
+
+                    $keyValuePairs->setPropertyWithId($keyid, $value);
+                    $object->$setter($keyValuePairs);
+                } else if(count($parts) > 1) {
+                    // check for bricks
                     $brickType = $parts[0];
                     $brickKey = $parts[1];
                     $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);

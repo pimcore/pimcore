@@ -52,6 +52,6 @@ pimcore.extensionmanager.settings = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_extension_" + id + "_" + type);
+        tabPanel.activate("pimcore_extension_" + this.id + "_" + type);
     }
 });

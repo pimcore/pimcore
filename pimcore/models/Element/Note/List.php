@@ -40,6 +40,7 @@ class Element_Note_List extends Pimcore_Model_List_Abstract {
     public function setNotes($notes)
     {
         $this->notes = $notes;
+        return $this;
     }
 
     /**

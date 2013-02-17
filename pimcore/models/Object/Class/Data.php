@@ -267,6 +267,7 @@ abstract class Object_Class_Data
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -276,6 +277,7 @@ abstract class Object_Class_Data
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -285,6 +287,7 @@ abstract class Object_Class_Data
     public function setMandatory($mandatory)
     {
         $this->mandatory = (bool)$mandatory;
+        return $this;
     }
 
     /**
@@ -294,6 +297,7 @@ abstract class Object_Class_Data
     public function setPermissions($permissions)
     {
         $this->permissions = $permissions;
+        return $this;
     }
 
     /**
@@ -308,6 +312,7 @@ abstract class Object_Class_Data
                 $this->$method($value);
             }
         }
+        return $this;
     }
 
 
@@ -326,6 +331,7 @@ abstract class Object_Class_Data
     public function setDatatype($datatype)
     {
         $this->datatype = $datatype;
+        return $this;
     }
 
     /**
@@ -343,6 +349,7 @@ abstract class Object_Class_Data
     public function setFieldtype($fieldtype)
     {
         $this->fieldtype = $fieldtype;
+        return $this;
     }
 
     /**
@@ -360,6 +367,7 @@ abstract class Object_Class_Data
     public function setColumnType($columnType)
     {
         $this->columnType = $columnType;
+        return $this;
     }
 
     /**
@@ -377,6 +385,7 @@ abstract class Object_Class_Data
     public function setQueryColumnType($queryColumnType)
     {
         $this->queryColumnType = $queryColumnType;
+        return $this;
     }
 
     /**
@@ -394,6 +403,7 @@ abstract class Object_Class_Data
     public function setNoteditable($noteditable)
     {
         $this->noteditable = (bool)$noteditable;
+        return $this;
     }
 
     /**
@@ -411,6 +421,7 @@ abstract class Object_Class_Data
     public function setIndex($index)
     {
         $this->index = $index;
+        return $this;
     }
 
     /**
@@ -437,6 +448,7 @@ abstract class Object_Class_Data
     public function setStyle($style)
     {
         $this->style = (string)$style;
+        return $this;
     }
 
     /**
@@ -455,6 +467,7 @@ abstract class Object_Class_Data
     public function setLocked($locked)
     {
         $this->locked = (bool)$locked;
+        return $this;
     }
 
     /**
@@ -473,6 +486,7 @@ abstract class Object_Class_Data
     public function setTooltip($tooltip)
     {
         $this->tooltip = (string)$tooltip;
+        return $this;
     }
 
     /**
@@ -499,6 +513,7 @@ abstract class Object_Class_Data
     public function setInvisible($invisible)
     {
         $this->invisible = (bool)$invisible;
+        return $this;
     }
 
     /**
@@ -516,6 +531,7 @@ abstract class Object_Class_Data
     public function setVisibleGridView($visibleGridView)
     {
         $this->visibleGridView = (bool)$visibleGridView;
+        return $this;
     }
 
     /**
@@ -533,6 +549,7 @@ abstract class Object_Class_Data
     public function setVisibleSearch($visibleSearch)
     {
         $this->visibleSearch = (bool)$visibleSearch;
+        return $this;
     }
 
     /**
@@ -643,6 +660,7 @@ abstract class Object_Class_Data
             $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
         }
 
+        $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -689,6 +707,7 @@ abstract class Object_Class_Data
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
         $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
+        $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -729,6 +748,7 @@ abstract class Object_Class_Data
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
         $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
+        $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
 
         return $code;
@@ -776,7 +796,7 @@ abstract class Object_Class_Data
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ', $language = null) {' . "\n";
 
         $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language)' . ";\n";
-
+        $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
 
         return $code;

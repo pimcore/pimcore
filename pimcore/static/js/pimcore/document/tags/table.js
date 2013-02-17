@@ -196,7 +196,7 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
         for (var i = 0; i < data.items.length; i++) {
             tmData = [];
 
-            keys = Object.keys(data.items[i].data);
+            var keys = Object.keys(data.items[i].data);
             for (var u = 0; u < keys.length; u++) {
                 tmData.push(data.items[i].data[keys[u]]);
             }

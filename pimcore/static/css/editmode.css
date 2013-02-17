@@ -166,7 +166,7 @@
 }
 
 /* because this causes problems with the fixed z-index of combo and window above */
-.x-shadow {
+.x-shadow, .x-ie-shadow {
     display: none !important;
 }
 
@@ -211,7 +211,8 @@
 
 .pimcore_tag_video_empty {
 	border: 1px solid #d0d0d0 !important;
-	background:url(/pimcore/static/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;
+	/*background:url(/pimcore/static/img/icon/drop-40.png) center center no-repeat #f9fbfb !important;*/
+    background:url(/pimcore/static/img/icon/video-icon-big.png) center center no-repeat #f9fbfb !important;
 }
 
 .pimcore_tag_checkbox {
@@ -374,4 +375,16 @@
     width: 22px;
     height: 22px;
     z-index: 10;
+}
+
+.pimcore_tag_wysiwyg strong {
+    font-weight: bold;
+}
+
+.pimcore_tag_wysiwyg em {
+    font-style: italic;
+}
+
+.cke-code-editor textarea {
+    font-family: "courier new", courier !important;
 }

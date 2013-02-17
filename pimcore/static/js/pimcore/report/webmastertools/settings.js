@@ -56,11 +56,15 @@ pimcore.report.webmastertools.settings = Class.create({
         var configs = [];
         var sites = pimcore.globalmanager.get("sites");
 
-        // get default
-        configs.push(this.getConfiguration("default", t("main_site"), "default"));
-
         sites.each(function (record) {
-            configs.push(this.getConfiguration("site_" + record.data.id, record.data.domains.split(",").join(", "), record.data.id));
+            var id = record.data.id;
+            var key = "site_" + id;
+            if(!id) {
+                id = "default";
+                key = "default";
+            }
+
+            configs.push(this.getConfiguration(key, record.data.domain, id));
         }, this);
 
 
@@ -94,14 +98,16 @@ pimcore.report.webmastertools.settings = Class.create({
         var sites = pimcore.globalmanager.get("sites");
         var sitesData = {};
 
-        // default site
-        sitesData["default"] = {
-            verification: Ext.getCmp("report_settings_webmastertools_verification_default").getValue()
-        };
-
         sites.each(function (record) {
-            sitesData["site_" + record.data.id] = {
-                verification: Ext.getCmp("report_settings_webmastertools_verification_" + record.data.id).getValue()
+            var id = record.data.id;
+            var key = "site_" + id;
+            if(!id) {
+                id = "default";
+                key = "default";
+            }
+
+            sitesData[key] = {
+                verification: Ext.getCmp("report_settings_webmastertools_verification_" + id).getValue()
             };
         }, this);
 

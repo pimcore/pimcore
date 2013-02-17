@@ -56,6 +56,7 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
                     WHERE documents.id = ?", $this->model->getId());
 
             if ($data["id"] > 0) {
+                $data["metaData"] = @unserialize($data["metaData"]);
                 $this->assignVariablesToModel($data);
             }
             else {
@@ -114,6 +115,10 @@ class Document_Page_Resource extends Document_PageSnippet_Resource {
                 if(is_bool($value)) {
                     $value = (int)$value;
                 }
+                if(is_array($value)) {
+                    $value = serialize($value);
+                }
+
                 if (in_array($key, $this->validColumnsDocument)) {
                     $dataDocument[$key] = $value;
                 }

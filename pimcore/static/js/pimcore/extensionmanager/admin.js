@@ -60,24 +60,28 @@ pimcore.extensionmanager.admin = Class.create({
             url: '/admin/extensionmanager/admin/get-extensions',
             restful: false,
             root: "extensions",
-            fields: ["id","type", "name", "description", "installed", "active", "configuration","updateable","xmlEditorFile"]
+            fields: ["id","type", "name", "description", "installed", "active", "configuration","updateable",
+                                                                        "xmlEditorFile"]
         });
         this.store.load();
 
         var typesColumns = [
-            {header: t("type"), width: 30, sortable: false, dataIndex: 'type', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+            {header: t("type"), width: 30, sortable: false, dataIndex: 'type', renderer:
+                                        function (value, metaData, record, rowIndex, colIndex, store) {
 
                 var icon = "";
                 if(value == "plugin") {
                     icon = "cog.png";
-                } else if (value = "brick") {
+                } else if (value == "brick") {
                     icon = "bricks.png";
                 }
-                return '<img src="/pimcore/static/img/icon/' + icon + '" alt="'+ t("value") +'" title="'+ t("value") +'" />';
+                return '<img src="/pimcore/static/img/icon/' + icon + '" alt="'+ t("value") +'" title="'
+                                                             + t("value") +'" />';
             }},
             {header: "ID", width: 100, sortable: true, dataIndex: 'id'},
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name'},
-            {header: t("description"), id: "extension_description", width: 200, sortable: true, dataIndex: 'description'},
+            {header: t("description"), id: "extension_description", width: 200, sortable: true,
+                                                                dataIndex: 'description'},
             {
                 header: t('enable') + " / " + t("disable"),
                 xtype: 'actioncolumn',
@@ -174,7 +178,8 @@ pimcore.extensionmanager.admin = Class.create({
                     tooltip: t('configure'),
                     getClass: function (v, meta, rec) {
                         var klass = "pimcore_action_column ";
-                        if(rec.get("configuration") || rec.get("xmlEditorFile") && rec.get("active") && rec.get("installed")) {
+                        if(rec.get("configuration") || rec.get("xmlEditorFile") && rec.get("active")
+                                                                                    && rec.get("installed")) {
                             klass += "pimcore_icon_edit ";
                         } else {
                             return "";
@@ -186,7 +191,8 @@ pimcore.extensionmanager.admin = Class.create({
                         var rec = grid.getStore().getAt(rowIndex);
                         var id = rec.get("id");
                         var type = rec.get("type");
-                        var iframeSrc = rec.get("configuration") + "?systemLocale=" + pimcore.globalmanager.get("user").language;
+                        var iframeSrc = rec.get("configuration") + "?systemLocale="
+                                                                        + pimcore.globalmanager.get("user").language;
                         var xmlEditorFile =  rec.get("xmlEditorFile");
 
                         try {
@@ -194,9 +200,11 @@ pimcore.extensionmanager.admin = Class.create({
                         }
                         catch (e) {
                             if(xmlEditorFile){
-                                pimcore.globalmanager.add("extension_settings_" + id + "_" + type, new pimcore.extensionmanager.xmlEditor(id, type, xmlEditorFile));
+                                pimcore.globalmanager.add("extension_settings_" + id + "_" + type,
+                                                new pimcore.extensionmanager.xmlEditor(id, type, xmlEditorFile));
                             }else{
-                                pimcore.globalmanager.add("extension_settings_" + id + "_" + type, new pimcore.extensionmanager.settings(id, type, iframeSrc));
+                                pimcore.globalmanager.add("extension_settings_" + id + "_" + type,
+                                                new pimcore.extensionmanager.settings(id, type, iframeSrc));
                             }
                         }
                     }.bind(this)

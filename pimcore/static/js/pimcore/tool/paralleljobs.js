@@ -81,7 +81,7 @@ pimcore.tool.paralleljobs = Class.create({
                 success: function (response) {
 
                     try {
-                        var response = Ext.decode(response.responseText);
+                        response = Ext.decode(response.responseText);
                         if(!response.success) {
                             // if the download fails, stop all activity
                             throw response;
@@ -103,7 +103,7 @@ pimcore.tool.paralleljobs = Class.create({
                         if(typeof this.config.update == "function") {
                             this.config.update(this.alloverJobsFinished, this.alloverJobs, percent);
                         }
-                    } catch (e) {}
+                    } catch (e2) {}
 
                 }.bind(this),
                 failure: function (response) {

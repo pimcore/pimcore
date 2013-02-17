@@ -68,19 +68,22 @@ pimcore.extensionmanager.share = Class.create({
         this.store.load();
 
         var typesColumns = [
-            {header: t("type"), width: 30, sortable: false, dataIndex: 'type', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+            {header: t("type"), width: 30, sortable: false, dataIndex: 'type', renderer:
+                                                    function (value, metaData, record, rowIndex, colIndex, store) {
 
                 var icon = "";
                 if(value == "plugin") {
                     icon = "cog.png";
-                } else if (value = "brick") {
+                } else if (value == "brick") {
                     icon = "bricks.png";
                 }
-                return '<img src="/pimcore/static/img/icon/' + icon + '" alt="'+ t("value") +'" title="'+ t("value") +'" />';
+                return '<img src="/pimcore/static/img/icon/' + icon + '" alt="'+ t("value") +'" title="'
+                                                    + t("value") +'" />';
             }},
             {header: "ID", width: 100, sortable: true, dataIndex: 'id'},
             {header: t("name"), width: 200, sortable: true, dataIndex: 'name'},
-            {header: t("description"), id: "extension_description", width: 200, sortable: true, dataIndex: 'description'},
+            {header: t("description"), id: "extension_description", width: 200, sortable: true,
+                                                    dataIndex: 'description'},
             {
                 header: t('share') + " / " + t("push_update"),
                 xtype: 'actioncolumn',
@@ -349,7 +352,9 @@ pimcore.extensionmanager.share = Class.create({
 
                 this.callAction("verify", function () {
 
-                    this.finishLink = "http://www.pimcore.org/resources/extensions/edit?token=" + pimcore.settings.liveconnect.getToken() + "&id=" + this.currentExtension.get("id") + "&finish=1";
+                    this.finishLink = "http://www.pimcore.org/resources/extensions/edit?token="
+                                        + pimcore.settings.liveconnect.getToken() + "&id="
+                                        + this.currentExtension.get("id") + "&finish=1";
 
                     this.updateshareWindow.removeAll();
                     this.updateshareWindow.add({
@@ -388,7 +393,8 @@ pimcore.extensionmanager.share = Class.create({
                             }
                         } catch (e) {
                             clearInterval(this.parallelJobsInterval);
-                            this.error("Download fails, see debug.log for more details.<br /><br />Error-Message:<br /><hr />" + response);
+                            this.error("Download fails, see debug.log for more details.<br /><br />Error-Message:<br />"
+                                        +"<hr />" + response);
                         }
 
                         this.parallelJobsFinished++;
@@ -400,7 +406,7 @@ pimcore.extensionmanager.share = Class.create({
 
                         try {
                             this.progressBar.updateProgress(status, percent + "%");
-                        } catch (e) {}
+                        } catch (e2) {}
 
                     }.bind(this),
                     failure: function () {

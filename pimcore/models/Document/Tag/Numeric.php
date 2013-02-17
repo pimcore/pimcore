@@ -56,6 +56,7 @@ class Document_Tag_Numeric extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->number = $data;
+        return $this;
     }
 
     /**
@@ -65,6 +66,7 @@ class Document_Tag_Numeric extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->number = $data;
+        return $this;
     }
 
     /**

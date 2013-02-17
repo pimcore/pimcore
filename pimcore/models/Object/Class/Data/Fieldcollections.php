@@ -61,6 +61,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      */
     public function setLazyLoading($lazyLoading){
         $this->lazyLoading = $lazyLoading;
+        return $this;
     }
 
     /**
@@ -228,6 +229,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+        return $this;
     }
 
     /**
@@ -290,6 +292,9 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
 
+                if ($collectionRaw instanceof stdClass) {
+                    $collectionRaw = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $collectionRaw);
+                }
                 if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
                     throw new Exception("invalid data in fieldcollections [" . $this->getName() . "]");
@@ -305,6 +310,9 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     foreach ($collectionRaw->value as $field) {
+                        if ($field instanceof stdClass) {
+                            $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
+                        }
                         if (!$field instanceof Webservice_Data_Object_Element) {
                             throw new Exception("invalid data in fieldcollections [" . $this->getName() . "]");
                         } else if ($field->name == $fd->getName()) {
@@ -511,6 +519,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**

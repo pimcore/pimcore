@@ -21,18 +21,19 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
 
         this.fieldConfig = fieldConfig;
+        var i;
 
         if (!data) {
             data = [
                 [" "]
             ];
             if (this.fieldConfig.cols) {
-                for (var i = 0; i < (this.fieldConfig.cols - 1); i++) {
+                for (i = 0; i < (this.fieldConfig.cols - 1); i++) {
                     data[0].push(" ");
                 }
             }
             if (this.fieldConfig.rows) {
-                for (var i = 0; i < (this.fieldConfig.rows - 1); i++) {
+                for (i = 0; i < (this.fieldConfig.rows - 1); i++) {
                     data.push(data[0]);
                 }
             }
@@ -40,7 +41,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                 try {
                     var dataRows = this.fieldConfig.data.split("\n");
                     var dataGrid = [];
-                    for (var i = 0; i < dataRows.length; i++) {
+                    for (i = 0; i < dataRows.length; i++) {
                         dataGrid.push(dataRows[i].split("|"));
                     }
 
@@ -57,26 +58,27 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+                renderer: function (key, value, metaData, record) {
+                            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                                metaData.css += " grid_value_inherited";
+                            }
 
 
-            if (value && value.length > 0) {
-                var table = '<table cellpadding="2" cellspacing="0" border="1">';
-                for (var i = 0; i < value.length; i++) {
-                    table += '<tr>';
-                    for (var c = 0; c < value[i].length; c++) {
-                        table += '<td>' + value[i][c] + '</td>';
-                    }
-                    table += '</tr>';
-                }
-                table += '</table>';
-                return table;
-            }
-            return "";
-        }.bind(this, field.key)};
+                            if (value && value.length > 0) {
+                                var table = '<table cellpadding="2" cellspacing="0" border="1">';
+                                for (var i = 0; i < value.length; i++) {
+                                    table += '<tr>';
+                                    for (var c = 0; c < value[i].length; c++) {
+                                        table += '<td>' + value[i][c] + '</td>';
+                                    }
+                                    table += '</tr>';
+                                }
+                                table += '</table>';
+                                return table;
+                            }
+                            return "";
+                        }.bind(this, field.key)};
     },
 
     getLayoutEdit: function () {
@@ -253,7 +255,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         for (var i = 0; i < data.items.length; i++) {
             tmData = [];
 
-            keys = Object.keys(data.items[i].data);
+            var keys = Object.keys(data.items[i].data);
             for (var u = 0; u < keys.length; u++) {
                 tmData.push(data.items[i].data[keys[u]]);
             }

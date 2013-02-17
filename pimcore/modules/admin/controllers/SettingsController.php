@@ -247,7 +247,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                         "username" => $values["general.http_auth.username"],
                         "password" => $values["general.http_auth.password"]
                     ),
-                    "firephp" => $values["general.firephp"],
+                    "custom_php_logfile" => $values["general.custom_php_logfile"],
                     "loglevel" => array(
                         "debug" => $values["general.loglevel.debug"],
                         "info" => $values["general.loglevel.info"],
@@ -262,7 +262,6 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "devmode" => $values["general.devmode"],
                     "logrecipient" => $values["general.logrecipient"],
                     "viewSuffix" => $values["general.viewSuffix"],
-                    "targeting" => $values["general.targeting"]
                 ),
                 "database" => $oldValues["database"], // db cannot be changed here
                 "documents" => array(
@@ -275,7 +274,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                     "error_pages" => $errorPages,
                     "createredirectwhenmoved" => $values["documents.createredirectwhenmoved"],
                     "allowtrailingslash" => $values["documents.allowtrailingslash"],
-                    "allowcapitals" => $values["documents.allowcapitals"]
+                    "allowcapitals" => $values["documents.allowcapitals"],
+                    "generatepreview" => $values["documents.generatepreview"],
+                    "wkhtmltoimage" => $values["documents.wkhtmltoimage"],
+                    "wkhtmltopdf" => $values["documents.wkhtmltopdf"]
                 ),
                 "objects" => array(
                     "versions" => array(
@@ -340,9 +342,21 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
                             "password" => $smtpPassword
                         )
                     ),
-                    "debug" => array( //ckogler
+                    "debug" => array(
                         "emailaddresses" => $values["email.debug.emailAddresses"],
                     ),
+                    "bounce" => array(
+                        "type" => $values["email.bounce.type"],
+                        "maildir" => $values["email.bounce.maildir"],
+                        "mbox" => $values["email.bounce.mbox"],
+                        "imap" => array(
+                            "host" => $values["email.bounce.imap.host"],
+                            "port" => $values["email.bounce.imap.port"],
+                            "username" => $values["email.bounce.imap.username"],
+                            "password" => $values["email.bounce.imap.password"],
+                            "ssl" => $values["email.bounce.imap.ssl"]
+                        )
+                    )
                 ),
                 "webservice" => array(
                     "enabled" => $values["webservice.enabled"]
@@ -383,8 +397,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
             // empty cache directory
             $files = scandir(PIMCORE_CACHE_DIRECTORY);
             foreach ($files as $file) {
-                if (is_file(PIMCORE_CACHE_DIRECTORY . "/" . $file)) {
-                    unlink(PIMCORE_CACHE_DIRECTORY . "/" . $file);
+                if ($file == ".dummy") {
+                    // PIMCORE-1854 Deleting cache cleans whole folder inclusive .dummy
+                    continue;
+                }
+                $filename = PIMCORE_CACHE_DIRECTORY . "/" . $file;
+                if (is_file($filename)) {
+                    unlink($filename);
                 }
             }
 
@@ -463,8 +482,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
                 $data = Zend_Json::decode($this->getParam("data"));
 
-                foreach ($data as &$value) {
-                    $value = trim($value);
+                if(is_array($data)) {
+                    foreach ($data as &$value) {
+                        $value = trim($value);
+                    }
                 }
 
                 if ($this->getParam("xaction") == "destroy") {
@@ -1077,7 +1098,13 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         $sitesList = new Site_List();
         $sitesObjects = $sitesList->load();
-        $sites = array();
+        $sites = array(array(
+            "id" => "",
+            "rootId" => 1,
+            "domains" => "",
+            "rootPath" => "/",
+            "domain" => $this->view->translate("main_site")
+        ));
 
         foreach ($sitesObjects as $site) {
 
@@ -1367,7 +1394,12 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function robotsTxtAction () {
 
-        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots.txt";
+        $siteSuffix = "";
+        if($this->getParam("site")) {
+            $siteSuffix = "-" . $this->getParam("site");
+        }
+
+        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
 
         if($this->getParam("data") !== null) {
             // save data

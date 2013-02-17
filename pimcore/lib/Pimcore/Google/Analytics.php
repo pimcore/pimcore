@@ -16,6 +16,8 @@
 class Pimcore_Google_Analytics {
     
     public static $stack = array();
+
+    public static $defaultPath = null;
     
     public static function isConfigured (Site $site = null) {
         if(self::getSiteConfig($site) && self::getSiteConfig($site)->profile) {
@@ -75,7 +77,7 @@ class Pimcore_Google_Analytics {
               if (typeof _gaqPageView != \"undefined\"){
                 _gaq.push(['_trackPageview',_gaqPageView]);
               } else {
-                _gaq.push(['_trackPageview']);
+                _gaq.push(['_trackPageview'" . (self::$defaultPath ? (",'" . self::$defaultPath . "'") : "") . "]);
               }
 
               " . $config->additionalcode . "
@@ -117,5 +119,16 @@ class Pimcore_Google_Analytics {
     
     public static function trackPageView ($path) {
         self::$stack[] = array("_trackPageview",$path);
+    }
+
+    public static function setDefaultPath($defaultPath)
+    {
+        self::$defaultPath = $defaultPath;
+        return self;
+    }
+
+    public static function getDefaultPath()
+    {
+        return self::$defaultPath;
     }
 }

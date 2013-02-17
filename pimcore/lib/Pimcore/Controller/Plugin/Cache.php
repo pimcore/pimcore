@@ -85,7 +85,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
         }
 
         foreach ($excludePatterns as $pattern) {
-            if (preg_match($pattern, $requestUri)) {
+            if (@preg_match($pattern, $requestUri)) {
                 return $this->disable();
             }
         }
@@ -155,6 +155,7 @@ class Pimcore_Controller_Plugin_Cache extends Zend_Controller_Plugin_Abstract {
     public function setLifetime($lifetime)
     {
         $this->lifetime = $lifetime;
+        return $this;
     }
 
     public function getLifetime()

@@ -168,8 +168,8 @@ class Object_Class_Data_Date extends Object_Class_Data
             } else {
                 $this->defaultValue = strtotime($defaultValue);
             }
-
         }
+        return $this;
     }
 
 
@@ -245,6 +245,7 @@ class Object_Class_Data_Date extends Object_Class_Data
     public function setUseCurrentDate($useCurrentDate)
     {
         $this->useCurrentDate = (bool)$useCurrentDate;
+        return $this;
     }
 
     /** True if change is allowed in edit mode.

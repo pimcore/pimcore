@@ -47,23 +47,24 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer: function (key, value, metaData, record) {
-            if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
-                metaData.css += " grid_value_inherited";
-            }
-
-            if (value && value.length > 0) {
-
-                // only show 10 relations in the grid
-                var maxAmount = 10;
-                if(value.length > maxAmount) {
-                    value.splice(maxAmount, (value.length - maxAmount) );
-                    value.push("...");
+        return {header: ts(field.label), width: 150, sortable: false, dataIndex: field.key, renderer:
+            function (key, value, metaData, record) {
+                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.css += " grid_value_inherited";
                 }
 
-                return value.join("<br />");
-            }
-        }.bind(this, field.key)};
+                if (value && value.length > 0) {
+
+                    // only show 10 relations in the grid
+                    var maxAmount = 10;
+                    if(value.length > maxAmount) {
+                        value.splice(maxAmount, (value.length - maxAmount) );
+                        value.push("...");
+                    }
+
+                    return value.join("<br />");
+                }
+            }.bind(this, field.key)};
     },    
 
     openParentSearchEditor: function(){
@@ -202,6 +203,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     getCreateControl: function () {
 
         var allowedClasses;
+        var i;
+
         var classStore = pimcore.globalmanager.get("object_types_store");
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             allowedClasses = [];
@@ -609,7 +612,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         var classname = data.node.attributes.className;
         var isAllowedClass = false;
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
-            for (i = 0; i < this.fieldConfig.classes.length; i++) {
+            for (var i = 0; i < this.fieldConfig.classes.length; i++) {
                 if (this.fieldConfig.classes[i].classes == classname) {
                     isAllowedClass = true;
                     break;

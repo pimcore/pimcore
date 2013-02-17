@@ -58,7 +58,7 @@ pimcore.settings.tagmanagement.item = Class.create({
 
         this.panel = new Ext.form.FormPanel({
             border: false,
-            layout: "fit",
+//            layout: "fit",
             closable: true,
             autoScroll: true,
             layout: "pimcoreform",
@@ -81,11 +81,47 @@ pimcore.settings.tagmanagement.item = Class.create({
                 width: 300,
                 height: 50
             },{
+                xtype: "combo",
+                name: "siteId",
+                fieldLabel: t("site"),
+                store: pimcore.globalmanager.get("sites"),
+                valueField: "id",
+                displayField: "domain",
+                triggerAction: "all",
+                value: this.data.siteId
+            },{
                 xtype: "textfield",
                 name: "urlPattern",
                 value: this.data.urlPattern,
                 fieldLabel: t("url_pattern"),
-                width: 400
+                width: 400,
+                cls: "input_drop_target",
+                listeners: {
+                    "render": function (el) {
+                        new Ext.dd.DropZone(el.getEl(), {
+                            reference: el,
+                            ddGroup: "element",
+                            getTargetFromEvent: function(e) {
+                                return this.getEl();
+                            }.bind(el),
+
+                            onNodeOver : function(target, dd, e, data) {
+                                return Ext.dd.DropZone.prototype.dropAllowed;
+                            },
+
+                            onNodeDrop : function (el, target, dd, e, data) {
+                                if (data.node.attributes.elementType == "document") {
+                                    var pattern = preg_quote(data.node.attributes.path);
+                                    pattern = str_replace("@","\\@",pattern);
+                                    pattern = "@^" + pattern + "$@";
+                                    el.setValue(pattern);
+                                    return true;
+                                }
+                                return false;
+                            }.bind(this, el)
+                        });
+                    }.bind(this)
+                }
             },{
                 xtype:'combo',
                 fieldLabel: t('http_method'),

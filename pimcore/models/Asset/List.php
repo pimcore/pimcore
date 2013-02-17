@@ -71,6 +71,7 @@ class Asset_List extends Pimcore_Model_List_Abstract implements Zend_Paginator_A
      */
     public function setAssets($assets) {
         $this->assets = $assets;
+        return $this;
     }
     
     

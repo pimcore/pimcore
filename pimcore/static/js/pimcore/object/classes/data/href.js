@@ -54,10 +54,12 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
 
         this.uniqeFieldId = uniqid();
 
+        var i;
+
         var allowedClasses = [];
         if(typeof this.datax.classes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.classes.length; i++) {
+            for(i=0; i<this.datax.classes.length; i++) {
                 allowedClasses.push(this.datax.classes[i]["classes"]);
             }
         } else if(typeof this.datax.classes == "string") {
@@ -68,7 +70,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         var allowedDocuments = [];
         if(typeof this.datax.documentTypes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.documentTypes.length; i++) {
+            for(i=0; i<this.datax.documentTypes.length; i++) {
                 allowedDocuments.push(this.datax.documentTypes[i]["documentTypes"]);
             }
         } else if(typeof this.datax.documentTypes == "string") {

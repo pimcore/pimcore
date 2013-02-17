@@ -41,39 +41,6 @@ class Pimcore_Tool {
 
     /**
      * @static
-     * @param  $element
-     * @return string
-     */
-    public static function getIdPathForElement($element) {
-
-        $path = "";
-
-        if ($element instanceof Document) {
-            $nid = $element->getParentId();
-            $ne = Document::getById($nid);
-        }
-        else if ($element instanceof Asset) {
-            $nid = $element->getParentId();
-            $ne = Asset::getById($nid);
-        }
-        else if ($element instanceof Object_Abstract) {
-            $nid = $element->getO_parentId();
-            $ne = Object_Abstract::getById($nid);
-        }
-
-        if ($ne) {
-            $path = self::getIdPathForElement($ne, $path);
-        }
-
-        if ($element) {
-            $path = $path . "/" . $element->getId();
-        }
-
-        return $path;
-    }
-
-    /**
-     * @static
      * @param  $language
      * @return bool
      */
@@ -210,7 +177,8 @@ class Pimcore_Tool {
             || array_key_exists("pimcore_preview", $_REQUEST)
             || array_key_exists("pimcore_admin", $_REQUEST)
             || array_key_exists("pimcore_object_preview", $_REQUEST)
-            || array_key_exists("pimcore_version", $_REQUEST)) {
+            || array_key_exists("pimcore_version", $_REQUEST)
+            || preg_match("@^/pimcore_document_tag_renderlet@", $_SERVER["REQUEST_URI"])) {
 
             return true;
         }
@@ -417,10 +385,14 @@ class Pimcore_Tool {
             $requestType = Zend_Http_Client::POST;
         }
 
-        $response = $client->request($requestType);
+        try {
+            $response = $client->request($requestType);
 
-        if ($response->isSuccessful()) {
-            return $response->getBody();
+            if ($response->isSuccessful()) {
+                return $response->getBody();
+            }
+        } catch (Exception $e) {
+
         }
 
         return false;
@@ -508,4 +480,13 @@ class Pimcore_Tool {
 
         return $exists;
     }
+
+    /**
+     * @param $message
+     */
+    public static function exitWithError($message) {
+        header('HTTP/1.1 503 Service Temporarily Unavailable');
+        die($message);
+    }
+
 }

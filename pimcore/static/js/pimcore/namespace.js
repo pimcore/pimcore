@@ -34,4 +34,4 @@ pimcore.registerNS = function(namespace) {
         currentLevel = currentLevel[spaces[i]];
     }
     return currentLevel;
-} 
+};

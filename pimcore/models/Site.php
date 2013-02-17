@@ -176,6 +176,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -187,6 +188,7 @@ class Site extends Pimcore_Model_Abstract {
             $domains = Pimcore_Tool_Serialize::unserialize($domains);
         }
         $this->domains = $domains;
+        return $this;
     }
 
     /**
@@ -198,6 +200,7 @@ class Site extends Pimcore_Model_Abstract {
 
         $rd = Document::getById($this->rootId);
         $this->setRootDocument($rd);
+        return $this;
     }
 
     /**
@@ -206,6 +209,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setRootDocument($rootDocument) {
         $this->rootDocument = $rootDocument;
+        return $this;
     }
 
     /**
@@ -213,6 +217,7 @@ class Site extends Pimcore_Model_Abstract {
      */
     public function setRootPath($path) {
         $this->rootPath = $path;
+        return $this;
     }
 
     /**

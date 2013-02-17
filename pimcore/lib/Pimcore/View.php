@@ -248,11 +248,12 @@ class Pimcore_View extends Zend_View {
     }
 
     /**
-     * @param Zend_Controller_Request_Http $request
+     * @param Zend_Controller_Request_Abstract $request
      * @return void
      */
-    public function setRequest(Zend_Controller_Request_Http $request) {
+    public function setRequest(Zend_Controller_Request_Abstract $request) {
         $this->request = $request;
+        return $this;
     }
 
     /**

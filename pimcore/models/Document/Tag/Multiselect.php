@@ -59,6 +59,7 @@ class Document_Tag_Multiselect extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->values = Pimcore_Tool_Serialize::unserialize($data);
+        return $this;
     }
 
     /**
@@ -68,6 +69,7 @@ class Document_Tag_Multiselect extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->values = empty($data)?array():explode(",", $data);
+        return $this;
     }
 
     /**

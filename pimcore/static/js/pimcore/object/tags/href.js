@@ -235,6 +235,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
+        var i;
         
         if (this.fieldConfig.objectsAllowed) {
             allowedTypes.push("object");
@@ -305,6 +306,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
     dndAllowed: function(data) {
         var type = data.node.attributes.elementType;
+        var i;
         var isAllowed = false;
         if (type == "object" && this.fieldConfig.objectsAllowed) {
 

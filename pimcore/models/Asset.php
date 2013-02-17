@@ -285,7 +285,19 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public static function create($parentId, $data = array()) {
 
-        $asset = new self();
+        // create already the real class for the asset type, this is especially for images, because a system-thumbnail
+        // (tree) is generated immediately after creating an image
+        $class = "Asset";
+        if(array_key_exists("filename", $data) && array_key_exists("data", $data)) {
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-create-tmp-file-" . md5($data["data"]) . ".tmp";
+            file_put_contents($tmpFile, $data["data"]);
+            $mimeType = MIME_Type::autoDetect($tmpFile);
+            unlink($tmpFile);
+            $type = self::getTypeFromMimeMapping($mimeType, $data["filename"]);
+            $class = "Asset_" . ucfirst($type);
+        }
+
+        $asset = new $class();
         $asset->setParentId($parentId);
         foreach ($data as $key => $value) {
             $asset->setValue($key, $value);
@@ -317,6 +329,42 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
             return $list;
         }
+    }
+
+    /**
+     * returns the asset type of a filename and mimetype
+     * @param $mimeType
+     * @param $filename
+     * @return int|string
+     */
+    public static function getTypeFromMimeMapping ($mimeType, $filename) {
+
+        $type = "unknown";
+
+        $mappings = array(
+            "image" => array("/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"),
+            "text" => array("/text/"),
+            "audio" => array("/audio/"),
+            "video" => array("/video/"),
+            "document" => array("/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"),
+            "archive" => array("/zip/","/tar/")
+        );
+
+        foreach ($mappings as $assetType => $patterns) {
+            foreach ($patterns as $pattern) {
+                if(preg_match($pattern,$mimeType . " .". Pimcore_File::getFileExtension($filename))) {
+                    $type = $assetType;
+                    break;
+                }
+            }
+
+            // break at first match
+            if($type != "unknown") {
+                break;
+            }
+        }
+
+        return $type;
     }
 
 
@@ -369,30 +417,28 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function save() {
 
-        if($this->getId()) {
-            // do not lock when creating a new asset, this will cause a dead-lock because the cache-tag is used as key
-            // and the cache tag is different when releasing the lock later, because the asset has then an id
-            Tool_Lock::acquire($this->getCacheTag());
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateAsset($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
         }
 
         $this->beginTransaction();
 
         try {
             if (!Pimcore_Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
-                throw new Exception("invalid filname '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
+                throw new Exception("invalid filename '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
             }
 
             $this->correctPath();
 
-            if ($this->getId()) {
-                $this->update();
-            }
-            else {
-                Pimcore_API_Plugin_Broker::getInstance()->preAddAsset($this);
+            if (!$isUpdate) {
                 $this->getResource()->create();
-                Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
-                $this->update();
             }
+
+            $this->update();
 
             $this->commit();
         } catch (Exception $e) {
@@ -401,9 +447,13 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             throw $e;
         }
 
-        $this->clearDependentCache();
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateAsset($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddAsset($this);
+        }
 
-        Tool_Lock::release($this->getCacheTag());
+        $this->clearDependentCache();
     }
 
     public function correctPath() {
@@ -437,9 +487,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     protected function update() {
 
-        Pimcore_API_Plugin_Broker::getInstance()->preUpdateAsset($this);
-
-
         if (!$this->getFilename() && $this->getId() != 1) {
             $this->setFilename("---no-valid-filename---" . $this->getId());
             throw new Exception("Asset requires filename, generated filename automatically");
@@ -455,7 +502,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         }
 
         if ($this->_oldPath) {
-            rename(PIMCORE_ASSET_DIRECTORY . $this->_oldPath, $this->getFileSystemPath());
+            @rename(PIMCORE_ASSET_DIRECTORY . $this->_oldPath, $this->getFileSystemPath());
         }
 
         if ($this->getType() != "folder") {
@@ -473,7 +520,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
             // check file exists
             if (!is_file($destinationPath)) {
-                throw new Exception("couldn't create new asset");
+                throw new Exception("couldn't create new asset, file " . $destinationPath . " doesn't exist");
             }
 
             // set mime type
@@ -540,10 +587,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), $this);
-
-        Pimcore_API_Plugin_Broker::getInstance()->postUpdateAsset($this);
     }
-
 
     /**
      * detects the pimcore internal asset type based on the mime-type and file extension
@@ -551,37 +595,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function setTypeFromMapping () {
-
-        $found = false;
-
-        $mappings = array(
-            "image" => array("/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"),
-            "text" => array("/text/"),
-            "audio" => array("/audio/"),
-            "video" => array("/video/"),
-            "document" => array("/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"),
-            "archive" => array("/zip/","/tar/")
-        );
-
-        foreach ($mappings as $type => $patterns) {
-            foreach ($patterns as $pattern) {
-                if(preg_match($pattern,$this->getMimetype() . " .". Pimcore_File::getFileExtension($this->getFilename()))) {
-                    $this->setType($type);
-                    $found = true;
-                    break;
-                }
-            }
-
-            // break at first match
-            if($found) {
-                break;
-            }
-        }
-
-        // default is unknown
-        if(!$found) {
-            $this->setType("unknown");    
-        }
+        $this->setType(self::getTypeFromMimeMapping($this->getMimetype(), $this->getFilename()));
+        return $this;
     }
 
     /**
@@ -654,6 +669,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setLocked($locked){
         $this->locked = $locked;
+        return $this;
     }
 
     /**
@@ -843,6 +859,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setCreationDate($creationDate) {
         $this->creationDate = (int) $creationDate;
+        return $this;
     }
 
     /**
@@ -851,6 +868,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -864,6 +882,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
         $this->filename = $filename;
+        return $this;
     }
 
     /**
@@ -872,6 +891,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setModificationDate($modificationDate) {
         $this->modificationDate = (int) $modificationDate;
+        return $this;
     }
 
     /**
@@ -883,6 +903,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
         $this->parentId = (int) $parentId;
+        return $this;
     }
 
     /**
@@ -891,6 +912,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setPath($path) {
         $this->path = $path;
+        return $this;
     }
 
     /**
@@ -899,6 +921,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setType($type) {
         $this->type = $type;
+        return $this;
     }
 
     /**
@@ -918,6 +941,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public function setData($data) {
         $this->data = $data;
         $this->_dataChanged = true;
+        return $this;
     }
 
     /**
@@ -944,6 +968,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setProperties($properties) {
         $this->properties = $properties;
+        return $this;
     }
 
     /**
@@ -994,6 +1019,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $property->setInherited($inherited);
 
         $this->properties[$name] = $property;
+        return $this;
     }
 
     /**
@@ -1016,6 +1042,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setUserOwner($userOwner) {
         $this->userOwner = $userOwner;
+        return $this;
     }
 
     /**
@@ -1024,6 +1051,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setUserModification($userModification) {
         $this->userModification = $userModification;
+        return $this;
     }
 
     /**
@@ -1042,6 +1070,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setVersions($versions) {
         $this->versions = $versions;
+        return $this;
     }
 
     /**
@@ -1067,6 +1096,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setCustomSetting($key, $value) {
         $this->customSettings[$key] = $value;
+        return $this;
     }
 
     /**
@@ -1101,6 +1131,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         }
 
         $this->customSettings = $customSettings;
+        return $this;
     }
 
     /**
@@ -1116,6 +1147,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setMimetype($mimetype) {
         $this->mimetype = $mimetype;
+        return $this;
     }
 
     /**
@@ -1171,6 +1203,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setScheduledTasks($scheduledTasks) {
         $this->scheduledTasks = $scheduledTasks;
+        return $this;
     }
 
     /**
@@ -1241,6 +1274,10 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      */
     public function setParent ($parent) {
         $this->parent = $parent;
+        if($parent instanceof Asset) {
+            $this->parentId = $parent->getId();
+        }
+        return $this;
     }
 
     /**
@@ -1280,7 +1317,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     
     public function __wakeup() {
         if(isset($this->_fulldump) && $this->properties !== null) {
-            unset($this->_fulldump);
             $this->renewInheritedProperties();
         }
 
@@ -1291,6 +1327,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
                 $this->setFilename($originalElement->getFilename());
                 $this->setPath($originalElement->getPath());
             }
+
+            unset($this->_fulldump);
         }
     }
     

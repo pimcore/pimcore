@@ -84,6 +84,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setCreate($create)
     {
         $this->create = $create;
+        return $this;
     }
 
     /**
@@ -100,6 +101,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setDelete($delete)
     {
         $this->delete = $delete;
+        return $this;
     }
 
     /**
@@ -116,6 +118,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setList($list)
     {
         $this->list = $list;
+        return $this;
     }
 
     /**
@@ -132,6 +135,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setProperties($properties)
     {
         $this->properties = $properties;
+        return $this;
     }
 
     /**
@@ -148,6 +152,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setPublish($publish)
     {
         $this->publish = $publish;
+        return $this;
     }
 
     /**
@@ -164,6 +169,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setRename($rename)
     {
         $this->rename = $rename;
+        return $this;
     }
 
     /**
@@ -180,6 +186,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setSettings($settings)
     {
         $this->settings = $settings;
+        return $this;
     }
 
     /**
@@ -196,6 +203,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setVersions($versions)
     {
         $this->versions = $versions;
+        return $this;
     }
 
     /**
@@ -212,6 +220,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setView($view)
     {
         $this->view = $view;
+        return $this;
     }
 
     /**
@@ -228,6 +237,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setCid($cid)
     {
         $this->cid = $cid;
+        return $this;
     }
 
     /**
@@ -244,6 +254,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setUserId($userId)
     {
         $this->userId = $userId;
+        return $this;
     }
 
     /**
@@ -260,6 +271,7 @@ class User_Workspace_Abstract extends Pimcore_Model_Abstract {
     public function setCpath($cpath)
     {
         $this->cpath = $cpath;
+        return $this;
     }
 
     /**

@@ -225,6 +225,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function setId ($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -239,6 +240,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function setPath ($path) {
         $this->path = $path;
+        return $this;
     }
 
     /**
@@ -253,6 +255,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function setType ($type) {
         $this->type = $type;
+        return $this;
     }
 
     /**
@@ -267,6 +270,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function setSubtype ($subtype) {
         $this->subtype = $subtype;
+        return $this;
     }
 
     /**
@@ -281,6 +285,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function setAmount ($amount) {
         $this->amount = (int) $amount;
+        return $this;
     }
 
     /**
@@ -295,6 +300,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function setDate ($date) {
         $this->date = (int) $date;
+        return $this;
     }
 
     /**
@@ -309,6 +315,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function setElement ($element) {
         $this->element = $element;
+        return $this;
     }
 
     /**
@@ -316,6 +323,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
      */
     public function setDeletedby($username){
         $this->deletedby = $username;
+        return $this;
     }
 
     /**

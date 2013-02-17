@@ -33,6 +33,7 @@ class Schedule_Manager_Procedural {
         if(is_array($validJobs)) {
             $this->validJobs = $validJobs;
         }
+        return $this;
     }
 
     public function registerJob(Schedule_Maintenance_Job $job, $force = false) {
@@ -73,16 +74,17 @@ class Schedule_Manager_Procedural {
         }
     }
 
-    public  function getPidFile() {
+    public function getPidFile() {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/".$this->_pidFileName;
     }
 
-    public  function setLastExecution() {
+    public function setLastExecution() {
         file_put_contents($this->getPidFile(), time());
         chmod($this->getPidFile(), 0766);
+        return $this;
     }
 
-    public  function getLastExecution() {
+    public function getLastExecution() {
         if (is_file($this->getPidFile())) {
             return file_get_contents($this->getPidFile());
         }

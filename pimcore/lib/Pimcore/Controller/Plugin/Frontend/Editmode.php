@@ -40,8 +40,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             "/pimcore/static/js/lib/ext-plugins/ux/Portlet.js",
             "/pimcore/static/js/lib/ext-plugins/GridRowOrder/roworder.js",
             "/pimcore/static/js/lib/ckeditor/ckeditor.js",
-            "/pimcore/static/js/lib/ckeditor-plugins/pimcore-image.js",
-            "/pimcore/static/js/lib/ckeditor-plugins/pimcore-link.js",
+            "/pimcore/static/js/lib/ckeditor-plugins/htmlsourceinline.js",
             "/pimcore/static/js/pimcore/libfixes.js"
         );
         
@@ -97,33 +96,35 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
 
+                    $pluginJsPaths = array();
                     if (is_array($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
-                        $jsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                        $pluginJsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
                     }
                     else if ($p['plugin']['pluginDocumentEditmodeJsPaths']['path'] != null) {
-                        $jsPaths[0] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                        $pluginJsPaths[] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
                     }
                     //manipulate path for frontend
-                    if (is_array($jsPaths) and count($jsPaths) > 0) {
-                        for ($i = 0; $i < count($jsPaths); $i++) {
-                            if (is_file(PIMCORE_PLUGINS_PATH . $jsPaths[$i])) {
-                                $jsPaths[$i] = "/plugins" . $jsPaths[$i];
+                    if (is_array($pluginJsPaths) and count($pluginJsPaths) > 0) {
+                        for ($i = 0; $i < count($pluginJsPaths); $i++) {
+                            if (is_file(PIMCORE_PLUGINS_PATH . $pluginJsPaths[$i])) {
+                                $jsPaths[] = "/plugins" . $pluginJsPaths[$i];
                             }
                         }
                     }
 
 
+                    $pluginCssPaths = array();
                     if (is_array($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
-                        $cssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                        $pluginCssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
                     }
                     else if ($p['plugin']['pluginDocumentEditmodeCssPaths']['path'] != null) {
-                        $cssPaths[0] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                        $pluginCssPaths[] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
                     }
                     //manipulate path for frontend
-                    if (is_array($cssPaths) and count($cssPaths) > 0) {
-                        for ($i = 0; $i < count($cssPaths); $i++) {
-                            if (is_file(PIMCORE_PLUGINS_PATH . $cssPaths[$i])) {
-                                $cssPaths[$i] = "/plugins" . $cssPaths[$i];
+                    if (is_array($pluginCssPaths) and count($pluginCssPaths) > 0) {
+                        for ($i = 0; $i < count($pluginCssPaths); $i++) {
+                            if (is_file(PIMCORE_PLUGINS_PATH . $pluginCssPaths[$i])) {
+                                $cssPaths[] = "/plugins" . $pluginCssPaths[$i];
                             }
                         }
                     }
@@ -189,9 +190,7 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
         // add html headers for snippets in editmode, so there is no problem with javascript
         $body = $this->getResponse()->getBody();
         if ($this->controller->editmode && strpos($body, "</body>") === false && !$request->getParam("blockAutoHtml")) {
-            $body = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-			<html xmlns="http://www.w3.org/1999/xhtml">
-			<head></head><body>' . $body . "</body></html>";
+            $body = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $body . "</body></html>";
 
             $this->getResponse()->setBody($body);
         }
@@ -217,5 +216,8 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                 }
             }
         }
+
+        // IE compatibility
+        $this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
     }
 }

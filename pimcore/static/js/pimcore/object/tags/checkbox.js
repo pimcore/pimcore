@@ -94,7 +94,9 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             if (!this.component.rendered) {
                 if (!this.fieldConfig.defaultValue) {
                     return false;
-                } else return true;
+                } else {
+                    return true;
+                }
 
             } else {
                 dirty = this.component.isDirty();
@@ -110,7 +112,6 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                 if (dirty) {
                     this.component["__pimcore_dirty"] = true;
                 }
-
 
                 return dirty;
             }

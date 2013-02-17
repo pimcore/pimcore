@@ -34,7 +34,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>');
 
         var button = new Ext.Button({
-            iconCls: "pimcore_icon_edit_link",
+            iconCls: "pimcore_icon_edit_video",
             cls: "pimcore_edit_link_button",
             handler: this.openEditor.bind(this)
         });
@@ -117,12 +117,6 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
     openEditor: function () {
 
-        for (var i = 0; i < editables.length; i++) {
-            if (editables[i].getType() == "wysiwyg") {
-                editables[i].endCKeditor();
-            }
-        }
-
         this.fieldPath = new Ext.form.TextField({
             fieldLabel: t('path'),
             value: this.data.path,
@@ -169,7 +163,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
                 this.dndOver = false;
             }.bind(domElement));
 
-        }
+        };
 
         this.fieldPath.on("render", initDD.bind(this));
         this.poster.on("render", initDD.bind(this));
@@ -193,7 +187,20 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
                     iconCls: "pimcore_icon_search",
                     handler: this.openSearchEditor.bind(this)
                 }]
-            }, this.poster],
+            }, this.poster,{
+                xtype: "textfield",
+                name: "title",
+                fieldLabel: t('title'),
+                width: 320,
+                value: this.data.title
+            },{
+                xtype: "textarea",
+                name: "description",
+                fieldLabel: t('description'),
+                width: 320,
+                height: 50,
+                value: this.data.description
+            }],
             buttons: [
                 {
                     text: t("cancel"),
@@ -215,7 +222,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         this.window = new Ext.Window({
             modal: true,
             width: 500,
-            height: 170,
+            height: 250,
             title: t("video"),
             items: [this.form],
             layout: "fit"

@@ -80,7 +80,8 @@ pimcore.object.versions = Class.create({
                 title: t("preview"),
                 region: "center",
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
-                html: '<iframe src="about:blank" frameborder="0" id="object_version_iframe_' + this.object.id + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" id="object_version_iframe_' + this.object.id
+                                                                + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -143,7 +144,8 @@ pimcore.object.versions = Class.create({
 
     onRowContextmenu: function (grid, rowIndex, event) {
 
-        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
+        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
+                                                .animate( { backgroundColor: '#fff' }, 400);
 
         var menu = new Ext.menu.Menu();
 

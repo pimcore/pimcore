@@ -41,7 +41,7 @@ class Webservice_Data_Document_Folder_Out extends Webservice_Data_Document_Folde
     /**
      * @var Webservice_Data_Document_List_Item[]
      */
-    public $childs;
+    //public $childs;
 
 
 }

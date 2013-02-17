@@ -124,8 +124,8 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         try {
             parameters.data = Ext.encode(this.edit.getValues());
         }
-        catch (e) {
-            //console.log(e);
+        catch (e2) {
+            //console.log(e2);
         }
 
         if (this.isAllowed("properties")) {
@@ -133,29 +133,46 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             try {
                 parameters.properties = Ext.encode(this.properties.getValues());
             }
-            catch (e) {
-                //console.log(e);
+            catch (e3) {
+                //console.log(e3);
             }
         }
+
+        var settings = null;
 
         if (this.isAllowed("settings")) {
             // settings
             try {
                 var settings = this.settings.getValues();
                 settings.published = this.data.published;
-                parameters.settings = Ext.encode(settings);
             }
-            catch (e) {
-                //console.log(e);
+            catch (e4) {
+                //console.log(e4);
             }
 
             // scheduler
             try {
                 parameters.scheduler = Ext.encode(this.scheduler.getValues());
             }
-            catch (e) {
-                //console.log(e);
+            catch (e5) {
+                //console.log(e5);
             }
+        }
+
+        // styles
+        try {
+            var styles = this.preview.getValues();
+            if(!settings) {
+                settings = {};
+            }
+            settings.css = styles.css;
+        }
+        catch (e6) {
+            //console.log(e6);
+        }
+
+        if(settings) {
+            parameters.settings = Ext.encode(settings);
         }
 
         return parameters;
@@ -163,37 +180,14 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
     createScreenshot: function () {
 
+        if(!pimcore.settings.document_generatepreviews) {
+            return;
+        }
+
         var date = new Date();
         var path = this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime();
 
-        pimcore.helpers.urlToCanvas(path, function (canvas) {
-
-            // resize canvas
-            var tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-
-            tempCanvas.getContext('2d').drawImage(canvas, 0, 0);
-
-            // resize to width 400px
-            canvas.width = tempCanvas.width / 3.2;
-            canvas.height = tempCanvas.height / 3.2;
-
-            // draw temp canvas back into canvas, scaled as needed
-            canvas.getContext('2d').drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, canvas.width, canvas.height);
-            delete tempCanvas;
-
-            var data = canvas.toDataURL('image/jpeg', 85);
-
-            Ext.Ajax.request({
-                url: '/admin/page/upload-screenshot',
-                method: "post",
-                params: {
-                    id: this.id,
-                    data: data
-                }
-            });
-        }.bind(this));
+        pimcore.helpers.generatePagePreview(this.id, path);
     }
 
 });

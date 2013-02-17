@@ -49,6 +49,7 @@ class Asset_WebDAV_File extends Sabre_DAV_File {
 
         $this->asset->setFilename(Pimcore_File::getValidFilename($name));
         $this->asset->save();
+        return $this;
     }
 
     /**

@@ -57,6 +57,29 @@ class Pimcore_Mail extends Zend_Mail
      */
     protected $params = array();
 
+
+    /**
+     * html2text from mbayer is installed (http://www.mbayer.de/html2text/)
+     *
+     * @var bool
+     */
+    protected static $html2textInstalled = null;
+
+    /**
+     * Options passed to html2text
+     *
+     * @var string
+     */
+    protected $html2textOptions = "";
+
+
+    /**
+     * use html2text from mbayer if it is installed (http://www.mbayer.de/html2text/)
+     *
+     * @var boolean
+     */
+    protected $html2textBinaryEnabled = null;
+
     /**
      * Prevent adding debug information
      *
@@ -94,6 +117,7 @@ class Pimcore_Mail extends Zend_Mail
 
     public function setHostUrl($url){
         $this->hostUrl = $url;
+        return $this;
     }
 
     public function getHostUrl(){
@@ -194,6 +218,7 @@ class Pimcore_Mail extends Zend_Mail
      */
     public function setIgnoreDebugMode($value){
         $this->ignoreDebugMode = (bool)$value;
+        return $this;
     }
 
     /**
@@ -214,6 +239,7 @@ class Pimcore_Mail extends Zend_Mail
      */
     public function setEnableLayoutOnPlaceholderRendering($value){
         $this->enableLayoutOnPlaceholderRendering = (bool)$value;
+        return $this;
     }
 
     /**
@@ -222,6 +248,51 @@ class Pimcore_Mail extends Zend_Mail
     public function getEnableLayoutOnPlaceholderRendering(){
         return $this->enableLayoutOnPlaceholderRendering;
     }
+
+
+    /**
+     * Determines if mbayer html2text is installed (more information at http://www.mbayer.de/html2text/)
+     * and uses it to automatically create a text version of the html email
+     *
+     * @static
+     * @return void
+     */
+    protected static function determineHtml2TextIsInstalled() {
+
+        self::$html2textInstalled = false;
+        $paths = array("/usr/bin/html2text","/usr/local/bin/html2text", "/bin/html2text");
+
+        foreach ($paths as $path) {
+            if(is_executable($path)) {
+                self::$html2textInstalled = true;
+            }
+        }
+    }
+
+    /**
+     * Sets options that are passed to html2text
+     *
+     * @param string $options
+     * @return Pimcore_Mail
+     */
+    public function setHtml2TextOptions($options = ''){
+        if(is_string($options)){
+            $this->html2textOptions = $options;
+        }else{
+            Logger::warn('Html2Text options ignored. You have to pass a string');
+        }
+        return $this;
+    }
+
+    /**
+     * Returns options for html2text
+     *
+     * @return string
+     */
+    public function getHtml2TextOptions(){
+        return $this->html2textOptions;
+    }
+
 
     // overwriting Zend_Mail methods - necessary for logging... - start
 
@@ -643,11 +714,16 @@ class Pimcore_Mail extends Zend_Mail
                 if($html) {
                     $body = $html->find("body",0);
                     if($body) {
+                        $style = $body->find("style",0);
+                        if ($style){
+                             $style->clear();
+                        }
                         $htmlContent = $body->innertext;
                     }
                 }
+               $content = $this->html2Text($htmlContent);
 
-                $content = @html2text($htmlContent);
+
             } catch (Exception $e) {
                 Logger::err($e);
                 $content = "";
@@ -697,4 +773,72 @@ class Pimcore_Mail extends Zend_Mail
         $this->preventDebugInformationAppending = true;
         return $this;
     }
+
+
+    /**
+     *
+     * @return boolean
+     */
+    public function getHtml2TextBinaryEnabled()
+    {
+        return $this->html2textBinaryEnabled;
+    }
+
+    /**
+     * enable html2text generation via html2text-binary instead of html2text
+     *
+     * @throws Exception if html2text binary is not installed
+     */
+    public function enableHtml2textBinary()
+    {
+        if (self::getHtml2textInstalled()){
+            $this->html2textBinaryEnabled = true;
+        } else {
+            throw new Exception("trying to enable html2text binary,
+            but html2text is not installed!");
+        }
+        return $this;
+    }
+
+    /**
+     * @static
+     * returns  html2text binary installation status
+     * @return boolean || null
+     */
+    public static function getHtml2textInstalled()
+    {
+        if (is_null(self::$html2textInstalled)){
+            self::determineHtml2TextIsInstalled();
+        }
+        return self::$html2textInstalled;
+    }
+
+    /**
+     *  generates text version of htmlContent
+     *  uses html2text binary if it was successfully enabled by calling
+     *  enableHtml2textBinary(), otherwise it uses html2text php version
+     *  @returns string
+     */
+    protected  function html2Text($htmlContent)
+    {
+        if ($this->getHtml2TextBinaryEnabled()){
+            $content = "";
+            //html2text doesn't support unicode
+            if ($this->getCharset()=="UTF-8"){
+                $htmlContent = utf8_decode($htmlContent);
+            }
+            //using temporary file so we don't have problems with special characters
+            $tmpFileName = PIMCORE_TEMPORARY_DIRECTORY . "/" . uniqid('email_', true) . ".tmp";
+            if (file_put_contents($tmpFileName, $htmlContent)) {
+                $content = @shell_exec("html2text $tmpFileName " . $this->getHtml2TextOptions());
+                @unlink($tmpFileName);
+            }
+            return $content;
+
+        }   else {
+            return @html2text($htmlContent);
+        }
+    }
+
+
 }

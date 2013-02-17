@@ -154,6 +154,7 @@ class Document_Tag_Renderlet extends Document_Tag {
         $this->subtype = $data["subtype"];
         
         $this->setElement();
+        return $this;
     }
 
     /**
@@ -168,6 +169,7 @@ class Document_Tag_Renderlet extends Document_Tag {
         $this->subtype = $data["subtype"];
 
         $this->setElement();
+        return $this;
     }
     
     /**
@@ -177,6 +179,7 @@ class Document_Tag_Renderlet extends Document_Tag {
      */
     public function setElement() {
         $this->o = Element_Service::getElementById($this->type, $this->id);
+        return $this;
     }
 
     /**

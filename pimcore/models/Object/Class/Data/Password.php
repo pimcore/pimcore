@@ -63,6 +63,7 @@ class Object_Class_Data_Password extends Object_Class_Data {
      */
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**

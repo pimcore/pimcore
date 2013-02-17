@@ -402,48 +402,54 @@ class Object_Class extends Pimcore_Model_Abstract {
      * @param int $id
      * @return void
      */
-    function setId($id) {
+    public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
      * @param string $name
      * @return void
      */
-    function setName($name) {
+    public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
      * @param int $creationDate
      * @return void
      */
-    function setCreationDate($creationDate) {
+    public function setCreationDate($creationDate) {
         $this->creationDate = (int) $creationDate;
+        return $this;
     }
 
     /**
      * @param int $modificationDate
      * @return void
      */
-    function setModificationDate($modificationDate) {
+    public function setModificationDate($modificationDate) {
         $this->modificationDate = (int) $modificationDate;
+        return $this;
     }
 
     /**
      * @param int $userOwner
      * @return void
      */
-    function setUserOwner($userOwner) {
+    public function setUserOwner($userOwner) {
         $this->userOwner = (int) $userOwner;
+        return $this;
     }
 
     /**
      * @param int $userModification
      * @return void
      */
-    function setUserModification($userModification) {
+    public function setUserModification($userModification) {
         $this->userModification = (int) $userModification;
+        return $this;
     }
 
     /**
@@ -466,6 +472,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setFieldDefinitions($fieldDefinitions) {
         $this->fieldDefinitions = $fieldDefinitions;
+        return $this;
     }
 
     /**
@@ -475,6 +482,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setFieldDefinition($key, $data) {
         $this->fieldDefinitions[$key] = $data;
+        return $this;
     }
 
     /**
@@ -498,6 +506,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         $this->fieldDefinitions = array();
 
         $this->extractDataDefinitions($this->layoutDefinitions);
+        return $this;
     }
 
     /**
@@ -536,6 +545,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setParent($parent) {
         $this->parent = $parent;
+        return $this;
     }
 
     /**
@@ -565,6 +575,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setParentClass($parentClass) {
         $this->parentClass = $parentClass;
+        return $this;
     }
 
     /**
@@ -573,6 +584,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setAllowInherit($allowInherit) {
         $this->allowInherit = (bool) $allowInherit;
+        return $this;
     }
 
     /**
@@ -581,6 +593,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setAllowVariants($allowVariants) {
         $this->allowVariants = (bool) $allowVariants;
+        return $this;
     }
 
     /**
@@ -595,6 +608,7 @@ class Object_Class extends Pimcore_Model_Abstract {
      */
     public function setIcon($icon) {
         $this->icon = $icon;
+        return $this;
     }
     
     /**
@@ -611,6 +625,7 @@ class Object_Class extends Pimcore_Model_Abstract {
         if(is_array($propertyVisibility)) {
             $this->propertyVisibility = $propertyVisibility;
         }
+        return $this;
     }
 
     /**
@@ -619,6 +634,7 @@ class Object_Class extends Pimcore_Model_Abstract {
     public function setPreviewUrl($previewUrl)
     {
         $this->previewUrl = $previewUrl;
+        return $this;
     }
 
     /**
@@ -635,6 +651,7 @@ class Object_Class extends Pimcore_Model_Abstract {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**

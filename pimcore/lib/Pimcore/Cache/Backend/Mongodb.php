@@ -244,6 +244,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
             // #ZF-4614 : we tranform null to zero to get the maximal lifetime
             parent::setDirectives(array('lifetime' => 0));
         }
+        return $this;
     }
 
     /**

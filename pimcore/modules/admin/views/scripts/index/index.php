@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<!DOCTYPE html>
+<html>
 <head>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -127,8 +127,7 @@
             "lib/ext-plugins/ux/gridfilters/filter/BooleanFilter.js",
             "lib/ext-plugins/ux/fileuploadfield/FileUploadField.js",
             "lib/ckeditor/ckeditor.js",
-            "lib/ckeditor-plugins/pimcore-image.js",
-            "lib/ckeditor-plugins/pimcore-link.js",
+            "lib/ckeditor-plugins/htmlsourceinline.js",
 
             // locale
             "lib/ext/locale/ext-lang-" . $this->language . ".js",
@@ -199,6 +198,7 @@
             "pimcore/settings/liveconnect.js",
             "pimcore/settings/robotstxt.js",
             "pimcore/settings/httpErrorLog.js",
+            "pimcore/settings/bouncemailinbox.js",
             "pimcore/settings/targeting/panel.js",
             "pimcore/settings/targeting/item.js",
 
@@ -289,6 +289,7 @@
             "pimcore/object/classes/data/localizedfields.js",
             "pimcore/object/classes/data/countrymultiselect.js",
             "pimcore/object/classes/data/languagemultiselect.js",
+            "pimcore/object/classes/data/keyValue.js",
             "pimcore/object/classes/layout/layout.js",
             "pimcore/object/classes/layout/accordion.js",
             "pimcore/object/classes/layout/fieldset.js",
@@ -335,6 +336,7 @@
             "pimcore/object/tags/countrymultiselect.js",
             "pimcore/object/tags/languagemultiselect.js",
             "pimcore/object/tags/objectbricks.js",
+            "pimcore/object/tags/keyValue.js",
             "pimcore/object/preview.js",
             "pimcore/object/versions.js",
             "pimcore/object/variantsTab.js",
@@ -363,6 +365,9 @@
             "pimcore/report/analytics/elementexplorer.js",
             "pimcore/report/analytics/elementnavigation.js",
             "pimcore/report/webmastertools/settings.js",
+            "pimcore/report/contentanalysis/settings.js",
+            "pimcore/report/seo/detail.js",
+            "pimcore/report/seo/socialoverview.js",
 
             "pimcore/settings/tagmanagement/panel.js",
             "pimcore/settings/tagmanagement/item.js",
@@ -389,7 +394,16 @@
             
             "pimcore/layout/toolbar.js",
             "pimcore/layout/treepanelmanager.js",
-            "pimcore/document/seemode.js"
+            "pimcore/document/seemode.js",
+
+            // keyvalue datatype
+            "pimcore/object/keyvalue/panel.js",
+            "pimcore/object/keyvalue/groupsPanel.js",
+            "pimcore/object/keyvalue/propertiesPanel.js",
+            "pimcore/object/keyvalue/selectionWindow.js",
+            "pimcore/object/keyvalue/specialConfigWindow.js",
+            "pimcore/object/keyvalue/columnConfigDialog.js"
+
         );
 
         // they're here because they are using some pimcore core functionality like t() for i18n , ...
@@ -430,13 +444,23 @@
             liveconnectToken: "<?php echo $this->liveconnectToken; ?>",
             showCloseConfirmation: true,
             debug_admin_translations: <?php echo Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
-            targeting_enabled: <?php echo Zend_Json::encode((bool) $this->config->general->targeting) ?>
+            targeting_enabled: <?php echo Zend_Json::encode((bool) PIMCORE_DEVMODE) ?>,
+            document_generatepreviews: <?php echo Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
+            htmltoimage: <?php echo Zend_Json::encode(Pimcore_Image_HtmlToImage::isSupported()) ?>
         };
     </script>
     
     
     <?php // 3rd party libraries ?>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=<?php echo $googleMapsApiKey ?>"></script>
+    <script type="text/javascript">
+        var gmapInitialize = function () {}; // dummy callback
+        (function() {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = 'https://maps.googleapis.com/maps/api/js?sensor=false&callback=gmapInitialize&key=<?php echo $googleMapsApiKey ?>';
+            document.body.appendChild(script);
+        })();
+    </script>
 
     <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>
     <script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?php echo $this->language ?>/?_dc=<?php echo Pimcore_Version::$revision ?>"></script>

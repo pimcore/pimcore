@@ -66,6 +66,7 @@ class Object_Class_Data_Languagemultiselect extends Object_Class_Data_Multiselec
      */
     public function setOnlySystemLanguages ($value) {
         $this->onlySystemLanguages = (bool) $value;
+        return $this;
     }
 
 

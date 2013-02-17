@@ -59,7 +59,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         var filterStore = [];
         var selectedStore = [];
         for (var i=0; i<possibleRestrictions.length; i++) {
-           if(this.parent.restrictions.subtype.asset && in_array(possibleRestrictions[i], this.parent.restrictions.subtype.asset )) {
+           if(this.parent.restrictions.subtype.asset && in_array(possibleRestrictions[i],
+                                                                    this.parent.restrictions.subtype.asset )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
            }
@@ -135,9 +136,12 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                width: 200,
                store: this.selectionStore,
                columns: [
-                    {header: t("type"), width: 25, sortable: true, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
-                    }},
+                    {header: t("type"), width: 25, sortable: true, dataIndex: 'subtype', renderer:
+                        function (value, metaData, record, rowIndex, colIndex, store) {
+                            return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
+                                                    + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
+                            }
+                    },
                     {header: t("filename"), width: 40, sortable: false, dataIndex: 'filename'}
                 ],
                 viewConfig: {
@@ -183,17 +187,25 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 region: "center",
                 store: this.store,
                 columns: [
-                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
-                    }},
+                    {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                            return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="'
+                                + t(record.data.subtype) + '">&nbsp;</div>';
+                            }
+                    },
                     {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                     {header: t("path"), width: 200, sortable: true, dataIndex: 'fullpath'},
                     {header: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true},
-                    {header: t("preview"), width: 100, sortable: false, dataIndex: 'subtype', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        if(record.data.subtype == "image") {
-                            return '<div name="' + t(record.data.subtype) + '"><img src="/admin/asset/get-image-thumbnail/id/' + record.data.id + '/width/100/height/100/cover/true/aspectratio/true" /></div>';
-                        }
-                    }}
+                    {header: t("preview"), width: 100, sortable: false, dataIndex: 'subtype',
+                            renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                                if(record.data.subtype == "image") {
+                                    return '<div name="' + t(record.data.subtype)
+                                            + '"><img src="/admin/asset/get-image-thumbnail/id/'
+                                            + record.data.id
+                                            + '/width/100/height/100/cover/true/aspectratio/true" /></div>';
+                                }
+                            }
+                    }
                 ],
                 loadMask: true,
                 columnLines: true,

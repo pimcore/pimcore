@@ -122,6 +122,7 @@ class Object_Fieldcollection_Definition_Resource extends Pimcore_Model_Resource_
         }
         if ($existingColName === null) {
             $this->db->query('ALTER TABLE `' . $table . '` ADD COLUMN `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
+            $this->resetValidTableColumnsCache($table);
         } else {
             $this->db->query('ALTER TABLE `' . $table . '` CHANGE COLUMN `' . $existingColName . '` `' . $colName . '` ' . $type . $default . ' ' . $null . ';');
         }

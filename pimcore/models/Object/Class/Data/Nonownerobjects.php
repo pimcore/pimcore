@@ -55,6 +55,7 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
      */
     public function setClasses($classes) {
         //dummy, classes are set from owner classId
+        return $this;
     }
 
 
@@ -72,7 +73,8 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
      * @return void
      */
     public function setLazyLoading($lazyLoading){
-        //dummy, non owner objects must be lazy loading              
+        //dummy, non owner objects must be lazy loading
+        return $this;
     }
 
 
@@ -83,6 +85,7 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
     public function setOwnerClassName($ownerClassName)
     {
         $this->ownerClassName = $ownerClassName;
+        return $this;
     }
 
     /**
@@ -111,6 +114,7 @@ class Object_Class_Data_Nonownerobjects extends Object_Class_Data_Objects {
      */
     public function setOwnerFieldName($fieldName){
         $this->ownerFieldName = $fieldName;
+        return $this;
     }
 
 

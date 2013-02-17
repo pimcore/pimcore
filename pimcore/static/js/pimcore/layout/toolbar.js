@@ -130,6 +130,10 @@ pimcore.layout.toolbar = Class.create({
                     text: t("http_errors"),
                     iconCls: "pimcore_icon_httperrorlog",
                     handler: this.showHttpErrorLog
+                }, {
+                    text: t("reports"),
+                    iconCls: "pimcore_icon_reports",
+                    handler: this.showReports
                 }]
             });
         }
@@ -226,6 +230,12 @@ pimcore.layout.toolbar = Class.create({
                 text: t("systemlog"),
                 iconCls: "pimcore_icon_systemlog",
                 handler: this.showLog
+            });
+
+            extrasItems.push({
+                text: t("bounce_mail_inbox"),
+                iconCls: "pimcore_icon_bouncemail",
+                handler: this.showBounceMailInbox
             });
 
             extrasItems.push({
@@ -344,7 +354,7 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: "pimcore_icon_object",
                 hideOnClick: false,
                 menu: []
-            }
+            };
 
             if (user.isAllowed("classes")) {
                 objectMenu.menu.push({
@@ -363,6 +373,12 @@ pimcore.layout.toolbar = Class.create({
                     text: t("objectbricks"),
                     iconCls: "pimcore_icon_objectbricks",
                     handler: this.editObjectBricks
+                });
+
+                objectMenu.menu.push({
+                    text: t("keyvalue_menu_config"),
+                    iconCls: "pimcore_icon_key",
+                    handler: this.keyValueSettings
                 });
 
                 objectMenu.menu.push({
@@ -390,7 +406,7 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: "pimcore_icon_menu_clear_cache",
                 hideOnClick: false,
                 menu: []
-            }
+            };
 
             if (user.isAllowed("clear_cache")) {
                 cacheMenu.menu.push({
@@ -416,6 +432,14 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
+            if(pimcore.settings.document_generatepreviews) {
+                cacheMenu.menu.push({
+                    text: t("generate_page_previews"),
+                    iconCls: "pimcore_icon_page",
+                    handler: this.generatePagePreviews
+                });
+            }
+
             settingsItems.push(cacheMenu);
         }
 
@@ -435,7 +459,6 @@ pimcore.layout.toolbar = Class.create({
                 handler: this.reportSettings
             });
         }
-
 
         // help menu
         if (settingsItems.length > 0) {
@@ -679,6 +702,66 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
+    generatePagePreviews: function ()  {
+        Ext.Ajax.request({
+            url: '/admin/page/get-list',
+            success: function (res) {
+                var data = Ext.decode(res.responseText);
+                if(data && data.success) {
+                    var items = data.data;
+                    var totalItems = items.length;
+
+                    var progressBar = new Ext.ProgressBar({
+                        text: t('initializing')
+                    });
+
+                    var progressWin = new Ext.Window({
+                        title: t("generate_page_previews"),
+                        layout:'fit',
+                        width:500,
+                        bodyStyle: "padding: 10px;",
+                        closable:false,
+                        plain: true,
+                        modal: false,
+                        items: [progressBar]
+                    });
+
+                    progressWin.show();
+
+                    var generate = function () {
+                        if(items.length > 1) {
+                            var next = items.shift();
+
+                            var date = new Date();
+                            var path = next.path + "?pimcore_preview=true&time=" + date.getTime();
+
+                            pimcore.helpers.generatePagePreview(next.id, path, function () {
+                                generate();
+                            });
+
+                            var status = (totalItems-items.length) / totalItems;
+                            progressBar.updateProgress(status, (Math.ceil(status*100) + "%"));
+                        } else {
+                            progressWin.close();
+                        }
+                    };
+
+                    generate();
+                }
+            }
+        });
+    },
+
+    showBounceMailInbox: function () {
+
+        try {
+            pimcore.globalmanager.get("bouncemailinbox").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("bouncemailinbox", new pimcore.settings.bouncemailinbox());
+        }
+    },
+
     showReports: function () {
         try {
             pimcore.globalmanager.get("reports").activate();
@@ -772,6 +855,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("reports_settings", new pimcore.report.settings());
+        }
+    },
+
+    keyValueSettings: function () {
+        try {
+            pimcore.globalmanager.get("keyvalue_config").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("keyvalue_config", new pimcore.object.keyvalue.configpanel());
         }
     },
 
@@ -916,7 +1008,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo", "pimcore_icon_php", "PHP Info"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo",
+                                                                "pimcore_icon_php", "PHP Info"));
         }
 
     },
@@ -929,7 +1022,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/linfo/index.php", "pimcore_icon_server_info", "Server Info"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
+                            "/pimcore/modules/3rdparty/linfo/index.php", "pimcore_icon_server_info", "Server Info"));
         }
 
     },
@@ -942,7 +1036,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/install/check/", "pimcore_icon_systemrequirements", "System-Requirements Check"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/install/check/",
+                                                    "pimcore_icon_systemrequirements", "System-Requirements Check"));
         }
 
     },
@@ -955,7 +1050,8 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.get(id).activate();
         }
         catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/pimcore/modules/3rdparty/adminer/index.php", "pimcore_icon_mysql", "Database Admin"));
+            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
+                            "/pimcore/modules/3rdparty/adminer/index.php", "pimcore_icon_mysql", "Database Admin"));
         }
 
     }

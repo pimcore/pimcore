@@ -128,6 +128,7 @@ class Document_Tag_Href extends Document_Tag {
         $this->subtype = $data["subtype"];
 
         $this->setElement();
+        return $this;
     }
 
     /**
@@ -142,7 +143,7 @@ class Document_Tag_Href extends Document_Tag {
         $this->subtype = $data["subtype"];
 
         $this->setElement();
-
+        return $this;
     }
 
     /**
@@ -154,6 +155,7 @@ class Document_Tag_Href extends Document_Tag {
 		if(!$this->element) {
 			$this->element = Element_Service::getElementById($this->type, $this->id);
 		}
+        return $this;
     }
 
     /**
@@ -199,7 +201,7 @@ class Document_Tag_Href extends Document_Tag {
 		
 		$this->setElement();
 	
-        if ($this->element instanceof Element_Interface) {
+        if ($this->getElement() instanceof Element_Interface) {
             return false;
         }
         return true;

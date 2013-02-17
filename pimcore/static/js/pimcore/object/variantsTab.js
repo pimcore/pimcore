@@ -65,7 +65,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             this.fieldObject[fields[i].key] = fields[i];
         }        
         
-        var gridHelper = new pimcore.object.helpers.grid(this.selectedClass, fields, "/admin/variants/get-variants", null, false);
+        var gridHelper = new pimcore.object.helpers.grid(this.selectedClass, fields, "/admin/variants/get-variants",
+                                                                            null, false);
         gridHelper.showSubtype = false;
         gridHelper.showKey = true;
         gridHelper.enableEditor = true;
@@ -99,7 +100,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     icon: "/pimcore/static/img/icon/cross.png",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
-                        Ext.MessageBox.confirm(t('remove_variant'), t('remove_variant_text'), this.doDeleteVariant.bind(this, data.id), this);
+                        Ext.MessageBox.confirm(t('remove_variant'), t('remove_variant_text'),
+                                                    this.doDeleteVariant.bind(this, data.id), this);
                     }.bind(this)
                 }
             ]
@@ -209,7 +211,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     },
 
     onRowContextmenu: function (grid, rowIndex, event) {
-        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100).animate( { backgroundColor: '#fff' }, 400);
+        $(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
+                                                        .animate( { backgroundColor: '#fff' }, 400);
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
@@ -218,7 +221,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             text: t('rename'),
             iconCls: "pimcore_icon_edit_key",
             handler: function (data) {
-                Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), this.editKey.bind(this, data.id), null, null, data.data.filename);
+                Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
+                                                this.editKey.bind(this, data.id), null, null, data.data.filename);
             }.bind(this, data)
         }));
 
@@ -235,7 +239,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     this.store.reload();
                     var responseJson = Ext.decode(response.responseText);
                     if(!responseJson.success) {
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_variant"), "error", t(responseJson.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_variant"), "error",
+                                                         t(responseJson.message));
                     }
                 }.bind(this)
             });
@@ -264,7 +269,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                         this.store.reload();
                         pimcore.helpers.openObject(responseJson.id, responseJson.type);
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error", t(responseJson.message));
+                        pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error",
+                                                         t(responseJson.message));
                     }
                 }.bind(this)
             });
@@ -289,7 +295,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                         //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
                         var rdata = Ext.decode(response.responseText);
                         if (rdata && !rdata.success) {
-                            pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error", t(rdata.message));
+                            pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error",
+                                                             t(rdata.message));
                         }
                     } catch(e) {
                         pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error");

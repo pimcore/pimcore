@@ -94,6 +94,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public static function setCurrentRoute($route) {
         self::$_currentRoute = $route;
+        return self;
     }
 
     /**
@@ -139,19 +140,20 @@ class Staticroute extends Pimcore_Model_Abstract {
      * @param string $name
      * @return Staticroute
      */
-    public static function getByName($name) {
+    public static function getByName($name, $siteId = null) {
 
+        $cacheKey = $name . "~~~" . $siteId;
 
         // check if pimcore already knows the id for this $name, if yes just return it
-        if(array_key_exists($name, self::$nameIdMappingCache)) {
-            return self::getById(self::$nameIdMappingCache[$name]);
+        if(array_key_exists($cacheKey, self::$nameIdMappingCache)) {
+            return self::getById(self::$nameIdMappingCache[$cacheKey]);
         }
 
         // create a tmp object to obtain the id
         $route = new self();
 
         try {
-            $route->getResource()->getByName($name);
+            $route->getResource()->getByName($name, $siteId);
         } catch (Exception $e) {
             Logger::error($e);
             return null;
@@ -160,7 +162,7 @@ class Staticroute extends Pimcore_Model_Abstract {
         // to have a singleton in a way. like all instances of Element_Interface do also, like Object_Abstract
         if($route->getId() > 0) {
             // add it to the mini-per request cache
-            self::$nameIdMappingCache[$name] = $route->getId();
+            self::$nameIdMappingCache[$cacheKey] = $route->getId();
             return self::getById($route->getId());
         }
     }
@@ -250,6 +252,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -258,6 +261,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setPattern($pattern) {
         $this->pattern = $pattern;
+        return $this;
     }
 
     /**
@@ -266,6 +270,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setModule($module) {
         $this->module = $module;
+        return $this;
     }
 
 
@@ -275,6 +280,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setController($controller) {
         $this->controller = $controller;
+        return $this;
     }
 
     /**
@@ -283,6 +289,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setAction($action) {
         $this->action = $action;
+        return $this;
     }
 
     /**
@@ -291,6 +298,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setVariables($variables) {
         $this->variables = $variables;
+        return $this;
     }
 
     /**
@@ -299,6 +307,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setDefaults($defaults) {
         $this->defaults = $defaults;
+        return $this;
     }
 
     /**
@@ -307,6 +316,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setPriority($priority) {
         $this->priority = (int) $priority;
+        return $this;
     }
 
     /**
@@ -322,6 +332,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -337,6 +348,7 @@ class Staticroute extends Pimcore_Model_Abstract {
      */
     public function setReverse($reverse) {
         $this->reverse = $reverse;
+        return $this;
     }
 
     /**
@@ -352,6 +364,7 @@ class Staticroute extends Pimcore_Model_Abstract {
     public function setSiteId($siteId)
     {
         $this->siteId = $siteId ? (int) $siteId : null;
+        return $this;
     }
 
     /**

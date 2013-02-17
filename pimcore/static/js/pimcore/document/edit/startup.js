@@ -122,8 +122,9 @@ Ext.onReady(function () {
         var bodyHeight = parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px";
         Ext.getBody().applyStyles("min-height:" + bodyHeight);
         // set handler
-        dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(), parent.Ext.get('document_iframe_' + window.editWindow.document.id), dndZones);
-        
+        dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
+                                parent.Ext.get('document_iframe_' + window.editWindow.document.id), dndZones);
+
         // handler for Esc
         var mapEsc = new Ext.KeyMap(document, {
             key: [27],
@@ -132,7 +133,7 @@ Ext.onReady(function () {
             },
             stopEvent: true
         });
-    
+
         // handler for STRG+S
         var mapCtrlS = new Ext.KeyMap(document, {
             key: "s",
@@ -157,7 +158,9 @@ Ext.onReady(function () {
         for (var e=0; e<editablesForTooltip.length; e++) {
             tmpEl = Ext.get(editablesForTooltip[e]);
             if(tmpEl) {
-                if(tmpEl.hasClass("pimcore_tag_inc") || tmpEl.hasClass("pimcore_tag_href") || tmpEl.hasClass("pimcore_tag_image") || tmpEl.hasClass("pimcore_tag_renderlet") || tmpEl.hasClass("pimcore_tag_snippet")) {
+                if(tmpEl.hasClass("pimcore_tag_inc") || tmpEl.hasClass("pimcore_tag_href")
+                                    || tmpEl.hasClass("pimcore_tag_image") || tmpEl.hasClass("pimcore_tag_renderlet")
+                                    || tmpEl.hasClass("pimcore_tag_snippet")) {
                     new Ext.ToolTip({
                         target: tmpEl,
                         showDelay: 100,
@@ -167,7 +170,8 @@ Ext.onReady(function () {
                 }
 
 
-                if(tmpEl.hasClass("pimcore_tag_snippet") || tmpEl.hasClass("pimcore_tag_renderlet") || tmpEl.hasClass("pimcore_tag_inc") ) {
+                if(tmpEl.hasClass("pimcore_tag_snippet") || tmpEl.hasClass("pimcore_tag_renderlet")
+                                    || tmpEl.hasClass("pimcore_tag_inc") ) {
                     tmpEl.on("mouseenter", function (e) {
                         pimcore.edithelpers.frameElement(this, Ext.getBody());
                     });
@@ -194,7 +198,8 @@ Ext.onReady(function () {
                             iconCls: "pimcore_icon_open",
                             handler: function (item) {
                                 item.parentMenu.destroy();
-                                pimcore.helpers.openDocument(this.getAttribute("pimcore_id"), this.getAttribute("pimcore_type"));
+                                pimcore.helpers.openDocument(this.getAttribute("pimcore_id"),
+                                                                                this.getAttribute("pimcore_type"));
                             }.bind(this)
                         }));
 

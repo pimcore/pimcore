@@ -30,6 +30,7 @@ class Object_Data_StructuredTable {
 
     public function setData($data) {
         $this->data = $data;
+        return $this;
     }
 
     public function getData() {

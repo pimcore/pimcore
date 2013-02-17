@@ -67,6 +67,7 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
     public function setDefaultValue($defaultValue)
     {
         $this->defaultValue = (int)$defaultValue;
+        return $this;
     }
 
 
@@ -94,7 +95,7 @@ class Object_Class_Data_Checkbox extends Object_Class_Data
      */
     public function getDataFromResource($data)
     {
-        return $data;
+        return (bool) $data;
 }
 
     /**

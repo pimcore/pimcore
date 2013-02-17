@@ -27,7 +27,7 @@ class User_UserRole_Folder extends User_Abstract {
      */
     function setHasChilds($state){
         $this->hasChilds= $state;
-
+        return $this;
     }
 
     /**

@@ -390,6 +390,9 @@
 	background: url(/pimcore/static/img/icon/world_edit.png) no-repeat !important;
 }
 
+.pimcore_icon_edit_video {
+    background: url(/pimcore/static/img/icon/film_edit.png) no-repeat !important;
+}
 
 .pimcore_icon_classes {
 	background: url(/pimcore/static/img/icon/database_edit.png) left center no-repeat !important;
@@ -873,7 +876,7 @@
     background: url(/pimcore/static/img/icon/chart_pie.png) left center no-repeat !important;
 }
 
-.pimcore_icon_analytics_overview {
+.pimcore_icon_analytics_overview, .pimcore_icon_seo_overview {
     background: url(/pimcore/static/img/icon/chart_pie.png) left center no-repeat !important;
 }
 
@@ -1205,3 +1208,45 @@
 .pimcore_icon_change_type {
     background: url(/pimcore/static/img/icon/change_type.png) left center no-repeat !important;
 }
+
+.pimcore_icon_key {
+    background: url(/pimcore/static/img/icon/key.png) left center no-repeat !important;
+}
+
+.pimcore_icon_keys {
+    background: url(/pimcore/static/img/icon/keys.png) left center no-repeat !important;
+}
+
+.pimcore_icon_keyValue  {
+    background: url(/pimcore/static/img/icon/key.png) left center no-repeat !important;
+}
+
+.pimcore_icon_cross {
+    background: url(/pimcore/static/img/icon/cross.png) center no-repeat !important;
+}
+
+.pimcore_icon_tv {
+    background: url(/pimcore/static/img/icon/television.png) left no-repeat !important;
+}
+
+.pimcore_icon_tablet {
+    background: url(/pimcore/static/img/icon/image.png) left no-repeat !important;
+}
+
+
+.pimcore_icon_bouncemail {
+    background: url(/pimcore/static/img/icon/email_error.png) left no-repeat !important;
+}
+
+.pimcore_icon_report_seo_group {
+    background: url(/pimcore/static/img/icon/zoom_in.png) left no-repeat !important;
+}
+
+.pimcore_icon_seo_detail {
+    background: url(/pimcore/static/img/icon/chart_curve.png) left no-repeat !important;
+}
+
+.pimcore_icon_report_social_group {
+    background: url(/pimcore/static/img/icon/group.png) left no-repeat !important;
+}
+

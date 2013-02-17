@@ -56,6 +56,7 @@ class Document_Tag_Checkbox extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->value = $data;
+        return $this;
     }
 
     /**
@@ -65,6 +66,7 @@ class Document_Tag_Checkbox extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->value = $data;
+        return $this;
     }
 
 

@@ -36,7 +36,7 @@ pimcore.report.abstract = Class.create({
     },
 
     getPanel: function () {
-        console.log("You have to implement the getPanel() method.")
+        console.log("You have to implement the getPanel() method.");
     },
 
     addPanel: function () {

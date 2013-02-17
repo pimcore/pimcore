@@ -53,6 +53,7 @@ class User_List_Abstract extends Pimcore_Model_List_Abstract {
      */
     public function setItems($items) {
         $this->items = $items;
+        return $this;
     }
 
     /**

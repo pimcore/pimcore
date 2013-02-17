@@ -231,6 +231,7 @@ class Document_Tag_Link extends Document_Tag
     public function setDataFromResource($data)
     {
         $this->data = Pimcore_Tool_Serialize::unserialize($data);
+        return $this;
     }
 
     /**
@@ -261,6 +262,7 @@ class Document_Tag_Link extends Document_Tag
         }
 
         $this->data = $data;
+        return $this;
     }
 
     /**

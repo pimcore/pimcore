@@ -67,7 +67,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
         var storedata = [];
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
-            storedata.push([pimcore.settings.websiteLanguages[i], pimcore.available_languages[pimcore.settings.websiteLanguages[i]]])
+            storedata.push([pimcore.settings.websiteLanguages[i],
+                            pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
         }
 
         this.languageField = new Ext.form.ComboBox({
@@ -161,6 +162,13 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                     Ext.apply({}, n.attributes)
                                 );
                                 e.dropNode = copy; // assign the copy as the new dropNode
+
+                                if (e.dropNode.attributes.dataType == "keyValue") {
+
+                                    var ccd = new pimcore.object.keyvalue.columnConfigDialog();
+                                    ccd.getConfigDialog(copy, this.selectionPanel);
+                                    return;
+                                }
                             }
                         }
                     }.bind(this),
@@ -205,7 +213,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             var items = [];
 
             this.brickKeys = [];
-            this.resultPanel = this.getClassTree("/admin/class/get-class-definition-for-column-config", this.config.classid);
+            this.resultPanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
+                                                    this.config.classid);
         }
 
         return this.resultPanel;
@@ -217,13 +226,19 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         var tree = classTreeHelper.getClassTree(url, id);
 
         tree.addListener("dblclick", function(node) {
-            if(!node.attributes.root && node.attributes.type != "layout" && node.attributes.dataType != 'localizedfields') {
+            if(!node.attributes.root && node.attributes.type != "layout"
+                            && node.attributes.dataType != 'localizedfields') {
                 var copy = new Ext.tree.TreeNode( // copy it
                     Ext.apply({}, node.attributes)
                 );
 
                 if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", copy.attributes.key)) {
                     this.selectionPanel.getRootNode().appendChild(copy);
+                }
+
+                if (copy.attributes.dataType == "keyValue") {
+                    var ccd = new pimcore.object.keyvalue.columnConfigDialog();
+                    ccd.getConfigDialog(copy, this.selectionPanel);
                 }
             }
         }.bind(this));

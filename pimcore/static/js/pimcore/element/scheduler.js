@@ -32,7 +32,8 @@ pimcore.element.scheduler = Class.create({
                 for (var i = 0; i < this.element.data.scheduledTasks.length; i++) {
                     rawTask = this.element.data.scheduledTasks[i];
                     d = new Date(intval(rawTask.date) * 1000);
-                    tasksData.push([Date.parseDate(d.format("n/j/Y"), "n/j/Y"), d.format("H:i"), rawTask.action, rawTask.version, rawTask.active]);
+                    tasksData.push([Date.parseDate(d.format("n/j/Y"), "n/j/Y"), d.format("H:i"), rawTask.action,
+                                                            rawTask.version, rawTask.active]);
                 }
             }
 
@@ -107,9 +108,11 @@ pimcore.element.scheduler = Class.create({
             });
 
             var propertiesColumns = [
-                {header: t("date"), width: 100, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField(),renderer: function(d) {
-                    return d.format("Y-m-d");
-                }},
+                {header: t("date"), width: 100, sortable: true, dataIndex: 'date', editor: new Ext.form.DateField(),
+                    renderer: function(d) {
+                        return d.format("Y-m-d");
+                    }
+                },
                 {header: t("time"), width: 80, sortable: true, dataIndex: 'time', editor: new Ext.form.TimeField({
                     format: "H:i"
                 })},
@@ -135,18 +138,20 @@ pimcore.element.scheduler = Class.create({
 
                     return "";
                 }},
-                {header: t("version"), width: 200, sortable: false, dataIndex: 'version', editor: new Ext.form.ComboBox({
-                    triggerAction: 'all',
-                    editable: false,
-                    store: this.versions,
-                    displayField:'date',
-                    valueField: "id",
-                    listeners: {
-                        "expand": function (el) {
-                            el.getStore().reload();
+                {header: t("version"), width: 200, sortable: false, dataIndex: 'version',
+                    editor: new Ext.form.ComboBox({
+                        triggerAction: 'all',
+                        editable: false,
+                        store: this.versions,
+                        displayField:'date',
+                        valueField: "id",
+                        listeners: {
+                            "expand": function (el) {
+                                el.getStore().reload();
+                            }
                         }
-                    }
-                })},
+                    })
+                },
                 checkColumn,
                 {
                     xtype: 'actioncolumn',

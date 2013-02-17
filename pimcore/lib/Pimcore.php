@@ -75,10 +75,12 @@ class Pimcore {
         // register general pimcore plugins for frontend
         if ($frontend) {
             $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_CustomStyles(), 806);
         }
 
         if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
-            $front->registerPlugin(new Pimcore_Controller_Plugin_CommonFilesFilter(), 795);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_CommonFilesFilter(), 794);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_Thumbnail(), 795);
             $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Webmastertools(), 797);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Analytics(), 798);
@@ -88,6 +90,7 @@ class Pimcore {
             $front->registerPlugin(new Pimcore_Controller_Plugin_TagManagement(), 804);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Targeting(), 805);
             $front->registerPlugin(new Pimcore_Controller_Plugin_HttpErrorLog(), 850);
+            $front->registerPlugin(new Pimcore_Controller_Plugin_ContentLog(), 851);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Cache(), 901); // for caching
         }
 
@@ -245,7 +248,7 @@ class Pimcore {
             }
             catch (Zend_Controller_Router_Exception $e) {
                 header("HTTP/1.0 404 Not Found");
-                throw new Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"]);
+                throw new Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
             }
             catch (Exception $e) {
                 header("HTTP/1.0 500 Internal Server Error");
@@ -288,14 +291,11 @@ class Pimcore {
         $conf = Pimcore_Config::getSystemConfig();
 
         if($conf) {
-            //firephp logger
-            if($conf->general->firephp) {
-                $writerFirebug = new Zend_Log_Writer_Firebug();
-                $loggerFirebug = new Zend_Log($writerFirebug);
-                Logger::addLogger($loggerFirebug);
+            // redirect php error_log to /website/var/log/php.log
+            if($conf->general->custom_php_logfile) {
+                ini_set("error_log", PIMCORE_LOG_DIRECTORY . "/php.log");
             }
         }
-
 
         if(!is_file(PIMCORE_LOG_DEBUG)) {
             if(is_writable(dirname(PIMCORE_LOG_DEBUG))) {
@@ -385,7 +385,7 @@ class Pimcore {
         }
 
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
-        @ini_set("memory_limit", "1024M");
+        //@ini_set("memory_limit", "1024M");
         @ini_set("max_execution_time", $maxExecutionTime);
         @ini_set("short_open_tag", 1);
         @ini_set("magic_quotes_gpc", 0);
@@ -399,12 +399,12 @@ class Pimcore {
         // check some system variables
         if (version_compare(PHP_VERSION, '5.3.0', "<")) {
             $m = "pimcore requires at least PHP version 5.3.0 your PHP version is: " . PHP_VERSION;
-            die($m);
+            Pimcore_Tool::exitWithError($m);
         }
 
         if (get_magic_quotes_gpc()) {
             $m = "pimcore requires magic_quotes_gpc OFF";
-            die($m);
+            Pimcore_Tool::exitWithError($m);
         }
     }
 
@@ -474,10 +474,13 @@ class Pimcore {
                     }
 
                     $jsPaths = array();
-                    if (is_array($p['plugin']['pluginJsPaths']['path'])) {
+                    if (is_array($p['plugin']['pluginJsPaths'])
+                        && isset($p['plugin']['pluginJsPaths']['path'])
+                        && is_array($p['plugin']['pluginJsPaths']['path'])) {
                         $jsPaths = $p['plugin']['pluginJsPaths']['path'];
                     }
-                    else if ($p['plugin']['pluginJsPaths']['path'] != null) {
+                    else if (is_array($p['plugin']['pluginJsPaths'])
+                        && $p['plugin']['pluginJsPaths']['path'] != null) {
                         $jsPaths[0] = $p['plugin']['pluginJsPaths']['path'];
                     }
                     //manipulate path for frontend
@@ -490,10 +493,13 @@ class Pimcore {
                     }
 
                     $cssPaths = array();
-                    if (is_array($p['plugin']['pluginCssPaths']['path'])) {
+                    if (is_array($p['plugin']['pluginCssPaths'])
+                        && isset($p['plugin']['pluginCssPaths']['path'])
+                        && is_array($p['plugin']['pluginCssPaths']['path'])) {
                         $cssPaths = $p['plugin']['pluginCssPaths']['path'];
                     }
-                    else if ($p['plugin']['pluginCssPaths']['path'] != null) {
+                    else if (is_array($p['plugin']['pluginCssPaths'])
+                        && $p['plugin']['pluginCssPaths']['path'] != null) {
                         $cssPaths[0] = $p['plugin']['pluginCssPaths']['path'];
                     }
 
@@ -574,6 +580,7 @@ class Pimcore {
         $autoloader->registerNamespace('Webservice');
         $autoloader->registerNamespace('Search');
         $autoloader->registerNamespace('Tool');
+        $autoloader->registerNamespace('KeyValue');
 
         Pimcore_Tool::registerClassModelMappingNamespaces();
     }
@@ -730,7 +737,8 @@ class Pimcore {
             "pimcore_config_website",
             "pimcore_editmode",
             "pimcore_error_document",
-            "pimcore_site"
+            "pimcore_site",
+            "Pimcore_Resource_Mysql"
         );
 
         if(is_array($keepItems) && count($keepItems) > 0) {

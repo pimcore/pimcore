@@ -139,12 +139,15 @@ pimcore.element.notes = Class.create({
                 columns: [
                     {header: "ID", sortable: true, dataIndex: 'id', hidden: true, width: 60},
                     {header: t("type"), sortable: true, dataIndex: 'type', width: 60},
-                    {header: t("element"), sortable: true, dataIndex: 'cpath', width: 200, hidden: this.inElementContext, renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                        if(record.get("cid")) {
-                            return t(record.get("ctype")) + ": " + record.get("cpath");
-                        }
-                        return "";
-                    }},
+                    {header: t("element"), sortable: true, dataIndex: 'cpath', width: 200,
+                                hidden: this.inElementContext,
+                                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                                    if(record.get("cid")) {
+                                        return t(record.get("ctype")) + ": " + record.get("cpath");
+                                    }
+                                    return "";
+                                }
+                    },
                     {header: t("title"), sortable: true, dataIndex: 'title', width: 200},
                     {header: t("description"), id: "description", sortable: true, dataIndex: 'description'},
                     {header: t("fields"), sortable: true, dataIndex: 'data', renderer: function(v) {
@@ -214,24 +217,29 @@ pimcore.element.notes = Class.create({
             title: t("details_for_selected_event") + " (" + rec.get("id") + ")",
             columns: [
                 {header: t("name"), sortable: true, dataIndex: 'name', width: 60},
-                {header: t("type"), sortable: true, dataIndex: 'type', renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                    return t(value);
-                }},
-                {header: t("value"), sortable: true, dataIndex: 'data', renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                {header: t("type"), sortable: true, dataIndex: 'type',
+                                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                                    return t(value);
+                                }
+                },
+                {header: t("value"), sortable: true, dataIndex: 'data',
+                                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                                            if(record.get("type") == "document" || record.get("type") == "asset"
+                                                                            || record.get("type") == "object") {
+                                                if(value && value["path"]) {
+                                                    return value["path"];
+                                                }
+                                            } else if (record.get("type") == "date") {
+                                                if(value) {
+                                                    var date = new Date(value * 1000);
+                                                    return date.format("Y-m-d H:i:s");
+                                                }
+                                            }
 
-                    if(record.get("type") == "document" || record.get("type") == "asset" || record.get("type") == "object") {
-                        if(value && value["path"]) {
-                            return value["path"];
-                        }
-                    } else if (record.get("type") == "date") {
-                        if(value) {
-                            var date = new Date(value * 1000);
-                            return date.format("Y-m-d H:i:s");
-                        }
-                    }
-
-                    return value;
-                }},{
+                                            return value;
+                                        }
+                },
+                {
                     xtype: 'actioncolumn',
                     width: 30,
                     items: [{
@@ -239,14 +247,17 @@ pimcore.element.notes = Class.create({
                         icon: "/pimcore/static/img/icon/pencil_go.png",
                         handler: function (grid, rowIndex) {
                             var rec = grid.getStore().getAt(rowIndex);
-                            if(rec.get("type") == "document" || rec.get("type") == "asset" || rec.get("type") == "object") {
+                            if(rec.get("type") == "document" || rec.get("type") == "asset"
+                                                                                || rec.get("type") == "object") {
                                 if(rec.get("data") && rec.get("data")["id"]) {
-                                    pimcore.helpers.openElement(rec.get("data").id,rec.get("type"),rec.get("data").type);
+                                    pimcore.helpers.openElement(rec.get("data").id,
+                                                                    rec.get("type"),rec.get("data").type);
                                 }
                             }
                         }.bind(this),
                         getClass: function(v, meta, rec) {  // Or return a class from a function
-                            if(rec.get('type') != "object" && rec.get('type') != "document" && rec.get('type') != "asset") {
+                            if(rec.get('type') != "object"
+                                                && rec.get('type') != "document" && rec.get('type') != "asset") {
                                 return "pimcore_hidden";
                             }
                         }
@@ -277,6 +288,7 @@ pimcore.element.notes = Class.create({
                 store: ["","content","seo","warning","notice"],
                 editable: true,
                 mode: "local",
+                triggerAction: "all",
                 width: 150
             },{
                 xtype: "textfield",

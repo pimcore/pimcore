@@ -1,4 +1,4 @@
-
+/*global user,util*/
 (function () {
 
     /**
@@ -27,7 +27,8 @@
         },
 
         country: function (params) {
-            if(util.toString(params["country"]).toLowerCase() == util.toString(user["location"]["country"]).toLowerCase()) {
+            if(util.toString(params["country"]).toLowerCase()
+                                                    == util.toString(user["location"]["country"]).toLowerCase()) {
                 return true;
             }
             return false;
@@ -53,7 +54,8 @@
         },
 
         geopoint: function (params) {
-            if(util.geoDistance(user["location"]["latitude"], user["location"]["longitude"], params["latitude"], params["longitude"]) < params["radius"]) {
+            if(util.geoDistance(user["location"]["latitude"], user["location"]["longitude"], params["latitude"],
+                                                                            params["longitude"]) < params["radius"]) {
                 return true;
             }
             return false;
@@ -174,10 +176,10 @@
         executeInsertedScripts: function (domelement) {
             var scripts = [];
 
-
-            ret = domelement.childNodes;
+            var ret = domelement.childNodes;
             for (var i = 0; ret[i]; i++) {
-                if (scripts && util.nodeName(ret[i], "script") && (!ret[i].type || ret[i].type.toLowerCase() === "text/javascript")) {
+                if (scripts && util.nodeName(ret[i], "script")
+                                            && (!ret[i].type || ret[i].type.toLowerCase() === "text/javascript")) {
                     scripts.push(ret[i].parentNode ? ret[i].parentNode.removeChild(ret[i]) : ret[i]);
                 }
             }
@@ -232,8 +234,8 @@
             if (elem.addEventListener)  // W3C DOM
                 elem.addEventListener(evnt,func,false);
             else if (elem.attachEvent) { // IE DOM
-                 var r = elem.attachEvent("on"+evnt, func);
-            return r;
+                var r = elem.attachEvent("on"+evnt, func);
+                return r;
             }
         },
 
@@ -249,7 +251,9 @@
             init = function(e) {
                 if (e.type == 'readystatechange' && doc.readyState != 'complete') return;
                 (e.type == 'load' ? win : doc)[rem](pre + e.type, init, false);
-                if (!done && (done = true)) fn.call(win, e.type || e);
+                if (!done && (done = true)) {
+                    fn.call(win, e.type || e);
+                }
             },
 
             poll = function() {
@@ -257,11 +261,14 @@
                 init('poll');
             };
 
-            if (doc.readyState == 'complete') fn.call(win, 'lazy');
-            else {
+            if (doc.readyState == 'complete') {
+                fn.call(win, 'lazy');
+            } else {
                 if (doc.createEventObject && root.doScroll) {
                     try { top = !win.frameElement; } catch(e) { }
-                    if (top) poll();
+                    if (top) {
+                        poll();
+                    }
                 }
                 doc[add](pre + 'DOMContentLoaded', init, false);
                 doc[add](pre + 'readystatechange', init, false);
@@ -364,8 +371,11 @@
             // redirects
             try {
                 var regexp = new RegExp("_ptr=" + target.id);
-                if(actions["redirectEnabled"] && actions["redirectUrl"].length > 0 && !regexp.test(window.location.href)) {
-                    window.location.href = actions["redirectUrl"] + (actions["redirectUrl"].indexOf("?") < 0 ? "?" : "&") + "_ptr=" + target.id;
+                if(actions["redirectEnabled"] && actions["redirectUrl"].length > 0
+                                              && !regexp.test(window.location.href)) {
+                    window.location.href = actions["redirectUrl"]
+                                            + (actions["redirectUrl"].indexOf("?") < 0 ? "?" : "&")
+                                            + "_ptr=" + target.id;
                 }
             } catch (e) {
                 util.log(e);

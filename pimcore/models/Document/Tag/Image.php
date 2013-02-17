@@ -116,10 +116,14 @@ class Document_Tag_Image extends Document_Tag {
         if ($this->image instanceof Asset) {
 
             $thumbnailInUse = false;
-            if ($this->options["thumbnail"]) {
+            if ($this->options["thumbnail"] || $this->cropPercent) {
                 // create a thumbnail first
 
                 $thumbConfig = $this->image->getThumbnailConfig($this->options["thumbnail"]);
+                if(!$thumbConfig && $this->cropPercent) {
+                    $thumbConfig = new Asset_Image_Thumbnail_Config();
+                }
+
                 if($this->cropPercent) {
                     $thumbConfig->addItemAt(0,"cropPercent", array(
                         "width" => $this->cropWidth,
@@ -214,6 +218,7 @@ class Document_Tag_Image extends Document_Tag {
         }
         catch (Exception $e) {
         }
+        return $this;
     }
 
     /**
@@ -231,6 +236,7 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropLeft = $data["cropLeft"];
 
         $this->image = Asset_Image::getById($this->id);
+        return $this;
     }
 
     /*
@@ -369,6 +375,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropHeight($cropHeight)
     {
         $this->cropHeight = $cropHeight;
+        return $this;
     }
 
     /**
@@ -385,6 +392,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropLeft($cropLeft)
     {
         $this->cropLeft = $cropLeft;
+        return $this;
     }
 
     /**
@@ -401,6 +409,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropPercent($cropPercent)
     {
         $this->cropPercent = $cropPercent;
+        return $this;
     }
 
     /**
@@ -417,6 +426,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropTop($cropTop)
     {
         $this->cropTop = $cropTop;
+        return $this;
     }
 
     /**
@@ -433,6 +443,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropWidth($cropWidth)
     {
         $this->cropWidth = $cropWidth;
+        return $this;
     }
 
     /**

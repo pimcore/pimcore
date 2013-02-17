@@ -67,6 +67,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->text = $data;
+        return $this;
     }
 
 
@@ -77,6 +78,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->text = $data;
+        return $this;
     }
 
     /**

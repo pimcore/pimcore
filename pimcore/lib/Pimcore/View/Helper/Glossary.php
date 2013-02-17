@@ -233,8 +233,7 @@ class Pimcore_View_Helper_Glossary_Controller {
                         }
                     }
 
-                    $r = '<a class="pimc
-                    ore_glossary" href="' . $d["link"] . '">' . $r . '</a>';
+                    $r = '<a class="pimcore_glossary" href="' . $d["link"] . '">' . $r . '</a>';
                 }
 
                 // add PCRE delimiter and modifiers
@@ -266,6 +265,7 @@ class Pimcore_View_Helper_Glossary_Controller {
     public function setView($view)
     {
         $this->view = $view;
+        return $this;
     }
 
     /**

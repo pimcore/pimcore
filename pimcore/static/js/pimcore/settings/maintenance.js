@@ -28,7 +28,9 @@ pimcore.settings.maintenance = Class.create({
                 xtype: "panel",
                 border: false,
                 bodyStyle: "padding:20px;font-size:14px;",
-                html: "<b style='color:red;'>WARNING</b><br />If you activate the maintenance mode all services (website, admin, api, ...) will be deactivated. This should be only done by administrators!<br />Only this browser (session) will be still able to access the services."
+                html: "<b style='color:red;'>WARNING</b><br />If you activate the maintenance mode all services "
+                        + "(website, admin, api, ...) will be deactivated. This should be only done by administrators!"
+                        + "<br />Only this browser (session) will be still able to access the services."
             }],
             buttons: [{
                 text: t("activate"),
