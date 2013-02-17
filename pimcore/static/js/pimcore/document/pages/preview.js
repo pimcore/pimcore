@@ -536,7 +536,8 @@ pimcore.document.pages.preview = Class.create({
                             var tmpValue = styles[name];
 
                             if(tmpValue) {
-                                if(tmpValue.indexOf("px") > 0 || tmpValue.indexOf("%") > 0 || tmpValue.indexOf("em") > 0) {
+                                if(tmpValue.indexOf("px") > 0 || tmpValue.indexOf("%") > 0
+                                                                                        || tmpValue.indexOf("em") > 0) {
                                     value = tmpValue.replace(/(px|%|em)/i,"");
                                     unitValue = tmpValue.replace(/[0-9\.]+/,"");
                                 } else if(typeof tmpValue == "number") {
@@ -1090,11 +1091,19 @@ pimcore.document.pages.preview = Class.create({
             this.editorUnFrameElement();
         }
 
+        var startDistance;
+        var offsets;
+        var bodyOffsetLeft;
+        var bodyOffsetTop;
+        var width;
+        var height;
+        var borderWidth;
+
         try {
-            var startDistance = 5;
-            var offsets = Ext.get(el).getOffsetsTo(this.getIframeBody());
-            var bodyOffsetLeft = intval(this.getIframeBody().getStyle("margin-left"));
-            var bodyOffsetTop = intval(this.getIframeBody().getStyle("margin-top"));
+            startDistance = 5;
+            offsets = Ext.get(el).getOffsetsTo(this.getIframeBody());
+            bodyOffsetLeft = intval(this.getIframeBody().getStyle("margin-left"));
+            bodyOffsetTop = intval(this.getIframeBody().getStyle("margin-top"));
 
             offsets[0] -= bodyOffsetLeft;
             offsets[1] -= bodyOffsetTop;
@@ -1102,12 +1111,12 @@ pimcore.document.pages.preview = Class.create({
             offsets[0] -= startDistance;
             offsets[1] -= startDistance;
 
-            var width = Ext.get(el).getWidth() + (startDistance*2);
-            var height = Ext.get(el).getHeight() + (startDistance*2);
-            var borderWidth = 1;
+            width = Ext.get(el).getWidth() + (startDistance*2);
+            height = Ext.get(el).getHeight() + (startDistance*2);
+            borderWidth = 1;
 
             if(typeof body == "undefined") {
-                var body = this.getIframeBody().dom;
+                body = this.getIframeBody().dom;
             }
         } catch (e) {
             return;

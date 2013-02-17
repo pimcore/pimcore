@@ -170,7 +170,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         var index = 0;
 
-        this.addBlockElement(index, type)
+        this.addBlockElement(index, type);
     },
     
     removeBlock: function (blockElement) {
@@ -326,7 +326,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         var types = Object.keys(this.currentElements);
         for(var t=0; t < types.length; t++) {
-            elementData = {};
+            var elementData = {};
             if(this.currentElements[types[t]]) {
                 var element = this.currentElements[types[t]];
                 if(element.action != "deleted") {
