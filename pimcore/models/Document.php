@@ -411,6 +411,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
             throw new Exception("Document requires key, document with id " . $this->getId() . " deleted");
         }
 
+        $disallowedKeysInFirstLevel = array("install","admin","webservice","plugin");
+        if(in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
+            throw new Exception("Key: " . $this->getKey() . " is not allowed in first level (root-level)");
+        }
+
         // save properties
         $this->getProperties();
         $this->getResource()->deleteAllProperties();
