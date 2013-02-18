@@ -55,10 +55,13 @@ class Pimcore_Tool_Text
                         if($element instanceof Document) {
                             // get parameters
                             preg_match("/href=\"([^\"]+)*\"/", $oldTag, $oldHref);
-                            if($oldHref[1] && strpos($oldHref[1], "?") !== false) {
-                                $parameters = explode("?",$oldHref[1]);
-                                if(!empty($parameters[1])) {
-                                    $path .= "?" . $parameters[1];
+                            if($oldHref[1] && (strpos($oldHref[1], "?") !== false || strpos($oldHref[1], "#") !== false)) {
+                                $urlParts = parse_url($oldHref[1]);
+                                if(array_key_exists("query", $urlParts) && !empty($urlParts["query"])) {
+                                    $path .= "?" . $urlParts["query"];
+                                }
+                                if(array_key_exists("fragment", $urlParts) && !empty($urlParts["fragment"])) {
+                                    $path .= "#" . $urlParts["fragment"];
                                 }
                             }
                         }
