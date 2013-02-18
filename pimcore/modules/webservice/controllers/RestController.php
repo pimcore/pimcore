@@ -267,6 +267,67 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $this->encoder->encode(array("success" => false));
     }
 
+    /** Returns the group/key config as JSON.
+     * @return mixed
+     */
+    public function keyValueDefinitionAction() {
+
+        try {
+            if ($this->isGet()) {
+
+                $definition = array();
+
+                $list = new Object_KeyValue_GroupConfig_List();
+                $list->load();
+                $items = $list->getList();
+
+                $groups = array();
+
+                foreach ($items as $item) {
+                    $group = array();
+                    $group["id"] = $item->getId();
+                    $group["name"] =  $item->getName();
+                    if ($item->getDescription()) {
+                        $group["description"] =  $item->getDescription();
+                    }
+                    $groups[] = $group;
+                }
+                $definition["groups"] = $groups;
+
+                $list = new Object_KeyValue_KeyConfig_List();
+                $list->load();
+                $items = $list->getList();
+
+                $keys = array();
+
+                foreach ($items as $item) {
+                    $key= array();
+                    $key['id'] = $item->getId();
+                    $key['name'] = $item->getName();
+                    if ($item->getDescription()) {
+                        $key['description'] = $item->getDescription();
+                    }
+                    $key['type'] = $item->getType();
+                    if ($item->getUnit()) {
+                        $key['unit'] = $item->getUnit();
+                    }
+                    if ($item->getGroup()) {
+                        $key['group'] = $item->getGroup();
+                    }
+                    if ($item->getPossibleValues()) {
+                        $key['possiblevalues'] = $item->getPossibleValues();
+                    }
+                    $keys[] = $key;
+                }
+                $definition["keys"] = $keys;
+                $this->encoder->encode($definition);
+            }
+        } catch (Exception $e) {
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+        $this->encoder->encode(array("success" => false));
+    }
+
     /** end point for document related data.
      * - get document by id
      *      GET http://[YOUR-DOMAIN]/webservice/rest/document/id/1281?apikey=[API-KEY]
@@ -298,23 +359,6 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     $getter = "getDocument" . ucfirst($type) . "ById";
 
                     $object = $this->service->$getter($id);
-
-//
-//                    if ($doc instanceof Document_Link) {
-//                        $object = $this->service->getDocumentLinkById($id);
-//                    }
-//
-//                    if ($doc instanceof Document_Snippet) {
-//                        $object = $this->service->getDocumentSnippedById($id);
-//                    }
-//
-//                    if ($doc instanceof Document_Page) {
-//                        $object = $this->service->getDocumentPageById($id);
-//                    }
-//
-//                    if ($doc instanceof Document_Folder) {
-//                        $object = $this->service->getDocumentFolderById($id);
-//                    }
                 }
 
                 if (!$object) {
