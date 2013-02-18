@@ -464,13 +464,15 @@ pimcore.document.tree = Class.create({
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
                     iconCls: "pimcore_icon_tree_unpublish",
-                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type, this.attributes.id, 'unpublish')
+                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type,
+                                                                                this.attributes.id, 'unpublish')
                 }));
             } else {
                 menu.add(new Ext.menu.Item({
                     text: t('publish'),
                     iconCls: "pimcore_icon_tree_publish",
-                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type, this.attributes.id, 'publish')
+                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type,
+                                                                                this.attributes.id, 'publish')
                 }));
             }
         }
@@ -878,7 +880,7 @@ pimcore.document.tree = Class.create({
 
     addDocumentComplete: function (response) {
         try {
-            var response = Ext.decode(response.responseText);
+            response = Ext.decode(response.responseText);
             if (response && response.success) {
                 this.leaf = false;
                 this.expand();

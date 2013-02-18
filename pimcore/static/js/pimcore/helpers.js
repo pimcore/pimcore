@@ -263,7 +263,8 @@ pimcore.helpers.showNotification = function (title, text, type, errorText) {
     if(type == "error"){
 
         if(errorText != null && errorText != undefined){
-            text = text + '<br /><br /><textarea style="width:300px; height:100px; font-size:11px;">' + strip_tags(errorText) + "</textarea>";
+            text = text + '<br /><br /><textarea style="width:300px; height:100px; font-size:11px;">'
+                                                                            + strip_tags(errorText) + "</textarea>";
         }
         Ext.MessageBox.show({
             title:title,
@@ -933,15 +934,15 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
 pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
 
     if(typeof success != "function") {
-        var success = function () {};
+        success = function () {};
     }
 
     if(typeof failure != "function") {
-        var failure = function () {};
+        failure = function () {};
     }
 
     if(typeof filename != "function") {
-        var filename = "file";
+        filename = "file";
     }
 
     var uploadWindowCompatible = new Ext.Window({

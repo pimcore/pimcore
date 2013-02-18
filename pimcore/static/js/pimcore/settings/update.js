@@ -388,7 +388,7 @@ pimcore.settings.update = Class.create({
                     success: function (response) {
                         
                         try {
-                            var response = Ext.decode(response.responseText);
+                            response = Ext.decode(response.responseText);
                             if(!response.success) {
                                 // if the download fails, stop all activity
                                 throw response;

@@ -205,8 +205,8 @@ pimcore.document.edit = Class.create({
             for (var i = 0; i < this.fieldsToMask.length; i++) {
                 this.fieldsToMask[i].unmask();
             }
-        } catch (e) {
-            console.log(e);
+        } catch (e2) {
+            console.log(e2);
         }
     },
 
@@ -234,7 +234,7 @@ pimcore.document.edit = Class.create({
                 }
             }
         }
-        catch (e) {
+        catch (e2) {
         }
 
         return values;
