@@ -17,7 +17,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     public $type;
 
     public $unit;
-#
+
     public $group;
 
     public $possiblevalues;
@@ -88,10 +88,11 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     }
 
 
-    public static function getByName ($name) {
+    public static function getByName ($name, $groupId = null) {
         try {
             $config = new self();
             $config->setName($name);
+            $config->setGroup($groupId);
             $config->getResource()->getByName();
 
             return $config;
