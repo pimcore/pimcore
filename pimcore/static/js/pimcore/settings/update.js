@@ -328,7 +328,7 @@ pimcore.settings.update = Class.create({
                         
                         try {
                             this.progressBar.updateProgress(status, percent + "%");
-                        } catch (e) {}
+                        } catch (e2) {}
                                                 
                     }.bind(this),
                     failure: function (response) {

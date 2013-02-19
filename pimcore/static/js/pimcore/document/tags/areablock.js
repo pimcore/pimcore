@@ -169,7 +169,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                             proxyEl = v.getEl().dom;
 
                             if (sourceEl) {
-                                d = proxyEl.cloneNode(true);
+                                var d = proxyEl.cloneNode(true);
                                 d.id = Ext.id();
 
                                 return v.dragData = {

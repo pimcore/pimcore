@@ -189,8 +189,8 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 columns: [
                     {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                            return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="'
-                                + t(record.data.subtype) + '">&nbsp;</div>';
+                            return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_'
+                                + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                             }
                     },
                     {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},

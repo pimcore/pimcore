@@ -490,6 +490,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
         var type = data.node.attributes.elementType;
         var isAllowed = false;
+        var subType;
+
         if (type == "object" && this.fieldConfig.objectsAllowed) {
 
             var classname = data.node.attributes.className;
@@ -508,8 +510,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
 
         } else if (type == "asset" && this.fieldConfig.assetsAllowed) {
-            var subType = data.node.attributes.type;
-            var isAllowed = false;
+            subType = data.node.attributes.type;
+            isAllowed = false;
             if (this.fieldConfig.assetTypes != null && this.fieldConfig.assetTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.assetTypes.length; i++) {
                     if (this.fieldConfig.assetTypes[i].assetTypes == subType) {
@@ -523,8 +525,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             }
 
         } else if (type == "document" && this.fieldConfig.documentsAllowed) {
-            var subType = data.node.attributes.type;
-            var isAllowed = false;
+            subType = data.node.attributes.type;
+            isAllowed = false;
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
                     if (this.fieldConfig.documentTypes[i].documentTypes == subType) {
