@@ -18,6 +18,11 @@
 class Asset_Video extends Asset {
 
     /**
+     * @var string
+     */
+    public $type = "video";
+
+    /**
      * @return void
      */
     public function update() {

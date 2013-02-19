@@ -17,5 +17,9 @@
 
 class Asset_Archive extends Asset {
 
-    
+    /**
+     * @var string
+     */
+    public $type = "archive";
+
 }
