@@ -1081,7 +1081,8 @@ pimcore.document.pages.preview = Class.create({
         }
 
         this.cssEditor.removeAll();
-        this.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">' + t("no_item_selected") + "</strong>");
+        this.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">'
+                                                            + t("no_item_selected") + "</strong>");
         this.cssEditor.doLayout();
     },
 

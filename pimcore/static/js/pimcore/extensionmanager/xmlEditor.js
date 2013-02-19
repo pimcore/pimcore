@@ -24,7 +24,7 @@ pimcore.extensionmanager.xmlEditor = Class.create(pimcore.settings.fileexplorer.
     },
 
     loadFileContentsComplete: function (response) {
-        var response = Ext.decode(response.responseText);
+        response = Ext.decode(response.responseText);
         if(response.success) {
             var toolbarItems = [];
             if(response.writeable) {

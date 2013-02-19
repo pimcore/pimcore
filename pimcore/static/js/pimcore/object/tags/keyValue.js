@@ -373,7 +373,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         } else {
             if (type == "bool") {
                 metaData.css += ' x-grid3-check-col-td';
-                return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
+                return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">'
+                    + '&#160;</div>', value ? '-on' : '');
             } else if (type == "select") {
                 var decodedValues = Ext.util.JSON.decode(data.possiblevalues);
                 for (var i = 0;  i < decodedValues.length; i++) {
