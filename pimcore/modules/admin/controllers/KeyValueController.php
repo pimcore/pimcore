@@ -301,12 +301,12 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
         $name = $this->_getParam("name");
         $alreadyExist = false;
 
-        try {
-            $config = Object_KeyValue_KeyConfig::getByName($name);
-            $alreadyExist = true;
-        } catch (Exception $e) {
-            $alreadyExist = false;
-        }
+//        try {
+//            $config = Object_KeyValue_KeyConfig::getByName($name);
+//            $alreadyExist = true;
+//        } catch (Exception $e) {
+//            $alreadyExist = false;
+//        }
 
         if(!$alreadyExist) {
             $config = new Object_KeyValue_KeyConfig();
