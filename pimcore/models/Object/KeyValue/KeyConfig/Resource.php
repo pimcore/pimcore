@@ -47,8 +47,9 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
 
         $stmt = "SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = '" . $name . "'";
         if ($groupId > 0) {
-            $stmt .= " AND group = " . $groupId;
+            $stmt .= " AND `group` = " . $groupId;
         }
+
         $data = $this->db->fetchRow($stmt);
 
         if($data["id"]) {

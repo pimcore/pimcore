@@ -276,6 +276,9 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     } catch (Exception $e) {
 
                     }
+                    if (empty($groupDescription)) {
+                        $groupDescription = $group->getName();
+                    }
                 }
 
                 $data[] = array(
