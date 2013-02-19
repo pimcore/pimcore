@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class Object_Class_Data_KeyValue extends Object_Class_Data {
 
@@ -16,9 +16,20 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public $phpdocType = "Object_Data_KeyValue";
 
+    /** width of key column
+     * @var
+     */
     public $keyWidth;
 
+    /** width of value column
+     * @var
+     */
     public $valueWidth;
+
+    /** width of description column
+     * @var
+     */
+    public $descWidth;
 
     public $height;
 
@@ -70,6 +81,14 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         return $this->keyWidth;
     }
 
+    /** Returns the width of the description column.
+     * @return mixed
+     */
+    public function getDescWidth() {
+        return $this->descWidth;
+    }
+
+
     /**
      * @param integer $width
      * @return void
@@ -88,6 +107,14 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         return $this;
     }
 
+    /** Sets the width of the description column.
+     * @param $width
+     * @return Object_Class_Data_KeyValue
+     */
+    public function setDescWidth($width) {
+        $this->descWidth = $this->getAsIntegerCast($width);
+        return $this;
+    }
 
     /**
      * @return integer
@@ -117,8 +144,8 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
 
     /**
- * @return integer
- */
+     * @return integer
+     */
     public function getValueWidth() {
         return $this->valueWidth;
     }
@@ -176,12 +203,6 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             $keyConfig = Object_KeyValue_KeyConfig::getById($key);
             $property["type"] = $keyConfig->getType();
             $property["possiblevalues"] = $keyConfig->getPossibleValues();
-
-            $niceName = $keyConfig->getDescription();
-            if ($niceName == "") {
-                $niceName = "~" . $keyConfig->getName() . "~";
-            }
-
             $groupId = $keyConfig->getGroup();
 
             if ($groupId) {
@@ -197,7 +218,8 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             }
 
 
-            $property["description"] = $niceName;
+            $property["key"] = $keyConfig->getName();
+            $property["keyDesc"] = $keyConfig->getDescription();
             $result[] = $property;
         }
         return $result;
@@ -284,10 +306,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
 
             $keyConfig = Object_KeyValue_KeyConfig::getById($key);
-            $niceName = $keyConfig->getDescription();
-            if ($niceName == "") {
-                $niceName = "~" . $keyConfig->getName() . "~";
-            }
+            $keyName = $keyConfig->getName();
 
             $prettyValue = $property["value"];
             if ($keyConfig->getType() == "select") {
@@ -301,9 +320,12 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
                 }
             }
             $diffdata["value"] = $prettyValue;
-
-
-            $diffdata["title"] = $niceName;
+            $diffdata["title"] = $keyName;
+            $diffdata["tooltip"] = $keyName;
+            $keyDescription = $keyConfig->getDescription();
+            if (!empty($keyDescription)) {
+                $diffdata["title"] = $keyDescription;
+            }
             $diffdata["disabled"] = !($this->isDiffChangeAllowed());
             $result[] = $diffdata;
         }
@@ -320,7 +342,6 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public function getForWebserviceExport($object)
     {
-
         $key = $this->getName();
         $getter = "get" . ucfirst($key);
         $data = $object->$getter();
