@@ -126,7 +126,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     }
                     $count++;
                     $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
-                }
+               }
                 $list->setCondition($condition);
             }
 
@@ -288,7 +288,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     "group" => $config->getGroup(),
                     "groupdescription" => $groupDescription
 
-                );
+            );
             }
             $rootElement["data"] = $data;
             $rootElement["success"] = true;

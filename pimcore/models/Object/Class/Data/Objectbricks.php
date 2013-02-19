@@ -364,10 +364,10 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($data, $object)
+    public function getFromWebserviceImport($data, $relatedObject)
     {
-        $containerName = "Object_" . ucfirst($object->getClass()->getName()) . "_" . ucfirst($this->getName());
-        $container = new $containerName($object, $this->getName());
+        $containerName = "Object_" . ucfirst($relatedObject->getClass()->getName()) . "_" . ucfirst($this->getName());
+        $container = new $containerName($relatedObject, $this->getName());
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
@@ -413,7 +413,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     }
 
                     $collectionClass = "Object_Objectbrick_Data_" . ucfirst($brick);
-                    $collection = new $collectionClass($object);
+                    $collection = new $collectionClass($relatedObject);
                     $collection->setValues($collectionData);
                     $collection->setFieldname($this->getName());
 

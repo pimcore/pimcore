@@ -223,7 +223,7 @@ abstract class Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null)
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
         return $value;
     }

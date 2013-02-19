@@ -633,7 +633,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value)
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
     {
 
         if (empty($value)) {
@@ -644,13 +644,23 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
                 // cast is needed to make it work for both SOAP and REST
                 $href = (array) $href;
                 if (is_array($href) and key_exists("id", $href) and key_exists("type", $href)) {
-
-                    $e = Element_Service::getElementById($href["type"], $href["id"]);
+                    $type = $href["type"];
+                    $id = $href["id"];
+                    if ($idMapper) {
+                        $id = $idMapper->getMappedId($type, $id);
+                    }
+                    if ($id) {
+                        $e = Element_Service::getElementById($type, $id);
+                    }
 
                     if ($e instanceof Element_Interface) {
                         $hrefs[] = $e;
                     } else {
-                        throw new Exception("cannot get values from web service import - unknown element of type [ " . $href["type"] . " ] with id [" . $href["id"] . "] is referenced");
+                        if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                            throw new Exception("cannot get values from web service import - unknown element of type [ " . $href["type"] . " ] with id [" . $href["id"] . "] is referenced");
+                        } else {
+                            $idMapper->recordMappingFailure($relatedObject, $type, $href["id"]);
+                        }
                     }
                 }
             }

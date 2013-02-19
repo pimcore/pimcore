@@ -56,9 +56,9 @@ class Webservice_Service
     }
 
     /**
- * @param int $id
- * @return Webservice_Data_Document_Link_Out
- */
+     * @param int $id
+     * @return Webservice_Data_Document_Link_Out
+     */
     public function getDocumentLinkById($id)
     {
         try {

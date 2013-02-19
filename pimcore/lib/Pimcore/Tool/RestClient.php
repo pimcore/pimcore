@@ -268,7 +268,7 @@ class Pimcore_Tool_RestClient {
 
 
 
-    public function getObjectById($id, $decode = true) {
+    public function getObjectById($id, $decode = true, $idMapper = null) {
         $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . $this->apikey, "GET");
         $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
 
@@ -286,7 +286,7 @@ class Pimcore_Tool_RestClient {
                 $object = new $classname();
 
                 if ($object instanceof Object_Concrete) {
-                    $wsDocument->reverseMap($object);
+                    $wsDocument->reverseMap($object, false, $idMapper);
                     return $object;
                 } else {
                     throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
@@ -504,6 +504,15 @@ class Pimcore_Tool_RestClient {
         $class = new Object_Class();
         $wsDocument->reverseMap($class);
         return $class;
+    }
+
+    /** Returns the key value definition
+     * @return mixed
+     */
+    public function getKeyValueDefinition() {
+        $response = $this->doRequest(self::$baseUrl .  "key-value-definition?apikey=" . $this->apikey, "GET");
+
+        return $response;
     }
 
 

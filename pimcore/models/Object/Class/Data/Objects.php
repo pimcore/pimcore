@@ -403,24 +403,37 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value, $object = null) {
-        $objects = array();
+    public function getFromWebserviceImport ($value, $object = null, $idMapper = null) {
+        $relatedObjects = array();
         if(empty($value)){
            return null;  
         } else if(is_array($value)){
             foreach($value as $key => $item){
                 $item = (array) $item;
-                $object = Object_Abstract::getById($item['id']);
-                if($object instanceof Object_Abstract){
-                    $objects[] = $object;
+                $id = $item['id'];
+
+                if ($idMapper) {
+                    $id = $idMapper->getMappedId("object", $id);
+                }
+
+                if ($id) {
+                    $relatedObject = Object_Abstract::getById($id);
+                }
+
+                if($relatedObject instanceof Object_Abstract){
+                    $relatedObjects[] = $relatedObject;
                 } else {
-                    throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
+                    if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                        throw new Exception("cannot get values from web service import - references unknown object with id [ ".$id." ]");
+                    } else {
+                        $idMapper->recordMappingFailure($object, "object", $id);
+                    }
                 }
             }
         } else {
             throw new Exception("cannot get values from web service import - invalid data");
         }
-        return $objects;
+        return $relatedObjects;
     }
 
 

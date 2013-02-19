@@ -967,7 +967,19 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function setProperties($properties) {
-        $this->properties = $properties;
+        if (!$properties) {
+            $this->properties = $properties;
+            return;
+        }
+        $convertedProps = array();
+        foreach ($properties as $prop) {
+            if ($prop instanceof stdClass) {
+                $prop = (array) $prop;
+            }
+            $convertedProps[] = $prop;
+        }
+        $this->properties = $convertedProps;
+
         return $this;
     }
 
@@ -1128,6 +1140,10 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public function setCustomSettings($customSettings) {
         if (is_string($customSettings)) {
             $customSettings = Pimcore_Tool_Serialize::unserialize($customSettings);
+        }
+
+        if ($customSettings instanceof stdClass) {
+            $customSettings = (array) $customSettings;
         }
 
         $this->customSettings = $customSettings;
