@@ -114,10 +114,15 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
     		`o_id` INT NOT NULL,
     		`key` INT NOT NULL,
     		`value` VARCHAR(255),
+            `translated` LONGTEXT NULL,
     	    PRIMARY KEY  (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
         $validColumns = $this->getValidTableColumns($table, false); // no caching of table definition
+
+        if (!in_array("translated", $validColumns)) {
+            $db->query("ALTER TABLE `" . $table . "` ADD COLUMN `translated` LONGTEXT NULL AFTER `value`;");
+        }
 
         Logger::debug("createUpdateTable done");
     }
