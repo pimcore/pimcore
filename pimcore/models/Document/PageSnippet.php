@@ -122,7 +122,8 @@ abstract class Document_PageSnippet extends Document {
         $version = null;
 
         // only create a new version if there is at least 1 allowed
-        if(Pimcore_Config::getSystemConfig()->documents->versions) {
+        if(Pimcore_Config::getSystemConfig()->documents->versions->steps
+            || Pimcore_Config::getSystemConfig()->documents->versions->days) {
             $version = new Version();
             $version->setCid($this->getId());
             $version->setCtype("document");

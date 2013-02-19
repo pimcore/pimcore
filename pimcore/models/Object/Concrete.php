@@ -262,7 +262,8 @@ class Object_Concrete extends Object_Abstract {
         $version = null;
 
         // only create a new version if there is at least 1 allowed
-        if(Pimcore_Config::getSystemConfig()->objects->versions) {
+        if(Pimcore_Config::getSystemConfig()->objects->versions->steps
+            || Pimcore_Config::getSystemConfig()->objects->versions->days) {
             // create version
             $version = new Version();
             $version->setCid($this->getO_Id());

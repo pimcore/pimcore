@@ -538,7 +538,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->getData(); // load data from filesystem to put it into the version
 
             // only create a new version if there is at least 1 allowed
-            if(Pimcore_Config::getSystemConfig()->assets->versions) {
+            if(Pimcore_Config::getSystemConfig()->assets->versions->steps
+                || Pimcore_Config::getSystemConfig()->assets->versions->days) {
                 $version = new Version();
                 $version->setCid($this->getId());
                 $version->setCtype("asset");
