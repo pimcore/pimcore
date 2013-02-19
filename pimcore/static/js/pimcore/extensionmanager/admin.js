@@ -109,7 +109,19 @@ pimcore.extensionmanager.admin = Class.create({
                                 id: rec.get("id"),
                                 type: rec.get("type")
                             },
-                            success: this.reload.bind(this)
+                            success: function (transport) {
+                                var res = Ext.decode(transport.responseText);
+
+                                if(!empty(res.message)) {
+                                    Ext.Msg.alert(" ", res.message);
+                                }
+
+                                if(res.reload) {
+                                    window.location.reload();
+                                } else {
+                                    this.reload();
+                                }
+                            }.bind(this)
                         });
                     }.bind(this)
                 }]
