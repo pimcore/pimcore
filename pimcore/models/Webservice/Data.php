@@ -51,12 +51,37 @@ abstract class Webservice_Data {
 
     }
 
+    private function mapProperties($value) {
+        if (is_array($value)) {
+            $result = array();
+
+            foreach ($value as $property) {
+                if ($property instanceof stdClass) {
+                    $newProperty = new Property();
+                    $vars = get_object_vars($property);
+                    foreach ($vars as $varName => $varValue) {
+                        $newProperty->$varName = $property->$varName;
+                    }
+                    $result[] = $newProperty;
+                } else {
+                    $result[] = $property;
+                }
+            }
+            $value = $result;
+
+        }
+        return $value;
+    }
+
     public function reverseMap($object) {
 
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
             $method = "set" . $key;
             if (method_exists($object, $method)) {
+                if ($object instanceof Element_Interface && $key == "properties") {
+                    $value = $this->mapProperties($value);
+                }
                 $object->$method($value);
             }
         }
