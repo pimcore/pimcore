@@ -1130,6 +1130,10 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $customSettings = Pimcore_Tool_Serialize::unserialize($customSettings);
         }
 
+        if ($customSettings instanceof stdClass) {
+            $customSettings = (array) $customSettings;
+        }
+
         $this->customSettings = $customSettings;
         return $this;
     }
