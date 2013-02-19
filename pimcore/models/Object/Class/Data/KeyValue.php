@@ -342,7 +342,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
     {
         if ($value) {
             $pairs = array();
@@ -350,14 +350,29 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
                 $property = (array) $property;
 
                 if (key_exists("key", $property)) {
+
+
+                    $key = $property["key"];
+                    if ($idMapper != null) {
+                        $newKey = $idMapper->getMappedId("kvkey", $key);
+                        if (!$newKey) {
+                            if ($idMapper->ignoreMappingFailures()) {
+                                $idMapper->recordMappingFailure($relatedObject, "kvkey", $key);
+                                continue;
+                            } else {
+                                throw new Exception("Key " . $key . " could not be mapped");
+                            }
+                        }
+                        $property["key"] = $newKey;
+                    }
                     $pairs[] = $property;
                 }
             }
 
             $keyValueData = new Object_Data_KeyValue();
             $keyValueData->setProperties($pairs);
-            $keyValueData->setClass($object->getClass());
-            $keyValueData->setObjectId($object->getId());
+            $keyValueData->setClass($relatedObject->getClass());
+            $keyValueData->setObjectId($relatedObject->getId());
             return ($keyValueData);
         }
     }

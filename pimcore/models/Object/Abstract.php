@@ -1169,7 +1169,21 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setProperties($o_properties) {
-        $this->setO_properties($o_properties);
+
+        if (!$o_properties) {
+            $this->setO_properties($o_properties);
+            return;
+        }
+        $convertedProps = array();
+        foreach ($o_properties as $prop) {
+            if ($prop instanceof stdClass) {
+                $prop = (array) $prop;
+            }
+            $convertedProps[] = $prop;
+        }
+
+        $this->setO_properties($convertedProps);
+
         return $this;
     }
     

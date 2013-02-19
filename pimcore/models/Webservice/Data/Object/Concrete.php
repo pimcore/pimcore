@@ -52,7 +52,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
         }
     }
 
-    public function reverseMap($object, $disableMappingExceptions = false) {
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
 
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
@@ -63,7 +63,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
         }
 
         //must be after generic setters above!!
-        parent::reverseMap($object, $disableMappingExceptions);
+        parent::reverseMap($object, $disableMappingExceptions, $idMapper);
 
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
@@ -75,7 +75,7 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
                         if($class instanceof Object_Class_Data_Fieldcollections){
                             $object->$setter($tag->getFromWebserviceImport($element->fieldcollection));
                         } else {
-                            $object->$setter($tag->getFromWebserviceImport($element->value, $object));
+                            $object->$setter($tag->getFromWebserviceImport($element->value, $object, $idMapper));
                         }
 
                         

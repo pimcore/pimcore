@@ -980,7 +980,19 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setProperties($properties) {
-        $this->properties = $properties;
+        if (!$properties) {
+            $this->properties = $properties;
+            return;
+        }
+        $convertedProps = array();
+        foreach ($properties as $prop) {
+            if ($prop instanceof stdClass) {
+                $prop = (array) $prop;
+            }
+            $convertedProps[] = $prop;
+        }
+        $this->properties = $convertedProps;
+
         return $this;
     }
 
