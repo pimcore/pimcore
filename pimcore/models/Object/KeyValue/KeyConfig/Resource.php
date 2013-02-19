@@ -33,8 +33,6 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
 
         $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE id = ?", $this->model->getId());
 
-//        $data["possiblevalues"] = unserialize($data["possiblevalues"]);
-
         $this->assignVariablesToModel($data);
     }
 
@@ -45,10 +43,13 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
         }
 
         $name = $this->model->getName();
+        $groupId = $this->model->getGroup();
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = ?", $name);
-
-//        $data["possiblevalues"] = unserialize($data["possiblevalues"]);
+        $stmt = "SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = '" . $name . "'";
+        if ($groupId > 0) {
+            $stmt .= " AND group = " . $groupId;
+        }
+        $data = $this->db->fetchRow($stmt);
 
         if($data["id"]) {
             $this->assignVariablesToModel($data);
