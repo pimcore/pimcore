@@ -258,7 +258,16 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
                 try {
                     $db->insert("object_relations_" . $classId, $relation);
                 } catch (Exception $e) {
-                    Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
+                    Logger::error("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"]
+                        . " (fieldname: " . $this->getName() . ") already exist -> try to update");
+                    Logger::error($e);
+
+                    // build condition
+                    $condition = array();
+                    foreach ($relation as $key => $value) {
+                        $condition[] = $db->quoteInto($key . " = ?", $value);
+                    }
+                    $db->update("object_relations_" . $classId, $relation, implode(" AND ", $condition));
                 }
             }
         }
