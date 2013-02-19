@@ -95,7 +95,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                                                                             editor: new Ext.form.ComboBox({
             triggerAction: 'all',
             editable: false,
-            store: ["text","number","bool","select"]
+            store: ["text","number","bool","select","translated"]
 
         })});
 
