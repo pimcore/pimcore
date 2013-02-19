@@ -126,7 +126,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     }
                     $count++;
                     $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
-               }
+                }
                 $list->setCondition($condition);
             }
 
@@ -288,7 +288,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     "group" => $config->getGroup(),
                     "groupdescription" => $groupDescription
 
-            );
+                );
             }
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
@@ -300,7 +300,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function addpropertyAction() {
         $name = $this->_getParam("name");
         $alreadyExist = false;
-
+//
 //        try {
 //            $config = Object_KeyValue_KeyConfig::getByName($name);
 //            $alreadyExist = true;
@@ -333,29 +333,12 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function exportAction() {
         $this->removeViewRenderer();
 
-        $helper = new Object_KeyValue_Helper();
-        $data = $helper->export();
+        $data = Object_KeyValue_Helper::export();
         header("Content-type: application/xml");
         header("Content-Disposition: attachment; filename=\"keyvalue_export.xml\"");
         echo $data;
     }
 
-    /**
-     * Imports the group and key config from an XML file.
-     */
-    public function importAction() {
-        $this->removeViewRenderer();
-
-        $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-        $conf = new Zend_Config_Xml($data);
-        $importData = $conf->toArray();
-
-        $helper = new Object_KeyValue_Helper();
-        $helper->import($importData);
-
-        $this->_helper->json(array("success" => true), false);
-        $this->getResponse()->setHeader("Content-Type", "text/html");
-    }
 
     public function testmagicAction() {
         $obj = Object_Concrete::getById(61071);

@@ -24,8 +24,9 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var fields = [];
 
         fields.push("id");
-        fields.push("description");
+//        fields.push("description");
         fields.push("key");
+        fields.push("keyDesc");
         fields.push("value");
         fields.push("type");
         fields.push("possiblevalues");
@@ -54,8 +55,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 }.bind(this)
             },
             fields: fields,
-            sortInfo : { field: "description", direction: "ASC" }
-    });
+            sortInfo : { field: "key", direction: "ASC" }
+        });
 
         for (var i = 0; i < data.length; i++) {
             var pair = data[i];
@@ -130,6 +131,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var gridWidth = 0;
         var gridHeight = 200;
         var keyWidth = 200;
+        var descWidth = 300;
         var groupWidth = 200;
         var valueWidth = 600;
         var maxHeight = 190;
@@ -151,6 +153,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             valueWidth = this.fieldConfig.valueWidth;
         }
 
+        if (this.fieldConfig.descWidth) {
+            descWidth = this.fieldConfig.descWidth;
+        }
+
+
         var readOnly = false;
         // css class for editorGridPanel
         var cls = 'object_field';
@@ -158,7 +165,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var columns = [];
 
         // var visibleFields = ['key','description', 'value','type','possiblevalues'];
-        var visibleFields = ['group', 'description', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
+        var visibleFields = ['group', 'key', 'keyDesc', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
 
 
         for(var i = 0; i < visibleFields.length; i++) {
@@ -255,16 +262,16 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
         var configuredFilters = [
             {
-            type: "string",
-            dataIndex: "group"
+                type: "string",
+                dataIndex: "group"
             },
             {
-            type: "string",
-            dataIndex: "description"
+                type: "string",
+                dataIndex: "description"
             },
             {
-            type: "string",
-            dataIndex: "value"
+                type: "string",
+                dataIndex: "value"
             }
         ];
 
@@ -373,8 +380,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         } else {
             if (type == "bool") {
                 metaData.css += ' x-grid3-check-col-td';
-                return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">'
-                    + '&#160;</div>', value ? '-on' : '');
+                return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
             } else if (type == "select") {
                 var decodedValues = Ext.util.JSON.decode(data.possiblevalues);
                 for (var i = 0;  i < decodedValues.length; i++) {
@@ -513,7 +519,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     colData.description = keyDef.description;
                     colData.group = keyDef.groupdescription;
                     if (!colData.description) {
-                       colData.description = "~" + keyDef.name +  "~";
+                        colData.description = "~" + keyDef.name +  "~";
                     }
                     this.store.add(new this.store.recordType(colData));
                 }
@@ -544,10 +550,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             }.bind(this, field.key);
 
             return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
-                                                                editor:this.getGridColumnEditor(field)};
+                editor:this.getGridColumnEditor(field)};
 
         }
- }
+    }
 
 
 });

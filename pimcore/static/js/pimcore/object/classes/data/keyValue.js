@@ -34,7 +34,7 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
         this.initData(initData);
 
         this.availableSettingsFields = ["title","tooltip","mandatory","noteditable","invisible","visibleGridView",
-                                                                    "visibleSearch","index","style"];
+            "visibleSearch","index","style"];
 
         this.treeNode = treeNode;
     },
@@ -44,7 +44,7 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
     },
 
     getGroup: function () {
-            return "structured";
+        return "structured";
     },
 
     getIconClass: function () {
@@ -59,7 +59,8 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
 
         var keyWidth = 200;
         var groupWidth = 200;
-        var valueWidth = 600;
+        var valueWidth = 500;
+        var descWidth = 200;
         var height = 200;
         var maxheight = 0;
 
@@ -70,6 +71,11 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
         if (this.datax.valueWidth) {
             valueWidth = this.datax.valueWidth;
         }
+
+        if (this.datax.descWidth) {
+            descWidth = this.datax.descWidth;
+        }
+
         if (this.datax.height) {
             height = this.datax.height;
         }
@@ -97,6 +103,12 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
                 fieldLabel: t("keyvalue_data_valuewidth"),
                 name: "valueWidth",
                 value: valueWidth
+            },
+            {
+                xtype: "spinnerfield",
+                fieldLabel: t("keyvalue_data_descwidth"),
+                name: "descWidth",
+                value: descWidth
             },
             {
                 xtype: "spinnerfield",
