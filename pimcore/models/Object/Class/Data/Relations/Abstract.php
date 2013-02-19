@@ -262,6 +262,9 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
                         . " (fieldname: " . $this->getName() . ") already exist -> try to update");
                     Logger::error($e);
 
+                    // try it again with an update if the insert fails, shouldn't be the case, but it seems that
+                    // sometimes the insert throws an exception
+
                     // build condition
                     $condition = array();
                     foreach ($relation as $key => $value) {
