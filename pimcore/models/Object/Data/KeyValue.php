@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class Object_Data_KeyValue extends Pimcore_Model_Abstract {
 
@@ -107,7 +107,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
                     if ($resultKey == $keyId) {
                         $add = false;
                         if (empty($resultPair["altSource"])) {
-                             $resultPair["altSource"] = $parent->getId();
+                            $resultPair["altSource"] = $parent->getId();
                             $resultPair["altValue"] = $parentPair["value"];
                         }
 

@@ -54,7 +54,7 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
         if($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("Config with name: " . $this->model->getName() . " does not exist");
+            throw new Exception("KeyConfig with name: " . $this->model->getName() . " does not exist");
         }
     }
 
