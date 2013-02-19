@@ -19,6 +19,11 @@ class Asset_Folder extends Asset
 {
 
     /**
+     * @var string
+     */
+    public $type = "folder";
+
+    /**
      * set the children of the document
      *
      * @return array

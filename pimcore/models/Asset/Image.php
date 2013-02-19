@@ -18,6 +18,11 @@
 class Asset_Image extends Asset {
 
     /**
+     * @var string
+     */
+    public $type = "image";
+
+    /**
      * @return void
      */
     public function update() {
