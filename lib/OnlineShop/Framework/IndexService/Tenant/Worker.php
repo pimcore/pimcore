@@ -208,9 +208,9 @@ class OnlineShop_Framework_IndexService_Tenant_Worker {
                         $value = $getter::get($object, $column->config);
                     } else {
                         if(!empty($column->fieldname)) {
-                            $getter = get . ucfirst($column->fieldname);
+                            $getter = "get" . ucfirst($column->fieldname);
                         } else {
-                            $getter = get . ucfirst($column->name);
+                            $getter = "get" . ucfirst($column->name);
                         }
 
                         if(method_exists($object, $getter)) {

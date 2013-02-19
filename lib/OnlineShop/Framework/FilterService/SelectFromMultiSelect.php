@@ -13,7 +13,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineSho
 
         $values = array();
         foreach($rawValues as $v) {
-            $explode = explode(OnlineShop_Framework_IndexService::MULTISELECT_DELIMITER, $v['value']);
+            $explode = explode(OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER, $v['value']);
             foreach($explode as $e) {
                 if(!empty($e)) {
                     if($values[$e]) {
@@ -48,7 +48,7 @@ class OnlineShop_Framework_FilterService_SelectFromMultiSelect extends OnlineSho
 
 
         if(!empty($value)) {
-            $value =  "%" . OnlineShop_Framework_IndexService::MULTISELECT_DELIMITER  . $value .  OnlineShop_Framework_IndexService::MULTISELECT_DELIMITER . "%";
+            $value =  "%" . OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER  . $value .  OnlineShop_Framework_IndexService_Tenant_Worker::MULTISELECT_DELIMITER . "%";
             if($isPrecondition) {
                 $productList->addCondition($filterDefinition->getField() . " LIKE " . $productList->quote($value), "PRECONDITION_" . $filterDefinition->getField());
             } else {
