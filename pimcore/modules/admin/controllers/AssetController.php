@@ -955,14 +955,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     "id" => $asset->getId(),
                     "type" => $asset->getType(),
                     "filename" => $asset->getFilename(),
-                    "url" => $asset->$thumbnailMethod(array(
-                        "contain" => true,
-                        "width" => 250,
-                        "height" => 250,
-                        "format" => "JPEG",
-                        "interlace" => true,
-                        "quality" => 80
-                    ))
+                    "url" => "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true"
                 );
             }
         }

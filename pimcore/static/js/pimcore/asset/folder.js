@@ -66,7 +66,10 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         var tpl = new Ext.XTemplate(
                 '<tpl for=".">',
                 '<div class="thumb-wrap">',
-                '<div class="thumb"><table cellspacing="0" cellpadding="0" border="0"><tr><td align="center" valign="middle"><img src="{url}"  id="{type}_{id}" align="center" title="{name}"></td></tr></table></div>',
+                '<div class="thumb"><table cellspacing="0" cellpadding="0" border="0"><tr><td align="center" '
+                    + 'valign="middle" style="background: url({url}) center center no-repeat; ' +
+                    'background-size: contain;" id="{type}_{id}">'
+                    + '</td></tr></table></div>',
                 '<span class="filename">{filename}</span></div>',
                 '</tpl>',
                 '<div class="x-clear"></div>'
