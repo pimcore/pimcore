@@ -437,8 +437,8 @@
                 if(actions["programmaticallyEnabled"]) {
                     app.matchesForProgrammatically.push(target["id"]);
                 }
-            } catch (e) {
-                util.log(e);
+            } catch (e5) {
+                util.log(e5);
             }
         },
 

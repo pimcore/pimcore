@@ -270,7 +270,9 @@ Ext.onReady(function () {
     // check for maintenance
     if (!pimcore.settings.maintenance_active) {
         statusbar.add('<div class="pimcore_statusbar_maintenance">'
-                + '<a href="http://www.pimcore.org/wiki/display/PIMCORE/Installation+and+Upgrade+Guide#InstallationandUpgradeGuide-SetuptheMaintenanceScript" target="_blank">'
+                + '<a href="http://www.pimcore.org/wiki/display/PIMCORE/'
+                + 'Installation+and+Upgrade+Guide#InstallationandUpgradeGuide-SetuptheMaintenanceScript"'
+                + 'target="_blank">'
                 + t("maintenance_not_active") + "</a></div>");
         statusbar.add("-");
     }

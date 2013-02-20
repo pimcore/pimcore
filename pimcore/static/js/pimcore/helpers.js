@@ -545,7 +545,8 @@ pimcore.helpers.deleteAssetFromServer = function (id, r, callback, button) {
             failure: function (id, message) {
                 this.deleteWindow.close();
 
-                pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_during_deleting"), "error", t(message));
+                pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_during_deleting"),
+                                                                    "error", t(message));
 
                 var node = pimcore.globalmanager.get("layout_asset_tree").tree.getNodeById(id);
                 if(node) {
@@ -1136,7 +1137,7 @@ pimcore.helpers.urlToCanvas = function (url, callback) {
                 proxy: "/admin/misc/proxy/"
             });
         }, 2000);
-    }
+    };
 
     document.body.appendChild(iframe);
 };

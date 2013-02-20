@@ -86,8 +86,8 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
 
                             //row values
                             for (var i = 0; i < rows.length; i++) {
-                                var row = value[rows[i]];
-                                var cols = Object.keys(row);
+                                row = value[rows[i]];
+                                cols = Object.keys(row);
 
                                 table += '<tr>';
                                 table += '<td>' + ts(field.layout.rows[i].label) + '</td>';

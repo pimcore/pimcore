@@ -114,7 +114,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                         var type = data.data.type;
                         var possiblevalues = data.data.possiblevalues;
 
-                        if (type != "select") {
+                        if (type != "select" && type != 'translated') {
                             alert(t("keyvalue_define_select_values_error"));
                         } else {
 
