@@ -91,7 +91,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
                         var found = false;
                         var typeKeys = Object.keys(this.options.subtypes);
                         for (var st = 0; st < typeKeys.length; st++) {
-                            for (i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
+                            for (var i = 0; i < this.options.subtypes[typeKeys[st]].length; i++) {
                                 if (this.options.subtypes[typeKeys[st]][i] == data["type"]) {
                                     found = true;
                                     break;
@@ -157,7 +157,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
         //type check   (asset,document,object)
         if (this.options.types) {
-            var found = false;
+            found = false;
             for (i = 0; i < this.options.types.length; i++) {
                 if (this.options.types[i] == data.node.attributes.elementType) {
                     found = true;
