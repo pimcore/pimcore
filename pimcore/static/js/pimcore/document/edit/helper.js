@@ -38,9 +38,14 @@ pimcore.edithelpers.frameElement = function (el, body) {
         pimcore.edithelpers.unFrameElement();
     }
 
+    var offsets;
+    var borderWidth;
+    var width;
+    var height;
+
     try {
         var startDistance = 5;
-        var offsets = Ext.get(el).getOffsetsTo(Ext.getBody());
+        offsets = Ext.get(el).getOffsetsTo(Ext.getBody());
         var bodyOffsetLeft = intval(Ext.getBody().getStyle("margin-left"));
         var bodyOffsetTop = intval(Ext.getBody().getStyle("margin-top"));
 
@@ -50,9 +55,9 @@ pimcore.edithelpers.frameElement = function (el, body) {
         offsets[0] -= startDistance;
         offsets[1] -= startDistance;
 
-        var width = Ext.get(el).getWidth() + (startDistance*2);
-        var height = Ext.get(el).getHeight() + (startDistance*2);
-        var borderWidth = 5;
+        width = Ext.get(el).getWidth() + (startDistance*2);
+        height = Ext.get(el).getHeight() + (startDistance*2);
+        borderWidth = 5;
 
         if(typeof body == "undefined") {
             body = document.body;

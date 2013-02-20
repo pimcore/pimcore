@@ -269,7 +269,9 @@ Ext.onReady(function () {
     }
     // check for maintenance
     if (!pimcore.settings.maintenance_active) {
-        statusbar.add('<div class="pimcore_statusbar_maintenance"><a href="http://www.pimcore.org/wiki/display/PIMCORE/Installation+and+Upgrade+Guide#InstallationandUpgradeGuide-SetuptheMaintenanceScript" target="_blank">' + t("maintenance_not_active") + "</a></div>");
+        statusbar.add('<div class="pimcore_statusbar_maintenance">'
+                + '<a href="http://www.pimcore.org/wiki/display/PIMCORE/Installation+and+Upgrade+Guide#InstallationandUpgradeGuide-SetuptheMaintenanceScript" target="_blank">'
+                + t("maintenance_not_active") + "</a></div>");
         statusbar.add("-");
     }
 
@@ -286,8 +288,8 @@ Ext.onReady(function () {
     }
 
     statusbar.add("->");
-    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">pimcore</a> - Version: '
-                                + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
+    statusbar.add('powered by <a href="http://www.pimcore.org/" target="_blank" style="color:#fff;">'
+                + 'pimcore</a> - Version: ' + pimcore.settings.version + " (Build: " + pimcore.settings.build + ")");
 
     if (!empty(pimcore.settings.liveconnectToken)) {
         pimcore.settings.liveconnect.setToken(pimcore.settings.liveconnectToken);

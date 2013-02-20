@@ -143,7 +143,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("settings")) {
             // settings
             try {
-                var settings = this.settings.getValues();
+                settings = this.settings.getValues();
                 settings.published = this.data.published;
             }
             catch (e4) {

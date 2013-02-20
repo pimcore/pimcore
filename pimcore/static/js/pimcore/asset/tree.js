@@ -463,7 +463,7 @@ pimcore.asset.tree = Class.create({
                         handler: function () {
                             this.attributes.reference.updateAsset(this.attributes.id, {locked: null}, function () {
                                 this.attributes.reference.tree.getRootNode().reload();
-                            }.bind(this))
+                            }.bind(this));
                         }.bind(this)
                     });
                 } else {

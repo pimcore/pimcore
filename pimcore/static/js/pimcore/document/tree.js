@@ -370,7 +370,8 @@ pimcore.document.tree = Class.create({
                 text: t("paste_cut_element"),
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
-                    this.attributes.reference.pasteCutDocument(this.attributes.reference.cutDocument, this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                    this.attributes.reference.pasteCutDocument(this.attributes.reference.cutDocument,
+                                this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
                     this.attributes.reference.cutParentNode = null;
                     this.attributes.reference.cutDocument = null;
                 }.bind(this)

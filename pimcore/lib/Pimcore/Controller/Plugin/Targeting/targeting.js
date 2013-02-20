@@ -1,4 +1,4 @@
-/*global user,util*/
+/*global user,util,google,localStorage*/
 (function () {
 
     /**
@@ -219,8 +219,8 @@
             var R = 6371; // km
             var dLat = (lat2-lat1) * Math.PI / 180;
             var dLon = (lon2-lon1) * Math.PI / 180;
-            var lat1 = lat1 * Math.PI / 180;
-            var lat2 = lat2 * Math.PI / 180;
+            lat1 = lat1 * Math.PI / 180;
+            lat2 = lat2 * Math.PI / 180;
 
             var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                     Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
@@ -231,9 +231,9 @@
         },
 
         listen: function (elem, evnt, func) {
-            if (elem.addEventListener)  // W3C DOM
+            if (elem.addEventListener) {  // W3C DOM
                 elem.addEventListener(evnt,func,false);
-            else if (elem.attachEvent) { // IE DOM
+            } else if (elem.attachEvent) { // IE DOM
                 var r = elem.attachEvent("on"+evnt, func);
                 return r;
             }
@@ -249,7 +249,9 @@
             pre = doc.addEventListener ? '' : 'on',
 
             init = function(e) {
-                if (e.type == 'readystatechange' && doc.readyState != 'complete') return;
+                if (e.type == 'readystatechange' && doc.readyState != 'complete') {
+                    return;
+                }
                 (e.type == 'load' ? win : doc)[rem](pre + e.type, init, false);
                 if (!done && (done = true)) {
                     fn.call(win, e.type || e);
@@ -390,8 +392,8 @@
                     });
                     app.saveUser();
                 }
-            } catch (e) {
-                util.log(e);
+            } catch (e2) {
+                util.log(e2);
             }
 
             // snippet
@@ -421,13 +423,13 @@
 
                                 util.executeInsertedScripts(el);
                             }
-                        } catch (e) {
-                            util.log(e);
+                        } catch (e3) {
+                            util.log(e3);
                         }
                     });
                 }
-            } catch (e) {
-                util.log(e);
+            } catch (e4) {
+                util.log(e4);
             }
 
             // programmatically
@@ -477,10 +479,10 @@
                 latitude: google.loader.ClientLocation.latitude,
                 longitude: google.loader.ClientLocation.longitude,
                 country: google.loader.ClientLocation.address.country_code
-            }
+            };
         }
-    } catch (e) {
-        util.log(e);
+    } catch (e5) {
+        util.log(e5);
     }
 
     try {
@@ -491,16 +493,16 @@
         if(!/_ptc=/.test(window.location.href)) {
             user["history"].push(location.href);
         }
-    } catch (e) {
-        util.log(e);
+    } catch (e6) {
+        util.log(e6);
     }
 
     try {
         if(!user["language"]) {
             user["language"] = navigator.browserLanguage ? navigator.browserLanguage : navigator.language;
         }
-    } catch (e) {
-        util.log(e);
+    } catch (e7) {
+        util.log(e7);
     }
 
     try {
@@ -541,8 +543,8 @@
                 user["environment"]["hardwareplatform"] = "tablet";
             }
         }
-    } catch (e) {
-        util.log(e);
+    } catch (e8) {
+        util.log(e8);
     }
 
 
@@ -561,8 +563,8 @@
                 user["events"].push(newEvents[ev]);
             }
         }
-    } catch (e) {
-        util.log(e);
+    } catch (e9) {
+        util.log(e9);
     }
 
     try {
@@ -582,8 +584,8 @@
                 }
             }
         }
-    } catch (e) {
-        util.log(e);
+    } catch (e10) {
+        util.log(e10);
     }
 
     try {
@@ -598,8 +600,8 @@
         if(!user["behavior"]["linksClicked"]) {
             user["behavior"]["linksClicked"] = [];
         }
-    } catch (e) {
-        util.log(e);
+    } catch (e11) {
+        util.log(e11);
     }
 
     // dom stuff
@@ -617,8 +619,8 @@
                     }
                 });
             }
-        } catch (e) {
-            util.log(e);
+        } catch (e12) {
+            util.log(e12);
         }
     });
 
