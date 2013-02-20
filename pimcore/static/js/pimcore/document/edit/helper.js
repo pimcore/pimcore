@@ -23,6 +23,21 @@ function pimcoreOnUnload() {
 
 pimcore.edithelpers = {};
 
+pimcore.edithelpers.setBodyHeight = function () {
+    try {
+        var body = document.body,
+            html = document.documentElement;
+
+        var height = Math.max(body.scrollHeight, body.offsetHeight,
+            html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+        Ext.getBody().setHeight(height);
+        Ext.get(Ext.query("html")[0]).setHeight(height);
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 pimcore.edithelpers.frame = {
     active: false,
     topEl: null,
