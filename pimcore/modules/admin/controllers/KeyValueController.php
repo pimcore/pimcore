@@ -290,8 +290,8 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     "unit" => $config->getUnit(),
                     "possiblevalues" => $config->getPossibleValues(),
                     "group" => $config->getGroup(),
-                    "groupdescription" => $groupDescription
-
+                    "groupdescription" => $groupDescription,
+                    "translator" => $config->getTranslator()
                 );
             }
             $rootElement["data"] = $data;
@@ -354,5 +354,55 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
         $pairs->setab123("new valuexyz");
         $pairs->setdddd("dvalue");
         $obj->save();
+    }
+
+    public function getTranslatorConfigsAction() {
+        $list = new Object_KeyValue_TranslatorConfig_List();
+        $list->load();
+        $items = $list->getList();
+        $result = array();
+        foreach ($items as $item) {
+            $result[] = array(
+                "id" => $item->getId(),
+                "name" => $item->getName(),
+                "translator" => $item->getTranslator()
+            );
+        }
+
+        $this->_helper->json(array("configurations" => $result));
+    }
+
+    public function translateAction() {
+        $success = false;
+        $keyId = $this->getParam("keyId");
+        $objectId = $this->getParam("objectId");
+        $recordId = $this->getParam("recordId");
+        $text = $this->getParam("text");
+        $translatedValue = $text;
+
+        try {
+            $keyConfig = Object_KeyValue_KeyConfig::getById($keyId);
+            $translatorID = $keyConfig->getTranslator();
+            $translatorConfig = Object_KeyValue_TranslatorConfig::getById($translatorID);
+            $className = $translatorConfig->getTranslator();
+            if (Pimcore_Tool::classExists($className)) {
+                $translator = new $className();
+                $translatedValue = $translator->translate($text);
+                if (!$translatedValue) {
+                    $translatedValue = $text;
+                }
+            }
+
+            $this->_helper->json(array("success" => true,
+                "keyId" => $keyId,
+                "text" => $text,
+                "translated" => $translatedValue,
+                "recordId" => $recordId
+            ));
+        } catch (Exception $e) {
+
+        }
+
+        $this->_helper->json(array("success" => $success));
     }
 }

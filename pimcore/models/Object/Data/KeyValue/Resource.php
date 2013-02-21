@@ -32,7 +32,8 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
         foreach ($properties as $pair) {
             $key = $db->quote($pair["key"]);
             $value = $db->quote($pair["value"]);
-            $sql = "INSERT INTO " . $this->getTableName() . " (`o_id`, `key`, `value`) VALUES (" . $objectId . "," . $key . "," . $value . ")";
+            $translated = $db->quote($pair["translated"]);
+            $sql = "INSERT INTO " . $this->getTableName() . " (`o_id`, `key`, `value`, `translated`) VALUES (" . $objectId . "," . $key . "," . $value . "," . $translated . ")";
             Logger::debug($sql);
             $db->query($sql);
         }
@@ -58,31 +59,7 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
      * @return void
      */
     public function update() {
-        // TODO implement
         Logger::debug("update called");
-
-
-//        try {
-//            $type = get_object_vars($this->model);
-//
-//            foreach ($type as $key => $value) {
-//                if (in_array($key, $this->validColumns)) {
-//                    if(is_bool($value)) {
-//                        $value = (int) $value;
-//                    }
-//                    if(is_array($value) || is_object($value)) {
-//                        $value = serialize($value);
-//                    }
-//
-//                    $data[$key] = $value;
-//                }
-//            }
-//
-//            $this->db->update(SavedSearch_Plugin::TABLE_NAME, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
-//        }
-//        catch (Exception $e) {
-//            throw $e;
-//        }
     }
 
     /**
@@ -139,4 +116,5 @@ class Object_Data_KeyValue_Resource extends Pimcore_Model_Resource_Abstract {
 
         Logger::debug("result=" . $result);
     }
+
 }
