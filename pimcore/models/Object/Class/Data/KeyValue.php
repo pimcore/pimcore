@@ -354,8 +354,11 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         if ($data) {
             $result = array();
             foreach ($data->arr as $item) {
+                $keyConfig = Object_KeyValue_KeyConfig::getById($item["key"]);
+                $keyName = $keyConfig->getName();
                 $resultItem = array(
-                    "key" => $item["key"],
+                    "id" => $item["key"],
+                    "name" => $keyName,
                     "value" => $item["value"]
                 );
                 $result[] = $resultItem;
@@ -373,6 +376,11 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
     {
         if ($value) {
             $pairs = array();
+
+            $id = $value["id"];
+            $value["key"] = $id;
+            unset($value["id"]);
+
             foreach ($value as $property) {
                 $property = (array) $property;
 
