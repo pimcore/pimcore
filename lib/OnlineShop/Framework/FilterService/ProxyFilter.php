@@ -23,7 +23,7 @@ class OnlineShop_Framework_FilterService_ProxyFilter extends OnlineShop_Framewor
             throw new Exception("wrong configuration for " .  __CLASS__ . ": config setting field is missing!");
         }
 
-        $this->proxy = new $config->proxyclass($view,$script);
+        $this->proxy = new $config->proxyclass($view,$script,$config);
         $this->field= $config->field;
     }
 

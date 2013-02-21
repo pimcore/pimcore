@@ -61,6 +61,9 @@ class OnlineShop_Framework_Impl_SessionCartItem_Resource extends Pimcore_Model_R
         $lastItemId = 'item' .  $cartsSystem->lastItemId;
 
         $cartItems = new Zend_Session_Namespace('cartItems');
+        if(empty($cartItems->$lastItemId)) {
+            $cartItems->$lastItemId = new stdClass();
+        }
         foreach ($this->fieldsToSave as $field) {
             $getter = "get" . ucfirst($field);
             $value = $this->model->$getter();

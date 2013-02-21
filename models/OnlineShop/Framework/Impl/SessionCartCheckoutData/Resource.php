@@ -60,6 +60,9 @@ class OnlineShop_Framework_Impl_SessionCartCheckoutData_Resource extends Pimcore
         $lastCheckoutId = 'checkout' .  $cartsSystem->lastCheckoutId;
 
         $checkoutData = new Zend_Session_Namespace('checkoutData');
+        if(empty($checkoutData->$lastCheckoutId)) {
+            $checkoutData->$lastCheckoutId = new stdClass();
+        }
         foreach ($this->fieldsToSave as $field) {
             $getter = "get" . ucfirst($field);
             $value = $this->model->$getter();
