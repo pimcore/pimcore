@@ -310,7 +310,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
+                                || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
             this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
                                 + id + '">' + wrappedText + '</a>');
             return true;
