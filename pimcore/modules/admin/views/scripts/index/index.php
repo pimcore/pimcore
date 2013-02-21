@@ -402,7 +402,8 @@
             "pimcore/object/keyvalue/propertiesPanel.js",
             "pimcore/object/keyvalue/selectionWindow.js",
             "pimcore/object/keyvalue/specialConfigWindow.js",
-            "pimcore/object/keyvalue/columnConfigDialog.js"
+            "pimcore/object/keyvalue/columnConfigDialog.js",
+            "pimcore/object/keyvalue/translatorConfigWindow.js"
 
         );
 

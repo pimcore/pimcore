@@ -1,6 +1,6 @@
 <?php
 
-class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
+class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
 
     /**
      * @var integer
@@ -12,79 +12,12 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public $name;
 
-    public $description;
-
-    public $type;
-
-    public $unit;
-
-    public $group;
-
-    public $possiblevalues;
-
     public $translator;
-
-    public function setTranslator($translator)
-    {
-        $this->translator = $translator;
-    }
-
-    public function getTranslator()
-    {
-        return $this->translator;
-    }
-
-
-    public function setUnit($unit)
-    {
-        $this->unit = $unit;
-        return $this;
-    }
-
-    public function getUnit()
-    {
-        return $this->unit;
-    }
-
-    public function setPossibleValues($values)
-    {
-        $this->possiblevalues = $values;
-        return $this;
-    }
-
-    public function getPossibleValues()
-    {
-        return $this->possiblevalues;
-    }
-
-
-
-    public function setType($type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    public function setGroup($group)
-    {
-        $this->group = $group;
-        return $this;
-    }
-
-    public function getGroup()
-    {
-        return $this->group;
-    }
 
 
     /**
      * @param integer $id
-     * @return Object_KeyValue_KeyConfig
+     * @return Object_KeyValue_TranslatorConfig
      */
     public static function getById($id) {
         try {
@@ -115,7 +48,7 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
 
 
     /**
-     * @return Object_KeyValue_KeyConfig
+     * @return Object_KeyValue_TranslatorConfig
      */
     public static function create() {
         $config = new self();
@@ -150,6 +83,16 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
         return $this;
     }
 
+    public function setTranslator($translator)
+    {
+        $this->translator = $translator;
+    }
+
+    public function getTranslator()
+    {
+        return $this->translator;
+    }
+
     /**
      * @return string
      */
@@ -157,12 +100,4 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
         return $this->name;
     }
 
-    public function getDescription() {
-        return $this->description;
-    }
-
-    public function setDescription($description) {
-        $this->description = $description;
-        return $this;
-    }
 }

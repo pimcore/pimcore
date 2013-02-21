@@ -218,7 +218,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             }
 
 
-            $property["key"] = $keyConfig->getName();
+            $property["keyName"] = $keyConfig->getName();
             $property["keyDesc"] = $keyConfig->getDescription();
             $result[] = $property;
         }
@@ -318,7 +318,13 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
                         break;
                     }
                 }
+            } else if ($keyConfig->getType() == "translated") {
+                $translatedValue = $property["translated"];
+                if ($translatedValue) {
+                    $prettyValue = $translatedValue;
+                }
             }
+
             $diffdata["value"] = $prettyValue;
             $diffdata["title"] = $keyName;
             $diffdata["tooltip"] = $keyName;

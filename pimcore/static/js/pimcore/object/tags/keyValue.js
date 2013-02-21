@@ -26,8 +26,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         fields.push("id");
 //        fields.push("description");
         fields.push("key");
+        fields.push("keyName");
         fields.push("keyDesc");
         fields.push("value");
+        fields.push("translated");
         fields.push("type");
         fields.push("possiblevalues");
         fields.push("inherited");
@@ -51,6 +53,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         // do nothing
                     } else {
                         record.set("inherited", false);
+                        if (record.data.type == "translated") {
+                            // whoooo, we have to go to the server and ask for a new translation
+                            this.translate(record);
+                        }
                     }
                 }.bind(this)
             },
@@ -69,6 +75,34 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             this.dataChanged = true;
         }.bind(this)
         );
+    },
+
+    translate: function(record) {
+        Ext.Ajax.request({
+            url: "/admin/key-value/translate",
+            params: {
+                "keyId" : record.data.key,
+                "id" : record.data.id,
+                "objectId" : record.data.o_id,
+                "text": record.data.value
+            },
+            success: this.translationReceived.bind(this),
+            failure: function() {
+                alert("translation failed");
+            }.bind(this)
+        });
+
+    },
+
+    translationReceived: function (response) {
+        var translation = Ext.decode(response.responseText);
+        if (translation.success) {
+            var recordId = translation.recordId;
+            var record = this.store.getById(recordId);
+            if (record.data.value == translation.text) {
+                record.set("translated", translation.translated);
+            }
+        }
     },
 
     getGridColumnEditor: function(field) {
@@ -165,7 +199,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var columns = [];
 
         // var visibleFields = ['key','description', 'value','type','possiblevalues'];
-        var visibleFields = ['group', 'key', 'keyDesc', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
+        var visibleFields = ['group', 'keyName', 'keyDesc', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
 
 
         for(var i = 0; i < visibleFields.length; i++) {
@@ -378,7 +412,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 metaData.css += " grid_value_inherited";
             }
         } else {
-            if (type == "bool") {
+            if (type == "translated") {
+                if (data.translated) {
+                    return data.translated;
+                }
+            } else if (type == "bool") {
                 metaData.css += ' x-grid3-check-col-td';
                 return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">'
                     + '&#160;</div>', value ? '-on' : '');
@@ -407,7 +445,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var type = data.type;
         var property;
 
-        if (type == "text") {
+        if (type == "text" || type == "translated") {
             property = new Ext.form.TextField();
         } else if (type == "number") {
             property = new Ext.form.NumberField();
@@ -515,15 +553,15 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 if (addKey) {
                     var colData = {};
                     colData.key = keyDef.id;
+                    colData.keyName = keyDef.name;
                     colData.type = keyDef.type;
                     colData.possiblevalues = keyDef.possiblevalues;
-                    colData.description = keyDef.description;
+                    colData.keyDesc = keyDef.description;
                     colData.group = keyDef.groupdescription;
-                    if (!colData.description) {
-                        colData.description = "~" + keyDef.name +  "~";
-                    }
+
                     this.store.add(new this.store.recordType(colData));
                 }
+
             }
         }
     },
