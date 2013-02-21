@@ -377,15 +377,14 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         if ($value) {
             $pairs = array();
 
-            $id = $value["id"];
-            $value["key"] = $id;
-            unset($value["id"]);
 
             foreach ($value as $property) {
-                $property = (array) $property;
 
-                if (key_exists("key", $property)) {
-
+                if (key_exists("id", $property)) {
+                    $property = (array) $property;
+                    $id = $property["id"];
+                    $property["key"] = $id;
+                    unset($property["id"]);
 
                     $key = $property["key"];
                     if ($idMapper != null) {
