@@ -109,7 +109,7 @@ abstract class Pimcore_Image_Adapter {
      */
     public function scaleByWidth ($width) {
 
-        if($width <= $this->getWidth()) {
+        if($width <= $this->getWidth() || $this->isVectorGraphic()) {
             $height = round(($width / $this->getWidth()) * $this->getHeight(), 0);
             $this->resize(max(1, $width), max(1, $height));
         }
@@ -123,7 +123,7 @@ abstract class Pimcore_Image_Adapter {
      */
     public function scaleByHeight ($height) {
 
-        if($height < $this->getHeight()) {
+        if($height < $this->getHeight() || $this->isVectorGraphic()) {
             $width = round(($height / $this->getHeight()) * $this->getWidth(), 0);
             $this->resize(max(1, $width), max(1, $height));
         }
