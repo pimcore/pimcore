@@ -412,7 +412,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         }
 
         $disallowedKeysInFirstLevel = array("install","admin","webservice","plugin");
-        if(in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
+        if($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
             throw new Exception("Key: " . $this->getKey() . " is not allowed in first level (root-level)");
         }
 
