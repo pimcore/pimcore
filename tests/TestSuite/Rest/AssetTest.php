@@ -43,6 +43,10 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $assetDirect = Asset::getById($id);
         $creationDate = $assetDirect->getCreationDate();
         $this->assertTrue($creationDate >= $time, "wrong creation date");
+        $properties = $asset->getProperties();
+        $this->assertEquals(1, count($properties), "property count does not match");
+        $property = $properties[0];
+        $this->assertEquals("bla", $property->getData());
 
         // as the asset key is unique there must be exactly one object with that key
         $list = Pimcore_Tool_RestClient::getInstance()->getAssetList("filename = '" . $asset->getKey() . "'");
