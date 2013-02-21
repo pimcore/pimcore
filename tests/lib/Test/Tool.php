@@ -540,6 +540,13 @@ class Test_Tool
         $asset->setCreationDate(time());
         $asset->setData($data);
         $asset->setType("image");
+        $property = new Property();
+
+        $property->setName("propname");
+        $property->setType("text");
+        $property->setData("bla");
+        $properties = array($property);
+        $asset->setProperties($properties);
         $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . ".jpg");
         if ($save) {
             $asset->save();
