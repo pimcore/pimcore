@@ -179,6 +179,7 @@ class OnlineShop_Framework_Impl_CommitOrderProcessor implements OnlineShop_Frame
             $orderItem->setProductName($item->getProduct()->getOSName());
             $orderItem->setProductNumber($item->getProduct()->getOSProductNumber());
         }
+        $orderItem->setComment($item->getComment());
 
         $price = 0;
         if($item->getPrice($item->getCount())) {

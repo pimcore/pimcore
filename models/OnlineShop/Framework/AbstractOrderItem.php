@@ -104,4 +104,20 @@ class OnlineShop_Framework_AbstractOrderItem extends Object_Concrete {
     public function setSubItems($subItems) {
         throw new OnlineShop_Framework_Exception_UnsupportedException("setSubItems is not implemented for " . get_class($this));
     }
+
+    /**
+     * @param string $comment
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function setComment($comment) {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("setComment is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return string
+     * @throws OnlineShop_Framework_Exception_UnsupportedException
+     */
+    public function getComment() {
+        throw new OnlineShop_Framework_Exception_UnsupportedException("getComment is not implemented for " . get_class($this));
+    }
 }
