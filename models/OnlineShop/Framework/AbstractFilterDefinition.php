@@ -79,10 +79,14 @@ abstract class OnlineShop_Framework_AbstractFilterDefinition extends Object_Conc
                 }() == "true"
             ) {
                 $parentValue = $this->getValueFromParent($key);
-                if (!$this->$key) {
+                $data = $this->$key;
+                if(!$data) {
+                    $data = $this->getClass()->getFieldDefinition($key)->preGetData($this);;
+                }
+                if (!$data) {
                     return $parentValue;
                 } else {
-                    $value = new Object_Fieldcollection($this->$key->getItems());
+                    $value = new Object_Fieldcollection($data->getItems());
                     if (!empty($parentValue)) {
                         foreach ($parentValue as $entry) {
                             $value->add($entry);
