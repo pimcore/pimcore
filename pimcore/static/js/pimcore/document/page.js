@@ -29,15 +29,24 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
     init: function () {
 
+        var user = pimcore.globalmanager.get("user");
+
         if (this.isAllowed("save") || this.isAllowed("publish")) {
             this.edit = new pimcore.document.edit(this);
         }
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.pages.settings(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
+        }
+
+        if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "document");
+        }
+
+        if(user.isAllowed("targeting")) {
             this.targeting = new pimcore.document.pages.targeting(this);
         }
+
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
@@ -52,6 +61,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
     getTabPanel: function () {
 
+        var user = pimcore.globalmanager.get("user");
         var items = [];
 
         if (this.isAllowed("save") || this.isAllowed("publish")) {
@@ -65,7 +75,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
         }
-        if (this.isAllowed("settings") && pimcore.settings.targeting_enabled) {
+        if (user.isAllowed("targeting") && pimcore.settings.targeting_enabled) {
             items.push(this.targeting.getLayout());
         }
         if (this.isAllowed("versions")) {
@@ -82,7 +92,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             items.push(reportLayout);
         }
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 

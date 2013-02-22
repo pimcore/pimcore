@@ -70,6 +70,8 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
 
     public function noteListAction () {
 
+        $this->checkPermission("notes_events");
+
         $list = new Element_Note_List();
 
         $list->setLimit($this->getParam("limit"));
@@ -179,6 +181,8 @@ class Admin_ElementController extends Pimcore_Controller_Action_Admin {
     }
 
     public function noteAddAction() {
+
+        $this->checkPermission("notes_events");
 
         $note = new Element_Note();
         $note->setCid((int) $this->getParam("cid"));

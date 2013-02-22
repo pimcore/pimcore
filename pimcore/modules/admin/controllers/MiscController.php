@@ -154,6 +154,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerTreeAction()
     {
+        $this->checkPermission("fileexplorer");
 
         $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("node"));
         $referencePath = PIMCORE_DOCUMENT_ROOT . $path;
@@ -194,6 +195,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerContentAction()
     {
+        $this->checkPermission("fileexplorer");
 
         $success = false;
         $writeable = false;
@@ -217,6 +219,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerContentSaveAction()
     {
+        $this->checkPermission("fileexplorer");
 
         $success = false;
 
@@ -237,6 +240,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerAddAction()
     {
+        $this->checkPermission("fileexplorer");
+
         $success = false;
 
         if ($this->getParam("filename") && $this->getParam("path")) {
@@ -258,6 +263,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerAddFolderAction()
     {
+        $this->checkPermission("fileexplorer");
+
         $success = false;
 
         if ($this->getParam("filename") && $this->getParam("path")) {
@@ -278,6 +285,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerDeleteAction()
     {
+        $this->checkPermission("fileexplorer");
 
         if ($this->getParam("path")) {
             $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
@@ -289,12 +297,14 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-                                  "success" => $success
-                             ));
+              "success" => $success
+        ));
     }
 
     public function maintenanceAction()
     {
+        $this->checkPermission("maintenance_mode");
+
         if ($this->getParam("activate")) {
             Pimcore_Tool_Admin::activateMaintenanceMode();
         }
@@ -470,6 +480,9 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function bounceMailInboxListAction() {
+
+        $this->checkPermission("bounce_mail_inbox");
+
         $offset = ($this->getParam("start")) ? $this->getParam("start")+1 : 1;
         $limit = ($this->getParam("limit")) ? $this->getParam("limit") : 40;
 
@@ -510,6 +523,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function bounceMailInboxDetailAction() {
+
+        $this->checkPermission("bounce_mail_inbox");
 
         $mail = $this->getBounceMailbox();
 

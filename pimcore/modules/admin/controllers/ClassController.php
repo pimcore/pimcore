@@ -22,11 +22,7 @@ class Admin_ClassController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("get-tree", "fieldcollection-list", "fieldcollection-tree", "fieldcollection-get", "get-class-definition-for-column-config", "objectbrick-list", "objectbrick-tree", "objectbrick-get");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("classes")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("classes");
         }
     }
 

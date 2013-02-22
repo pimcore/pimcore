@@ -26,11 +26,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("get-image-thumbnail");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("assets")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("assets");
         }
 
         $this->_assetService = new Asset_Service($this->getUser());
