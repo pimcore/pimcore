@@ -105,7 +105,7 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.isAllowed("system_settings")) {
+        if (user.isAllowed("recyclebin")) {
             extrasItems.push({
                 text: t("recyclebin"),
                 iconCls: "pimcore_icon_recyclebin",
