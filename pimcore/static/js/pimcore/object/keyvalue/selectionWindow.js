@@ -300,7 +300,7 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
         }
 
         this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 50,
+            pageSize: 15,
             store: this.store,
             displayInfo: true,
             displayMsg: '{0} - {1} / {2}',
