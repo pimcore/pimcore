@@ -42,7 +42,8 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
     },
 
     createGrid: function(response) {
-        this.fields = ['id', 'name', 'description', 'type', 'unit', 'group', 'groupdescription','possiblevalues','translator'];
+        this.fields = ['id', 'name', 'description', 'type', 'unit', 'group', 'groupdescription','possiblevalues',
+                                                                                        'translator'];
 
         var readerFields = [];
         for (var i = 0; i < this.fields.length; i++) {
@@ -120,7 +121,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                             specialConfigWindow.show();
                         } else if (type == 'translated') {
                             var translatorConfigWindow = new pimcore.object.keyvalue.translatorconfigwindow(
-                                data.id, this, data.data.translator).show()
+                                data.id, this, data.data.translator).show();
                         } else {
                             alert(t("keyvalue_define_select_values_error"));
                         }
