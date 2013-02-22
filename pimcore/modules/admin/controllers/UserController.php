@@ -21,11 +21,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("get-current-user", "update-current-user", "get-all-users", "get-available-permissions", "tree-get-childs-by-id", "get-minimal");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAdmin()) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("users");
         }
     }
 

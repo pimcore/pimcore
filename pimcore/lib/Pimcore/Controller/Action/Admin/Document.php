@@ -21,11 +21,7 @@ abstract class Pimcore_Controller_Action_Admin_Document extends Pimcore_Controll
         // check permissions
         $notRestrictedActions = array();
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("documents")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("documents");
         }
     }
 

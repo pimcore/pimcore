@@ -16,37 +16,33 @@
 class Reports_SettingsController extends Pimcore_Controller_Action_Admin_Reports {
     
     public function getAction () {
-        
-        if ($this->getUser()->isAllowed("system_settings")) {
-            
-            $conf = $this->getConfig();
-            
-            $response = array(
-                "values" => $conf->toArray(),
-                "config" => array()
-            );
 
-            $this->_helper->json($response);
-        }
+        $this->checkPermission("system_settings");
 
-        $this->_helper->json(false);
+        $conf = $this->getConfig();
+
+        $response = array(
+            "values" => $conf->toArray(),
+            "config" => array()
+        );
+
+        $this->_helper->json($response);
     }
     
     public function saveAction () {
-        if ($this->getUser()->isAllowed("system_settings")) {
-            
-            $values = Zend_Json::decode($this->getParam("data"));
 
-            $config = new Zend_Config($values, true);
-            $writer = new Zend_Config_Writer_Xml(array(
-                "config" => $config,
-                "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml"
-            ));
-            $writer->write();
+        $this->checkPermission("system_settings");
 
-            $this->_helper->json(array("success" => true));
-        } 
-        $this->_helper->json(false);
+        $values = Zend_Json::decode($this->getParam("data"));
+
+        $config = new Zend_Config($values, true);
+        $writer = new Zend_Config_Writer_Xml(array(
+            "config" => $config,
+            "filename" => PIMCORE_CONFIGURATION_DIRECTORY . "/reports.xml"
+        ));
+        $writer->write();
+
+        $this->_helper->json(array("success" => true));
     }
 
     public function cleanupExistingContentAnalysisDataAction() {

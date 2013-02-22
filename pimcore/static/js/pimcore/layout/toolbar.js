@@ -222,9 +222,9 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.isAllowed("system_settings")) {
+        if (user.isAllowed("notes_events")) {
             extrasItems.push({
-                text: t('notes') + " & " + t("events"),
+                text: t('notes_events'),
                 iconCls: "pimcore_icon_tab_notes",
                 handler: this.notes
             });
@@ -232,11 +232,19 @@ pimcore.layout.toolbar = Class.create({
 
         extrasItems.push("-");
 
-        if (user.isAllowed("system_settings")) {
+        if (user.isAllowed("backup")) {
             extrasItems.push({
                 text: t("backup"),
                 iconCls: "pimcore_icon_backup",
                 handler: this.backup
+            });
+        }
+
+        if (user.isAllowed("bounce_mail_inbox")) {
+            extrasItems.push({
+                text: t("bounce_mail_inbox"),
+                iconCls: "pimcore_icon_bouncemail",
+                handler: this.showBounceMailInbox
             });
         }
 
@@ -267,12 +275,6 @@ pimcore.layout.toolbar = Class.create({
                 text: t("systemlog"),
                 iconCls: "pimcore_icon_systemlog",
                 handler: this.showLog
-            });
-
-            extrasItems.push({
-                text: t("bounce_mail_inbox"),
-                iconCls: "pimcore_icon_bouncemail",
-                handler: this.showBounceMailInbox
             });
 
             extrasItems.push({
@@ -336,7 +338,7 @@ pimcore.layout.toolbar = Class.create({
             });
         }
         
-        if (user.isAllowed("system_settings")) {
+        if (user.isAllowed("website_settings")) {
             settingsItems.push({
                 text: t("website"),
                 iconCls: "pimcore_icon_website",

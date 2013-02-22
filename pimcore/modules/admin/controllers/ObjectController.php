@@ -27,11 +27,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         // check permissions
         $notRestrictedActions = array();
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("objects")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("objects");
         }
 
         $this->_objectService = new Object_Service($this->getUser());
