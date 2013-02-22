@@ -273,6 +273,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     try {
                         $group = Object_KeyValue_GroupConfig::getById($config->getGroup());
                         $groupDescription = $group->getDescription();
+                        $groupName = $group->getName();
                     } catch (Exception $e) {
 
                     }
@@ -291,6 +292,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     "possiblevalues" => $config->getPossibleValues(),
                     "group" => $config->getGroup(),
                     "groupdescription" => $groupDescription,
+                    "groupName" => $groupName,
                     "translator" => $config->getTranslator()
                 );
             }
@@ -394,7 +396,7 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
             }
 
             $this->_helper->json(array("success" => true,
-                "keyId" => $keyId,
+                "keyId" => $this->getParam("keyId"),
                 "text" => $text,
                 "translated" => $translatedValue,
                 "recordId" => $recordId
@@ -405,4 +407,5 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
 
         $this->_helper->json(array("success" => $success));
     }
+
 }
