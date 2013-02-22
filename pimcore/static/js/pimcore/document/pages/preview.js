@@ -150,6 +150,19 @@ pimcore.document.pages.preview = Class.create({
                                                                     + t("no_item_selected") + "</strong>"
             });
 
+            // check if CSS-Panel should be enabled
+            var cssPanelEnabled = true;
+            if(!pimcore.globalmanager.get("user").isAllowed("document_style_editor")) {
+                cssPanelEnabled = false;
+            }
+            if(!(this.page.isAllowed("save") || this.isAllowed("publish"))) {
+                cssPanelEnabled = false;
+            }
+            if(Ext.isIE8) {
+                cssPanelEnabled = false;
+            }
+
+
             this.cssPanel = new Ext.Panel({
                 border: false,
                 region: "east",
@@ -158,13 +171,13 @@ pimcore.document.pages.preview = Class.create({
                 collapsed: true,
                 split: true,
                 width: 300,
-                hidden: (!(this.page.isAllowed("save") || this.isAllowed("publish")) || Ext.isIE8),
+                hidden: !cssPanelEnabled,
                 layout: "accordion",
                 items: [this.cssEditor, this.cssSource]
             });
 
             this.layout = new Ext.Panel({
-                title: t('preview_and_styles'),
+                title: cssPanelEnabled ? t('preview_and_styles') : t("preview"),
                 border: false,
                 layout: "border",
                 tbar: tbar,
@@ -322,14 +335,16 @@ pimcore.document.pages.preview = Class.create({
             throw "preview/styles not available";
         }
 
+        if(this.cssPanel.hidden) {
+            throw "styles not available";
+        }
+
         var values = {
             css: this.stylesField.getValue()
         };
 
-
         return values;
     },
-
 
 
     // EDITOR
