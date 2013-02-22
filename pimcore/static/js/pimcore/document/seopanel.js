@@ -30,7 +30,7 @@ pimcore.document.seopanel = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_document_seopanel",
-                title: t("document_seo_analysis_overview"),
+                title: t("seo_document_editor"),
                 iconCls: "pimcore_icon_seo_document",
                 border: false,
                 layout: "fit",

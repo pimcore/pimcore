@@ -240,5 +240,16 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
         return $this->translator;
     }
 
+    /**
+     * @param $permission
+     * @throws Exception
+     */
+    protected function checkPermission($permission) {
+        if (!$this->getUser() || !$this->getUser()->isAllowed($permission)) {
+            $message = "attempt to access " . $permission . ", but has no permission to do so.";
+            Logger::err($message);
+            throw new \Exception($message);
+        }
+    }
 
 }

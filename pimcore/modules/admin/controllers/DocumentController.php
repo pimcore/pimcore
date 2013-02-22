@@ -1021,6 +1021,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
      * SEO PANEL
      */
     public function seopanelTreeRootAction() {
+
+        $this->checkPermission("seo_document_editor");
+
         $root = Document::getById(1);
         if ($root->isAllowed("list")) {
 
@@ -1036,6 +1039,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
 
     public function seopanelTreeAction() {
+
+        $this->checkPermission("seo_document_editor");
 
         $document = Document::getById($this->getParam("node"));
 

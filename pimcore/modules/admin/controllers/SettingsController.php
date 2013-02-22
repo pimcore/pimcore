@@ -1391,6 +1391,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function robotsTxtAction () {
 
+        $this->checkPermission("robots.txt");
+
         $siteSuffix = "";
         if($this->getParam("site")) {
             $siteSuffix = "-" . $this->getParam("site");
@@ -1424,6 +1426,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementTreeAction () {
 
+        $this->checkPermission("tag_snippet_management");
+
         $dir = Tool_Tag_Config::getWorkingDir();
 
         $tags = array();
@@ -1443,6 +1447,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementAddAction () {
 
+        $this->checkPermission("tag_snippet_management");
+
         try {
             Tool_Tag_Config::getByName($this->getParam("name"));
             $alreadyExist = true;
@@ -1461,6 +1467,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementDeleteAction () {
 
+        $this->checkPermission("tag_snippet_management");
+
         $tag = Tool_Tag_Config::getByName($this->getParam("name"));
         $tag->delete();
 
@@ -1470,12 +1478,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementGetAction () {
 
+        $this->checkPermission("tag_snippet_management");
+
         $tag = Tool_Tag_Config::getByName($this->getParam("name"));
         $this->_helper->json($tag);
     }
 
 
     public function tagManagementUpdateAction () {
+
+        $this->checkPermission("tag_snippet_management");
 
         $tag = Tool_Tag_Config::getByName($this->getParam("name"));
         $data = Zend_Json::decode($this->getParam("configuration"));
