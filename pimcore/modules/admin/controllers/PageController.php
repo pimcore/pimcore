@@ -225,6 +225,41 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         $this->_helper->json(array("success" => $success));
     }
 
+    public function checkPrettyUrlAction() {
+        $docId = $this->getParam("id");
+        $path = trim($this->getParam("path"));
+        $path = rtrim($path, "/");
+
+        $success = true;
+
+        // must start with /
+        if(strpos($path, "/") !== 0) {
+            $success = false;
+        }
+
+        if(strlen($path) < 2) {
+            $success = false;
+        }
+
+        if(!Pimcore_Tool::isValidPath($path)) {
+            $success = false;
+        }
+
+        $list = new Document_List();
+        $list->setCondition("(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
+            AND id != ?", array(
+            $path, $path, $docId
+        ));
+
+        if($list->getTotalCount() > 0) {
+            $success = false;
+        }
+
+        $this->_helper->json(array(
+            "success" => $success
+        ));
+    }
+
     protected function setValuesToDocument(Document $page) {
 
         $this->addSettingsToDocument($page);

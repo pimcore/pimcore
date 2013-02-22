@@ -303,16 +303,25 @@ pimcore.document.pages.settings = Class.create({
                                 maxLength: 255,
                                 width: 400,
                                 value: this.page.data.prettyUrl,
-                                validator: function (url) {
-                                    if(url.charAt(0) == "/") {
-                                        var result = url.match(/[a-zA-Z0-9_.\-\/]+/);
-                                        if (result == url) {
-                                            return true;
-                                        }
-                                    } else if (url.length < 1) {
-                                        return true;
-                                    }
-                                    return t("path_error_message");
+                                enableKeyEvents: true,
+                                listeners: {
+                                    "keyup": function (el) {
+                                        Ext.Ajax.request({
+                                            url: "/admin/page/check-pretty-url",
+                                            params: {
+                                                id: this.page.id,
+                                                path: el.getValue()
+                                            },
+                                            success: function (res) {
+                                                res = Ext.decode(res.responseText);
+                                                if(!res.success) {
+                                                    el.getEl().addClass("pimcore_error_input");
+                                                } else {
+                                                    el.getEl().removeClass("pimcore_error_input");
+                                                }
+                                            }
+                                        });
+                                    }.bind(this)
                                 }
                             }, this.urlAliasPanel
                         ]
