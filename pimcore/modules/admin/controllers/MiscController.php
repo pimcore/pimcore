@@ -304,11 +304,13 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-                                  "success" => true
-                             ));
+              "success" => true
+        ));
     }
 
     public function httpErrorLogAction() {
+
+        $this->checkPermission("http_errors");
 
         $db = Pimcore_Resource::get();
 
@@ -360,6 +362,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function httpErrorLogFlushAction() {
 
+        $this->checkPermission("http_errors");
+
         $db = Pimcore_Resource::get();
         $db->delete("http_error_log");
 
@@ -369,6 +373,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function httpErrorLogDetailAction() {
+
+        $this->checkPermission("http_errors");
 
         $db = Pimcore_Resource::get();
         $data = $db->fetchRow("SELECT * FROM http_error_log WHERE id = ?", array($this->getParam("id")));

@@ -113,28 +113,47 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
-        if (user.isAllowed("documents")) {
+
+        var seoMenu = [];
+
+        if(user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
+            seoMenu.push({
+                text: t("seo_document_editor"),
+                iconCls: "pimcore_icon_seo_document",
+                handler: this.showDocumentSeo
+            });
+        }
+
+        if(user.isAllowed("robots.txt")) {
+            seoMenu.push({
+                text: "robots.txt",
+                iconCls: "pimcore_icon_robots",
+                handler: this.showRobotsTxt
+            });
+        }
+
+        if(user.isAllowed("http_errors")) {
+            seoMenu.push({
+                text: t("http_errors"),
+                iconCls: "pimcore_icon_httperrorlog",
+                handler: this.showHttpErrorLog
+            });
+        }
+
+        if(user.isAllowed("reports")) {
+            seoMenu.push({
+                text: t("reports"),
+                iconCls: "pimcore_icon_reports",
+                handler: this.showReports
+            });
+        }
+
+        if (seoMenu.length > 0) {
             extrasItems.push({
                 text: t("search_engine_optimization"),
                 iconCls: "pimcore_icon_seo",
                 hideOnClick: false,
-                menu: [{
-                    text: t("document_seo_analysis_overview"),
-                    iconCls: "pimcore_icon_seo_document",
-                    handler: this.showDocumentSeo
-                }, {
-                    text: "robots.txt",
-                    iconCls: "pimcore_icon_robots",
-                    handler: this.showRobotsTxt
-                }, {
-                    text: t("http_errors"),
-                    iconCls: "pimcore_icon_httperrorlog",
-                    handler: this.showHttpErrorLog
-                }, {
-                    text: t("reports"),
-                    iconCls: "pimcore_icon_reports",
-                    handler: this.showReports
-                }]
+                menu: seoMenu
             });
         }
 
@@ -159,29 +178,47 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        var reportsMenu = [];
+
         if (user.isAllowed("reports")) {
+            reportsMenu.push({
+                text: t("reports"),
+                iconCls: "pimcore_icon_reports",
+                handler: this.showReports
+            });
+        }
+
+        if (user.isAllowed("tag_snippet_management")) {
+            reportsMenu.push({
+                text: t("tag_snippet_management"),
+                iconCls: "pimcore_icon_tag",
+                handler: this.showTagManagement
+            });
+        }
+
+        if (user.isAllowed("qr_codes")) {
+            reportsMenu.push({
+                text: t("qr_codes"),
+                iconCls: "pimcore_icon_qrcode",
+                handler: this.showQRCode
+            });
+        }
+
+        if (user.isAllowed("targeting")) {
+            reportsMenu.push({
+                text: t("targeting"),
+                iconCls: "pimcore_icon_tab_targeting",
+                handler: this.showTargeting,
+                hidden: !pimcore.settings.targeting_enabled
+            });
+        }
+
+        if (reportsMenu.length > 0) {
             extrasItems.push({
                 text: t("reports_and_marketing"),
                 iconCls: "pimcore_icon_reports",
                 hideOnClick: false,
-                menu: [{
-                    text: t("reports"),
-                    iconCls: "pimcore_icon_reports",
-                    handler: this.showReports
-                },{
-                    text: t("tag_snippet_management"),
-                    iconCls: "pimcore_icon_tag",
-                    handler: this.showTagManagement
-                },{
-                    text: t("qr_codes"),
-                    iconCls: "pimcore_icon_qrcode",
-                    handler: this.showQRCode
-                },{
-                    text: t("targeting"),
-                    iconCls: "pimcore_icon_tab_targeting",
-                    handler: this.showTargeting,
-                    hidden: !pimcore.settings.targeting_enabled
-                }]
+                menu: reportsMenu
             });
         }
 

@@ -15,6 +15,12 @@
 
 class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
+    public function init() {
+        parent::init();
+
+        $this->checkPermission("qr_codes");
+    }
+
     public function treeAction () {
 
         $dir = Tool_Qrcode_Config::getWorkingDir();
