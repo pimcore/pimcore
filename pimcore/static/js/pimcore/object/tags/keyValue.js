@@ -24,7 +24,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var fields = [];
 
         fields.push("id");
-//        fields.push("description");
+        fields.push("groupName");
         fields.push("key");
         fields.push("keyName");
         fields.push("keyDesc");
@@ -161,10 +161,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var autoHeight = true;
 
         var gridWidth = 0;
-        var gridHeight = 200;
-        var keyWidth = 200;
+        var gridHeight = 150;
+        var keyWidth = 150;
         var descWidth = 300;
         var groupWidth = 200;
+        var groupDescWidth = 200;
         var valueWidth = 600;
         var maxHeight = 190;
 
@@ -179,6 +180,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.groupWidth) {
             groupWidth = this.fieldConfig.groupWidth;
         }
+
+        if (this.fieldConfig.groupDescWidth) {
+            groupDescWidth = this.fieldConfig.groupDescWidth;
+        }
+
 
 
         if (this.fieldConfig.valueWidth) {
@@ -197,7 +203,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var columns = [];
 
         // var visibleFields = ['key','description', 'value','type','possiblevalues'];
-        var visibleFields = ['group', 'keyName', 'keyDesc', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
+        var visibleFields = ['group', 'groupDesc', 'keyName', 'keyDesc', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
 
 
         for(var i = 0; i < visibleFields.length; i++) {
@@ -219,6 +225,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
             if (col == "group") {
                 colWidth = groupWidth;
+            }
+
+            if (col == "groupDesc") {
+                colWidth = groupDescWidth;
             }
 
             if (col == 'value') {

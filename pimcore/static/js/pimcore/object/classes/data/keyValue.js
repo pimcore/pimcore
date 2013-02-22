@@ -59,6 +59,7 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
 
         var keyWidth = 200;
         var groupWidth = 200;
+        var groupDescWidth = 200;
         var valueWidth = 500;
         var descWidth = 200;
         var height = 200;
@@ -74,6 +75,10 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
 
         if (this.datax.descWidth) {
             descWidth = this.datax.descWidth;
+        }
+
+        if (this.datax.groupDescWidth) {
+            groupDescWidth = this.datax.groupDescWidth;
         }
 
         if (this.datax.height) {
@@ -97,6 +102,12 @@ pimcore.object.classes.data.keyValue = Class.create(pimcore.object.classes.data.
                 fieldLabel: t("keyvalue_data_groupwidth"),
                 name: "groupWidth",
                 value: groupWidth
+            },
+            {
+                xtype: "spinnerfield",
+                fieldLabel: t("keyvalue_data_groupdescwidth"),
+                name: "groupDescWidth",
+                value: groupDescWidth
             },
             {
                 xtype: "spinnerfield",
