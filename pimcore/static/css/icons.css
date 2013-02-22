@@ -574,8 +574,12 @@
 
 
 
-.pimcore_icon_input, .pimcore_icon_firstname, .pimcore_icon_lastname {
+.pimcore_icon_input {
 	background: url(/pimcore/static/img/icon/textfield.png) no-repeat !important;
+}
+
+.pimcore_icon_firstname, .pimcore_icon_lastname {
+	background: url(/pimcore/static/img/icon/textfield_user.png) no-repeat !important;
 }
 
 .pimcore_icon_textarea {
@@ -602,8 +606,12 @@
 	background: url(/pimcore/static/img/icon/text_list_numbers.png) no-repeat !important;
 }
 
-.pimcore_icon_select, .pimcore_icon_gender {
+.pimcore_icon_select {
 	background: url(/pimcore/static/img/icon/select.png) no-repeat !important;
+}
+
+.pimcore_icon_gender {
+	background: url(/pimcore/static/img/icon/select_user.png) no-repeat !important;
 }
 
 .pimcore_icon_date {
