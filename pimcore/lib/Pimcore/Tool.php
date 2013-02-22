@@ -31,12 +31,7 @@ class Pimcore_Tool {
      * @return bool
      */
     public static function isValidPath($path) {
-        if (preg_match("/[a-zA-Z0-9_~\.\-\/]+/", $path, $matches)) {
-            if ($matches[0] == $path) {
-                return true;
-            }
-        }
-        return false;
+        return (bool) preg_match("/^[a-zA-Z0-9_~\.\-\/]+$/", $path, $matches);
     }
 
     /**
