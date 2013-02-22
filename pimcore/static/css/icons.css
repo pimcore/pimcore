@@ -478,6 +478,10 @@
     background: url(/pimcore/static/img/icon/chart_organisation.png) no-repeat !important;
 }
 
+.pimcore_icon_data_group_crm {
+    background: url(/pimcore/static/img/icon/group_link.png) no-repeat !important;
+}
+
 .pimcore_icon_password {
 	background: url(/pimcore/static/img/icon/textfield_key.png) no-repeat !important;
 }
@@ -570,7 +574,7 @@
 
 
 
-.pimcore_icon_input {
+.pimcore_icon_input, .pimcore_icon_firstname, .pimcore_icon_lastname {
 	background: url(/pimcore/static/img/icon/textfield.png) no-repeat !important;
 }
 
@@ -598,7 +602,7 @@
 	background: url(/pimcore/static/img/icon/text_list_numbers.png) no-repeat !important;
 }
 
-.pimcore_icon_select {
+.pimcore_icon_select, .pimcore_icon_gender {
 	background: url(/pimcore/static/img/icon/select.png) no-repeat !important;
 }
 
