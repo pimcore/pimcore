@@ -31,11 +31,25 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public $descWidth;
 
+    /** Height of grid
+     * @var
+     */
     public $height;
 
+    /** Maximum height of grid
+     * @var
+     */
     public $maxheight;
 
+    /** width of group column
+     * @var
+     */
     public $groupWidth;
+
+    /** width of group description column
+     * @var
+     */
+    public $groupDescWidth;
 
     /**
      * This method is called in Object_Class::save() and is used to create the database table for the localized data
@@ -207,14 +221,8 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
             if ($groupId) {
                 $group = Object_KeyValue_GroupConfig::getById($groupId);
-
-                if (strlen($group->getDescription()) > 0) {
-                    $groupName = $group->getDescription();
-                } else {
-                    $groupName = $group->getName();
-                }
-
-                $property["group"] = $groupName;
+                $property["group"] = $group->getName();
+                $property["groupDesc"] = $group->getDescription();
             }
 
 
