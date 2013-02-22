@@ -81,8 +81,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         Ext.Ajax.request({
             url: "/admin/key-value/translate",
             params: {
+                "recordId": record.id,
                 "keyId" : record.data.key,
-                "id" : record.data.id,
                 "objectId" : record.data.o_id,
                 "text": record.data.value
             },
@@ -120,7 +120,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             return null;
         }
 
-        if (field.layout.gridType == "text") {
+        if (field.layout.gridType == "text" || field.layout.gridType == "translated") {
             return new Ext.form.TextField(editorConfig);
             // }
         } else if (field.layout.gridType == "select") {
@@ -145,8 +145,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             return new Ext.form.NumberField();
         } else if (field.layout.gridType == "bool") {
             return false;
-//             return new Ext.form.Checkbox();
-
         }
 
         return  null;
@@ -418,8 +416,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 }
             } else if (type == "bool") {
                 metaData.css += ' x-grid3-check-col-td';
-                return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">'
-                    + '&#160;</div>', value ? '-on' : '');
+                return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
             } else if (type == "select") {
                 var decodedValues = Ext.util.JSON.decode(data.possiblevalues);
                 for (var i = 0;  i < decodedValues.length; i++) {
@@ -445,7 +442,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var type = data.type;
         var property;
 
-        if (type == "text" || type == "translated") {
+        if (type == "text" || type =="translated") {
             property = new Ext.form.TextField();
         } else if (type == "number") {
             property = new Ext.form.NumberField();
@@ -453,7 +450,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             property = new Ext.form.Checkbox();
             return false;
         } else if (type == "select") {
-            // var config = data.config;
             var values = [];
             var possiblevalues = data.possiblevalues;
 
@@ -558,10 +554,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     colData.possiblevalues = keyDef.possiblevalues;
                     colData.keyDesc = keyDef.description;
                     colData.group = keyDef.groupdescription;
-
                     this.store.add(new this.store.recordType(colData));
                 }
-
             }
         }
     },
@@ -576,16 +570,28 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.css += " grid_value_inherited";
                     }
-                    metaData.css += ' x-grid3-check-col-td';
+                    metaData.css += ' x-grid3-check-col-td';g
                     return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
                 }.bind(this, field.key)
-            });        } else {
+            });
+        } else if (field.layout.gridType == "translated") {
+            renderer = function (key, value, metaData, record) {
+
+                if (record.data["#kv-tr"][key] !== undefined) {
+                    return record.data["#kv-tr"][key];
+                } else {
+                    return value;
+                }
+            }.bind(this, field.key);
+            return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+                editor:this.getGridColumnEditor(field)};
+        } else {
             renderer = function (key, value, metaData, record) {
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.css += " grid_value_inherited";
                 }
-                return value;
 
+                return value;
             }.bind(this, field.key);
 
             return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,

@@ -64,7 +64,7 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
                         $keyValuePairs->setClass($object->getClass());
                     }
 
-                    $keyValuePairs->setPropertyWithId($keyid, $value);
+                    $keyValuePairs->setPropertyWithId($keyid, $value, true);
                     $object->$setter($keyValuePairs);
                 } else if(count($parts) > 1) {
                     $brickType = $parts[0];

@@ -229,7 +229,12 @@ class Object_Service extends Element_Service {
 
                                 foreach ($props as $pair) {
                                     if ($pair["key"] == $keyid) {
+                                        if (isset($pair["translated"])) {
+                                            $data['#kv-tr'][$dataKey] = $pair["translated"];
+                                        }
+
                                         $data[$dataKey] = $pair["value"];
+
                                         if ($pair["inherited"]) {
                                             $data['inheritedFields'][$dataKey] = array("inherited" => $pair["inherited"], "objectid" => $pair["source"]);
                                         }
@@ -237,7 +242,6 @@ class Object_Service extends Element_Service {
                                     }
                                 }
                             }
-
                         }
 
                     }
