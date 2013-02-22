@@ -14,7 +14,18 @@
  */
  
 class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
-    
+
+    public function init() {
+
+        parent::init();
+
+        if (!$this->getUser() || !$this->getUser()->isAllowed("recyclebin")) {
+            $message = "attempt to access recycle bin, but has no permission to do so.";
+            Logger::err($message);
+            throw new \Exception($message);
+        }
+    }
+
     public function listAction () {
         
         if($this->getParam("xaction") == "destroy") {
