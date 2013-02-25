@@ -119,9 +119,12 @@ class Pimcore_Tool_Newsletter {
     public function sendConfirmationMail($object, $mailDocument) {
 
         $params = array(
+            "gender" => $object->getGender(),
             'firstname' => $object->getFirstname(),
             'lastname' => $object->getLastname(),
-            'token' => $object->getProperty("token")
+            "email" => $object->getEmail(),
+            'token' => $object->getProperty("token"),
+            "object" => $object
         );
 
         $mail = new Pimcore_Mail();
