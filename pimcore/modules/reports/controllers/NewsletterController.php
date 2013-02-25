@@ -151,6 +151,10 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
     public function sendAction() {
 
         $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        if($letter) {
+            $cmd = Pimcore_Tool_Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "send-newsletter.php"). " " . $letter->getName();
+            Pimcore_Tool_Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . "/newsletter--" . $letter->getName() . ".log");
+        }
 
         $this->_helper->json(array("success" => true));
     }
@@ -180,42 +184,7 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
             }
         }
 
-        $params = array(
-            "gender" => $object->getGender(),
-            'firstname' => $object->getFirstname(),
-            'lastname' => $object->getLastname(),
-            "email" => $object->getEmail(),
-            'token' => $object->getProperty("token"),
-            "object" => $object
-        );
-
-        $mail = new Pimcore_Mail();
-        $mail->setIgnoreDebugMode(true);
-        $mail->addTo($letter->getTestEmailAddress());
-        $mail->setDocument(Document::getById($letter->getDocument()));
-        $mail->setParams($params);
-
-        // render the document and rewrite the links (if analytics is enabled)
-        if($letter->getGoogleAnalytics()) {
-            if($content = $mail->getBodyHtmlRendered()){
-
-                include_once("simple_html_dom.php");
-
-                $html = str_get_html($content);
-                if($html) {
-                    $links = $html->find("a");
-                    foreach($links as $link) {
-
-                    }
-
-                    $content = $html->save();
-                }
-
-                $mail->setBodyHtml($content);
-            }
-        }
-
-        $mail->send();
+        Pimcore_Tool_Newsletter::sendMail($letter, $object, $letter->getTestEmailAddress());
 
         $this->_helper->json(array("success" => true));
     }

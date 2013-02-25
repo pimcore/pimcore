@@ -21,6 +21,59 @@ class Pimcore_Tool_Newsletter {
     protected $class;
 
     /**
+     * @param Tool_Newsletter_Config $newsletter
+     * @param Object_Concrete $object
+     */
+    public static function sendMail($newsletter, $object, $emailAddress = null) {
+
+        $params = array(
+            "gender" => $object->getGender(),
+            'firstname' => $object->getFirstname(),
+            'lastname' => $object->getLastname(),
+            "email" => $object->getEmail(),
+            'token' => $object->getProperty("token"),
+            "object" => $object
+        );
+
+        $mail = new Pimcore_Mail();
+        $mail->setIgnoreDebugMode(true);
+
+        if($emailAddress) {
+            $mail->addTo($emailAddress);
+        } else {
+            $mail->addTo($object->getEmail());
+        }
+        $mail->setDocument(Document::getById($newsletter->getDocument()));
+        $mail->setParams($params);
+
+        // render the document and rewrite the links (if analytics is enabled)
+        if($newsletter->getGoogleAnalytics()) {
+            if($content = $mail->getBodyHtmlRendered()){
+
+                include_once("simple_html_dom.php");
+
+                $html = str_get_html($content);
+                if($html) {
+                    $links = $html->find("a");
+                    foreach($links as $link) {
+
+                        $glue = "?";
+                        if(strpos($link->href, "?")) {
+                            $glue = "&";
+                        }
+                        $link->href = $link->href . $glue . "utm_source=Newsletter&utm_medium=Email&utm_campaign=" . $newsletter->getName();
+                    }
+                    $content = $html->save();
+                }
+
+                $mail->setBodyHtml($content);
+            }
+        }
+
+        $mail->send();
+    }
+
+    /**
      * @param int|string $class
      */
     public function __construct($classId = null) {
@@ -224,7 +277,7 @@ class Pimcore_Tool_Newsletter {
      * @param Object_Concrete $object
      * @param string $title
      */
-    protected function addNoteOnObject($object, $title) {
+    public function addNoteOnObject($object, $title) {
         $note = new Element_Note();
         $note->setElement($object);
         $note->setDate(time());
