@@ -312,7 +312,7 @@ pimcore.report.newsletter.item = Class.create({
                     }
                 });
             }
-        })
+        }.bind(this))
     },
 
     sendTest: function () {
