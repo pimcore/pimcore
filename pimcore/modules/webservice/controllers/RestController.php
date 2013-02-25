@@ -165,9 +165,46 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             }
         } catch (Exception $e) {
             Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
         }
         $this->encoder->encode(array("success" => false));
     }
+
+
+
+    /** end point for the object-brick definition
+     * GET http://[YOUR-DOMAIN]/webservice/rest/object-brick/id/abt1?apikey=[API-KEY]
+     *      returns the class definition for the given class
+     *
+     */
+    public function objectBrickAction() {
+        try {
+            $fc = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
+            $this->_helper->json($fc);
+        } catch (Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+        $this->encoder->encode(array("success" => false));
+    }
+
+    /** end point for the field collection definition
+     * GET http://[YOUR-DOMAIN]/webservice/rest/field-collection/id/abt1?apikey=[API-KEY]
+     *      returns the class definition for the given class
+     *
+     */
+    public function fieldCollectionAction() {
+        try {
+            $fc = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
+            $this->_helper->json($fc);
+        } catch (Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+        $this->encoder->encode(array("success" => false));
+    }
+
+
 
     /** GET http://[YOUR-DOMAIN]/webservice/rest/user?apikey=[API-KEY]
      *      returns the json-encoded user data for the current user
@@ -490,6 +527,137 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $this->encoder->encode($result);
     }
 
+    /** Returns the total number of objects matching the given condition
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-count?apikey=[API-KEY]&condition=type%3D%27folder%27
+     *
+     * Parameters:
+     *      - condition
+     *      - group by key
+     *      - objectClass the name of the object class (without "Object_"). If the class does
+     *          not exist the filter criteria will be ignored!
+     */
+    public function objectCountAction() {
+        $condition = urldecode($this->getParam("condition"));
+        $groupBy = $this->getParam("groupBy");
+        $objectClass = $this->getParam("objectClass");
+        $params = array();
+
+        if (!empty($condition)) $params["condition"] = $condition;
+        if (!empty($groupBy)) $params["groupBy"] = $groupBy;
+
+        $listClassName = "Object_Abstract";
+        if(!empty($objectClass)) {
+            $listClassName = "Object_" . ucfirst($objectClass);
+            if(!Pimcore_Tool::classExists($listClassName)) {
+                $listClassName = "Object_Abstract";
+            }
+        }
+
+        $count = $listClassName::getTotalCount($params);
+
+        $this->encoder->encode(array("success" => true, "totalCount" => $count));
+    }
+
+
+    /** Returns the total number of assets matching the given condition
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&condition=type%3D%27folder%27
+     *
+     * Parameters:
+     *      - condition
+     *      - group by key
+     */
+    public function assetCountAction() {
+        $condition = urldecode($this->getParam("condition"));
+        $groupBy = $this->getParam("groupBy");
+        $params = array();
+
+        if (!empty($condition)) $params["condition"] = $condition;
+        if (!empty($groupBy)) $params["groupBy"] = $groupBy;
+
+
+        $count = Asset::getTotalCount($params);
+
+        $this->encoder->encode(array("success" => true, "totalCount" => $count));
+    }
+
+    /** Returns the total number of documents matching the given condition
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&condition=type%3D%27folder%27
+     *
+     * Parameters:
+     *      - condition
+     *      - group by key
+     */
+    public function documentCountAction() {
+        $condition = urldecode($this->getParam("condition"));
+        $groupBy = $this->getParam("groupBy");
+        $params = array();
+
+        if (!empty($condition)) $params["condition"] = $condition;
+        if (!empty($groupBy)) $params["groupBy"] = $groupBy;
+
+
+        $count = Document::getTotalCount($params);
+
+        $this->encoder->encode(array("success" => true, "totalCount" => $count));
+    }
+
+    /**
+     * Returns a list of all class definitions.
+     */
+    public function classesAction() {
+        $list = new Object_Class_List();
+        $classes = $list->load();
+        $result = array();
+
+        foreach ($classes as $class) {
+            $item = array(
+                "id" => $class->getId(),
+                "name" => $class->getName()
+            );
+            $result[] = $item;
+        }
+
+        $this->encoder->encode(array("success" => true, "items" => $result));
+    }
+
+    /**
+     * Returns a list of all object brick definitions.
+     */
+    public function objectBricksAction() {
+        $list = new Object_Objectbrick_Definition_List();
+        $bricks = $list->load();
+
+        $result = array();
+
+        foreach ($bricks as $brick) {
+            $item = array(
+                "name" => $brick->getKey()
+            );
+            $result[] = $item;
+        }
+
+        $this->encoder->encode(array("success" => true, "items" => $result));
+    }
+
+    /**
+     * Returns a list of all field collection definitions.
+     */
+    public function fieldCollectionsAction() {
+        $list = new Object_Fieldcollection_Definition_List();
+        $fieldCollections = $list->load();
+
+        $result = array();
+
+        foreach ($fieldCollections as $fc) {
+            $item = array(
+                "name" => $fc->getKey()
+            );
+            $result[] = $item;
+        }
+
+        $this->encoder->encode(array("success" => true, "items" => $result));
+    }
+
 
     private static function map($wsData, $data) {
         foreach($data as $key => $value) {
@@ -569,5 +737,6 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         }
         return $request->isPut();
     }
+
 
 }

@@ -332,6 +332,25 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     }
 
     /**
+     * @param array $config
+     * @return total count
+     */
+    public static function getTotalCount($config = array()) {
+
+        if (is_array($config)) {
+            $listClass = "Asset_List";
+            $listClass = Pimcore_Tool::getModelClassMapping($listClass);
+            $list = new $listClass();
+
+            $list->setValues($config);
+            $count = $list->getTotalCount();
+
+            return $count;
+        }
+    }
+
+
+    /**
      * returns the asset type of a filename and mimetype
      * @param $mimeType
      * @param $filename
