@@ -27,8 +27,8 @@ class Object_Class_Data_Gender extends Object_Class_Data_Select {
 
     public function __construct() {
         $options = array(
-            array("key" => "m", "value" => "male"),
-            array("key" => "f", "value" => "female"),
+            array("key" => "male", "value" => "male"),
+            array("key" => "female", "value" => "female"),
             array("key" => "", "value" => "unknown"),
         );
 
