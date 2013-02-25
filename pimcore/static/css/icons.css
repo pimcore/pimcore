@@ -582,6 +582,14 @@
 	background: url(/pimcore/static/img/icon/textfield_user.png) no-repeat !important;
 }
 
+.pimcore_icon_newsletterActive {
+	background: url(/pimcore/static/img/icon/email_go.png) no-repeat !important;
+}
+
+.pimcore_icon_newsletterConfirmed {
+	background: url(/pimcore/static/img/icon/email_tick.png) no-repeat !important;
+}
+
 .pimcore_icon_textarea {
 	background: url(/pimcore/static/img/icon/text_align_left.png) no-repeat !important;
 }

@@ -21,13 +21,24 @@ pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.da
      */
     allowIn: {
         object: true,
-        objectbrick: true,
-        fieldcollection: true,
-        localizedfield: true
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
     },
 
     initialize: function (treeNode, initData) {
         this.type = "gender";
+
+        if(!initData["name"]) {
+            initData = {
+                title: t("gender")
+            };
+        }
+
+        initData.fieldtype = "gender";
+        initData.datatype = "data";
+        initData.name = "gender";
+        treeNode.setText("gender");
 
         this.initData(initData);
 
@@ -49,6 +60,9 @@ pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.da
     getLayout: function ($super) {
 
         $super();
+
+        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        nameField.disable();
 
         this.specificPanel.removeAll();
         return this.layout;

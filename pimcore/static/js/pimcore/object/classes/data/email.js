@@ -21,13 +21,24 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
      */
     allowIn: {
         object: true,
-        objectbrick: true,
-        fieldcollection: true,
-        localizedfield: true
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
     },
 
     initialize: function (treeNode, initData) {
         this.type = "email";
+
+        if(!initData["name"]) {
+            initData = {
+                title: t("email")
+            };
+        }
+
+        initData.fieldtype = "email";
+        initData.datatype = "data";
+        initData.name = "email";
+        treeNode.setText("email");
 
         this.initData(initData);
 
@@ -49,6 +60,9 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
     getLayout: function ($super) {
 
         $super();
+
+        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        nameField.disable();
 
         this.specificPanel.removeAll();
         this.specificPanel.add([
