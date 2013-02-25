@@ -607,7 +607,7 @@ class Object_Concrete extends Object_Abstract {
         if(property_exists($tmpObj,$propertyName)) {
 
             // check if the given fieldtype is valid for this shorthand
-            $allowedDataTypes = array("input","numeric","checkbox","country","date","datetime","image","language","multihref","multiselect","select","slider","time","user");
+            $allowedDataTypes = array("input","numeric","checkbox","country","date","datetime","image","language","multihref","multiselect","select","slider","time","user","email","firstname","lastname");
 
             $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
             if(!in_array($field->getFieldType(), $allowedDataTypes)) {
