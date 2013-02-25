@@ -213,6 +213,14 @@ pimcore.layout.toolbar = Class.create({
             });
         }
 
+        if (user.isAllowed("newsletter")) {
+            reportsMenu.push({
+                text: t("newsletter"),
+                iconCls: "pimcore_icon_newsletter",
+                handler: this.showNewsletter
+            });
+        }
+
         if (reportsMenu.length > 0) {
             extrasItems.push({
                 text: t("reports_and_marketing"),
@@ -825,6 +833,15 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("qrcode", new pimcore.report.qrcode.panel());
+        }
+    },
+
+    showNewsletter: function () {
+        try {
+            pimcore.globalmanager.get("newsletter").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("newsletter", new pimcore.report.newsletter.panel());
         }
     },
 
