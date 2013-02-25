@@ -51,7 +51,6 @@ if($newsletter) {
             $note->save();
         }
 
-        sleep(5);
         Pimcore::collectGarbage();
     }
 
