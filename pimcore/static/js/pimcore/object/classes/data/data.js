@@ -81,6 +81,7 @@ pimcore.object.classes.data.data = Class.create({
                 name: "name",
                 width: 300,
                 maxLength: 70,
+                itemId: "name",
                 autoCreate: {tag: 'input', type: 'text', maxlength: '70', autocomplete: 'off'},
                 enableKeyEvents: true,
                 value: this.datax.name,
@@ -90,6 +91,7 @@ pimcore.object.classes.data.data = Class.create({
                 xtype: "textfield",
                 fieldLabel: t("title") + " (" + t("label") + ")",
                 name: "title",
+                itemId: "title",
                 width: 300,
                 value: this.datax.title,
                 disabled: !in_array("title",this.availableSettingsFields)
@@ -114,6 +116,7 @@ pimcore.object.classes.data.data = Class.create({
                 xtype: "checkbox",
                 fieldLabel: t("not_editable"),
                 name: "noteditable",
+                itemId: "noteditable",
                 checked: this.datax.noteditable,
                 disabled: !in_array("noteditable",this.availableSettingsFields)
             },
@@ -166,6 +169,7 @@ pimcore.object.classes.data.data = Class.create({
                     bodyStyle: "padding: 10px;",
                     style: "margin: 10px 0 10px 0",
                     labelWidth: 140,
+                    itemId: "standardSettings",
                     items: standardSettings
                 },
                 {

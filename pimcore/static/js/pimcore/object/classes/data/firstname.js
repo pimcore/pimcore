@@ -21,13 +21,24 @@ pimcore.object.classes.data.firstname = Class.create(pimcore.object.classes.data
      */
     allowIn: {
         object: true,
-        objectbrick: true,
-        fieldcollection: true,
-        localizedfield: true
+        objectbrick: false,
+        fieldcollection: false,
+        localizedfield: false
     },
 
     initialize: function (treeNode, initData) {
         this.type = "firstname";
+
+        if(!initData["name"]) {
+            initData = {
+                title: t("firstname")
+            };
+        }
+
+        initData.fieldtype = "firstname";
+        initData.datatype = "data";
+        initData.name = "firstname";
+        treeNode.setText("firstname");
 
         this.initData(initData);
 
@@ -49,6 +60,9 @@ pimcore.object.classes.data.firstname = Class.create(pimcore.object.classes.data
     getLayout: function ($super) {
 
         $super();
+
+        var nameField = this.layout.getComponent("standardSettings").getComponent("name");
+        nameField.disable();
 
         this.specificPanel.removeAll();
         this.specificPanel.add([
