@@ -1270,3 +1270,14 @@
     background: url(/pimcore/static/img/icon/group.png) left no-repeat !important;
 }
 
+.pimcore_icon_newsletter {
+    background: url(/pimcore/static/img/icon/email_transfer.png) left no-repeat !important;
+}
+
+.pimcore_icon_send {
+    background: url(/pimcore/static/img/icon/email_start.png) left no-repeat !important;
+}
+
+.pimcore_icon_send_test {
+    background: url(/pimcore/static/img/icon/email_star.png) left no-repeat !important;
+}

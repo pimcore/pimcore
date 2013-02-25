@@ -1,0 +1,223 @@
+<?php
+/**
+ * Pimcore
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.pimcore.org/license
+ *
+ * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
+ * @license    http://www.pimcore.org/license     New BSD License
+ */
+
+class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Reports {
+
+    public function init() {
+        parent::init();
+
+        $this->checkPermission("newsletter");
+    }
+
+    public function treeAction () {
+
+        $dir = Tool_Newsletter_Config::getWorkingDir();
+
+        $letters = array();
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if(strpos($file, ".xml")) {
+                $name = str_replace(".xml", "", $file);
+                $letters[] = array(
+                    "id" => $name,
+                    "text" => $name
+                );
+            }
+        }
+
+        $this->_helper->json($letters);
+    }
+
+    public function addAction () {
+
+        try {
+            Tool_Newsletter_Config::getByName($this->getParam("name"));
+            $alreadyExist = true;
+        } catch (Exception $e) {
+            $alreadyExist = false;
+        }
+
+        if(!$alreadyExist) {
+            $letter = new Tool_Newsletter_Config();
+            $letter->setName($this->getParam("name"));
+            $letter->save();
+        }
+
+        $this->_helper->json(array("success" => !$alreadyExist, "id" => $letter->getName()));
+    }
+
+    public function deleteAction () {
+
+        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $letter->delete();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+
+    public function getAction () {
+
+        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+
+        if($emailDoc = Document::getById($letter->getDocument())) {
+            $letter->setDocument($emailDoc->getRealFullPath());
+        }
+
+        // get available classes
+        $classList = new Object_Class_List();
+
+        $availableClasses = array();
+        foreach($classList->load() as $class) {
+
+            $fieldCount = 0;
+            foreach ($class->getFieldDefinitions() as $fd) {
+                if($fd instanceof Object_Class_Data_Firstname ||
+                $fd instanceof Object_Class_Data_Lastname ||
+                $fd instanceof Object_Class_Data_Gender ||
+                $fd instanceof Object_Class_Data_NewsletterActive ||
+                $fd instanceof Object_Class_Data_NewsletterConfirmed ||
+                $fd instanceof Object_Class_Data_Email) {
+                    $fieldCount++;
+                }
+            }
+
+            if($fieldCount >= 5) {
+                $availableClasses[] = array($class->getName(), $class->getName());
+            }
+        }
+
+
+        $letter->availableClasses = $availableClasses;
+
+        $this->_helper->json($letter);
+    }
+
+
+    public function updateAction () {
+
+        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $data = Zend_Json::decode($this->getParam("configuration"));
+        $data = array_htmlspecialchars($data);
+
+        if($emailDoc = Document::getByPath($data["document"])) {
+            $data["document"] = $emailDoc->getId();
+        }
+
+        foreach ($data as $key => $value) {
+            $setter = "set" . ucfirst($key);
+            if(method_exists($letter, $setter)) {
+                $letter->$setter($value);
+            }
+        }
+
+        $letter->save();
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function checksqlAction() {
+
+        $count = 0;
+        $success = false;
+        try {
+            $className = "Object_" . ucfirst($this->getParam("class")) . "_List";
+            $list = new $className();
+            $list->setCondition($this->getParam("objectFilterSQL"));
+            $count = $list->getTotalCount();
+            $success = true;
+        } catch (\Exception $e) {
+
+        }
+
+        $this->_helper->json(array(
+            "count" => $count,
+            "success" => $success
+        ));
+
+    }
+
+    public function sendAction() {
+
+        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function sendTestAction() {
+
+        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+
+        $className = "Object_" . ucfirst($letter->getClass());
+
+        $object = $className::getByEmail($letter->getTestEmailAddress(), 1);
+        if(!$object) {
+            $objectList = $className . "_List";
+            $list = new $objectList();
+
+            if($letter->getObjectFilterSQL()) {
+                $list->setCondition($letter->getObjectFilterSQL());
+            }
+
+            $list->setOrderKey("RAND()", false);
+            $list->setLimit(1);
+            $list->setOffset(0);
+
+            $object = current($list->load());
+            if(!$object) {
+                throw new \Exception("no valid user data available, can't send email");
+            }
+        }
+
+        $params = array(
+            "gender" => $object->getGender(),
+            'firstname' => $object->getFirstname(),
+            'lastname' => $object->getLastname(),
+            "email" => $object->getEmail(),
+            'token' => $object->getProperty("token"),
+            "object" => $object
+        );
+
+        $mail = new Pimcore_Mail();
+        $mail->setIgnoreDebugMode(true);
+        $mail->addTo($letter->getTestEmailAddress());
+        $mail->setDocument(Document::getById($letter->getDocument()));
+        $mail->setParams($params);
+
+        // render the document and rewrite the links (if analytics is enabled)
+        if($letter->getGoogleAnalytics()) {
+            if($content = $mail->getBodyHtmlRendered()){
+
+                include_once("simple_html_dom.php");
+
+                $html = str_get_html($content);
+                if($html) {
+                    $links = $html->find("a");
+                    foreach($links as $link) {
+
+                    }
+
+                    $content = $html->save();
+                }
+
+                $mail->setBodyHtml($content);
+            }
+        }
+
+        $mail->send();
+
+        $this->_helper->json(array("success" => true));
+    }
+}
+

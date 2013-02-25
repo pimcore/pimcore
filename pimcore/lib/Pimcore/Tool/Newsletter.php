@@ -74,8 +74,8 @@ class Pimcore_Tool_Newsletter {
         $object = new $className;
 
         // check for existing e-mail
-        $object = $className::getByEmail($params["email"], 1);
-        if($object) {
+        $existingObject = $className::getByEmail($params["email"], 1);
+        if($existingObject) {
             throw new \Exception("email address '" . $params["email"] . "' already exists");
         }
 
