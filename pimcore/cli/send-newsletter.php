@@ -43,7 +43,7 @@ if($newsletter) {
 
             try {
                 $count++;
-                Logger::info("Sending newsletter " . $count . " / " . $elementsTotal);
+                Logger::info("Sending newsletter " . $count . " / " . $elementsTotal. " [" . $newsletter->getName() . "]");
 
                 Pimcore_Tool_Newsletter::sendMail($newsletter, $object);
 
@@ -56,7 +56,7 @@ if($newsletter) {
                 $note->setData(array());
                 $note->save();
 
-                Logger::info("Sent newsletter to: " . obfucateEmail($object->getEmail()) );
+                Logger::info("Sent newsletter to: " . obfucateEmail($object->getEmail()) . " [" . $newsletter->getName() . "]");
             } catch (\Exception $e) {
                 Logger::err($e);
             }
