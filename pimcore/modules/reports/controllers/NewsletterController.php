@@ -134,7 +134,13 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
         try {
             $className = "Object_" . ucfirst($this->getParam("class")) . "_List";
             $list = new $className();
-            $list->setCondition($this->getParam("objectFilterSQL"));
+
+            $conditions = array("(newsletterActive = 1 AND newsletterConfirmed = 1)");
+            if($this->getParam("objectFilterSQL")) {
+                $conditions[] = $this->getParam("objectFilterSQL");
+            }
+            $list->setCondition(implode(" AND ", $conditions));
+
             $count = $list->getTotalCount();
             $success = true;
         } catch (\Exception $e) {

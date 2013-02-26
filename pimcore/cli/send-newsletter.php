@@ -39,16 +39,23 @@ if($newsletter) {
 
         $objects = $list->load();
         foreach ($objects as $object) {
-            Pimcore_Tool_Newsletter::sendMail($newsletter, $object);
 
-            $note = new Element_Note();
-            $note->setElement($object);
-            $note->setDate(time());
-            $note->setType("newsletter");
-            $note->setTitle("sent newsletter: '" . $newsletter->getName() . "'");
-            $note->setUser(0);
-            $note->setData(array());
-            $note->save();
+            try {
+                Pimcore_Tool_Newsletter::sendMail($newsletter, $object);
+
+                $note = new Element_Note();
+                $note->setElement($object);
+                $note->setDate(time());
+                $note->setType("newsletter");
+                $note->setTitle("sent newsletter: '" . $newsletter->getName() . "'");
+                $note->setUser(0);
+                $note->setData(array());
+                $note->save();
+
+                Logger::info("Sent newsletter to: " . obfucateEmail($object->getEmail()) );
+            } catch (\Exception $e) {
+                Logger::err($e);
+            }
         }
 
         Pimcore::collectGarbage();
@@ -56,4 +63,11 @@ if($newsletter) {
 
 } else {
     Logger::emerg("Newsletter '" . $argv[1] . "' doesn't exist");
+}
+
+
+
+function obfucateEmail($email) {
+    $email = substr_replace($email, ".xxx", strrpos($email, "."));
+    return $email;
 }
