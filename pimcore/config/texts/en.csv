@@ -1,3 +1,4 @@
+"progress","Progress"
 "recipients","Recipients"
 "newsletter_send_error","Can't send your newsletter, please contact your administrator!"
 "newsletter_sent_message","Your newsletter is now sent to all recipients, this process is done in the background (you can close pimcore in the meantime) and can take up to one hour."

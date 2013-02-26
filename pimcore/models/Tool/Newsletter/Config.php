@@ -80,6 +80,12 @@ class Tool_Newsletter_Config {
         return $dir;
     }
 
+    /**
+     * @return string
+     */
+    public function getPidFile() {
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/newsletter__" . $this->getName() . ".pid";
+    }
 
     /**
      * @return void
