@@ -14,8 +14,8 @@ class OnlineShop_Framework_Impl_SessionCartCheckoutData_List_Resource extends Pi
             $hit = null;
             foreach ($conditions as $condition){
                 $expandedCondition = explode('=', $condition);
-                $value = $expandedCondition[1];
-                $key = (string) $expandedCondition[0];
+                $value = trim($expandedCondition[1]);
+                $key = trim((string) $expandedCondition[0]);
                 if ($checkoutDataItem->$key == $value AND ($hit === null OR $hit === true)) {
                     $hit = true;
                 } else {
