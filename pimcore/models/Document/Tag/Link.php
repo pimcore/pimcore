@@ -346,6 +346,9 @@ class Document_Tag_Link extends Document_Tag
      */
     public function getFromWebserviceImport($wsElement)
     {
+        if ($wsElement->value->data instanceof stdClass) {
+            $wsElement->value->data = (array) $wsElement->value->data;
+        }
 
         if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
 
