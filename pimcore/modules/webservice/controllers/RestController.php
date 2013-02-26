@@ -395,7 +395,20 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     $type = $doc->getType();
                     $getter = "getDocument" . ucfirst($type) . "ById";
 
-                    $object = $this->service->$getter($id);
+                    if (method_exists($this->service, $getter)) {
+                        $object = $this->service->$getter($id);
+                    } else {
+                        // check if the getter is implemented by a plugin
+                        $class = "Webservice_Data_Document_" . ucfirst($type) . "_Out";
+                        if (class_exists($class)) {
+                            Document_Service::loadAllDocumentFields($doc);
+                            $object = Webservice_Data_Mapper::map($doc, $class, "out");
+                        } else {
+                            throw new Exception("unknown type");
+                        }
+
+                    }
+
                 }
 
                 if (!$object) {
