@@ -335,8 +335,8 @@ pimcore.report.newsletter.item = Class.create({
                         var start = new Date(res["data"]["start"] * 1000);
 
                         this.statusPanel.getComponent("progress").setValue(res["data"]["current"] + " / " + res["data"]["total"]);
-                        this.statusPanel.getComponent("start").setValue(lastUpdate.format("Y-m-d H:i:s"));
-                        this.statusPanel.getComponent("lastUpdate").setValue(start.format("Y-m-d H:i:s"));
+                        this.statusPanel.getComponent("start").setValue(start.format("Y-m-d H:i:s"));
+                        this.statusPanel.getComponent("lastUpdate").setValue(lastUpdate.format("Y-m-d H:i:s"));
                     } catch (e) {
                         clearInterval(this.updateStatusInterval);
                     }
