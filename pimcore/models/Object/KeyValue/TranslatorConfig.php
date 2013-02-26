@@ -33,11 +33,10 @@ class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
     }
 
 
-    public static function getByName ($name, $groupId = null) {
+    public static function getByName ($name) {
         try {
             $config = new self();
             $config->setName($name);
-            $config->setGroup($groupId);
             $config->getResource()->getByName();
 
             return $config;

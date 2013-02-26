@@ -43,7 +43,6 @@ class Object_KeyValue_TranslatorConfig_Resource extends Pimcore_Model_Resource_A
         }
 
         $name = $this->model->getName();
-        $groupId = $this->model->getGroup();
 
         $stmt = "SELECT * FROM " . self::TABLE_NAME_TRANSLATOR . " WHERE name = '" . $name . "'";
         $data = $this->db->fetchRow($stmt);
