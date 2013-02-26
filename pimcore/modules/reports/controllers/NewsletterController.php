@@ -154,6 +154,31 @@ class Reports_NewsletterController extends Pimcore_Controller_Action_Admin_Repor
 
     }
 
+    public function getSendStatusAction() {
+
+        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        $data = null;
+        if(file_exists($letter->getPidFile())) {
+            $data = unserialize(file_get_contents($letter->getPidFile()));
+        }
+
+        $this->_helper->json(array(
+            "data" => $data,
+            "success" => true
+        ));
+    }
+
+    public function stopSendAction() {
+        $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));
+        if(file_exists($letter->getPidFile())) {
+            @unlink($letter->getPidFile());
+        }
+
+        $this->_helper->json(array(
+            "success" => true
+        ));
+    }
+
     public function sendAction() {
 
         $letter = Tool_Newsletter_Config::getByName($this->getParam("name"));

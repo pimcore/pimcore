@@ -118,6 +118,40 @@ pimcore.report.newsletter.item = Class.create({
             }]
         });
 
+        this.statusPanel = new Ext.form.FieldSet({
+            hidden: true,
+            title: t("status"),
+            items: [{
+                xtype: "displayfield",
+                itemId: "progress",
+                fieldLabel: t("progress")
+            }, {
+                xtype: "displayfield",
+                itemId: "start",
+                fieldLabel: t("start")
+            }, {
+                xtype: "displayfield",
+                itemId: "lastUpdate",
+                fieldLabel: t("last_update")
+            }],
+            buttons: [{
+                iconCls: "pimcore_icon_stop",
+                text: t("stop"),
+                handler: function () {
+                    Ext.Ajax.request({
+                        url: "/admin/reports/newsletter/stop-send",
+                        method: "get",
+                        params: {
+                            name: this.data.name
+                        },
+                        success: function (response) {
+                            this.updateStatus();
+                        }.bind(this)
+                    });
+                }.bind(this)
+            }]
+        });
+
         this.form = new Ext.form.FormPanel({
             layout: "pimcoreform",
             region: "center",
@@ -252,7 +286,7 @@ pimcore.report.newsletter.item = Class.create({
                     value: t("source") + ":Newsletter, " + t("medium") + ":Email, " + t("name") + ":" + this.data.name,
                     cls: "pimcore_extra_label_bottom"
                 }]
-            }, this.analytics]
+            }, this.statusPanel, this.analytics]
         });
 
         this.panel = new Ext.Panel({
@@ -263,13 +297,54 @@ pimcore.report.newsletter.item = Class.create({
             title: this.data.name,
             id: "pimcore_newsletter_panel_" + this.data.name,
             items: [this.form],
-            buttons: panelButtons
+            buttons: panelButtons,
+            listeners: {
+                destroy: function () {
+                    clearInterval(this.updateStatusInterval);
+                }.bind(this)
+            }
         });
 
         this.parentPanel.getEditPanel().add(this.panel);
         this.parentPanel.getEditPanel().activate(this.panel);
 
         pimcore.layout.refresh();
+
+        // start update interval
+        this.updateStatusInterval = window.setInterval(this.updateStatus.bind(this), 5000);
+
+        // do it once manually to get immediately the status
+        this.updateStatus();
+    },
+
+    updateStatus: function () {
+
+        Ext.Ajax.request({
+            url: "/admin/reports/newsletter/get-send-status",
+            method: "get",
+            params: {
+                name: this.data.name
+            },
+            success: function (response) {
+                var res = Ext.decode(response.responseText);
+                if(res["data"]) {
+                    this.statusPanel.show();
+
+                    try {
+                        var lastUpdate = new Date(res["data"]["lastUpdate"] * 1000);
+                        var start = new Date(res["data"]["start"] * 1000);
+
+                        this.statusPanel.getComponent("progress").setValue(res["data"]["current"] + " / " + res["data"]["total"]);
+                        this.statusPanel.getComponent("start").setValue(lastUpdate.format("Y-m-d H:i:s"));
+                        this.statusPanel.getComponent("lastUpdate").setValue(start.format("Y-m-d H:i:s"));
+                    } catch (e) {
+                        clearInterval(this.updateStatusInterval);
+                    }
+                } else {
+                    this.statusPanel.hide();
+                }
+            }.bind(this)
+        });
     },
 
     save: function () {

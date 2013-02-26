@@ -18,6 +18,13 @@ include_once("startup.php");
 $newsletter = Tool_Newsletter_Config::getByName($argv[1]);
 if($newsletter) {
 
+    $pidFile = $newsletter->getPidFile();
+
+    if(file_exists($pidFile)) {
+        Logger::alert("Cannot send newsletters because there's already on active sending process");
+        exit;
+    }
+
     $elementsPerLoop = 10;
     $objectList = "Object_" . ucfirst($newsletter->getClass()) . "_List";
     $list = new $objectList();
@@ -34,11 +41,22 @@ if($newsletter) {
     $elementsTotal = $list->getTotalCount();
     $count = 0;
 
+    $pidContents = array(
+        "start" => time(),
+        "lastUpdate" => time(),
+        "newsletter" => $newsletter->getName(),
+        "total" => $elementsTotal,
+        "current" => $count
+    );
+
+    writePid($pidFile, $pidContents);
+
     for($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
         $list->setLimit($elementsPerLoop);
         $list->setOffset($i*$elementsPerLoop);
 
         $objects = $list->load();
+
         foreach ($objects as $object) {
 
             try {
@@ -62,8 +80,22 @@ if($newsletter) {
             }
         }
 
+        // check if pid exists
+        if(!file_exists($pidFile)) {
+            Logger::alert("Newsletter PID not found, cancel sending process");
+            exit;
+        }
+
+        // update pid
+        $pidContents["lastUpdate"] = time();
+        $pidContents["current"] = $count;
+        writePid($pidFile, $pidContents);
+
         Pimcore::collectGarbage();
     }
+
+    // remove pid
+    @unlink($pidFile);
 
 } else {
     Logger::emerg("Newsletter '" . $argv[1] . "' doesn't exist");
@@ -74,4 +106,8 @@ if($newsletter) {
 function obfucateEmail($email) {
     $email = substr_replace($email, ".xxx", strrpos($email, "."));
     return $email;
+}
+
+function writePid ($file, $content) {
+    file_put_contents($file, serialize($content));
 }
