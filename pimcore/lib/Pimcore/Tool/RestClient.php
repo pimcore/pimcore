@@ -263,7 +263,6 @@ class Pimcore_Tool_RestClient {
                 $type = $wsDocument->type;
                 $type = "Document_" . ucfirst($type);
 
-                $type = "Document_" . ucfirst($type);
                 if (!Pimcore_Tool::classExists($type)) {
                     throw new Exception("Class " . $type . " does not exist");
                 }
