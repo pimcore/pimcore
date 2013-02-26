@@ -486,7 +486,7 @@ pimcore.document.pages.preview = Class.create({
                                     var answer = window.confirm(
                                                         t("there_are_more_than_one_items_for_the_given_selector"));
                                     if(!answer) {
-                                        editor.getIframeWindow().pimcore.editorSelectElement(e, el, true);
+                                        editor.getIframeWindow().pimcore.editorSelectElement(e, element.dom, true);
                                         return;
                                     }
                                 }
@@ -1078,7 +1078,7 @@ pimcore.document.pages.preview = Class.create({
         if(el.getAttribute("id") && el.getAttribute("id").indexOf("ext-") < 0) {
             css += "#" + el.getAttribute("id");
         } else if(el.getAttribute("class")) {
-            css += "." + el.getAttribute("class").replace(" ", ".");
+            css += "." + el.getAttribute("class").replace(/ /g,".");
             css = css.replace("..", ".");
         }
 
