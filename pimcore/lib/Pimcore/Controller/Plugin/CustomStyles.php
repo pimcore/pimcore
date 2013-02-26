@@ -15,25 +15,28 @@
 
 class Pimcore_Controller_Plugin_CustomStyles extends Zend_Controller_Plugin_Abstract {
 
-
-    public function dispatchLoopShutdown() {
-        
-        if(!Pimcore_Tool::isHtmlResponse($this->getResponse()) || $this->getRequest()->getParam("pimcore_editmode")) {
+    /**
+     * @param Zend_Controller_Request_Abstract $request
+     */
+    public function postDispatch($request) {
+        if(!Pimcore_Tool::isHtmlResponse($this->getResponse()) || $request->getParam("pimcore_editmode")) {
             return;
         }
 
         // append custom page styles,  if it is a document-request
-        $doc = $this->getRequest()->getParam("document");
+        $doc = $request->getParam("document");
         if(!Staticroute::getCurrentRoute() && method_exists($doc, "getCss") && $doc->getCss()) {
             $body = $this->getResponse()->getBody();
 
-            $code = '<style type="text/css" id="pimcore_styles">';
+            $code = '<style type="text/css" id="pimcore_styles_' . $doc->getId() . '">';
             $code .= "\n\n" . $doc->getCss() . "\n\n";
             $code .= '</style>';
 
             $headEndPosition = stripos($body, "</head>");
             if($headEndPosition !== false) {
                 $body = substr_replace($body, $code."\n\n</head>", $headEndPosition, 7);
+            } else {
+                $body .= "\n\n" . $code;
             }
 
             $this->getResponse()->setBody($body);
