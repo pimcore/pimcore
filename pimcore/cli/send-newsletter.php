@@ -32,6 +32,7 @@ if($newsletter) {
     $list->setOrder("ASC");
 
     $elementsTotal = $list->getTotalCount();
+    $count = 0;
 
     for($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
         $list->setLimit($elementsPerLoop);
@@ -41,6 +42,9 @@ if($newsletter) {
         foreach ($objects as $object) {
 
             try {
+                $count++;
+                Logger::info("Sending newsletter " . $count . " / " . $elementsTotal);
+
                 Pimcore_Tool_Newsletter::sendMail($newsletter, $object);
 
                 $note = new Element_Note();
