@@ -172,7 +172,7 @@ pimcore.report.newsletter.panel = Class.create({
             var codes = this.tree.getRootNode().childNodes;
             for (var i = 0; i < codes.length; i++) {
                 if (codes[i].text == value) {
-                    Ext.MessageBox.alert(t('add_thumbnail'),
+                    Ext.MessageBox.alert(t('add_newsletter'),
                                          t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
                     return;
                 }
