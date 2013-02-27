@@ -71,7 +71,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                         $object = $this->service->getObjectConcreteById($id);
                     }
 
-                    $this->encoder->encode($object);
+                    $this->encoder->encode(array("success" => true, "data" => $object));
                     return;
                 }
             } else if ($this->isDelete()) {
@@ -137,7 +137,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
             if ($id) {
                 $class = $this->service->getObjectMetadataById($id);
-                $this->encoder->encode($class);
+                $this->encoder->encode(array("success" => true, "data" => $class));
                 return;
             }
         } catch (Exception $e) {
@@ -160,7 +160,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $id = $this->getParam("id");
             if ($id) {
                 $class = $this->service->getClassById($id);
-                $this->encoder->encode($class);
+                $this->encoder->encode(array("success" => true, "data" => $class));
                 return;
             }
         } catch (Exception $e) {
@@ -180,7 +180,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function objectBrickAction() {
         try {
             $fc = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
-            $this->_helper->json($fc);
+            $this->_helper->json(array("success" => true, "data" => $fc));
         } catch (Exception $e) {
             Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => $e));
@@ -196,7 +196,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function fieldCollectionAction() {
         try {
             $fc = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
-            $this->_helper->json($fc);
+            $this->_helper->json(array("success" => true, "data" => $fc));
         } catch (Exception $e) {
             Logger::error($e);
             $this->encoder->encode(array("success" => false, "msg" => $e));
@@ -214,7 +214,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
 
             $object = $this->service->getuser();
-            $this->encoder->encode($object);
+            $this->encoder->encode(array("success" => true, "data" => $object));
 
         } catch (Exception $e) {
             Logger::error($e);
@@ -253,7 +253,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 } else {
                     $object = $this->service->getAssetFileById($id);
                 }
-                $this->encoder->encode($object);
+                $this->encoder->encode(array("success" => true, "data" => $object));
                 return;
             } else if ($this->isDelete()) {
                 $success = $this->service->deleteAsset($id);
@@ -290,7 +290,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 }
 
                 if ($success && !$isUpdate) {
-                    $this->encoder->encode(array("success" => $success, "id" => $id));
+                    $this->encoder->encode(array("success" => $success, "data" => array("id" => $id)));
                 } else {
                     $this->encoder->encode(array("success" => $success));
                 }
@@ -357,7 +357,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     $keys[] = $key;
                 }
                 $definition["keys"] = $keys;
-                $this->encoder->encode($definition);
+                $this->encoder->encode(array("success" => true, "data" => $definition));
             }
         } catch (Exception $e) {
             $this->encoder->encode(array("success" => false, "msg" => $e));
@@ -414,7 +414,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 if (!$object) {
                     throw new Exception("could not find document");
                 }
-                $this->encoder->encode($object);
+                $this->encoder->encode(array("success" => true, "data" => $object));
                 return;
             } else if ($this->isDelete()) {
                 $success = $this->service->deleteDocument($id);
@@ -488,7 +488,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $limit = $this->getParam("limit");
         $groupBy = $this->getParam("groupBy");
         $result = $this->service->getAssetList($condition, $order, $orderKey, $offset, $limit, $groupBy);
-        $this->encoder->encode($result);
+        $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
     /** Returns a list of document id/type pairs matching the given criteria.
@@ -511,7 +511,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $limit = $this->getParam("limit");
         $groupBy = $this->getParam("groupBy");
         $result = $this->service->getDocumentList($condition, $order, $orderKey, $offset, $limit, $groupBy);
-        $this->encoder->encode($result);
+        $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
     /** Returns a list of object id/type pairs matching the given criteria.
@@ -537,7 +537,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $groupBy = $this->getParam("groupBy");
         $objectClass = $this->getParam("objectClass");
         $result = $this->service->getObjectList($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
-        $this->encoder->encode($result);
+        $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
     /** Returns the total number of objects matching the given condition
@@ -568,7 +568,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
         $count = $listClassName::getTotalCount($params);
 
-        $this->encoder->encode(array("success" => true, "totalCount" => $count));
+        $this->encoder->encode(array("success" => true, "data" => array("totalCount" => $count)));
     }
 
 
@@ -590,7 +590,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
         $count = Asset::getTotalCount($params);
 
-        $this->encoder->encode(array("success" => true, "totalCount" => $count));
+        $this->encoder->encode(array("success" => true, "data" => array ("totalCount" => $count)));
     }
 
     /** Returns the total number of documents matching the given condition
@@ -611,7 +611,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
         $count = Document::getTotalCount($params);
 
-        $this->encoder->encode(array("success" => true, "totalCount" => $count));
+        $this->encoder->encode(array("success" => true, "data" => array("totalCount" => $count)));
     }
 
     /**
@@ -630,7 +630,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $result[] = $item;
         }
 
-        $this->encoder->encode(array("success" => true, "items" => $result));
+        $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
     /**
@@ -649,7 +649,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $result[] = $item;
         }
 
-        $this->encoder->encode(array("success" => true, "items" => $result));
+        $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
     /**
@@ -668,7 +668,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             $result[] = $item;
         }
 
-        $this->encoder->encode(array("success" => true, "items" => $result));
+        $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
 

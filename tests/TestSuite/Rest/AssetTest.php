@@ -34,7 +34,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $time = time();
 
         $result = Pimcore_Tool_RestClient::getInstance()->createAsset($asset);
-        $this->assertTrue($result->success, "request not successful");
+        $this->assertTrue($result->id > 0, "request not successful");
         $this->assertEquals(2, Test_Tool::getAssetCount());
 
         $id = $result->id;
@@ -90,7 +90,7 @@ class TestSuite_Rest_AssetTest extends Test_Base {
         $this->assertNull($fitem);
 
         $response = Pimcore_Tool_RestClient::getInstance()->createAssetFolder($folder);
-        $this->assertTrue($response->success, "request wasn't successful");
+        $this->assertTrue($response->id > 0, "request wasn't successful");
 
         $id = $response->id;
         $this->assertTrue($id > 1, "id not set");
