@@ -540,4 +540,14 @@ class Pimcore_Tool_RestClient {
     }
 
 
+    /** Returns the current user
+     * @return mixed
+     */
+    public function getUser() {
+        $response = $this->doRequest(self::$baseUrl .  "user?apikey=" . self::$apikey, "GET");
+        $response = $response->data;
+
+        return $response;
+    }
+
 }
