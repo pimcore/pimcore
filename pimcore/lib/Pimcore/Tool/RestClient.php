@@ -576,7 +576,7 @@ class Pimcore_Tool_RestClient {
      */
     public function getUser() {
         $response = $this->doRequest(self::$baseUrl .  "user?apikey=" . self::$apikey, "GET");
-        $response = $response->data;
+        $response = array("success" => true, "data" => $response->data);
 
         return $response;
     }
