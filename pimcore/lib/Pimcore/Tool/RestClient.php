@@ -540,6 +540,37 @@ class Pimcore_Tool_RestClient {
     }
 
 
+    public function getAssetCount($condition = null, $groupBy = null) {
+        $params = $this->fillParms($condition, null, null, null, null, $groupBy, null);
+
+        $response = (array) $this->doRequest(self::$baseUrl .  "asset-count/?apikey=" . self::$apikey . $params, "GET");
+
+        if (!$response || !$response["success"]) {
+            throw new Exception("Could not retrieve asset count");
+        }
+        return $response["totalCount"];
+    }
+
+    public function getDocumentCount($condition = null, $groupBy = null) {
+        $params = $this->fillParms($condition, null, null, null, null, $groupBy, null);
+
+        $response = (array) $this->doRequest(self::$baseUrl .  "document-count/?apikey=" . self::$apikey . $params, "GET");
+        if (!$response || !$response["success"]) {
+            throw new Exception("Could not retrieve document count");
+        }
+        return $response["totalCount"];
+    }
+
+    public function getObjectCount($condition = null, $groupBy = null) {
+        $params = $this->fillParms($condition, null, null, null, null, $groupBy, null);
+
+        $response = (array) $this->doRequest(self::$baseUrl .  "object-count/?apikey=" . self::$apikey . $params, "GET");
+        if (!$response || !$response["success"]) {
+            throw new Exception("Could not retrieve object count");
+        }
+        return $response["totalCount"];
+    }
+
     /** Returns the current user
      * @return mixed
      */
