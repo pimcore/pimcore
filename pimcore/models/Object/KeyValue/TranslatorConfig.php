@@ -28,7 +28,7 @@ class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
 
             return $config;
         } catch (Exception $e) {
-
+            Logger::warning($e);
         }
     }
 
@@ -41,7 +41,7 @@ class Object_KeyValue_TranslatorConfig extends Pimcore_Model_Abstract {
 
             return $config;
         } catch (Exception $e) {
-
+            Logger::warning($e);
         }
     }
 
