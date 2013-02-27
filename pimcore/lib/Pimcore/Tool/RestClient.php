@@ -191,6 +191,9 @@ class Pimcore_Tool_RestClient {
 
         $response = $this->doRequest(self::$baseUrl .  "object-list/?apikey=" . self::$apikey . $params, "GET");
 
+        $response = $response->data;
+
+
         if (!is_array($response)) {
             throw new Exception("response is empty");
         }
@@ -222,6 +225,7 @@ class Pimcore_Tool_RestClient {
         $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy);
 
         $response = $this->doRequest(self::$baseUrl .  "asset-list/?apikey=" . self::$apikey . $params, "GET");
+        $response = $response->data;
 
         if (!is_array($response)) {
             throw new Exception("response is empty");
@@ -249,7 +253,7 @@ class Pimcore_Tool_RestClient {
         $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy);
 
         $response = $this->doRequest(self::$baseUrl .  "document-list/?apikey=" . self::$apikey . $params, "GET");
-
+        $response = $response->data;
         if (!is_array($response)) {
             throw new Exception("response is empty");
         }
@@ -279,6 +283,7 @@ class Pimcore_Tool_RestClient {
 
     public function getObjectById($id, $decode = true, $idMapper = null) {
         $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . self::$apikey, "GET");
+        $response = $response->data;
         $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
 
         if (!$decode) {
@@ -315,6 +320,7 @@ class Pimcore_Tool_RestClient {
      */
     public function getDocumentById($id, $decode = true) {
         $response = $this->doRequest(self::$baseUrl .  "document/id/" . $id . "?apikey=" . self::$apikey, "GET");
+        $response = $response->data;
 
         if ($response->type == "folder") {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Document_Folder_In", $response);
@@ -345,6 +351,7 @@ class Pimcore_Tool_RestClient {
 
     public function getAssetById($id, $decode = true) {
         $response = $this->doRequest(self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey, "GET");
+        $response = $response->data;
 
         if ($response->type == "folder") {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Asset_Folder_In", $response);
@@ -421,6 +428,8 @@ class Pimcore_Tool_RestClient {
         $wsDocument = Webservice_Data_Mapper::map($asset, $documentType, "out");
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest(self::$baseUrl .  "asset/?apikey=" . self::$apikey, "PUT", $encodedData);
+        $response = $response->data;
+        var_dump($response);
         return $response;
     }
 
@@ -486,6 +495,7 @@ class Pimcore_Tool_RestClient {
      */
     public function getClassById($id, $decode = true) {
         $response = $this->doRequest(self::$baseUrl .  "class/id/" . $id . "?apikey=" . self::$apikey, "GET");
+        $response = $response->data;
         $wsDocument = self::fillWebserviceData("Webservice_Data_Class_In", $response);
 
         if (!$decode) {
@@ -506,6 +516,7 @@ class Pimcore_Tool_RestClient {
      */
     public function getObjectMetaById($id, $decode = true) {
         $response = $this->doRequest(self::$baseUrl .  "object-meta/id/" . $id . "?apikey=" . self::$apikey, "GET");
+        $response = $response->data;
 
         $wsDocument = self::fillWebserviceData("Webservice_Data_Class_In", $response);
 
@@ -523,6 +534,7 @@ class Pimcore_Tool_RestClient {
      */
     public function getKeyValueDefinition() {
         $response = $this->doRequest(self::$baseUrl .  "key-value-definition?apikey=" . self::$apikey, "GET");
+        $response = $response->data;
 
         return $response;
     }
