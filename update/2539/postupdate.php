@@ -13,5 +13,4 @@ $db->query("INSERT INTO `users_permission_definitions` VALUES ('targeting');");
 $db->query("INSERT INTO `users_permission_definitions` VALUES ('notes_events');");
 $db->query("INSERT INTO `users_permission_definitions` VALUES ('backup');");
 $db->query("INSERT INTO `users_permission_definitions` VALUES ('bounce_mail_inbox');");
-$db->query("INSERT INTO `users_permission_definitions` VALUES ('bounce_mail_inbox');");
 $db->query("INSERT INTO `users_permission_definitions` VALUES ('website_settings');");
