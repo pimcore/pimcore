@@ -186,7 +186,10 @@ pimcore.document.pages.preview = Class.create({
                 items: [this.framePanel, this.cssPanel]
             });
 
-            this.layout.on("activate", this.refresh.bind(this));
+            this.layout.on("activate", function () {
+                this.refresh();
+                this.editorClearCurrentElement();
+            }.bind(this));
             this.layout.on("destroy", function () {
                 if(this.editorUpdateInterval) {
                     clearInterval(this.editorUpdateInterval);
