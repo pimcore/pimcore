@@ -212,7 +212,7 @@ pimcore.report.newsletter.item = Class.create({
                     xtype: "combo",
                     name: "class",
                     fieldLabel: t("class"),
-                    value: this.data.class,
+                    value: this.data["class"],
                     triggerAction: 'all',
                     editable: false,
                     store: this.data.availableClasses,
