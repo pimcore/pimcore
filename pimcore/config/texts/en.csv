@@ -969,7 +969,6 @@
 "plugin_download_failed_info","Plugin download failed. Please check permissions!"
 "plugin_repositories","Plugin Servers (comma separated)"
 "inheritable","Inheritable"
-"mendatory_field_empty","Mendatory field is empty"
 "table","Table"
 "rows","Rows"
 "cols","Columns"
