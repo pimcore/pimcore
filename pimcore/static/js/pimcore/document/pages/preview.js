@@ -96,7 +96,8 @@ pimcore.document.pages.preview = Class.create({
                 region: "center",
                 bodyStyle: "-webkit-overflow-scrolling:touch; background:#323232;",
                 html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="'
-                                            + this.iframeName + '" name="' + this.iframeName + '"></iframe>'
+                    + this.iframeName + '" name="' + this.iframeName + '"' +
+                    'style="background: #fff;"></iframe>'
             });
 
             this.stylesField = new Ext.form.TextArea({
