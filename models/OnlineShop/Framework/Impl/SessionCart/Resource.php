@@ -57,7 +57,7 @@ class OnlineShop_Framework_Impl_SessionCart_Resource extends Pimcore_Model_Resou
         $this->delete();
         $carts = new Zend_Session_Namespace('carts');
         $cartName = $this->model->getName();
-        if($carts->$cartName) {
+        if(!$carts->$cartName) {
             $carts->$cartName = new stdClass();
         }
         foreach ($this->fieldsToSave as $field) {
