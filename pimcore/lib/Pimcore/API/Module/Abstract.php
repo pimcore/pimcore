@@ -15,5 +15,129 @@
 
 class Pimcore_API_Module_Abstract extends Pimcore_API_Abstract {
 
+    /**
+     *
+     * Hook called before a key/value key config was added
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function preAddKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
+    {
+
+    }
+
+    /**
+     *
+     * Hook called after a key/value key config was added
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function postAddKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
+    {
+
+    }
+
+    /**
+     * Hook called before a key/value key config is deleted
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function preKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
+    {
+
+    }
+
+    /**
+     * Hook called after a key/value key config is deleted
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function postDeleteKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
+    {
+
+    }
+
+    /**
+     * Hook called before a key/value key config is updated
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function preUpdateKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
+    {
+
+    }
+
+    /**
+     * Hook called after a key/value key config is updated
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function postUpdateKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
+    {
+
+    }
+
+
+    /**
+     *
+     * Hook called before a key/value group config was added
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function preAddKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
+    {
+
+    }
+
+    /**
+     *
+     * Hook called after a key/value group config was added
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function postAddKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
+    {
+
+    }
+
+    /**
+     * Hook called before a key/value group config is deleted
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function preKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
+    {
+
+    }
+
+    /**
+     * Hook called after a key/value group config is deleted
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function postDeleteKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
+    {
+
+    }
+
+    /**
+     * Hook called before a key/value group config is updated
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function preUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
+    {
+
+    }
+
+    /**
+     * Hook called after a key/value key config is updated
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function postUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
+    {
+
+    }
 
 }

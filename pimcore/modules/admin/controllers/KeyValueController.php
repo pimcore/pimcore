@@ -27,15 +27,10 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function addgroupAction() {
         $name = $this->_getParam("name");
         $alreadyExist = false;
+        $config = Object_KeyValue_GroupConfig::getByName($name);
 
-        try {
-            $config = Object_KeyValue_GroupConfig::getByName($name);
-            $alreadyExist = true;
-        } catch (Exception $e) {
-            $alreadyExist = false;
-        }
 
-        if(!$alreadyExist) {
+        if(!$config) {
             $config = new Object_KeyValue_GroupConfig();
             $config->setName($name);
             $config->save();
