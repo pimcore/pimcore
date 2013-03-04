@@ -73,7 +73,7 @@ abstract class Webservice_Data {
         return $value;
     }
 
-    public function reverseMap($object) {
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
 
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {

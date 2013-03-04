@@ -1187,4 +1187,5 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $inheritedProperties = $this->getResource()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
+
 }

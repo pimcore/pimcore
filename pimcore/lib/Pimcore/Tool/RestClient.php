@@ -318,7 +318,7 @@ class Pimcore_Tool_RestClient {
      * @param bool
      * @return Document_Folder
      */
-    public function getDocumentById($id, $decode = true) {
+    public function getDocumentById($id, $decode = true, $idMapper = null) {
         $response = $this->doRequest(self::$baseUrl .  "document/id/" . $id . "?apikey=" . self::$apikey, "GET");
         $response = $response->data;
 
@@ -342,7 +342,7 @@ class Pimcore_Tool_RestClient {
             if (!empty($type)) {
                 $type = "Document_" . ucfirst($wsDocument->type);
                 $document = new $type();
-                $wsDocument->reverseMap($document);
+                $wsDocument->reverseMap($document, false, $idMapper);
                 return $document;
             }
         }
