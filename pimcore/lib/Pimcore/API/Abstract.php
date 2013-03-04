@@ -352,7 +352,7 @@ class Pimcore_API_Abstract
      *
      * @param Object_KeyValue_GroupConfig $config
      */
-    public function preUpdateGroupValueKeyConfig(Object_KeyValue_GroupConfig $config)
+    public function preUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
     {
 
     }
