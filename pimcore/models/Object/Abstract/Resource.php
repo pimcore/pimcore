@@ -158,6 +158,8 @@ class Object_Abstract_Resource extends Element_Resource {
             //get objects to empty their cache
             $objects = $this->db->fetchAll("SELECT o_id,o_path FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
+            $this->db->query("update objects set o_modificationDate = " . time() . " where o_path like " . $this->db->quote($oldPath . "/%") .";");
+
             //update object child paths
             $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where o_path like " . $this->db->quote($oldPath . "/%") .";");
 
