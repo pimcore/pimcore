@@ -180,10 +180,13 @@ class Document_Resource extends Element_Resource {
         //get documents to empty their cache
         $documents = $this->db->fetchAll("SELECT id,path FROM documents WHERE path LIKE ?", $oldPath . "%");
 
-        $this->db->query("update documents set modificationDate = " . time() . " where path like " . $this->db->quote($oldPath . "/%") . ";");
+        $userId = "0";
+        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+            $userId = $user->getId();
+        }
 
         //update documents child paths
-        $this->db->query("update documents set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . ") where path like " . $this->db->quote($oldPath . "/%") . ";");
+        $this->db->query("update documents set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . "), modificationDate = '" . time() . "', userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update documents child permission paths
         $this->db->query("update users_workspaces_document set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") .";");
