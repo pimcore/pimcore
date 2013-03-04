@@ -116,6 +116,31 @@
                 <column name="simularity_attributes" fieldname="attributes" hideInFieldlistDatatype="true" type="INTEGER" interpreter="OnlineShop_Framework_IndexService_Interpreter_ObjectIdSum" />
             </columns>
 
+            <!-- configuration of different tenants -->
+            <tenants>
+                <sampletenant class="OnlineShop_Framework_IndexService_Tenant_DefaultSubTenantConfig">
+                    <generalSearchColumns>
+                        <column name="name"/>
+                        <column name="shortDescription"/>
+                    </generalSearchColumns>
+                    <columns>
+                        <column name="name" type="varchar(255)" />
+                        <column name="shortDescription" type="varchar(255)" />
+                        <column name="supplierRemoteId" type="varchar(255)"/>
+                        <column name="mainImage" type="int" interpreter="OnlineShop_Framework_IndexService_Interpreter_AssetId"/>
+
+                        <column name="hardDiskDriveCapacity" type="DOUBLE"
+                                getter="OnlineShop_Framework_IndexService_Getter_DefaultBrickGetter"
+                                interpreter="OnlineShop_Framework_IndexService_Interpreter_DimensionUnitField">
+                            <config brickfield="specialFeatures" bricktype="Memory" fieldname="hardDiskDriveCapacity"/>
+                        </column>
+                    </columns>
+
+                </sampletenant>
+                <testtenant2 class="OnlineShop_Framework_IndexService_Tenant_DefaultConfigInheritColumnConfig">
+                </testtenant2>
+            </tenants>
+
         </productindex>
 
         <!-- assign backend implementations and views to filter type field collections -->
