@@ -42,7 +42,7 @@ class Pimcore_API_Module_Abstract extends Pimcore_API_Abstract {
      *
      * @param Object_KeyValue_KeyConfig $config
      */
-    public function preKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
+    public function preDeleteKeyValueKeyConfig(Object_KeyValue_KeyConfig $config)
     {
 
     }
@@ -105,7 +105,7 @@ class Pimcore_API_Module_Abstract extends Pimcore_API_Abstract {
      *
      * @param Object_KeyValue_GroupConfig $config
      */
-    public function preKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
+    public function preDeleteKeyValueGroupConfig(Object_KeyValue_GroupConfig $config)
     {
 
     }
