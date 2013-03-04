@@ -165,6 +165,8 @@ class Asset_Resource extends Element_Resource {
         //get assets to empty their cache
         $assets = $this->db->fetchAll("SELECT id,path FROM assets WHERE path LIKE " . $this->db->quote($oldPath . "%"));
 
+        $this->db->query("update assets set modificationDate = " . time() . " where path like " . $this->db->quote($oldPath . "/%")  . ";");
+
         //update assets child paths
         $this->db->query("update assets set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where path like " . $this->db->quote($oldPath . "/%")  . ";");
 
