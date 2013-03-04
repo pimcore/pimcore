@@ -414,7 +414,11 @@ class Pimcore_Tool {
                 if(Pimcore_Tool::classExists($tmpClassName)) {
                     if(is_subclass_of($tmpClassName, $sourceClassName)) {
                         $targetClassName = $tmpClassName;
+                    } else {
+                        Logger::error("Classmapping for " . $sourceClassName . " failed. '" . $tmpClassName . " is not a subclass of '" . $sourceClassName . "'. " . $tmpClassName . " has to extend " . $sourceClassName);
                     }
+                } else {
+                    Logger::error("Classmapping for " . $sourceClassName . " failed. Cannot find class '" . $tmpClassName . "'");
                 }
             }
         }
