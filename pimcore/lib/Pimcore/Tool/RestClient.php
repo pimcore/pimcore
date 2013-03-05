@@ -249,7 +249,7 @@ class Pimcore_Tool_RestClient {
 
 
     public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null,
-                                                                $groupBy = null, $decode = true) {
+                                    $groupBy = null, $decode = true) {
         $params = $this->fillParms($condition, $order, $orderKey, $offset, $limit, $groupBy);
 
         $response = $this->doRequest(self::$baseUrl .  "document-list/?apikey=" . self::$apikey . $params, "GET");
@@ -495,12 +495,13 @@ class Pimcore_Tool_RestClient {
      */
     public function getClassById($id, $decode = true) {
         $response = $this->doRequest(self::$baseUrl .  "class/id/" . $id . "?apikey=" . self::$apikey, "GET");
-        $response = $response->data;
-        $wsDocument = self::fillWebserviceData("Webservice_Data_Class_In", $response);
+        $responseData = $response->data;
 
         if (!$decode) {
-            return $wsDocument;
+            return $response;
         }
+
+        $wsDocument = self::fillWebserviceData("Webservice_Data_Class_In", $responseData);
 
         $class = new Object_Class();
         $wsDocument->reverseMap($class);
@@ -575,8 +576,31 @@ class Pimcore_Tool_RestClient {
      * @return mixed
      */
     public function getUser() {
-        $response = $this->doRequest(self::$baseUrl .  "user?apikey=" . self::$apikey, "GET");
+        $url = self::$baseUrl .  "user?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
         $response = array("success" => true, "data" => $response->data);
+
+        return $response;
+    }
+
+    public function getFieldCollections() {
+        $url = self::$baseUrl .  "field-collections?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+
+        return $response;
+    }
+
+    public function getFieldCollection($id) {
+        $url = self::$baseUrl .  "field-collection/id/" . $id . "?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+
+        return $response;
+    }
+
+
+    public function getClasses() {
+        $url = self::$baseUrl .  "classes?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
 
         return $response;
     }
