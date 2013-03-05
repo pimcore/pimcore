@@ -74,7 +74,7 @@ if($newsletter) {
                 $note->setData(array());
                 $note->save();
 
-                Logger::info("Sent newsletter to: " . obfucateEmail($object->getEmail()) . " [" . $newsletter->getName() . "]");
+                Logger::info("Sent newsletter to: " . obfuscateEmail($object->getEmail()) . " [" . $newsletter->getName() . "]");
             } catch (\Exception $e) {
                 Logger::err($e);
             }
@@ -103,7 +103,7 @@ if($newsletter) {
 
 
 
-function obfucateEmail($email) {
+function obfuscateEmail($email) {
     $email = substr_replace($email, ".xxx", strrpos($email, "."));
     return $email;
 }
