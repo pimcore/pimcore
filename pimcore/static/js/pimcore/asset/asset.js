@@ -240,6 +240,24 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 }.bind(this)
             });
 
+            // only for videos and images
+            if (this.isAllowed("publish") && in_array(this.data.type,["image","video"])) {
+                buttons.push({
+                    text: t("clear_thumbnails"),
+                    iconCls: "pimcore_icon_menu_clear_thumbnails",
+                    scale: "medium",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/asset/clear-thumbnail",
+                            method: "get",
+                            params: {
+                                id: this.data.id
+                            }
+                        })
+                    }.bind(this)
+                });
+            }
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
