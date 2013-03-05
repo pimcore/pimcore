@@ -1197,6 +1197,22 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => $success));
     }
 
+    public function clearThumbnailAction () {
+
+        $success = false;
+
+        if($asset = Asset::getById($this->getParam("id"))) {
+            if(method_exists($asset, "clearThumbnails")) {
+                $asset->clearThumbnails(true); // force clear
+                $asset->save();
+
+                $success = true;
+            }
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
     protected function importFromFileSystem ($path, $parentId) {
 
         $assetFolder = Asset::getById($parentId);
