@@ -38,6 +38,11 @@ class Redirect extends Pimcore_Model_Abstract {
     public $sourceSite;
 
     /**
+     * @var bool
+     */
+    public $passThroughParameters;
+
+    /**
      * @var string
      */
     public $target;
@@ -302,5 +307,28 @@ class Redirect extends Pimcore_Model_Abstract {
     public function getTargetSite()
     {
         return $this->targetSite;
+    }
+
+    /**
+     * @param $passThroughParameters
+     * @return Redirect
+     */
+    public function setPassThroughParameters($passThroughParameters)
+    {
+        if($passThroughParameters) {
+            $this->passThroughParameters = (bool) $passThroughParameters;
+        } else {
+            $this->passThroughParameters = null;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getPassThroughParameters()
+    {
+        return $this->passThroughParameters;
     }
 }

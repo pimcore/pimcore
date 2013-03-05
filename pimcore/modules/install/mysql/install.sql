@@ -408,6 +408,7 @@ CREATE TABLE `redirects` (
   `source` varchar(255) DEFAULT NULL,
   `sourceEntireUrl` tinyint(1) DEFAULT NULL,
   `sourceSite` int(11) DEFAULT NULL,
+  `passThroughParameters` tinyint(1) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,
   `targetSite` int(11) DEFAULT NULL,
   `statusCode` varchar(3) DEFAULT NULL,

@@ -499,12 +499,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             }
 
             $requestScheme = ($_SERVER['HTTPS'] == 'on') ? Zend_Controller_Request_Http::SCHEME_HTTPS : Zend_Controller_Request_Http::SCHEME_HTTP;
-            $matchRequestUri = $_SERVER["REQUEST_URI"];
-            $matchUrl = $requestScheme . "://" . $_SERVER["HTTP_HOST"] . $matchRequestUri;
+            $matchRequestPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+            $matchUrl = $requestScheme . "://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
 
             foreach ($this->redirects as $redirect) {
 
-                $matchAgainst = $matchRequestUri;
+                $matchAgainst = $matchRequestPath;
                 if($redirect->getSourceEntireUrl()) {
                     $matchAgainst = $matchUrl;
                 }
@@ -556,6 +556,17 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                         } else if (!preg_match("@http(s)?://@i", $url) && $config->general->domain && $redirect->getSourceEntireUrl()) {
                             // prepend the host and scheme to avoid infinite loops when using "domain" redirects
                             $url = ($front->getRequest()->isSecure() ? "https" : "http") . "://" . $config->general->domain . $url;
+                        }
+
+                        // pass-through parameters if specified
+                        if($redirect->getPassThroughParameters()) {
+                            $glue = "?";
+                            if(strpos($url, "?")) {
+                                $glue = "&";
+                            }
+
+                            $url .= $glue;
+                            $url .= $_SERVER["QUERY_STRING"];
                         }
 
                         header($redirect->getHttpStatus());
