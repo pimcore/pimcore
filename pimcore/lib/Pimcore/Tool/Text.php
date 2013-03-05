@@ -194,7 +194,13 @@ class Pimcore_Tool_Text
                     $el->src=null;
                 }
             }
-            return $html->save();
+
+            $return = $html->save();
+
+            $html->clear();
+            unset($html);
+
+            return $return;
         }
     }
 

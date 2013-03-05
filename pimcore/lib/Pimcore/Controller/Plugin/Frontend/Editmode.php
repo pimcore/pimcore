@@ -214,6 +214,9 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
                     $this->getResponse()->setBody($body);
                 }
+
+                $html->clear();
+                unset($html);
             }
         }
 

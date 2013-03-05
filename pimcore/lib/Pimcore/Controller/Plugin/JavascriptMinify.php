@@ -129,6 +129,10 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
                 }
 
                 $body = $html->save();
+
+                $html->clear();
+                unset($html);
+
                 $this->getResponse()->setBody($body);
             }
         }

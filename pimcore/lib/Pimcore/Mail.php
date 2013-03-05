@@ -720,6 +720,9 @@ class Pimcore_Mail extends Zend_Mail
                         }
                         $htmlContent = $body->innertext;
                     }
+
+                    $html->clear();
+                    unset($html);
                 }
                $content = $this->html2Text($htmlContent);
 

@@ -64,6 +64,9 @@ class Pimcore_Tool_Newsletter {
                         $link->href = $link->href . $glue . "utm_source=Newsletter&utm_medium=Email&utm_campaign=" . $newsletter->getName();
                     }
                     $content = $html->save();
+
+                    $html->clear();
+                    unset($html);
                 }
 
                 $mail->setBodyHtml($content);

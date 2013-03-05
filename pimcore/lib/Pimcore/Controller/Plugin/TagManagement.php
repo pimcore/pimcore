@@ -99,12 +99,21 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
 
                                 // we havve to reinitialize the html object, otherwise it causes problems with nested child selectors
                                 $body = $html->save();
+
+                                $html->clear();
+                                unset($html);
+
                                 $html = str_get_html($body);
                             }
                         }
                     }
                 }
             }
+        }
+
+        if($html && method_exists($html, "clear")) {
+            $html->clear();
+            unset($html);
         }
 
         $this->getResponse()->setBody($body);

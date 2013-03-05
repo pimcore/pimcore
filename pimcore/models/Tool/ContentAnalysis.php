@@ -98,6 +98,9 @@ class Tool_ContentAnalysis extends Pimcore_Model_Abstract {
                     $record["twitter"] = count($html->find("meta[property^=twitter],meta[name^=twitter]"));
 
                     $record["robotsMetaBlocked"] = (int) ((bool) $html->find("meta[content*=noindex]"));
+
+                    $html->clear();
+                    unset($html);
                 }
 
                 /*
