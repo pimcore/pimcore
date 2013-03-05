@@ -328,7 +328,7 @@ class Pimcore_Tool_RestClient {
                 return $wsDocument;
             }
             $doc = new Document_Folder();
-            $wsDocument->reverseMap($doc);
+            $wsDocument->reverseMap($doc, false, $idMapper);
             return $doc;
         } else {
             $type = ucfirst($response->type);
@@ -349,8 +349,12 @@ class Pimcore_Tool_RestClient {
     }
 
 
-    public function getAssetById($id, $decode = true) {
-        $response = $this->doRequest(self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey, "GET");
+    public function getAssetById($id, $decode = true, $idMapper = null, $light = false) {
+        $uri = self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey;
+        if ($light) {
+            $uri .= "&light=1";
+        }
+        $response = $this->doRequest($uri, "GET");
         $response = $response->data;
 
         if ($response->type == "folder") {
@@ -359,7 +363,7 @@ class Pimcore_Tool_RestClient {
                 return $wsDocument;
             }
             $asset = new Asset_Folder();
-            $wsDocument->reverseMap($asset);
+            $wsDocument->reverseMap($asset, false, $idMapper);
             return $asset;
         } else {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Asset_File_In", $response);
@@ -376,6 +380,20 @@ class Pimcore_Tool_RestClient {
 
                 $asset = new $type();
                 $wsDocument->reverseMap($asset);
+
+                if ($light) {
+                    $client = Pimcore_Tool::getHttpClient();
+                    $client->setMethod("GET");
+                    $path = $wsDocument->path;
+                    $filename = $wsDocument->filename;
+                    $uri = "http://" . self::$host . "/website/var/assets" . $path . $filename;
+                    $client->setUri($uri);
+                    $result = $client->request();
+                    $data = $result->getBody();
+                    $asset->setData($data);
+
+                }
+
                 return $asset;
             }
         }
@@ -604,7 +622,6 @@ class Pimcore_Tool_RestClient {
 
         return $response;
     }
-
 
     public function getObjectBricks() {
         $url = self::$baseUrl .  "object-bricks?apikey=" . self::$apikey;
