@@ -29,7 +29,7 @@ class Pimcore_Image_HtmlToImage {
     public static function getWkhtmltoimageBinary () {
 
         if(Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage) {
-            if(is_executable(Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage)) {
+            if(@is_executable(Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage)) {
                 return (string) Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage;
             } else {
                 Logger::critical("wkhtmltoimage binary: " . Pimcore_Config::getSystemConfig()->documents->wkhtmltoimage . " is not executable");
@@ -40,7 +40,7 @@ class Pimcore_Image_HtmlToImage {
         "/usr/bin/wkhtmltoimage", "/usr/local/bin/wkhtmltoimage", "/bin/wkhtmltoimage");
 
         foreach ($paths as $path) {
-            if(is_executable($path)) {
+            if(@is_executable($path)) {
                 return $path;
             }
         }

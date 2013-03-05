@@ -38,7 +38,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public static function getFfmpegCli () {
 
         if(Pimcore_Config::getSystemConfig()->assets->ffmpeg) {
-            if(is_executable(Pimcore_Config::getSystemConfig()->assets->ffmpeg)) {
+            if(@is_executable(Pimcore_Config::getSystemConfig()->assets->ffmpeg)) {
                 return Pimcore_Config::getSystemConfig()->assets->ffmpeg;
             } else {
                 Logger::critical("FFMPEG binary: " . Pimcore_Config::getSystemConfig()->assets->ffmpeg . " is not executable");
@@ -48,7 +48,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
         $paths = array("/usr/bin/ffmpeg","/usr/local/bin/ffmpeg", "/bin/ffmpeg");
 
         foreach ($paths as $path) {
-            if(is_executable($path)) {
+            if(@is_executable($path)) {
                 return $path;
             }
         }
@@ -114,7 +114,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
     public static function getQtfaststartCli () {
 
         if(Pimcore_Config::getSystemConfig()->assets->qtfaststart) {
-            if(is_executable(Pimcore_Config::getSystemConfig()->assets->qtfaststart)) {
+            if(@is_executable(Pimcore_Config::getSystemConfig()->assets->qtfaststart)) {
                 return Pimcore_Config::getSystemConfig()->assets->qtfaststart;
             } else {
                 Logger::critical("qtfaststart binary: " . Pimcore_Config::getSystemConfig()->assets->qtfaststart . " is not executable");
@@ -123,7 +123,7 @@ class Pimcore_Video_Adapter_Ffmpeg extends Pimcore_Video_Adapter {
 
         $paths = array("/usr/bin/qtfaststart","/usr/local/bin/qtfaststart", "/bin/qtfaststart");
         foreach ($paths as $path) {
-            if(is_executable($path)) {
+            if(@is_executable($path)) {
                 return $path;
             }
         }
