@@ -99,9 +99,24 @@ abstract class Webservice_Data {
                 $dat = $propertyWs["data"];
                 $type = $propertyWs["type"];
                 if (in_array($type, array("object", "document", "asset"))) {
-                    $dat = Element_Service::getElementById($propertyWs["type"], $propertyWs["data"]);
+
+                    $id = $propertyWs["data"];
+                    $type = $propertyWs["type"];
+                    $dat = null;
+                    if ($idMapper) {
+                        $id = $idMapper->getMappedId($type, $id);
+                    }
+
+                    if ($id) {
+                        $dat = Element_Service::getElementById($type, $id);
+                    }
+
                     if (is_numeric($propertyWs["data"]) and !$dat) {
-                        throw new Exception("cannot import property [ " . $propertyWs["name"] . " ] because it references unknown " . $propertyWs["type"]);
+                        if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                            throw new Exception("cannot import property [ " . $type . " ] because it references unknown " . $propertyWs["data"]);
+                        } else {
+                            $idMapper->recordMappingFailure($object, $type, $propertyWs["data"]);
+                        }
                     }
                 } else if ($type == "date"){
                     $dat = new Pimcore_Date(strtotime($propertyWs["data"]));
@@ -113,7 +128,5 @@ abstract class Webservice_Data {
                 $object->setProperty($propertyWs["name"], $propertyWs["type"], $dat, $propertyWs["inherited"]);
             }
         }
-
-
     }
 }
