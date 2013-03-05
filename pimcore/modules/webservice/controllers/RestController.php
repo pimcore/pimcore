@@ -252,6 +252,10 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     $object = $this->service->getAssetFolderById($id);
                 } else {
                     $object = $this->service->getAssetFileById($id);
+                    $light = $this->getParam("light");
+                    if ($light) {
+                        unset($object->data);
+                    }
                 }
                 $this->encoder->encode(array("success" => true, "data" => $object));
                 return;
