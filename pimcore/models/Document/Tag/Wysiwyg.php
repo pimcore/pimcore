@@ -149,5 +149,8 @@ class Document_Tag_Wysiwyg extends Document_Tag {
         }
 
         $this->text = $html->save();
+
+        $html->clear();
+        unset($html);
     }
 }

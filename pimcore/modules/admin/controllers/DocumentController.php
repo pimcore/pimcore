@@ -1116,6 +1116,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                                 }
                                             }
                                         }
+
+                                        $html->clear();
+                                        unset($html);
                                     }
                                 }
                             } catch (Exception $e) {

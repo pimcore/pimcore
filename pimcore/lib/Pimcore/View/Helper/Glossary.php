@@ -124,6 +124,9 @@ class Pimcore_View_Helper_Glossary_Controller {
             }
             echo $html->save();
 
+            $html->clear();
+            unset($html);
+
             // very memory intensive method with a huge amount of glossary entries
             /*foreach ($data as $search => $replace) {
                 $html = str_get_html($contents);
