@@ -69,6 +69,7 @@ pimcore.settings.redirects = Class.create({
             {name: 'source', allowBlank: false},
             {name: 'sourceEntireUrl', allowBlank: true},
             {name: 'sourceSite', allowBlank: true},
+            {name: 'passThroughParameters', allowBlank: true},
             {name: 'target', allowBlank: false},
             {name: 'targetSite', allowBlank: true},
             {name: 'statusCode', allowBlank: true},
@@ -160,6 +161,12 @@ pimcore.settings.redirects = Class.create({
             width: 70
         });
 
+        var passThroughParametersCheck = new Ext.grid.CheckColumn({
+            header: t("pass_through_params"),
+            dataIndex: "passThroughParameters",
+            width: 70
+        });
+
         var typesColumns = [
             {header: t("source"), width: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
             sourceEntireUrlCheck,
@@ -176,6 +183,7 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
+            passThroughParametersCheck,
             {header: t("target"), width: 200, sortable: false, dataIndex: 'target',
                 editor: new Ext.form.TextField({}),
                 css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
