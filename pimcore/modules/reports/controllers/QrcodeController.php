@@ -94,33 +94,8 @@ class Reports_QrcodeController extends Pimcore_Controller_Action_Admin_Reports {
 
     public function codeAction () {
 
-        $url = $this->getParam("url");
-        $urlParts = parse_url($url);
-
-        if(empty($urlParts["host"])) {
-            $urlParts["host"] = $this->getRequest()->getHttpHost();
-        }
-        if(empty($urlParts["scheme"])) {
-            $urlParts["scheme"] = $this->getRequest()->getScheme();
-        }
-
-        if($this->getParam("googleAnalytics") === "true") {
-            if(!array_key_exists("query", $urlParts)) {
-                $urlParts["query"] = "";
-            } else {
-                $urlParts["query"] .= "&";
-            }
-
-            $urlParts["query"] .= "utm_source=Mobile&utm_medium=QR-Code&utm_campaign=" . $this->getParam("name");
-        }
-
-        $url = $urlParts["scheme"] . "://" . $urlParts["host"] . $urlParts["path"];
-        if(!empty($urlParts["query"])) {
-            $url .= "?" . $urlParts["query"];
-        }
-        if(!empty($urlParts["fragment"])) {
-            $url .= ("#" . $urlParts["fragment"]);
-        }
+        $url = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() . "/qr~-~code/" .
+            $this->getParam("name");
 
         $codeSettings = array(
             'text' => $url,

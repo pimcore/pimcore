@@ -78,6 +78,7 @@ class Pimcore {
         }
 
         if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
+            $front->registerPlugin(new Pimcore_Controller_Plugin_QrCode(), 793);
             $front->registerPlugin(new Pimcore_Controller_Plugin_CommonFilesFilter(), 794);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Thumbnail(), 795);
             $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
