@@ -605,4 +605,19 @@ class Pimcore_Tool_RestClient {
         return $response;
     }
 
+
+    public function getObjectBricks() {
+        $url = self::$baseUrl .  "object-bricks?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+
+        return $response;
+    }
+
+    public function getObjectBrick($id) {
+        $url = self::$baseUrl .  "object-brick/id/" . $id . "?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+
+        return $response;
+    }
+
 }
