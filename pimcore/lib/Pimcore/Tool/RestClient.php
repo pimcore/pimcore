@@ -549,7 +549,7 @@ class Pimcore_Tool_RestClient {
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve asset count");
         }
-        return $response["totalCount"];
+        return $response["data"]->totalCount;
     }
 
     public function getDocumentCount($condition = null, $groupBy = null) {
@@ -559,7 +559,7 @@ class Pimcore_Tool_RestClient {
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve document count");
         }
-        return $response["totalCount"];
+        return $response["data"]->totalCount;
     }
 
     public function getObjectCount($condition = null, $groupBy = null) {
@@ -569,7 +569,7 @@ class Pimcore_Tool_RestClient {
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve object count");
         }
-        return $response["totalCount"];
+        return $response["data"]->totalCount;
     }
 
     /** Returns the current user
