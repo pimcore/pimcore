@@ -60,8 +60,8 @@ class Webservice_Data_Document_PageSnippet extends Webservice_Data_Document {
     }
     
     
-    public function reverseMap ($object) {
-        parent::reverseMap($object);
+    public function reverseMap ($object, $disableMappingExceptions = false, $idMapper = null) {
+        parent::reverseMap($object, $disableMappingExceptions, $idMapper);
         
         $object->childs = null;
         $object->elements = array();

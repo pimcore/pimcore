@@ -23,6 +23,8 @@ class Pimcore_Tool_RestClient {
 
     static private $apikey;
 
+    static private $disableMappingExceptions = false;
+
 
     /** Set the host name.
      * @param $host e.g. pimcore.jenkins.elements.at
@@ -300,7 +302,7 @@ class Pimcore_Tool_RestClient {
                 $object = new $classname();
 
                 if ($object instanceof Object_Concrete) {
-                    $wsDocument->reverseMap($object, false, $idMapper);
+                    $wsDocument->reverseMap($object, self::$disableMappingExceptions, $idMapper);
                     return $object;
                 } else {
                     throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
@@ -328,7 +330,7 @@ class Pimcore_Tool_RestClient {
                 return $wsDocument;
             }
             $doc = new Document_Folder();
-            $wsDocument->reverseMap($doc, false, $idMapper);
+            $wsDocument->reverseMap($doc, self::$disableMappingExceptions, $idMapper);
             return $doc;
         } else {
             $type = ucfirst($response->type);
@@ -342,7 +344,7 @@ class Pimcore_Tool_RestClient {
             if (!empty($type)) {
                 $type = "Document_" . ucfirst($wsDocument->type);
                 $document = new $type();
-                $wsDocument->reverseMap($document, false, $idMapper);
+                $wsDocument->reverseMap($document, self::$disableMappingExceptions, $idMapper);
                 return $document;
             }
         }
@@ -363,7 +365,7 @@ class Pimcore_Tool_RestClient {
                 return $wsDocument;
             }
             $asset = new Asset_Folder();
-            $wsDocument->reverseMap($asset, false, $idMapper);
+            $wsDocument->reverseMap($asset, self::$disableMappingExceptions, $idMapper);
             return $asset;
         } else {
             $wsDocument = self::fillWebserviceData("Webservice_Data_Asset_File_In", $response);
@@ -379,7 +381,7 @@ class Pimcore_Tool_RestClient {
                 }
 
                 $asset = new $type();
-                $wsDocument->reverseMap($asset);
+                $wsDocument->reverseMap($asset, self::$disableMappingExceptions, $idMapper);
 
                 if ($light) {
                     $client = Pimcore_Tool::getHttpClient();
