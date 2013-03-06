@@ -229,6 +229,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         this.component = new Ext.grid.EditorGridPanel({
             store: this.store,
             trackMouseOver: true,
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
             stripeRows: true,
             colModel: new Ext.grid.ColumnModel({
