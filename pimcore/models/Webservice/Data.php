@@ -115,7 +115,7 @@ abstract class Webservice_Data {
                         if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                             throw new Exception("cannot import property [ " . $type . " ] because it references unknown " . $propertyWs["data"]);
                         } else {
-                            $idMapper->recordMappingFailure($object, $type, $propertyWs["data"]);
+                            $idMapper->recordMappingFailure($object->getId(), $type, $propertyWs["data"]);
                         }
                     }
                 } else if ($type == "date"){

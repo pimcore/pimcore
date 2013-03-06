@@ -131,7 +131,7 @@ class Document_Tag_Date extends Document_Tag {
         * @param  Webservice_Data_Document_Element $data
         * @return void
         */
-       public function getFromWebserviceImport($wsElement){
+       public function getFromWebserviceImport($wsElement, $idMapper = null){
 
            if(!$wsElement or empty($wsElement->value)){
                 $this->date=null;

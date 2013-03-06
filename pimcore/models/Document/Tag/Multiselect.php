@@ -87,7 +87,7 @@ class Document_Tag_Multiselect extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->values === null or is_array($data->values)) {
             $this->values = $data->values;

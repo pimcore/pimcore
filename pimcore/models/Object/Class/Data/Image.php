@@ -276,7 +276,7 @@ class Object_Class_Data_Image extends Object_Class_Data {
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                 throw new Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
             } else {
-                $idMapper->recordMappingFailure($relatedObject, "asset", $value);
+                $idMapper->recordMappingFailure($relatedObject->getId(), "asset", $value);
             }
         }
     }

@@ -67,9 +67,13 @@ interface Document_Tag_Interface {
      *
      * @abstract
      * @param  object $wsElement
+     * @param IdMapper $idMapper
      * @return void
      */
-    public function getFromWebserviceImport($wsElement);
+//    JAIC: $idMapper is needed for REST webservice import. However, cannot just add this to
+//    the interface as otherwise all tags would have to implement it including those defined
+//    in (internal & external) plugins which are already in use.
+//    public function getFromWebserviceImport($wsElement, $idMapper = null);
 
 
     /**

@@ -659,7 +659,7 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
                         if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                             throw new Exception("cannot get values from web service import - unknown element of type [ " . $href["type"] . " ] with id [" . $href["id"] . "] is referenced");
                         } else {
-                            $idMapper->recordMappingFailure($relatedObject, $type, $href["id"]);
+                            $idMapper->recordMappingFailure($relatedObject->getId(), $type, $href["id"]);
                         }
                     }
                 }

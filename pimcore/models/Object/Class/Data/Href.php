@@ -507,7 +507,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
                     if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                         throw new Exception("cannot get values from web service import - invalid href relation");
                     } else {
-                        $idMapper->recordMappingFailure($relatedObject, $type,  $value["id"]);
+                        $idMapper->recordMappingFailure($relatedObject->getId(), $type,  $value["id"]);
                     }
                 }
 

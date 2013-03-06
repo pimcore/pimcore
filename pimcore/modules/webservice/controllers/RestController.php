@@ -418,7 +418,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 if (!$object) {
                     throw new Exception("could not find document");
                 }
-                $this->encoder->encode(array("success" => true, "data" => $object));
+                @$this->encoder->encode(array("success" => true, "data" => $object));
                 return;
             } else if ($this->isDelete()) {
                 $success = $this->service->deleteDocument($id);

@@ -30,7 +30,7 @@ class Webservice_Data_Document_Hardlink_In extends Webservice_Data_Document_Link
         }
 
         if ($idMapper) {
-            $idMapper->recordMappingFailure($object, "document", $sourceId);
+            $idMapper->recordMappingFailure($object->getId(), "document", $sourceId);
         }
 
         $object->setSourceId = $sourceId;
