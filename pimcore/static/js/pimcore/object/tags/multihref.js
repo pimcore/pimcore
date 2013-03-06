@@ -112,6 +112,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.grid.GridPanel({
             store: this.store,
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: false
