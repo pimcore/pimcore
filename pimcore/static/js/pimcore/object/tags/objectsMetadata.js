@@ -127,18 +127,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 });
             } else if(this.fieldConfig.columns[i].type == "bool") {
                 if(!readOnly) {
-                    editor = new Ext.form.Checkbox();
-
-                    listeners = {
-                        "mousedown": function (col, grid, rowIndex, event) {
-                            console.log("ddd");
-                            var store = grid.getStore();
-                            var record = store.getAt(rowIndex);
-                            record.set(col.dataIndex, !record.data[col.dataIndex]);
-                            this.dataChanged = true;
-                        }.bind(this)
-                    };
-
+                    columns.push(new Ext.grid.CheckColumn({
+                        header: ts(this.fieldConfig.columns[i].label),
+                        dataIndex: this.fieldConfig.columns[i].key,
+                        width: width
+                    }));
+                    continue;
                 }
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     metaData.css += ' x-grid3-check-col-td';
@@ -163,20 +157,58 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         }
 
 
-        columns.push({
-                        xtype: 'actioncolumn',
-                        width: 30,
-                        items: [
-                            {
-                                tooltip: t('open'),
-                                icon: "/pimcore/static/img/icon/pencil_go.png",
-                                handler: function (grid, rowIndex) {
-                                    var data = grid.getStore().getAt(rowIndex);
-                                    pimcore.helpers.openObject(data.data.id, "object");
-                                }.bind(this)
+        if(!readOnly) {
+            columns.push({
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [
+                    {
+                        tooltip: t('up'),
+                        icon: "/pimcore/static/img/icon/arrow_up.png",
+                        handler: function (grid, rowIndex) {
+                            if(rowIndex > 0) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                grid.getStore().removeAt(rowIndex);
+                                grid.getStore().insert(rowIndex-1, [rec]);
                             }
-                        ]
-                    });
+                        }.bind(this)
+                    }
+                ]
+            });
+            columns.push({
+                xtype: 'actioncolumn',
+                width: 30,
+                items: [
+                    {
+                        tooltip: t('down'),
+                        icon: "/pimcore/static/img/icon/arrow_down.png",
+                        handler: function (grid, rowIndex) {
+                            if(rowIndex < (grid.getStore().getCount()-1)) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                grid.getStore().removeAt(rowIndex);
+                                grid.getStore().insert(rowIndex+1, [rec]);
+                            }
+                        }.bind(this)
+                    }
+                ]
+            });
+        }
+
+        columns.push({
+            xtype: 'actioncolumn',
+            width: 30,
+            items: [
+                {
+                    tooltip: t('open'),
+                    icon: "/pimcore/static/img/icon/pencil_go.png",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.openObject(data.data.id, "object");
+                    }.bind(this)
+                }
+            ]
+        });
+
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
@@ -191,14 +223,14 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     }
                 ]
             });
-
         }
 
 
         this.component = new Ext.grid.EditorGridPanel({
-            selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
-            plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
+            trackMouseOver: true,
+            columnLines: true,
+            stripeRows: true,
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: false
