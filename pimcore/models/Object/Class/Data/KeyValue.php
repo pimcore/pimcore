@@ -369,6 +369,11 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
                     "name" => $keyName,
                     "value" => $item["value"]
                 );
+
+                if ($keyConfig->getType() == "translated") {
+                    $resultItem["translated"] = $item["translated"];
+                }
+
                 $result[] = $resultItem;
             }
             return $result;
@@ -399,7 +404,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
                         $newKey = $idMapper->getMappedId("kvkey", $key);
                         if (!$newKey) {
                             if ($idMapper->ignoreMappingFailures()) {
-                                $idMapper->recordMappingFailure($relatedObject, "kvkey", $key);
+                                $idMapper->recordMappingFailure($relatedObject->getId(), "kvkey", $key);
                                 continue;
                             } else {
                                 throw new Exception("Key " . $key . " could not be mapped");
