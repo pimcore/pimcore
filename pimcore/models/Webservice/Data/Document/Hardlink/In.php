@@ -22,7 +22,7 @@ class Webservice_Data_Document_Hardlink_In extends Webservice_Data_Document_Link
         $sourceId = $this->sourceId;
         $this->sourceId = null;
 
-        parent::reverseMap($object);
+        parent::reverseMap($object, $disableMappingExceptions, $idMapper);
 
 
         if ($idMapper) {
@@ -34,7 +34,7 @@ class Webservice_Data_Document_Hardlink_In extends Webservice_Data_Document_Link
         }
 
         $object->setSourceId = $sourceId;
-        }
+    }
 
 
 }
