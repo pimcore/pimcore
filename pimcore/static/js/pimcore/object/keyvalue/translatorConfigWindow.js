@@ -15,9 +15,10 @@
 pimcore.registerNS("pimcore.object.keyvalue.translatorconfigwindow");
 pimcore.object.keyvalue.translatorconfigwindow = Class.create({
 
-    initialize: function (keyid, parentPanel) {
+    initialize: function (keyid, parentPanel, groupId) {
         this.parentPanel = parentPanel;
         this.keyid = keyid;
+        this.groupId = groupId;
     },
 
 
@@ -37,10 +38,11 @@ pimcore.object.keyvalue.translatorconfigwindow = Class.create({
             url: "/admin/key-value/get-translator-configs",
             success: this.selectTranslator.bind(this),
             failure: function() {
-                        this.window.hide();
-                    }.bind(this)
+                this.window.hide();
+            }.bind(this)
         });
     },
+
     selectTranslator: function (response) {
         var availableTranslators = Ext.decode(response.responseText);
 
@@ -72,7 +74,8 @@ pimcore.object.keyvalue.translatorconfigwindow = Class.create({
                     store: storeConfigs,
                     triggerAction: "all",
                     displayField: "name",
-                    valueField: "id"
+                    valueField: "id",
+                    value: this.groupId
                 }
             ],
             bbar: ["->",
