@@ -284,7 +284,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($data)
+    public function getFromWebserviceImport($data, $object = null, $idMapper = null)
     {
         $values = array();
         $count = 0;
@@ -320,7 +320,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
                             if ($field->type != $fd->getFieldType()) {
                                 throw new Exception("Type mismatch for fieldcollection field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
                             }
-                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value);
+                            $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $idMapper);
                             break;
                         }
 
