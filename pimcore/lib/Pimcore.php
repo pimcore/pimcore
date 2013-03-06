@@ -714,7 +714,7 @@ class Pimcore {
     }
 
     /**
-     * foreces a garbage collection
+     * Forces a garbage collection.
      * @static
      * @return void
      */
