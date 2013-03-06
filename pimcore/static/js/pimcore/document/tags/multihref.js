@@ -42,6 +42,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         var elementConfig = {
             store: this.store,
             bodyStyle: "color:#000",
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: false
