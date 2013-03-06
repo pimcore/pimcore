@@ -255,37 +255,60 @@ class Document_Tag_Href extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->id !==null) {
 
             $this->type = $data->type;
             $this->subtype = $data->subtype;
             $this->id = $data->id;
-            if (is_numeric($this->id)) {
-                if ($this->type == "asset") {
-                    $this->element = Asset::getById($this->id);
-                    if(!$this->element instanceof Asset){
-                        throw new Exception("cannot get values from web service import - referenced asset with id [ ".$this->id." ] is unknown");
+
+            if (!is_numeric($this->id)) {
+                throw new Exception("cannot get values from web service import - id is not valid");
+            }
+
+            if ($idMapper) {
+                $this->id = $idMapper->getMappedId($this->type, $data->id);
+            }
+
+
+            if ($this->type == "asset") {
+                $this->element = Asset::getById($this->id);
+                if(!$this->element instanceof Asset){
+                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                        $idMapper->recordMappingFailure($this->getDocumentId(), $data->type, $data->id);
+                    } else {
+                        throw new Exception("cannot get values from web service import - referenced asset with id [ ".$data->id." ] is unknown");
                     }
-                } else if ($this->type == "document") {
-                    $this->element = Document::getById($this->id);
-                    if(!$this->element instanceof Document){
-                        throw new Exception("cannot get values from web service import - referenced document with id [ ".$this->id." ] is unknown");
+                }
+            } else if ($this->type == "document") {
+                $this->element = Document::getById($this->id);
+                if(!$this->element instanceof Document){
+                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                        $idMapper->recordMappingFailure($this->getDocumentId(), $data->type, $data->id);
+                    } else {
+                        throw new Exception("cannot get values from web service import - referenced document with id [ ".$data->id." ] is unknown");
                     }
-                } else if ($this->type == "object") {
-                    $this->element = Object_Abstract::getById($this->id);
-                    if(!$this->element instanceof Object_Abstract){
-                        throw new Exception("cannot get values from web service import - referenced object with id [ ".$this->id." ] is unknown");
+                }
+            } else if ($this->type == "object") {
+                $this->element = Object_Abstract::getById($this->id);
+                if(!$this->element instanceof Object_Abstract){
+                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                        $idMapper->recordMappingFailure($this->getDocumentId(), $data->type, $data->id);
+                    } else {
+                        throw new Exception("cannot get values from web service import - referenced object with id [ ".$data->id." ] is unknown");
                     }
+                }
+            } else {
+                if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                    $idMapper->recordMappingFailure($this->getDocumentId(), $data->type, $data->id);
                 } else {
                     throw new Exception("cannot get values from web service import - type is not valid");
                 }
-            } else {
-                throw new Exception("cannot get values from web service import - id is not valid");
             }
         }
     }
+
 
     /**
      * @return bool

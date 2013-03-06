@@ -419,7 +419,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
                     if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                         throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
                     } else {
-                        $idMapper->recordMappingFailure($object, "object", $item['id']);
+                        $idMapper->recordMappingFailure($object->getId(), "object", $item['id']);
                     }
 
                 }

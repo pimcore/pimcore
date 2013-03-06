@@ -363,7 +363,7 @@ class Document_Tag_Block extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement){
+    public function getFromWebserviceImport($wsElement, $idMapper = null){
         $data = $wsElement->value;
         if(($data->indices === null or is_array($data->indices)) and ($data->current==null or is_numeric($data->current)) ){
             $this->indices = $data->indices;

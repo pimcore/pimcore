@@ -83,7 +83,7 @@ class Document_Tag_Numeric extends Document_Tag {
         * @param  Webservice_Data_Document_Element $data
         * @return void
         */
-    public function getFromWebserviceImport($wsElement){
+    public function getFromWebserviceImport($wsElement, $idMapper = null){
         $data = $wsElement->value;
         if(empty($data->number) or is_numeric($data->number)){
             $this->number = $data->number;

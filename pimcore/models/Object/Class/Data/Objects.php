@@ -426,7 +426,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
                     if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                         throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
                     } else {
-                        $idMapper->recordMappingFailure($object, "object", $item['id']);
+                        $idMapper->recordMappingFailure($object->getId(), "object", $item['id']);
                     }
                 }
             }

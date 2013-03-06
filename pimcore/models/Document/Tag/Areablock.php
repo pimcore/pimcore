@@ -588,8 +588,10 @@ class Document_Tag_Areablock extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement){
-        throw new Exception("It's not possible to set areas via the webservice");
+    public function getFromWebserviceImport($wsElement, $idMapper = null){
+        if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+            throw new Exception("It's not possible to set areas via the webservice");
+        }
     }
 
 

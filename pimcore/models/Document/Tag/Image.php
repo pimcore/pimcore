@@ -348,25 +348,33 @@ class Document_Tag_Image extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->id !==null) {
-
             $this->alt = $data->alt;
             $this->id = $data->id;
+
+            if ($idMapper) {
+                $this->id = $idMapper->getMappedId("asset", $data->id);
+            }
+
             if (is_numeric($this->id)) {
                 $this->image = Asset_Image::getById($this->id);
                 if (!$this->image instanceof Asset_Image) {
-                    throw new Exception("cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
+                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                        $idMapper->recordMappingFailure($this->getDocumentId(), "asset", $data->id);
+                    } else {
+                        throw new Exception("cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
+                    }
                 }
             } else {
-                throw new Exception("cannot get values from web service import - id is not valid");
+                if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                    $idMapper->recordMappingFailure($this->getDocumentId(), "asset", $data->id);
+                } else {
+                    throw new Exception("cannot get values from web service import - id is not valid");
+                }
             }
-
-
         }
-
-
     }
 
     /**
