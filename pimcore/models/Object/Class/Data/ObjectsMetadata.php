@@ -444,7 +444,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $classId = null;
         $objectId = null;
 
-        if($object instanceof Object_Concrete) {
+        /*if($object instanceof Object_Concrete) {
             $objectId = $object->getId();
             $classId = $object->getClassId();
             $class = $object->getClass();
@@ -460,7 +460,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             $objectId = $object->getObject()->getId();
             $classId = $object->getObject()->getClassId();
             $class = $object->getObject()->getClass();
-        }
+        }*/
 
         $table = "object_metadata_" . $classId;
         $db = Pimcore_Resource::get();
