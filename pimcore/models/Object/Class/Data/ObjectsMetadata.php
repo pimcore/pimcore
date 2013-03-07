@@ -462,6 +462,7 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
             $class = $object->getObject()->getClass();
         }*/
 
+        $classId = $object->getClassId();
         $table = "object_metadata_" . $classId;
         $db = Pimcore_Resource::get();
 
