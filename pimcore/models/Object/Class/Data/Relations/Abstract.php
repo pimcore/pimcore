@@ -268,7 +268,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
                     // build condition
                     $condition = array();
                     foreach ($relation as $key => $value) {
-                        $condition[] = $db->quoteInto($key . " = ?", $value);
+                        $condition[] = $db->quoteInto($db->quoteIdentifier($key) . " = ?", $value);
                     }
                     $db->update("object_relations_" . $classId, $relation, implode(" AND ", $condition));
                 }
