@@ -444,23 +444,15 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         $classId = null;
         $objectId = null;
 
-        /*if($object instanceof Object_Concrete) {
+        if($object instanceof Object_Concrete) {
             $objectId = $object->getId();
-            $classId = $object->getClassId();
-            $class = $object->getClass();
         } else if($object instanceof Object_Fieldcollection_Data_Abstract) {
             $objectId = $object->getObject()->getId();
-            $classId = $object->getObject()->getClassId();
-            $class = $object->getObject()->getClass();
         } else if ($object instanceof Object_Localizedfield) {
             $objectId = $object->getObject()->getId();
-            $classId = $object->getObject()->getClassId();
-            $class = $object->getObject()->getClass();
         } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
             $objectId = $object->getObject()->getId();
-            $classId = $object->getObject()->getClassId();
-            $class = $object->getObject()->getClass();
-        }*/
+        }
 
         $classId = $object->getClassId();
         $table = "object_metadata_" . $classId;
