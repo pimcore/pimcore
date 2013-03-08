@@ -364,7 +364,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($data, $relatedObject)
+    public function getFromWebserviceImport($data, $relatedObject, $idMapper = null)
     {
         $containerName = "Object_" . ucfirst($relatedObject->getClass()->getName()) . "_" . ucfirst($this->getName());
         $container = new $containerName($relatedObject, $this->getName());
@@ -403,7 +403,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                                 if ($field->type != $fd->getFieldType()) {
                                     throw new Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
                                 }
-                                $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value);
+                                $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $idMapper);
                                 break;
                             }
 
