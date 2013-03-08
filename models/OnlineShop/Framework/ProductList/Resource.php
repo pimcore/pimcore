@@ -271,6 +271,6 @@ class OnlineShop_Framework_ProductList_Resource {
         foreach($fields as $c) {
             $columnNames[] = $this->db->quoteIdentifier($c);
         }
-        return 'MATCH (' . implode(",", $columnNames) . ') AGAINST (' . $this->db->quote($searchstring) . ')';
+        return 'MATCH (' . implode(",", $columnNames) . ') AGAINST (' . $this->db->quote($searchstring) . ' IN BOOLEAN MODE)';
     }
 }
