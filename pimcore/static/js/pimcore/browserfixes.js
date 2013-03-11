@@ -23,14 +23,6 @@ if (Ext.isChrome) {
         var ui8a = new Uint8Array(ords);
         this.send(ui8a.buffer);
     };
-
-    // chrome allows scrolling out of viewport/canvas (Y-axis) with the mouse middle button
-    // this only happens after opening a document-page (iframe)
-    window.setInterval(function () {
-        if(window.scrollY > 0) {
-            window.scrollTo(0,0);
-        }
-    }, 1000);
 }
 
 
