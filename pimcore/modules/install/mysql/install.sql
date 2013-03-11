@@ -281,7 +281,7 @@ CREATE TABLE `http_error_log` (
 DROP TABLE IF EXISTS `keyvalue_groups`;
 CREATE TABLE `keyvalue_groups` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL ,
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
     `description` VARCHAR(255),
     PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
@@ -289,7 +289,7 @@ CREATE TABLE `keyvalue_groups` (
 DROP TABLE IF EXISTS `keyvalue_keys`;
 CREATE TABLE `keyvalue_keys` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL ,
+  `name` VARCHAR(255) NOT NULL DEFAULT '',
   `description` TEXT,
   `type` enum('bool','number','select','text') DEFAULT NULL,
   `unit` VARCHAR(255),
