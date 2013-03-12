@@ -1241,7 +1241,7 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
     }
 };
 
-pimcore.helpers.insertTextInFocusedElement = function (text) {
+pimcore.helpers.insertTextAtCursorPosition = function (text) {
 
     // get focused element
     var focusedElement = document.activeElement;
