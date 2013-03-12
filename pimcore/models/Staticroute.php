@@ -466,6 +466,62 @@ class Staticroute extends Pimcore_Model_Abstract {
         
         return $url;
     }
+
+    public function match($path, $params = array()) {
+
+        if (@preg_match($this->getPattern(), $path)) {
+
+            // check for site
+            if($this->getSiteId()) {
+                if(!Site::isSiteRequest() || $this->getSiteId() != Site::getCurrentSite()->getId()) {
+                    return false;
+                }
+            }
+
+            $params = array_merge($this->getDefaultsArray(), $params);
+
+            $variables = explode(",", $this->getVariables());
+
+            preg_match_all($this->getPattern(), $path, $matches);
+
+            if (is_array($matches) && count($matches) > 1) {
+                foreach ($matches as $index => $match) {
+                    if ($variables[$index - 1]) {
+                        $params[$variables[$index - 1]] = urldecode($match[0]);
+                    }
+                }
+            }
+
+            $controller = $this->getController();
+            $action = $this->getAction();
+            $module = trim($this->getModule());
+
+            // check for dynamic controller / action / module
+            $dynamicRouteReplace = function ($item, $params) {
+                if(strpos($item, "%") !== false) {
+                    foreach ($params as $key => $value) {
+                        $dynKey = "%" . $key;
+                        if(strpos($item, $dynKey) !== false) {
+                            return str_replace($dynKey, $value, $item);
+                        }
+                    }
+                }
+                return $item;
+            };
+
+            $controller = $dynamicRouteReplace($controller, $params);
+            $action = $dynamicRouteReplace($action, $params);
+            $module = $dynamicRouteReplace($module, $params);
+
+            $params["controller"] = $controller;
+            $params["action"] = $action;
+            if(!empty($module)){
+                $params["module"] = $module;
+            }
+
+            return $params;
+        }
+    }
     
     
     /**
