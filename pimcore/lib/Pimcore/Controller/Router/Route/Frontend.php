@@ -307,73 +307,29 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
                 
                 foreach ($routes as $route) {
 
-                    if (@preg_match($route->getPattern(), $originalPath) && !$matchFound) {
+                    if(!$matchFound) {
+                        $routeParams = $route->match($originalPath, $params);
+                        if($routeParams) {
+                            $params = $routeParams;
 
-                        // check for site
-                        if($route->getSiteId()) {
-                            if(!Site::isSiteRequest() || $route->getSiteId() != Site::getCurrentSite()->getId()) {
-                                continue;
+                            // try to get nearest document to the route
+                            $document = $this->getNearestDocumentByPath($path, false, array("page", "snippet", "hardlink"));
+                            if($document instanceof Document_Hardlink) {
+                                $document = Document_Hardlink_Service::wrap($document);
                             }
+                            $params["document"] = $document;
+
+                            $matchFound = true;
+                            Staticroute::setCurrentRoute($route);
+
+                            // add the route object also as parameter to the request object, this is needed in
+                            // Pimcore_Controller_Action_Frontend::getRenderScript()
+                            // to determine if a call to an action was made through a staticroute or not
+                            // more on that infos see Pimcore_Controller_Action_Frontend::getRenderScript()
+                            $params["pimcore_request_source"] = "staticroute";
+
+                            break;
                         }
-
-                        $params = array_merge($route->getDefaultsArray(), $params);
-
-                        $variables = explode(",", $route->getVariables());
-
-                        preg_match_all($route->getPattern(), $originalPath, $matches);
-
-                        if (is_array($matches) && count($matches) > 1) {
-                            foreach ($matches as $index => $match) {
-                                if ($variables[$index - 1]) {
-                                    $params[$variables[$index - 1]] = urldecode($match[0]);
-                                }
-                            }
-                        }
-
-                        $controller = $route->getController();
-                        $action = $route->getAction();
-                        $module = trim($route->getModule());
-
-                        // check for dynamic controller / action / module
-                        $dynamicRouteReplace = function ($item, $params) {
-                            if(strpos($item, "%") !== false) {
-                                foreach ($params as $key => $value) {
-                                    $dynKey = "%" . $key;
-                                    if(strpos($item, $dynKey) !== false) {
-                                        return str_replace($dynKey, $value, $item);
-                                    }
-                                }
-                            }
-                            return $item;
-                        };
-
-                        $controller = $dynamicRouteReplace($controller, $params);
-                        $action = $dynamicRouteReplace($action, $params);
-                        $module = $dynamicRouteReplace($module, $params);
-
-                        $params["controller"] = $controller;
-                        $params["action"] = $action;
-                        if(!empty($module)){
-                            $params["module"] = $module;
-                        }
-
-                        // try to get nearest document to the route
-                        $document = $this->getNearestDocumentByPath($path, false, array("page", "snippet", "hardlink"));
-                        if($document instanceof Document_Hardlink) {
-                            $document = Document_Hardlink_Service::wrap($document);
-                        }
-                        $params["document"] = $document;
-
-                        $matchFound = true;
-                        Staticroute::setCurrentRoute($route);
-
-                        // add the route object also as parameter to the request object, this is needed in
-                        // Pimcore_Controller_Action_Frontend::getRenderScript()
-                        // to determine if a call to an action was made through a staticroute or not
-                        // more on that infos see Pimcore_Controller_Action_Frontend::getRenderScript()
-                        $params["pimcore_request_source"] = "staticroute";
-
-                        break;
                     }
                 }
             }
