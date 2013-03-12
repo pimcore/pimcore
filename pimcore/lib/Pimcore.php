@@ -732,7 +732,6 @@ class Pimcore {
             "Pimcore_API_Plugin_Broker",
             "pimcore_tag_block_current",
             "pimcore_tag_block_numeration",
-            "pimcore_user",
             "pimcore_config_system",
             "pimcore_admin_user",
             "pimcore_config_website",

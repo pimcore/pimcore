@@ -150,7 +150,7 @@ abstract class Pimcore_Controller_Action_Admin extends Pimcore_Controller_Action
 
     public function setUser(User $user) {
         $this->user = $user;
-        Zend_Registry::set("pimcore_user", $this->user);
+        Zend_Registry::set("pimcore_admin_user", $this->user);
 
         $this->setLanguage($this->user->getLanguage());
         return $this;

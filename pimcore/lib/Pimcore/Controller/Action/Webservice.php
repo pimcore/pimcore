@@ -37,7 +37,7 @@ class Pimcore_Controller_Action_Webservice extends Pimcore_Controller_Action {
             $user = $users[0];
         }
 
-        Zend_Registry::set("pimcore_user", $user);
+        Zend_Registry::set("pimcore_admin_user", $user);
 
         parent::init();
     }

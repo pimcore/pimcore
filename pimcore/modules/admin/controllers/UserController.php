@@ -200,7 +200,7 @@ class Admin_UserController extends Pimcore_Controller_Action_Admin {
         // object <=> user dependencies
         $userObjects = Object_Service::getObjectsReferencingUser($user->getId());
         $userObjectData = array();
-        $currentUser = Zend_Registry::get("pimcore_user");
+
         foreach ($userObjects as $o) {
             $hasHidden = false;
             if ($o->isAllowed("list")) {
