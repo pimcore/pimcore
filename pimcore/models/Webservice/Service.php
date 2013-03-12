@@ -21,16 +21,11 @@ class Webservice_Service
 
     public function getUser()
     {
-        try {
-            $user = Zend_Registry::get("pimcore_user");
-            if (!$user instanceof User) {
-                Logger::critical("Webservice instantiated, but no user present");
-            }
+        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
             return $user;
-        } catch (Exception $e) {
-            Logger::error($e);
-            throw $e;
         }
+
+        throw new \Exception("Webservice instantiated, but no user present");
     }
 
 

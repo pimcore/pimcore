@@ -57,8 +57,6 @@ class Element_Service extends Pimcore_Model_Abstract {
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d)
     {
-
-        $user = Zend_Registry::get("pimcore_user");
         $dependencies["hasHidden"] = false;
         $dependencies["requiredBy"] = array();
 
@@ -81,8 +79,6 @@ class Element_Service extends Pimcore_Model_Abstract {
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d)
     {
-
-        $user = Zend_Registry::get("pimcore_user");
         $dependencies["hasHidden"] = false;
         $dependencies["requires"] = array();
 
