@@ -1533,3 +1533,70 @@ function implode (glue, pieces) {
         return retVal;
     }    return pieces;
 };
+
+/**
+ * inserts a text into an input/textarea where the cursor is set
+ * @param txtarea
+ * @param text
+ */
+function insertTextToFormElementAtCursor(txtarea, text) {
+    var scrollPos = txtarea.scrollTop;
+    var strPos = 0;
+    var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
+        "ff" : (document.selection ? "ie" : false ) );
+    if (br == "ie") {
+        txtarea.focus();
+        var range = document.selection.createRange();
+        range.moveStart('character', -txtarea.value.length);
+        strPos = range.text.length;
+    }
+    else if (br == "ff") strPos = txtarea.selectionStart;
+
+    var front = (txtarea.value).substring(0, strPos);
+    var back = (txtarea.value).substring(strPos, txtarea.value.length);
+    txtarea.value = front + text + back;
+    strPos = strPos + text.length;
+    if (br == "ie") {
+        txtarea.focus();
+        var range = document.selection.createRange();
+        range.moveStart('character', -txtarea.value.length);
+        range.moveStart('character', strPos);
+        range.moveEnd('character', 0);
+        range.select();
+    }
+    else if (br == "ff") {
+        txtarea.selectionStart = strPos;
+        txtarea.selectionEnd = strPos;
+        txtarea.focus();
+    }
+    txtarea.scrollTop = scrollPos;
+};
+
+/**
+ * inserts a text into an html element with contenteditable where the cursor is set
+ * @param text
+ * @param win
+ * @param doc
+ */
+function insertTextToContenteditableAtCursor (text, win, doc) {
+
+    if(!win) {
+        var win = window;
+    }
+    if(!doc) {
+        var doc = document;
+    }
+
+    var sel, range;
+    if (win.getSelection) {
+        sel = win.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode( doc.createTextNode(text) );
+        }
+    } else if (doc.selection && doc.selection.createRange) {
+        doc.selection.createRange().text = text;
+    }
+};
+

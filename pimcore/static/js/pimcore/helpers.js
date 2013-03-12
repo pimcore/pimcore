@@ -1241,3 +1241,31 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
     }
 };
 
+pimcore.helpers.insertTextInFocusedElement = function (text) {
+
+    // get focused element
+    var focusedElement = document.activeElement;
+    var win = window;
+    var doc = document;
+
+    // now check if the focus is inside an iframe
+    try {
+        while(focusedElement.tagName.toLowerCase() == "iframe") {
+            win = window[focusedElement.getAttribute("name")];
+            doc = win.document;
+            focusedElement = doc.activeElement;
+        }
+    } catch(e) {
+        console.log(e);
+    }
+
+    var elTagName = focusedElement.tagName.toLowerCase();
+
+    if(elTagName == "input" || elTagName == "textarea") {
+        insertTextToFormElementAtCursor(focusedElement, text);
+    } else if(elTagName == "div" && focusedElement.getAttribute("contenteditable")) {
+        insertTextToContenteditableAtCursor(text, win, doc);
+    }
+
+};
+
