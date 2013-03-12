@@ -622,6 +622,11 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     public function correctPath () {
         // set path
         if($this->getId() != 1) { // not for the root node
+
+            if($this->getParentId() == $this->getId()) {
+                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+            }
+
             $parent = Object_Abstract::getById($this->getParentId());
 
             if($parent) {

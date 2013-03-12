@@ -394,6 +394,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function correctPath() {
         // set path
         if ($this->getId() != 1) { // not for the root node
+
+            if($this->getParentId() == $this->getId()) {
+                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+            }
+
             $parent = Document::getById($this->getParentId());
             if($parent) {
                 $this->setPath(str_replace("//", "/", $parent->getRealFullPath() . "/"));
