@@ -154,6 +154,10 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         } else if ($this->getAssetsAllowed() and  is_array($allowedAssetTypes) and count($allowedAssetTypes) > 0) {
             //check for allowed asset types
             foreach ($allowedAssetTypes as $t) {
+                if (is_array($t) && array_key_exists("assetTypes",$t)) {
+                    $t = $t["assetTypes"];
+                }
+
                 $allowedTypes[] = $t['assetTypes'];
             }
             if (!in_array($asset->getType(), $allowedTypes)) {
