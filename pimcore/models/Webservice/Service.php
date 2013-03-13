@@ -1019,8 +1019,9 @@ class Webservice_Service
         try {
             $class = Object_Class::getById($id);
             if ($class instanceof Object_Class) {
-                $apiFolder = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
-                return $apiFolder;
+                $apiClass = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
+                unset($apiClass->fieldDefinitions);
+                return $apiClass;
             }
 
             throw new Exception("Class with given ID (" . $id . ") does not exist.");
