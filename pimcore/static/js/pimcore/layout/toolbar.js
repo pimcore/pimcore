@@ -582,6 +582,59 @@ pimcore.layout.toolbar = Class.create({
         this.toolbar.add("->");
         
 
+        if (('webkitSpeechRecognition' in window)) {
+            this.toolbar.add({
+                iconCls: "pimcore_icon_mic",
+                cls: "pimcore_main_menu",
+                handler: function (btn) {
+                    if(btn.pressed) {
+                        var recognition = new webkitSpeechRecognition();
+                        recognition.continuous = true;
+                        recognition.interimResults = true;
+
+                        recognition.onstart = function () {
+
+                        }
+                        recognition.onresult = function (event) {
+                            var interim_transcript = '';
+                            var final_transcript = "";
+
+                            for (var i = event.resultIndex; i < event.results.length; ++i) {
+                                if (event.results[i].isFinal) {
+                                    final_transcript += event.results[i][0].transcript;
+                                } else {
+                                    interim_transcript += event.results[i][0].transcript;
+                                }
+                            }
+
+                            if(final_transcript) {
+                                pimcore.helpers.insertTextAtCursorPosition(final_transcript);
+                            } else {
+                                console.log(interim_transcript);
+                            }
+                        }
+                        recognition.onerror = function (event) {
+
+                        }
+                        recognition.onend = function () {
+
+                        }
+
+                        recognition.start();
+
+                        pimcore.globalmanager.add("recognition", recognition);
+                    } else {
+                        if(pimcore.globalmanager.exists("recognition")) {
+                            var recognition = pimcore.globalmanager.get("recognition");
+                            recognition.stop();
+                            pimcore.globalmanager.remove("recognition");
+                        }
+                    }
+                },
+                enableToggle: true
+            });
+        }
+
         if (user.isAllowed("seemode")) {
             this.toolbar.add({
                 text: t("seemode"),
