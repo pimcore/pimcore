@@ -287,7 +287,11 @@ class Object_Objectbrick_Definition extends Object_Fieldcollection_Definition {
 
 
         foreach($containerDefinition as $classId => $cd) {
-             $class = Object_Class::getById($classId);
+            $class = Object_Class::getById($classId);
+
+            if(!$class) {
+                continue;
+            }
 
             foreach($cd as $fieldname => $brickKeys) {
                 $className = $this->getContainerClassName($class->getName(), $fieldname);
