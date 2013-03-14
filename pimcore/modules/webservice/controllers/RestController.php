@@ -37,6 +37,35 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $this->encoder = new Webservice_JsonEncoder();
     }
 
+    private function checkPermission($element, $category) {
+        if ($category == "get") {
+            if (!$element->isAllowed("view")) {
+                $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission view is needed"));
+            }
+        } else if ($category == "delete") {
+            if (!$element->isAllowed("delete")) {
+                $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission delete is needed"));
+            }
+        } else if ($category == "update") {
+            if (!$element->isAllowed("publish")) {
+                $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission save is needed"));
+            }
+        } else if ($category == "create") {
+            if (!$element->isAllowed("create")) {
+                $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission create is needed"));
+            }
+        }
+    }
+
+    private function checkUserPermission($permission) {
+        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+            if ($user->isAllowed($permission)) {
+                return;
+            }
+        }
+        $this->encoder->encode(array("success" => false, "msg" => "not allowed"));
+    }
+
 
     /** end point for object related data.
      * - get object by id
@@ -65,6 +94,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
             if ($this->isGet()) {
                 if ($id) {
                     $object = Object_Abstract::getById($id);
+                    $this->checkPermission($object, "get");
                     if ($object instanceof Object_Folder) {
                         $object = $this->service->getObjectFolderById($id);
                     } else {
@@ -75,6 +105,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     return;
                 }
             } else if ($this->isDelete()) {
+                $object = Object_Abstract::getById($id);
+                if ($object) {
+                    $this->checkPermission($object, "delete");
+                }
+
                 $success = $this->service->deleteObject($id);
                 $this->encoder->encode(array("success" => $success));
                 return;
@@ -86,6 +121,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $id = null;
 
                 if ($data["id"]) {
+                    $obj = Object_Abstract::getById($data["id"]);
+                    if ($obj) {
+                        $this->checkPermission($obj, "update");
+                    }
+
                     $isUpdate = true;
                     if ($type == "folder") {
                         $wsData = self::fillWebserviceData("Webservice_Data_Object_Folder_In", $data);
@@ -96,12 +136,19 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     }
                 } else {
                     if ($type == "folder") {
-                        $wsData = self::fillWebserviceData("Webservice_Data_Object_Folder_In", $data);
-                        $id = $this->service->createObjectFolder($wsData);
+                        $class = Webservice_Data_Object_Folder_In;
+                        $method = "createObjectFolder";
                     } else {
-                        $wsData = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $data);
-                        $id = $this->service->createObjectConcrete($wsData);
+                        $class = Webservice_Data_Object_Concrete_In;
+                        $method = "createObjectConcrete";
                     }
+                    $wsData = self::fillWebserviceData($class, $data);
+
+                    $obj = new Object_Abstract();
+                    $obj->setId($wsData->parentId);
+                    $this->checkPermission($obj, "create");
+
+                    $id = $this->service->$method($wsData);
                 }
 
                 if (!$isUpdate) {
@@ -130,6 +177,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *
      */
     public function objectMetaAction() {
+        $this->checkUserPermission("classes");
 
         $id = $this->getParam("id");
         $success = false;
@@ -156,6 +204,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *
      */
     public function classAction() {
+        $this->checkUserPermission("classes");
+
         try {
             $id = $this->getParam("id");
             if ($id) {
@@ -178,6 +228,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *
      */
     public function objectBrickAction() {
+        $this->checkUserPermission("classes");
         try {
             $fc = Object_Objectbrick_Definition::getByKey($this->getParam("id"));
             $this->_helper->json(array("success" => true, "data" => $fc));
@@ -194,6 +245,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *
      */
     public function fieldCollectionAction() {
+        $this->checkUserPermission("classes");
         try {
             $fc = Object_Fieldcollection_Definition::getByKey($this->getParam("id"));
             $this->_helper->json(array("success" => true, "data" => $fc));
@@ -247,6 +299,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
             if ($this->isGet()) {
                 $asset = Asset::getById($id);
+                $this->checkPermission($asset, "get");
 
                 if ($asset instanceof Asset_Folder) {
                     $object = $this->service->getAssetFolderById($id);
@@ -260,6 +313,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $this->encoder->encode(array("success" => true, "data" => $object));
                 return;
             } else if ($this->isDelete()) {
+                $asset = Asset::getById($id);
+                if ($asset) {
+                    $this->checkPermission($asset, "delete");
+                }
+
                 $success = $this->service->deleteAsset($id);
                 $this->encoder->encode(array("success" => $success));
                 return;
@@ -271,6 +329,12 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $id = null;
 
                 if ($data["id"]) {
+
+                    $asset = Asset::getById($data["id"]);
+                    if ($asset) {
+                        $this->checkPermission($asset, "update");
+                    }
+
                     $isUpdate = true;
                     if ($type == "folder") {
                         $wsData = self::fillWebserviceData("Webservice_Data_Asset_Folder_In", $data);
@@ -280,13 +344,22 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                         $success = $this->service->updateAssetFile($wsData);
                     }
                 } else {
+
                     if ($type == "folder") {
-                        $wsData = self::fillWebserviceData("Webservice_Data_Asset_Folder_In", $data);
-                        $id = $this->service->createAssetFolder($wsData);
+                        $class = "Webservice_Data_Asset_Folder_In";
+                        $method = "createAssetFolder";
                     } else {
-                        $wsData = self::fillWebserviceData("Webservice_Data_Asset_File_In", $data);
-                        $id = $this->service->createAssetFile($wsData);
+                        $class = "Webservice_Data_Asset_File_In";
+                        $method = "createAssetFile";
                     }
+
+                    $wsData = self::fillWebserviceData($class, $data);
+
+                    $asset = new Asset();
+                    $asset->setId($wsData->parentId);
+                    $this->checkPermission($asset, "create");
+
+                    $id = $this->service->$method($wsData);
                 }
 
                 if (!$isUpdate) {
@@ -312,6 +385,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      * @return mixed
      */
     public function keyValueDefinitionAction() {
+        $this->checkUserPermission("classes");
 
         try {
             if ($this->isGet()) {
@@ -394,6 +468,7 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
             if ($this->isGet()) {
                 $doc = Document::getById($id);
+                $this->checkPermission($doc, "get");
 
                 if ($doc) {
                     $type = $doc->getType();
@@ -421,6 +496,10 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 @$this->encoder->encode(array("success" => true, "data" => $object));
                 return;
             } else if ($this->isDelete()) {
+                $doc = Document::getById($id);
+                if ($doc) {
+                    $this->checkPermission($doc, "delete");
+                }
                 $success = $this->service->deleteDocument($id);
                 $this->encoder->encode(array("success" => $success));
                 return;
@@ -434,6 +513,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                 $className = "Webservice_Data_Document_" . $typeUpper . "_In";
 
                 if ($data["id"]) {
+                    $doc = Document::getById($data["id"]);
+                    if ($doc) {
+                        $this->checkPermission($doc, "update");
+                    }
+
                     $isUpdate = true;
                     $setter = "updateDocument" . $typeUpper;
                     if (!method_exists($this->service, $setter)) {
@@ -448,6 +532,10 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                         throw new Exception("method does not exist " . $setter);
                     }
                     $wsData = self::fillWebserviceData($className, $data);
+                    $doc = new Document();
+                    $doc->setId($wsData->parentId);
+                    $this->checkPermission($doc, "create");
+
                     $id = $this->service->$setter($wsData);
 
                 }
@@ -485,6 +573,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      - group by key
      */
     public function assetListAction() {
+        $this->checkUserPermission("assets");
+
         $condition = $this->getParam("condition");
         $order = $this->getParam("order");
         $orderKey = $this->getParam("orderKey");
@@ -508,6 +598,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      - group by key
      */
     public function documentListAction() {
+        $this->checkUserPermission("documents");
+
         $condition = urldecode($this->getParam("condition"));
         $order = $this->getParam("order");
         $orderKey = $this->getParam("orderKey");
@@ -533,6 +625,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *          not exist the filter criteria will be ignored!
      */
     public function objectListAction() {
+        $this->checkUserPermission("objects");
+
         $condition = urldecode($this->getParam("condition"));
         $order = $this->getParam("order");
         $orderKey = $this->getParam("orderKey");
@@ -554,6 +648,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *          not exist the filter criteria will be ignored!
      */
     public function objectCountAction() {
+        $this->checkUserPermission("objects");
+
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $objectClass = $this->getParam("objectClass");
@@ -584,6 +680,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      - group by key
      */
     public function assetCountAction() {
+        $this->checkUserPermission("assets");
+
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $params = array();
@@ -605,6 +703,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      *      - group by key
      */
     public function documentCountAction() {
+        $this->checkUserPermission("documents");
+
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $params = array();
@@ -622,6 +722,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      * Returns a list of all class definitions.
      */
     public function classesAction() {
+        $this->checkUserPermission("classes");
+
         $list = new Object_Class_List();
         $classes = $list->load();
         $result = array();
@@ -641,6 +743,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      * Returns a list of all object brick definitions.
      */
     public function objectBricksAction() {
+        $this->checkUserPermission("classes");
+
         $list = new Object_Objectbrick_Definition_List();
         $bricks = $list->load();
 
@@ -660,6 +764,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      * Returns a list of all field collection definitions.
      */
     public function fieldCollectionsAction() {
+        $this->checkUserPermission("classes");
+
         $list = new Object_Fieldcollection_Definition_List();
         $fieldCollections = $list->load();
 
@@ -761,6 +867,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      * Returns a list of all class definitions.
      */
     public function serverInfoAction() {
+        $this->checkUserPermission("system_settings");
+
         $result = array();
         $pimcore = array();
         $pimcore["version"] = Pimcore_Version::getVersion();
