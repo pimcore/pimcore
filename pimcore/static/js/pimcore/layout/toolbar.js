@@ -587,42 +587,126 @@ pimcore.layout.toolbar = Class.create({
                 iconCls: "pimcore_icon_mic",
                 cls: "pimcore_main_menu",
                 handler: function (btn) {
+                    var speechRecognitionButton = btn;
                     if(btn.pressed) {
-                        var recognition = new webkitSpeechRecognition();
-                        recognition.continuous = true;
-                        recognition.interimResults = true;
 
-                        recognition.onstart = function () {
+                        var win = new Ext.Window({
+                            modal: true,
+                            width: 200,
+                            height: 100,
+                            title: t("language"),
+                            bodyStyle: "padding:10px",
+                            items: [{
+                                xtype: "combo",
+                                itemId: "language",
+                                store: [['af-ZA', "Afrikaans"],  ['id-ID', "Bahasa Indonesia"],
+                                    ['ms-MY', "Bahasa Melayu"], ['ca-ES', "Català"], ['cs-CZ', "Čeština"],
+                                    ['de-DE', "Deutsch"], ['en-AU', 'English (Australia)'],
+                                    ['en-CA', 'English (Canada)'], ['en-IN', 'English (India)'],
+                                    ['en-NZ', 'English (New Zealand)'], ['en-ZA', 'English (South Africa)'],
+                                    ['en-GB', 'English (United Kingdom)'], ['en-US', 'English (United States)'],
+                                    ['es-AR', 'Español (Argentina)'], ['es-BO', 'Español (Bolivia)'],
+                                    ['es-CL', 'Español (Chile)'], ['es-CO', 'Español (Colombia)'],
+                                    ['es-CR', 'Español (Costa Rica)'], ['es-EC', 'Español (Ecuador)'],
+                                    ['es-SV', 'Español (El Salvador)'], ['es-ES', 'Español (España)'],
+                                    ['es-US', 'Español (Estados Unidos)'], ['es-GT', 'Español (Guatemala)'],
+                                    ['es-HN', 'Español (Honduras)'], ['es-MX', 'Español (México)'],
+                                    ['es-NI', 'Español (Nicaragua)'], ['es-PA', 'Español (Panamá)'],
+                                    ['es-PY', 'Español (Paraguay)'], ['es-PE', 'Español (Perú)'],
+                                    ['es-PR', 'Español (Puerto Rico)'], ['es-DO', 'Español (República Dominicana)'],
+                                    ['es-UY', 'Español (Uruguay)'], ['es-VE', 'Español (Venezuela)'],
+                                    ['eu-ES', "Euskara"], ['fr-FR', "Français"], ['gl-ES', "Galego"],
+                                    ['hr_HR', "Hrvatski"], ['zu-ZA', "IsiZulu"], ['is-IS', "Íslenska"],
+                                    ['it-IT', 'Italiano (Italia)'], ['it-CH', 'Italiano (Svizzera)'],
+                                    ['hu-HU', "Magyar"], ['nl-NL', "Nederlands"], ['nb-NO', "Norsk bokmål"],
+                                    ['pl-PL', "Polski"], ['pt-BR', 'Português (Brasil)'],
+                                    ['pt-PT', 'Português (Portugal)'], ['ro-RO', "Română"],
+                                    ['sk-SK', "Slovenčina"], ['fi-FI', "Suomi"], ['sv-SE', "Svenska"],
+                                    ['tr-TR', "Türkçe"], ['bg-BG', "български"], ['ru-RU', "Pусский"],
+                                    ['sr-RS', "Српски"], ['ko-KR', "한국어"], ['cmn-Hans-CN', '中文 普通话 (中国大陆)'],
+                                    ['cmn-Hans-HK', '中文 普通话 (香港)'], ['cmn-Hant-TW', '中文(台灣)'],
+                                    ['yue-Hant-HK', '中文 粵語 (香港)'], ['ja-JP', "日本語"], ['la', "Lingua latīna"]],
+                                typeAhead: false,
+                                editable: false,
+                                forceSelection: true,
+                                triggerAction: "all"
+                            }],
+                            buttons: [{
+                                xtype: "button",
+                                text: t("apply"),
+                                iconCls: "pimcore_icon_apply",
+                                handler: function () {
+                                    var lang = win.getComponent("language").getValue();
 
-                        }
-                        recognition.onresult = function (event) {
-                            var interim_transcript = '';
-                            var final_transcript = "";
+                                    if(!lang) {
+                                        return;
+                                    }
 
-                            for (var i = event.resultIndex; i < event.results.length; ++i) {
-                                if (event.results[i].isFinal) {
-                                    final_transcript += event.results[i][0].transcript;
-                                } else {
-                                    interim_transcript += event.results[i][0].transcript;
+                                    win.close();
+
+
+                                    var offset = speechRecognitionButton.getEl().getOffsetsTo(Ext.getBody());
+                                    offset[0] = offset[0] - 260;
+
+                                    var interimToolTip = new Ext.Tip({
+                                        x: offset[0],
+                                        y: offset[1],
+                                        html: "",
+                                        width: 250,
+                                        autoHide: false,
+                                        closable: false
+                                    });
+
+                                    var recognition = new webkitSpeechRecognition();
+                                    recognition.continuous = true;
+                                    recognition.interimResults = true;
+                                    recognition.lang = lang;
+
+                                    recognition.onresult = function (event) {
+                                        var interim_transcript = '';
+                                        var final_transcript = "";
+
+                                        for (var i = event.resultIndex; i < event.results.length; ++i) {
+                                            if (event.results[i].isFinal) {
+                                                final_transcript += event.results[i][0].transcript;
+                                            } else {
+                                                interim_transcript += event.results[i][0].transcript;
+                                            }
+                                        }
+
+                                        if(final_transcript) {
+                                            pimcore.helpers.insertTextAtCursorPosition(final_transcript);
+                                        } else {
+                                            interimToolTip.show();
+                                            interimToolTip.update(interim_transcript);
+                                        }
+                                    }
+
+                                    recognition.onstart = function () { }
+                                    recognition.onerror = function (event) {
+                                        console.log("SpeechRecognition ERROR");
+                                        console.log(event);
+
+                                        if(speechRecognitionButton.pressed) {
+                                            interimToolTip.hide();
+                                            speechRecognitionButton.toggle();
+                                        }
+                                    }
+                                    recognition.onend = function () {
+                                        if(speechRecognitionButton.pressed) {
+                                            interimToolTip.hide();
+                                            speechRecognitionButton.toggle();
+                                        }
+                                    }
+
+                                    recognition.start();
+
+                                    pimcore.globalmanager.add("recognition", recognition);
                                 }
-                            }
+                            }]
+                        });
 
-                            if(final_transcript) {
-                                pimcore.helpers.insertTextAtCursorPosition(final_transcript);
-                            } else {
-                                console.log(interim_transcript);
-                            }
-                        }
-                        recognition.onerror = function (event) {
-
-                        }
-                        recognition.onend = function () {
-
-                        }
-
-                        recognition.start();
-
-                        pimcore.globalmanager.add("recognition", recognition);
+                        win.show();
                     } else {
                         if(pimcore.globalmanager.exists("recognition")) {
                             var recognition = pimcore.globalmanager.get("recognition");
