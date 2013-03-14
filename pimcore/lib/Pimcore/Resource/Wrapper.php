@@ -52,9 +52,14 @@ class Pimcore_Resource_Wrapper {
      */
     public function closeDDLResource() {
         if($this->DDLResource) {
-            Logger::debug("closing mysql connection with ID: " . $this->DDLResource->fetchOne("SELECT CONNECTION_ID()"));
-            $this->DDLResource->closeConnection();
-            $this->DDLResource = null;
+            try {
+                Logger::debug("closing mysql connection with ID: " . $this->DDLResource->fetchOne("SELECT CONNECTION_ID()"));
+                $this->DDLResource->closeConnection();
+                $this->DDLResource = null;
+            } catch (\Exception $e) {
+                // this is the case when the mysql connection has gone away (eg. when forking using pcntl)
+                Logger::info($e);
+            }
         }
     }
 
@@ -94,9 +99,14 @@ class Pimcore_Resource_Wrapper {
      */
     public function closeResource() {
         if($this->resource) {
-            Logger::debug("closing mysql connection with ID: " . $this->resource->fetchOne("SELECT CONNECTION_ID()"));
-            $this->resource->closeConnection();
-            $this->resource = null;
+            try {
+                Logger::debug("closing mysql connection with ID: " . $this->resource->fetchOne("SELECT CONNECTION_ID()"));
+                $this->resource->closeConnection();
+                $this->resource = null;
+            } catch (\Exception $e) {
+                // this is the case when the mysql connection has gone away (eg. when forking using pcntl)
+                Logger::info($e);
+            }
         }
     }
     
