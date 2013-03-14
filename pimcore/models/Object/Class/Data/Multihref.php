@@ -481,12 +481,13 @@ class Object_Class_Data_Multihref extends Object_Class_Data_Relations_Abstract
                 } else {
                     $allow = false;
                 }
+                if (!$allow) {
+                    throw new Exception("Invalid multihref relation", null, null);
+                }
             }
         }
 
-        if (!$allow) {
-            throw new Exception("Invalid multihref relation", null, null);
-        }
+
     }
 
     /**
