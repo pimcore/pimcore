@@ -838,7 +838,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return string
      */
     public function getFilename() {
-        return $this->filename;
+        return (string) $this->filename;
     }
 
     /**
@@ -906,7 +906,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         if ($this->filename != null and $filename != null and $filename != $this->filename) {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
-        $this->filename = $filename;
+        $this->filename = (string) $filename;
         return $this;
     }
 
