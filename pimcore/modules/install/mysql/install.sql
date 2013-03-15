@@ -41,6 +41,7 @@ CREATE TABLE `classes` (
   `parentClass` varchar(255) DEFAULT NULL,
   `icon` varchar(255) DEFAULT NULL,
   `previewUrl` varchar(255) DEFAULT NULL,
+  `treeLabelField` varchar(255) DEFAULT NULL,
   `propertyVisibility` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)

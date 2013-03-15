@@ -283,6 +283,96 @@ class Object_Concrete extends Object_Abstract {
     }
 
     /**
+     * Returns TRUE if the tree label should be read from a different
+     * field than the object key and this field has a getter method.
+     *
+     * @return string
+     */
+    public function getO_hasValidCustomTreeLabel() {
+
+        $customTreeLabel = $this->getO_customTreeLabel();
+
+        if (!empty($customTreeLabel)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * If this object is of type object and a custom tree label field
+     * is configured it will be returned, otherwise FALSE is returned.
+     *
+     * If the method parameter is provided the getter or setter for the
+     * field is returned if the method exists.
+     *
+     * @param string $method Can be "getter" or "setter" and will return
+     * the getter or setter method for the custom tree label field if
+     * the method exits
+     * @return string|bool Name of the custom tree label field or FALSE
+     */
+    public function getO_customTreeLabelField($method = null) {
+
+        if ($this->getType() !== self::OBJECT_TYPE_OBJECT) {
+            return false;
+        }
+
+        $class = $this->getClass();
+        $treeLabelField = $class->getTreeLabelField();
+
+        if (empty($treeLabelField)) {
+            return false;
+        }
+
+        switch ($method) {
+            case 'getter':
+                $methodName = 'get' . $treeLabelField;
+                break;
+            case 'setter':
+                $methodName = 'set' . $treeLabelField;
+                break;
+            default:
+                return $treeLabelField;
+        }
+
+        if (method_exists($this, $methodName) && is_callable(array($this, $methodName))) {
+            return $methodName;
+        }
+    }
+
+    /**
+     * Returns the custom tree label or an empty string if none is
+     * available
+     *
+     * @return string
+     */
+    public function getO_customTreeLabel() {
+
+        $getter = $this->getO_customTreeLabelField('getter');
+
+        if ($getter === false) {
+            return '';
+        }
+
+        return $this->$getter();
+    }
+
+    /**
+     * Returns the label that should be used in the tree. By default
+     * the object key is used.
+     *
+     * @return string
+     */
+    public function getO_treeLabel() {
+
+        if ($this->getO_hasValidCustomTreeLabel()) {
+            return $this->getO_customTreeLabel();
+        } else {
+            return parent::getO_treeLabel();
+        }
+    }
+
+    /**
      * @return array
      */
     public function getO_versions() {
@@ -504,6 +594,23 @@ class Object_Concrete extends Object_Abstract {
     }
 
     /**
+     * If a tree label field was set and a setter method is present for
+     * this field the setter will be called with the given value.
+     *
+     * @param mixed $value The value that will be passed to the setter
+     */
+    public function setO_treeLabelFieldValue($value) {
+
+        $treeLabelCustomFieldSetter = $this->getO_customTreeLabelField('setter');
+
+        if ($treeLabelCustomFieldSetter === false) {
+            return;
+        } else {
+            $this->$treeLabelCustomFieldSetter($value);
+        }
+    }
+
+    /**
      * @param boolean $omitMandatoryCheck
      */
     public function setOmitMandatoryCheck($omitMandatoryCheck)
@@ -666,7 +773,7 @@ class Object_Concrete extends Object_Abstract {
             } else {
                 $finalVars[] = $key;
             }
-        } 
+        }
 
         return $finalVars;
     }

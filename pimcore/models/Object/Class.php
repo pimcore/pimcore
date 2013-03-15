@@ -90,6 +90,13 @@ class Object_Class extends Pimcore_Model_Abstract {
     public $previewUrl;
 
     /**
+     * The content of this field will be used as label for the tree nodes
+     *
+     * @var string
+     */
+    public $treeLabelField;
+
+    /**
      * @var array
      */
     public $propertyVisibility = array(
@@ -662,5 +669,17 @@ class Object_Class extends Pimcore_Model_Abstract {
         return $this->description;
     }
 
+    /**
+     * @param string $treeLabelField
+     */
+    public function setTreeLabelField($treeLabelField) {
+        $this->treeLabelField = $treeLabelField;
+    }
 
+    /**
+     * @return string
+     */
+    public function getTreeLabelField() {
+        return $this->treeLabelField;
+    }
 }

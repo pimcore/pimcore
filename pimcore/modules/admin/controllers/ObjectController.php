@@ -147,7 +147,8 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
 
         $tmpObject = array(
             "id" => $child->getId(),
-            "text" => $child->getKey(),
+            "text" => $child->getTreeLabel(),
+            "key" => $child->getKey(),
             "type" => $child->getType(),
             "path" => $child->getFullPath(),
             "basePath" => $child->getPath(),
@@ -205,6 +206,10 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $tmpObject["expanded"] = $child->hasNoChilds();
         $tmpObject["permissions"] = $child->getUserPermissions($this->getUser());
 
+        // disable renaming when a custom tree label is used
+        if ($child->getO_hasValidCustomTreeLabel()) {
+            $tmpObject["permissions"]["rename"] = false;
+        }
 
         if ($child->isLocked()) {
             $tmpObject["cls"] .= "pimcore_treenode_locked ";
