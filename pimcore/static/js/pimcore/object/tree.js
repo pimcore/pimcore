@@ -673,7 +673,7 @@ pimcore.object.tree = Class.create({
 
     editKey: function () {
         Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-                                        this.attributes.reference.editKeyComplete.bind(this), null, null, this.text);
+                                        this.attributes.reference.editKeyComplete.bind(this), null, null, this.attributes.key);
     },
 
     editKeyComplete: function (button, value, object) {
@@ -702,7 +702,10 @@ pimcore.object.tree = Class.create({
 
             value = pimcore.helpers.getValidFilename(value);
 
-            this.setText(value);
+            if (!this.attributes.validCustomLabel) {
+                this.setText(value);
+            }
+
             this.attributes.path = this.attributes.basePath + value;
 
             this.getOwnerTree().loadMask.show();

@@ -562,6 +562,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         }
                     }
 
+                    if (this.data.treeLabelField) {
+                        this.reloadParentTreeNode();
+                    }
+
                     if(typeof callback == "function") {
                         callback();
                     }
@@ -588,5 +592,18 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }.bind(window, this.id), 500);
 
         pimcore.helpers.closeObject(this.id);
+    },
+
+    /**
+     * Searches for the tree node of the current object in the object
+     * tree and reloads its parent
+     */
+    reloadParentTreeNode: function () {
+
+        try {
+            var treeNode = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(this.id);
+            treeNode.parentNode.reload();
+        } catch (e) {
+        }
     }
 });
