@@ -284,7 +284,7 @@ class Object_Concrete extends Object_Abstract {
 
     /**
      * Returns TRUE if the tree label should be read from a different
-     * field than the object key and this field has a getter method.
+     * field than the object key and this field is not empty
      *
      * @return string
      */
