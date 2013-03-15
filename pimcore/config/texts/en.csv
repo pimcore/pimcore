@@ -314,6 +314,7 @@
 "enter_the_name_of_the_new_thumbnail","Enter the name for the new thumbnail:"
 "problem_creating_new_thumbnail","Cannot create thumbnail, please check the name! (allowed characters are a-z A-Z 0-9 _ -)"
 "preview_url","Preview URL"
+"tree_label_field","Tree label field"
 "opacity","Opacity"
 "applymask","Apply Mask"
 "addoverlay","Add Overlay"
