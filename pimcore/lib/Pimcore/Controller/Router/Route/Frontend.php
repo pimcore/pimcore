@@ -455,12 +455,12 @@ class Pimcore_Controller_Router_Route_Frontend extends Zend_Controller_Router_Ro
             }
 
             $requestScheme = ($_SERVER['HTTPS'] == 'on') ? Zend_Controller_Request_Http::SCHEME_HTTPS : Zend_Controller_Request_Http::SCHEME_HTTP;
-            $matchRequestPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-            $matchUrl = $requestScheme . "://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+            $matchRequestUri = $_SERVER["REQUEST_URI"];
+            $matchUrl = $requestScheme . "://" . $_SERVER["HTTP_HOST"] . $matchRequestUri;
 
             foreach ($this->redirects as $redirect) {
 
-                $matchAgainst = $matchRequestPath;
+                $matchAgainst = $matchRequestUri;
                 if($redirect->getSourceEntireUrl()) {
                     $matchAgainst = $matchUrl;
                 }
