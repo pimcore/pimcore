@@ -434,23 +434,25 @@ class Document_Tag_Video extends Document_Tag
         $uid = "video_" . uniqid();
 
         // get youtube id
-        $youtubeId = null;
-        $parts = parse_url($this->id);
-        parse_str($parts["query"], $vars);
+        $youtubeId = $this->id;
+        if(strpos($youtubeId, "http") === 0) {
+            $parts = parse_url($this->id);
+            parse_str($parts["query"], $vars);
 
-        if($vars["v"]) {
-            $youtubeId = $vars["v"];
-        }
+            if($vars["v"]) {
+                $youtubeId = $vars["v"];
+            }
 
-        //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-        if(!$youtubeId && strpos($this->id,'embed') !== false){
-            $explodedPath = explode('/',$parts['path']);
-            $youtubeId = $explodedPath[array_search('embed',$explodedPath)+1];
-        }
+            //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
+            if(!$youtubeId && strpos($this->id,'embed') !== false){
+                $explodedPath = explode('/',$parts['path']);
+                $youtubeId = $explodedPath[array_search('embed',$explodedPath)+1];
+            }
 
 
-        if(!$youtubeId && $parts["host"] == "youtu.be") {
-            $youtubeId = trim($parts["path"]," /");
+            if(!$youtubeId && $parts["host"] == "youtu.be") {
+                $youtubeId = trim($parts["path"]," /");
+            }
         }
 
         if (!$youtubeId) {
