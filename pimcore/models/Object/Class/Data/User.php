@@ -113,7 +113,8 @@ class Object_Class_Data_User extends Object_Class_Data_Select {
     }
 
     public function __wakeup() {
-        if(Pimcore::inAdmin()) {
+        $options = $this->getOptions();
+        if(Pimcore::inAdmin() || empty($options)) {
             $this->configureOptions();
         }
     }
