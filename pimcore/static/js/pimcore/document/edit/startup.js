@@ -37,9 +37,9 @@ Ext.onReady(function () {
 
     // this sets the height of the body and html element to the current absolute height of the page
     // this is because some pages set the body height, and the positioning is then done by "absolute"
-    // the problem is that ExtJS relies on the body height for DnD, so if the body isn't as high as the hole page
+    // the problem is that ExtJS relies on the body height for DnD, so if the body isn't as high as the whole page
     // dnd works only in the section covered by the specified body height
-    window.setTimeout(pimcore.edithelpers.setBodyHeight, 500);
+    window.setInterval(pimcore.edithelpers.setBodyHeight, 1000);
 
 
     Ext.QuickTips.init();
