@@ -1286,3 +1286,6 @@
 	background: url(/pimcore/static/img/icon/lightning.png) 8px center no-repeat !important;
 }
 
+.pimcore_icon_mic {
+    background: url(/pimcore/static/img/icon/user_comment.png) left center no-repeat !important;
+}
