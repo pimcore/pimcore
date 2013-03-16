@@ -39,80 +39,6 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
             handler: this.openEditor.bind(this)
         });
         button.render(Ext.get(Ext.query(".pimcore_video_edit_button", element.dom)[0]));
-
-        /*var toolbar = [];
-        toolbar.push("Type");
-        toolbar.push({
-            xtype: "combo",
-            mode: "local",
-            triggerAction: "all",
-            store: [
-                ["asset","Asset"],
-                ["youtube","YouTube"],
-                ["vimeo","Vimeo"],
-                ["url","URL"]
-            ],
-            value: this.data.type,
-            listeners: {
-                "select": function (box, rec, index) {
-                    this.data.type = box.getValue();
-                    this.reloadDocument();
-                }.bind(this)
-            }
-        });
-
-        if (this.data.type != "asset") {
-            this.urlField = new Ext.form.TextField({
-                name: "url",
-                value: this.data.id,
-                emptyText: t("insert_video_url_here")
-            });
-            toolbar.push(this.urlField);
-            toolbar.push({
-                xtype: "button",
-                iconCls: "pimcore_icon_apply",
-                handler: function () {
-                    this.data.id = this.urlField.getValue();
-                    this.reloadDocument();
-                }.bind(this)
-            });
-        }
-
-
-        toolbar.push({
-            xtype: "button",
-            iconCls: "pimcore_icon_empty",
-            handler: function () {
-                this.data = null;
-                this.reloadDocument();
-            }.bind(this)
-        });
-
-        this.element = new Ext.Panel({
-            width: this.options.width,
-            autoHeight: true,
-            bodyStyle: "background: none;",
-            tbar: toolbar
-        });
-
-        this.element.on("afterrender", function (el) {
-            var domElement = el.getEl().dom;
-            domElement.dndOver = false;
-            domElement.reference = this;
-
-            dndZones.push(domElement);
-            el.getEl().on("mouseover", function (options, e) {
-                this.dndOver = true;
-            }.bind(domElement, this.options));
-            el.getEl().on("mouseout", function (e) {
-                this.dndOver = false;
-            }.bind(domElement));
-
-            Ext.get("pimcore_video_" + name).appendTo(el.body);
-        }.bind(this));
-
-        this.element.render(id);
-        */
     },
 
     openEditor: function () {
@@ -168,6 +94,11 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         this.fieldPath.on("render", initDD.bind(this));
         this.poster.on("render", initDD.bind(this));
 
+        this.searchButton = new Ext.Button({
+            iconCls: "pimcore_icon_search",
+            handler: this.openSearchEditor.bind(this)
+        });
+
         this.form = new Ext.FormPanel({
             bodyStyle: "padding:10px;",
             items: [{
@@ -179,14 +110,17 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
                 editable: true,
                 mode: "local",
                 store: ["asset","youtube","vimeo"],
-                value: this.data.type
+                value: this.data.type,
+                listeners: {
+                    select: function (combo) {
+                        var type = combo.getValue();
+                        this.updateType(type);
+                    }.bind(this)
+                }
             }, {
                 xtype: "compositefield",
-                items: [this.fieldPath, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                }]
+                itemId: "pathContainer",
+                items: [this.fieldPath, this.searchButton]
             }, this.poster,{
                 xtype: "textfield",
                 name: "title",
@@ -225,9 +159,30 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
             height: 250,
             title: t("video"),
             items: [this.form],
-            layout: "fit"
+            layout: "fit",
+            listeners: {
+                afterrender: function () {
+                    this.updateType(this.data.type);
+                }.bind(this)
+            }
         });
         this.window.show();
+    },
+
+    updateType: function (type) {
+        this.searchButton.enable();
+        var labelEl = this.form.getComponent("pathContainer").label;
+        labelEl.update(t("path"));
+
+        if(type != "asset") {
+            this.searchButton.disable();
+        }
+        if(type == "youtube") {
+            labelEl.update("URL / ID");
+        }
+        if(type == "vimeo") {
+            labelEl.update("URL");
+        }
     },
 
     onNodeDrop: function (target, dd, e, data) {
