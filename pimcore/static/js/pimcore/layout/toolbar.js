@@ -584,7 +584,7 @@ pimcore.layout.toolbar = Class.create({
 
         if (('webkitSpeechRecognition' in window)) {
             this.toolbar.add({
-                iconCls: "pimcore_icon_mic",
+                iconCls: "",
                 cls: "pimcore_main_menu",
                 handler: function (btn) {
                     var speechRecognitionButton = btn;
@@ -675,6 +675,7 @@ pimcore.layout.toolbar = Class.create({
                                         }
 
                                         if(final_transcript) {
+                                            interimToolTip.hide();
                                             pimcore.helpers.insertTextAtCursorPosition(final_transcript);
                                         } else {
                                             interimToolTip.show();
