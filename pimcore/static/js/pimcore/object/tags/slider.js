@@ -90,7 +90,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
     },
 
     showValueInLabel:function () {
-        var labelEl = Ext.get(this.component.getEl().parent(".object_field").query("label")[0]);
+        var labelEl = this.component.label;
 
         if (!this.labelText) {
             this.labelText = labelEl.dom.innerHTML;
