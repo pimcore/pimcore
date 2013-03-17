@@ -97,12 +97,17 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                 foreach ($pluginConfigs as $p) {
 
                     $pluginJsPaths = array();
-                    if (is_array($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
-                        $pluginJsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                    if(array_key_exists("pluginDocumentEditmodeJsPaths", $p['plugin'])
+                    && is_array($p['plugin']['pluginDocumentEditmodeJsPaths'])
+                    && isset($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
+                        if (is_array($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
+                            $pluginJsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                        }
+                        else if ($p['plugin']['pluginDocumentEditmodeJsPaths']['path'] != null) {
+                            $pluginJsPaths[] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                        }
                     }
-                    else if ($p['plugin']['pluginDocumentEditmodeJsPaths']['path'] != null) {
-                        $pluginJsPaths[] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
-                    }
+
                     //manipulate path for frontend
                     if (is_array($pluginJsPaths) and count($pluginJsPaths) > 0) {
                         for ($i = 0; $i < count($pluginJsPaths); $i++) {
@@ -114,11 +119,15 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
 
                     $pluginCssPaths = array();
-                    if (is_array($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
-                        $pluginCssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
-                    }
-                    else if ($p['plugin']['pluginDocumentEditmodeCssPaths']['path'] != null) {
-                        $pluginCssPaths[] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                    if(array_key_exists("pluginDocumentEditmodeCssPaths", $p['plugin'])
+                    && is_array($p['plugin']['pluginDocumentEditmodeCssPaths'])
+                    && isset($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
+                        if (is_array($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
+                            $pluginCssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                        }
+                        else if ($p['plugin']['pluginDocumentEditmodeCssPaths']['path'] != null) {
+                            $pluginCssPaths[] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                        }
                     }
                     //manipulate path for frontend
                     if (is_array($pluginCssPaths) and count($pluginCssPaths) > 0) {
