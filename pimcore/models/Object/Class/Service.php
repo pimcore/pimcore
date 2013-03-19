@@ -39,7 +39,7 @@ class Object_Class_Service  {
     }
 
     /**
-     * @param $class
+     * @param Object_Class $class
      * @param $json
      * @return bool
      */
@@ -68,6 +68,7 @@ class Object_Class_Service  {
         $class->setAllowVariants($importData["allowVariants"]);
         $class->setParentClass($importData["parentClass"]);
         $class->setPreviewUrl($importData["previewUrl"]);
+        $class->setTreeLabelField($importData["treeLabelField"]);
         $class->setPropertyVisibility($importData["propertyVisibility"]);
 
         $class->save();

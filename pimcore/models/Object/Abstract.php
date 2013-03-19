@@ -803,6 +803,35 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     }
 
     /**
+     * Returns TRUE if a custom tree label is used
+     *
+     * @return string
+     */
+    public function getO_hasValidCustomTreeLabel() {
+        return false;
+    }
+
+    /**
+     * Returns the label that should be used in the tree. By default
+     * the object key is used.
+     *
+     * @return string
+     */
+    public function getO_treeLabel() {
+        return $this->getO_key();
+    }
+
+    /**
+     * Returns the label that should be used in the tree. By default
+     * the object key is used. Alias for getO_treeLabel()
+     *
+     * @return string
+     */
+    public function getTreeLabel() {
+        return $this->getO_treeLabel();
+    }
+
+    /**
      * @return string
      */
     public function getO_type() {
@@ -960,6 +989,18 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     public function setParentId($o_parentId) {
         $this->setO_parentId($o_parentId);
         return $this;
+    }
+
+    /**
+     * If a tree label field was set and a setter method is present for
+     * this field the setter will be called with the given value.
+     *
+     * This is method does nothing but should be overwritten in the
+     * concrete child objects.
+     *
+     * @param mixed $value The value that will be passed to the setter
+     */
+    public function setO_treeLabelFieldValue($value) {
     }
 
     /**
