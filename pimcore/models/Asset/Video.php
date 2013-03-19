@@ -48,8 +48,11 @@ class Asset_Video extends Asset {
             $this->setCustomSetting("thumbnails", null);
 
             // video thumbnails and image previews
-            foreach (glob(PIMCORE_TEMPORARY_DIRECTORY . "/video_" . $this->getId() . "__*") as $file) {
-                unlink($file);
+            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/video_" . $this->getId() . "__*");
+            if(is_array($files)) {
+                foreach ($files as $file) {
+                    unlink($file);
+                }
             }
         }
     }
