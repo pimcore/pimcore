@@ -158,7 +158,9 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
                     $t = $t["assetTypes"];
                 }
 
-                $allowedTypes[] = $t['assetTypes'];
+                if($t && is_string($t)) {
+                    $allowedTypes[] = $t;
+                }
             }
             if (!in_array($asset->getType(), $allowedTypes)) {
                 $allowed = false;
