@@ -172,7 +172,7 @@ pimcore.object.tree = Class.create({
                         newBasePath = "";
                     }
                     this.attributes.basePath = newBasePath;
-                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.text;
+                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.key;
                 }
                 else {
                     tree.loadMask.hide();
@@ -468,7 +468,7 @@ pimcore.object.tree = Class.create({
                         newBasePath = "";
                     }
                     this.attributes.basePath = newBasePath;
-                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.text;
+                    this.attributes.path = this.attributes.basePath + "/" + this.attributes.key;
                 }
                 else {
                     tree.loadMask.hide();
@@ -597,7 +597,8 @@ pimcore.object.tree = Class.create({
                     className: className,
                     classId: classId,
                     parentId: this.id,
-                    key: pimcore.helpers.getValidFilename(value)
+                    key: pimcore.helpers.getValidFilename(value),
+                    originalKey: value
                 },
                 success: this.attributes.reference.addObjectComplete.bind(this)
             });
@@ -657,7 +658,7 @@ pimcore.object.tree = Class.create({
         key = pimcore.helpers.getValidFilename(key);
         var parentChilds = parentNode.childNodes;
         for (var i = 0; i < parentChilds.length; i++) {
-            if (parentChilds[i].text == key && node != parentChilds[i]) {
+            if (parentChilds[i].attributes.key == key && node != parentChilds[i]) {
                 Ext.MessageBox.alert(t('edit_key'),
                                      t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
                 return true;
@@ -672,7 +673,7 @@ pimcore.object.tree = Class.create({
 
     editKey: function () {
         Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-                                        this.attributes.reference.editKeyComplete.bind(this), null, null, this.text);
+                                        this.attributes.reference.editKeyComplete.bind(this), null, null, this.attributes.key);
     },
 
     editKeyComplete: function (button, value, object) {
@@ -687,7 +688,7 @@ pimcore.object.tree = Class.create({
             // check for ident filename in current level
             var parentChilds = this.parentNode.childNodes;
             for (var i = 0; i < parentChilds.length; i++) {
-                if (parentChilds[i].text == value && this != parentChilds[i]) {
+                if (parentChilds[i].attributes.key == value && this != parentChilds[i]) {
                     Ext.MessageBox.alert(t('rename'), t('the_filename_is_already_in_use'));
                     return;
                 }
@@ -701,7 +702,10 @@ pimcore.object.tree = Class.create({
 
             value = pimcore.helpers.getValidFilename(value);
 
-            this.setText(value);
+            if (!this.attributes.validCustomLabel) {
+                this.setText(value);
+            }
+
             this.attributes.path = this.attributes.basePath + value;
 
             this.getOwnerTree().loadMask.show();

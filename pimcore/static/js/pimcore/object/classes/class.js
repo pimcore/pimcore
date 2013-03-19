@@ -557,6 +557,13 @@ pimcore.object.classes.klass = Class.create({
                     value: this.data.previewUrl
                 },
                 {
+                    xtype: "textfield",
+                    fieldLabel: t("tree_label_field"),
+                    name: "treeLabelField",
+                    width: 400,
+                    value: this.data.treeLabelField
+                },
+                {
                     xtype: "displayfield",
                     hideLabel: true,
                     width: 600,
