@@ -525,6 +525,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
                 $object->setClassName($this->getParam("className"));
                 $object->setParentId($this->getParam("parentId"));
                 $object->setKey($this->getParam("key"));
+                $object->setO_treeLabelFieldValue($this->getParam("originalKey"));
                 $object->setCreationDate(time());
                 $object->setUserOwner($this->getUser()->getId());
                 $object->setUserModification($this->getUser()->getId());
