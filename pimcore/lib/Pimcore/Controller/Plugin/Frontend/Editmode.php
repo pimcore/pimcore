@@ -204,6 +204,14 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             $this->getResponse()->setBody($body);
         }
 
+        if ($this->controller->editmode
+            && strpos($body, "<head") === false
+            && !$request->getParam("blockAutoHtml")
+        ) {
+            // add error message if no head or body is in the response
+            $this->getResponse()->setBody('<span style="font-size:30px; font-weight:bold; color:red;">You have to define a &lt;head&gt; element in your view/layout!</span><br /><br />' . $body);
+        }
+
         // add scripts in html header for pages in editmode
         if ($this->controller->editmode && Document_Service::isValidType($this->controller->document->getType()) ) { //ckogler
             include_once("simple_html_dom.php");
