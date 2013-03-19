@@ -85,8 +85,11 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     private function deleteThumbnailTmpFiles(Asset_Image_Thumbnail_Config $thumbnail) {
         // delete all thumbnails which are using this config
-        foreach (glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_*__" . $thumbnail->getName() . "*") as $file) {
-            unlink($file);
+        $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_*__" . $thumbnail->getName() . "*");
+        if(is_array($files)) {
+            foreach ($files as $file) {
+                unlink($file);
+            }
         }
     }
 
