@@ -189,6 +189,7 @@ class Asset_Video_Thumbnail_Config {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -205,6 +206,7 @@ class Asset_Video_Thumbnail_Config {
     public function setItems($items)
     {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -221,6 +223,7 @@ class Asset_Video_Thumbnail_Config {
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -237,6 +240,7 @@ class Asset_Video_Thumbnail_Config {
     public function setAudioBitrate($audioBitrate)
     {
         $this->audioBitrate = (int) $audioBitrate;
+        return $this;
     }
 
     /**
@@ -253,6 +257,7 @@ class Asset_Video_Thumbnail_Config {
     public function setVideoBitrate($videoBitrate)
     {
         $this->videoBitrate = (int) $videoBitrate;
+        return $this;
     }
 
     /**

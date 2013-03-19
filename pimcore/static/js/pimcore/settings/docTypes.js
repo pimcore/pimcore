@@ -56,15 +56,21 @@ pimcore.settings.document.doctypes = Class.create({
     getRowEditor: function () {
 
         this.store = pimcore.globalmanager.get("document_types_store");
-        var documentDocumentTypeStore = pimcore.globalmanager.get("document_documenttype_store")
+        var documentDocumentTypeStore = pimcore.globalmanager.get("document_documenttype_store");
 
         var typesColumns = [
-            {header: t("name"), width: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
-            {header: t("module_optional"), width: 50, sortable: true, dataIndex: 'module', editor: new Ext.form.TextField({})},
-            {header: t("controller"), width: 50, sortable: true, dataIndex: 'controller', editor: new Ext.form.TextField({})},
-            {header: t("action"), width: 50, sortable: true, dataIndex: 'action', editor: new Ext.form.TextField({})},
-            {header: t("template"), width: 50, sortable: true, dataIndex: 'template', editor: new Ext.form.TextField({})},
-            {header: t("type"), width: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
+            {header: t("name"), width: 100, sortable: true, dataIndex: 'name',
+                                                                        editor: new Ext.form.TextField({})},
+            {header: t("module_optional"), width: 50, sortable: true, dataIndex: 'module',
+                                                                        editor: new Ext.form.TextField({})},
+            {header: t("controller"), width: 50, sortable: true, dataIndex: 'controller',
+                                                                        editor: new Ext.form.TextField({})},
+            {header: t("action"), width: 50, sortable: true, dataIndex: 'action',
+                                                                        editor: new Ext.form.TextField({})},
+            {header: t("template"), width: 50, sortable: true, dataIndex: 'template',
+                                                                        editor: new Ext.form.TextField({})},
+            {header: t("type"), width: 50, sortable: true, dataIndex: 'type',
+                                                                        editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
                 store: documentDocumentTypeStore
@@ -96,7 +102,8 @@ pimcore.settings.document.doctypes = Class.create({
                             pimcore.globalmanager.get("translationadminmanager").activate(rec.data.name);
                         }
                         catch (e) {
-                            pimcore.globalmanager.add("translationadminmanager", new pimcore.settings.translation.admin(rec.data.name));
+                            pimcore.globalmanager.add("translationadminmanager",
+                                                    new pimcore.settings.translation.admin(rec.data.name));
                         }
                     }.bind(this)
                 }]

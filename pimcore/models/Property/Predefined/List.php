@@ -46,6 +46,7 @@ class Property_Predefined_List extends Pimcore_Model_List_Abstract {
      */
     public function setProperties($properties) {
         $this->properties = $properties;
+        return $this;
     }
 
 }

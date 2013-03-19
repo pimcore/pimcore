@@ -116,10 +116,14 @@ class Document_Tag_Image extends Document_Tag {
         if ($this->image instanceof Asset) {
 
             $thumbnailInUse = false;
-            if ($this->options["thumbnail"]) {
+            if ($this->options["thumbnail"] || $this->cropPercent) {
                 // create a thumbnail first
 
                 $thumbConfig = $this->image->getThumbnailConfig($this->options["thumbnail"]);
+                if(!$thumbConfig && $this->cropPercent) {
+                    $thumbConfig = new Asset_Image_Thumbnail_Config();
+                }
+
                 if($this->cropPercent) {
                     $thumbConfig->addItemAt(0,"cropPercent", array(
                         "width" => $this->cropWidth,
@@ -214,6 +218,7 @@ class Document_Tag_Image extends Document_Tag {
         }
         catch (Exception $e) {
         }
+        return $this;
     }
 
     /**
@@ -231,6 +236,7 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropLeft = $data["cropLeft"];
 
         $this->image = Asset_Image::getById($this->id);
+        return $this;
     }
 
     /*
@@ -342,25 +348,33 @@ class Document_Tag_Image extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->id !==null) {
-
             $this->alt = $data->alt;
             $this->id = $data->id;
+
+            if ($idMapper) {
+                $this->id = $idMapper->getMappedId("asset", $data->id);
+            }
+
             if (is_numeric($this->id)) {
                 $this->image = Asset_Image::getById($this->id);
                 if (!$this->image instanceof Asset_Image) {
-                    throw new Exception("cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
+                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                        $idMapper->recordMappingFailure($this->getDocumentId(), "asset", $data->id);
+                    } else {
+                        throw new Exception("cannot get values from web service import - referenced image with id [ " . $this->id . " ] is unknown");
+                    }
                 }
             } else {
-                throw new Exception("cannot get values from web service import - id is not valid");
+                if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                    $idMapper->recordMappingFailure($this->getDocumentId(), "asset", $data->id);
+                } else {
+                    throw new Exception("cannot get values from web service import - id is not valid");
+                }
             }
-
-
         }
-
-
     }
 
     /**
@@ -369,6 +383,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropHeight($cropHeight)
     {
         $this->cropHeight = $cropHeight;
+        return $this;
     }
 
     /**
@@ -385,6 +400,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropLeft($cropLeft)
     {
         $this->cropLeft = $cropLeft;
+        return $this;
     }
 
     /**
@@ -401,6 +417,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropPercent($cropPercent)
     {
         $this->cropPercent = $cropPercent;
+        return $this;
     }
 
     /**
@@ -417,6 +434,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropTop($cropTop)
     {
         $this->cropTop = $cropTop;
+        return $this;
     }
 
     /**
@@ -433,6 +451,7 @@ class Document_Tag_Image extends Document_Tag {
     public function setCropWidth($cropWidth)
     {
         $this->cropWidth = $cropWidth;
+        return $this;
     }
 
     /**

@@ -11,7 +11,6 @@
  * @copyright  Copyright (c) 2009-2010 elements.at New Media Solutions GmbH (http://www.elements.at)
  * @license    http://www.pimcore.org/license     New BSD License
  */
-
 function t(key) {
     if (pimcore && pimcore.system_i18n && pimcore.system_i18n[key]) {
         return pimcore.system_i18n[key];
@@ -61,20 +60,30 @@ function ts(key) {
     }
 }
 
-Math.sec = function(x) { return 1 / Math.cos(x); }
+Math.sec = function(x) {
+    return 1 / Math.cos(x);
+};
 
 
 
 function RealTypeOf(v) {
   if (typeof(v) == "object") {
-    if (v === null) return "null";
-    if (v.constructor == (new Array).constructor) return "array";
-    if (v.constructor == (new Date).constructor) return "date";
-    if (v.constructor == (new RegExp).constructor) return "regex";
+    if (v === null) {
+        return "null";
+    }
+    if (v.constructor == (new Array).constructor) {
+        return "array";
+    }
+    if (v.constructor == (new Date).constructor) {
+        return "date";
+    }
+    if (v.constructor == (new RegExp).constructor) {
+        return "regex";
+    }
     return "object";
   }
   return typeof(v);
-}
+};
 
 
 
@@ -148,12 +157,12 @@ function FormatJSON(oData, sIndent) {
 
     // return
     return sHTML;
-}
+};
 
 
 function in_arrayi(needle, haystack) {
     return in_array(needle.toLocaleLowerCase(), array_map(strtolower, haystack));
-}
+};
 
 
 function strtolower (str) {
@@ -163,7 +172,7 @@ function strtolower (str) {
     // *     example 1: strtolower('Kevin van Zonneveld');
     // *     returns 1: 'kevin van zonneveld'
     return (str + '').toLowerCase();
-}
+};
 
 
 function array_map (callback) {
@@ -245,7 +254,7 @@ function ucfirst(str) {
     str += '';
     var f = str.charAt(0).toUpperCase();
     return f + str.substr(1);
-}
+};
 
 
 function in_array(needle, haystack, argStrict) {
@@ -282,7 +291,7 @@ function in_array(needle, haystack, argStrict) {
     }
 
     return false;
-}
+};
 
 
 function uniqid(prefix, more_entropy) {
@@ -331,7 +340,7 @@ function uniqid(prefix, more_entropy) {
     }
 
     return retId;
-}
+};
 
 
 function empty (mixed_var) {
@@ -356,7 +365,8 @@ function empty (mixed_var) {
     // *     returns 5: false
     var key;
 
-    if (mixed_var === "" || mixed_var === 0 || mixed_var === "0" || mixed_var === null || mixed_var === false || typeof mixed_var === 'undefined') {
+    if (mixed_var === "" || mixed_var === 0 || mixed_var === "0" || mixed_var === null || mixed_var === false
+                                                            || typeof mixed_var === 'undefined') {
         return true;
     }
 
@@ -368,7 +378,7 @@ function empty (mixed_var) {
     }
 
     return false;
-}
+};
 
 function str_replace(search, replace, subject, count) {
     // Replaces all occurrences of search in haystack with replace  
@@ -419,7 +429,7 @@ function str_replace(search, replace, subject, count) {
         }
     }
     return sa ? s : s[0];
-}
+};
 
 
 function trim(str, charlist) {
@@ -471,7 +481,7 @@ function trim(str, charlist) {
     }
 
     return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
-}
+};
 
 
 function base64_encode(data) {
@@ -529,7 +539,7 @@ function base64_encode(data) {
     }
 
     return enc;
-}
+};
 
 function base64_decode(data) {
     // Decodes string using MIME base64 algorithm  
@@ -588,7 +598,7 @@ function base64_decode(data) {
     dec = this.utf8_decode(dec);
 
     return dec;
-}
+};
 
 
 function utf8_decode(str_data) {
@@ -628,7 +638,7 @@ function utf8_decode(str_data) {
     }
 
     return tmp_arr.join('');
-}
+};
 
 
 function ucfirst(str) {
@@ -644,7 +654,7 @@ function ucfirst(str) {
     str += '';
     var f = str.charAt(0).toUpperCase();
     return f + str.substr(1);
-}
+};
 
 
 function array_search(needle, haystack, argStrict) {
@@ -668,7 +678,7 @@ function array_search(needle, haystack, argStrict) {
     }
 
     return false;
-}
+};
 
 
 function mergeObject(p, c) {
@@ -682,7 +692,7 @@ function mergeObject(p, c) {
     }
 
     return c;
-}
+};
 
 
 function strip_tags(str, allowed_tags) {
@@ -775,7 +785,7 @@ function strip_tags(str, allowed_tags) {
     }
 
     return str;
-}
+};
 
 
 function md5(str) {
@@ -964,7 +974,7 @@ function md5(str) {
 
     var temp = wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d);
     return temp.toLowerCase();
-}
+};
 
 function utf8_encode(string) {
     // Encodes an ISO-8859-1 string to UTF-8  
@@ -1010,7 +1020,7 @@ function utf8_encode(string) {
     }
 
     return utftext;
-}
+};
 
 
 function intval(mixed_var, base) {
@@ -1045,7 +1055,7 @@ function intval(mixed_var, base) {
     } else {
         return 0;
     }
-}
+};
 
 
 function nl2br (str, is_xhtml) {
@@ -1069,7 +1079,7 @@ function nl2br (str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
 
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
-}
+};
 
 
 function array_merge () {
@@ -1126,7 +1136,7 @@ function array_merge () {
         }
     }
     return retObj;
-}
+};
 
 
 function preg_quote (str, delimiter) {
@@ -1143,7 +1153,7 @@ function preg_quote (str, delimiter) {
     // *     example 3: preg_quote("\\.+*?[^]$(){}=!<>|:");
     // *     returns 3: '\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:'
     return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
-}
+};
 
 
 function urlencode (str) {
@@ -1177,7 +1187,7 @@ function urlencode (str) {
     // PHP behavior, you would need to add ".replace(/~/g, '%7E');" to the following.
     return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').
     replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
-}
+};
 
 
 function htmlentities (string, quote_style, charset, double_encode) {
@@ -1224,7 +1234,7 @@ function htmlentities (string, quote_style, charset, double_encode) {
     }
 
     return string;
-}
+};
 
 
 function get_html_translation_table (table, quote_style) {
@@ -1388,7 +1398,7 @@ function get_html_translation_table (table, quote_style) {
     }
 
     return hash_map;
-}
+};
 
 
 function parse_url (str, component) {
@@ -1441,7 +1451,7 @@ function parse_url (str, component) {
     }
     delete uri.source;
     return uri;
-}
+};
 
 function round (value, precision, mode) {
     // http://kevin.vanzonneveld.net
@@ -1494,7 +1504,7 @@ function round (value, precision, mode) {
     }
 
     return (isHalf ? value : Math.round(value)) / m;
-}
+};
 
 
 function implode (glue, pieces) {
@@ -1522,4 +1532,71 @@ function implode (glue, pieces) {
         }
         return retVal;
     }    return pieces;
-}
+};
+
+/**
+ * inserts a text into an input/textarea where the cursor is set
+ * @param txtarea
+ * @param text
+ */
+function insertTextToFormElementAtCursor(txtarea, text) {
+    var scrollPos = txtarea.scrollTop;
+    var strPos = 0;
+    var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
+        "ff" : (document.selection ? "ie" : false ) );
+    if (br == "ie") {
+        txtarea.focus();
+        var range = document.selection.createRange();
+        range.moveStart('character', -txtarea.value.length);
+        strPos = range.text.length;
+    }
+    else if (br == "ff") strPos = txtarea.selectionStart;
+
+    var front = (txtarea.value).substring(0, strPos);
+    var back = (txtarea.value).substring(strPos, txtarea.value.length);
+    txtarea.value = front + text + back;
+    strPos = strPos + text.length;
+    if (br == "ie") {
+        txtarea.focus();
+        var range = document.selection.createRange();
+        range.moveStart('character', -txtarea.value.length);
+        range.moveStart('character', strPos);
+        range.moveEnd('character', 0);
+        range.select();
+    }
+    else if (br == "ff") {
+        txtarea.selectionStart = strPos;
+        txtarea.selectionEnd = strPos;
+        txtarea.focus();
+    }
+    txtarea.scrollTop = scrollPos;
+};
+
+/**
+ * inserts a text into an html element with contenteditable where the cursor is set
+ * @param text
+ * @param win
+ * @param doc
+ */
+function insertTextToContenteditableAtCursor (text, win, doc) {
+
+    if(!win) {
+        var win = window;
+    }
+    if(!doc) {
+        var doc = document;
+    }
+
+    var sel, range;
+    if (win.getSelection) {
+        sel = win.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode( doc.createTextNode(text) );
+        }
+    } else if (doc.selection && doc.selection.createRange) {
+        doc.selection.createRange().text = text;
+    }
+};
+

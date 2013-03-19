@@ -49,6 +49,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
      */
     public function setClasses($classes) {
         $this->classes = $this->correctClasses($classes);
+        return $this;
     }
 
     /**
@@ -92,6 +93,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
      */
     public function setLazyLoading($lazyLoading){
         $this->lazyLoading = $lazyLoading;
+        return $this;
     }
 
     /**
@@ -152,6 +154,10 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         } else if ($this->getAssetsAllowed() and  is_array($allowedAssetTypes) and count($allowedAssetTypes) > 0) {
             //check for allowed asset types
             foreach ($allowedAssetTypes as $t) {
+                if (is_array($t) && array_key_exists("assetTypes",$t)) {
+                    $t = $t["assetTypes"];
+                }
+
                 $allowedTypes[] = $t['assetTypes'];
             }
             if (!in_array($asset->getType(), $allowedTypes)) {
@@ -256,7 +262,19 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
                 try {
                     $db->insert("object_relations_" . $classId, $relation);
                 } catch (Exception $e) {
-                    Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
+                    Logger::error("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"]
+                        . " (fieldname: " . $this->getName() . ") already exist -> try to update");
+                    Logger::error($e);
+
+                    // try it again with an update if the insert fails, shouldn't be the case, but it seems that
+                    // sometimes the insert throws an exception
+
+                    // build condition
+                    $condition = array();
+                    foreach ($relation as $key => $value) {
+                        $condition[] = $db->quoteInto($db->quoteIdentifier($key) . " = ?", $value);
+                    }
+                    $db->update("object_relations_" . $classId, $relation, implode(" AND ", $condition));
                 }
             }
         }
@@ -271,7 +289,7 @@ abstract class Object_Class_Data_Relations_Abstract extends Object_Class_Data {
         $data = null;
 
         if($object instanceof Object_Concrete) {
-            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or $params["force"]) {
+            if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or (array_key_exists("force", $params) && $params["force"])) {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", array($object->getO_id(), $this->getName()));
             } else {
                 return null;

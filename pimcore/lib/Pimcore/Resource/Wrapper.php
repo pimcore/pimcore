@@ -32,6 +32,7 @@ class Pimcore_Resource_Wrapper {
     public function setDDLResource($DDLResource)
     {
         $this->DDLResource = $DDLResource;
+        return $this;
     }
 
     /**
@@ -41,7 +42,7 @@ class Pimcore_Resource_Wrapper {
     {
         if(!$this->DDLResource) {
             // get the Zend_Db_Adapter_Abstract not the wrapper
-            $this->DDLResource = Pimcore_Resource::getConnection()->getResource();
+            $this->DDLResource = Pimcore_Resource::getConnection(true);
         }
         return $this->DDLResource;
     }
@@ -51,17 +52,24 @@ class Pimcore_Resource_Wrapper {
      */
     public function closeDDLResource() {
         if($this->DDLResource) {
-            Logger::debug("closing mysql connection with ID: " . $this->DDLResource->fetchOne("SELECT CONNECTION_ID()"));
-            $this->DDLResource->closeConnection();
-            $this->DDLResource = null;
+            try {
+                Logger::debug("closing mysql connection with ID: " . $this->DDLResource->fetchOne("SELECT CONNECTION_ID()"));
+                $this->DDLResource->closeConnection();
+                $this->DDLResource = null;
+            } catch (\Exception $e) {
+                // this is the case when the mysql connection has gone away (eg. when forking using pcntl)
+                Logger::info($e);
+            }
         }
     }
 
     /**
      * @param $resource
      */
-    public function __construct($resource) {
-        $this->setResource($resource);
+    public function __construct($resource = false) {
+        if($resource) {
+            $this->setResource($resource);
+        }
     }
 
     /**
@@ -71,6 +79,7 @@ class Pimcore_Resource_Wrapper {
     public function setResource($resource)
     {
         $this->resource = $resource;
+        return $this;
     }
 
     /**
@@ -78,9 +87,28 @@ class Pimcore_Resource_Wrapper {
      */
     public function getResource()
     {
+        if(!$this->resource) {
+            // get the Zend_Db_Adapter_Abstract not the wrapper
+            $this->resource = Pimcore_Resource::getConnection(true);
+        }
         return $this->resource;
     }
 
+    /**
+     *
+     */
+    public function closeResource() {
+        if($this->resource) {
+            try {
+                Logger::debug("closing mysql connection with ID: " . $this->resource->fetchOne("SELECT CONNECTION_ID()"));
+                $this->resource->closeConnection();
+                $this->resource = null;
+            } catch (\Exception $e) {
+                // this is the case when the mysql connection has gone away (eg. when forking using pcntl)
+                Logger::info($e);
+            }
+        }
+    }
     
     /**
      * @throws Exception

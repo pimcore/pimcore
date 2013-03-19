@@ -30,7 +30,7 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         
         $page->getVersions();
         $page->getScheduledTasks();
-        $page->idPath = Pimcore_Tool::getIdPathForElement($page);
+        $page->idPath = Element_Service::getIdPath($page);
         $page->userPermissions = $page->getUserPermissions();
         $page->setLocked($page->isLocked());
 
@@ -77,10 +77,13 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                 $page->setPublished(true);
             }
 
+            $settings = array();
+            if($this->getParam("settings")) {
+                $settings = Zend_Json::decode($this->getParam("settings"));
+            }
+
             // check for redirects
             if($this->getUser()->isAllowed("redirects") && $this->getParam("settings")) {
-                $settings = Zend_Json::decode($this->getParam("settings"));
-
                 if(is_array($settings)) {
                     $redirectList = new Redirect_List();
                     $redirectList->setCondition("target = ?", $page->getId());
@@ -116,6 +119,19 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
                     }
                 }
             }
+
+            $metaData = array();
+            for($i=1; $i<30; $i++) {
+                if(array_key_exists("metadata_idName_" . $i, $settings)) {
+                    $metaData[] = array(
+                        "idName" => $settings["metadata_idName_" . $i],
+                        "idValue" => $settings["metadata_idValue_" . $i],
+                        "contentName" => $settings["metadata_contentName_" . $i],
+                        "contentValue" => $settings["metadata_contentValue_" . $i],
+                    );
+                }
+            }
+            $page->setMetaData($metaData);
 
             // only save when publish or unpublish
             if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
@@ -159,6 +175,17 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         }
     }
 
+    public function getListAction() {
+        $list = new Document_List();
+        $list->setCondition("type = ?", array("page"));
+        $data = $list->loadIdPathList();
+
+        $this->_helper->json(array(
+            "success" => true,
+            "data" => $data
+        ));
+    }
+
     public function uploadScreenshotAction() {
         if($this->getParam("data") && $this->getParam("id")) {
             $data = substr($this->getParam("data"),strpos($this->getParam("data"), ",")+1);
@@ -167,6 +194,70 @@ class Admin_PageController extends Pimcore_Controller_Action_Admin_Document {
         }
 
         $this->_helper->json(array("success" => true));
+    }
+
+    public function generateScreenshotAction() {
+
+        $success = false;
+        if($this->getParam("id")) {
+
+            $doc = Document::getById($this->getParam("id"));
+            $url = Pimcore_Tool::getHostUrl() . $doc->getRealFullPath();
+            $tmpFile = PIMCORE_TEMPORARY_DIRECTORY . "/screenshot_tmp_" . $doc->getId() . ".png";
+            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-screenshot-" . $doc->getId() . ".jpg";
+
+            try {
+                if(Pimcore_Image_HtmlToImage::convert($url, $tmpFile)) {
+                    $im = Pimcore_Image::getInstance();
+                    $im->load($tmpFile);
+                    $im->scaleByWidth(400);
+                    $im->save($file, "jpeg", 85);
+
+                    unlink($tmpFile);
+
+                    $success = true;
+                }
+            } catch (Exception $e) {
+                Logger::error($e);
+            }
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
+    public function checkPrettyUrlAction() {
+        $docId = $this->getParam("id");
+        $path = trim($this->getParam("path"));
+        $path = rtrim($path, "/");
+
+        $success = true;
+
+        // must start with /
+        if(strpos($path, "/") !== 0) {
+            $success = false;
+        }
+
+        if(strlen($path) < 2) {
+            $success = false;
+        }
+
+        if(!Pimcore_Tool::isValidPath($path)) {
+            $success = false;
+        }
+
+        $list = new Document_List();
+        $list->setCondition("(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
+            AND id != ?", array(
+            $path, $path, $docId
+        ));
+
+        if($list->getTotalCount() > 0) {
+            $success = false;
+        }
+
+        $this->_helper->json(array(
+            "success" => $success
+        ));
     }
 
     protected function setValuesToDocument(Document $page) {

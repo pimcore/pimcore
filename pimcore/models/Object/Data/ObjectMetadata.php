@@ -67,6 +67,7 @@ class Object_Data_ObjectMetadata extends Pimcore_Model_Abstract {
 
     public function setFieldname($fieldname) {
         $this->fieldname = $fieldname;
+        return $this;
     }
 
     public function getFieldname() {
@@ -75,6 +76,7 @@ class Object_Data_ObjectMetadata extends Pimcore_Model_Abstract {
 
     public function setObject($object) {
         $this->object = $object;
+        return $this;
     }
 
     /**
@@ -86,6 +88,7 @@ class Object_Data_ObjectMetadata extends Pimcore_Model_Abstract {
 
     public function setColumns($columns) {
         $this->columns = $columns;
+        return $this;
     }
 
     public function getColumns() {

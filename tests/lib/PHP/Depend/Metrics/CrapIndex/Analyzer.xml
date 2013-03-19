@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<analyzer>
+    <options>
+        <option name="coverage-report" value="file">
+            <message>Clover style CodeCoverage report, as produced by PHPUnit's --coverage-clover option.</message>
+        </option>
+    </options>
+</analyzer>

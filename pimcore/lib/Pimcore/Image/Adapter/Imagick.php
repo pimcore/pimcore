@@ -49,13 +49,14 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         try {
             $this->resource = new Imagick();
-            if(!$this->resource->readImage($imagePath)) {
+            if(!$this->resource->readImage($imagePath."[0]")) {
                 return false;
             }
 
             $this->imagePath = $imagePath;
 
         } catch (Exception $e) {
+            Logger::error($e);
             return false;
         }
 
@@ -67,7 +68,11 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     }
 
     /**
-     * @param  $path
+     * @param $path
+     * @param null $format
+     * @param null $quality
+     * @param string $colorProfile
+     * @return Pimcore_Image_Adapter|Pimcore_Image_Adapter_Imagick
      */
     public function save ($path, $format = null, $quality = null, $colorProfile = "RGB") {
 
@@ -83,6 +88,10 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
         if($quality) {
             $this->resource->setCompressionQuality((int) $quality);
             $this->resource->setImageCompressionQuality((int) $quality);
+        }
+
+        if($format == "tiff") {
+            $this->resource->setCompression(Imagick::COMPRESSION_LZW);
         }
         
         $this->resource->writeImage($path);
@@ -157,6 +166,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function setCMYKColorProfile($CMYKColorProfile)
     {
         self::$CMYKColorProfile = $CMYKColorProfile;
+        return self;
     }
 
     /**
@@ -181,6 +191,7 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
     public static function setRGBColorProfile($RGBColorProfile)
     {
         self::$RGBColorProfile = $RGBColorProfile;
+        return self;
     }
 
     /**

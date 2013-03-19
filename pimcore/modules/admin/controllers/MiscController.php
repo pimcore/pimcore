@@ -101,6 +101,30 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         $this->getResponse()->setHeader("Content-Type", "text/css; charset=UTF-8", true);
     }
 
+    public function proxyAction() {
+        if($this->getParam("url")) {
+
+            header("Content-Type: application/javascript");
+
+            $client = Pimcore_Tool::getHttpClient();
+            $client->setUri($this->getParam("url"));
+
+            try {
+                $response = $client->request(Zend_Http_Client::GET);
+
+                if ($response->isSuccessful()) {
+                    echo $this->getParam("callback") . "(" . Zend_Json::encode("data:" .$response->getHeader("Content-Type") . ";base64," . base64_encode($response->getBody())) . ");";
+                } else {
+                    throw new Exception("Invalid response");
+                }
+            } catch (Exception $e) {
+                echo $this->getParam("callback") . "(" . Zend_Json::encode("error:Application error") . ")";
+            }
+        }
+
+        exit;
+    }
+
     public function pingAction()
     {
 
@@ -130,6 +154,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerTreeAction()
     {
+        $this->checkPermission("fileexplorer");
 
         $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("node"));
         $referencePath = PIMCORE_DOCUMENT_ROOT . $path;
@@ -170,6 +195,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerContentAction()
     {
+        $this->checkPermission("fileexplorer");
 
         $success = false;
         $writeable = false;
@@ -193,6 +219,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerContentSaveAction()
     {
+        $this->checkPermission("fileexplorer");
 
         $success = false;
 
@@ -213,6 +240,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerAddAction()
     {
+        $this->checkPermission("fileexplorer");
+
         $success = false;
 
         if ($this->getParam("filename") && $this->getParam("path")) {
@@ -234,6 +263,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerAddFolderAction()
     {
+        $this->checkPermission("fileexplorer");
+
         $success = false;
 
         if ($this->getParam("filename") && $this->getParam("path")) {
@@ -254,6 +285,7 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function fileexplorerDeleteAction()
     {
+        $this->checkPermission("fileexplorer");
 
         if ($this->getParam("path")) {
             $path = preg_replace("/^\/fileexplorer/", "", $this->getParam("path"));
@@ -265,12 +297,14 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-                                  "success" => $success
-                             ));
+              "success" => $success
+        ));
     }
 
     public function maintenanceAction()
     {
+        $this->checkPermission("maintenance_mode");
+
         if ($this->getParam("activate")) {
             Pimcore_Tool_Admin::activateMaintenanceMode();
         }
@@ -280,11 +314,13 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
         }
 
         $this->_helper->json(array(
-                                  "success" => true
-                             ));
+              "success" => true
+        ));
     }
 
     public function httpErrorLogAction() {
+
+        $this->checkPermission("http_errors");
 
         $db = Pimcore_Resource::get();
 
@@ -336,6 +372,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
 
     public function httpErrorLogFlushAction() {
 
+        $this->checkPermission("http_errors");
+
         $db = Pimcore_Resource::get();
         $db->delete("http_error_log");
 
@@ -345,6 +383,8 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     }
 
     public function httpErrorLogDetailAction() {
+
+        $this->checkPermission("http_errors");
 
         $db = Pimcore_Resource::get();
         $data = $db->fetchRow("SELECT * FROM http_error_log WHERE id = ?", array($this->getParam("id")));
@@ -392,6 +432,107 @@ class Admin_MiscController extends Pimcore_Controller_Action_Admin
     {
         phpinfo();
         exit;
+    }
+
+
+    protected function getBounceMailbox () {
+
+        $mail = null;
+        $config = Pimcore_Config::getSystemConfig();
+
+        if($config->email->bounce->type == "Mbox") {
+            $mail = new Zend_Mail_Storage_Mbox(array(
+                'filename' => $config->email->bounce->mbox
+            ));
+        } else if ($config->email->bounce->type == "Maildir") {
+            $mail = new Zend_Mail_Storage_Maildir(array(
+                'dirname' => $config->email->bounce->maildir
+            ));
+        } else if ($config->email->bounce->type == "IMAP") {
+            $mail = new Zend_Mail_Storage_Imap(array(
+                'host' => $config->email->bounce->imap->host,
+                "port" => $config->email->bounce->imap->port,
+                'user' => $config->email->bounce->imap->username,
+                'password' => $config->email->bounce->imap->password,
+                "ssl" => (bool) $config->email->bounce->imap->ssl
+            ));
+        } else {
+            // default
+            $pathes = array(
+                "/var/mail/" . get_current_user(),
+                "/var/spool/mail/" . get_current_user()
+            );
+
+            foreach ($pathes as $path) {
+                if(is_dir($path)) {
+                    $mail = new Zend_Mail_Storage_Maildir(array(
+                        'dirname' => $path . "/"
+                    ));
+                } else if(is_file($path)) {
+                    $mail = new Zend_Mail_Storage_Mbox(array(
+                        'filename' => $path
+                    ));
+                }
+            }
+        }
+
+        return $mail;
+    }
+
+    public function bounceMailInboxListAction() {
+
+        $this->checkPermission("bounce_mail_inbox");
+
+        $offset = ($this->getParam("start")) ? $this->getParam("start")+1 : 1;
+        $limit = ($this->getParam("limit")) ? $this->getParam("limit") : 40;
+
+        $mail = $this->getBounceMailbox();
+        $mail->seek($offset);
+
+        $mails = array();
+        $count = 0;
+        while ($mail->valid()) {
+            $count++;
+
+            $message = $mail->current();
+
+            $mailData = array(
+                "subject" => iconv(mb_detect_encoding($message->subject), "UTF-8", $message->subject),
+                "to" => $message->to,
+                "from" => $message->from,
+                "id" => (int) $mail->key()
+            );
+
+            $date = new Zend_Date($message->date);
+            $mailData["date"] = $date->get(Zend_Date::DATETIME_MEDIUM);
+
+            $mails[] = $mailData;
+
+            if($count >= $limit) {
+                break;
+            }
+
+            $mail->next();
+        }
+
+        $this->_helper->json(array(
+            "data" => $mails,
+            "success" => true,
+            "total" => $mail->countMessages()
+        ));
+    }
+
+    public function bounceMailInboxDetailAction() {
+
+        $this->checkPermission("bounce_mail_inbox");
+
+        $mail = $this->getBounceMailbox();
+
+        $message = $mail->getMessage((int) $this->getParam("id"));
+        $message->getContent();
+
+        $this->view->mail = $mail; // we have to pass $mail too, otherwise the stream is closed
+        $this->view->message = $message;
     }
 
     public function testAction()

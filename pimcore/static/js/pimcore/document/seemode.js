@@ -47,7 +47,8 @@ pimcore.document.seemode = Class.create({
             closeAction:'hide',
             plain: true,
             bodyStyle: "-webkit-overflow-scrolling:touch;",
-            html: '<iframe id="pimcore_seemode" name="pimcore_seemode" src="about:blank" frameborder="0" allowtransparency="false"></iframe>',
+            html: '<iframe id="pimcore_seemode" name="pimcore_seemode" src="about:blank" frameborder="0" '
+                        + 'allowtransparency="false"></iframe>',
             maximized: true,
             buttons: [
                 {

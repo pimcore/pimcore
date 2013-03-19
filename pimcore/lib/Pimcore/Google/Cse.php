@@ -237,6 +237,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function setOffset($offset)
     {
         $this->offset = $offset;
+        return $this;
     }
 
     /**
@@ -253,6 +254,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function setRaw($raw)
     {
         $this->raw = $raw;
+        return $this;
     }
 
     /**
@@ -269,6 +271,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function setTotal($total)
     {
         $this->total = $total;
+        return $this;
     }
 
     /**
@@ -285,6 +288,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function setPerPage($perPage)
     {
         $this->perPage = $perPage;
+        return $this;
     }
 
     /**
@@ -301,6 +305,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function setConfig($config)
     {
         $this->config = $config;
+        return $this;
     }
 
     /**
@@ -317,6 +322,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function setQuery($query)
     {
         $this->query = $query;
+        return $this;
     }
 
     /**
@@ -333,6 +339,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function setResults($results)
     {
         $this->results = $results;
+        return $this;
     }
 
     /**
@@ -352,6 +359,7 @@ class Pimcore_Google_Cse implements Zend_Paginator_Adapter_Interface, Zend_Pagin
     public function setFacets($facets)
     {
         $this->facets = $facets;
+        return $this;
     }
 
     /**

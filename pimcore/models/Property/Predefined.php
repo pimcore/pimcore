@@ -143,6 +143,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setKey($key) {
         $this->key = $key;
+        return $this;
     }
 
     /**
@@ -151,6 +152,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setName($name) {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -159,6 +161,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setType($type) {
         $this->type = $type;
+        return $this;
     }
 
     /**
@@ -167,6 +170,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setData($data) {
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -182,6 +186,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -197,6 +202,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setConfig($config) {
         $this->config = $config;
+        return $this;
     }
 
     /**
@@ -212,6 +218,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setCtype($ctype) {
         $this->ctype = $ctype;
+        return $this;
     }
     
     /**
@@ -227,6 +234,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
      */
     public function setInheritable($inheritable) {
         $this->inheritable = (bool) $inheritable;
+        return $this;
     }
 
     /**
@@ -236,6 +244,7 @@ class Property_Predefined extends Pimcore_Model_Abstract {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**

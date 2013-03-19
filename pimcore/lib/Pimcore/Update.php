@@ -321,7 +321,7 @@ class Pimcore_Update {
         }
 
         //directory for additional languages
-        $langDir = PIMCORE_WEBSITE_PATH . "/var/config/texts";
+        $langDir = PIMCORE_CONFIGURATION_DIRECTORY . "/texts";
         if (!is_dir($langDir)) {
             mkdir($langDir, 0755, true);
         }

@@ -18,6 +18,11 @@
 class Asset_Video extends Asset {
 
     /**
+     * @var string
+     */
+    public $type = "video";
+
+    /**
      * @return void
      */
     public function update() {
@@ -43,13 +48,8 @@ class Asset_Video extends Asset {
             $this->setCustomSetting("thumbnails", null);
 
             // video thumbnails and image previews
-            $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
-            foreach ($files as $file) {
-                if (is_file(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file)) {
-                    if (preg_match("/video_" . $this->getId() . "/", $file)) {
-                        @unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
-                    }
-                }
+            foreach (glob(PIMCORE_TEMPORARY_DIRECTORY . "/video_" . $this->getId() . "__*") as $file) {
+                unlink($file);
             }
         }
     }
@@ -188,5 +188,15 @@ class Asset_Video extends Asset {
         }
 
         return $path;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDuration () {
+        $converter = Pimcore_Video::getInstance();
+        $converter->load($this->getFileSystemPath());
+
+        return $converter->getDuration();
     }
 }

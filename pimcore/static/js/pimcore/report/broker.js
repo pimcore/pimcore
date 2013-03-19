@@ -44,7 +44,7 @@ pimcore.report.broker = {
         }
 
         if (typeof this.reports[groupId] != "object") {
-            this.reports[groupId] = []
+            this.reports[groupId] = [];
         }
 
         this.reports[groupId].push(report);

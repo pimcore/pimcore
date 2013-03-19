@@ -195,6 +195,11 @@ class Pimcore_Model_Cache {
         );
         $config["customBackendNaming"] = false;
 
+        // create cache dir
+        if(!is_dir(PIMCORE_CACHE_DIRECTORY)) {
+            mkdir(PIMCORE_CACHE_DIRECTORY, 0777, true);
+        }
+
         return $config;
     }
     
@@ -405,6 +410,7 @@ class Pimcore_Model_Cache {
             self::$writeLockTimestamp = time();
             self::save(self::$writeLockTimestamp, "system_cache_write_lock", array(), 30, 0, true);
         }
+        return self;
     }
 
     /**
@@ -438,6 +444,12 @@ class Pimcore_Model_Cache {
      * @param $key
      */
     public static function remove($key) {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         self::setWriteLock();
 
         $key = self::$cachePrefix . $key;
@@ -452,6 +464,12 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function clearAll() {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         self::setWriteLock();
 
         if($cache = self::getInstance()) {
@@ -482,6 +500,12 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function clearTags($tags = array()) {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         self::setWriteLock();
 
         Logger::info("clear cache tags: " . implode(",",$tags));
@@ -539,6 +563,12 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function clearTagsOnShutdown() {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         if(!empty(self::$_clearTagsOnShutdown)) {
             $tags = array_unique(self::$_clearTagsOnShutdown);
             if($cache = self::getInstance()) {
@@ -596,6 +626,7 @@ class Pimcore_Model_Cache {
     public static function setForceImmediateWrite($forceImmediateWrite)
     {
         self::$forceImmediateWrite = $forceImmediateWrite;
+        return self;
     }
 
     /**

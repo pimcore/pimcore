@@ -46,7 +46,9 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
             else if ($this->conf->outputfilters->javascriptminifyalgorithm == "yuicompressor") {
                 Minify_YUICompressor::$tempDir = PIMCORE_TEMPORARY_DIRECTORY;
                 Minify_YUICompressor::$jarFile = PIMCORE_PATH . "/lib/Minify/yuicompressor-2.4.2.jar";
-                $js = Minify_YUICompressor::minifyJs($js);
+                $js = Minify_YUICompressor::minifyJs($js,array(
+                    'charset'=>'utf8'
+                ));
             }
             else {
                 $js = JSMin::minify($js);
@@ -76,10 +78,13 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
             if($html) {
                 $scripts = $html->find("script[src]");
                 $scriptContent = "";
+                $async = "";
+                $prevAsync = "";
 
                 foreach ($scripts as $script) {
 
                     $source = $script->src;
+                    $async = $script->async ? $script->async : "false";
                     $path = "";
 
                     if(!preg_match("@http(s)?://@i", $source)) {
@@ -91,6 +96,13 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
                         }
                     }
 
+                    // handle async attribute
+                    if(!empty($prevAsync) && $prevAsync != $async) {
+                        $scriptPath = $this->writeJsTempFile($scriptContent);
+                        $scriptContent = "";
+                        $script->prev_sibling()->outertext = '<script type="text/javascript" async="' . $prevAsync . '" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
+                    }
+
 
                     if ($path && @is_file($path)) {
                         $scriptContent .= file_get_contents($path)."\n\n";
@@ -98,8 +110,7 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
                         if($script->next_sibling()->tag != "script" || !$script->next_sibling()->src) {
                             $scriptPath = $this->writeJsTempFile($scriptContent);
                             $scriptContent = "";
-
-                            $script->outertext = '<script type="text/javascript" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
+                            $script->outertext = '<script type="text/javascript" async="' . $async . '" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n";
                         }
                         else {
                             $script->outertext = "";
@@ -110,13 +121,18 @@ class Pimcore_Controller_Plugin_JavascriptMinify extends Zend_Controller_Plugin_
                         if (strlen($scriptContent) > 0) {
                             $scriptPath = $this->writeJsTempFile($scriptContent);
                             $scriptContent = "";
-
-                            $script->outertext = '<script type="text/javascript" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n" . $script->outertext;
+                            $script->outertext = '<script type="text/javascript" async="' . $async . '" src="' .  str_replace(PIMCORE_DOCUMENT_ROOT,"",$scriptPath) . '"></script>'."\n" . $script->outertext;
                         }
                     }
+
+                    $prevAsync = $async;
                 }
 
                 $body = $html->save();
+
+                $html->clear();
+                unset($html);
+
                 $this->getResponse()->setBody($body);
             }
         }

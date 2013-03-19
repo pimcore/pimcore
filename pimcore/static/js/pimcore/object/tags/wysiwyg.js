@@ -112,12 +112,19 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
     },
 
     initializePreview: function () {
+
+        if(!Ext.get(this.previewIframeId)) {
+            return;
+        }
+
         var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
         var iframeContent = this.data;
-        iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
+        iframeContent +=
+                        '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
+        iframeContent += "&nbsp;"
 
         document.body.innerHTML = iframeContent;
-        document.body.setAttribute("style", "height: 80%; cursor: pointer;");
+        document.body.setAttribute("style", "min-height: " + Math.round(this.fieldConfig.height*0.8) + "px; cursor: pointer;");
 
         if(this.disableEditing == false) {
             Ext.get(document.body).on("click", this.initCkEditor.bind(this));
@@ -152,7 +159,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         ];
 
         eConfig.extraPlugins = "close_object";
-        eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,autogrow,divarea';
+        eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,autogrow,divarea,magicline';
         
         if (intval(this.fieldConfig.width) > 1) {
             eConfig.width = this.fieldConfig.width;
@@ -161,9 +168,13 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             eConfig.height = this.fieldConfig.height;
         }
 
-        Ext.get(this.editableDivId).update(this.data);
-        this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
-        this.ckeditor.pimcore_tag_instance = this;
+        try {
+            Ext.get(this.editableDivId).update(this.data);
+            this.ckeditor = CKEDITOR.replace(this.editableDivId, eConfig);
+            this.ckeditor.pimcore_tag_instance = this;
+        } catch (e) {
+            console.log(e);
+        }
     },
 
     mask: function () {
@@ -178,7 +189,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                 var maskEl = pan.createChild({
                     tag: "div",
                     id: Ext.id()
-                })
+                });
                 
                 maskEl = Ext.get(maskEl.id);
                 
@@ -252,7 +263,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                 textIsSelected = true;
             }
         }
-        catch (e) {
+        catch (e2) {
         }
 
 
@@ -270,14 +281,16 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         
         if (data.node.attributes.elementType == "asset") {
             if (data.node.attributes.type == "image" && textIsSelected == false) {
-                // images bigger than 600px or formats which cannot be displayed by the browser directly will be converted
-                // by the pimcore thumbnailing service so that they can be displayed in the editor
+                // images bigger than 600px or formats which cannot be displayed by the browser directly will be
+                // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
                 uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
 
                 if(typeof data.node.attributes.imageWidth != "undefined") {
-                    if(data.node.attributes.imageWidth < defaultWidth && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text), browserPossibleExtensions)) {
+                    if(data.node.attributes.imageWidth < defaultWidth
+                                && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text),
+                                                                        browserPossibleExtensions)) {
                         uri = data.node.attributes.path;
                         additionalAttributes += ' pimcore_disable_thumbnail="true"';
                     }
@@ -287,17 +300,21 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
 
-                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
+                this.ckeditor.insertHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id
+                                + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
                 return true;
             }
             else {
-                this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
+                this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="asset" pimcore_id="'
+                                + id + '">' + wrappedText + '</a>');
                 return true;
             }
         }
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
-            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="' + id + '">' + wrappedText + '</a>');
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
+                                || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+            this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
+                                + id + '">' + wrappedText + '</a>');
             return true;
         }
 
@@ -337,6 +354,21 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
         return false;
 //        return this.ckeditor.IsDirty();
+    },
+
+    close: function () {
+        try {
+            if(this.ckeditor) {
+                this.data = this.ckeditor.getData();
+                this.ckeditor.destroy();
+                this.ckeditor = null;
+                this.dirty = true;
+
+                this.getPreview();
+            }
+        } catch (e) {
+            console.log(e);
+        }
     }
 });
 
@@ -348,18 +380,7 @@ CKEDITOR.plugins.add(ckeditor_close_objectplugin_button,{
     init:function(editor){
         editor.addCommand(ckeditor_close_objectplugin_button, {
             exec:function(editor){
-                window.setTimeout(function () {
-                    try {
-                        this.data = this.ckeditor.getData();
-                        this.ckeditor.destroy();
-                        this.ckeditor = null;
-                        this.dirty = true;
-
-                        this.getPreview();
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }.bind(editor.pimcore_tag_instance), 10);
+                window.setTimeout(editor.pimcore_tag_instance.close.bind(editor.pimcore_tag_instance), 10);
             }
         });
         editor.ui.addButton("close_object",{

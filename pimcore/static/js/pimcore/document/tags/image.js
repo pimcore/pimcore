@@ -129,28 +129,36 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                     this.openEditWindow();
                 }.bind(this)
             }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('empty'),
+                iconCls: "pimcore_icon_delete",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+
+                    this.empty();
+
+                }.bind(this)
+            }));
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_open",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    pimcore.helpers.openAsset(this.datax.id, "image");
+                }.bind(this)
+            }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_fileexplorer",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    pimcore.helpers.selectElementInTree("asset", this.datax.id);
+                }.bind(this)
+            }));
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('empty'),
-            iconCls: "pimcore_icon_delete",
-            handler: function (item) {
-                item.parentMenu.destroy();
-
-                this.empty();
-
-            }.bind(this)
-        }));
-        menu.add(new Ext.menu.Item({
-            text: t('open'),
-            iconCls: "pimcore_icon_open",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                pimcore.helpers.openAsset(this.datax.id, "image");
-            }.bind(this)
-        }));
-        
-        
         menu.add(new Ext.menu.Item({
             text: t('search'),
             iconCls: "pimcore_icon_search",
@@ -216,7 +224,9 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         if(data.node.attributes.elementType!="asset" || data.node.attributes.type!="image"){
             return false;
-        } else return true;
+        } else {
+            return true;
+        }
 
     },
 
@@ -260,7 +270,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     getBody: function () {
-        // get the id from the body element of the panel because there is no method to set body's html (only in configure)
+        // get the id from the body element of the panel because there is no method to set body's html
+        // (only in configure)
         var body = Ext.get(this.element.getEl().query(".x-panel-body")[0]);
         return body;
     },
@@ -279,17 +290,23 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
 
         if (!this.options["thumbnail"] && !this.originalDimensions["width"] && !this.originalDimensions["height"]) {
-            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.element.getEl().getWidth() + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.element.getEl().getWidth()
+                            + "/aspectratio/true?" + Ext.urlEncode(this.datax);
         } else if (this.originalDimensions["width"]) {
-            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.originalDimensions["width"] + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.originalDimensions["width"]
+                            + "/aspectratio/true?" + Ext.urlEncode(this.datax);
         } else if (this.originalDimensions["height"]) {
-            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/height/" + this.originalDimensions["height"] + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+            path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/height/"
+                            + this.originalDimensions["height"] + "/aspectratio/true?" + Ext.urlEncode(this.datax);
         } else {
             if (typeof this.options.thumbnail == "string") {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail + "?" + Ext.urlEncode(this.datax);
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail
+                            + "?" + Ext.urlEncode(this.datax);
             }
             else if (this.options.thumbnail.width || this.options.thumbnail.height) {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height + "?" + Ext.urlEncode(this.datax);
+                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/"
+                            + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height + "?"
+                            + Ext.urlEncode(this.datax);
             }
         }
 
@@ -325,7 +342,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         var width = image.getWidth();
         var height = image.getHeight();
-        
+
         if (width > 1 && height > 1) {
 
             var dimensionError = false;
@@ -362,6 +379,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.altBar.setStyle({
                 display: "block"
             });
+
+            clearInterval(this.updateDimensionsInterval);
         }
         else {
             this.altBar.setStyle({
@@ -416,7 +435,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                     this.updateImage();
                 }.bind(this)
             }],
-            html: '<img id="selectorImage" src="' + imageUrl + '" /><div id="selector" style="cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;"></div>'
+            html: '<img id="selectorImage" src="' + imageUrl + '" />' +
+                '<div id="selector" style="cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;"></div>'
         });
 
         this.editWindowInitCount = 0;

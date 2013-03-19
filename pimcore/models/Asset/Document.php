@@ -17,5 +17,9 @@
 
 class Asset_Document extends Asset {
 
+    /**
+     * @var string
+     */
+    public $type = "document";
 
 }

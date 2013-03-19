@@ -56,5 +56,6 @@ class Document_Email_Log_List extends Pimcore_Model_List_Abstract
     public function setEmailLogs($emailLogs)
     {
         $this->emailLogs = $emailLogs;
+        return $this;
     }
 }

@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,28 +34,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.2.0
  */
 
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * XML helpers.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.2.0
  */
@@ -69,75 +64,16 @@ class PHPUnit_Util_XML
      */
     public static function prepareString($string)
     {
-        return preg_replace(
-          '([\\x00-\\x04\\x0b\\x0c\\x0e-\\x1f\\x7f])e',
-          'sprintf( "&#x%02x;", ord( "\\1" ) )',
+        return preg_replace_callback(
+          '([\\x00-\\x04\\x0b\\x0c\\x0e-\\x1f\\x7f])',
+          function ($matches)
+          {
+              return sprintf('&#x%02x;', ord($matches[1]));
+          },
           htmlspecialchars(
-            self::convertToUtf8($string), ENT_COMPAT, 'UTF-8'
+            PHPUnit_Util_String::convertToUtf8($string), ENT_COMPAT, 'UTF-8'
           )
         );
-    }
-
-    /**
-     * Converts a string to UTF-8 encoding.
-     *
-     * @param  string $string
-     * @return string
-     * @since  Method available since Release 3.2.19
-     */
-    protected static function convertToUtf8($string)
-    {
-        if (!self::isUtf8($string)) {
-            if (function_exists('mb_convert_encoding')) {
-                $string = mb_convert_encoding($string, 'UTF-8');
-            } else {
-                $string = utf8_encode($string);
-            }
-        }
-
-        return $string;
-    }
-
-    /**
-     * Checks a string for UTF-8 encoding.
-     *
-     * @param  string $string
-     * @return boolean
-     * @since  Method available since Release 3.3.0
-     */
-    protected static function isUtf8($string)
-    {
-        $length = strlen($string);
-
-        for ($i = 0; $i < $length; $i++) {
-            if (ord($string[$i]) < 0x80) {
-                $n = 0;
-            }
-
-            else if ((ord($string[$i]) & 0xE0) == 0xC0) {
-                $n = 1;
-            }
-
-            else if ((ord($string[$i]) & 0xF0) == 0xE0) {
-                $n = 2;
-            }
-
-            else if ((ord($string[$i]) & 0xF0) == 0xF0) {
-                $n = 3;
-            }
-
-            else {
-                return FALSE;
-            }
-
-            for ($j = 0; $j < $n; $j++) {
-                if ((++$i == $length) || ((ord($string[$i]) & 0xC0) != 0x80)) {
-                    return FALSE;
-                }
-            }
-        }
-
-        return TRUE;
     }
 
     /**
@@ -145,10 +81,11 @@ class PHPUnit_Util_XML
      *
      * @param  string  $filename
      * @param  boolean $isHtml
+     * @param  boolean $xinclude
      * @return DOMDocument
      * @since  Method available since Release 3.3.0
      */
-    public static function loadFile($filename, $isHtml = FALSE)
+    public static function loadFile($filename, $isHtml = FALSE, $xinclude = FALSE)
     {
         $reporting = error_reporting(0);
         $contents  = file_get_contents($filename);
@@ -163,7 +100,7 @@ class PHPUnit_Util_XML
             );
         }
 
-        return self::load($contents, $isHtml, $filename);
+        return self::load($contents, $isHtml, $filename, $xinclude);
     }
 
     /**
@@ -172,7 +109,9 @@ class PHPUnit_Util_XML
      *
      * If $actual is already a DOMDocument, it is returned with
      * no changes.  Otherwise, $actual is loaded into a new DOMDocument
-     * as either HTML or XML, depending on the value of $isHtml.
+     * as either HTML or XML, depending on the value of $isHtml. If $isHtml is
+     * false and $xinclude is true, xinclude is performed on the loaded
+     * DOMDocument.
      *
      * Note: prior to PHPUnit 3.3.0, this method loaded a file and
      * not a string as it currently does.  To load a file into a
@@ -181,37 +120,48 @@ class PHPUnit_Util_XML
      * @param  string|DOMDocument  $actual
      * @param  boolean             $isHtml
      * @param  string              $filename
+     * @param  boolean             $xinclude
      * @return DOMDocument
      * @since  Method available since Release 3.3.0
      * @author Mike Naberezny <mike@maintainable.com>
      * @author Derek DeVries <derek@maintainable.com>
+     * @author Tobias Schlitt <toby@php.net>
      */
-    public static function load($actual, $isHtml = FALSE, $filename = '')
+    public static function load($actual, $isHtml = FALSE, $filename = '', $xinclude = FALSE)
     {
         if ($actual instanceof DOMDocument) {
             return $actual;
         }
 
+        $document  = new DOMDocument;
+
         $internal  = libxml_use_internal_errors(TRUE);
+        $message   = '';
         $reporting = error_reporting(0);
-        $dom       = new DOMDocument;
 
         if ($isHtml) {
-            $loaded = $dom->loadHTML($actual);
+            $loaded = $document->loadHTML($actual);
         } else {
-            $loaded = $dom->loadXML($actual);
+            $loaded = $document->loadXML($actual);
+        }
+
+        if ('' !== $filename) {
+            // Necessary for xinclude
+            $document->documentURI = $filename;
+        }
+
+        if (!$isHtml && $xinclude) {
+            $document->xinclude();
+        }
+
+        foreach (libxml_get_errors() as $error) {
+            $message .= $error->message;
         }
 
         libxml_use_internal_errors($internal);
         error_reporting($reporting);
 
         if ($loaded === FALSE) {
-            $message = '';
-
-            foreach (libxml_get_errors() as $error) {
-                $message .= $error->message;
-            }
-
             if ($filename != '') {
                 throw new PHPUnit_Framework_Exception(
                   sprintf(
@@ -226,7 +176,7 @@ class PHPUnit_Util_XML
             }
         }
 
-        return $dom;
+        return $document;
     }
 
     /**
@@ -341,7 +291,7 @@ class PHPUnit_Util_XML
      * @param  array $hash
      * @param  array $validKeys
      * @return array
-     * @throws InvalidArgumentException
+     * @throws PHPUnit_Framework_Exception
      * @since  Method available since Release 3.3.0
      * @author Mike Naberezny <mike@maintainable.com>
      * @author Derek DeVries <derek@maintainable.com>
@@ -366,7 +316,7 @@ class PHPUnit_Util_XML
         }
 
         if (!empty($unknown)) {
-            throw new InvalidArgumentException(
+            throw new PHPUnit_Framework_Exception(
               'Unknown key(s): ' . implode(', ', $unknown)
             );
         }
@@ -526,12 +476,13 @@ class PHPUnit_Util_XML
      * @since  Method available since Release 3.3.0
      * @author Mike Naberezny <mike@maintainable.com>
      * @author Derek DeVries <derek@maintainable.com>
+     * @author Tobias Schlitt <toby@php.net>
      */
     public static function cssSelect($selector, $content, $actual, $isHtml = TRUE)
     {
         $matcher = self::convertSelectToTag($selector, $content);
         $dom     = self::load($actual, $isHtml);
-        $tags    = self::findNodes($dom, $matcher);
+        $tags    = self::findNodes($dom, $matcher, $isHtml);
 
         return $tags;
     }
@@ -546,6 +497,7 @@ class PHPUnit_Util_XML
      * @since  Method available since Release 3.3.0
      * @author Mike Naberezny <mike@maintainable.com>
      * @author Derek DeVries <derek@maintainable.com>
+     * @author Tobias Schlitt <toby@php.net>
      */
     public static function findNodes(DOMDocument $dom, array $options, $isHtml = TRUE)
     {
@@ -687,6 +639,13 @@ class PHPUnit_Util_XML
                     }
                 }
 
+                // match empty string
+                else if ($options['content'] === '') {
+                    if (self::getNodeText($node) !== '') {
+                        $invalid = TRUE;
+                    }
+                }
+
                 // match by exact string
                 else if (strstr(self::getNodeText($node), $options['content']) === FALSE) {
                     $invalid = TRUE;
@@ -707,12 +666,12 @@ class PHPUnit_Util_XML
 
         // filter by parent node
         if ($options['parent']) {
-            $parentNodes = self::findNodes($dom, $options['parent']);
+            $parentNodes = self::findNodes($dom, $options['parent'], $isHtml);
             $parentNode  = isset($parentNodes[0]) ? $parentNodes[0] : NULL;
 
             foreach ($nodes as $node) {
                 if ($parentNode !== $node->parentNode) {
-                    break;
+                    continue;
                 }
 
                 $filtered[] = $node;
@@ -728,7 +687,7 @@ class PHPUnit_Util_XML
 
         // filter by child node
         if ($options['child']) {
-            $childNodes = self::findNodes($dom, $options['child']);
+            $childNodes = self::findNodes($dom, $options['child'], $isHtml);
             $childNodes = !empty($childNodes) ? $childNodes : array();
 
             foreach ($nodes as $node) {
@@ -751,13 +710,13 @@ class PHPUnit_Util_XML
 
         // filter by ancestor
         if ($options['ancestor']) {
-            $ancestorNodes = self::findNodes($dom, $options['ancestor']);
+            $ancestorNodes = self::findNodes($dom, $options['ancestor'], $isHtml);
             $ancestorNode  = isset($ancestorNodes[0]) ? $ancestorNodes[0] : NULL;
 
             foreach ($nodes as $node) {
                 $parent = $node->parentNode;
 
-                while ($parent->nodeType != XML_HTML_DOCUMENT_NODE) {
+                while ($parent && $parent->nodeType != XML_HTML_DOCUMENT_NODE) {
                     if ($parent === $ancestorNode) {
                         $filtered[] = $node;
                     }
@@ -776,7 +735,7 @@ class PHPUnit_Util_XML
 
         // filter by descendant
         if ($options['descendant']) {
-            $descendantNodes = self::findNodes($dom, $options['descendant']);
+            $descendantNodes = self::findNodes($dom, $options['descendant'], $isHtml);
             $descendantNodes = !empty($descendantNodes) ? $descendantNodes : array();
 
             foreach ($nodes as $node) {
@@ -849,7 +808,7 @@ class PHPUnit_Util_XML
                     // match each child against a specific tag
                     if ($childOptions['only']) {
                         $onlyNodes = self::findNodes(
-                          $dom, $childOptions['only']
+                          $dom, $childOptions['only'], $isHtml
                         );
 
                         // try to match each child to one of the 'only' nodes
@@ -958,4 +917,3 @@ class PHPUnit_Util_XML
         return str_replace('  ', ' ', $result);
     }
 }
-?>

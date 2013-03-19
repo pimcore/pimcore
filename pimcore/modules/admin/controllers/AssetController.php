@@ -26,11 +26,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("get-image-thumbnail");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("assets")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("assets");
         }
 
         $this->_assetService = new Asset_Service($this->getUser());
@@ -55,7 +51,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset->setProperties(Element_Service::minimizePropertiesForEditmode($asset->getProperties()));
         $asset->getVersions();
         $asset->getScheduledTasks();
-        $asset->idPath = Pimcore_Tool::getIdPathForElement($asset);
+        $asset->idPath = Element_Service::getIdPath($asset);
         $asset->userPermissions = $asset->getUserPermissions();
         $asset->setLocked($asset->isLocked());
 
@@ -240,7 +236,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         $parentAsset = Asset::getById(intval($this->getParam("parentId")));
 
-        // check for dublicate filename
+        // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
 
         if ($parentAsset->isAllowed("create")) {
@@ -478,9 +474,9 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
         if ($asset->getType() == "image") {
             try {
-                $tmpAsset["thumbnail"] = "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/width/400/aspectratio/true";
+                $tmpAsset["thumbnail"] = "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true";
 
-                // this is for backward-compatibilty, to calculate the dimensions if they are not there
+                // this is for backward-compatibility, to calculate the dimensions if they are not there
                 if(!$asset->getCustomSetting("imageDimensionsCalculated")) {
                     $asset->save();
                 }
@@ -497,7 +493,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         } else if ($asset->getType() == "video") {
             try {
                 if(Pimcore_Video::isAvailable()) {
-                    $tmpAsset["thumbnail"] = "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/width/400/aspectratio/true";
+                    $tmpAsset["thumbnail"] = "/admin/asset/get-video-thumbnail/id/" . $asset->getId() . "/treepreview/true";
                 }
             } catch (Exception $e) {
                 Logger::debug("Cannot get dimensions of video, seems to be broken.");
@@ -780,9 +776,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
         
         $format = strtolower($thumbnail->getFormat());
-        if ($format == "source") {
+        if ($format == "source" || $format == "print") {
             $thumbnail->setFormat("PNG");
             $format = "png";
+        }
+
+        if($this->getParam("treepreview")) {
+            $thumbnail = Asset_Image_Thumbnail_Config::getPreviewConfig();
         }
 
         if ($this->getParam("cropPercent")) {
@@ -797,9 +797,6 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $thumbnail->setName("auto_" . $hash);
         }
 
-
-        header("Content-Type: image/" . $format, true);
-
         if($this->getParam("download")) {
             header('Content-Disposition: attachment; filename="' . $image->getFilename() . '"');
         }
@@ -808,13 +805,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $imageContent = file_get_contents($thumbnailFile);
 
         $fileExtension = Pimcore_File::getFileExtension($thumbnailFile);
-        if(in_array($fileExtension, array("gif","jpeg","jpeg","png"))) {
-            header("Content-Type: image/".$fileExtension);
+        if(in_array($fileExtension, array("gif","jpeg","jpeg","png","pjpeg"))) {
+            header("Content-Type: image/".$fileExtension, true);
         } else {
-            header("Content-Type: " . $image->getMimetype());
+            header("Content-Type: " . $image->getMimetype(), true);
         }
 
-        header("Content-Length: " . filesize($thumbnailFile));
+        header("Content-Length: " . filesize($thumbnailFile), true);
         echo $imageContent;
         exit;
     }
@@ -828,6 +825,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         if ($format == "source") {
             $thumbnail->setFormat("PNG");
             $format = "png";
+        }
+
+        if($this->getParam("treepreview")) {
+            $thumbnail = Asset_Image_Thumbnail_Config::getPreviewConfig();
         }
 
         $time = null;
@@ -852,7 +853,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $video->save();
         }
 
-        $this->getResponse()->setHeader("Content-Type", "image/png", true);
+        $this->getResponse()->setHeader("Content-Type", "image/" . $format, true);
         readfile(PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time, $image));
         $this->removeViewRenderer();
     }
@@ -950,14 +951,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     "id" => $asset->getId(),
                     "type" => $asset->getType(),
                     "filename" => $asset->getFilename(),
-                    "url" => $asset->$thumbnailMethod(array(
-                        "contain" => true,
-                        "width" => 250,
-                        "height" => 250,
-                        "format" => "JPEG",
-                        "interlace" => true,
-                        "quality" => 80
-                    ))
+                    "url" => "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true"
                 );
             }
         }
@@ -1090,7 +1084,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
 
     /**
-     * Download the all assets contained in the folder with parameter id as ZIP file.
+     * Download all assets contained in the folder with parameter id as ZIP file.
      * The suggested filename is either [folder name].zip or assets.zip for the root folder.
      */
     public function downloadAsZipAction () {
@@ -1185,7 +1179,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             throw new Exception("The filename of the asset is empty");
         }
 
-        // check for dublicate filename
+        // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
 
         if ($parentAsset->isAllowed("create")) {
@@ -1203,6 +1197,22 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $this->_helper->json(array("success" => $success));
     }
 
+    public function clearThumbnailAction () {
+
+        $success = false;
+
+        if($asset = Asset::getById($this->getParam("id"))) {
+            if(method_exists($asset, "clearThumbnails")) {
+                $asset->clearThumbnails(true); // force clear
+                $asset->save();
+
+                $success = true;
+            }
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
     protected function importFromFileSystem ($path, $parentId) {
 
         $assetFolder = Asset::getById($parentId);
@@ -1214,7 +1224,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 $folder = $this->getOrCreateAssetFolderByPath(dirname($relativePath));
                 $filename = basename($file);
 
-                // check for dublicate filename
+                // check for duplicate filename
                 $filename = Pimcore_File::getValidFilename($filename);
                 $filename = $this->getSafeFilename($folder->getFullPath(), $filename);
 

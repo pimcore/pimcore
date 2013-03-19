@@ -40,6 +40,50 @@ class Document_Tag_Video extends Document_Tag
     public $poster;
 
     /**
+     * @var string
+     */
+    public $title = "";
+
+    /**
+     * @var string
+     */
+    public $description = "";
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
      * @see Document_Tag_Interface::getType
      * @return string
      */
@@ -64,6 +108,8 @@ class Document_Tag_Video extends Document_Tag
         return array(
             "id" => $this->id,
             "type" => $this->type,
+            "title" => $this->title,
+            "description" => $this->description,
             "path" => $path,
             "poster" => $poster ? $poster->getFullPath() : ""
         );
@@ -76,6 +122,8 @@ class Document_Tag_Video extends Document_Tag
         return array(
             "id" => $this->id,
             "type" => $this->type,
+            "title" => $this->title,
+            "description" => $this->description,
             "poster" => $this->poster
         );
     }
@@ -194,6 +242,9 @@ class Document_Tag_Video extends Document_Tag
         $this->id = $data["id"];
         $this->type = $data["type"];
         $this->poster = $data["poster"];
+        $this->title = $data["title"];
+        $this->description = $data["description"];
+        return $this;
     }
 
     /**
@@ -205,6 +256,14 @@ class Document_Tag_Video extends Document_Tag
     {
         if ($data["type"]) {
             $this->type = $data["type"];
+        }
+
+        if ($data["title"]) {
+            $this->title = $data["title"];
+        }
+
+        if ($data["description"]) {
+            $this->description = $data["description"];
         }
 
         // this is to be backward compatible to <= v 1.4.7
@@ -224,6 +283,7 @@ class Document_Tag_Video extends Document_Tag
         if($poster instanceof Asset_Image) {
             $this->poster = $poster->getId();
         }
+        return $this;
     }
 
 
@@ -367,7 +427,6 @@ class Document_Tag_Video extends Document_Tag
 
         if (!$this->id) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
 
         $options = $this->getOptions();
@@ -375,36 +434,30 @@ class Document_Tag_Video extends Document_Tag
         $uid = "video_" . uniqid();
 
         // get youtube id
-        $youtubeId = null;
-        $parts = parse_url($this->id);
-        parse_str($parts["query"], $vars);
+        $youtubeId = $this->id;
+        if(strpos($youtubeId, "http") === 0) {
+            $parts = parse_url($this->id);
+            parse_str($parts["query"], $vars);
 
-        if($vars["v"]) {
-            $youtubeId = $vars["v"];
-        }
+            if($vars["v"]) {
+                $youtubeId = $vars["v"];
+            }
 
-        //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-        if(!$youtubeId && strpos($this->id,'embed') !== false){
-            $explodedPath = explode('/',$parts['path']);
-            $youtubeId = $explodedPath[array_search('embed',$explodedPath)+1];
-        }
+            //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
+            if(!$youtubeId && strpos($this->id,'embed') !== false){
+                $explodedPath = explode('/',$parts['path']);
+                $youtubeId = $explodedPath[array_search('embed',$explodedPath)+1];
+            }
 
 
-        if(!$youtubeId && $parts["host"] == "youtu.be") {
-            $youtubeId = trim($parts["path"]," /");
+            if(!$youtubeId && $parts["host"] == "youtu.be") {
+                $youtubeId = trim($parts["path"]," /");
+            }
         }
 
         if (!$youtubeId) {
             return $this->getEmptyCode();
-            //return $this->getFlowplayerCode();
         }
-
-
-        $width = "100%";
-        if(array_key_exists("width", $options)) {
-            $width = $options["width"];
-        }
-
 
         $width = "100%";
         if(array_key_exists("width", $options)) {
@@ -415,10 +468,6 @@ class Document_Tag_Video extends Document_Tag
         if(array_key_exists("height", $options)) {
             $height = $options["height"];
         }
-        /*
-       if($options["config"]["clip"]["autoPlay"]){
-           $autoPlayString = "&autoplay=1";
-       } */
 
         $valid_youtube_prams=array( "autohide",
             "autoplay",
@@ -548,7 +597,6 @@ class Document_Tag_Video extends Document_Tag
         $config["clip"]["url"] = $urls["mp4"];
         if (empty($urls)) {
             return $this->getEmptyCode();
-            //$config["clip"]["url"] = "/pimcore/static/f4v/pimcore.f4v";
         }
 
         if (!Document_Tag_Video::$playerJsEmbedded) {
@@ -588,7 +636,7 @@ class Document_Tag_Video extends Document_Tag
             	href="'.$urls["mp4"].'"
             	class="pimcore_video_flowplayer"
             	style="background:url(' . $thumbnail . ') no-repeat center center; width:' . $this->getWidth() . 'px; height:' . $this->getHeight() . 'px;">
-            	' . (Pimcore_Video::isAvailable() ? '<span class="play">' : "") .'</span>
+            	' . (Pimcore_Video::isAvailable() ? '<span class="play"></span>' : "") .'
             </a>
         </div>';
 
@@ -601,7 +649,7 @@ class Document_Tag_Video extends Document_Tag
                 flowplayer("' . $uid . '", {
             		src: "' . $swfPath . '",
             		width: "' . $this->getWidth() . '",
-            		height: "' . $this->getHeight() . '",
+            		height: "' . $this->getHeight() . '"
             	},player_config_' . $uid . ');
             </script>
         ';
@@ -611,13 +659,40 @@ class Document_Tag_Video extends Document_Tag
 
     public function getHtml5Code($urls = array(), $thumbnail = null)
     {
-        $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">';
-        $code .= '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">';
+        $video = $this->getVideoAsset();
+        $duration = ceil($video->getDuration());
+
+        $durationParts = array("T");
+
+        // hours
+        if($duration/3600 >= 1) {
+            $hours = floor($duration/3600);
+            $durationParts[] = $hours . "H";
+            $duration = $duration - $hours * 3600;
+        }
+
+        // minutes
+        if($duration/60 >= 1) {
+            $minutes = floor($duration/60);
+            $durationParts[] = $minutes . "M";
+            $duration = $duration - $minutes * 60;
+        }
+
+        $durationParts[] = $duration . "S";
+        $durationString = implode("",$durationParts);
+
+        $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video" itemprop="video" itemscope itemtype="http://schema.org/VideoObject">' . "\n";
+        $code .= '<meta itemprop="name" content="' . $this->getTitle() . '" />' . "\n";
+        $code .= '<meta itemprop="description" content="' . $this->getDescription() . '" />' . "\n";
+        $code .= '<meta itemprop="duration" content="' . $durationString . '" />' . "\n";
+        $code .= '<meta itemprop="url" content="' . Pimcore_Tool::getHostUrl() . $_SERVER["REQUEST_URI"] . ($_SERVER["QUERY_STRING"] ? ("?" .$_SERVER["QUERY_STRING"]) : "") . '" />' . "\n";
+        $code .= '<meta itemprop="thumbnail" content="' . Pimcore_Tool::getHostUrl() . $thumbnail . '" />' . "\n";
+        $code .= '<video class="pimcore_video" width="' . $this->getWidth() . '" height="' . $this->getHeight() . '" poster="' . $thumbnail . '" controls="controls" preload="none">' . "\n";
             foreach ($urls as $type => $url) {
-                $code .= '<source type="video/' . $type . '" src="' . $url . '" />';
+                $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
             }
-        $code .= '</video>';
-        $code .= '</div>';
+        $code .= '</video>' . "\n";
+        $code .= '</div>' . "\n";
 
         return $code;
     }
@@ -697,7 +772,7 @@ class Document_Tag_Video extends Document_Tag
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement)
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
     {
         $data = $wsElement->value;
         if($data->id){

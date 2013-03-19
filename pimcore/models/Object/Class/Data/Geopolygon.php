@@ -197,6 +197,7 @@ class Object_Class_Data_Geopolygon extends Object_Class_Data_Geo_Abstract {
         } else if (is_array($value)) {
             $points = array();
             foreach ($value as $point) {
+                $point = (array) $point;
                 if($point["longitude"]!=null and  $point["latitude"]!=null){
                     $points[] = new Object_Data_Geopoint($point["longitude"], $point["latitude"]);
                 } else {

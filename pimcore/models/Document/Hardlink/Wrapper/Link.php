@@ -116,6 +116,7 @@ class Document_Hardlink_Wrapper_Link extends Document_Link implements Document_H
     public function setHardLinkSource($hardLinkSource)
     {
         $this->hardLinkSource = $hardLinkSource;
+        return $this;
     }
 
     /**

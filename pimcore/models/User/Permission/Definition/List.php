@@ -39,6 +39,7 @@ class User_Permission_Definition_List extends Pimcore_Model_List_Abstract {
      */
     function setDefinitions($definitions) {
         $this->definitions = $definitions;
+        return $this;
     }
 
     /**

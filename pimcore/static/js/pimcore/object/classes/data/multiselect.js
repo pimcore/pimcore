@@ -74,12 +74,47 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             }],
             style: "margin-top: 10px",
             store: this.valueStore,
-            plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             selModel:new Ext.grid.RowSelectionModel({singleSelect:true}),
             columnLines: true,
             columns: [
-                {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}), width: 200},
-                {header: t("value"), sortable: false, dataIndex: 'value', editor: new Ext.form.TextField({}), width: 200},
+                {header: t("display_name"), sortable: false, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                                                    width: 200},
+                {header: t("value"), sortable: false, dataIndex: 'value', editor: new Ext.form.TextField({}),
+                                                    width: 200},
+                {
+                    xtype:'actioncolumn',
+                    width:30,
+                    items:[
+                        {
+                            tooltip:t('up'),
+                            icon:"/pimcore/static/img/icon/arrow_up.png",
+                            handler:function (grid, rowIndex) {
+                                if (rowIndex > 0) {
+                                    var rec = grid.getStore().getAt(rowIndex);
+                                    grid.getStore().removeAt(rowIndex);
+                                    grid.getStore().insert(rowIndex - 1, [rec]);
+                                }
+                            }.bind(this)
+                        }
+                    ]
+                },
+                {
+                    xtype:'actioncolumn',
+                    width:30,
+                    items:[
+                        {
+                            tooltip:t('down'),
+                            icon:"/pimcore/static/img/icon/arrow_down.png",
+                            handler:function (grid, rowIndex) {
+                                if (rowIndex < (grid.getStore().getCount() - 1)) {
+                                    var rec = grid.getStore().getAt(rowIndex);
+                                    grid.getStore().removeAt(rowIndex);
+                                    grid.getStore().insert(rowIndex + 1, [rec]);
+                                }
+                            }.bind(this)
+                        }
+                    ]
+                },
                 {
                     xtype: 'actioncolumn',
                     width: 30,

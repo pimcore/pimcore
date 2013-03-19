@@ -76,7 +76,8 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
             this.editPanel = new Ext.Panel({
                 title: t("preview"),
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
-                html: '<iframe src="/admin/asset/get-preview-document/id/' + this.id + '/" frameborder="0" id="asset_document_edit_' + this.id + '"></iframe>',
+                html: '<iframe src="/admin/asset/get-preview-document/id/' + this.id
+                                        + '/" frameborder="0" id="asset_document_edit_' + this.id + '"></iframe>',
                 iconCls: "pimcore_icon_tab_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {

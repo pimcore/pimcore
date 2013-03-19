@@ -70,6 +70,7 @@ class Document_Tag_Block extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->indices = Pimcore_Tool_Serialize::unserialize($data);
+        return $this;
     }
 
     /**
@@ -79,6 +80,7 @@ class Document_Tag_Block extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->indices = $data;
+        return $this;
     }
 
     /**
@@ -90,6 +92,7 @@ class Document_Tag_Block extends Document_Tag {
                 $this->indices[$i] = $i + 1;
             }
         }
+        return $this;
     }
 
     /**
@@ -306,6 +309,7 @@ class Document_Tag_Block extends Document_Tag {
         }
 
         $this->options = $options;
+        return $this;
     }
 
     /**
@@ -359,7 +363,7 @@ class Document_Tag_Block extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement){
+    public function getFromWebserviceImport($wsElement, $idMapper = null){
         $data = $wsElement->value;
         if(($data->indices === null or is_array($data->indices)) and ($data->current==null or is_numeric($data->current)) ){
             $this->indices = $data->indices;

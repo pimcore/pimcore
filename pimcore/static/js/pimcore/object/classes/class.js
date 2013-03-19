@@ -159,7 +159,8 @@ pimcore.object.classes.klass = Class.create({
         if (this.data.layoutDefinitions) {
             if (this.data.layoutDefinitions.childs) {
                 for (var i = 0; i < this.data.layoutDefinitions.childs.length; i++) {
-                    this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.childs[i], this.tree.getRootNode()));
+                    this.tree.getRootNode().appendChild(this.recursiveAddNode(this.data.layoutDefinitions.childs[i],
+                                                                                this.tree.getRootNode()));
                 }
                 this.tree.getRootNode().expand();
             }
@@ -320,7 +321,10 @@ pimcore.object.classes.klass = Class.create({
 
         //get all allowed data types for localized fields
         var lftypes = ["panel","tabpanel","accordion","fieldset","text","region","button"];
-        //["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg","textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect", "countrymultiselect","languagemultiselect","objects","multihref","href","hotspotimage","geopoint","geobounds","geopolygon","structuredTable"]
+        //["checkbox","select","date","datetime","time","image","input","link","numeric","slider","table","wysiwyg",
+        // "textarea","panel","tabpanel","accordion","fieldset","text","html","region","multiselect",
+        // "countrymultiselect","languagemultiselect","objects","multihref","href","hotspotimage","geopoint",
+        // "geobounds","geopolygon","structuredTable"]
 
         var dataComps = Object.keys(pimcore.object.classes.data);
 
@@ -777,9 +781,11 @@ pimcore.object.classes.klass = Class.create({
                     var invalidFieldsText = null;
 
                     if(node.attributes.object.invalidFieldNames){
-                        invalidFieldsText = t("reserved_field_names_error")+(implode(',',node.attributes.object.forbiddenNames));
+                        invalidFieldsText = t("reserved_field_names_error")
+                                +(implode(',',node.attributes.object.forbiddenNames));
                     }
-                    pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",invalidFieldsText);
+                    pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
+                                                                        invalidFieldsText);
 
 
 
@@ -819,7 +825,8 @@ pimcore.object.classes.klass = Class.create({
 
         var regresult = this.data["name"].match(/[a-zA-Z]+/);
 
-        if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(), this.parentPanel.forbiddennames)) {
+        if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(),
+                                                        this.parentPanel.forbiddennames)) {
             delete this.data.layoutDefinitions;
 
             var m = Ext.encode(this.getData());

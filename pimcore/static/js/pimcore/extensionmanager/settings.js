@@ -36,7 +36,8 @@ pimcore.extensionmanager.settings = Class.create({
                 layout: "fit",
                 closable:true,
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
-                html: '<iframe frameborder="0" style="width:100%; height: ' + height + 'px" src="' + iframeSrc + '"></iframe>'
+                html: '<iframe frameborder="0" style="width:100%; height: ' + height
+                                                            + 'px" src="' + iframeSrc + '"></iframe>'
             });
 
 
@@ -52,6 +53,6 @@ pimcore.extensionmanager.settings = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("pimcore_extension_" + id + "_" + type);
+        tabPanel.activate("pimcore_extension_" + this.id + "_" + type);
     }
 });

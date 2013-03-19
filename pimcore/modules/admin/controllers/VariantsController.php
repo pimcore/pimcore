@@ -49,7 +49,24 @@ class Admin_VariantsController extends Pimcore_Controller_Action_Admin {
             $objectData = array();
             foreach($data as $key => $value) {
                 $parts = explode("~", $key);
-                if(count($parts) > 1) {
+                if (substr($key, 0, 1) == "~") {
+                    $type = $parts[1];
+                    $field = $parts[2];
+                    $keyid = $parts[3];
+
+                    $getter = "get" . ucfirst($field);
+                    $setter = "set" . ucfirst($field);
+                    $keyValuePairs = $object->$getter();
+
+                    if (!$keyValuePairs) {
+                        $keyValuePairs = new Object_Data_KeyValue();
+                        $keyValuePairs->setObjectId($object->getId());
+                        $keyValuePairs->setClass($object->getClass());
+                    }
+
+                    $keyValuePairs->setPropertyWithId($keyid, $value, true);
+                    $object->$setter($keyValuePairs);
+                } else if(count($parts) > 1) {
                     $brickType = $parts[0];
                     $brickKey = $parts[1];
                     $brickField = Object_Service::getFieldForBrickType($object->getClass(), $brickType);

@@ -44,6 +44,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      */
     public function setKey($key) {
         $this->key = self::getValidTranslationKey($key);
+        return $this;
     }
 
     /**
@@ -58,6 +59,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      */
     public function setTranslations($translations) {
         $this->translations = $translations;
+        return $this;
     }
 
     /**
@@ -72,6 +74,7 @@ abstract class Translation_Abstract extends Pimcore_Model_Abstract implements Tr
      */
     public function setDate($date) {
         $this->date = (int) $date;
+        return $this;
     }
 
     /**

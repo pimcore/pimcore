@@ -19,12 +19,14 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
         
         // deactivate temporary
         return;
-        
-        var types = ["global"];
-        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types) && pimcore.settings.google_analytics_enabled) {
-            return true;
-        }
-        return false;
+// // commented this out, otherwise JSLint would complain
+//
+//        var types = ["global"];
+//        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
+//                                                            && pimcore.settings.google_analytics_enabled) {
+//            return true;
+//        }
+//        return false;
     },
 
     getName: function () {
@@ -157,7 +159,8 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
         queryString.dateTo = values.dateto.getTime() / 1000;
         queryString.site = this.site;
 
-        Ext.get(this.iframeId).dom.setAttribute("src", "/admin/reports/analytics/siteoverview?" + Object.toQueryString(queryString));
+        Ext.get(this.iframeId).dom.setAttribute("src",
+                                "/admin/reports/analytics/siteoverview?" + Object.toQueryString(queryString));
     }
 });
 

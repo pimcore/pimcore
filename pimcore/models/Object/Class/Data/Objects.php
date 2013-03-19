@@ -243,6 +243,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      */
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -258,6 +259,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      */
     public function setHeight($height) {
         $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     /**
@@ -401,23 +403,37 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value, $object = null) {
-        $objects = array();
+    public function getFromWebserviceImport ($value, $object = null, $idMapper = null) {
+        $relatedObjects = array();
         if(empty($value)){
            return null;  
         } else if(is_array($value)){
             foreach($value as $key => $item){
-                $object = Object_Abstract::getById($item['id']);
-                if($object instanceof Object_Abstract){
-                    $objects[] = $object;
+                $item = (array) $item;
+                $id = $item['id'];
+
+                if ($idMapper) {
+                    $id = $idMapper->getMappedId("object", $id);
+                }
+
+                if ($id) {
+                    $relatedObject = Object_Abstract::getById($id);
+                }
+
+                if($relatedObject instanceof Object_Abstract){
+                    $relatedObjects[] = $relatedObject;
                 } else {
-                    throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
+                    if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                        throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
+                    } else {
+                        $idMapper->recordMappingFailure($object->getId(), "object", $item['id']);
+                    }
                 }
             }
         } else {
             throw new Exception("cannot get values from web service import - invalid data");
         }
-        return $objects;
+        return $relatedObjects;
     }
 
 
@@ -460,6 +476,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function setFieldtype($fieldtype)
     {
         $this->fieldtype = $fieldtype;
+        return $this;
     }
 
     /**
@@ -476,6 +493,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+        return $this;
     }
 
     /**
@@ -502,6 +520,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function getDiffVersionPreview($data, $object = null) {
         $value = array();
         $value["type"] = "html";
+        $value["html"] = "";
 
         if ($data) {
             $html = $this->getVersionPreview($data);
@@ -519,6 +538,10 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
     public function getDiffDataFromEditmode($data, $object = null) {
         if ($data) {
             $tabledata = $data[0]["data"];
+
+            if (!$tabledata) {
+                return;
+            }
 
             $result = array();
             foreach ($tabledata as $in) {

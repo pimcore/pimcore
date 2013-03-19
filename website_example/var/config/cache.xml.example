@@ -12,7 +12,7 @@
     <!--<backend>
         <type>File</type>
         <options>
-            <cache_file_umask>0755</cache_file_umask>
+            <cache_file_perm>0755</cache_file_perm>
             <cache_dir>/home/pimcore/www/website/var/cache</cache_dir>
         </options>
     </backend>-->

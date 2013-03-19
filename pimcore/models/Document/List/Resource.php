@@ -48,6 +48,11 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
         return $documentIds;
     }
 
+    public function loadIdPathList() {
+        $documentIds = $this->db->fetchAll("SELECT id, CONCAT(path,`key`) as path FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $documentIds;
+    }
+
     protected function getCondition() {
         if ($cond = $this->model->getCondition()) {
             if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
@@ -55,7 +60,7 @@ class Document_List_Resource extends Pimcore_Model_List_Resource_Abstract {
             }
             return " WHERE " . $cond . " ";
         }
-        else if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
+    else if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
             return " WHERE published = 1";
         }
         return "";

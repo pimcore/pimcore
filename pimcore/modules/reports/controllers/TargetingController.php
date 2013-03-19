@@ -15,6 +15,11 @@
 
 class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
+    public function init() {
+        parent::init();
+        $this->checkPermission("targeting");
+    }
+
     public function listAction() {
 
         $targets = array();

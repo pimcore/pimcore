@@ -17,7 +17,8 @@ pimcore.report.analytics.elementnavigation = Class.create(pimcore.report.abstrac
 
     matchType: function (type) {        
         var types = ["document_page"];
-        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types) && pimcore.settings.google_analytics_enabled) {
+        if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)
+                                                            && pimcore.settings.google_analytics_enabled) {
             return true;
         }
         return false;
@@ -78,7 +79,8 @@ pimcore.report.analytics.elementnavigation = Class.create(pimcore.report.abstrac
         
         var height = this.contentPanel.getHeight()-10;
         
-        swfobject.embedSWF("/pimcore/static/swf/analytics_navigation.swf", this.flashContainerId, "100%", height, "10.0.0","/pimcore/static/swf/expressInstall.swf", flashvars, params);
+        swfobject.embedSWF("/pimcore/static/swf/analytics_navigation.swf", this.flashContainerId, "100%",
+                                height, "10.0.0","/pimcore/static/swf/expressInstall.swf", flashvars, params);
     },
     
     getConfigFile: function () {
@@ -102,7 +104,8 @@ pimcore.report.analytics.elementnavigation = Class.create(pimcore.report.abstrac
             formValues = this.filterPanel.getForm().getFieldValues();
         } catch (e) {}
         
-        return "/admin/reports/analytics/navigation?path=" + path + "&id=" + id + "&type=" + type + "&dateFrom=" + formValues.dateFrom + "&dateTo=" + formValues.dateTo + "&site=" + formValues.site;  
+        return "/admin/reports/analytics/navigation?path=" + path + "&id=" + id + "&type=" + type + "&dateFrom="
+                            + formValues.dateFrom + "&dateTo=" + formValues.dateTo + "&site=" + formValues.site;
     },
     
     getFilterPanel: function () {

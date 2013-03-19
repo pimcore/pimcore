@@ -70,6 +70,7 @@ class Object_Class_Data_Select extends Object_Class_Data {
      */
     public function setOptions($options) {
         $this->options = $options;
+        return $this;
     }
     
     /**
@@ -85,6 +86,7 @@ class Object_Class_Data_Select extends Object_Class_Data {
      */
     public function setWidth($width) {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     /**
@@ -168,7 +170,7 @@ class Object_Class_Data_Select extends Object_Class_Data {
         $diffdata["key"] = $this->getName();
         $diffdata["type"] = $this->fieldtype;
 
-        $value = "unknown";
+        $value = "";
         foreach ($this->options as $option) {
             if ($option["value"] == $data) {
                 $value = $option["key"];

@@ -19,6 +19,8 @@ class Admin_BackupController extends Pimcore_Controller_Action_Admin {
     public function init() {
         parent::init();
 
+        $this->checkPermission("backup");
+
         @ini_set("memory_limit", "-1");
 
         $this->session = new Zend_Session_Namespace("pimcore_backup");

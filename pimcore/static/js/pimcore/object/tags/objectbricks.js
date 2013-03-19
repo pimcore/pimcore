@@ -70,7 +70,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         };
         this.tabpanel = new Ext.TabPanel(panelConf);
 
-        var panelConf = {
+        panelConf = {
             autoHeight: true,
             cls: "object_field",
             items: [this.tabpanel]
@@ -170,7 +170,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         var index = 0;
 
-        this.addBlockElement(index, type)
+        this.addBlockElement(index, type);
     },
     
     removeBlock: function (blockElement) {
@@ -326,9 +326,9 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         
         var types = Object.keys(this.currentElements);
         for(var t=0; t < types.length; t++) {
-            elementData = {};
+            var elementData = {};
             if(this.currentElements[types[t]]) {
-                element = this.currentElements[types[t]];
+                var element = this.currentElements[types[t]];
                 if(element.action != "deleted") {
                     for (var u=0; u<element.fields.length; u++) {
                         if(element.fields[u].isDirty()) {
@@ -377,7 +377,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     for (var u=0; u<element.fields.length; u++) {
                         if(element.fields[u].isMandatory()) {
                             if(element.fields[u].isInvalidMandatory()) {
-                                invalidMandatoryFields.push(element.fields[u].getTitle() + " (" + element.fields[u].getName() + "|" + types[t] + ")");
+                                invalidMandatoryFields.push(element.fields[u].getTitle()
+                                                        + " (" + element.fields[u].getName() + "|" + types[t] + ")");
                                 isInvalid = true;
                             }
                         }

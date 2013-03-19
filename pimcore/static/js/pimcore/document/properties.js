@@ -16,7 +16,9 @@ pimcore.registerNS("pimcore.document.properties");
 pimcore.document.properties = Class.create(pimcore.element.properties,{
 
 
-    disallowedKeys: ["language","navigation_exclude","navigation_name","navigation_title","navigation_relation","navigation_parameters","navigation_anchor","navigation_target","navigation_class","navigation_tabindex","navigation_accesskey"],
+    disallowedKeys: ["language","navigation_exclude","navigation_name","navigation_title","navigation_relation",
+                        "navigation_parameters","navigation_anchor","navigation_target","navigation_class",
+                        "navigation_tabindex","navigation_accesskey"],
 
     inheritableKeys: ["language"],
 
@@ -216,6 +218,8 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                         } else if(record.get("data") == systemValues[name]) {
                             unchanged=true;
                         }
+                    } else if (systemValues[name]) {
+                        addProperty = true;
                     }
                 } else {
                     addProperty = true;

@@ -1,4 +1,6 @@
 #!/bin/bash
 
-./phpunit --bootstrap /home/pimcore/www/tests/bootstrap.php --log-json /home/pimcore/www/tests/output/log.xml AllTests
+mkdir -p output
+
+./phpunit --verbose --bootstrap bootstrap.php --log-json output/log.xml AllTests
 

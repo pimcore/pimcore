@@ -17,59 +17,148 @@
 
 class Object_Class_Service  {
 
-
-
-
     /**
      * @static
      * @param  Object_Class $class
      * @return string
      */
-    public static function generateClassDefinitionXml($class){
+    public static function generateClassDefinitionJson($class){
 
-        $data = object2array($class);
+        $data = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
+        unset($data->id);
+        unset($data->name);
+        unset($data->creationDate);
+        unset($data->modificationDate);
+        unset($data->userOwner);
+        unset($data->userModification);
+        unset($data->fieldDefinitions);
 
-        unset($data["id"]);
-        unset($data["name"]);
-        unset($data["creationDate"]);
-        unset($data["modificationDate"]);
-        unset($data["userOwner"]);
-        unset($data["userModification"]);
-        unset($data["fieldDefinitions"]);
-
-        $referenceFunction =  function(&$value,$key){
-            $value = htmlspecialchars($value);
-        };
-        array_walk_recursive($data,$referenceFunction);
-
-
-        $config = new Zend_Config($data, true);
-        $writer = new Zend_Config_Writer_Xml(array(
-            "config" => $config
-        ));
-        return $writer->render();
+        $json = Zend_Json::encode($data);
+        $json = Zend_Json::prettyPrint($json);
+        return $json;
     }
 
     /**
-     * @static
-     * @param  Object_Class $class
+     * @param $class
+     * @param $json
+     * @return bool
+     */
+    public static function importClassDefinitionFromJson($class, $json) {
+
+        $userId = 0;
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+        if($user) {
+            $userId = $user->getId();
+        }
+
+        $importData = Zend_Json::decode($json);
+
+        $values["modificationDate"] = time();
+        $values["userModification"] = $userId;
+
+        // set layout-definition
+        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+        $class->setLayoutDefinitions($layout);
+
+        // set properties of class
+        $class->setModificationDate(time());
+        $class->setUserModification($userId);
+        $class->setIcon($importData["icon"]);
+        $class->setAllowInherit($importData["allowInherit"]);
+        $class->setAllowVariants($importData["allowVariants"]);
+        $class->setParentClass($importData["parentClass"]);
+        $class->setPreviewUrl($importData["previewUrl"]);
+        $class->setPropertyVisibility($importData["propertyVisibility"]);
+
+        $class->save();
+
+        return true;
+    }
+
+    /**
+     * @param $fieldCollection
      * @return string
      */
-    public static function generateFieldCollectionXml($fieldCollection){
-        $FieldCollectionJson = Zend_Json::encode($fieldCollection);
-        $data = Zend_Json::decode($FieldCollectionJson);
-        unset($data["key"]);
+    public static function generateFieldCollectionJson($fieldCollection){
 
-        $referenceFunction =  function(&$value,$key){
-            $value = htmlspecialchars($value);
-        };
-        array_walk_recursive($data,$referenceFunction);
+        unset($fieldCollection->key);
+        unset($fieldCollection->fieldDefinitions);
 
-        $config = new Zend_Config($data, true);
-        $writer = new Zend_Config_Writer_Xml(array(
-            "config" => $config
-        ));
-        return $writer->render();
+        $json = Zend_Json::encode($fieldCollection);
+        $json = Zend_Json::prettyPrint($json);
+        return $json;
+    }
+
+    /**
+     * @param $fieldCollection
+     * @param $json
+     * @return bool
+     */
+    public static function importFieldCollectionFromJson($fieldCollection, $json) {
+
+        $importData = Zend_Json::decode($json);
+
+        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+        $fieldCollection->setLayoutDefinitions($layout);
+        $fieldCollection->setParentClass($importData["parentClass"]);
+        $fieldCollection->save();
+
+        return true;
+    }
+
+    /**
+     * @param $fieldCollection
+     * @return string
+     */
+    public static function generateObjectBrickJson($objectBrick){
+
+        unset($objectBrick->key);
+        unset($objectBrick->fieldDefinitions);
+
+        // set classname attribute to the real class name not to the class ID
+        // this will allow to import the brick on a different instance with identical class names but different class IDs
+        if(is_array($objectBrick->classDefinitions)) {
+            foreach($objectBrick->classDefinitions as &$cd) {
+                $class = Object_Class::getById($cd["classname"]);
+                if($class) {
+                    $cd["classname"] = $class->getName();
+                }
+            }
+        }
+
+        $json = Zend_Json::encode($objectBrick);
+        $json = Zend_Json::prettyPrint($json);
+        return $json;
+    }
+
+    /**
+     * @param $objectBrick
+     * @param $json
+     * @return bool
+     */
+    public static function importObjectBrickFromJson($objectBrick, $json) {
+
+        $importData = Zend_Json::decode($json);
+
+        // reverse map the class name to the class ID, see: self::generateObjectBrickJson()
+        if(is_array($importData["classDefinitions"])) {
+            foreach($importData["classDefinitions"] as &$cd) {
+                if(!is_numeric($cd["classname"])) {
+                    $class = Object_Class::getByName($cd["classname"]);
+                    if($class) {
+                        $cd["classname"] = $class->getId();
+                    }
+                }
+            }
+        }
+
+        $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+        $objectBrick->setLayoutDefinitions($layout);
+        $objectBrick->setClassDefinitions($importData["classDefinitions"]);
+        $objectBrick->setParentClass($importData["parentClass"]);
+        $objectBrick->save();
+
+        return true;
     }
 
     public static function generateLayoutTreeFromArray($array) {
@@ -84,7 +173,7 @@ class Object_Class_Service  {
 
                     $item->setValues($array, array("childs"));
 
-                    if($array["childs"]["datatype"]){
+                    if(is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]){
                          $childO = self::generateLayoutTreeFromArray($array["childs"]);
                             $item->addChild($childO);
                     } else if (is_array($array["childs"]) && count($array["childs"]) > 0) {

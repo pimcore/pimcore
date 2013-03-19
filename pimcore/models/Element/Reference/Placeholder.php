@@ -43,6 +43,7 @@ class Element_Reference_Placeholder {
     public function setId($id)
     {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -60,6 +61,7 @@ class Element_Reference_Placeholder {
     public function setType($type)
     {
         $this->type = $type;
+        return $this;
     }
 
     /**

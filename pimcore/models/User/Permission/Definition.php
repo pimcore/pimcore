@@ -40,5 +40,6 @@ class User_Permission_Definition extends Pimcore_Model_Abstract {
      */
     function setKey($key) {
         $this->key = $key;
+        return $this;
     }
 }

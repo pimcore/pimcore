@@ -31,7 +31,9 @@ pimcore.settings.glossary = Class.create({
                 }
                 catch (e) {
                     console.log(e);
-                    Ext.MessageBox.alert(t('error'), t('translations_are_not_configured') + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">' + t("read_more_here") + '</a>');
+                    Ext.MessageBox.alert(t('error'), t('translations_are_not_configured')
+                                + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">'
+                                + t("read_more_here") + '</a>');
                 }
             }.bind(this)
         });
@@ -181,9 +183,11 @@ pimcore.settings.glossary = Class.create({
 
         var typesColumns = [
             {header: t("text"), width: 200, sortable: true, dataIndex: 'text', editor: new Ext.form.TextField({})},
-            {header: t("link"), width: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}), css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
+            {header: t("link"), width: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}),
+                                css: "background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat;"},
             {header: t("abbr"), width: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
-            {header: t("acronym"), width: 200, sortable: true, dataIndex: 'acronym', editor: new Ext.form.TextField({})},
+            {header: t("acronym"), width: 200, sortable: true, dataIndex: 'acronym',
+                                editor: new Ext.form.TextField({})},
             {header: t("language"), width: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
                 store: this.languages,
                 mode: "local",

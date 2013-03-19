@@ -115,34 +115,36 @@ pimcore.settings.fileexplorer.explorer = Class.create({
 
     addNewFile: function (node) {
 
-        Ext.MessageBox.prompt(t('new_file'), t('please_enter_the_name_of_the_new_file'), function (node, button, value) {
-            Ext.Ajax.request({
-                url: "/admin/misc/fileexplorer-add",
-                success: function (node, response) {
-                    node.reload();
-                }.bind(this, node),
-                params: {
-                    path: node.id,
-                    filename: value
-                }
-            });
-        }.bind(this, node));
+        Ext.MessageBox.prompt(t('new_file'), t('please_enter_the_name_of_the_new_file'),
+                            function (node, button, value) {
+                                Ext.Ajax.request({
+                                    url: "/admin/misc/fileexplorer-add",
+                                    success: function (node, response) {
+                                        node.reload();
+                                    }.bind(this, node),
+                                    params: {
+                                        path: node.id,
+                                        filename: value
+                                    }
+                                });
+                            }.bind(this, node));
     },
 
     addNewFolder: function (node) {
 
-        Ext.MessageBox.prompt(t('new_folder'), t('please_enter_the_name_of_the_new_folder'), function (node, button, value) {
-            Ext.Ajax.request({
-                url: "/admin/misc/fileexplorer-add-folder",
-                success: function (node, response) {
-                    node.reload();
-                }.bind(this, node),
-                params: {
-                    path: node.id,
-                    filename: value
-                }
-            });
-        }.bind(this, node));
+        Ext.MessageBox.prompt(t('new_folder'), t('please_enter_the_name_of_the_new_folder'),
+                            function (node, button, value) {
+                                Ext.Ajax.request({
+                                    url: "/admin/misc/fileexplorer-add-folder",
+                                    success: function (node, response) {
+                                        node.reload();
+                                    }.bind(this, node),
+                                    params: {
+                                        path: node.id,
+                                        filename: value
+                                    }
+                                });
+                            }.bind(this, node));
     },
 
     deleteFile: function (node) {

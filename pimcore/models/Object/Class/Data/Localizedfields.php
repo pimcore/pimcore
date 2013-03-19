@@ -206,19 +206,30 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value)
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
         if (is_array($value)) {
 
             $validLanguages = Pimcore_Tool::getValidLanguages();
-            foreach($value as $v){
-                if (!in_array($v->language, $validLanguages)) {
-                    throw new Exception("Invalid language in localized fields");
+
+            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                foreach($value as $v){
+                        if (!in_array($v->language, $validLanguages)) {
+                            throw new Exception("Invalid language in localized fields");
+                    }
                 }
             }
-
             $data = array();
             foreach ($value as $field) {
+                    if ($field instanceof stdClass) {
+                        $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
+                    }
+
+                    if ($idMapper && $idMapper->ignoreMappingFailures()){
+                        if (!in_array($field->language, $validLanguages)) {
+                            continue;
+                        }
+                    }
 
                     if(!$field instanceof Webservice_Data_Object_Element){
                         throw new Exception("Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]");
@@ -257,6 +268,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setChilds($childs)
     {
         $this->childs = $childs;
+        return $this;
     }
 
     /**
@@ -294,6 +306,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 }
             }
         }
+        return $this;
     }
 
 
@@ -465,6 +478,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+        return $this;
     }
 
     public function getHeight()
@@ -475,6 +489,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setLayout($layout)
     {
         $this->layout = $layout;
+        return $this;
     }
 
     public function getLayout()
@@ -485,6 +500,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     public function getName()
@@ -495,6 +511,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setRegion($region)
     {
         $this->region = $region;
+        return $this;
     }
 
     public function getRegion()
@@ -505,6 +522,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     public function getTitle()
@@ -515,6 +533,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+        return $this;
     }
 
     public function getWidth()

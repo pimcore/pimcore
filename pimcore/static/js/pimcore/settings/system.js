@@ -50,7 +50,7 @@ pimcore.settings.system = Class.create({
                         root: 'languages',
                         fields: ['language', 'display']
                     });
-                } catch(e) {
+                } catch(e2) {
                     this.languagesStore = new Ext.data.JsonStore({
                         autoDestroy: true,
                         fields: ['language', 'display']
@@ -65,7 +65,7 @@ pimcore.settings.system = Class.create({
                         root: 'emaildebugaddressesArray',
                         fields: ['value']
                     });
-                } catch(e) {
+                } catch(e3) {
                     this.emailDebugAddressesStore = new Ext.data.JsonStore({
                         autoDestroy: true,
                         fields: ['value']
@@ -80,7 +80,7 @@ pimcore.settings.system = Class.create({
                         root: 'excludePatternsArray',
                         fields: ['value']
                     });
-                } catch(e) {
+                } catch(e4) {
                     this.cacheExcludeStore = new Ext.data.JsonStore({
                         autoDestroy: true,
                         fields: ['value']
@@ -138,10 +138,12 @@ pimcore.settings.system = Class.create({
             // sites error pages
             var sitesErrorPagesFields = [];
             var sites = pimcore.globalmanager.get("sites");
-            sitesErrorPagesFields.push(this.getErrorPageFieldConfig("default", t("main_site")));
-
             sites.each(function (record) {
-                sitesErrorPagesFields.push(this.getErrorPageFieldConfig("site_" + record.data.id, record.data.domains.split(",")[0]));
+                var key = "site_" + record.data.id;
+                if(!record.data.id) {
+                    key = "default";
+                }
+                sitesErrorPagesFields.push(this.getErrorPageFieldConfig(key, record.data.domain));
             }, this);
 
             // debug
@@ -279,7 +281,8 @@ pimcore.settings.system = Class.create({
                                     check: function (el, checked) {
                                         // set the current client ip to the debug ip field
                                         if(checked) {
-                                            Ext.getCmp("system.settings.general.debug_ip").setValue(this.data.config.client_ip);
+                                            Ext.getCmp("system.settings.general.debug_ip")
+                                                                            .setValue(this.data.config.client_ip);
                                         }
                                     }.bind(this)
                                 }
@@ -328,10 +331,10 @@ pimcore.settings.system = Class.create({
                                 value: "<b>" + t("logger") + "</b>"
                             },
                             {
-                                fieldLabel: "FirePHP (Firebug/Wildfire)",
+                                fieldLabel: "PHP error_log = /website/var/log/php.log",
                                 xtype: "checkbox",
-                                name: "general.firephp",
-                                checked: this.getValue("general.firephp")
+                                name: "general.custom_php_logfile",
+                                checked: this.getValue("general.custom_php_logfile")
                             },
                             {
                                 fieldLabel: t('log_messages_user_mail_recipient'),
@@ -437,7 +440,8 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.debug_admin_translations")
                             },
                             {
-                                fieldLabel: 'DEV-Mode (<span style="color:red;font-weight:bold;">DON`T ACTIVATE IT!</span>)',
+                                fieldLabel: 'DEV-Mode (<span style="color:red;font-weight:bold;">'
+                                        + 'DON`T ACTIVATE IT!</span>)',
                                 xtype: "checkbox",
                                 name: "general.devmode",
                                 checked: this.getValue("general.devmode")
@@ -450,146 +454,241 @@ pimcore.settings.system = Class.create({
                         collapsible: true,
                         collapsed: true,
                         autoHeight:true,
-                        labelWidth: 250,
-                        defaultType: 'textfield',
-                        defaults: {width: 150},
-                        items :[
-                            {
-                                fieldLabel: t("email_senderemail"),
-                                name: "email.sender.email",
-                                value: this.getValue("email.sender.email")
-                            },
-                            {
-                                fieldLabel: t("email_sendername"),
-                                name: "email.sender.name",
-                                value: this.getValue("email.sender.name")
-                            },
-                            {
-                                fieldLabel: t("email_returnemail"),
-                                name: "email.return.email",
-                                value: this.getValue("email.return.email")
-                            },
-                            {
-                                fieldLabel: t("email_returnname"),
-                                name: "email.return.name",
-                                value: this.getValue("email.return.name")
-                            },
-                            {
-                                fieldLabel: t("email_method"),
+                        items : [{
+                            xtype: "fieldset",
+                            title: t("delivery_settings"),
+                            collapsible: false,
+                            defaults: {width: 150},
+                            labelWidth: 250,
+                            defaultType: 'textfield',
+                            autoHeight:true,
+                            items: [
+                                {
+                                    fieldLabel: t("email_senderemail"),
+                                    name: "email.sender.email",
+                                    value: this.getValue("email.sender.email")
+                                },
+                                {
+                                    fieldLabel: t("email_sendername"),
+                                    name: "email.sender.name",
+                                    value: this.getValue("email.sender.name")
+                                },
+                                {
+                                    fieldLabel: t("email_returnemail"),
+                                    name: "email.return.email",
+                                    value: this.getValue("email.return.email")
+                                },
+                                {
+                                    fieldLabel: t("email_returnname"),
+                                    name: "email.return.name",
+                                    value: this.getValue("email.return.name")
+                                },
+                                {
+                                    fieldLabel: t("email_method"),
+                                    xtype: "combo",
+                                    name: "email.method",
+                                    value: this.getValue("email.method"),
+                                    store: [
+                                        ["sendmail", "sendmail"],
+                                        ["smtp","smtp"]
+                                    ],
+                                    listeners: {
+                                        select: this.emailMethodSelected.bind(this)
+                                    },
+                                    mode: "local",
+                                    triggerAction: "all"
+                                },
+                                {
+                                    fieldLabel: t("email_smtp_host"),
+                                    id: "system.settings.email.smtp.host",
+                                    name: "email.smtp.host",
+                                    disabled: this.getValue("email.method") != "smtp",
+                                    value: this.getValue("email.smtp.host")
+                                },
+                                {
+                                    fieldLabel: t("email_smtp_ssl"),
+                                    xtype: "combo",
+                                    disabled: this.getValue("email.method") != "smtp",
+                                    name: "email.smtp.ssl",
+                                    id: "system.settings.email.smtp.ssl",
+                                    value: this.getValue("email.smtp.ssl"),
+                                    store: [
+                                        ["", t('no_ssl')],
+                                        ["tls","TLS"],
+                                        ["ssl","SSL"]
+                                    ],
+                                    mode: "local",
+                                    triggerAction: "all"
+                                },
+                                {
+                                    fieldLabel: t("email_smtp_port"),
+                                    name: "email.smtp.port",
+                                    id: "system.settings.email.smtp.port",
+                                    disabled: this.getValue("email.method") != "smtp",
+                                    value: this.getValue("email.smtp.port")
+                                },
+                                {
+                                    fieldLabel: t("email_smtp_name"),
+                                    name: "email.smtp.name",
+                                    id: "system.settings.email.smtp.name",
+                                    disabled: this.getValue("email.method") != "smtp",
+                                    value: this.getValue("email.smtp.name")
+                                },
+                                {
+                                    fieldLabel: t("email_smtp_auth_method"),
+                                    xtype: "combo",
+                                    disabled: this.getValue("email.method") != "smtp",
+                                    name: "email.smtp.auth.method",
+                                    id: "system.settings.email.smtp.method",
+                                    value: this.getValue("email.smtp.auth.method"),
+                                    store: [
+                                        ["", t('no_authentication')],
+                                        ["login","LOGIN"],
+                                        ["plain","PLAIN"],
+                                        ["cram-md5", "CRAM-MD5"]
+                                    ],
+                                    mode: "local",
+                                    triggerAction: "all",
+                                    listeners: {
+                                        select: this.smtpAuthSelected.bind(this)
+                                    }
+                                },
+                                {
+                                    fieldLabel: t("email_smtp_auth_username"),
+                                    name: "email.smtp.auth.username",
+                                    id: "system.settings.email.smtp.auth.username",
+                                    disabled: this.getValue("email.smtp.auth.method") == "",
+                                    value: this.getValue("email.smtp.auth.username")
+                                },
+                                {
+                                    fieldLabel: t("email_smtp_auth_password"),
+                                    name: "email.smtp.auth.password",
+                                    id: "system.settings.email.smtp.auth.password",
+                                    inputType: "password",
+                                    disabled: this.getValue("email.smtp.auth.method") == "",
+                                    value: this.getValue("email.smtp.auth.password")
+                                },
+                                {
+                                    xtype: 'superboxselect',
+                                    allowBlank:true,
+                                    queryDelay: 100,
+                                    triggerAction: 'all',
+                                    resizable: true,
+                                    mode: 'local',
+                                    anchor:'100%',
+                                    minChars: 2,
+                                    fieldLabel: t("email_debug_addresses"), //ckogler
+                                    name: 'email.debug.emailAddresses',
+                                    value: this.getValue("email.debug.emailaddresses"),
+                                    emptyText: t("email_debug_addresses_empty_text"),
+                                    store: this.emailDebugAddressesStore,
+                                    fields: ['value'],
+                                    displayField: 'value',
+                                    valueField: 'value',
+                                    allowAddNewData: true,
+                                    ctCls: 'superselect-no-drop-down',
+                                    listeners: {
+                                        newitem: function(bs, v, f) {
+                                            v = v + '';
+                                            var newObj = {
+                                                value: v
+                                            };
+                                            bs.addNewItem(newObj);
+                                        }
+                                }
+
+                                }
+                            ]
+                        }, {
+                            xtype: "fieldset",
+                            title: t("bounce_mail_inbox"),
+                            collapsible: false,
+                            defaults: {width: 150},
+                            labelWidth: 250,
+                            defaultType: 'textfield',
+                            autoHeight:true,
+                            items: [{
+                                fieldLabel: t("type"),
                                 xtype: "combo",
-                                name: "email.method",
-                                value: this.getValue("email.method"),
+                                name: "email.bounce.type",
+                                value: this.getValue("email.bounce.type"),
                                 store: [
-                                    ["sendmail", "sendmail"],
-                                    ["smtp","smtp"]
+                                    ["", ""],
+                                    ["Mbox", "Mbox"],
+                                    ["Maildir","Maildir"],
+                                    ["IMAP", "IMAP"]
                                 ],
                                 listeners: {
-                                    select: this.emailMethodSelected.bind(this)
+                                    select: function (el) {
+
+                                        Ext.getCmp("system.settings.email.bounce.maildir").hide();
+                                        Ext.getCmp("system.settings.email.bounce.mbox").hide();
+                                        Ext.getCmp("system.settings.email.bounce.imap.host").hide();
+                                        Ext.getCmp("system.settings.email.bounce.imap.port").hide();
+                                        Ext.getCmp("system.settings.email.bounce.imap.username").hide();
+                                        Ext.getCmp("system.settings.email.bounce.imap.password").hide();
+                                        Ext.getCmp("system.settings.email.bounce.imap.ssl").hide();
+
+                                        if(el.getValue() == "IMAP") {
+                                            Ext.getCmp("system.settings.email.bounce.imap.host").show();
+                                            Ext.getCmp("system.settings.email.bounce.imap.port").show();
+                                            Ext.getCmp("system.settings.email.bounce.imap.username").show();
+                                            Ext.getCmp("system.settings.email.bounce.imap.password").show();
+                                            Ext.getCmp("system.settings.email.bounce.imap.ssl").show();
+                                        } else if (el.getValue() == "Maildir") {
+                                            Ext.getCmp("system.settings.email.bounce.maildir").show();
+                                        } else if (el.getValue() == "Mbox") {
+                                            Ext.getCmp("system.settings.email.bounce.mbox").show();
+                                        }
+                                    }.bind(this)
                                 },
                                 mode: "local",
                                 triggerAction: "all"
-                            },
-                            {
-                                fieldLabel: t("email_smtp_host"),
-                                id: "system.settings.email.smtp.host",
-                                name: "email.smtp.host",
-                                disabled: this.getValue("email.method") != "smtp",
-                                value: this.getValue("email.smtp.host")
-                            },
-                            {
-                                fieldLabel: t("email_smtp_ssl"),
-                                xtype: "combo",
-                                disabled: this.getValue("email.method") != "smtp",
-                                name: "email.smtp.ssl",
-                                id: "system.settings.email.smtp.ssl",
-                                value: this.getValue("email.smtp.ssl"),
-                                store: [
-                                    ["", t('no_ssl')],
-                                    ["tls","TLS"],
-                                    ["ssl","SSL"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all"
-                            },
-                            {
-                                fieldLabel: t("email_smtp_port"),
-                                name: "email.smtp.port",
-                                id: "system.settings.email.smtp.port",
-                                disabled: this.getValue("email.method") != "smtp",
-                                value: this.getValue("email.smtp.port")
-                            },
-                            {
-                                fieldLabel: t("email_smtp_name"),
-                                name: "email.smtp.name",
-                                id: "system.settings.email.smtp.name",
-                                disabled: this.getValue("email.method") != "smtp",
-                                value: this.getValue("email.smtp.name")
-                            },
-                            {
-                                fieldLabel: t("email_smtp_auth_method"),
-                                xtype: "combo",
-                                disabled: this.getValue("email.method") != "smtp",
-                                name: "email.smtp.auth.method",
-                                id: "system.settings.email.smtp.method",
-                                value: this.getValue("email.smtp.auth.method"),
-                                store: [
-                                    ["", t('no_authentication')],
-                                    ["login","LOGIN"],
-                                    ["plain","PLAIN"],
-                                    ["cram-md5", "CRAM-MD5"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all",
-                                listeners: {
-                                    select: this.smtpAuthSelected.bind(this)
-                                }
-                            },
-                            {
-                                fieldLabel: t("email_smtp_auth_username"),
-                                name: "email.smtp.auth.username",
-                                id: "system.settings.email.smtp.auth.username",
-                                disabled: this.getValue("email.smtp.auth.method") == "",
-                                value: this.getValue("email.smtp.auth.username")
-                            },
-                            {
-                                fieldLabel: t("email_smtp_auth_password"),
-                                name: "email.smtp.auth.password",
-                                id: "system.settings.email.smtp.auth.password",
-                                inputType: "password",
-                                disabled: this.getValue("email.smtp.auth.method") == "",
-                                value: this.getValue("email.smtp.auth.password")
-                            },
-                            {
-                                xtype: 'superboxselect',
-                                allowBlank:true,
-                                queryDelay: 100,
-                                triggerAction: 'all',
-                                resizable: true,
-                                mode: 'local',
-                                anchor:'100%',
-                                minChars: 2,
-                                fieldLabel: t("email_debug_addresses"), //ckogler
-                                name: 'email.debug.emailAddresses',
-                                value: this.getValue("email.debug.emailaddresses"),
-                                emptyText: t("email_debug_addresses_empty_text"),
-                                store: this.emailDebugAddressesStore,
-                                fields: ['value'],
-                                displayField: 'value',
-                                valueField: 'value',
-                                allowAddNewData: true,
-                                ctCls: 'superselect-no-drop-down',
-                                listeners: {
-                                    newitem: function(bs, v, f) {
-                                        v = v + '';
-                                        var newObj = {
-                                            value: v
-                                        };
-                                        bs.addNewItem(newObj);
-                                    }
-                            }
-
-                            }
-                        ]
+                            }, {
+                                fieldLabel: t('path'),
+                                name: 'email.bounce.maildir',
+                                value: this.getValue("email.bounce.maildir"),
+                                id: "system.settings.email.bounce.maildir",
+                                hidden: (this.getValue("email.bounce.type") == "Maildir") ? false : true
+                            }, {
+                                fieldLabel: t('path'),
+                                name: 'email.bounce.mbox',
+                                value: this.getValue("email.bounce.mbox"),
+                                id: "system.settings.email.bounce.mbox",
+                                hidden: (this.getValue("email.bounce.type") == "Mbox") ? false : true
+                            }, {
+                                fieldLabel: t('host'),
+                                name: 'email.bounce.imap.host',
+                                value: this.getValue("email.bounce.imap.host"),
+                                id: "system.settings.email.bounce.imap.host",
+                                hidden: (this.getValue("email.bounce.type") == "IMAP") ? false : true
+                            }, {
+                                fieldLabel: t('port'),
+                                name: 'email.bounce.imap.port',
+                                value: this.getValue("email.bounce.imap.port"),
+                                id: "system.settings.email.bounce.imap.port",
+                                hidden: (this.getValue("email.bounce.type") == "IMAP") ? false : true
+                            }, {
+                                fieldLabel: t('username'),
+                                name: 'email.bounce.imap.username',
+                                value: this.getValue("email.bounce.imap.username"),
+                                id: "system.settings.email.bounce.imap.username",
+                                hidden: (this.getValue("email.bounce.type") == "IMAP") ? false : true
+                            }, {
+                                fieldLabel: t('password'),
+                                name: 'email.bounce.imap.password',
+                                value: this.getValue("email.bounce.imap.password"),
+                                id: "system.settings.email.bounce.imap.password",
+                                hidden: (this.getValue("email.bounce.type") == "IMAP") ? false : true
+                            }, {
+                                xtype: "checkbox",
+                                fieldLabel: "SSL",
+                                name: "email.bounce.imap.ssl",
+                                checked: this.getValue("email.bounce.imap.ssl"),
+                                id: "system.settings.email.bounce.imap.ssl",
+                                hidden: (this.getValue("email.bounce.type") == "IMAP") ? false : true
+                            }]
+                        }]
                     },
                     {
                         xtype:'fieldset',
@@ -611,12 +710,6 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t("redirect_unknown_domains_to_main_domain"),
                                 name: "general.redirect_to_maindomain",
                                 checked: this.getValue("general.redirect_to_maindomain")
-                            },
-                            {
-                                xtype: "checkbox",
-                                fieldLabel: t("enable_targeting"),
-                                name: "general.targeting",
-                                checked: this.getValue("general.targeting")
                             },
                             {
                                 xtype:'fieldset',
@@ -756,6 +849,23 @@ pimcore.settings.system = Class.create({
                                 ],
                                 mode: "local",
                                 triggerAction: "all"
+                            },{
+                                fieldLabel: t("generate_previews"),
+                                xtype: "checkbox",
+                                name: "documents.generatepreview",
+                                checked: this.getValue("documents.generatepreview")
+                            },
+                            {
+                                fieldLabel: t('absolute_path_to_wkhtmltoimage_binary'),
+                                name: 'documents.wkhtmltoimage',
+                                value: this.getValue("documents.wkhtmltoimage"),
+                                width: 300
+                            },
+                            {
+                                fieldLabel: t('absolute_path_to_wkhtmltopdf_binary'),
+                                name: 'documents.wkhtmltopdf',
+                                value: this.getValue("documents.wkhtmltopdf"),
+                                width: 300
                             }
                         ]
                     },
@@ -902,7 +1012,12 @@ pimcore.settings.system = Class.create({
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
-                                value: this.data.config.google_private_key_exists ? t("google_api_private_key_installed") : ('<span style="color:red;">' + t("google_api_key_missing") + " <br />" + this.data.config.google_private_key_path + '</span>'),
+                                value: this.data.config.google_private_key_exists ?
+                                                            t("google_api_private_key_installed")
+                                                            : ('<span style="color:red;">'
+                                                                + t("google_api_key_missing")
+                                                                + " <br />" + this.data.config.google_private_key_path
+                                                                + '</span>'),
                                 cls: "pimcore_extra_label"
                             },{
                                 xtype: "displayfield",
@@ -990,7 +1105,7 @@ pimcore.settings.system = Class.create({
                                 mode: 'local',
                                 anchor:'100%',
                                 minChars: 2,
-                                fieldLabel: t('cache_exclude_patterns'),
+                                fieldLabel: t('exclude_patterns'),
                                 name: 'cache.excludePatterns',
                                 value: this.getValue("cache.excludePatterns"),
                                 emptyText: t("superselectbox_empty_text"),
@@ -1014,7 +1129,7 @@ pimcore.settings.system = Class.create({
                             {
                                 xtype: "displayfield",
                                 width: 600,
-                                value: t("cache_exclude_patterns_description"),
+                                value: t("exclude_patterns_description"),
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {
@@ -1209,7 +1324,7 @@ pimcore.settings.system = Class.create({
         }
 
 
-        
+
         Ext.Ajax.request({
             url: "/admin/settings/set-system",
             method: "post",
@@ -1228,7 +1343,8 @@ pimcore.settings.system = Class.create({
                             }
                         }.bind(this));
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error", t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"),
+                                                                "error", t(res.message));
                     }
                 } catch(e) {
                     pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error");
@@ -1246,7 +1362,7 @@ pimcore.settings.system = Class.create({
         this.layout.getForm().findField("system.settings.email.smtp.name").setDisabled(disabled);
         this.layout.getForm().findField("system.settings.email.smtp.method").setDisabled(disabled);
         this.layout.getForm().findField("system.settings.email.smtp.ssl").setDisabled(disabled);
-        
+
         if (disabled) {
             this.layout.getForm().findField("system.settings.email.smtp.host").setValue();
             this.layout.getForm().findField("system.settings.email.smtp.port").setValue();
@@ -1305,22 +1421,22 @@ pimcore.settings.system = Class.create({
             }
         };
     },
-    
+
     checkVersionInputs: function (elementType, type, field, event) {
-                
+
         var mappingOpposite = {
             steps: "days",
             days: "steps"
         };
-        
+
         var value = Ext.getCmp("system.settings." + elementType + ".versions." + type).getValue();
-        
+
         if(event == "init") {
             if(!value) {
                 return;
             }
         }
-        
+
         if(value) {
             Ext.getCmp("system.settings." + elementType + ".versions." + mappingOpposite[type]).disable();
             Ext.getCmp("system.settings." + elementType + ".versions." + mappingOpposite[type]).setValue("");

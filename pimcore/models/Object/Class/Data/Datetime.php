@@ -233,8 +233,8 @@ class Object_Class_Data_Datetime extends Object_Class_Data
             } else {
                 $this->defaultValue = strtotime($defaultValue);
             }
-
         }
+        return $this;
     }
 
 
@@ -246,6 +246,7 @@ class Object_Class_Data_Datetime extends Object_Class_Data
     public function setUseCurrentDate($useCurrentDate)
     {
         $this->useCurrentDate = (bool)$useCurrentDate;
+        return $this;
     }
 
 

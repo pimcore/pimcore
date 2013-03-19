@@ -32,7 +32,8 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","visibleGridView","visibleSearch","index","style"];
+        this.availableSettingsFields = ["name","title","tooltip","noteditable","invisible","visibleGridView",
+                                        "visibleSearch","index","style"];
 
         this.treeNode = treeNode;
     },

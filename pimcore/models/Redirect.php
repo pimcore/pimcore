@@ -38,6 +38,11 @@ class Redirect extends Pimcore_Model_Abstract {
     public $sourceSite;
 
     /**
+     * @var bool
+     */
+    public $passThroughParameters;
+
+    /**
      * @var string
      */
     public $target;
@@ -125,6 +130,7 @@ class Redirect extends Pimcore_Model_Abstract {
      */
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -133,6 +139,7 @@ class Redirect extends Pimcore_Model_Abstract {
      */
     public function setSource($source) {
         $this->source = $source;
+        return $this;
     }
 
     /**
@@ -141,6 +148,7 @@ class Redirect extends Pimcore_Model_Abstract {
      */
     public function setTarget($target) {
         $this->target = $target;
+        return $this;
     }
 
     /**
@@ -151,6 +159,7 @@ class Redirect extends Pimcore_Model_Abstract {
         if($priority) {
            $this->priority = $priority; 
         }
+        return $this;
     }
 
     /**
@@ -168,6 +177,7 @@ class Redirect extends Pimcore_Model_Abstract {
         if($statusCode) {
             $this->statusCode = $statusCode;
         }
+        return $this;
     }
 
     /**
@@ -211,6 +221,7 @@ class Redirect extends Pimcore_Model_Abstract {
             $expiry = strtotime($expiry);
         }
         $this->expiry = $expiry;
+        return $this;
     }
 
     /**
@@ -245,6 +256,7 @@ class Redirect extends Pimcore_Model_Abstract {
         } else {
             $this->sourceEntireUrl = null;
         }
+        return $this;
     }
 
     /**
@@ -265,6 +277,7 @@ class Redirect extends Pimcore_Model_Abstract {
         } else {
             $this->sourceSite = null;
         }
+        return $this;
     }
 
     /**
@@ -285,6 +298,7 @@ class Redirect extends Pimcore_Model_Abstract {
         } else {
             $this->targetSite = null;
         }
+        return $this;
     }
 
     /**
@@ -293,5 +307,28 @@ class Redirect extends Pimcore_Model_Abstract {
     public function getTargetSite()
     {
         return $this->targetSite;
+    }
+
+    /**
+     * @param $passThroughParameters
+     * @return Redirect
+     */
+    public function setPassThroughParameters($passThroughParameters)
+    {
+        if($passThroughParameters) {
+            $this->passThroughParameters = (bool) $passThroughParameters;
+        } else {
+            $this->passThroughParameters = null;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getPassThroughParameters()
+    {
+        return $this->passThroughParameters;
     }
 }

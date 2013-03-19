@@ -22,7 +22,8 @@ pimcore.document.edit = Class.create({
 
     getEditLink: function () {
         var date = new Date();
-        return  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='+pimcore.settings.language+'&_dc=' + date.getTime();
+        return  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
+                                                            + pimcore.settings.language+'&_dc=' + date.getTime();
     },
 
     getLayout: function () {
@@ -31,7 +32,8 @@ pimcore.document.edit = Class.create({
             this.reloadInProgress = true;
             this.iframeName = 'document_iframe_' + this.document.id;
 
-            var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
+            var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName
+                                                    + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
             this.layout = new Ext.Panel({
                 id: "document_content_" + this.document.id,
                 html: html,
@@ -61,7 +63,7 @@ pimcore.document.edit = Class.create({
 
     setLayoutFrameDimensions: function (width, height) {
         Ext.get(this.iframeName).setStyle({
-            height: height + "px"
+            height: (height-5) + "px"
         });
     },
 
@@ -116,11 +118,13 @@ pimcore.document.edit = Class.create({
 
     maskFrames: function () {
         
-        // this is for dnd over iframes, with this method it's not nessercery to register the dnd manager in each iframe (wysiwyg)
+        // this is for dnd over iframes, with this method it's not nessercery to register the dnd manager in each
+        // iframe (wysiwyg)
         var width;
         var height;
         var offset;
         var element;
+        var i;
 
 
         // mask frames (iframes)
@@ -131,7 +135,7 @@ pimcore.document.edit = Class.create({
             }
 
             var iFrames = this.frame.document.getElementsByTagName("iframe");
-            for (var i = 0; i < iFrames.length; i++) {
+            for (i = 0; i < iFrames.length; i++) {
                 width = Ext.get(iFrames[i]).getWidth();
                 height = Ext.get(iFrames[i]).getHeight();
 
@@ -140,7 +144,7 @@ pimcore.document.edit = Class.create({
                 var element = this.frame.Ext.getBody().createChild({
                     tag: "div",
                     id: Ext.id()
-                })
+                });
                 
                 element.setStyle({
                     width: width + "px",
@@ -163,19 +167,19 @@ pimcore.document.edit = Class.create({
             if (this.frame && this.frame.editables) {
                 var editables = this.frame.editables;
 
-                for (var i = 0; i < editables.length; i++) {
+                for (i = 0; i < editables.length; i++) {
                     try {
                         if (typeof editables[i].mask == "function") {
                             editables[i].mask();
                             this.fieldsToMask.push(editables[i]);
                         }
-                    } catch (e) {
-                        console.log(e);
+                    } catch (e2) {
+                        console.log(e2);
                     }
                 }
             }
-        } catch (e) {
-            console.log(e);
+        } catch (e3) {
+            console.log(e3);
         }
     },
 
@@ -202,8 +206,8 @@ pimcore.document.edit = Class.create({
             for (var i = 0; i < this.fieldsToMask.length; i++) {
                 this.fieldsToMask[i].unmask();
             }
-        } catch (e) {
-            console.log(e);
+        } catch (e2) {
+            console.log(e2);
         }
     },
 
@@ -231,7 +235,7 @@ pimcore.document.edit = Class.create({
                 }
             }
         }
-        catch (e) {
+        catch (e2) {
         }
 
         return values;

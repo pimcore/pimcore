@@ -20,7 +20,8 @@ try {
         'verbose|v' => 'show detailed information (for debug, ...)',
         'help|h' => 'display this help',
         "parent|p=i" => "only create thumbnails of images in this folder (ID)",
-        "thumbnails|t=s" => "only create specified thumbnails (comma separated eg.: thumb1,thumb2)"
+        "thumbnails|t=s" => "only create specified thumbnails (comma separated eg.: thumb1,thumb2)",
+        "system|s" => "create system thumbnails (used for tree-preview, ...)"
     ));
 } catch (Exception $e) {
     echo $e->getMessage();
@@ -98,10 +99,15 @@ for($i=0; $i<(ceil($total/$perLoop)); $i++) {
     $images = $list->load();
     foreach ($images as $image) {
         foreach ($thumbnails as $thumbnail) {
-            if(empty($allowedThumbs) || in_array($thumbnail, $allowedThumbs)) {
+            if((empty($allowedThumbs) && !$opts->getOption("system")) || in_array($thumbnail, $allowedThumbs)) {
                 echo "generating thumbnail for image: " . $image->getFullpath() . " | " . $image->getId() . " | Thumbnail: " . $thumbnail . " : " . formatBytes(memory_get_usage()) . " \n";
                 $image->getThumbnail($thumbnail);
             }
+        }
+
+        if($opts->getOption("system")) {
+            echo "generating thumbnail for image: " . $image->getFullpath() . " | " . $image->getId() . " | Thumbnail: System Preview (tree) : " . formatBytes(memory_get_usage()) . " \n";
+            $image->getThumbnail(Asset_Image_Thumbnail_Config::getPreviewConfig());
         }
     }
     Pimcore::collectGarbage();

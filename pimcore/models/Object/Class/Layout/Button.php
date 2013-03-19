@@ -36,6 +36,7 @@ class Object_Class_Layout_Button extends Object_Class_Layout {
 
     public function setText($text) {
         $this->text = $text;
+        return $this;
     }
 
 
@@ -45,6 +46,7 @@ class Object_Class_Layout_Button extends Object_Class_Layout {
 
     public function setHandler($handler) {
         $this->handler = $handler;
+        return $this;
     }
 
 }

@@ -124,6 +124,9 @@ class Pimcore_View_Helper_Glossary_Controller {
             }
             echo $html->save();
 
+            $html->clear();
+            unset($html);
+
             // very memory intensive method with a huge amount of glossary entries
             /*foreach ($data as $search => $replace) {
                 $html = str_get_html($contents);
@@ -233,8 +236,7 @@ class Pimcore_View_Helper_Glossary_Controller {
                         }
                     }
 
-                    $r = '<a class="pimc
-                    ore_glossary" href="' . $d["link"] . '">' . $r . '</a>';
+                    $r = '<a class="pimcore_glossary" href="' . $d["link"] . '">' . $r . '</a>';
                 }
 
                 // add PCRE delimiter and modifiers
@@ -266,6 +268,7 @@ class Pimcore_View_Helper_Glossary_Controller {
     public function setView($view)
     {
         $this->view = $view;
+        return $this;
     }
 
     /**

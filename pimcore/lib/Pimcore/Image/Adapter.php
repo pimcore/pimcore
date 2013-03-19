@@ -37,6 +37,7 @@ abstract class Pimcore_Image_Adapter {
     public function setHeight($height)
     {
         $this->height = $height;
+        return $this;
     }
 
     /**
@@ -53,6 +54,7 @@ abstract class Pimcore_Image_Adapter {
     public function setWidth($width)
     {
         $this->width = $width;
+        return $this;
     }
 
     /**
@@ -107,8 +109,10 @@ abstract class Pimcore_Image_Adapter {
      */
     public function scaleByWidth ($width) {
 
-        $height = round(($width / $this->getWidth()) * $this->getHeight(), 0);
-        $this->resize(max(1, $width), max(1, $height));
+        if($width <= $this->getWidth() || $this->isVectorGraphic()) {
+            $height = round(($width / $this->getWidth()) * $this->getHeight(), 0);
+            $this->resize(max(1, $width), max(1, $height));
+        }
 
         return $this;
     }
@@ -119,8 +123,10 @@ abstract class Pimcore_Image_Adapter {
      */
     public function scaleByHeight ($height) {
 
-        $width = round(($height / $this->getHeight()) * $this->getWidth(), 0);
-        $this->resize(max(1, $width), max(1, $height));
+        if($height < $this->getHeight() || $this->isVectorGraphic()) {
+            $width = round(($height / $this->getHeight()) * $this->getWidth(), 0);
+            $this->resize(max(1, $width), max(1, $height));
+        }
 
         return $this;
     }
@@ -243,7 +249,6 @@ abstract class Pimcore_Image_Adapter {
      * @return Pimcore_Image_Adapter
      */
     public function setBackgroundColor ($color) {
-
         return $this;
     }
 

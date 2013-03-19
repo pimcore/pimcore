@@ -42,6 +42,7 @@ abstract class Pimcore_Model_Abstract {
      */
     public function setResource($resource) {
         $this->resource = $resource;
+        return $this;
     }
 
     /**
@@ -165,6 +166,7 @@ abstract class Pimcore_Model_Abstract {
                 $this->setValue($key,$value);
             }
         }
+        return $this;
     }
 
     /**
@@ -177,6 +179,7 @@ abstract class Pimcore_Model_Abstract {
         if (method_exists($this, $method)) {
             $this->$method($value);
         }
+        return $this;
     }
 
     /**

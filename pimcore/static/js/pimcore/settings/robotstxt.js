@@ -17,20 +17,27 @@ pimcore.settings.robotstxt = Class.create({
 
     initialize: function(id) {
 
-        this.getTabPanel();
+        this.site = "";
+        this.data = {data: ""};
 
+        this.getTabPanel();
+        this.load();
+    },
+
+    load: function () {
         Ext.Ajax.request({
             url: "/admin/settings/robots-txt",
             method: "get",
-            params: {},
+            params: {
+                site: this.site
+            },
             success: function (response) {
 
                 try {
                     var data = Ext.decode(response.responseText);
-                    if(data.success) {
+                    if(data.success && this.editArea instanceof Ext.form.TextArea) {
                         this.data = data;
-                        this.getTabPanel().add(this.getEditPanel());
-                        this.getTabPanel().doLayout();
+                        this.editArea.setValue(this.data.data);
                     }
                 } catch (e) {
 
@@ -53,7 +60,8 @@ pimcore.settings.robotstxt = Class.create({
                 iconCls: "pimcore_icon_robots",
                 border: false,
                 layout: "fit",
-                closable:true
+                closable:true,
+                items: [this.getEditPanel()]
             });
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
@@ -92,6 +100,22 @@ pimcore.settings.robotstxt = Class.create({
             this.editPanel = new Ext.Panel({
                 bodyStyle: "padding: 10px;",
                 items: [this.editArea],
+                tbar: ["->", {
+                    xtype: 'tbtext',
+                    text: t("select_site")
+                }, {
+                    xtype: "combo",
+                    store: pimcore.globalmanager.get("sites"),
+                    valueField: "id",
+                    displayField: "domain",
+                    triggerAction: "all",
+                    listeners: {
+                        "select": function (el) {
+                            this.site = el.getValue();
+                            this.load();
+                        }.bind(this)
+                    }
+                }],
                 buttons: [{
                     text: t("save"),
                     iconCls: "pimcore_icon_apply",
@@ -114,7 +138,8 @@ pimcore.settings.robotstxt = Class.create({
             url: "/admin/settings/robots-txt",
             method: "post",
             params: {
-                data: this.editArea.getValue()
+                data: this.editArea.getValue(),
+                site: this.site
             },
             success: function (response) {
 

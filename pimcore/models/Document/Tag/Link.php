@@ -231,6 +231,7 @@ class Document_Tag_Link extends Document_Tag
     public function setDataFromResource($data)
     {
         $this->data = Pimcore_Tool_Serialize::unserialize($data);
+        return $this;
     }
 
     /**
@@ -261,6 +262,7 @@ class Document_Tag_Link extends Document_Tag
         }
 
         $this->data = $data;
+        return $this;
     }
 
     /**
@@ -342,23 +344,42 @@ class Document_Tag_Link extends Document_Tag
      * @param  Webservice_Data_Document_Element $wsElement
      * @return void
      */
-    public function getFromWebserviceImport($wsElement)
+    public function getFromWebserviceImport($wsElement, $idMapper = null)
     {
+        if ($wsElement->value->data instanceof stdClass) {
+            $wsElement->value->data = (array) $wsElement->value->data;
+        }
 
         if (empty($wsElement->value->data) or is_array($wsElement->value->data)) {
 
             $this->data = $wsElement->value->data;
             if ($this->data["internal"]) {
                 if (intval($this->data["internalId"]) > 0) {
+                    $id = $this->data["internalId"];
+
                     if ($this->data["internalType"] == "document") {
-                        $referencedDocument = Document::getById($this->data["internalId"]);
+                        if ($idMapper) {
+                            $id = $idMapper->getMappedId("document", $id);
+                        }
+                        $referencedDocument = Document::getById($id);
                         if (!$referencedDocument instanceof Document) {
-                            throw new Exception("cannot get values from web service import - link references unknown document with id [ " . $this->data["internalId"] . " ] ");
+                            if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                                $idMapper->recordMappingFailure($this->getDocumentId(), $this->data["internalType"], $this->data["internalId"]);
+                            } else {
+                                throw new Exception("cannot get values from web service import - link references unknown document with id [ " . $this->data["internalId"] . " ] ");
+                            }
                         }
                     } else if ($this->data["internalType"] == "asset") {
-                        $referencedAsset = Asset::getById($this->data["internalId"]);
+                        if ($idMapper) {
+                            $id = $idMapper->getMappedId("document", $id);
+                        }
+                        $referencedAsset = Asset::getById($id);
                         if (!$referencedAsset instanceof Asset) {
-                            throw new Exception("cannot get values from web service import - link references unknown asset with id [ " . $this->data["internalId"] . " ] ");
+                            if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                                $idMapper->recordMappingFailure($this->getDocumentId(), $this->data["internalType"], $this->data["internalId"]);
+                            } else {
+                                throw new Exception("cannot get values from web service import - link references unknown asset with id [ " . $this->data["internalId"] . " ] ");
+                            }
                         }
                     }
                 }

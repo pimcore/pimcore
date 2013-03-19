@@ -65,19 +65,19 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
-
-        this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
-
-        this.loadingPanel = new Ext.Panel({
-            title: t("loading"),
-            closable:false,
-            html: "",
-            iconCls: "pimcore_icon_loading"
-        });
-
-        this.tabPanel.add(this.loadingPanel);
+// // commented this out, otherwise JSLint would complain
+//        window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
+//
+//        this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
+//
+//        this.loadingPanel = new Ext.Panel({
+//            title: t("loading"),
+//            closable:false,
+//            html: "",
+//            iconCls: "pimcore_icon_loading"
+//        });
+//
+//        this.tabPanel.add(this.loadingPanel);
     },
 
     removeLoadingPanel: function () {
@@ -86,23 +86,23 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        if (this.loadingPanel) {
-            this.tabPanel.remove(this.loadingPanel);
-        }
-        this.loadingPanel = null;
-
+//  // commented this out as JSLint would complain
+//        if (this.loadingPanel) {
+//            this.tabPanel.remove(this.loadingPanel);
+//        }
+//        this.loadingPanel = null;
+//
     },
 
     checkLoadingStatus: function () {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        if (this.loadingPanel) {
-            // loadingpanel is active close the whole document
-            pimcore.helpers.closeDocument(this.id);
-        }
+// commented this out, otherwise JSLint would complain
+//        if (this.loadingPanel) {
+//            // loadingpanel is active close the whole document
+//            pimcore.helpers.closeDocument(this.id);
+//        }
     },
 
     activate: function () {
@@ -142,7 +142,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             }
                         }
                         else {
-                            pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error",t(rdata.message));
+                            pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error",
+                                                                                                    t(rdata.message));
                         }
                     } catch (e) {
                         pimcore.helpers.showNotification(t("error"), t("error_saving_document"), "error");
@@ -193,7 +194,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         // remove class in tree panel
         try {
-            pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(this.data.id).getUI().removeClass("pimcore_unpublished");
+            pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(this.data.id).getUI()
+                                                                                    .removeClass("pimcore_unpublished");
         } catch (e) {
         }
 
@@ -213,7 +215,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         // set class in tree panel
         try {
-            pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(this.data.id).getUI().addClass("pimcore_unpublished");
+            pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(this.data.id).getUI()
+                                                                                    .addClass("pimcore_unpublished");
         } catch (e) {
         }
 

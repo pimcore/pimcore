@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,69 +34,80 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Util_TestDox
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 2.3.0
  */
 
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Util/TestDox/NamePrettifier.php';
-require_once 'PHPUnit/Util/Printer.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Base class for printers of TestDox documentation.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Util_TestDox
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.1.0
  */
 abstract class PHPUnit_Util_TestDox_ResultPrinter extends PHPUnit_Util_Printer implements PHPUnit_Framework_TestListener
 {
     /**
-     * @var    PHPUnit_Util_TestDox_NamePrettifier
+     * @var PHPUnit_Util_TestDox_NamePrettifier
      */
     protected $prettifier;
 
     /**
-     * @var    string
+     * @var string
      */
     protected $testClass = '';
 
     /**
-     * @var    integer
+     * @var integer
      */
     protected $testStatus = FALSE;
 
     /**
-     * @var    array
+     * @var array
      */
     protected $tests = array();
 
+    /**
+     * @var integer
+     */
     protected $successful = 0;
+
+    /**
+     * @var integer
+     */
     protected $failed = 0;
+
+    /**
+     * @var integer
+     */
     protected $skipped = 0;
+
+    /**
+     * @var integer
+     */
     protected $incomplete = 0;
+
+    /**
+     * @var string
+     */
     protected $testTypeOfInterest = 'PHPUnit_Framework_TestCase';
 
     /**
-     * @var    string
+     * @var string
      */
     protected $currentTestClassPrettified;
 
     /**
-     * @var    string
+     * @var string
      */
     protected $currentTestMethodPrettified;
 
@@ -236,7 +247,7 @@ abstract class PHPUnit_Util_TestDox_ResultPrinter extends PHPUnit_Util_Printer i
 
                 if (isset($annotations['method']['testdox'][0])) {
                     $this->currentTestMethodPrettified = $annotations['method']['testdox'][0];
-                    $prettified = TRUE;
+                    $prettified                        = TRUE;
                 }
             }
 
@@ -334,4 +345,3 @@ abstract class PHPUnit_Util_TestDox_ResultPrinter extends PHPUnit_Util_Printer i
     {
     }
 }
-?>

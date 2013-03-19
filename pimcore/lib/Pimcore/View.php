@@ -190,6 +190,9 @@ class Pimcore_View extends Zend_View {
                         }
                     }
                     $content = $html->save();
+
+                    $html->clear();
+                    unset($html);
                 } else {
                     // add a div container if the include doesn't contain markup/html
                     $content = '<div class="' . $class . '">' . $content . '</div>';
@@ -248,11 +251,12 @@ class Pimcore_View extends Zend_View {
     }
 
     /**
-     * @param Zend_Controller_Request_Http $request
+     * @param Zend_Controller_Request_Abstract $request
      * @return void
      */
-    public function setRequest(Zend_Controller_Request_Http $request) {
+    public function setRequest(Zend_Controller_Request_Abstract $request) {
         $this->request = $request;
+        return $this;
     }
 
     /**

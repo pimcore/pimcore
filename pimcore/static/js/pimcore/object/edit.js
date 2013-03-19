@@ -73,7 +73,8 @@ pimcore.object.edit = Class.create({
     },
 
     maskFrames: function () {
-        // this is for dnd over iframes, with this method it's not nessercery to register the dnd manager in each iframe (wysiwyg)
+        // this is for dnd over iframes, with this method it's not nessercery to register the dnd manager in each
+        // iframe (wysiwyg)
 
         // mask wysiwyg editors
         for (var i = 0; i < this.fieldsToMask.length; i++) {
@@ -118,7 +119,8 @@ pimcore.object.edit = Class.create({
                                 if(typeof isInvalidMandatory == "object") {
                                     invalidMandatoryFields = array_merge(isInvalidMandatory, invalidMandatoryFields);
                                 } else {
-                                    invalidMandatoryFields.push(currentField.getTitle() + " (" + currentField.getName() + ")");
+                                    invalidMandatoryFields.push(currentField.getTitle() + " ("
+                                                                        + currentField.getName() + ")");
                                 }
                             }
                         }
@@ -137,7 +139,8 @@ pimcore.object.edit = Class.create({
         }
 
         if (invalidMandatoryFields.length > 0 && !omitMandatoryCheck) {
-            Ext.MessageBox.alert(t("error"), t("mandatory_field_empty") + "<br />- " + invalidMandatoryFields.join("<br />- "));
+            Ext.MessageBox.alert(t("error"), t("mandatory_field_empty") + "<br />- "
+                                                        + invalidMandatoryFields.join("<br />- "));
             return false;
         }
 

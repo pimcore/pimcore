@@ -75,6 +75,7 @@ class Document_Email extends Document_PageSnippet
     public function setSubject($subject)
     {
         $this->subject = $subject;
+        return $this;
     }
 
     /**
@@ -96,6 +97,7 @@ class Document_Email extends Document_PageSnippet
     public function setTo($to)
     {
         $this->to = $to;
+        return $this;
     }
 
     /**
@@ -167,6 +169,7 @@ class Document_Email extends Document_PageSnippet
     public function setFrom($from)
     {
         $this->from = $from;
+        return $this;
     }
 
     /**
@@ -198,6 +201,7 @@ class Document_Email extends Document_PageSnippet
     public function setCc($cc)
     {
         $this->cc = $cc;
+        return $this;
     }
 
     /**
@@ -229,6 +233,7 @@ class Document_Email extends Document_PageSnippet
     public function setBcc($bcc)
     {
         $this->bcc = $bcc;
+        return $this;
     }
 
     /**

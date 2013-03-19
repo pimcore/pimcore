@@ -12,6 +12,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
+/*global CKEDITOR*/
 pimcore.registerNS("pimcore.document.tags.wysiwyg");
 pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
@@ -49,7 +50,9 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         var textareaId = id + "_textarea";
         this.textarea = document.createElement("div");
-        this.textarea.setAttribute("contenteditable","true");
+        if(this.options["inline"] !== false) {
+            this.textarea.setAttribute("contenteditable","true");
+        }
         Ext.get(id).appendChild(this.textarea);
 
         Ext.get(id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
@@ -68,7 +71,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         }
 
         Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
-        Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight + "px;");
+        Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
+                                                                                                + "px;");
 
         // if the width is a % value get the current width of the container in px for further processing
         if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
@@ -85,7 +89,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         });
 
         
-        // create mask for dnd, this is done here (in initialize) because we have to register the dom node in dndZones which is used in startup.js
+        // create mask for dnd, this is done here (in initialize) because we have to register the dom node in
+        // dndZones which is used in startup.js
         var mask = document.createElement("div");
         Ext.getBody().appendChild(mask);
         mask = Ext.get(mask);
@@ -117,7 +122,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         this.maskEl = mask;
 
-        this.startCKeditor();
+        if(this.options["inline"] === false) {
+            Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
+        } else {
+            this.startCKeditor();
+        }
     },
 
     mask: function () {
@@ -140,21 +149,28 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     startCKeditor: function () {
         
         try {
+            if(this.options["inline"] === false) {
+                Ext.get(this.textarea).un("click", this.startCKeditor.bind(this));
+            }
+
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
 
             var eConfig = Object.clone(this.options);
 
-            // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible is also Basic
+            // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
+            // is also Basic
             if (!this.options["toolbar"] && !this.options["toolbarGroups"]) {
                 eConfig.toolbarGroups = [
-                	{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
-                	{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
-                	{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker' ] }, { name: 'forms' },
-                	{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                	{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
+                    { name: 'clipboard', groups: [ "htmlsourceinline", 'clipboard', 'undo', "find" ] },
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
                     '/',
-                	{ name: 'links' },{ name: 'insert' }, { name: 'styles' }, { name: 'colors' }, { name: 'tools' },
-                    { name: 'others' }, { name: 'about' }
+                    { name: 'paragraph', groups: [ 'align', 'indent'] },
+                    { name: 'blocks' },
+                    { name: 'links' },
+                    { name: 'insert' },
+                    "/",
+                    { name: 'styles' },
+                    { name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"] }
                 ];
             }
 
@@ -165,8 +181,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 removePluginsAdd = "," + eConfig.removePlugins;
             }
 
-
-            eConfig.removePlugins = 'about,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates' + removePluginsAdd;
+            eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,'
+                    + 'filebrowser,templates,divarea,bgcolor,magicline' + removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
@@ -182,11 +198,24 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 }
                 this.ckeditor = CKEDITOR.replace(this.textarea, eConfig);
             } else {
+                eConfig.extraPlugins = "htmlsourceinline";
                 this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
             }
         }
         catch (e) {
             console.log(e);
+        }
+    },
+
+    endCKeditor : function (force) {
+
+        if (this.ckeditor && (this.options["inline"] === false || force === true)) {
+            this.data = this.ckeditor.getData();
+
+            this.ckeditor.destroy();
+            this.ckeditor = null;
+
+            Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
         }
     },
 
@@ -221,7 +250,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 textIsSelected = true;
             }
         }
-        catch (e) {
+        catch (e2) {
         }
 
         // remove existing links out of the wrapped text
@@ -239,14 +268,16 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         if (data.node.attributes.elementType == "asset") {
             if (data.node.attributes.type == "image" && textIsSelected == false) {
-                // images bigger than 600px or formats which cannot be displayed by the browser directly will be converted
-                // by the pimcore thumbnailing service so that they can be displayed in the editor
+                // images bigger than 600px or formats which cannot be displayed by the browser directly will be
+                // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
-                uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
 
                 if(typeof data.node.attributes.imageWidth != "undefined") {
-                    if(data.node.attributes.imageWidth < defaultWidth && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text), browserPossibleExtensions)) {
+                    uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
+                    if(data.node.attributes.imageWidth < defaultWidth
+                            && in_arrayi(pimcore.helpers.getFileExtension(data.node.attributes.text),
+                                        browserPossibleExtensions)) {
                         uri = data.node.attributes.path;
                         additionalAttributes += ' pimcore_disable_thumbnail="true"';
                     }
@@ -254,21 +285,27 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     if(data.node.attributes.imageWidth < defaultWidth) {
                         defaultWidth = data.node.attributes.imageWidth;
                     }
+
+                    additionalAttributes += ' style="width:' + defaultWidth + 'px;"';
                 }
 
-                insertEl = CKEDITOR.dom.element.createFromHtml('<img src="' + uri + '" pimcore_type="asset" pimcore_id="' + id + '" style="width:' + defaultWidth + 'px;"' + additionalAttributes + ' />');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<img src="'
+                            + uri + '" pimcore_type="asset" pimcore_id="' + id + '" ' + additionalAttributes + ' />');
                 this.ckeditor.insertElement(insertEl);
                 return true;
             }
             else {
-                insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" target="_blank" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
+                insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri
+                            + '" target="_blank" pimcore_type="asset" pimcore_id="' + id + '">' + wrappedText + '</a>');
                 this.ckeditor.insertElement(insertEl);
                 return true;
             }
         }
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
-            insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="' + id + '">' + wrappedText + '</a>');
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
+                            || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+            insertEl = CKEDITOR.dom.element.createFromHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
+                                                                        + id + '">' + wrappedText + '</a>');
             this.ckeditor.insertElement(insertEl);
             return true;
         }
@@ -287,7 +324,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
+                            || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
             return true;
         } else if (data.node.attributes.elementType=="asset" && data.node.attributes.type != "folder"){
             return true;
@@ -318,3 +356,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
 
 CKEDITOR.disableAutoInline = true;
+
+function closeCKeditors() {
+    for (var i = 0; i < editables.length; i++) {
+        if (editables[i].getType() == "wysiwyg") {
+            editables[i].endCKeditor();
+        }
+    }
+}

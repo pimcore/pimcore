@@ -57,21 +57,22 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     addLoadingPanel : function () {
 
-        // DEPRECIATED loadingpanel not active
+        // DEPRECATED loadingpanel not active
         return;
 
-        window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
-
-        this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
-
-        this.loadingPanel = new Ext.Panel({
-            title: t("loading"),
-            closable:false,
-            html: "",
-            iconCls: "pimcore_icon_loading"
-        });
-
-        this.tabPanel.add(this.loadingPanel);
+// commented this out as JSLINT would complain
+//        window.setTimeout(this.checkLoadingStatus.bind(this), 5000);
+//
+//        this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
+//
+//        this.loadingPanel = new Ext.Panel({
+//            title: t("loading"),
+//            closable:false,
+//            html: "",
+//            iconCls: "pimcore_icon_loading"
+//        });
+//
+//        this.tabPanel.add(this.loadingPanel);
     },
 
     removeLoadingPanel: function () {
@@ -80,22 +81,22 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        if (this.loadingPanel) {
-            this.tabPanel.remove(this.loadingPanel);
-        }
-        this.loadingPanel = null;
+// commented this out, otherwise JSLint would complain
+//        if (this.loadingPanel) {
+//            this.tabPanel.remove(this.loadingPanel);
+//        }
+//        this.loadingPanel = null;
     },
 
     checkLoadingStatus: function () {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        if (this.loadingPanel) {
-            // loadingpanel is active close the whole asset
-            pimcore.helpers.closeAsset(this.id);
-        }
+// // commented this out, otherwise JSLint would complain
+//        if (this.loadingPanel) {
+//            // loadingpanel is active close the whole asset
+//            pimcore.helpers.closeAsset(this.id);
+//        }
     },
 
     addTab: function () {
@@ -239,6 +240,24 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 }.bind(this)
             });
 
+            // only for videos and images
+            if (this.isAllowed("publish") && in_array(this.data.type,["image","video"])) {
+                buttons.push({
+                    text: t("clear_thumbnails"),
+                    iconCls: "pimcore_icon_menu_clear_thumbnails",
+                    scale: "medium",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/asset/clear-thumbnail",
+                            method: "get",
+                            params: {
+                                id: this.data.id
+                            }
+                        })
+                    }.bind(this)
+                });
+            }
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -287,7 +306,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         try {
             parameters.properties = Ext.encode(this.properties.getValues());
         }
-        catch (e) {
+        catch (e2) {
             //console.log(e);
         }
 
@@ -297,7 +316,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 parameters.scheduler = Ext.encode(this.scheduler.getValues());
             }
         }
-        catch (e) {
+        catch (e3) {
             //console.log(e);
         }
 
@@ -345,7 +364,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     upload: function () {
 
-        pimcore.helpers.uploadDialog('/admin/asset/replace-asset/?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.data.id, "Filedata", function() {
+        pimcore.helpers.uploadDialog('/admin/asset/replace-asset/?pimcore_admin_sid='
+                                    + pimcore.settings.sessionId + "&id=" + this.data.id, "Filedata", function() {
             this.reload();
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));

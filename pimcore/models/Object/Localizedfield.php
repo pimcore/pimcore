@@ -57,6 +57,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
     public function setItems($items)
     {
         $this->items = $items;
+        return $this;
     }
 
     /**
@@ -75,6 +76,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
     {
         $this->object = $object;
         $this->setClass($this->getObject()->getClass());
+        return $this;
     }
 
     /**
@@ -92,6 +94,7 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
     public function setClass(Object_Class $class)
     {
         $this->class = $class;
+        return $this;
     }
 
     /**
@@ -164,5 +167,6 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         }
 
         $this->items[$language][$name] = $value;
+        return $this;
     }
 }

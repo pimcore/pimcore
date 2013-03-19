@@ -119,9 +119,6 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
         this.layout.on("render", this.layoutRendered.bind(this));
 
         return this.layout;
-
-
-        return this.layout;
     },
 
     getData: function ($super) {

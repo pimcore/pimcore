@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,39 +34,29 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Extensions_PhptTestCase
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.1.4
  */
 
-if (PHPUnit_Util_Filesystem::fileExistsInIncludePath('PEAR/RunTest.php')) {
+if (stream_resolve_include_path('PEAR/RunTest.php')) {
     $currentErrorReporting = error_reporting(E_ERROR | E_WARNING | E_PARSE);
-    PHPUnit_Util_Filesystem::collectStart();
     require_once 'PEAR/RunTest.php';
     error_reporting($currentErrorReporting);
-
-    PHPUnit_Util_Filesystem::collectEndAndAddToBlacklist();
 }
-
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/Extensions/PhptTestCase/Logger.php';
-require_once 'PHPUnit/Util/Filter.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
 
 /**
  * Wrapper to run .phpt test cases.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Extensions_PhptTestCase
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.1.4
  */
@@ -170,27 +160,38 @@ class PHPUnit_Extensions_PhptTestCase implements PHPUnit_Framework_Test, PHPUnit
 
         $result->startTest($this);
 
-        PHPUnit_Util_Timer::start();
-        $buffer       = $runner->run($this->filename, $options);
-        $time         = PHPUnit_Util_Timer::stop();
+        PHP_Timer::start();
+
+        $buffer = $runner->run($this->filename, $options);
+        $time   = PHP_Timer::stop();
+
         error_reporting($currentErrorReporting);
+
         $base         = basename($this->filename);
         $path         = dirname($this->filename);
-        $coverageFile = $path . DIRECTORY_SEPARATOR . str_replace('.phpt', '.xdebug', $base);
-        $diffFile     = $path . DIRECTORY_SEPARATOR . str_replace('.phpt', '.diff', $base);
-        $expFile      = $path . DIRECTORY_SEPARATOR . str_replace('.phpt', '.exp', $base);
-        $logFile      = $path . DIRECTORY_SEPARATOR . str_replace('.phpt', '.log', $base);
-        $outFile      = $path . DIRECTORY_SEPARATOR . str_replace('.phpt', '.out', $base);
-        $phpFile      = $path . DIRECTORY_SEPARATOR . str_replace('.phpt', '.php', $base);
-
-        if (file_exists($phpFile)) {
-            PHPUnit_Util_Filter::addFileToFilter($phpFile, 'TESTS');
-        }
+        $coverageFile = $path . DIRECTORY_SEPARATOR . str_replace(
+                          '.phpt', '.xdebug', $base
+                        );
+        $diffFile     = $path . DIRECTORY_SEPARATOR . str_replace(
+                          '.phpt', '.diff', $base
+                        );
+        $expFile      = $path . DIRECTORY_SEPARATOR . str_replace(
+                          '.phpt', '.exp', $base
+                        );
+        $logFile      = $path . DIRECTORY_SEPARATOR . str_replace(
+                          '.phpt', '.log', $base
+                        );
+        $outFile      = $path . DIRECTORY_SEPARATOR . str_replace(
+                          '.phpt', '.out', $base
+                        );
+        $phpFile      = $path . DIRECTORY_SEPARATOR . str_replace(
+                          '.phpt', '.php', $base
+                        );
 
         if (is_object($buffer) && $buffer instanceof PEAR_Error) {
             $result->addError(
               $this,
-              new RuntimeException($buffer->getMessage()),
+              new PHPUnit_Framework_Exception($buffer->getMessage()),
               $time
             );
         }
@@ -200,11 +201,16 @@ class PHPUnit_Extensions_PhptTestCase implements PHPUnit_Framework_Test, PHPUnit
         }
 
         else if ($buffer != 'PASSED') {
+            $expContent = file_get_contents($expFile);
+            $outContent = file_get_contents($outFile);
+
             $result->addFailure(
               $this,
-              PHPUnit_Framework_ComparisonFailure::diffEqual(
-                file_get_contents($expFile),
-                file_get_contents($outFile)
+              new PHPUnit_Framework_ComparisonFailure(
+                $expContent,
+                $outContent,
+                $expContent,
+                $outContent
               ),
               $time
             );
@@ -220,7 +226,7 @@ class PHPUnit_Extensions_PhptTestCase implements PHPUnit_Framework_Test, PHPUnit
             eval('$coverageData = ' . file_get_contents($coverageFile) . ';');
             unset($coverageData[$phpFile]);
 
-            $result->appendCodeCoverageInformation($this, $coverageData);
+            $result->getCodeCoverage()->append($coverageData, $this);
             unlink($coverageFile);
         }
 
@@ -261,4 +267,3 @@ class PHPUnit_Extensions_PhptTestCase implements PHPUnit_Framework_Test, PHPUnit
         return $this->filename;
     }
 }
-?>

@@ -46,6 +46,7 @@ class Object_Data_Hotspotimage {
 
     public function setHotspots($hotspots) {
         $this->hotspots = $hotspots;
+        return $this;
     }
 
     public function getHotspots() {
@@ -54,6 +55,7 @@ class Object_Data_Hotspotimage {
 
     public function setImage($image) {
         $this->image = $image;
+        return $this;
     }
 
     public function getImage() {

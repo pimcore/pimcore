@@ -130,26 +130,17 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
 
 
             if (this.id != user.id) {
-                var isEnabled = true;
-
-                // folders
-                if(this.allowChildren) {
-                    isEnabled = false;
-                }
-                if (this.childNodes == 0) {
-                    isEnabled = true;
-                }
                 menu.add(new Ext.menu.Item({
                     text: t('delete'),
                     iconCls: "pimcore_icon_delete",
                     listeners: {
                         "click": this.attributes.reference.remove.bind(this)
-                    },
-                    disabled: !isEnabled
+                    }
                 }));
             }
 
-            if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined" && menu.items.items.length > 0) {
+            if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined"
+                                                                && menu.items.items.length > 0) {
                 menu.show(this.ui.getAnchor());
             }
         }
@@ -165,7 +156,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             }
 
         } catch(e){
-             pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error")
+             pimcore.helpers.showNotification(t("error"), t("user_creation_error"), "error");
         }
     },
 

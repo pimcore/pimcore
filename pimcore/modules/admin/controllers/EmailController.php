@@ -30,7 +30,7 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         $email = Document_Email::getById($this->getParam("id"));
         $email = $this->getLatestVersion($email);
         $email->getVersions();
-        $email->idPath = Pimcore_Tool::getIdPathForElement($email);
+        $email->idPath = Element_Service::getIdPath($email);
         $email->userPermissions = $email->getUserPermissions();
         $email->setLocked($email->isLocked());
 
@@ -128,13 +128,13 @@ class Admin_EmailController extends Pimcore_Controller_Action_Admin_Document
         if($this->getParam('filter')){
             if ($this->getParam("filter")) {
                 $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
-                $list->setCondition("   `from` LIKE " . $filterTerm . " OR
+                $list->setCondition("   (`from` LIKE " . $filterTerm . " OR
                                         `to` LIKE " . $filterTerm . " OR
                                         `cc` LIKE " . $filterTerm . " OR
                                         `bcc` LIKE " . $filterTerm . " OR
                                         `subject` LIKE " . $filterTerm . " OR
-                                        `params` LIKE " . $filterTerm . "
-                                       ");
+                                        `params` LIKE " . $filterTerm . ") AND
+                                       documentId = " . (int)$this->getParam('documentId'));
             }
         }
 

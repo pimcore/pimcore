@@ -71,20 +71,26 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             afterrender: function () {
                 this.tabPanelAdjustIntervalCounter = 0;
                 this.tabPanelAdjustInterval = window.setInterval(function () {
-                    if(!this.fieldConfig.height && !this.fieldConfig.region) {
-                        var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
-                        var panelBody = Ext.get(panelBodies[0]);
-                        panelBody.applyStyles("height: auto;");
-                        var height = panelBody.getHeight();
-                        this.component.setHeight(height+100); // 100 is just a fixed value which seems to be ok (caused by title bar, tabs itself, ... )
-
-                        //this.tabPanel.getEl().applyStyles("position:relative;");
-                        this.component.doLayout();
-                    }
 
                     this.tabPanelAdjustIntervalCounter++;
                     if(this.tabPanelAdjustIntervalCounter > 20) {
                         clearInterval(this.tabPanelAdjustInterval);
+                    }
+
+                    if(!this.fieldConfig.height && !this.fieldConfig.region) {
+                        try {
+                            var panelBodies = this.tabPanel.items.first().getEl().query(".x-panel-body");
+                            var panelBody = Ext.get(panelBodies[0]);
+                            panelBody.applyStyles("height: auto;");
+                            var height = panelBody.getHeight();
+                            // 100 is just a fixed value which seems to be ok(caused by title bar, tabs itself, ... )
+                            this.component.setHeight(height+100);
+
+                            //this.tabPanel.getEl().applyStyles("position:relative;");
+                            this.component.doLayout();
+                        } catch (e) {
+                            console.log(e);
+                        }
                     }
                 }.bind(this), 100);
             }.bind(this)
@@ -182,7 +188,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isDirty()) {
-                    localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()] = this.languageElements[currentLanguage][s].getValue();
+                    localizedData[currentLanguage][this.languageElements[currentLanguage][s].getName()]
+                                                        = this.languageElements[currentLanguage][s].getValue();
                 }
             }
         }
@@ -245,7 +252,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isMandatory()) {
                     if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
-                        invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - " + currentLanguage.toUpperCase() + " (" + this.languageElements[currentLanguage][s].getName() + ")");
+                        invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
+                                                + currentLanguage.toUpperCase() + " ("
+                                                + this.languageElements[currentLanguage][s].getName() + ")");
                         isInvalid = true;
                     }
                 }

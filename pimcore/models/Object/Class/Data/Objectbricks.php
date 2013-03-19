@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -308,6 +308,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+        return $this;
     }
 
     /**
@@ -363,13 +364,18 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($data, $object)
+    public function getFromWebserviceImport($data, $relatedObject, $idMapper = null)
     {
-        $containerName = "Object_" . ucfirst($object->getClass()->getName()) . "_" . ucfirst($this->getName());
-        $container = new $containerName($object, $this->getName());
+        $containerName = "Object_" . ucfirst($relatedObject->getClass()->getName()) . "_" . ucfirst($this->getName());
+        $container = new $containerName($relatedObject, $this->getName());
 
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
+                if ($collectionRaw instanceof stdClass) {
+                    $class = "Webservice_Data_Object_Element";
+                    $collectionRaw = Pimcore_Tool_Cast::castToClass($class, $collectionRaw);
+                }
+
                 if($collectionRaw != null) {
                     if (!$collectionRaw instanceof Webservice_Data_Object_Element) {
 
@@ -386,6 +392,10 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         foreach ($collectionRaw->value as $field) {
+                            if ($field instanceof stdClass) {
+                                $class = "Webservice_Data_Object_Element";
+                                $field = Pimcore_Tool_Cast::castToClass($class, $field);
+                            }
                             if (!$field instanceof Webservice_Data_Object_Element) {
                                 throw new Exception("invalid data in objectbricks [" . $this->getName() . "]");
                             } else if ($field->name == $fd->getName()) {
@@ -393,7 +403,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                                 if ($field->type != $fd->getFieldType()) {
                                     throw new Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
                                 }
-                                $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value);
+                                $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $idMapper);
                                 break;
                             }
 
@@ -403,7 +413,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     }
 
                     $collectionClass = "Object_Objectbrick_Data_" . ucfirst($brick);
-                    $collection = new $collectionClass($object);
+                    $collection = new $collectionClass($relatedObject);
                     $collection->setValues($collectionData);
                     $collection->setFieldname($this->getName());
 
@@ -637,7 +647,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
 
                 $diffdata["title"] = $this->getName() . " / " . $subdata["title"];
                 $brickdata = array(
-                    "brick" => strtolower(substr($getter, 3)),
+                    "brick" => substr($getter, 3),
                     "name" => $fd->getName(),
                     "subdata" => $subdata
                 );

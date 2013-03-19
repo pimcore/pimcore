@@ -54,6 +54,17 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         }
         else {
             $this->setDocument($this->getParam("document"));
+
+            // append meta-data to the headMeta() view helper,  if it is a document-request
+            if(!Staticroute::getCurrentRoute() && ($this->getDocument() instanceof Document_Page)) {
+                if(is_array($this->getDocument()->getMetaData())) {
+                    foreach ($this->getDocument()->getMetaData() as $meta) {
+                        // only name
+                        $method = "append" . ucfirst($meta["idName"]);
+                        $this->view->headMeta()->$method($meta["idValue"], $meta["contentValue"]);
+                    }
+                }
+            }
         }
 
 
@@ -68,11 +79,11 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
         if (!$this->document->isPublished()) {
             if (Pimcore_Tool::isFrontentRequestByAdmin()) {
                 if (!$user) {
-                    throw new Exception("access denied for " . $this->document->getFullPath());
+                    throw new Zend_Controller_Router_Exception("access denied for " . $this->document->getFullPath());
                 }
             }
             else {
-                throw new Exception("access denied for " . $this->document->getFullPath());
+                throw new Zend_Controller_Router_Exception("access denied for " . $this->document->getFullPath());
             }
         }
 
@@ -195,6 +206,7 @@ abstract class Pimcore_Controller_Action_Frontend extends Pimcore_Controller_Act
             $this->document = $document;
             $this->view->document = $document;
         }
+        return $this;
     }
 
     public function getDocument() {

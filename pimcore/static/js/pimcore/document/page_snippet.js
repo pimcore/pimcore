@@ -83,6 +83,11 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 this.edit.onClose();
             }
         }
+        if (this.preview) {
+            if (typeof this.preview.onClose == "function") {
+                this.preview.onClose();
+            }
+        }
         if (this.settings) {
             if (typeof this.settings.onClose == "function") {
                 this.settings.onClose();
@@ -270,7 +275,8 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             // version notification
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
-                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;' + t("this_is_a_newer_not_published_version"),
+                text: '&nbsp;&nbsp;<img src="/pimcore/static/img/icon/error.png" align="absbottom" />&nbsp;&nbsp;'
+                                                                        + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });
@@ -311,7 +317,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
         if (typeof onComplete != "function") {
             onComplete = function () {
-            }
+            };
         }
 
         Ext.Ajax.request({

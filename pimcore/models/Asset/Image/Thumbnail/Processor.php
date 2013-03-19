@@ -38,11 +38,35 @@ class Asset_Image_Thumbnail_Processor {
     );
 
     /**
-     * @static
-     * @param Asset_Image|Asset_Video|string
-     * @param Asset_Image_Thumbnail_Config $config
-     * @param string $path
+     * @param $format
+     * @param array $allowed
+     * @param string $fallback
      * @return string
+     */
+    protected static function getAllowedFormat($format, $allowed = array(), $fallback = "png") {
+        $typeMappings = array(
+            "jpg" => "jpeg",
+            "tif" => "tiff"
+        );
+
+        if(array_key_exists($format, $typeMappings)) {
+            $format = $typeMappings[$format];
+        }
+
+        if(in_array($format, $allowed)) {
+            $target = $format;
+        } else {
+            $target = $fallback;
+        }
+
+        return $target;
+    }
+
+    /**
+     * @param $asset
+     * @param Asset_Image_Thumbnail_Config $config
+     * @param null $fileSystemPath
+     * @return mixed|string
      */
     public static function process ($asset, Asset_Image_Thumbnail_Config $config, $fileSystemPath = null) {
 
@@ -51,25 +75,34 @@ class Asset_Image_Thumbnail_Processor {
             $fileSystemPath = $asset->getFileSystemPath();
         }
 
+        $fileExt = Pimcore_File::getFileExtension($asset->getFilename());
+
         // simple detection for source type if SOURCE is selected
         if($format == "source" || empty($format)) {
-            $typeMapping = array(
-                "gif" => "gif",
-                "jpeg" => "jpeg",
-                "jpg" => "jpeg",
-                "png" => "png",
-                "tiff" => "tiff"
-            );
-
-            $fileExt = Pimcore_File::getFileExtension($asset->getFilename());
-            if($typeMapping[$fileExt]) {
-                $format = $typeMapping[$fileExt];
-            } else {
-                // use PNG if source doesn't have a valid mapping
-                $format = "png";
-            }
+            $format = self::getAllowedFormat($fileExt, array("jpeg","gif","png"), "png");
         }
 
+        if($format == "print") {
+            $format = self::getAllowedFormat($fileExt, array("svg","jpeg","png","tiff"), "png");
+
+            if(($format == "tiff" || $format == "svg") && Pimcore_Tool::isFrontentRequestByAdmin()) {
+                // return a webformat in admin -> tiff cannot be displayed in browser
+                $format = "png";
+            } else if($format == "tiff") {
+                $transformations = $config->getItems();
+                if(is_array($transformations) && count($transformations) > 0) {
+                    foreach ($transformations as $transformation) {
+                        if(!empty($transformation)) {
+                            if($transformation["method"] == "tifforiginal") {
+                                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $asset->getFilesystemPath());
+                            }
+                        }
+                    }
+                }
+            } else if($format == "svg") {
+                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $asset->getFilesystemPath());
+            }
+        }
 
         $filename = "thumb_" . $asset->getId() . "__" . $config->getName() . "." . $format;
 
@@ -77,7 +110,7 @@ class Asset_Image_Thumbnail_Processor {
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
         // check for existing and still valid thumbnail
-        if (is_file($fsPath) and filemtime($fsPath) > $asset->getModificationDate()) {
+        if (is_file($fsPath) and filemtime($fsPath) >= $asset->getModificationDate()) {
             return $path;
         }
 

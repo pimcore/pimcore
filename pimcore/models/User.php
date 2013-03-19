@@ -94,6 +94,7 @@ class User extends User_UserRole {
         if (strlen($password) > 4) {
             $this->password = $password;
         }
+        return $this;
     }
 
     /**
@@ -112,6 +113,7 @@ class User extends User_UserRole {
      */
     public function setUsername ($username) {
         $this->setName($username);
+        return $this;
     }
 
     /**
@@ -128,6 +130,7 @@ class User extends User_UserRole {
      */
     public function setFirstname($firstname) {
         $this->firstname = $firstname;
+        return $this;
     }
 
     /**
@@ -144,6 +147,7 @@ class User extends User_UserRole {
      */
     public function setLastname($lastname) {
         $this->lastname = $lastname;
+        return $this;
     }
 
     /**
@@ -160,6 +164,7 @@ class User extends User_UserRole {
      */
     public function setEmail($email) {
         $this->email = $email;
+        return $this;
     }
 
     /**
@@ -177,6 +182,7 @@ class User extends User_UserRole {
         if ($language) {
             $this->language = $language;
         }
+        return $this;
     }
 
     /**
@@ -200,6 +206,7 @@ class User extends User_UserRole {
      */
     public function setAdmin($admin) {
         $this->admin = (bool) $admin;
+        return $this;
     }
 
     /**
@@ -215,6 +222,7 @@ class User extends User_UserRole {
      */
     public function setActive($active) {
         $this->active = (bool) $active;
+        return $this;
     }
 
     /**
@@ -269,6 +277,7 @@ class User extends User_UserRole {
         } else if (empty($roles)) {
             $this->roles = array();
         }
+        return $this;
     }
 
     /**
@@ -288,6 +297,7 @@ class User extends User_UserRole {
     public function setWelcomescreen($welcomescreen)
     {
         $this->welcomescreen = (bool) $welcomescreen;
+        return $this;
     }
 
     /**
@@ -304,6 +314,7 @@ class User extends User_UserRole {
     public function setCloseWarning($closeWarning)
     {
         $this->closeWarning = (bool) $closeWarning;
+        return $this;
     }
 
     /**
@@ -320,6 +331,7 @@ class User extends User_UserRole {
     public function setMemorizeTabs($memorizeTabs)
     {
         $this->memorizeTabs = (bool) $memorizeTabs;
+        return $this;
     }
 
     /**

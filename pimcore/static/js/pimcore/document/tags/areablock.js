@@ -28,7 +28,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.createToolBar();
         }
 
-        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv, typebuttontext, editDiv, editButton;
+        var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, typemenu, typeDiv,
+                                                                        typebuttontext, editDiv, editButton;
         this.elements = Ext.get(id).query("div." + name + "[key]");
 
         // reload or not => default not
@@ -130,12 +131,14 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                 // type button
                 typebuttontext = "<b>"  + this.elements[i].type + "</b>";
-                if(typeNameMappings[this.elements[i].type] && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
-                    typebuttontext = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> " + typeNameMappings[this.elements[i].type].description
+                if(typeNameMappings[this.elements[i].type]
+                                        && typeof typeNameMappings[this.elements[i].type].name != "undefined") {
+                    typebuttontext = "<b>" + typeNameMappings[this.elements[i].type].name + "</b> "
+                                                + typeNameMappings[this.elements[i].type].description;
                 }
 
                 typeDiv = Ext.get(this.elements[i]).query(".pimcore_block_type_" + this.name)[0];
-                typeButton = new Ext.Button({
+                var typeButton = new Ext.Button({
                     cls: "pimcore_block_button_type",
                     text: typebuttontext,
                     handleMouseEvents: false,
@@ -150,6 +153,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     v.dragZone = new Ext.dd.DragZone(v.getEl(), {
                         hasOuterHandles: true,
                         getDragData: function(e) {
+                            closeCKeditors();
 
                             var sourceEl = element;
                             var proxyEl = null;
@@ -165,14 +169,14 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                             proxyEl = v.getEl().dom;
 
                             if (sourceEl) {
-                                d = proxyEl.cloneNode(true);
+                                var d = proxyEl.cloneNode(true);
                                 d.id = Ext.id();
 
                                 return v.dragData = {
                                     sourceEl: sourceEl,
                                     repairXY: Ext.fly(sourceEl).getXY(),
                                     ddel: d
-                                }
+                                };
                             }
                         },
 
@@ -242,6 +246,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
             this.addDropZoneToElement(c);
         }
+
+        // update body height on drag & drop (dnd)
+        // set the body height again because adding the drop zones will usually change the height of the whole body
+        pimcore.edithelpers.setBodyHeight();
     },
 
     addDropZoneToElement: function (el) {
@@ -541,7 +549,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var bricksInThisArea = [];
         var itemCount = 0;
 
-        if(pimcore.document.tags[this.toolbarGlobalVar] != false && pimcore.document.tags[this.toolbarGlobalVar].itemCount) {
+        if(pimcore.document.tags[this.toolbarGlobalVar] != false
+                                                && pimcore.document.tags[this.toolbarGlobalVar].itemCount) {
             itemCount = pimcore.document.tags[this.toolbarGlobalVar].itemCount;
         }
 
@@ -564,9 +573,12 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
             if(!brick.icon) {
                 // this contains fallback-icons
-                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey","flag_orange","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
-                    "award_star_bronze_1","award_star_bronze_2","award_star_bronze_3","award_star_gold_1","award_star_gold_1","award_star_gold_1","award_star_silver_1","award_star_silver_2","award_star_silver_3",
-                    "medal_bronze_1","medal_bronze_2","medal_bronze_3","medal_gold_1","medal_gold_1","medal_gold_1","medal_silver_1","medal_silver_2","medal_silver_3"];
+                var iconStore = ["flag_black","flag_blue","flag_checked","flag_france","flag_green","flag_grey",
+                    "flag_orange","flag_pink","flag_purple","flag_red","flag_white","flag_yellow",
+                    "award_star_bronze_1","award_star_bronze_2","award_star_bronze_3","award_star_gold_1",
+                    "award_star_gold_1","award_star_gold_1","award_star_silver_1","award_star_silver_2",
+                    "award_star_silver_3","medal_bronze_1","medal_bronze_2","medal_bronze_3","medal_gold_1",
+                    "medal_gold_1","medal_gold_1","medal_silver_1","medal_silver_2","medal_silver_3"];
                 brick.icon = "/pimcore/static/img/icon/" + iconStore[itemCount] + ".png";
             }
 
@@ -575,13 +587,15 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 xtype: "button",
                 tooltip: "<b>" + brick.name + "</b><br />" + brick.description,
                 icon: brick.icon,
-                text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..." : brick.name,
+                text: brick.name.length > maxButtonCharacters ? brick.name.substr(0,maxButtonCharacters) + "..."
+                                                                                                : brick.name,
                 width: areaBlockToolbarSettings.buttonWidth,
                 listeners: {
                     "afterrender": function (brick, v) {
 
                         v.dragZone = new Ext.dd.DragZone(v.getEl(), {
                             getDragData: function(e) {
+                                closeCKeditors();
                                 var sourceEl = v.getEl().dom;
                                 if (sourceEl) {
                                     d = sourceEl.cloneNode(true);
@@ -667,7 +681,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             };
         } else {
             pimcore.document.tags[this.toolbarGlobalVar].toolbar.add(buttons);
-            pimcore.document.tags[this.toolbarGlobalVar].bricks = array_merge(pimcore.document.tags[this.toolbarGlobalVar].bricks, bricksInThisArea);
+            pimcore.document.tags[this.toolbarGlobalVar].bricks =
+                                    array_merge(pimcore.document.tags[this.toolbarGlobalVar].bricks, bricksInThisArea);
             pimcore.document.tags[this.toolbarGlobalVar].itemCount += buttons.length;
             pimcore.document.tags[this.toolbarGlobalVar].areablocks.push(this);
             pimcore.document.tags[this.toolbarGlobalVar].toolbar.doLayout();

@@ -154,6 +154,7 @@ class Document_Tag_Renderlet extends Document_Tag {
         $this->subtype = $data["subtype"];
         
         $this->setElement();
+        return $this;
     }
 
     /**
@@ -168,6 +169,7 @@ class Document_Tag_Renderlet extends Document_Tag {
         $this->subtype = $data["subtype"];
 
         $this->setElement();
+        return $this;
     }
     
     /**
@@ -177,6 +179,7 @@ class Document_Tag_Renderlet extends Document_Tag {
      */
     public function setElement() {
         $this->o = Element_Service::getElementById($this->type, $this->id);
+        return $this;
     }
 
     /**
@@ -260,7 +263,7 @@ class Document_Tag_Renderlet extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->id !==null) {
 

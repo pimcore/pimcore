@@ -60,8 +60,8 @@ class Webservice_Data_Document_PageSnippet extends Webservice_Data_Document {
     }
     
     
-    public function reverseMap ($object) {
-        parent::reverseMap($object);
+    public function reverseMap ($object, $disableMappingExceptions = false, $idMapper = null) {
+        parent::reverseMap($object, $disableMappingExceptions, $idMapper);
         
         $object->childs = null;
         $object->elements = array();
@@ -70,7 +70,7 @@ class Webservice_Data_Document_PageSnippet extends Webservice_Data_Document {
             foreach ($this->elements as $element) {
 
                 $tag = Document_Tag::factory($element->type,$element->name,$this->id);
-                $tag->getFromWebserviceImport($element);
+                $tag->getFromWebserviceImport($element, $idMapper);
 
                 $object->elements[$element->name] = $tag;
             }

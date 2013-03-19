@@ -43,7 +43,8 @@ pimcore.report.analytics.settings = Class.create({
                     xtype: "displayfield",
                     width: 300,
                     hideLabel: true,
-                    value: "&nbsp;<br />" + t("analytics_settings_description") + "<br /><br />" + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
+                    value: "&nbsp;<br />" + t("analytics_settings_description") + "<br /><br />"
+                                           + t('only_required_for_reporting_in_pimcore_but_not_for_code_integration'),
                     cls: "pimcore_extra_label"
                 },
                 {
@@ -64,11 +65,14 @@ pimcore.report.analytics.settings = Class.create({
         var configs = [];
         var sites = pimcore.globalmanager.get("sites");
 
-        // get default
-        configs.push(this.getConfiguration("default", t("main_site"), "default"));
-
         sites.each(function (record) {
-            configs.push(this.getConfiguration("site_" + record.data.id, record.data.domains.split(",").join(", "), record.data.id));
+            var id = record.data.id;
+            var key = "site_" + id;
+            if(!id) {
+                id = "default";
+                key = "default";
+            }
+            configs.push(this.getConfiguration(key, record.data.domain, id));
         }, this);
 
 
@@ -88,6 +92,12 @@ pimcore.report.analytics.settings = Class.create({
                     name: "trackid_" + id,
                     id: "report_settings_analytics_trackid_" + id,
                     value: this.parent.getValue("analytics.sites." + key + ".trackid")
+                },{
+                    xtype: "checkbox",
+                    fieldLabel: t("analytics_retargeting_code"),
+                    name: "retargetingcode_" + id,
+                    id: "report_settings_analytics_retargetingcode_" + id,
+                    checked: this.parent.getValue("analytics.sites." + key + ".retargetingcode")
                 },{
                     xtype: "textarea",
                     fieldLabel: t("analytics_additional_code"),
@@ -169,26 +179,24 @@ pimcore.report.analytics.settings = Class.create({
         var sites = pimcore.globalmanager.get("sites");
         var sitesData = {};
 
-        // default site
-        sitesData["default"] = {
-            profile: Ext.getCmp("report_settings_analytics_profile_default").getValue(),
-            trackid: Ext.getCmp("report_settings_analytics_trackid_default").getValue(),
-            additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_default").getValue(),
-            additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_default").getValue(),
-            accountid: Ext.getCmp("report_settings_analytics_accountid_default").getValue(),
-            internalid: Ext.getCmp("report_settings_analytics_internalid_default").getValue(),
-            advanced: Ext.getCmp("report_settings_analytics_advanced_default").getValue()
-        };
-
         sites.each(function (record) {
-            sitesData["site_" + record.data.id] = {
-                profile: Ext.getCmp("report_settings_analytics_profile_" + record.data.id).getValue(),
-                trackid: Ext.getCmp("report_settings_analytics_trackid_" + record.data.id).getValue(),
-                additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + record.data.id).getValue(),
-                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + record.data.id).getValue(),
-                accountid: Ext.getCmp("report_settings_analytics_accountid_" + record.data.id).getValue(),
-                internalid: Ext.getCmp("report_settings_analytics_internalid_" + record.data.id).getValue(),
-                advanced: Ext.getCmp("report_settings_analytics_advanced_" + record.data.id).getValue()
+            var id = record.data.id;
+            var key = "site_" + id;
+            if(!id) {
+                id = "default";
+                key = "default";
+            }
+
+            sitesData[key] = {
+                profile: Ext.getCmp("report_settings_analytics_profile_" + id).getValue(),
+                trackid: Ext.getCmp("report_settings_analytics_trackid_" + id).getValue(),
+                retargetingcode: Ext.getCmp("report_settings_analytics_retargetingcode_" + id).getValue(),
+                additionalcode: Ext.getCmp("report_settings_analytics_additionalcode_" + id).getValue(),
+                additionalcodebeforepageview: Ext.getCmp("report_settings_analytics_additionalcodebeforepageview_" + id)
+                                                                                        .getValue(),
+                accountid: Ext.getCmp("report_settings_analytics_accountid_" + id).getValue(),
+                internalid: Ext.getCmp("report_settings_analytics_internalid_" + id).getValue(),
+                advanced: Ext.getCmp("report_settings_analytics_advanced_" + id).getValue()
             };
         }, this);
 

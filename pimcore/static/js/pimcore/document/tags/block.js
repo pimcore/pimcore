@@ -168,7 +168,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
         Ext.get(this.id).appendChild(clearEl);
 
         // amount selection
-        amountBox = new Ext.form.ComboBox({
+        var amountBox = new Ext.form.ComboBox({
             cls: "pimcore_block_amount_select",
             store: this.getAmountValues(),
             mode: "local",
@@ -179,7 +179,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
         amountBox.render(amountEl);
 
         // plus button
-        plusButton = new Ext.Button({
+        var plusButton = new Ext.Button({
             cls: "pimcore_block_button_plus",
             iconCls: "pimcore_icon_plus",
             listeners: {

@@ -24,7 +24,8 @@ pimcore.object.preview = Class.create({
 
         if (this.layout == null) {
 
-            var iframeOnLoad = "pimcore.globalmanager.get('object_" + this.object.data.general.o_id + "').preview.iFrameLoaded()";
+            var iframeOnLoad = "pimcore.globalmanager.get('object_"
+                                        + this.object.data.general.o_id + "').preview.iFrameLoaded()";
 
             this.layout = new Ext.Panel({
                 title: t('preview'),
@@ -32,7 +33,8 @@ pimcore.object.preview = Class.create({
                 autoScroll: true,
                 iconCls: "pimcore_icon_tab_preview",
                 bodyStyle: "-webkit-overflow-scrolling:touch;",
-                html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="object_preview_iframe_' + this.object.data.general.o_id + '"></iframe>'
+                html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad
+                    + '" frameborder="0" id="object_preview_iframe_' + this.object.data.general.o_id + '"></iframe>'
             });
 
             this.layout.on("resize", this.onLayoutResize.bind(this));

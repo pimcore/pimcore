@@ -48,10 +48,23 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public $actions;
 
     /**
-     * @param int $targetId
+     * @param int|Tool_Targeting $targetId
      * @return bool
      */
-    public static function inTarget($targetId) {
+    public static function inTarget($target) {
+        if($target instanceof Tool_Targeting) {
+            $targetId = $target->getId();
+        } else if (is_string($target)) {
+            $target = self::getByName($target);
+            if(!$target) {
+                return false;
+            } else {
+                $targetId = $target->getId();
+            }
+        } else {
+            $targetId = (int) $target;
+        }
+
         if(array_key_exists("_ptc", $_GET) && intval($targetId) == intval($_GET["_ptc"])) {
             return true;
         }
@@ -81,12 +94,30 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
      * @return Tool_Targeting
      */
     public static function getById($id) {
+        try {
+            $target = new self();
+            $target->setId(intval($id));
+            $target->getResource()->getById();
+            return $target;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
 
-        $target = new self();
-        $target->setId(intval($id));
-        $target->getResource()->getById();
-
-        return $target;
+    /**
+     * Static helper to retrieve an instance of Tool_Targeting by the given name
+     * @param integer $id
+     * @return Tool_Targeting
+     */
+    public static function getByName($name) {
+        try {
+            $target = new self();
+            $target->setName($name);
+            $target->getResource()->getByName();
+            return $target;
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -95,6 +126,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -111,6 +143,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function setId($id)
     {
         $this->id = (int) $id;
+        return $this;
     }
 
     /**
@@ -127,6 +160,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -143,6 +177,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function setDocumentId($documentId)
     {
         $this->documentId = (int) $documentId;
+        return $this;
     }
 
     /**
@@ -162,6 +197,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
             $actions = new Tool_Targeting_Actions();
         }
         $this->actions = $actions;
+        return $this;
     }
 
     /**
@@ -181,6 +217,7 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
             $conditions = array();
         }
         $this->conditions = $conditions;
+        return $this;
     }
 
     /**

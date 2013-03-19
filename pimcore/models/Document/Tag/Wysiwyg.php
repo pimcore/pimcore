@@ -67,6 +67,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
      */
     public function setDataFromResource($data) {
         $this->text = $data;
+        return $this;
     }
 
 
@@ -77,6 +78,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
      */
     public function setDataFromEditmode($data) {
         $this->text = $data;
+        return $this;
     }
 
     /**
@@ -94,7 +96,7 @@ class Document_Tag_Wysiwyg extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         $data = $wsElement->value;
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
@@ -147,5 +149,8 @@ class Document_Tag_Wysiwyg extends Document_Tag {
         }
 
         $this->text = $html->save();
+
+        $html->clear();
+        unset($html);
     }
 }

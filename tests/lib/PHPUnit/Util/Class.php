@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
+ * Copyright (c) 2001-2013, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,33 +34,23 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 3.1.0
  */
 
-if (!defined('T_NAMESPACE')) {
-    define('T_NAMESPACE', 377);
-}
-
-require_once 'PHPUnit/Util/Filter.php';
-require_once 'PHPUnit/Util/InvalidArgumentHelper.php';
-
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'PHPUNIT');
-
 /**
  * Class helpers.
  *
- * @category   Testing
  * @package    PHPUnit
- * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @copyright  2002-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.4.14
+ * @subpackage Util
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2001-2013 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/BSD-3-Clause  The BSD 3-Clause License
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.1.0
  */
@@ -88,34 +78,6 @@ class PHPUnit_Util_Class
         return array_values(
           array_diff(get_declared_classes(), self::$buffer)
         );
-    }
-
-    /**
-     * Stops the collection of loaded classes and
-     * returns the names of the files that declare the loaded classes.
-     *
-     * @return array
-     */
-    public static function collectEndAsFiles()
-    {
-        $result = self::collectEnd();
-        $count  = count($result);
-
-        for ($i = 0; $i < $count; $i++) {
-            $class = new ReflectionClass($result[$i]);
-
-            if ($class->isUserDefined()) {
-                $file = $class->getFileName();
-
-                if (file_exists($file)) {
-                    $result[$i] = $file;
-                } else {
-                    unset($result[$i]);
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -164,92 +126,70 @@ class PHPUnit_Util_Class
      * Returns the parameters of a function or method.
      *
      * @param  ReflectionFunction|ReflectionMethod $method
+     * @param  boolean                             $forCall
      * @return string
      * @since  Method available since Release 3.2.0
      */
-    public static function getMethodParameters($method)
+    public static function getMethodParameters($method, $forCall = FALSE)
     {
         $parameters = array();
 
         foreach ($method->getParameters() as $i => $parameter) {
             $name = '$' . $parameter->getName();
 
-            if ($name === '$') {
-                $name .= 'arg' . $i;
+            /* Note: PHP extensions may use empty names for reference arguments
+             * or "..." for methods taking a variable number of arguments.
+             */
+            if ($name === '$' || $name === '$...') {
+                $name = '$arg' . $i;
             }
 
-            $typeHint = '';
+            $default   = '';
+            $reference = '';
+            $typeHint  = '';
 
-            if ($parameter->isArray()) {
-                $typeHint = 'array ';
-            } else {
-                try {
-                    $class = $parameter->getClass();
+            if (!$forCall) {
+                if ($parameter->isArray()) {
+                    $typeHint = 'array ';
                 }
 
-                catch (ReflectionException $e) {
-                    $class = FALSE;
+                else if (version_compare(PHP_VERSION, '5.4', '>') &&
+                         $parameter->isCallable()) {
+                    $typeHint = 'callable ';
                 }
 
-                if ($class) {
-                    $typeHint = $class->getName() . ' ';
+                else {
+                    try {
+                        $class = $parameter->getClass();
+                    }
+
+                    catch (ReflectionException $e) {
+                        $class = FALSE;
+                    }
+
+                    if ($class) {
+                        $typeHint = $class->getName() . ' ';
+                    }
+                }
+
+                if ($parameter->isDefaultValueAvailable()) {
+                    $value   = $parameter->getDefaultValue();
+                    $default = ' = ' . var_export($value, TRUE);
+                }
+
+                else if ($parameter->isOptional()) {
+                    $default = ' = null';
                 }
             }
-
-            $default = '';
-
-            if ($parameter->isDefaultValueAvailable()) {
-                $value   = $parameter->getDefaultValue();
-                $default = ' = ' . var_export($value, TRUE);
-            }
-
-            else if ($parameter->isOptional()) {
-                $default = ' = null';
-            }
-
-            $ref = '';
 
             if ($parameter->isPassedByReference()) {
-                $ref = '&';
+                $reference = '&';
             }
 
-            $parameters[] = $typeHint . $ref . $name . $default;
+            $parameters[] = $typeHint . $reference . $name . $default;
         }
 
         return join(', ', $parameters);
-    }
-
-    /**
-     * Returns the sourcecode of a user-defined class.
-     *
-     * @param  string  $className
-     * @param  string  $methodName
-     * @return mixed
-     */
-    public static function getMethodSource($className, $methodName)
-    {
-        if ($className != 'global') {
-            $function = new ReflectionMethod($className, $methodName);
-        } else {
-            $function = new ReflectionFunction($methodName);
-        }
-
-        $filename = $function->getFileName();
-
-        if (file_exists($filename)) {
-            $file   = file($filename);
-            $result = '';
-            $start  = $function->getStartLine() - 1;
-            $end    = $function->getEndLine() - 1;
-
-            for ($line = $start; $line <= $end; $line++) {
-                $result .= $file[$line];
-            }
-
-            return $result;
-        } else {
-            return FALSE;
-        }
     }
 
     /**
@@ -305,7 +245,7 @@ class PHPUnit_Util_Class
      * @param  string  $className
      * @param  string  $attributeName
      * @return mixed
-     * @throws InvalidArgumentException
+     * @throws PHPUnit_Framework_Exception
      * @since  Method available since Release 3.4.0
      */
     public static function getStaticAttribute($className, $attributeName)
@@ -327,22 +267,8 @@ class PHPUnit_Util_Class
         while ($class) {
             $attributes = $class->getStaticProperties();
 
-            $key = $attributeName;
-
-            if (isset($attributes[$key])) {
-                return $attributes[$key];
-            }
-
-            $key = "\0*\0" . $attributeName;
-
-            if (isset($attributes[$key])) {
-                return $attributes[$key];
-            }
-
-            $key = "\0" . $class->getName() . "\0" . $attributeName;
-
-            if (isset($attributes[$key])) {
-                return $attributes[$key];
+            if (array_key_exists($attributeName, $attributes)) {
+                return $attributes[$attributeName];
             }
 
             $class = $class->getParentClass();
@@ -364,7 +290,7 @@ class PHPUnit_Util_Class
      * @param  object  $object
      * @param  string  $attributeName
      * @return mixed
-     * @throws InvalidArgumentException
+     * @throws PHPUnit_Framework_Exception
      * @since  Method available since Release 3.4.0
      */
     public static function getObjectAttribute($object, $attributeName)
@@ -377,28 +303,11 @@ class PHPUnit_Util_Class
             throw PHPUnit_Util_InvalidArgumentHelper::factory(2, 'string');
         }
 
-        PHPUnit_Framework_Assert::assertObjectHasAttribute(
-          $attributeName, $object
-        );
-
         try {
             $attribute = new ReflectionProperty($object, $attributeName);
         }
 
         catch (ReflectionException $e) {
-            // Workaround for http://bugs.php.net/46064
-            if (version_compare(PHP_VERSION, '5.2.7', '<')) {
-                $reflector  = new ReflectionObject($object);
-                $attributes = $reflector->getProperties();
-
-                foreach ($attributes as $_attribute) {
-                    if ($_attribute->getName() == $attributeName) {
-                        $attribute = $_attribute;
-                        break;
-                    }
-                }
-            }
-
             $reflector = new ReflectionObject($object);
 
             while ($reflector = $reflector->getParentClass()) {
@@ -412,63 +321,23 @@ class PHPUnit_Util_Class
             }
         }
 
-        if ($attribute->isPublic()) {
-            return $object->$attributeName;
-        } else {
-            $array         = (array)$object;
-            $protectedName = "\0*\0" . $attributeName;
-
-            if (array_key_exists($protectedName, $array)) {
-                return $array[$protectedName];
-            } else {
-                $classes = self::getHierarchy(get_class($object));
-
-                foreach ($classes as $class) {
-                    $privateName = sprintf(
-                      "\0%s\0%s",
-
-                      $class,
-                      $attributeName
-                    );
-
-                    if (array_key_exists($privateName, $array)) {
-                        return $array[$privateName];
-                    }
-                }
+        if (isset($attribute)) {
+            if (!$attribute || $attribute->isPublic()) {
+                return $object->$attributeName;
             }
+            $attribute->setAccessible(TRUE);
+            $value = $attribute->getValue($object);
+            $attribute->setAccessible(FALSE);
+
+            return $value;
         }
 
         throw new PHPUnit_Framework_Exception(
           sprintf(
             'Attribute "%s" not found in object.',
-
             $attributeName
           )
         );
-    }
-
-    /**
-     *
-     *
-     * @param  string $className
-     * @return array
-     * @since  Method available since Release 3.4.0
-     */
-    public static function parseFullyQualifiedClassName($className)
-    {
-        $result = array(
-          'namespace'               => '',
-          'className'               => $className,
-          'fullyQualifiedClassName' => $className
-        );
-
-        if (strpos($className, '\\') !== FALSE) {
-            $tmp                 = explode('\\', $className);
-            $result['className'] = $tmp[count($tmp)-1];
-            $result['namespace'] = self::arrayToName($tmp);
-        }
-
-        return $result;
     }
 
     /**
@@ -492,4 +361,3 @@ class PHPUnit_Util_Class
         return $result;
     }
 }
-?>

@@ -16,6 +16,12 @@
 class Update_IndexController extends Pimcore_Controller_Action_Admin {
 
 
+    public function init() {
+        parent::init();
+
+        $this->checkPermission("update");
+    }
+
     public function checkFilePermissionsAction () {
         
         $success = false;
@@ -82,7 +88,7 @@ class Update_IndexController extends Pimcore_Controller_Action_Admin {
         $languages = $languagesData["languages"];
         if (is_array($languages)) {
             for ($i = 0; $i < count($languages); $i++) {
-                if (is_file($filesDir = PIMCORE_WEBSITE_PATH."/var/config/texts/" . $languages[$i]['key'] . ".csv")) {
+                if (is_file($filesDir = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $languages[$i]['key'] . ".csv")) {
                     $languages[$i]["exists"] = true;
                 } else {
                     $languages[$i]["exists"] = false;

@@ -16,7 +16,6 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
 
     const DEFAULT_HOST = '127.0.0.1';
     const DEFAULT_PORT =  27017;
-    const DEFAULT_PERSISTENT = true;
     const DEFAULT_DBNAME = 'pimcore_cache';
     const DEFAULT_COLLECTION = 'cache_items';
 
@@ -42,7 +41,6 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
      * an array of mongodb server ; each mongodb server is described by an associative array :
      * 'host' => (string) : the name of the mongodb server
      * 'port' => (int) : the port of the mongodb server
-     * 'persistent' => (bool) : use or not persistent connections to this mongodb server
      * 'collection' => (string) : name of the collection to use
      * 'dbname' => (string) : name of the database to use
      *
@@ -51,7 +49,6 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
     protected $_options = array(
         'host'       => self::DEFAULT_HOST,
         'port'       => self::DEFAULT_PORT,
-        'persistent' => self::DEFAULT_PERSISTENT,
         'collection' => self::DEFAULT_COLLECTION,
         'dbname'     => self::DEFAULT_DBNAME,
     );
@@ -69,7 +66,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
         // Merge the options passed in; overridding any default options
         $this->_options = array_merge($this->_options, $options);
 
-        $this->_conn       = new Mongo('mongodb://' . $this->_options['host'] . ':' . $this->_options['port'], array('persistent' => $this->_options['persistent']));
+        $this->_conn       = new Mongo('mongodb://' . $this->_options['host'] . ':' . $this->_options['port'], array());
         $this->_db         = $this->_conn->selectDB($this->_options['dbname']);
         $this->_collection = $this->_db->selectCollection($this->_options['collection']);
 
@@ -244,6 +241,7 @@ class Pimcore_Cache_Backend_Mongodb extends Zend_Cache_Backend implements Zend_C
             // #ZF-4614 : we tranform null to zero to get the maximal lifetime
             parent::setDirectives(array('lifetime' => 0));
         }
+        return $this;
     }
 
     /**

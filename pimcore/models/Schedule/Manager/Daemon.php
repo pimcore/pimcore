@@ -32,6 +32,7 @@ class Schedule_Manager_Daemon extends Schedule_Manager_Procedural {
      */
     public function setWaitForChildrenToFinish($wait){
         $this->waitForChildrenToFinish=$wait;
+        return $this;
     }
 
     /**

@@ -47,6 +47,7 @@ class Redirect_List extends Pimcore_Model_List_Abstract {
      */
     public function setRedirects($redirects) {
         $this->redirects = $redirects;
+        return $this;
     }
 
 }
