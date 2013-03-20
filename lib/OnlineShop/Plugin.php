@@ -62,6 +62,8 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
               `count` int(20) NOT NULL,
               `itemKey` varchar(100) COLLATE utf8_bin NOT NULL,
               `parentItemKey` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '0',
+              `comment` LONGTEXT ASCII,
+              `addedDateTimestamp` int(10) NOT NULL,
               PRIMARY KEY (`itemKey`,`cartId`,`parentItemKey`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;"
         );
@@ -158,7 +160,7 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         $result = null;
 		try{
 			$result = Pimcore_API_Plugin_Abstract::getDb()->describeTable("plugin_onlineshop_cartitem");
-		} catch(Zend_Db_Adapter_Exception $e){}
+		} catch(Exception $e){}
 		return !empty($result);
     }
 

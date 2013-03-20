@@ -82,6 +82,12 @@ interface OnlineShop_Framework_ICartItem {
     public function getPriceInfo();
 
     /**
+     * @param string $comment
+     * @return void
+     */
+    public function setComment($comment);
+
+    /**
      * @abstract
      * @return string
      */
@@ -122,4 +128,26 @@ interface OnlineShop_Framework_ICartItem {
      * @return void
      */
     public function save();
+
+    /**
+     * @param Zend_Date $date
+     * @return void
+     */
+    public function setAddedDate(Zend_Date $date = null);
+
+    /**
+     * @return Zend_Date
+     */
+    public function getAddedDate();
+
+    /**
+     * @return int unix timestamp
+     */
+    public function getAddedDateTimestamp();
+
+    /**
+     * @param int $time
+     * @return void
+     */
+    public function setAddedDateTimestamp($time);
 }

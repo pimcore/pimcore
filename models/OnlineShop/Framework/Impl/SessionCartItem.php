@@ -20,6 +20,17 @@ class OnlineShop_Framework_Impl_SessionCartItem extends Pimcore_Model_Abstract i
     protected $cart;
     protected $cartId;
 
+    /**
+     * @var int unix timestamp
+     */
+    protected $addedDateTimestamp;
+
+
+    public function __construct()
+    {
+        $this->setAddedDate(Zend_Date::now());
+    }
+
     public function setCount($count) {
         $this->count = $count;
     }
@@ -246,5 +257,28 @@ class OnlineShop_Framework_Impl_SessionCartItem extends Pimcore_Model_Abstract i
      */
     public function getTotalPrice() {
         return $this->getPriceInfo()->getTotalPrice();
+    }
+
+
+    public function setAddedDate(Zend_Date $date = null) {
+        if($date) {
+            $this->addedDateTimestamp = $date->getTimestamp();
+        } else {
+            $this->addedDateTimestamp = null;
+        }
+    }
+
+    public function getAddedDate() {
+        return $this->addedDateTimestamp !== NULL ? new Zend_Date($this->addedDateTimestamp) : null;
+    }
+
+    public function getAddedDateTimestamp()
+    {
+        return $this->addedDateTimestamp;
+    }
+
+    public function setAddedDateTimestamp($time)
+    {
+        $this->addedDateTimestamp = $time;
     }
 }

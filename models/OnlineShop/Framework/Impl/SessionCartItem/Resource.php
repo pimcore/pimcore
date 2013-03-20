@@ -2,7 +2,7 @@
 
 class OnlineShop_Framework_Impl_SessionCartItem_Resource extends Pimcore_Model_Resource_Abstract {
 
-    protected $fieldsToSave = array("cartId", "productId", "count", "itemKey", "parentItemKey", "comment");
+    protected $fieldsToSave = array("cartId", "productId", "count", "itemKey", "parentItemKey", "comment", "addedDateTimestamp");
 
     /**
      * @param int $productId

@@ -15,3 +15,12 @@ if($revision == 18) {
       ADD comment LONGTEXT ASCII AFTER parentItemKey;
     ");
 }
+
+if($revision == 36) {
+
+    $db = Pimcore_Resource::get();
+
+    $db->query("ALTER TABLE plugin_onlineshop_cartitem
+      ADD `addedDateTimestamp` int(10) NOT NULL AFTER comment;
+    ");
+}
