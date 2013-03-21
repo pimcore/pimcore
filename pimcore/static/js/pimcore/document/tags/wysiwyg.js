@@ -71,6 +71,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         }
 
         Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
+        Ext.get(this.textarea).addClass("pimcore_wysiwyg");
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
                                                                                                 + "px;");
 
@@ -151,6 +152,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         try {
             if(this.options["inline"] === false) {
                 Ext.get(this.textarea).un("click", this.startCKeditor.bind(this));
+                Ext.get(this.textarea).removeClass("pimcore_wysiwyg_inactive");
             }
 
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
@@ -200,6 +202,13 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             } else {
                 eConfig.extraPlugins = "htmlsourceinline";
                 this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
+
+                this.ckeditor.on('focus', function () {
+                    Ext.get(this.textarea).removeClass("pimcore_wysiwyg_inactive");
+                }.bind(this));
+                this.ckeditor.on('blur', function () {
+                    Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
+                }.bind(this));
             }
         }
         catch (e) {
@@ -216,6 +225,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             this.ckeditor = null;
 
             Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
+            Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
         }
     },
 
