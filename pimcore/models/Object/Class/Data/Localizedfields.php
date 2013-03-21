@@ -240,7 +240,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     } else if ($fd->getFieldtype() != $field->type){
                         throw new Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
                     }
-                    $data[$field->language][$field->name] = $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value);
+                    $data[$field->language][$field->name] = $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value, $object, $idMapper);
 
             }
 
