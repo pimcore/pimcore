@@ -99,7 +99,9 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         if($type == "plugin") {
             $config = Pimcore_ExtensionManager::getPluginConfig($id);
             $className = $config["plugin"]["pluginClassName"];
-            $reload = $className::needsReloadAfterInstall();
+            if(class_exists($className)) {
+                $reload = $className::needsReloadAfterInstall();
+            }
         }
 
         $this->_helper->json(array("success" => true, "reload" => $reload));
