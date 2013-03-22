@@ -258,7 +258,7 @@ pimcore.helpers.getValidFilename = function (value) {
 
 };
 
-pimcore.helpers.showNotification = function (title, text, type, errorText) {
+pimcore.helpers.showNotification = function (title, text, type, errorText, hideDelay) {
     // icon types: info,error,success
     if(type == "error"){
 
@@ -278,7 +278,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText) {
             title: title,
             html: text,
             autoDestroy: true,
-            hideDelay:  1000
+            hideDelay:  hideDelay | 1000
         });
         notification.show(document);
     }
