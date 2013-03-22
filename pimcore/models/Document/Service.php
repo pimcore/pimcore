@@ -124,6 +124,10 @@ class Document_Service extends Element_Service {
             $view->document = $documentBackup;
         }
 
+        if(Pimcore_Config::getSystemConfig()->outputfilters->less){
+            $content = Pimcore_Tool_Less::processHtml($content);
+        }
+
         return $content;
     }
 
