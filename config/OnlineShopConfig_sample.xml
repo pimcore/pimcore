@@ -118,7 +118,8 @@
 
             <!-- configuration of different tenants -->
             <tenants>
-                <sampletenant class="OnlineShop_Framework_IndexService_Tenant_DefaultSubTenantConfig">
+                <sampletenant class="OnlineShop_Framework_IndexService_Tenant_DefaultSubTenantConfig" file="/website/var/plugins/OnlineShop/sampletenant.xml">
+                    <!--
                     <generalSearchColumns>
                         <column name="name"/>
                         <column name="shortDescription"/>
@@ -135,6 +136,7 @@
                             <config brickfield="specialFeatures" bricktype="Memory" fieldname="hardDiskDriveCapacity"/>
                         </column>
                     </columns>
+                    -->
 
                 </sampletenant>
                 <testtenant2 class="OnlineShop_Framework_IndexService_Tenant_DefaultConfigInheritColumnConfig">

@@ -19,7 +19,14 @@ class OnlineShop_Framework_IndexService {
         if($config->tenants) {
             foreach($config->tenants as $name => $tenant) {
                 $tenantConfigClass = (string) $tenant->class;
-                $worker = new OnlineShop_Framework_IndexService_Tenant_Worker(new $tenantConfigClass($tenant, $config));
+
+                $tenantConfig = $tenant;
+                if($tenant->file) {
+                    $tenantConfig = new Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file));
+                    $tenantConfig = $tenantConfig->tenant;
+                }
+
+                $worker = new OnlineShop_Framework_IndexService_Tenant_Worker(new $tenantConfigClass($tenantConfig, $config));
                 $this->tenantWorkers[$name] = $worker;
             }
         }
