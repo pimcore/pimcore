@@ -854,6 +854,10 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         }
 
         $this->getResponse()->setHeader("Content-Type", "image/" . $format, true);
+
+        while(@ob_end_flush());
+        flush();
+
         readfile(PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time, $image));
         $this->removeViewRenderer();
     }
@@ -1083,30 +1087,63 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     }
 
 
-    /**
-     * Download all assets contained in the folder with parameter id as ZIP file.
-     * The suggested filename is either [folder name].zip or assets.zip for the root folder.
-     */
-    public function downloadAsZipAction () {
-        
+    public function downloadAsZipJobsAction() {
+
+        $jobId = uniqid();
+        $filesPerJob = 20;
+        $jobs = array();
         $asset = Asset::getById($this->getParam("id"));
 
         if ($asset->isAllowed("view")) {
-            $archive_name = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/download.zip";
+            $assetList = new Asset_List();
+            $assetList->setCondition("path LIKE ? AND type != ?", array($asset->getFullPath() . "/%", "folder"));
+            $assetList->setOrderKey("LENGTH(path)", false);
+            $assetList->setOrder("ASC");
 
-            if(is_file($archive_name)) {
-                unlink($archive_name);
+            for($i=0; $i<ceil($assetList->getTotalCount()/$filesPerJob); $i++) {
+                $jobs[] = array(array(
+                    "url" => "/admin/asset/download-as-zip-add-files",
+                    "params" => array(
+                        "id" => $asset->getId(),
+                        "offset" => $i*$filesPerJob,
+                        "limit" => $filesPerJob,
+                        "jobId" => $jobId
+                    )
+                ));
             }
+        }
 
-            $archive_folder = $asset->getFileSystemPath();
+        $this->_helper->json(array(
+            "success" => true,
+            "jobs" => $jobs,
+            "jobId" => $jobId
+        ));
+    }
+
+
+    public function downloadAsZipAddFilesAction() {
+
+        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/download-zip-" . $this->getParam("jobId") . ".zip";
+        $asset = Asset::getById($this->getParam("id"));
+        $success = false;
+
+        if ($asset->isAllowed("view")) {
 
             $zip = new ZipArchive();
-            if ($zip -> open($archive_name, ZipArchive::CREATE) === TRUE) {
+            if(!is_file($zipFile)) {
+                $zipState = $zip->open($zipFile, ZipArchive::CREATE);
+            } else {
+                $zipState = $zip->open($zipFile);
+            }
+
+            if ($zipState === TRUE) {
 
                 $assetList = new Asset_List();
                 $assetList->setCondition("path LIKE ?", $asset->getFullPath() . "/%");
                 $assetList->setOrderKey("LENGTH(path)", false);
                 $assetList->setOrder("ASC");
+                $assetList->setOffset((int) $this->getParam("offset"));
+                $assetList->setLimit((int) $this->getParam("limit"));
 
                 foreach ($assetList->load() as $a) {
                     if($a->isAllowed("view")) {
@@ -1117,22 +1154,40 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 }
 
                 $zip->close();
+                $success = true;
             }
 
-            $suggestedFilename = $asset->getFilename();
-            if (empty($suggestedFilename)) {
-                $suggestedFilename = "assets";
-            }
-
-            $this->getResponse()->setHeader("Content-Type", "application/zip", true);
-            $this->getResponse()->setHeader("Content-Disposition", 'attachment; filename="' . $suggestedFilename . '.zip"');
-
-            echo file_get_contents($archive_name);
-
-            unlink($archive_name);
         }
 
-        $this->removeViewRenderer();
+        $this->_helper->json(array(
+            "success" => $success
+        ));
+    }
+
+    /**
+     * Download all assets contained in the folder with parameter id as ZIP file.
+     * The suggested filename is either [folder name].zip or assets.zip for the root folder.
+     */
+    public function downloadAsZipAction () {
+
+        $asset = Asset::getById($this->getParam("id"));
+        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/download-zip-" . $this->getParam("jobId") . ".zip";
+        $suggestedFilename = $asset->getFilename();
+        if (empty($suggestedFilename)) {
+            $suggestedFilename = "assets";
+        }
+
+        header("Content-Type: application/zip");
+        header("Content-Length: " . filesize($zipFile));
+        header('Content-Disposition: attachment; filename="' . $suggestedFilename . '.zip"');
+
+        while(@ob_end_flush());
+        flush();
+
+        readfile($zipFile);
+        unlink($zipFile);
+
+        exit;
     }
 
     public function importZipAction() {
