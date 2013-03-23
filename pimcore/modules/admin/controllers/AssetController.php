@@ -1095,8 +1095,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         $asset = Asset::getById($this->getParam("id"));
 
         if ($asset->isAllowed("view")) {
+            $parentPath = $asset->getFullPath();
+            if($asset->getId() == 1) {
+                $parentPath = "";
+            }
+
             $assetList = new Asset_List();
-            $assetList->setCondition("path LIKE ? AND type != ?", array($asset->getFullPath() . "/%", "folder"));
+            $assetList->setCondition("path LIKE ? AND type != ?", array($parentPath . "/%", "folder"));
             $assetList->setOrderKey("LENGTH(path)", false);
             $assetList->setOrder("ASC");
 
@@ -1138,8 +1143,13 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
 
             if ($zipState === TRUE) {
 
+                $parentPath = $asset->getFullPath();
+                if($asset->getId() == 1) {
+                    $parentPath = "";
+                }
+
                 $assetList = new Asset_List();
-                $assetList->setCondition("path LIKE ?", $asset->getFullPath() . "/%");
+                $assetList->setCondition("path LIKE ?", $parentPath . "/%");
                 $assetList->setOrderKey("LENGTH(path)", false);
                 $assetList->setOrder("ASC");
                 $assetList->setOffset((int) $this->getParam("offset"));
