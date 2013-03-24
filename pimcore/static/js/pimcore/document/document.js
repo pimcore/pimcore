@@ -86,23 +86,23 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        if (this.loadingPanel) {
-            this.tabPanel.remove(this.loadingPanel);
-        }
-        this.loadingPanel = null;
-
+//  // commented this out as JSLint would complain
+//        if (this.loadingPanel) {
+//            this.tabPanel.remove(this.loadingPanel);
+//        }
+//        this.loadingPanel = null;
+//
     },
 
     checkLoadingStatus: function () {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        if (this.loadingPanel) {
-            // loadingpanel is active close the whole document
-            pimcore.helpers.closeDocument(this.id);
-        }
+// commented this out, otherwise JSLint would complain
+//        if (this.loadingPanel) {
+//            // loadingpanel is active close the whole document
+//            pimcore.helpers.closeDocument(this.id);
+//        }
     },
 
     activate: function () {

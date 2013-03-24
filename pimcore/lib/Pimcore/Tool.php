@@ -31,12 +31,7 @@ class Pimcore_Tool {
      * @return bool
      */
     public static function isValidPath($path) {
-        if (preg_match("/[a-zA-Z0-9_~\.\-\/]+/", $path, $matches)) {
-            if ($matches[0] == $path) {
-                return true;
-            }
-        }
-        return false;
+        return (bool) preg_match("/^[a-zA-Z0-9_~\.\-\/]+$/", $path, $matches);
     }
 
     /**
@@ -419,7 +414,11 @@ class Pimcore_Tool {
                 if(Pimcore_Tool::classExists($tmpClassName)) {
                     if(is_subclass_of($tmpClassName, $sourceClassName)) {
                         $targetClassName = $tmpClassName;
+                    } else {
+                        Logger::error("Classmapping for " . $sourceClassName . " failed. '" . $tmpClassName . " is not a subclass of '" . $sourceClassName . "'. " . $tmpClassName . " has to extend " . $sourceClassName);
                     }
+                } else {
+                    Logger::error("Classmapping for " . $sourceClassName . " failed. Cannot find class '" . $tmpClassName . "'");
                 }
             }
         }

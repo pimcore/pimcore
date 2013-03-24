@@ -22,7 +22,7 @@ class Pimcore_Tool_Console {
     public static function getPhpCli () {
 
         if(Pimcore_Config::getSystemConfig()->general->php_cli) {
-            if(is_executable(Pimcore_Config::getSystemConfig()->general->php_cli)) {
+            if(@is_executable(Pimcore_Config::getSystemConfig()->general->php_cli)) {
                 return (string) Pimcore_Config::getSystemConfig()->general->php_cli;
             } else {
                 Logger::critical("PHP-CLI binary: " . Pimcore_Config::getSystemConfig()->general->php_cli . " is not executable");
@@ -32,7 +32,7 @@ class Pimcore_Tool_Console {
         $paths = array("/usr/bin/php","/usr/local/bin/php","/usr/local/zend/bin/php", "/bin/php");
 
         foreach ($paths as $path) {
-            if(is_executable($path)) {
+            if(@is_executable($path)) {
                 return $path;
             }
         }
@@ -91,7 +91,7 @@ class Pimcore_Tool_Console {
         }
 
         $nice = "";
-        if(is_executable("/usr/bin/nice")) {
+        if(@is_executable("/usr/bin/nice")) {
             $nice = "/usr/bin/nice -n 19 ";
         }
 

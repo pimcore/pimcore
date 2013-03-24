@@ -71,6 +71,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         }
 
         Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
+        Ext.get(this.textarea).addClass("pimcore_wysiwyg");
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
                                                                                                 + "px;");
 
@@ -151,6 +152,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         try {
             if(this.options["inline"] === false) {
                 Ext.get(this.textarea).un("click", this.startCKeditor.bind(this));
+                Ext.get(this.textarea).removeClass("pimcore_wysiwyg_inactive");
             }
 
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
@@ -181,7 +183,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 removePluginsAdd = "," + eConfig.removePlugins;
             }
 
-            eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,filebrowser,templates,divarea,bgcolor,magicline' + removePluginsAdd;
+            eConfig.removePlugins = 'about,placeholder,flash,smiley,scayt,save,print,preview,newpage,maximize,forms,'
+                    + 'filebrowser,templates,divarea,bgcolor,magicline' + removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
@@ -199,6 +202,13 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             } else {
                 eConfig.extraPlugins = "htmlsourceinline";
                 this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
+
+                this.ckeditor.on('focus', function () {
+                    Ext.get(this.textarea).removeClass("pimcore_wysiwyg_inactive");
+                }.bind(this));
+                this.ckeditor.on('blur', function () {
+                    Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
+                }.bind(this));
             }
         }
         catch (e) {
@@ -215,6 +225,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             this.ckeditor = null;
 
             Ext.get(this.textarea).on("click", this.startCKeditor.bind(this));
+            Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
         }
     },
 
@@ -249,7 +260,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 textIsSelected = true;
             }
         }
-        catch (e) {
+        catch (e2) {
         }
 
         // remove existing links out of the wrapped text

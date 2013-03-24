@@ -81,7 +81,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         var allowedAssets = [];
         if(typeof this.datax.assetTypes == "object") {
             // this is when it comes from the server
-            for(var i=0; i<this.datax.assetTypes.length; i++) {
+            for(i=0; i<this.datax.assetTypes.length; i++) {
                 allowedAssets.push(this.datax.assetTypes[i]["assetTypes"]);
             }
         } else if(typeof this.datax.assetTypes == "string") {

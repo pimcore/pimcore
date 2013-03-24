@@ -23,6 +23,21 @@ function pimcoreOnUnload() {
 
 pimcore.edithelpers = {};
 
+pimcore.edithelpers.setBodyHeight = function () {
+    try {
+        var body = document.body,
+            html = document.documentElement;
+
+        var height = Math.max(body.scrollHeight, body.offsetHeight,
+            html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+        Ext.getBody().setHeight(height);
+        Ext.get(Ext.query("html")[0]).setHeight(height);
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 pimcore.edithelpers.frame = {
     active: false,
     topEl: null,
@@ -38,9 +53,14 @@ pimcore.edithelpers.frameElement = function (el, body) {
         pimcore.edithelpers.unFrameElement();
     }
 
+    var offsets;
+    var borderWidth;
+    var width;
+    var height;
+
     try {
         var startDistance = 5;
-        var offsets = Ext.get(el).getOffsetsTo(Ext.getBody());
+        offsets = Ext.get(el).getOffsetsTo(Ext.getBody());
         var bodyOffsetLeft = intval(Ext.getBody().getStyle("margin-left"));
         var bodyOffsetTop = intval(Ext.getBody().getStyle("margin-top"));
 
@@ -50,9 +70,9 @@ pimcore.edithelpers.frameElement = function (el, body) {
         offsets[0] -= startDistance;
         offsets[1] -= startDistance;
 
-        var width = Ext.get(el).getWidth() + (startDistance*2);
-        var height = Ext.get(el).getHeight() + (startDistance*2);
-        var borderWidth = 5;
+        width = Ext.get(el).getWidth() + (startDistance*2);
+        height = Ext.get(el).getHeight() + (startDistance*2);
+        borderWidth = 5;
 
         if(typeof body == "undefined") {
             body = document.body;

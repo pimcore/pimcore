@@ -45,18 +45,18 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
                 }.bind(this)
             },
             bbar: [//this.searchfield,
-            "->",{
-                xtype: "button",
-                text: t("cancel"),
-                icon: "/pimcore/static/img/icon/cancel.png",
-                handler: function () {
-                    this.searchWindow.close();
-                }.bind(this)
-            },{
-                xtype: "button",
-                text: t("apply"),
-                iconCls: "pimcore_icon_apply",
-                handler: function () {
+                "->",{
+                    xtype: "button",
+                    text: t("cancel"),
+                    icon: "/pimcore/static/img/icon/cancel.png",
+                    handler: function () {
+                        this.searchWindow.close();
+                    }.bind(this)
+                },{
+                    xtype: "button",
+                    text: t("apply"),
+                    iconCls: "pimcore_icon_apply",
+                    handler: function () {
 
                         if (this.isGroupSearch) {
                             var groupIds = [];
@@ -76,8 +76,8 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
                             this.addKeys(keyIds);
                         }
 
-                }.bind(this)
-            }]
+                    }.bind(this)
+                }]
         });
 
         this.searchWindow.show();
@@ -167,7 +167,7 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
 
         items.push({
             xtype: "button",
-                text: t("search"),
+            text: t("search"),
             icon: "/pimcore/static/img/icon/magnifier.png",
             handler: function () {
                 var formValue = this.searchfield.getValue();
@@ -249,8 +249,20 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
     },
 
     getGridPanel: function() {
+        var postFix;
+        var nameWidth = 200;
+        var descWidth = 590;
 
-        this.groupFields = ['id', 'name', 'description'];
+        if (this.isGroupSearch) {
+            postFix = "groups";
+            this.groupFields = ['id', 'name', 'description'];
+        } else {
+            postFix = "properties";
+            nameWidth = 150;
+            descWidth = 490;
+            this.groupFields = ['id', 'groupName', 'name', 'description'];
+        }
+
 
         var readerFields = [];
         for (var i = 0; i < this.groupFields.length; i++) {
@@ -259,15 +271,13 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
 
         var gridColumns = [];
         gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
-        gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name'});
-        gridColumns.push({header: t("description"), width: 590, sortable: true, dataIndex: 'description'});
 
-        var postFix;
-        if (this.isGroupSearch) {
-            postFix = "groups";
-        } else {
-            postFix = "properties";
+        if (postFix == "properties") {
+            gridColumns.push({header: t("keyvalue_tag_col_group"), width: 150, sortable: true, dataIndex: 'groupName'});
         }
+
+        gridColumns.push({header: t("name"), width: nameWidth, sortable: true, dataIndex: 'name'});
+        gridColumns.push({header: t("description"), width: descWidth, sortable: true, dataIndex: 'description'});
 
         var proxy = new Ext.data.HttpProxy({
             url: "/admin/key-value/" + postFix,
@@ -300,7 +310,7 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
         }
 
         this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 50,
+            pageSize: 15,
             store: this.store,
             displayInfo: true,
             displayMsg: '{0} - {1} / {2}',

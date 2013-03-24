@@ -16,6 +16,12 @@
 class Update_IndexController extends Pimcore_Controller_Action_Admin {
 
 
+    public function init() {
+        parent::init();
+
+        $this->checkPermission("update");
+    }
+
     public function checkFilePermissionsAction () {
         
         $success = false;

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class Object_Class_Data_KeyValue extends Object_Class_Data {
 
@@ -16,15 +16,40 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public $phpdocType = "Object_Data_KeyValue";
 
+    /** width of key column
+     * @var
+     */
     public $keyWidth;
 
+    /** width of value column
+     * @var
+     */
     public $valueWidth;
 
+    /** width of description column
+     * @var
+     */
+    public $descWidth;
+
+    /** Height of grid
+     * @var
+     */
     public $height;
 
+    /** Maximum height of grid
+     * @var
+     */
     public $maxheight;
 
+    /** width of group column
+     * @var
+     */
     public $groupWidth;
+
+    /** width of group description column
+     * @var
+     */
+    public $groupDescWidth;
 
     /**
      * This method is called in Object_Class::save() and is used to create the database table for the localized data
@@ -70,6 +95,14 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         return $this->keyWidth;
     }
 
+    /** Returns the width of the description column.
+     * @return mixed
+     */
+    public function getDescWidth() {
+        return $this->descWidth;
+    }
+
+
     /**
      * @param integer $width
      * @return void
@@ -88,6 +121,14 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
         return $this;
     }
 
+    /** Sets the width of the description column.
+     * @param $width
+     * @return Object_Class_Data_KeyValue
+     */
+    public function setDescWidth($width) {
+        $this->descWidth = $this->getAsIntegerCast($width);
+        return $this;
+    }
 
     /**
      * @return integer
@@ -117,8 +158,8 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
 
     /**
- * @return integer
- */
+     * @return integer
+     */
     public function getValueWidth() {
         return $this->valueWidth;
     }
@@ -176,28 +217,17 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
             $keyConfig = Object_KeyValue_KeyConfig::getById($key);
             $property["type"] = $keyConfig->getType();
             $property["possiblevalues"] = $keyConfig->getPossibleValues();
-
-            $niceName = $keyConfig->getDescription();
-            if ($niceName == "") {
-                $niceName = "~" . $keyConfig->getName() . "~";
-            }
-
             $groupId = $keyConfig->getGroup();
 
             if ($groupId) {
                 $group = Object_KeyValue_GroupConfig::getById($groupId);
-
-                if (strlen($group->getDescription()) > 0) {
-                    $groupName = $group->getDescription();
-                } else {
-                    $groupName = $group->getName();
-                }
-
-                $property["group"] = $groupName;
+                $property["group"] = $group->getName();
+                $property["groupDesc"] = $group->getDescription();
             }
 
 
-            $property["description"] = $niceName;
+            $property["keyName"] = $keyConfig->getName();
+            $property["keyDesc"] = $keyConfig->getDescription();
             $result[] = $property;
         }
         return $result;
@@ -284,10 +314,7 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
 
 
             $keyConfig = Object_KeyValue_KeyConfig::getById($key);
-            $niceName = $keyConfig->getDescription();
-            if ($niceName == "") {
-                $niceName = "~" . $keyConfig->getName() . "~";
-            }
+            $keyName = $keyConfig->getName();
 
             $prettyValue = $property["value"];
             if ($keyConfig->getType() == "select") {
@@ -299,11 +326,20 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
                         break;
                     }
                 }
+            } else if ($keyConfig->getType() == "translated") {
+                $translatedValue = $property["translated"];
+                if ($translatedValue) {
+                    $prettyValue = $translatedValue;
+                }
             }
+
             $diffdata["value"] = $prettyValue;
-
-
-            $diffdata["title"] = $niceName;
+            $diffdata["title"] = $keyName;
+            $diffdata["tooltip"] = $keyName;
+            $keyDescription = $keyConfig->getDescription();
+            if (!empty($keyDescription)) {
+                $diffdata["title"] = $keyDescription;
+            }
             $diffdata["disabled"] = !($this->isDiffChangeAllowed());
             $result[] = $diffdata;
         }
@@ -320,17 +356,24 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      */
     public function getForWebserviceExport($object)
     {
-
         $key = $this->getName();
         $getter = "get" . ucfirst($key);
         $data = $object->$getter();
         if ($data) {
             $result = array();
             foreach ($data->arr as $item) {
+                $keyConfig = Object_KeyValue_KeyConfig::getById($item["key"]);
+                $keyName = $keyConfig->getName();
                 $resultItem = array(
-                    "key" => $item["key"],
+                    "id" => $item["key"],
+                    "name" => $keyName,
                     "value" => $item["value"]
                 );
+
+                if ($keyConfig->getType() == "translated") {
+                    $resultItem["translated"] = $item["translated"];
+                }
+
                 $result[] = $resultItem;
             }
             return $result;
@@ -342,22 +385,41 @@ class Object_Class_Data_KeyValue extends Object_Class_Data {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null)
     {
         if ($value) {
             $pairs = array();
-            foreach ($value as $property) {
-                $property = (array) $property;
 
-                if (key_exists("key", $property)) {
+
+            foreach ($value as $property) {
+
+                if (key_exists("id", $property)) {
+                    $property = (array) $property;
+                    $id = $property["id"];
+                    $property["key"] = $id;
+                    unset($property["id"]);
+
+                    $key = $property["key"];
+                    if ($idMapper != null) {
+                        $newKey = $idMapper->getMappedId("kvkey", $key);
+                        if (!$newKey) {
+                            if ($idMapper->ignoreMappingFailures()) {
+                                $idMapper->recordMappingFailure($relatedObject->getId(), "kvkey", $key);
+                                continue;
+                            } else {
+                                throw new Exception("Key " . $key . " could not be mapped");
+                            }
+                        }
+                        $property["key"] = $newKey;
+                    }
                     $pairs[] = $property;
                 }
             }
 
             $keyValueData = new Object_Data_KeyValue();
             $keyValueData->setProperties($pairs);
-            $keyValueData->setClass($object->getClass());
-            $keyValueData->setObjectId($object->getId());
+            $keyValueData->setClass($relatedObject->getClass());
+            $keyValueData->setObjectId($relatedObject->getId());
             return ($keyValueData);
         }
     }

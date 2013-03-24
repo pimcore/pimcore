@@ -657,4 +657,236 @@ class Pimcore_API_Plugin_Broker {
     }
 
 
+    /**
+     *
+     * Calls preAddKeyValueKeyConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function preAddKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
+
+        foreach ($this->_systemModules as $module) {
+            $module->preAddKeyValueKeyConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preAddKeyValueKeyConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddKeyValueKeyConfig");
+            }
+        }
+
+    }
+
+    /**
+     *
+     * Calls postAddKeyValueKeyConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function postAddKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
+
+        foreach ($this->_systemModules as $module) {
+            $module->postAddKeyValueKeyConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postAddKeyValueKeyConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postAddKeyValueKeyConfig");
+            }
+        }
+
+    }
+
+    /**
+     * Calls preDeleteKeyValueKeyConfig functions of all registered plugins and system modules
+     *
+     * @param preDeleteKeyValueKeyConfig $config
+     */
+    public function preDeleteKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
+        foreach ($this->_systemModules as $module) {
+            $module->preDeleteKeyValueKeyConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preDeleteKeyValueKeyConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDeleteKeyValueKeyConfig");
+            }
+        }
+    }
+
+
+    /**
+     * Calls postDeleteKeyValueKeyConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_KeyConfig $asset
+     */
+    public function postDeleteKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
+        foreach ($this->_systemModules as $module) {
+            $module->postDeleteKeyValueKeyConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postDeleteKeyValueKeyConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteKeyValueKeyConfig");
+            }
+        }
+    }
+
+    /**
+     * Calls preUpdateKeyValueKeyConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_KeyConfig $asset
+     */
+    public function preUpdateKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
+        foreach ($this->_systemModules as $module) {
+            $module->preUpdateKeyValueKeyConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preUpdateKeyValueKeyConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preUpdateKeyValueKeyConfig");
+            }
+        }
+    }
+
+    /**
+     * Calls postUpdateKeyValueKeyConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_KeyConfig $config
+     */
+    public function postUpdateKeyValueKeyConfig(Object_KeyValue_KeyConfig $config) {
+        foreach ($this->_systemModules as $module) {
+            $module->postUpdateKeyValueKeyConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postUpdateKeyValueKeyConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postUpdateKeyValueKeyConfig");
+            }
+        }
+    }
+
+
+    /**
+     *
+     * Calls preAddKeyValueGroupConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function preAddKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
+
+        foreach ($this->_systemModules as $module) {
+            $module->preAddKeyValueGroupConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preAddKeyValueGroupConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preAddKeyValueGroupConfig");
+            }
+        }
+
+    }
+
+    /**
+     *
+     * Calls postAddKeyValueGroupConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function postAddKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
+
+        foreach ($this->_systemModules as $module) {
+            $module->postAddKeyValueGroupConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postAddKeyValueGroupConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postAddKeyValueGroupConfig");
+            }
+        }
+
+    }
+
+    /**
+     * Calls preDeleteKeyValueGroupConfig functions of all registered plugins and system modules
+     *
+     * @param preDeleteKeyValueGroupConfig $config
+     */
+    public function preDeleteKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
+        foreach ($this->_systemModules as $module) {
+            $module->preDeleteKeyValueGroupConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preDeleteKeyValueGroupConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preDeleteKeyValueGroupConfig");
+            }
+        }
+    }
+
+
+    /**
+     * Calls postDeleteKeyValueGroupConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_GroupConfig $asset
+     */
+    public function postDeleteKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
+        foreach ($this->_systemModules as $module) {
+            $module->postDeleteKeyValueGroupConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postDeleteKeyValueGroupConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postDeleteKeyValueGroupConfig");
+            }
+        }
+    }
+
+    /**
+     * Calls preUpdateKeyValueGroupConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_GroupConfig $asset
+     */
+    public function preUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
+        foreach ($this->_systemModules as $module) {
+            $module->preUpdateKeyValueGroupConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->preUpdateKeyValueGroupConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in preUpdateKeyValueGroupConfig");
+            }
+        }
+    }
+
+    /**
+     * Calls postUpdateKeyValueGroupConfig functions of all registered plugins and system modules
+     *
+     * @param Object_KeyValue_GroupConfig $config
+     */
+    public function postUpdateKeyValueGroupConfig(Object_KeyValue_GroupConfig $config) {
+        foreach ($this->_systemModules as $module) {
+            $module->postUpdateKeyValueGroupConfig($config);
+        }
+        foreach ($this->_plugins as $plugin) {
+            try {
+                $plugin->postUpdateKeyValueGroupConfig($config);
+            } catch (Exception $e) {
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception in postUpdateKeyValueGroupConfig");
+            }
+        }
+    }
+
+
 }

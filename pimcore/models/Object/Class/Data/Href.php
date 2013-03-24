@@ -484,17 +484,33 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value) {
+    public function getFromWebserviceImport ($value, $relatedObject = null, $idMapper = null) {
         if(empty($value)){
             return null;        
         } else  {
             $value = (array) $value;
             if(key_exists("id",$value) and key_exists("type",$value)){
-                $el =  $this->getDataFromEditmode($value);
-                if(!empty($value['id']) and !$el instanceof Element_Interface){
-                    throw new Exception("cannot get values from web service import - invalid href relation");
+                $type = $value["type"];
+                $id = $value["id"];
+
+                if ($idMapper) {
+                    $id = $idMapper->getMappedId($type, $id);
                 }
-                return $el;
+
+                if ($id) {
+                    $el = Element_Service::getElementById($type, $id);
+                }
+
+                if($el instanceof Element_Interface){
+                    return $el;
+                } else {
+                    if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                        $idMapper->recordMappingFailure($relatedObject->getId(), $type,  $value["id"]);
+                    } else {
+                        throw new Exception("cannot get values from web service import - invalid href relation");
+                    }
+                }
+
             } else {
                 throw new Exception("cannot get values from web service import - invalid data");
             }

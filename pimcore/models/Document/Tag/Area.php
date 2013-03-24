@@ -276,7 +276,7 @@ class Document_Tag_Area extends Document_Tag {
      * @param  Webservice_Data_Document_Element $data
      * @return void
      */
-    public function getFromWebserviceImport($wsElement){
+    public function getFromWebserviceImport($wsElement, $idMapper = null){
         throw new Exception("It's not possible to set areas via the webservice");
     }
 

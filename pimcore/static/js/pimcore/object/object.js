@@ -334,6 +334,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 scale: "medium"
             });
 
+            buttons.push("-");
+            buttons.push({
+                xtype: 'tbtext',
+                text: ts(this.data.general.o_className),
+                scale: "medium"
+            });
 
             // version notification
             this.newerVersionNotification = new Ext.Toolbar.TextItem({

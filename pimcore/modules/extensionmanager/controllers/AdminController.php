@@ -18,13 +18,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
     public function init () {
         parent::init();
 
-        if (!$this->getUser()->isAllowed("plugins")) {
-            if ($this->getUser() != null) {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to install plugin, but has no permission to do so.");
-            } else {
-                Logger::err("attempt to install plugin, but no user in session.");
-            }
-        }
+        $this->checkPermission("plugins");
     }
 
     public function getExtensionsAction () {
@@ -96,12 +90,21 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
         $type = $this->getParam("type");
         $id = $this->getParam("id");
         $method = $this->getParam("method");
+        $reload = false;
 
         if($type && $id) {
             Pimcore_ExtensionManager::$method($type, $id);
         }
 
-        $this->_helper->json(array("success" => true));
+        if($type == "plugin") {
+            $config = Pimcore_ExtensionManager::getPluginConfig($id);
+            $className = $config["plugin"]["pluginClassName"];
+            if(class_exists($className)) {
+                $reload = $className::needsReloadAfterInstall();
+            }
+        }
+
+        $this->_helper->json(array("success" => true, "reload" => $reload));
     }
 
 
@@ -152,6 +155,7 @@ class Extensionmanager_AdminController extends Pimcore_Controller_Action_Admin {
 
                 $this->_helper->json(array(
                     "message" => $message,
+                    "reload" => $className::needsReloadAfterInstall(),
                     "pluginJsClassName" => $className::getJsClassName(),
                     "status" => array(
                         "installed" => $className::isInstalled()

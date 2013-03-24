@@ -14,7 +14,18 @@
  */
  
 class Admin_RecyclebinController extends Pimcore_Controller_Action_Admin {
-    
+
+    public function init() {
+
+        parent::init();
+
+        // check permissions
+        $notRestrictedActions = array("add");
+        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
+            $this->checkPermission("recyclebin");
+        }
+    }
+
     public function listAction () {
         
         if($this->getParam("xaction") == "destroy") {

@@ -206,6 +206,10 @@ pimcore.document.tree = Class.create({
             return false;
         }
 
+        if(element.attributes.reference.isDisallowedKey(newParent.id, element.text)) {
+            return false;
+        }
+
         // check permissions
         if (element.attributes.permissions.settings) {
             tree.loadMask.show();
@@ -366,7 +370,8 @@ pimcore.document.tree = Class.create({
                 text: t("paste_cut_element"),
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
-                    this.attributes.reference.pasteCutDocument(this.attributes.reference.cutDocument, this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                    this.attributes.reference.pasteCutDocument(this.attributes.reference.cutDocument,
+                                this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
                     this.attributes.reference.cutParentNode = null;
                     this.attributes.reference.cutDocument = null;
                 }.bind(this)
@@ -464,13 +469,15 @@ pimcore.document.tree = Class.create({
                 menu.add(new Ext.menu.Item({
                     text: t('unpublish'),
                     iconCls: "pimcore_icon_tree_unpublish",
-                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type, this.attributes.id, 'unpublish')
+                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type,
+                                                                                this.attributes.id, 'unpublish')
                 }));
             } else {
                 menu.add(new Ext.menu.Item({
                     text: t('publish'),
                     iconCls: "pimcore_icon_tree_publish",
-                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type, this.attributes.id, 'publish')
+                    handler: this.attributes.reference.publishDocument.bind(this, this.attributes.type,
+                                                                                this.attributes.id, 'publish')
                 }));
             }
         }
@@ -862,6 +869,10 @@ pimcore.document.tree = Class.create({
                 return;
             }
 
+            if(this.attributes.reference.isDisallowedKey(this.id, value)) {
+                return;
+            }
+
             Ext.Ajax.request({
                 url: "/admin/document/add/",
                 params: {
@@ -878,7 +889,7 @@ pimcore.document.tree = Class.create({
 
     addDocumentComplete: function (response) {
         try {
-            var response = Ext.decode(response.responseText);
+            response = Ext.decode(response.responseText);
             if (response && response.success) {
                 this.leaf = false;
                 this.expand();
@@ -906,6 +917,10 @@ pimcore.document.tree = Class.create({
 
             // check for ident filename in current level
             if(this.attributes.reference.isExistingKeyInLevel(this.parentNode, value, this)) {
+                return;
+            }
+
+            if(this.attributes.reference.isDisallowedKey(this.parentNode.id, value)) {
                 return;
             }
 
@@ -954,6 +969,19 @@ pimcore.document.tree = Class.create({
             if (parentChilds[i].text == key && node != parentChilds[i]) {
                 Ext.MessageBox.alert(t('edit_key'),
                                             t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+                return true;
+            }
+        }
+        return false;
+    },
+
+    isDisallowedKey: function (parentNodeId, key) {
+
+        if(parentNodeId === 1) {
+            var disallowedKeys = ["admin","install","webservice","plugin"];
+            if(in_arrayi(key, disallowedKeys)) {
+                Ext.MessageBox.alert(t('name_is_not_allowed'),
+                    t('name_is_not_allowed'));
                 return true;
             }
         }

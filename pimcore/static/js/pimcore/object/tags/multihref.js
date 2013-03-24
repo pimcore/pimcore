@@ -111,8 +111,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         }
 
         this.component = new Ext.grid.GridPanel({
-            plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: false
@@ -122,6 +122,40 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     {id: "path", header: t("path"), dataIndex: 'path', width: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {header: t("subtype"), dataIndex: 'subtype', width: 100},
+                    {
+                        xtype:'actioncolumn',
+                        width:30,
+                        items:[
+                            {
+                                tooltip:t('up'),
+                                icon:"/pimcore/static/img/icon/arrow_up.png",
+                                handler:function (grid, rowIndex) {
+                                    if (rowIndex > 0) {
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        grid.getStore().removeAt(rowIndex);
+                                        grid.getStore().insert(rowIndex - 1, [rec]);
+                                    }
+                                }.bind(this)
+                            }
+                        ]
+                    },
+                    {
+                        xtype:'actioncolumn',
+                        width:30,
+                        items:[
+                            {
+                                tooltip:t('down'),
+                                icon:"/pimcore/static/img/icon/arrow_down.png",
+                                handler:function (grid, rowIndex) {
+                                    if (rowIndex < (grid.getStore().getCount() - 1)) {
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        grid.getStore().removeAt(rowIndex);
+                                        grid.getStore().insert(rowIndex + 1, [rec]);
+                                    }
+                                }.bind(this)
+                            }
+                        ]
+                    },
                     {
                         xtype: 'actioncolumn',
                         width: 30,
@@ -490,6 +524,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
         var type = data.node.attributes.elementType;
         var isAllowed = false;
+        var subType;
+
         if (type == "object" && this.fieldConfig.objectsAllowed) {
 
             var classname = data.node.attributes.className;
@@ -508,8 +544,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
 
         } else if (type == "asset" && this.fieldConfig.assetsAllowed) {
-            var subType = data.node.attributes.type;
-            var isAllowed = false;
+            subType = data.node.attributes.type;
+            isAllowed = false;
             if (this.fieldConfig.assetTypes != null && this.fieldConfig.assetTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.assetTypes.length; i++) {
                     if (this.fieldConfig.assetTypes[i].assetTypes == subType) {
@@ -523,8 +559,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             }
 
         } else if (type == "document" && this.fieldConfig.documentsAllowed) {
-            var subType = data.node.attributes.type;
-            var isAllowed = false;
+            subType = data.node.attributes.type;
+            isAllowed = false;
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
                     if (this.fieldConfig.documentTypes[i].documentTypes == subType) {

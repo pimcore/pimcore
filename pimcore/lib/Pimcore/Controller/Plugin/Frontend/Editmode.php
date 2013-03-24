@@ -97,12 +97,17 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
                 foreach ($pluginConfigs as $p) {
 
                     $pluginJsPaths = array();
-                    if (is_array($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
-                        $pluginJsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                    if(array_key_exists("pluginDocumentEditmodeJsPaths", $p['plugin'])
+                    && is_array($p['plugin']['pluginDocumentEditmodeJsPaths'])
+                    && isset($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
+                        if (is_array($p['plugin']['pluginDocumentEditmodeJsPaths']['path'])) {
+                            $pluginJsPaths = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                        }
+                        else if ($p['plugin']['pluginDocumentEditmodeJsPaths']['path'] != null) {
+                            $pluginJsPaths[] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
+                        }
                     }
-                    else if ($p['plugin']['pluginDocumentEditmodeJsPaths']['path'] != null) {
-                        $pluginJsPaths[] = $p['plugin']['pluginDocumentEditmodeJsPaths']['path'];
-                    }
+
                     //manipulate path for frontend
                     if (is_array($pluginJsPaths) and count($pluginJsPaths) > 0) {
                         for ($i = 0; $i < count($pluginJsPaths); $i++) {
@@ -114,11 +119,15 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
 
                     $pluginCssPaths = array();
-                    if (is_array($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
-                        $pluginCssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
-                    }
-                    else if ($p['plugin']['pluginDocumentEditmodeCssPaths']['path'] != null) {
-                        $pluginCssPaths[] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                    if(array_key_exists("pluginDocumentEditmodeCssPaths", $p['plugin'])
+                    && is_array($p['plugin']['pluginDocumentEditmodeCssPaths'])
+                    && isset($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
+                        if (is_array($p['plugin']['pluginDocumentEditmodeCssPaths']['path'])) {
+                            $pluginCssPaths = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                        }
+                        else if ($p['plugin']['pluginDocumentEditmodeCssPaths']['path'] != null) {
+                            $pluginCssPaths[] = $p['plugin']['pluginDocumentEditmodeCssPaths']['path'];
+                        }
                     }
                     //manipulate path for frontend
                     if (is_array($pluginCssPaths) and count($pluginCssPaths) > 0) {
@@ -195,6 +204,14 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
             $this->getResponse()->setBody($body);
         }
 
+        if ($this->controller->editmode
+            && strpos($body, "<head") === false
+            && !$request->getParam("blockAutoHtml")
+        ) {
+            // add error message if no head or body is in the response
+            $this->getResponse()->setBody('<span style="font-size:30px; font-weight:bold; color:red;">You have to define a &lt;head&gt; element in your view/layout!</span><br /><br />' . $body);
+        }
+
         // add scripts in html header for pages in editmode
         if ($this->controller->editmode && Document_Service::isValidType($this->controller->document->getType()) ) { //ckogler
             include_once("simple_html_dom.php");
@@ -214,6 +231,9 @@ class Pimcore_Controller_Plugin_Frontend_Editmode extends Zend_Controller_Plugin
 
                     $this->getResponse()->setBody($body);
                 }
+
+                $html->clear();
+                unset($html);
             }
         }
 

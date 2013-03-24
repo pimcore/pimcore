@@ -81,11 +81,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         // DEPRECIATED loadingpanel not active
         return;
-
-        if (this.loadingPanel) {
-            this.tabPanel.remove(this.loadingPanel);
-        }
-        this.loadingPanel = null;
+// commented this out, otherwise JSLint would complain
+//        if (this.loadingPanel) {
+//            this.tabPanel.remove(this.loadingPanel);
+//        }
+//        this.loadingPanel = null;
     },
 
     checkLoadingStatus: function () {
@@ -239,6 +239,24 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
                 }.bind(this)
             });
+
+            // only for videos and images
+            if (this.isAllowed("publish") && in_array(this.data.type,["image","video"])) {
+                buttons.push({
+                    text: t("clear_thumbnails"),
+                    iconCls: "pimcore_icon_menu_clear_thumbnails",
+                    scale: "medium",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: "/admin/asset/clear-thumbnail",
+                            method: "get",
+                            params: {
+                                id: this.data.id
+                            }
+                        })
+                    }.bind(this)
+                });
+            }
 
             buttons.push("-");
             buttons.push({

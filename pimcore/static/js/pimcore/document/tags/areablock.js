@@ -169,7 +169,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                             proxyEl = v.getEl().dom;
 
                             if (sourceEl) {
-                                d = proxyEl.cloneNode(true);
+                                var d = proxyEl.cloneNode(true);
                                 d.id = Ext.id();
 
                                 return v.dragData = {
@@ -246,6 +246,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
             this.addDropZoneToElement(c);
         }
+
+        // update body height on drag & drop (dnd)
+        // set the body height again because adding the drop zones will usually change the height of the whole body
+        pimcore.edithelpers.setBodyHeight();
     },
 
     addDropZoneToElement: function (el) {

@@ -478,6 +478,10 @@
     background: url(/pimcore/static/img/icon/chart_organisation.png) no-repeat !important;
 }
 
+.pimcore_icon_data_group_crm {
+    background: url(/pimcore/static/img/icon/group_link.png) no-repeat !important;
+}
+
 .pimcore_icon_password {
 	background: url(/pimcore/static/img/icon/textfield_key.png) no-repeat !important;
 }
@@ -574,6 +578,18 @@
 	background: url(/pimcore/static/img/icon/textfield.png) no-repeat !important;
 }
 
+.pimcore_icon_firstname, .pimcore_icon_lastname {
+	background: url(/pimcore/static/img/icon/textfield_user.png) no-repeat !important;
+}
+
+.pimcore_icon_newsletterActive {
+	background: url(/pimcore/static/img/icon/email_go.png) no-repeat !important;
+}
+
+.pimcore_icon_newsletterConfirmed {
+	background: url(/pimcore/static/img/icon/email_tick.png) no-repeat !important;
+}
+
 .pimcore_icon_textarea {
 	background: url(/pimcore/static/img/icon/text_align_left.png) no-repeat !important;
 }
@@ -600,6 +616,10 @@
 
 .pimcore_icon_select {
 	background: url(/pimcore/static/img/icon/select.png) no-repeat !important;
+}
+
+.pimcore_icon_gender {
+	background: url(/pimcore/static/img/icon/select_user.png) no-repeat !important;
 }
 
 .pimcore_icon_date {
@@ -1250,3 +1270,22 @@
     background: url(/pimcore/static/img/icon/group.png) left no-repeat !important;
 }
 
+.pimcore_icon_newsletter {
+    background: url(/pimcore/static/img/icon/email_transfer.png) left no-repeat !important;
+}
+
+.pimcore_icon_send {
+    background: url(/pimcore/static/img/icon/email_start.png) left no-repeat !important;
+}
+
+.pimcore_icon_send_test {
+    background: url(/pimcore/static/img/icon/email_star.png) left no-repeat !important;
+}
+
+.pimcore_icon_menu_clear_thumbnails {
+	background: url(/pimcore/static/img/icon/lightning.png) 8px center no-repeat !important;
+}
+
+.pimcore_icon_mic {
+    background: url(/pimcore/static/img/icon/user_comment.png) left center no-repeat !important;
+}

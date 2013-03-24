@@ -117,7 +117,20 @@ class Tool_Setup_Resource extends Pimcore_Model_Resource_Abstract {
             array("key" => "translations"),
             array("key" => "redirects"),
             array("key" => "glossary" ),
-            array("key" => "reports")
+            array("key" => "reports"),
+            array("key" => "document_style_editor"),
+            array("key" => "recyclebin"),
+            array("key" => "seo_document_editor"),
+            array("key" => "robots.txt"),
+            array("key" => "http_errors"),
+            array("key" => "tag_snippet_management"),
+            array("key" => "qr_codes"),
+            array("key" => "targeting"),
+            array("key" => "notes_events"),
+            array("key" => "backup"),
+            array("key" => "bounce_mail_inbox"),
+            array("key" => "website_settings"),
+            array("key" => "newsletter"),
         );
         foreach ($userPermissions as $up) {
             $this->db->insert("users_permission_definitions", $up);

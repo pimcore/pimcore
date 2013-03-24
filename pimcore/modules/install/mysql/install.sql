@@ -21,7 +21,7 @@ CREATE TABLE `assets` (
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
   `id` varchar(165) NOT NULL DEFAULT '',
-  `tag` varchar(165) NULL DEFAULT NULL,
+  `tag` varchar(165) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`,`tag`),
   INDEX `id` (`id`),
   INDEX `tag` (`tag`)
@@ -281,7 +281,7 @@ CREATE TABLE `http_error_log` (
 DROP TABLE IF EXISTS `keyvalue_groups`;
 CREATE TABLE `keyvalue_groups` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL ,
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
     `description` VARCHAR(255),
     PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8;
@@ -289,7 +289,7 @@ CREATE TABLE `keyvalue_groups` (
 DROP TABLE IF EXISTS `keyvalue_keys`;
 CREATE TABLE `keyvalue_keys` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL ,
+  `name` VARCHAR(255) NOT NULL DEFAULT '',
   `description` TEXT,
   `type` enum('bool','number','select','text') DEFAULT NULL,
   `unit` VARCHAR(255),
@@ -408,6 +408,7 @@ CREATE TABLE `redirects` (
   `source` varchar(255) DEFAULT NULL,
   `sourceEntireUrl` tinyint(1) DEFAULT NULL,
   `sourceSite` int(11) DEFAULT NULL,
+  `passThroughParameters` tinyint(1) DEFAULT NULL,
   `target` varchar(255) DEFAULT NULL,
   `targetSite` int(11) DEFAULT NULL,
   `statusCode` varchar(3) DEFAULT NULL,

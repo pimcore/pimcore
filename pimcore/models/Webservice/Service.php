@@ -21,16 +21,11 @@ class Webservice_Service
 
     public function getUser()
     {
-        try {
-            $user = Zend_Registry::get("pimcore_user");
-            if (!$user instanceof User) {
-                Logger::critical("Webservice instantiated, but no user present");
-            }
+        if($user = Pimcore_Tool_Admin::getCurrentUser()) {
             return $user;
-        } catch (Exception $e) {
-            Logger::error($e);
-            throw $e;
         }
+
+        throw new \Exception("Webservice instantiated, but no user present");
     }
 
 
@@ -56,9 +51,9 @@ class Webservice_Service
     }
 
     /**
- * @param int $id
- * @return Webservice_Data_Document_Link_Out
- */
+     * @param int $id
+     * @return Webservice_Data_Document_Link_Out
+     */
     public function getDocumentLinkById($id)
     {
         try {
@@ -1024,8 +1019,9 @@ class Webservice_Service
         try {
             $class = Object_Class::getById($id);
             if ($class instanceof Object_Class) {
-                $apiFolder = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
-                return $apiFolder;
+                $apiClass = Webservice_Data_Mapper::map($class, "Webservice_Data_Class_Out", "out");
+                unset($apiClass->fieldDefinitions);
+                return $apiClass;
             }
 
             throw new Exception("Class with given ID (" . $id . ") does not exist.");

@@ -15,7 +15,16 @@
 
 class Webservice_SoapController extends Pimcore_Controller_Action_Webservice {
 
- 
+
+    public function init() {
+        parent::init();
+
+        $user = Pimcore_Tool_Admin::getCurrentUser();
+        if(!$user->isAdmin()) {
+            throw new \Exception("only admin users can access the SOAP API");
+        }
+    }
+
     public function endpointAction() {
 
         // disable wsdl cache

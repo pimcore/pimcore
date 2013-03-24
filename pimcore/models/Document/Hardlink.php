@@ -200,7 +200,4 @@ class Document_Hardlink extends Document
     public function hasChilds() {
         return count($this->getChilds()) > 0;
     }
-
-
-
 }

@@ -332,6 +332,25 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     }
 
     /**
+     * @param array $config
+     * @return total count
+     */
+    public static function getTotalCount($config = array()) {
+
+        if (is_array($config)) {
+            $listClass = "Asset_List";
+            $listClass = Pimcore_Tool::getModelClassMapping($listClass);
+            $list = new $listClass();
+
+            $list->setValues($config);
+            $count = $list->getTotalCount();
+
+            return $count;
+        }
+    }
+
+
+    /**
      * returns the asset type of a filename and mimetype
      * @param $mimeType
      * @param $filename
@@ -459,6 +478,11 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public function correctPath() {
         // set path
         if ($this->getId() != 1) { // not for the root node
+
+            if($this->getParentId() == $this->getId()) {
+                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+            }
+
             $parent = Asset::getById($this->getParentId());
             if($parent) {
                 $this->setPath(str_replace("//", "/", $parent->getFullPath() . "/"));
@@ -538,7 +562,8 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
             $this->getData(); // load data from filesystem to put it into the version
 
             // only create a new version if there is at least 1 allowed
-            if(Pimcore_Config::getSystemConfig()->assets->versions) {
+            if(Pimcore_Config::getSystemConfig()->assets->versions->steps
+                || Pimcore_Config::getSystemConfig()->assets->versions->days) {
                 $version = new Version();
                 $version->setCid($this->getId());
                 $version->setCtype("asset");
@@ -813,7 +838,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return string
      */
     public function getFilename() {
-        return $this->filename;
+        return (string) $this->filename;
     }
 
     /**
@@ -881,7 +906,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         if ($this->filename != null and $filename != null and $filename != $this->filename) {
             $this->_oldPath = $this->getResource()->getCurrentFullPath();
         }
-        $this->filename = $filename;
+        $this->filename = (string) $filename;
         return $this;
     }
 
@@ -1128,6 +1153,10 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public function setCustomSettings($customSettings) {
         if (is_string($customSettings)) {
             $customSettings = Pimcore_Tool_Serialize::unserialize($customSettings);
+        }
+
+        if ($customSettings instanceof stdClass) {
+            $customSettings = (array) $customSettings;
         }
 
         $this->customSettings = $customSettings;

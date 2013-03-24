@@ -262,7 +262,8 @@ class Object_Concrete extends Object_Abstract {
         $version = null;
 
         // only create a new version if there is at least 1 allowed
-        if(Pimcore_Config::getSystemConfig()->objects->versions) {
+        if(Pimcore_Config::getSystemConfig()->objects->versions->steps
+            || Pimcore_Config::getSystemConfig()->objects->versions->days) {
             // create version
             $version = new Version();
             $version->setCid($this->getO_Id());
@@ -606,7 +607,7 @@ class Object_Concrete extends Object_Abstract {
         if(property_exists($tmpObj,$propertyName)) {
 
             // check if the given fieldtype is valid for this shorthand
-            $allowedDataTypes = array("input","numeric","checkbox","country","date","datetime","image","language","multihref","multiselect","select","slider","time","user");
+            $allowedDataTypes = array("input","numeric","checkbox","country","date","datetime","image","language","multihref","multiselect","select","slider","time","user","email","firstname","lastname");
 
             $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
             if(!in_array($field->getFieldType(), $allowedDataTypes)) {

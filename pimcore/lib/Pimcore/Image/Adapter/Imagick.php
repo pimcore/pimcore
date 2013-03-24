@@ -49,6 +49,12 @@ class Pimcore_Image_Adapter_Imagick extends Pimcore_Image_Adapter {
 
         try {
             $this->resource = new Imagick();
+
+            // transparency for EPS files
+            if(method_exists($this->resource, "setcolorspace")) {
+                $this->resource->setcolorspace(Imagick::COLORSPACE_RGB);
+            }
+
             if(!$this->resource->readImage($imagePath."[0]")) {
                 return false;
             }

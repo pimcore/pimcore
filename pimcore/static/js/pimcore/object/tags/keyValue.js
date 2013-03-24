@@ -24,9 +24,12 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var fields = [];
 
         fields.push("id");
-        fields.push("description");
+        fields.push("groupName");
         fields.push("key");
+        fields.push("keyName");
+        fields.push("keyDesc");
         fields.push("value");
+        fields.push("translated");
         fields.push("type");
         fields.push("possiblevalues");
         fields.push("inherited");
@@ -50,12 +53,16 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                         // do nothing
                     } else {
                         record.set("inherited", false);
+                        if (record.data.type == "translated") {
+                            // whoooo, we have to go to the server and ask for a new translation
+                            this.translate(record);
+                        }
                     }
                 }.bind(this)
             },
             fields: fields,
-            sortInfo : { field: "description", direction: "ASC" }
-    });
+            sortInfo : { field: "key", direction: "ASC" }
+        });
 
         for (var i = 0; i < data.length; i++) {
             var pair = data[i];
@@ -68,6 +75,34 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             this.dataChanged = true;
         }.bind(this)
         );
+    },
+
+    translate: function(record) {
+        Ext.Ajax.request({
+            url: "/admin/key-value/translate",
+            params: {
+                "recordId": record.id,
+                "keyId" : record.data.key,
+                "objectId" : record.data.o_id,
+                "text": record.data.value
+            },
+            success: this.translationReceived.bind(this),
+            failure: function() {
+                alert("translation failed");
+            }.bind(this)
+        });
+
+    },
+
+    translationReceived: function (response) {
+        var translation = Ext.decode(response.responseText);
+        if (translation.success) {
+            var recordId = translation.recordId;
+            var record = this.store.getById(recordId);
+            if (record.data.value == translation.text) {
+                record.set("translated", translation.translated);
+            }
+        }
     },
 
     getGridColumnEditor: function(field) {
@@ -85,7 +120,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             return null;
         }
 
-        if (field.layout.gridType == "text") {
+        if (field.layout.gridType == "text" || field.layout.gridType == "translated") {
             return new Ext.form.TextField(editorConfig);
             // }
         } else if (field.layout.gridType == "select") {
@@ -110,8 +145,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             return new Ext.form.NumberField();
         } else if (field.layout.gridType == "bool") {
             return false;
-//             return new Ext.form.Checkbox();
-
         }
 
         return  null;
@@ -128,9 +161,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var autoHeight = true;
 
         var gridWidth = 0;
-        var gridHeight = 200;
-        var keyWidth = 200;
+        var gridHeight = 150;
+        var keyWidth = 150;
+        var descWidth = 300;
         var groupWidth = 200;
+        var groupDescWidth = 200;
         var valueWidth = 600;
         var maxHeight = 190;
 
@@ -146,10 +181,20 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             groupWidth = this.fieldConfig.groupWidth;
         }
 
+        if (this.fieldConfig.groupDescWidth) {
+            groupDescWidth = this.fieldConfig.groupDescWidth;
+        }
+
+
 
         if (this.fieldConfig.valueWidth) {
             valueWidth = this.fieldConfig.valueWidth;
         }
+
+        if (this.fieldConfig.descWidth) {
+            descWidth = this.fieldConfig.descWidth;
+        }
+
 
         var readOnly = false;
         // css class for editorGridPanel
@@ -158,7 +203,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var columns = [];
 
         // var visibleFields = ['key','description', 'value','type','possiblevalues'];
-        var visibleFields = ['group', 'description', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
+        var visibleFields = ['group', 'groupDesc', 'keyName', 'keyDesc', 'value' /*, 'inherited', 'source' ,'altSource', 'altValue' */];
 
 
         for(var i = 0; i < visibleFields.length; i++) {
@@ -180,6 +225,10 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
             if (col == "group") {
                 colWidth = groupWidth;
+            }
+
+            if (col == "groupDesc") {
+                colWidth = groupDescWidth;
             }
 
             if (col == 'value') {
@@ -255,16 +304,16 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
 
         var configuredFilters = [
             {
-            type: "string",
-            dataIndex: "group"
+                type: "string",
+                dataIndex: "group"
             },
             {
-            type: "string",
-            dataIndex: "description"
+                type: "string",
+                dataIndex: "description"
             },
             {
-            type: "string",
-            dataIndex: "value"
+                type: "string",
+                dataIndex: "value"
             }
         ];
 
@@ -371,7 +420,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 metaData.css += " grid_value_inherited";
             }
         } else {
-            if (type == "bool") {
+            if (type == "translated") {
+                if (data.translated) {
+                    return data.translated;
+                }
+            } else if (type == "bool") {
                 metaData.css += ' x-grid3-check-col-td';
                 return String.format('<div class="x-grid3-check-col{0}" style="background-position:10px center;">&#160;</div>', value ? '-on' : '');
             } else if (type == "select") {
@@ -399,7 +452,7 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
         var type = data.type;
         var property;
 
-        if (type == "text") {
+        if (type == "text" || type =="translated") {
             property = new Ext.form.TextField();
         } else if (type == "number") {
             property = new Ext.form.NumberField();
@@ -407,7 +460,6 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
             property = new Ext.form.Checkbox();
             return false;
         } else if (type == "select") {
-            // var config = data.config;
             var values = [];
             var possiblevalues = data.possiblevalues;
 
@@ -507,13 +559,11 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                 if (addKey) {
                     var colData = {};
                     colData.key = keyDef.id;
+                    colData.keyName = keyDef.name;
                     colData.type = keyDef.type;
                     colData.possiblevalues = keyDef.possiblevalues;
-                    colData.description = keyDef.description;
+                    colData.keyDesc = keyDef.description;
                     colData.group = keyDef.groupdescription;
-                    if (!colData.description) {
-                       colData.description = "~" + keyDef.name +  "~";
-                    }
                     this.store.add(new this.store.recordType(colData));
                 }
             }
@@ -530,23 +580,35 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.css += " grid_value_inherited";
                     }
-                    metaData.css += ' x-grid3-check-col-td';
+                    metaData.css += ' x-grid3-check-col-td';g
                     return String.format('<div class="x-grid3-check-col{0}">&#160;</div>', value ? '-on' : '');
                 }.bind(this, field.key)
-            });        } else {
+            });
+        } else if (field.layout.gridType == "translated") {
+            renderer = function (key, value, metaData, record) {
+
+                if (record.data["#kv-tr"][key] !== undefined) {
+                    return record.data["#kv-tr"][key];
+                } else {
+                    return value;
+                }
+            }.bind(this, field.key);
+            return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+                editor:this.getGridColumnEditor(field)};
+        } else {
             renderer = function (key, value, metaData, record) {
                 if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.css += " grid_value_inherited";
                 }
-                return value;
 
+                return value;
             }.bind(this, field.key);
 
             return {header:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
-                                                                editor:this.getGridColumnEditor(field)};
+                editor:this.getGridColumnEditor(field)};
 
         }
- }
+    }
 
 
 });

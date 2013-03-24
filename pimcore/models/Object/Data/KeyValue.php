@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class Object_Data_KeyValue extends Pimcore_Model_Abstract {
 
@@ -107,7 +107,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
                     if ($resultKey == $keyId) {
                         $add = false;
                         if (empty($resultPair["altSource"])) {
-                             $resultPair["altSource"] = $parent->getId();
+                            $resultPair["altSource"] = $parent->getId();
                             $resultPair["altValue"] = $parentPair["value"];
                         }
 
@@ -162,12 +162,36 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         }
     }
 
-    public function setPropertyWithId($keyId, $value) {
+    /** Sets the value of the property with the given id
+     * @param $keyId the id of the key
+     * @param $value the value
+     * @param bool $fromGrid if true then the data is coming from the grid, we have to check if the value needs
+     *                  to be translated
+     * @return Object_Data_KeyValue the resulting object
+     */
+    public function setPropertyWithId($keyId, $value, $fromGrid = false) {
         // the key name is valid, now iterate over the object's pairs
         for ($i = 0; $i < count($this->arr); $i++) {
             $pair = $this->arr[$i];
             if ($pair["key"] == $keyId) {
+
+                if ($fromGrid) {
+                    $keyConfig = Object_KeyValue_KeyConfig::getById($keyId);
+                    $translatorID = $keyConfig->getTranslator();
+                    $translatorConfig = Object_KeyValue_TranslatorConfig::getById($translatorID);
+                    $className = $translatorConfig->getTranslator();
+                    if (Pimcore_Tool::classExists($className)) {
+                        $translator = new $className();
+                        $translatedValue = $translator->translate($value);
+                        if (!$translatedValue) {
+                            $translatedValue = $value;
+                        }
+                    }
+
+                }
+
                 $pair["value"] = $value;
+                $pair["translated"] = $translatedValue;
                 $this->arr[$i] = $pair;
                 return;
             }
@@ -179,6 +203,7 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         $this->arr[] = $pair;
         return $this;
     }
+
 
     public function setProperty($propName, $value) {
         $keyId =  $this->getKeyId($propName);
@@ -195,4 +220,6 @@ class Object_Data_KeyValue extends Pimcore_Model_Abstract {
         }
         return parent::__call($name, $arguments);
     }
+
+
 }

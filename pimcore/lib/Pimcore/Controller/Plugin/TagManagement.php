@@ -88,23 +88,34 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
                                 $html = str_get_html($body);
                             }
 
-                            $element = $html->find($item["element"],0);
-                            if($element) {
-                                if($item["position"] == "end") {
-                                    $element->innertext = $element->innertext . "\n\n" . $item["code"] . "\n\n";
-                                } else {
-                                    // beginning
-                                    $element->innertext = "\n\n" . $item["code"] . "\n\n" . $element->innertext;
-                                }
+                            if($html) {
+                                $element = $html->find($item["element"],0);
+                                if($element) {
+                                    if($item["position"] == "end") {
+                                        $element->innertext = $element->innertext . "\n\n" . $item["code"] . "\n\n";
+                                    } else {
+                                        // beginning
+                                        $element->innertext = "\n\n" . $item["code"] . "\n\n" . $element->innertext;
+                                    }
 
-                                // we havve to reinitialize the html object, otherwise it causes problems with nested child selectors
-                                $body = $html->save();
-                                $html = str_get_html($body);
+                                    // we havve to reinitialize the html object, otherwise it causes problems with nested child selectors
+                                    $body = $html->save();
+
+                                    $html->clear();
+                                    unset($html);
+
+                                    $html = str_get_html($body);
+                                }
                             }
                         }
                     }
                 }
             }
+        }
+
+        if($html && method_exists($html, "clear")) {
+            $html->clear();
+            unset($html);
         }
 
         $this->getResponse()->setBody($body);

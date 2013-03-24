@@ -50,8 +50,10 @@ class Pimcore {
 
         // set locale data cache, this must be after self::initLogger() since Pimcore_Model_Cache requires the logger
         // to log if there's something wrong with the cache configuration in cache.xml
-        Zend_Locale_Data::setCache(Pimcore_Model_Cache::getInstance());
-        Zend_Locale::setCache(Pimcore_Model_Cache::getInstance());
+        $cache = Pimcore_Model_Cache::getInstance();
+        Zend_Locale_Data::setCache($cache);
+        Zend_Locale::setCache($cache);
+        Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
 
         // load plugins and modules (=core plugins)
         self::initModules();
@@ -75,10 +77,10 @@ class Pimcore {
         // register general pimcore plugins for frontend
         if ($frontend) {
             $front->registerPlugin(new Pimcore_Controller_Plugin_Less(), 799);
-            $front->registerPlugin(new Pimcore_Controller_Plugin_CustomStyles(), 806);
         }
 
         if (Pimcore_Tool::useFrontendOutputFilters(new Zend_Controller_Request_Http())) {
+            $front->registerPlugin(new Pimcore_Controller_Plugin_QrCode(), 793);
             $front->registerPlugin(new Pimcore_Controller_Plugin_CommonFilesFilter(), 794);
             $front->registerPlugin(new Pimcore_Controller_Plugin_Thumbnail(), 795);
             $front->registerPlugin(new Pimcore_Controller_Plugin_WysiwygAttributes(), 796);
@@ -294,6 +296,7 @@ class Pimcore {
             // redirect php error_log to /website/var/log/php.log
             if($conf->general->custom_php_logfile) {
                 ini_set("error_log", PIMCORE_LOG_DIRECTORY . "/php.log");
+                ini_set("log_errors", "1");
             }
         }
 
@@ -713,7 +716,7 @@ class Pimcore {
     }
 
     /**
-     * foreces a garbage collection
+     * Forces a garbage collection.
      * @static
      * @return void
      */
@@ -731,7 +734,6 @@ class Pimcore {
             "Pimcore_API_Plugin_Broker",
             "pimcore_tag_block_current",
             "pimcore_tag_block_numeration",
-            "pimcore_user",
             "pimcore_config_system",
             "pimcore_admin_user",
             "pimcore_config_website",

@@ -84,6 +84,9 @@ class Pimcore_Controller_Plugin_Less extends Zend_Controller_Plugin_Abstract {
                 $body = $html->save();
                 $this->getResponse()->setBody($body);
             }
+
+            $html->clear();
+            unset($html);
         }
     }
 

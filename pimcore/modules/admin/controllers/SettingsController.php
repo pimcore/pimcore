@@ -18,48 +18,40 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function propertiesAction() {
 
         if ($this->getParam("data")) {
-            if ($this->getUser()->isAllowed("predefined_properties")) {
-                if ($this->getParam("xaction") == "destroy") {
+            $this->checkPermission("predefined_properties");
 
-                    $id = Zend_Json::decode($this->getParam("data"));
+            if ($this->getParam("xaction") == "destroy") {
 
-                    $property = Property_Predefined::getById($id);
-                    $property->delete();
+                $id = Zend_Json::decode($this->getParam("data"));
 
-                    $this->_helper->json(array("success" => true, "data" => array()));
-                }
-                else if ($this->getParam("xaction") == "update") {
+                $property = Property_Predefined::getById($id);
+                $property->delete();
 
-                    $data = Zend_Json::decode($this->getParam("data"));
-
-                    // save type
-                    $property = Property_Predefined::getById($data["id"]);
-                    $property->setValues($data);
-
-                    $property->save();
-
-                    $this->_helper->json(array("data" => $property, "success" => true));
-                }
-                else if ($this->getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->getParam("data"));
-                    unset($data["id"]);
-
-                    // save type
-                    $property = Property_Predefined::create();
-                    $property->setValues($data);
-
-                    $property->save();
-
-                    $this->_helper->json(array("data" => $property, "success" => true));
-                }
+                $this->_helper->json(array("success" => true, "data" => array()));
             }
-            else {
-                if ($this->getUser() != null) {
-                    Logger::err("user [" . $this->getUser()->getId() . "] attempted to modify properties predefined, but has no permission to do so.");
-                }
-                else {
-                    Logger::err("attempt to modify properties predefined, but no user in session.");
-                }
+            else if ($this->getParam("xaction") == "update") {
+
+                $data = Zend_Json::decode($this->getParam("data"));
+
+                // save type
+                $property = Property_Predefined::getById($data["id"]);
+                $property->setValues($data);
+
+                $property->save();
+
+                $this->_helper->json(array("data" => $property, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+                $data = Zend_Json::decode($this->getParam("data"));
+                unset($data["id"]);
+
+                // save type
+                $property = Property_Predefined::create();
+                $property->setValues($data);
+
+                $property->save();
+
+                $this->_helper->json(array("data" => $property, "success" => true));
             }
         }
         else {
@@ -93,10 +85,10 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     private function deleteThumbnailTmpFiles(Asset_Image_Thumbnail_Config $thumbnail) {
         // delete all thumbnails which are using this config
-        $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
-        foreach ($files as $file) {
-            if (preg_match("/^thumb_(.*)__" . $thumbnail->getName() . "/", $file)) {
-                unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
+        $files = glob(PIMCORE_TEMPORARY_DIRECTORY . "/thumb_*__" . $thumbnail->getName() . "*");
+        if(is_array($files)) {
+            foreach ($files as $file) {
+                unlink($file);
             }
         }
     }
@@ -112,365 +104,330 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     }
 
     public function getSystemAction() {
-        if ($this->getUser()->isAllowed("system_settings")) {
-            $values = Pimcore_Config::getSystemConfig();
 
-            if (($handle = fopen(PIMCORE_PATH . "/config/timezones.csv", "r")) !== FALSE) {
-                while (($rowData = fgetcsv($handle, 10000, ",", '"')) !== false) {
-                    $timezones[] = $rowData[0];
-                }
-                fclose($handle);
+        $this->checkPermission("system_settings");
+
+        $values = Pimcore_Config::getSystemConfig();
+
+        if (($handle = fopen(PIMCORE_PATH . "/config/timezones.csv", "r")) !== FALSE) {
+            while (($rowData = fgetcsv($handle, 10000, ",", '"')) !== false) {
+                $timezones[] = $rowData[0];
             }
+            fclose($handle);
+        }
 
-            $locales = Pimcore_Tool::getSupportedLocales();
-            $languageOptions = array();
-            foreach ($locales as $short => $translation) {
-                $languageOptions[] = array(
-                    "language" => $short,
-                    "display" => $translation . " ($short)"
-                );
-                $validLanguages[] = $short;
-            }
-
-            $valueArray = $values->toArray();
-            $valueArray['general']['validLanguage'] = explode(",", $valueArray['general']['validLanguages']);
-
-            //for "wrong" legacy values
-            if (is_array($valueArray['general']['validLanguage'])) {
-                foreach ($valueArray['general']['validLanguage'] as $existingValue) {
-                    if (!in_array($existingValue, $validLanguages)) {
-                        $languageOptions[] = array(
-                            "language" => $existingValue,
-                            "display" => $existingValue
-                        );
-                    }
-                }
-            }
-
-            //debug email addresses - add as array ckogler
-            if (!empty($valueArray['email']['debug']['emailaddresses'])) {
-                $emailAddresses = explode(",", $valueArray['email']['debug']['emailaddresses']);
-                if (is_array($emailAddresses)) {
-                    foreach ($emailAddresses as $emailAddress) {
-                        $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => $emailAddress);
-                    }
-                }
-            }else{
-                $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => '');
-            }
-
-            //cache exclude patterns - add as array
-            if (!empty($valueArray['cache']['excludePatterns'])) {
-                $patterns = explode(",", $valueArray['cache']['excludePatterns']);
-                if (is_array($patterns)) {
-                    foreach ($patterns as $pattern) {
-                        $valueArray['cache']['excludePatternsArray'][] = array("value" => $pattern);
-                    }
-                }
-            }
-
-            //remove password from values sent to frontend
-            $valueArray['database']["params"]['password'] = "##SECRET_PASS##";
-
-            //admin users as array
-            $adminUsers = array();
-            $userList = new User_List();
-            $userList->setCondition("admin = 1 and email is not null and email != ''");
-            $users = $userList->load();
-            if (is_array($users)) {
-                foreach ($users as $user) {
-                    $adminUsers[] = array("id" => $user->getId(), "username" => $user->getName());
-                }
-            }
-            $adminUsers[] = array("id" => "", "username" => "-");
-
-            $response = array(
-                "values" => $valueArray,
-                "adminUsers" => $adminUsers,
-                "config" => array(
-                    "timezones" => $timezones,
-                    "languages" => $languageOptions,
-                    "client_ip" => Pimcore_Tool::getClientIp(),
-                    "google_private_key_exists" => file_exists(Pimcore_Google_Api::getPrivateKeyPath()),
-                    "google_private_key_path" => Pimcore_Google_Api::getPrivateKeyPath()
-                )
+        $locales = Pimcore_Tool::getSupportedLocales();
+        $languageOptions = array();
+        foreach ($locales as $short => $translation) {
+            $languageOptions[] = array(
+                "language" => $short,
+                "display" => $translation . " ($short)"
             );
+            $validLanguages[] = $short;
+        }
 
-            $this->_helper->json($response);
-        } else {
-            if ($this->getUser() != null) {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to view system settings, but has no permission to do so.");
-            } else {
-                Logger::err("attempt to view system settings, but no user in session.");
+        $valueArray = $values->toArray();
+        $valueArray['general']['validLanguage'] = explode(",", $valueArray['general']['validLanguages']);
+
+        //for "wrong" legacy values
+        if (is_array($valueArray['general']['validLanguage'])) {
+            foreach ($valueArray['general']['validLanguage'] as $existingValue) {
+                if (!in_array($existingValue, $validLanguages)) {
+                    $languageOptions[] = array(
+                        "language" => $existingValue,
+                        "display" => $existingValue
+                    );
+                }
             }
         }
+
+        //debug email addresses - add as array ckogler
+        if (!empty($valueArray['email']['debug']['emailaddresses'])) {
+            $emailAddresses = explode(",", $valueArray['email']['debug']['emailaddresses']);
+            if (is_array($emailAddresses)) {
+                foreach ($emailAddresses as $emailAddress) {
+                    $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => $emailAddress);
+                }
+            }
+        }else{
+            $valueArray['email']['debug']['emaildebugaddressesArray'][] = array("value" => '');
+        }
+
+        //cache exclude patterns - add as array
+        if (!empty($valueArray['cache']['excludePatterns'])) {
+            $patterns = explode(",", $valueArray['cache']['excludePatterns']);
+            if (is_array($patterns)) {
+                foreach ($patterns as $pattern) {
+                    $valueArray['cache']['excludePatternsArray'][] = array("value" => $pattern);
+                }
+            }
+        }
+
+        //remove password from values sent to frontend
+        $valueArray['database']["params"]['password'] = "##SECRET_PASS##";
+
+        //admin users as array
+        $adminUsers = array();
+        $userList = new User_List();
+        $userList->setCondition("admin = 1 and email is not null and email != ''");
+        $users = $userList->load();
+        if (is_array($users)) {
+            foreach ($users as $user) {
+                $adminUsers[] = array("id" => $user->getId(), "username" => $user->getName());
+            }
+        }
+        $adminUsers[] = array("id" => "", "username" => "-");
+
+        $response = array(
+            "values" => $valueArray,
+            "adminUsers" => $adminUsers,
+            "config" => array(
+                "timezones" => $timezones,
+                "languages" => $languageOptions,
+                "client_ip" => Pimcore_Tool::getClientIp(),
+                "google_private_key_exists" => file_exists(Pimcore_Google_Api::getPrivateKeyPath()),
+                "google_private_key_path" => Pimcore_Google_Api::getPrivateKeyPath()
+            )
+        );
+
+        $this->_helper->json($response);
 
         $this->_helper->json(false);
     }
 
     public function setSystemAction() {
-        if ($this->getUser()->isAllowed("system_settings")) {
-            $values = Zend_Json::decode($this->getParam("data"));
 
-            // convert all special characters to their entities so the xml writer can put it into the file
-            $values = array_htmlspecialchars($values);
+        $this->checkPermission("system_settings");
 
-            $oldConfig = Pimcore_Config::getSystemConfig();
-            $oldValues = $oldConfig->toArray();
-            $smtpPassword = $values["email.smtp.auth.password"];
-            if (empty($smtpPassword)) {
-                $smtpPassword = $oldValues['email']['smtp']['auth']['password'];
-            }
+        $values = Zend_Json::decode($this->getParam("data"));
 
-            $errorPages = array();
-            foreach ($values as $key => $value) {
-                if(strpos($key, "error_pages")) {
-                    $keySteps = explode(".",$key);
-                    $errorPages[$keySteps[2]] = $value;
-                }
-            }
+        // convert all special characters to their entities so the xml writer can put it into the file
+        $values = array_htmlspecialchars($values);
 
-            $settings = array(
-                "general" => array(
-                    "timezone" => $values["general.timezone"],
-                    "php_cli" => $values["general.php_cli"],
-                    "domain" => $values["general.domain"],
-                    "redirect_to_maindomain" => $values["general.redirect_to_maindomain"],
-                    "language" => $values["general.language"],
-                    "validLanguages" => $values["general.validLanguages"],
-                    "theme" => $values["general.theme"],
-                    "loginscreenimageservice" => $values["general.loginscreenimageservice"],
-                    "loginscreencustomimage" => $values["general.loginscreencustomimage"],
-                    "debug" => $values["general.debug"],
-                    "debug_ip" => $values["general.debug_ip"],
-                    "http_auth" => array(
-                        "username" => $values["general.http_auth.username"],
-                        "password" => $values["general.http_auth.password"]
-                    ),
-                    "custom_php_logfile" => $values["general.custom_php_logfile"],
-                    "loglevel" => array(
-                        "debug" => $values["general.loglevel.debug"],
-                        "info" => $values["general.loglevel.info"],
-                        "notice" => $values["general.loglevel.notice"],
-                        "warning" => $values["general.loglevel.warning"],
-                        "error" => $values["general.loglevel.error"],
-                        "critical" => $oldValues["general"]["loglevel"]["critical"],
-                        "alert" => $oldValues["general"]["loglevel"]["alert"],
-                        "emergency" => $oldValues["general"]["loglevel"]["emergency"],
-                    ),
-                    "debug_admin_translations" => $values["general.debug_admin_translations"],
-                    "devmode" => $values["general.devmode"],
-                    "logrecipient" => $values["general.logrecipient"],
-                    "viewSuffix" => $values["general.viewSuffix"],
-                ),
-                "database" => $oldValues["database"], // db cannot be changed here
-                "documents" => array(
-                    "versions" => array(
-                        "days" => $values["documents.versions.days"],
-                        "steps" => $values["documents.versions.steps"]
-                    ),
-                    "default_controller" => $values["documents.default_controller"],
-                    "default_action" => $values["documents.default_action"],
-                    "error_pages" => $errorPages,
-                    "createredirectwhenmoved" => $values["documents.createredirectwhenmoved"],
-                    "allowtrailingslash" => $values["documents.allowtrailingslash"],
-                    "allowcapitals" => $values["documents.allowcapitals"],
-                    "generatepreview" => $values["documents.generatepreview"],
-                    "wkhtmltoimage" => $values["documents.wkhtmltoimage"],
-                    "wkhtmltopdf" => $values["documents.wkhtmltopdf"]
-                ),
-                "objects" => array(
-                    "versions" => array(
-                        "days" => $values["objects.versions.days"],
-                        "steps" => $values["objects.versions.steps"]
-                    )
-                ),
-                "assets" => array(
-                    "webdav" => array(
-                        "hostname" => $values["assets.webdav.hostname"]
-                    ),
-                    "versions" => array(
-                        "days" => $values["assets.versions.days"],
-                        "steps" => $values["assets.versions.steps"]
-                    ),
-                    "ffmpeg" => $values["assets.ffmpeg"],
-                    "qtfaststart" => $values["assets.qtfaststart"],
-                    "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
-                    "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
-                ),
-                "services" => array(
-                    "translate" => array(
-                        "apikey" => $values["services.translate.apikey"]
-                    ),
-                    "google" => array(
-                        "client_id" => $values["services.google.client_id"],
-                        "email" => $values["services.google.email"],
-                        "simpleapikey" => $values["services.google.simpleapikey"],
-                        "browserapikey" => $values["services.google.browserapikey"]
-                    )
-                ),
-                "cache" => array(
-                    "enabled" => $values["cache.enabled"],
-                    "lifetime" => $values["cache.lifetime"],
-                    "excludePatterns" => $values["cache.excludePatterns"],
-                    "excludeCookie" => $values["cache.excludeCookie"]
-                ),
-                "outputfilters" => array(
-                    "imagedatauri" => $values["outputfilters.imagedatauri"],
-                    "less" => $values["outputfilters.less"],
-                    "lesscpath" => $values["outputfilters.lesscpath"],
-                    "cssminify" => $values["outputfilters.cssminify"],
-                    "javascriptminify" => $values["outputfilters.javascriptminify"],
-                    "javascriptminifyalgorithm" => $values["outputfilters.javascriptminifyalgorithm"]
-                ),
-                "email" => array(
-                    "sender" => array(
-                        "name" => $values["email.sender.name"],
-                        "email" => $values["email.sender.email"]),
-                    "return" => array(
-                        "name" => $values["email.return.name"],
-                        "email" => $values["email.return.email"]),
-                    "method" => $values["email.method"],
-                    "smtp" => array(
-                        "host" => $values["email.smtp.host"],
-                        "port" => $values["email.smtp.port"],
-                        "ssl" => $values["email.smtp.ssl"],
-                        "name" => $values["email.smtp.name"],
-                        "auth" => array(
-                            "method" => $values["email.smtp.auth.method"],
-                            "username" => $values["email.smtp.auth.username"],
-                            "password" => $smtpPassword
-                        )
-                    ),
-                    "debug" => array(
-                        "emailaddresses" => $values["email.debug.emailAddresses"],
-                    ),
-                    "bounce" => array(
-                        "type" => $values["email.bounce.type"],
-                        "maildir" => $values["email.bounce.maildir"],
-                        "mbox" => $values["email.bounce.mbox"],
-                        "imap" => array(
-                            "host" => $values["email.bounce.imap.host"],
-                            "port" => $values["email.bounce.imap.port"],
-                            "username" => $values["email.bounce.imap.username"],
-                            "password" => $values["email.bounce.imap.password"],
-                            "ssl" => $values["email.bounce.imap.ssl"]
-                        )
-                    )
-                ),
-                "webservice" => array(
-                    "enabled" => $values["webservice.enabled"]
-                ),
-                "httpclient" => array(
-                    "adapter" => $values["httpclient.adapter"],
-                    "proxy_host" => $values["httpclient.proxy_host"],
-                    "proxy_port" => $values["httpclient.proxy_port"],
-                    "proxy_user" => $values["httpclient.proxy_user"],
-                    "proxy_pass" => $values["httpclient.proxy_pass"],
-                )
-            ); 
+        $oldConfig = Pimcore_Config::getSystemConfig();
+        $oldValues = $oldConfig->toArray();
+        $smtpPassword = $values["email.smtp.auth.password"];
+        if (empty($smtpPassword)) {
+            $smtpPassword = $oldValues['email']['smtp']['auth']['password'];
+        }
 
-            $config = new Zend_Config($settings, true);
-            $writer = new Zend_Config_Writer_Xml(array(
-                "config" => $config,
-                "filename" => PIMCORE_CONFIGURATION_SYSTEM
-            ));
-            $writer->write();
-
-            $this->_helper->json(array("success" => true));
-        } else {
-            if ($this->getUser() != null) {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to change system settings, but has no permission to do so.");
-            } else {
-                Logger::err("attempt to change system settings, but no user in session.");
+        $errorPages = array();
+        foreach ($values as $key => $value) {
+            if(strpos($key, "error_pages")) {
+                $keySteps = explode(".",$key);
+                $errorPages[$keySteps[2]] = $value;
             }
         }
-        $this->_helper->json(false);
+
+        $settings = array(
+            "general" => array(
+                "timezone" => $values["general.timezone"],
+                "php_cli" => $values["general.php_cli"],
+                "domain" => $values["general.domain"],
+                "redirect_to_maindomain" => $values["general.redirect_to_maindomain"],
+                "language" => $values["general.language"],
+                "validLanguages" => $values["general.validLanguages"],
+                "theme" => $values["general.theme"],
+                "loginscreenimageservice" => $values["general.loginscreenimageservice"],
+                "loginscreencustomimage" => $values["general.loginscreencustomimage"],
+                "debug" => $values["general.debug"],
+                "debug_ip" => $values["general.debug_ip"],
+                "http_auth" => array(
+                    "username" => $values["general.http_auth.username"],
+                    "password" => $values["general.http_auth.password"]
+                ),
+                "custom_php_logfile" => $values["general.custom_php_logfile"],
+                "loglevel" => array(
+                    "debug" => $values["general.loglevel.debug"],
+                    "info" => $values["general.loglevel.info"],
+                    "notice" => $values["general.loglevel.notice"],
+                    "warning" => $values["general.loglevel.warning"],
+                    "error" => $values["general.loglevel.error"],
+                    "critical" => $oldValues["general"]["loglevel"]["critical"],
+                    "alert" => $oldValues["general"]["loglevel"]["alert"],
+                    "emergency" => $oldValues["general"]["loglevel"]["emergency"],
+                ),
+                "debug_admin_translations" => $values["general.debug_admin_translations"],
+                "devmode" => $values["general.devmode"],
+                "logrecipient" => $values["general.logrecipient"],
+                "viewSuffix" => $values["general.viewSuffix"],
+            ),
+            "database" => $oldValues["database"], // db cannot be changed here
+            "documents" => array(
+                "versions" => array(
+                    "days" => $values["documents.versions.days"],
+                    "steps" => $values["documents.versions.steps"]
+                ),
+                "default_controller" => $values["documents.default_controller"],
+                "default_action" => $values["documents.default_action"],
+                "error_pages" => $errorPages,
+                "createredirectwhenmoved" => $values["documents.createredirectwhenmoved"],
+                "allowtrailingslash" => $values["documents.allowtrailingslash"],
+                "allowcapitals" => $values["documents.allowcapitals"],
+                "generatepreview" => $values["documents.generatepreview"],
+                "wkhtmltoimage" => $values["documents.wkhtmltoimage"],
+                "wkhtmltopdf" => $values["documents.wkhtmltopdf"]
+            ),
+            "objects" => array(
+                "versions" => array(
+                    "days" => $values["objects.versions.days"],
+                    "steps" => $values["objects.versions.steps"]
+                )
+            ),
+            "assets" => array(
+                "webdav" => array(
+                    "hostname" => $values["assets.webdav.hostname"]
+                ),
+                "versions" => array(
+                    "days" => $values["assets.versions.days"],
+                    "steps" => $values["assets.versions.steps"]
+                ),
+                "ffmpeg" => $values["assets.ffmpeg"],
+                "qtfaststart" => $values["assets.qtfaststart"],
+                "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
+                "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"]
+            ),
+            "services" => array(
+                "translate" => array(
+                    "apikey" => $values["services.translate.apikey"]
+                ),
+                "google" => array(
+                    "client_id" => $values["services.google.client_id"],
+                    "email" => $values["services.google.email"],
+                    "simpleapikey" => $values["services.google.simpleapikey"],
+                    "browserapikey" => $values["services.google.browserapikey"]
+                )
+            ),
+            "cache" => array(
+                "enabled" => $values["cache.enabled"],
+                "lifetime" => $values["cache.lifetime"],
+                "excludePatterns" => $values["cache.excludePatterns"],
+                "excludeCookie" => $values["cache.excludeCookie"]
+            ),
+            "outputfilters" => array(
+                "imagedatauri" => $values["outputfilters.imagedatauri"],
+                "less" => $values["outputfilters.less"],
+                "lesscpath" => $values["outputfilters.lesscpath"],
+                "cssminify" => $values["outputfilters.cssminify"],
+                "javascriptminify" => $values["outputfilters.javascriptminify"],
+                "javascriptminifyalgorithm" => $values["outputfilters.javascriptminifyalgorithm"]
+            ),
+            "email" => array(
+                "sender" => array(
+                    "name" => $values["email.sender.name"],
+                    "email" => $values["email.sender.email"]),
+                "return" => array(
+                    "name" => $values["email.return.name"],
+                    "email" => $values["email.return.email"]),
+                "method" => $values["email.method"],
+                "smtp" => array(
+                    "host" => $values["email.smtp.host"],
+                    "port" => $values["email.smtp.port"],
+                    "ssl" => $values["email.smtp.ssl"],
+                    "name" => $values["email.smtp.name"],
+                    "auth" => array(
+                        "method" => $values["email.smtp.auth.method"],
+                        "username" => $values["email.smtp.auth.username"],
+                        "password" => $smtpPassword
+                    )
+                ),
+                "debug" => array(
+                    "emailaddresses" => $values["email.debug.emailAddresses"],
+                ),
+                "bounce" => array(
+                    "type" => $values["email.bounce.type"],
+                    "maildir" => $values["email.bounce.maildir"],
+                    "mbox" => $values["email.bounce.mbox"],
+                    "imap" => array(
+                        "host" => $values["email.bounce.imap.host"],
+                        "port" => $values["email.bounce.imap.port"],
+                        "username" => $values["email.bounce.imap.username"],
+                        "password" => $values["email.bounce.imap.password"],
+                        "ssl" => $values["email.bounce.imap.ssl"]
+                    )
+                )
+            ),
+            "webservice" => array(
+                "enabled" => $values["webservice.enabled"]
+            ),
+            "httpclient" => array(
+                "adapter" => $values["httpclient.adapter"],
+                "proxy_host" => $values["httpclient.proxy_host"],
+                "proxy_port" => $values["httpclient.proxy_port"],
+                "proxy_user" => $values["httpclient.proxy_user"],
+                "proxy_pass" => $values["httpclient.proxy_pass"],
+            )
+        );
+
+        $config = new Zend_Config($settings, true);
+        $writer = new Zend_Config_Writer_Xml(array(
+            "config" => $config,
+            "filename" => PIMCORE_CONFIGURATION_SYSTEM
+        ));
+        $writer->write();
+
+        $this->_helper->json(array("success" => true));
+
     }
 
     public function clearCacheAction() {
-        if ($this->getUser()->isAllowed("clear_cache")) {
 
-            // empty document cache
-            Pimcore_Model_Cache::clearAll();
+        $this->checkPermission("clear_cache");
 
-            // empty cache directory
-            $files = scandir(PIMCORE_CACHE_DIRECTORY);
-            foreach ($files as $file) {
-                if ($file == ".dummy") {
-                    // PIMCORE-1854 Deleting cache cleans whole folder inclusive .dummy
-                    continue;
-                }
-                $filename = PIMCORE_CACHE_DIRECTORY . "/" . $file;
-                if (is_file($filename)) {
-                    unlink($filename);
-                }
+        // empty document cache
+        Pimcore_Model_Cache::clearAll();
+
+        // empty cache directory
+        $files = scandir(PIMCORE_CACHE_DIRECTORY);
+        foreach ($files as $file) {
+            if ($file == ".dummy") {
+                // PIMCORE-1854 Deleting cache cleans whole folder inclusive .dummy
+                continue;
             }
-
-            $this->_helper->json(array("success" => true));
-        }
-        else {
-            if ($this->getUser() != null) {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to clear cache, but has no permission to do so.");
-            } else {
-                Logger::err("attempt to clear cache, but no user in session.");
+            $filename = PIMCORE_CACHE_DIRECTORY . "/" . $file;
+            if (is_file($filename)) {
+                unlink($filename);
             }
         }
-        $this->_helper->json(false);
+
+        $this->_helper->json(array("success" => true));
+
     }
 
     public function clearOutputCacheAction() {
-        if ($this->getUser()->isAllowed("clear_cache")) {
 
-            // remove "output" out of the ignored tags, if a cache lifetime is specified
-            Pimcore_Model_Cache::removeIgnoredTagOnClear("output");
+        $this->checkPermission("clear_cache");
 
-            // empty document cache
-            Pimcore_Model_Cache::clearTag("output");
+        // remove "output" out of the ignored tags, if a cache lifetime is specified
+        Pimcore_Model_Cache::removeIgnoredTagOnClear("output");
 
-            $this->_helper->json(array("success" => true));
-        }
-        else {
-            if ($this->getUser() != null) {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to clear ouput cache, but has no permission to do so.");
-            } else {
-                Logger::err("attempt to clear output cache, but no user in session.");
-            }
-        }
-        $this->_helper->json(false);
+        // empty document cache
+        Pimcore_Model_Cache::clearTag("output");
+
+        $this->_helper->json(array("success" => true));
     }
 
     public function clearTemporaryFilesAction() {
-        if ($this->getUser()->isAllowed("clear_temp_files")) {
 
-            // public files
-            $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
-            foreach ($files as $file) {
-                if (is_file(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file)) {
-                    unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
-                }
-            }
+        $this->checkPermission("clear_temp_files");
 
-            // system files
-            $files = scandir(PIMCORE_SYSTEM_TEMP_DIRECTORY);
-            foreach ($files as $file) {
-                if (is_file(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $file)) {
-                    unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $file);
-                }
-            }
-
-            $this->_helper->json(array("success" => true));
-        }
-        else {
-            if ($this->getUser() != null) {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to clear temporary files, but has no permission to do so.");
-            }
-            else {
-                Logger::err("attempt to clear temporary files, but no user in session.");
+        // public files
+        $files = scandir(PIMCORE_TEMPORARY_DIRECTORY);
+        foreach ($files as $file) {
+            if (is_file(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file)) {
+                unlink(PIMCORE_TEMPORARY_DIRECTORY . "/" . $file);
             }
         }
 
-        $this->_helper->json(false);
+        // system files
+        $files = scandir(PIMCORE_SYSTEM_TEMP_DIRECTORY);
+        foreach ($files as $file) {
+            if (is_file(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $file)) {
+                unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $file);
+            }
+        }
+
+        $this->_helper->json(array("success" => true));
     }
 
 
@@ -478,45 +435,42 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if ($this->getParam("data")) {
 
-            if ($this->getUser()->isAllowed("routes")) {
+            $this->checkPermission("routes");
 
-                $data = Zend_Json::decode($this->getParam("data"));
+            $data = Zend_Json::decode($this->getParam("data"));
 
-                if(is_array($data)) {
-                    foreach ($data as &$value) {
-                        $value = trim($value);
-                    }
+            if(is_array($data)) {
+                foreach ($data as &$value) {
+                    $value = trim($value);
                 }
+            }
 
-                if ($this->getParam("xaction") == "destroy") {
-                    $route = Staticroute::getById($data);
-                    $route->delete();
+            if ($this->getParam("xaction") == "destroy") {
+                $route = Staticroute::getById($data);
+                $route->delete();
 
-                    $this->_helper->json(array("success" => true, "data" => array()));
-                }
-                else if ($this->getParam("xaction") == "update") {
-                    // save routes
-                    $route = Staticroute::getById($data["id"]);
-                    $route->setValues($data);
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
+                // save routes
+                $route = Staticroute::getById($data["id"]);
+                $route->setValues($data);
 
-                    $route->save();
+                $route->save();
 
-                    $this->_helper->json(array("data" => $route, "success" => true));
-                }
-                else if ($this->getParam("xaction") == "create") {
+                $this->_helper->json(array("data" => $route, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
 
-                    unset($data["id"]);
+                unset($data["id"]);
 
-                    // save route
-                    $route = new Staticroute();
-                    $route->setValues($data);
+                // save route
+                $route = new Staticroute();
+                $route->setValues($data);
 
-                    $route->save();
+                $route->save();
 
-                    $this->_helper->json(array("data" => $route, "success" => true));
-                }
-            } else {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
+                $this->_helper->json(array("data" => $route, "success" => true));
             }
         }
         else {
@@ -551,98 +505,87 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function translationsImportAction() {
 
+        $this->checkPermission("translations");
+
         $admin = $this->getParam("admin");
 
-        if ($this->getUser()->isAllowed("translations")) {
-
-            $tmpFile = $_FILES["Filedata"]["tmp_name"];
-            if($admin){
-                Translation_Admin::importTranslationsFromFile($tmpFile,true);
-            }else{
-                Translation_Website::importTranslationsFromFile($tmpFile,true);
-            }
-
-            $this->_helper->json(array(
-                "success" => true
-            ), false);
-
-            // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
-            // Ext.form.Action.Submit and mark the submission as failed
-            $this->getResponse()->setHeader("Content-Type", "text/html");
-
-        } else {
-            Logger::err("user [" . $this->getUser()->getId() . "] attempted to import translations csv, but has no permission to do so.");
-            die();
+        $tmpFile = $_FILES["Filedata"]["tmp_name"];
+        if($admin){
+            Translation_Admin::importTranslationsFromFile($tmpFile,true);
+        }else{
+            Translation_Website::importTranslationsFromFile($tmpFile,true);
         }
 
+        $this->_helper->json(array(
+            "success" => true
+        ), false);
+
+        // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
+        // Ext.form.Action.Submit and mark the submission as failed
+        $this->getResponse()->setHeader("Content-Type", "text/html");
     }
 
     public function translationsExportAction() {
 
+        $this->checkPermission("translations");
         $admin = $this->getParam("admin");
 
-        if ($this->getUser()->isAllowed("translations")) {
+        // clear translation cache
+        Pimcore_Model_Cache::clearTag("translator");
 
-            // clear translation cache
-            Pimcore_Model_Cache::clearTag("translator");
-
-            if ($admin) {
-                $list = new Translation_Admin_List();
-            } else {
-                $list = new Translation_Website_List();
-            }
-
-            $list->setOrder("asc");
-            $list->setOrderKey("key");
-            $list->load();
-
-            $translations = array();
-            foreach ($list->getTranslations() as $t) {
-                $translations[] = array_merge(array("key" => $t->getKey(), "date" => $t->getDate()), $t->getTranslations());
-            }
-
-            $languages = Pimcore_Tool::getValidLanguages();
-            //header column
-            $columns = array_keys($translations[0]);
-            //add language columns which have no translations yet
-            foreach ($languages as $l) {
-                if (!in_array($l, $columns)) {
-                    $columns[] = $l;
-                }
-            }
-
-            $headerRow = array();
-            foreach ($columns as $key => $value) {
-                $headerRow[] = '"' . $value . '"';
-            }
-            $csv = implode(";", $headerRow) . "\r\n";
-
-            foreach ($translations as $t) {
-                $tempRow = array();
-                foreach ($columns as $key) {
-                    $value = $t[$key];
-                    //clean value of evil stuff such as " and linebreaks
-                    if (is_string($value)) {
-                        $value = Pimcore_Tool_Text::removeLineBreaks($value);
-                        $value = str_replace('"', '&quot;', $value);
-
-                        $tempRow[$key] = '"' . $value . '"';
-                    } else $tempRow[$key] = "";
-                }
-                $csv .= implode(";", $tempRow) . "\r\n";
-            }
-            header("Content-type: text/csv");
-            header("Content-Disposition: attachment; filename=\"export.csv\"");
-            echo $csv;
-            die();
+        if ($admin) {
+            $list = new Translation_Admin_List();
         } else {
-            Logger::err("user [" . $this->getUser()->getId() . "] attempted to export translations csv, but has no permission to do so.");
-            die();
+            $list = new Translation_Website_List();
         }
 
+        $list->setOrder("asc");
+        $list->setOrderKey("key");
+        $list->load();
+
+        $translations = array();
+        foreach ($list->getTranslations() as $t) {
+            $translations[] = array_merge(array("key" => $t->getKey(), "date" => $t->getDate()), $t->getTranslations());
+        }
+
+        $languages = Pimcore_Tool::getValidLanguages();
+        //header column
+        $columns = array_keys($translations[0]);
+        //add language columns which have no translations yet
+        foreach ($languages as $l) {
+            if (!in_array($l, $columns)) {
+                $columns[] = $l;
+            }
+        }
+
+        $headerRow = array();
+        foreach ($columns as $key => $value) {
+            $headerRow[] = '"' . $value . '"';
+        }
+        $csv = implode(";", $headerRow) . "\r\n";
+
+        foreach ($translations as $t) {
+            $tempRow = array();
+            foreach ($columns as $key) {
+                $value = $t[$key];
+                //clean value of evil stuff such as " and linebreaks
+                if (is_string($value)) {
+                    $value = Pimcore_Tool_Text::removeLineBreaks($value);
+                    $value = str_replace('"', '&quot;', $value);
+
+                    $tempRow[$key] = '"' . $value . '"';
+                } else $tempRow[$key] = "";
+            }
+            $csv .= implode(";", $tempRow) . "\r\n";
+        }
+        header("Content-type: text/csv");
+        header("Content-Disposition: attachment; filename=\"export.csv\"");
+        echo $csv;
+        die();
     }
 
     public function addAdminTranslationKeysAction() {
+
         $this->removeViewRenderer();
 
         $keys = $this->getParam("keys");
@@ -684,110 +627,105 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if ($admin) {
             $class = "Translation_Admin";
+            $this->checkPermission("translations_admin");
         } else {
             $class = "Translation_Website";
+            $this->checkPermission("translations");
         }
 
-        if ($this->getUser()->isAllowed("translations")) {
+        // clear translation cache
+        Pimcore_Model_Cache::clearTags(array("translator","translate"));
 
-            // clear translation cache
-            Pimcore_Model_Cache::clearTags(array("translator","translate"));
+        if ($this->getParam("data")) {
 
-            if ($this->getParam("data")) {
+            $data = Zend_Json::decode($this->getParam("data"));
 
+            if ($this->getParam("xaction") == "destroy") {
                 $data = Zend_Json::decode($this->getParam("data"));
+                $t = $class::getByKey($data);
+                $t->delete();
 
-                if ($this->getParam("xaction") == "destroy") {
-                    $data = Zend_Json::decode($this->getParam("data"));
-                    $t = $class::getByKey($data);
-                    $t->delete();
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
+                $t = $class::getByKey($data["key"]);
 
-                    $this->_helper->json(array("success" => true, "data" => array()));
+                foreach ($data as $key => $value) {
+                    if ($key != "key") {
+                        $t->addTranslation($key, $value);
+                    }
                 }
-                else if ($this->getParam("xaction") == "update") {
+
+                if ($data["key"]) {
+                    $t->setKey($data["key"]);
+                }
+
+                $t->save();
+
+                $return = array_merge(array("key" => $t->getKey(), "date" => $t->getDate()), $t->getTranslations());
+
+                $this->_helper->json(array("data" => $return, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+
+                try {
                     $t = $class::getByKey($data["key"]);
+                }
+                catch (Exception $e) {
 
-                    foreach ($data as $key => $value) {
-                        if ($key != "key") {
-                            $t->addTranslation($key, $value);
-                        }
+                    $t = new $class();
+
+                    $t->setKey($data["key"]);
+                    $t->setDate(time());
+
+                    foreach (Pimcore_Tool::getValidLanguages() as $lang) {
+                        $t->addTranslation($lang, "");
                     }
-
-                    if ($data["key"]) {
-                        $t->setKey($data["key"]);
-                    }
-
                     $t->save();
-
-                    $return = array_merge(array("key" => $t->getKey(), "date" => $t->getDate()), $t->getTranslations());
-
-                    $this->_helper->json(array("data" => $return, "success" => true));
                 }
-                else if ($this->getParam("xaction") == "create") {
 
-                    try {
-                        $t = $class::getByKey($data["key"]);
-                    }
-                    catch (Exception $e) {
+                $return = array_merge(array(
+                    "key" => $t->getKey(),
+                    "date" => $t->getDate()
+                ), $t->getTranslations());
 
-                        $t = new $class();
-
-                        $t->setKey($data["key"]);
-                        $t->setDate(time());
-
-                        foreach (Pimcore_Tool::getValidLanguages() as $lang) {
-                            $t->addTranslation($lang, "");
-                        }
-                        $t->save();
-                    }
-
-                    $return = array_merge(array(
-                        "key" => $t->getKey(),
-                        "date" => $t->getDate()
-                    ), $t->getTranslations());
-
-                    $this->_helper->json(array("data" => $return, "success" => true));
-                }
+                $this->_helper->json(array("data" => $return, "success" => true));
             }
-            else {
-                // get list of types
-                if ($admin) {
-                    $list = new Translation_Admin_List();
-
-                } else {
-                    $list = new Translation_Website_List();
-                }
-                
-                $list->setOrder("asc");
-                $list->setOrderKey("key");
-
-                if($this->getParam("dir")) {
-                    $list->setOrder($this->getParam("dir"));
-                }
-                if($this->getParam("sort")) {
-                    $list->setOrderKey($this->getParam("sort"));
-                }
-
-                $list->setLimit($this->getParam("limit"));
-                $list->setOffset($this->getParam("start"));
-                if ($this->getParam("filter")) {
-                    $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
-                    $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm);
-                }
-                $list->load();
-
-                $translations = array();
-                foreach ($list->getTranslations() as $t) {
-                    $translations[] = array_merge($t->getTranslations(), array("key" => $t->getKey(), "date" => $t->getDate()));
-                }
-
-                $this->_helper->json(array("data" => $translations, "success" => true, "total" => $list->getTotalCount()));
-            }
-        } else {
-            Logger::err("user [" . $this->getUser()->getId() . "] attempted to access translations, but has no permission to do so.");
         }
+        else {
+            // get list of types
+            if ($admin) {
+                $list = new Translation_Admin_List();
 
-        $this->_helper->json(false);
+            } else {
+                $list = new Translation_Website_List();
+            }
+
+            $list->setOrder("asc");
+            $list->setOrderKey("key");
+
+            if($this->getParam("dir")) {
+                $list->setOrder($this->getParam("dir"));
+            }
+            if($this->getParam("sort")) {
+                $list->setOrderKey($this->getParam("sort"));
+            }
+
+            $list->setLimit($this->getParam("limit"));
+            $list->setOffset($this->getParam("start"));
+            if ($this->getParam("filter")) {
+                $filterTerm = $list->quote("%".mb_strtolower($this->getParam("filter"))."%");
+                $list->setCondition("lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm);
+            }
+            $list->load();
+
+            $translations = array();
+            foreach ($list->getTranslations() as $t) {
+                $translations[] = array_merge($t->getTranslations(), array("key" => $t->getKey(), "date" => $t->getDate()));
+            }
+
+            $this->_helper->json(array("data" => $translations, "success" => true, "total" => $list->getTotalCount()));
+        }
     }
 
     public function translationsCleanupAction() {
@@ -838,69 +776,66 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
         if ($this->getParam("data")) {
 
-            if ($this->getUser()->isAllowed("redirects")) {
+            $this->checkPermission("redirects");
 
-                if ($this->getParam("xaction") == "destroy") {
+            if ($this->getParam("xaction") == "destroy") {
 
-                    $id = Zend_Json::decode($this->getParam("data"));
+                $id = Zend_Json::decode($this->getParam("data"));
 
-                    $redirect = Redirect::getById($id);
-                    $redirect->delete();
+                $redirect = Redirect::getById($id);
+                $redirect->delete();
 
-                    $this->_helper->json(array("success" => true, "data" => array()));
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
+
+                $data = Zend_Json::decode($this->getParam("data"));
+
+                // save redirect
+                $redirect = Redirect::getById($data["id"]);
+
+                if ($data["target"]) {
+                    if ($doc = Document::getByPath($data["target"])) {
+                        $data["target"] = $doc->getId();
+                    }
                 }
-                else if ($this->getParam("xaction") == "update") {
 
-                    $data = Zend_Json::decode($this->getParam("data"));
+                $redirect->setValues($data);
 
-                    // save redirect
-                    $redirect = Redirect::getById($data["id"]);
+                $redirect->save();
 
-                    if ($data["target"]) {
-                        if ($doc = Document::getByPath($data["target"])) {
-                            $data["target"] = $doc->getId();
-                        }
+                $redirectTarget = $redirect->getTarget();
+                if (is_numeric($redirectTarget)) {
+                    if ($doc = Document::getById(intval($redirectTarget))) {
+                        $redirect->setTarget($doc->getFullPath());
                     }
-
-                    $redirect->setValues($data);
-
-                    $redirect->save();
-
-                    $redirectTarget = $redirect->getTarget();
-                    if (is_numeric($redirectTarget)) {
-                        if ($doc = Document::getById(intval($redirectTarget))) {
-                            $redirect->setTarget($doc->getFullPath());
-                        }
-                    }
-                    $this->_helper->json(array("data" => $redirect, "success" => true));
                 }
-                else if ($this->getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->getParam("data"));
-                    unset($data["id"]);
+                $this->_helper->json(array("data" => $redirect, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+                $data = Zend_Json::decode($this->getParam("data"));
+                unset($data["id"]);
 
-                    // save route
-                    $redirect = new Redirect();
+                // save route
+                $redirect = new Redirect();
 
-                    if ($data["target"]) {
-                        if ($doc = Document::getByPath($data["target"])) {
-                            $data["target"] = $doc->getId();
-                        }
+                if ($data["target"]) {
+                    if ($doc = Document::getByPath($data["target"])) {
+                        $data["target"] = $doc->getId();
                     }
-
-                    $redirect->setValues($data);
-
-                    $redirect->save();
-
-                    $redirectTarget = $redirect->getTarget();
-                    if (is_numeric($redirectTarget)) {
-                        if ($doc = Document::getById(intval($redirectTarget))) {
-                            $redirect->setTarget($doc->getFullPath());
-                        }
-                    }
-                    $this->_helper->json(array("data" => $redirect, "success" => true));
                 }
-            } else {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
+
+                $redirect->setValues($data);
+
+                $redirect->save();
+
+                $redirectTarget = $redirect->getTarget();
+                if (is_numeric($redirectTarget)) {
+                    if ($doc = Document::getById(intval($redirectTarget))) {
+                        $redirect->setTarget($doc->getFullPath());
+                    }
+                }
+                $this->_helper->json(array("data" => $redirect, "success" => true));
             }
         }
         else {
@@ -946,79 +881,75 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     public function glossaryAction() {
 
         if ($this->getParam("data")) {
+            $this->checkPermission("glossary");
 
-            if ($this->getUser()->isAllowed("glossary")) {
+            Pimcore_Model_Cache::clearTag("glossary");
 
-                Pimcore_Model_Cache::clearTag("glossary");
+            if ($this->getParam("xaction") == "destroy") {
 
-                if ($this->getParam("xaction") == "destroy") {
+                $id = Zend_Json::decode($this->getParam("data"));
 
-                    $id = Zend_Json::decode($this->getParam("data"));
+                $glossary = Glossary::getById($id);
+                $glossary->delete();
 
-                    $glossary = Glossary::getById($id);
-                    $glossary->delete();
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
 
-                    $this->_helper->json(array("success" => true, "data" => array()));
+                $data = Zend_Json::decode($this->getParam("data"));
+
+                // save glossary
+                $glossary = Glossary::getById($data["id"]);
+
+                if ($data["link"]) {
+                    if ($doc = Document::getByPath($data["link"])) {
+                        $tmpLink = $data["link"];
+                        $data["link"] = $doc->getId();
+                    }
                 }
-                else if ($this->getParam("xaction") == "update") {
 
-                    $data = Zend_Json::decode($this->getParam("data"));
 
-                    // save glossary
-                    $glossary = Glossary::getById($data["id"]);
+                $glossary->setValues($data);
 
-                    if ($data["link"]) {
-                        if ($doc = Document::getByPath($data["link"])) {
-                            $tmpLink = $data["link"];
-                            $data["link"] = $doc->getId();
+                $glossary->save();
+
+                if ($link = $glossary->getLink()) {
+                    if (intval($link) > 0) {
+                        if ($doc = Document::getById(intval($link))) {
+                            $glossary->setLink($doc->getFullPath());
                         }
                     }
-
-
-                    $glossary->setValues($data);
-
-                    $glossary->save();
-
-                    if ($link = $glossary->getLink()) {
-                        if (intval($link) > 0) {
-                            if ($doc = Document::getById(intval($link))) {
-                                $glossary->setLink($doc->getFullPath());
-                            }
-                        }
-                    }
-
-                    $this->_helper->json(array("data" => $glossary, "success" => true));
                 }
-                else if ($this->getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->getParam("data"));
-                    unset($data["id"]);
 
-                    // save glossary
-                    $glossary = new Glossary();
+                $this->_helper->json(array("data" => $glossary, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+                $data = Zend_Json::decode($this->getParam("data"));
+                unset($data["id"]);
 
-                    if ($data["link"]) {
-                        if ($doc = Document::getByPath($data["link"])) {
-                            $tmpLink = $data["link"];
-                            $data["link"] = $doc->getId();
-                        }
+                // save glossary
+                $glossary = new Glossary();
+
+                if ($data["link"]) {
+                    if ($doc = Document::getByPath($data["link"])) {
+                        $tmpLink = $data["link"];
+                        $data["link"] = $doc->getId();
                     }
-
-                    $glossary->setValues($data);
-
-                    $glossary->save();
-
-                    if ($link = $glossary->getLink()) {
-                        if (intval($link) > 0) {
-                            if ($doc = Document::getById(intval($link))) {
-                                $glossary->setLink($doc->getFullPath());
-                            }
-                        }
-                    }
-
-                    $this->_helper->json(array("data" => $glossary, "success" => true));
                 }
-            } else {
-                Logger::err("user [" . $this->getUser()->getId() . "] attempted to modify static routes, but has no permission to do so.");
+
+                $glossary->setValues($data);
+
+                $glossary->save();
+
+                if ($link = $glossary->getLink()) {
+                    if (intval($link) > 0) {
+                        if ($doc = Document::getById(intval($link))) {
+                            $glossary->setLink($doc->getFullPath());
+                        }
+                    }
+                }
+
+                $this->_helper->json(array("data" => $glossary, "success" => true));
             }
         }
         else {
@@ -1060,6 +991,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     }
 
     public function systemlogAction() {
+
+        $this->checkPermission("systemlog");
 
         $file = PIMCORE_LOG_DEBUG;
         $lines = 400;
@@ -1133,6 +1066,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function websiteSaveAction() {
 
+        $this->checkPermission("website_settings");
+
         $data = Zend_Json::decode($this->getParam("data"));
 
         // convert all special characters to their entities to ensure that Zend_Config can write it
@@ -1155,6 +1090,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
     }
 
     public function websiteLoadAction() {
+
+        $this->checkPermission("website_settings");
 
         $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/website.xml";
 
@@ -1203,6 +1140,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function thumbnailTreeAction () {
 
+        $this->checkPermission("thumbnails");
+
         $dir = Asset_Image_Thumbnail_Config::getWorkingDir();
 
         $pipelines = array();
@@ -1222,6 +1161,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function thumbnailAddAction () {
 
+        $this->checkPermission("thumbnails");
 
         $alreadyExist = false;
 
@@ -1243,6 +1183,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function thumbnailDeleteAction () {
 
+        $this->checkPermission("thumbnails");
+
         $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
         $pipe->delete();
 
@@ -1252,6 +1194,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function thumbnailGetAction () {
 
+        $this->checkPermission("thumbnails");
+
         $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
         //$pipe->delete();
 
@@ -1260,6 +1204,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
 
     public function thumbnailUpdateAction () {
+
+        $this->checkPermission("thumbnails");
 
         $pipe = Asset_Image_Thumbnail_Config::getByName($this->getParam("name"));
         $settingsData = Zend_Json::decode($this->getParam("settings"));
@@ -1304,6 +1250,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function videoThumbnailTreeAction () {
 
+        $this->checkPermission("thumbnails");
+
         $dir = Asset_Video_Thumbnail_Config::getWorkingDir();
 
         $pipelines = array();
@@ -1323,6 +1271,7 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function videoThumbnailAddAction () {
 
+        $this->checkPermission("thumbnails");
 
         $alreadyExist = false;
 
@@ -1344,6 +1293,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function videoThumbnailDeleteAction () {
 
+        $this->checkPermission("thumbnails");
+
         $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
         $pipe->delete();
 
@@ -1353,12 +1304,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function videoThumbnailGetAction () {
 
+        $this->checkPermission("thumbnails");
+
         $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
         $this->_helper->json($pipe);
     }
 
 
     public function videoThumbnailUpdateAction () {
+
+        $this->checkPermission("thumbnails");
 
         $pipe = Asset_Video_Thumbnail_Config::getByName($this->getParam("name"));
         $data = Zend_Json::decode($this->getParam("configuration"));
@@ -1394,6 +1349,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function robotsTxtAction () {
 
+        $this->checkPermission("robots.txt");
+
         $siteSuffix = "";
         if($this->getParam("site")) {
             $siteSuffix = "-" . $this->getParam("site");
@@ -1427,6 +1384,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementTreeAction () {
 
+        $this->checkPermission("tag_snippet_management");
+
         $dir = Tool_Tag_Config::getWorkingDir();
 
         $tags = array();
@@ -1446,6 +1405,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementAddAction () {
 
+        $this->checkPermission("tag_snippet_management");
+
         try {
             Tool_Tag_Config::getByName($this->getParam("name"));
             $alreadyExist = true;
@@ -1464,6 +1425,8 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementDeleteAction () {
 
+        $this->checkPermission("tag_snippet_management");
+
         $tag = Tool_Tag_Config::getByName($this->getParam("name"));
         $tag->delete();
 
@@ -1473,12 +1436,16 @@ class Admin_SettingsController extends Pimcore_Controller_Action_Admin {
 
     public function tagManagementGetAction () {
 
+        $this->checkPermission("tag_snippet_management");
+
         $tag = Tool_Tag_Config::getByName($this->getParam("name"));
         $this->_helper->json($tag);
     }
 
 
     public function tagManagementUpdateAction () {
+
+        $this->checkPermission("tag_snippet_management");
 
         $tag = Tool_Tag_Config::getByName($this->getParam("name"));
         $data = Zend_Json::decode($this->getParam("configuration"));

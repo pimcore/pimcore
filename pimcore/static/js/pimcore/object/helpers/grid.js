@@ -69,6 +69,7 @@ pimcore.object.helpers.grid = Class.create({
         readerFields.push({name: "creationDate", allowBlank: true});
         readerFields.push({name: "modificationDate", allowBlank: true});
         readerFields.push({name: "inheritedFields", allowBlank: false});
+        readerFields.push({name: "#kv-tr", allowBlank: true});
 
         for (var i = 0; i < this.fields.length; i++) {
             readerFields.push({name: this.fields[i].key, allowBlank: true});
@@ -156,8 +157,8 @@ pimcore.object.helpers.grid = Class.create({
                 gridColumns.push({header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                                         hidden: !this.showSubtype,
                                         renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="'
-                                                    + t(record.data.subtype) + '">&nbsp;</div>';
+                        return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_'
+                                    + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }});
             } else if(field.key == "id") {
                 gridColumns.push({header: 'ID', width: 40, sortable: true,

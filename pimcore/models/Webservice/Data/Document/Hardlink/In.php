@@ -17,4 +17,24 @@
 
 class Webservice_Data_Document_Hardlink_In extends Webservice_Data_Document_Link {
 
+    public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null) {
+
+        $sourceId = $this->sourceId;
+        $this->sourceId = null;
+
+        parent::reverseMap($object, $disableMappingExceptions, $idMapper);
+
+
+        if ($idMapper) {
+            $sourceId = $idMapper->getMappedId("document", $sourceId);
+        }
+
+        if ($idMapper) {
+            $idMapper->recordMappingFailure($object->getId(), "document", $sourceId);
+        }
+
+        $object->setSourceId = $sourceId;
+    }
+
+
 }

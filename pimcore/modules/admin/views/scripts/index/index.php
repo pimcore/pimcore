@@ -290,6 +290,12 @@
             "pimcore/object/classes/data/countrymultiselect.js",
             "pimcore/object/classes/data/languagemultiselect.js",
             "pimcore/object/classes/data/keyValue.js",
+            "pimcore/object/classes/data/firstname.js",
+            "pimcore/object/classes/data/lastname.js",
+            "pimcore/object/classes/data/email.js",
+            "pimcore/object/classes/data/gender.js",
+            "pimcore/object/classes/data/newsletterActive.js",
+            "pimcore/object/classes/data/newsletterConfirmed.js",
             "pimcore/object/classes/layout/layout.js",
             "pimcore/object/classes/layout/accordion.js",
             "pimcore/object/classes/layout/fieldset.js",
@@ -337,6 +343,12 @@
             "pimcore/object/tags/languagemultiselect.js",
             "pimcore/object/tags/objectbricks.js",
             "pimcore/object/tags/keyValue.js",
+            "pimcore/object/tags/firstname.js",
+            "pimcore/object/tags/lastname.js",
+            "pimcore/object/tags/email.js",
+            "pimcore/object/tags/gender.js",
+            "pimcore/object/tags/newsletterActive.js",
+            "pimcore/object/tags/newsletterConfirmed.js",
             "pimcore/object/preview.js",
             "pimcore/object/versions.js",
             "pimcore/object/variantsTab.js",
@@ -375,6 +387,9 @@
             "pimcore/report/qrcode/panel.js",
             "pimcore/report/qrcode/item.js",
 
+            "pimcore/report/newsletter/panel.js",
+            "pimcore/report/newsletter/item.js",
+
             // extension manager
             "pimcore/extensionmanager/settings.js",
             "pimcore/extensionmanager/xmlEditor.js",
@@ -402,7 +417,8 @@
             "pimcore/object/keyvalue/propertiesPanel.js",
             "pimcore/object/keyvalue/selectionWindow.js",
             "pimcore/object/keyvalue/specialConfigWindow.js",
-            "pimcore/object/keyvalue/columnConfigDialog.js"
+            "pimcore/object/keyvalue/columnConfigDialog.js",
+            "pimcore/object/keyvalue/translatorConfigWindow.js"
 
         );
 

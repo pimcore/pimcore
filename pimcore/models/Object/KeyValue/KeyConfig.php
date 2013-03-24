@@ -7,20 +7,56 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
      */
     public $id;
 
-    /**
+    /** The key
      * @var string
      */
     public $name;
 
+    /** The key description.
+     * @var
+     */
     public $description;
 
+    /** The key type ("text", "number", etc...)
+     * @var
+     */
     public $type;
 
+    /** Unit information (just for information)
+     * @var
+     */
     public $unit;
-#
+
+    /** The group id.
+     * @var
+     */
     public $group;
 
+    /** Array of possible vales ("select" datatype)
+     * @var
+     */
     public $possiblevalues;
+
+    /**
+     * @var
+     */
+    public $translator;
+
+    /** Sets the translator id.
+     * @param $translator
+     */
+    public function setTranslator($translator)
+    {
+        $this->translator = $translator;
+    }
+
+    /** Returns the translator id.
+     * @return mixed
+     */
+    public function getTranslator()
+    {
+        return $this->translator;
+    }
 
 
     public function setUnit($unit)
@@ -88,10 +124,11 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
     }
 
 
-    public static function getByName ($name) {
+    public static function getByName ($name, $groupId = null) {
         try {
             $config = new self();
             $config->setName($name);
+            $config->setGroup($groupId);
             $config->getResource()->getByName();
 
             return $config;
@@ -144,12 +181,51 @@ class Object_KeyValue_KeyConfig extends Pimcore_Model_Abstract {
         return $this->name;
     }
 
+    /** Returns the key description.
+     * @return mixed
+     */
     public function getDescription() {
         return $this->description;
     }
 
+    /** Sets the key description
+     * @param $description
+     * @return Object_KeyValue_KeyConfig
+     */
     public function setDescription($description) {
         $this->description = $description;
         return $this;
+    }
+
+
+    /**
+     * Deletes the key value key configuration
+     */
+    public function delete() {
+        Pimcore_API_Plugin_Broker::getInstance()->preDeleteKeyValueKeyConfig($this);
+        parent::delete();
+        Pimcore_API_Plugin_Broker::getInstance()->postDeleteKeyValueKeyConfig($this);
+    }
+
+    /**
+     * Saves the key config
+     */
+    public function save() {
+        $isUpdate = false;
+
+        if ($this->getId()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateKeyValueKeyConfig($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddKeyValueKeyConfig($this);
+        }
+
+        parent::save();
+
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateKeyValueKeyConfig($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddKeyValueKeyConfig($this);
+        }
     }
 }

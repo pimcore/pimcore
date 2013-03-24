@@ -151,9 +151,13 @@
     background: #6ec563;
 }
 
-.pimcore_wysiwyg_inactive {
+.pimcore_wysiwyg.pimcore_wysiwyg_inactive {
 	border: 1px solid #d0d0d0;
 	cursor:pointer;
+}
+
+.pimcore_wysiwyg {
+    border: 1px solid transparent;
 }
 
 /* all ext windows have to be above the dnd masks (wysiwyg, iframe) */

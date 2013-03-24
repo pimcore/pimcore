@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     New BSD License
  */
 
-
+/*global localStorage */
 pimcore.registerNS("pimcore.helpers.x");
 
 
@@ -263,7 +263,8 @@ pimcore.helpers.showNotification = function (title, text, type, errorText) {
     if(type == "error"){
 
         if(errorText != null && errorText != undefined){
-            text = text + '<br /><br /><textarea style="width:300px; height:100px; font-size:11px;">' + strip_tags(errorText) + "</textarea>";
+            text = text + '<br /><br /><textarea style="width:300px; height:100px; font-size:11px;">'
+                                                                            + strip_tags(errorText) + "</textarea>";
         }
         Ext.MessageBox.show({
             title:title,
@@ -544,7 +545,8 @@ pimcore.helpers.deleteAssetFromServer = function (id, r, callback, button) {
             failure: function (id, message) {
                 this.deleteWindow.close();
 
-                pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_during_deleting"), "error", t(message));
+                pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_during_deleting"),
+                                                                    "error", t(message));
 
                 var node = pimcore.globalmanager.get("layout_asset_tree").tree.getNodeById(id);
                 if(node) {
@@ -933,15 +935,15 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
 pimcore.helpers.uploadDialog = function (url, filename, success, failure) {
 
     if(typeof success != "function") {
-        var success = function () {};
+        success = function () {};
     }
 
     if(typeof failure != "function") {
-        var failure = function () {};
+        failure = function () {};
     }
 
     if(typeof filename != "function") {
-        var filename = "file";
+        filename = "file";
     }
 
     var uploadWindowCompatible = new Ext.Window({
@@ -1121,7 +1123,8 @@ pimcore.helpers.urlToCanvas = function (url, callback) {
     iframe.setAttribute("id", frameId);
     iframe.setAttribute("src", url);
     iframe.setAttribute("allowtransparency", "false");
-    iframe.setAttribute("style","width:1280px; height:1000px; position:absolute; left:-10000; top:-10000px; background:#fff;");
+    iframe.setAttribute("style","width:1280px; height:1000px; position:absolute; left:-10000; "
+                    + "top:-10000px; background:#fff;");
     iframe.onload = function () {
         window.setTimeout(function () {
             html2canvas([window[frameId].document.body], {
@@ -1132,9 +1135,9 @@ pimcore.helpers.urlToCanvas = function (url, callback) {
                     }
                 },
                 proxy: "/admin/misc/proxy/"
-            })
+            });
         }, 2000);
-    }
+    };
 
     document.body.appendChild(iframe);
 };
@@ -1236,5 +1239,33 @@ pimcore.helpers.treeNodeThumbnailPreview = function (tree, parent, node, index) 
             }.bind(this));
         }.bind(this, node), 200);
     }
+};
+
+pimcore.helpers.insertTextAtCursorPosition = function (text) {
+
+    // get focused element
+    var focusedElement = document.activeElement;
+    var win = window;
+    var doc = document;
+
+    // now check if the focus is inside an iframe
+    try {
+        while(focusedElement.tagName.toLowerCase() == "iframe") {
+            win = window[focusedElement.getAttribute("name")];
+            doc = win.document;
+            focusedElement = doc.activeElement;
+        }
+    } catch(e) {
+        console.log(e);
+    }
+
+    var elTagName = focusedElement.tagName.toLowerCase();
+
+    if(elTagName == "input" || elTagName == "textarea") {
+        insertTextToFormElementAtCursor(focusedElement, text);
+    } else if(elTagName == "div" && focusedElement.getAttribute("contenteditable")) {
+        insertTextToContenteditableAtCursor(text, win, doc);
+    }
+
 };
 

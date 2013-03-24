@@ -119,10 +119,12 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         var document = Ext.get(this.previewIframeId).dom.contentWindow.document;
         var iframeContent = this.data;
-        iframeContent += '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
+        iframeContent +=
+                        '<link href="/pimcore/static/js/lib/ckeditor/contents.css" rel="stylesheet" type="text/css" />';
+        iframeContent += "&nbsp;"
 
         document.body.innerHTML = iframeContent;
-        document.body.setAttribute("style", "height: 80%; cursor: pointer;");
+        document.body.setAttribute("style", "min-height: " + Math.round(this.fieldConfig.height*0.8) + "px; cursor: pointer;");
 
         if(this.disableEditing == false) {
             Ext.get(document.body).on("click", this.initCkEditor.bind(this));
@@ -187,7 +189,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                 var maskEl = pan.createChild({
                     tag: "div",
                     id: Ext.id()
-                })
+                });
                 
                 maskEl = Ext.get(maskEl.id);
                 
@@ -279,8 +281,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         
         if (data.node.attributes.elementType == "asset") {
             if (data.node.attributes.type == "image" && textIsSelected == false) {
-                // images bigger than 600px or formats which cannot be displayed by the browser directly will be converted
-                // by the pimcore thumbnailing service so that they can be displayed in the editor
+                // images bigger than 600px or formats which cannot be displayed by the browser directly will be
+                // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
                 uri = "/admin/asset/get-image-thumbnail/id/" + id + "/width/" + defaultWidth + "/aspectratio/true";
@@ -309,7 +311,8 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             }
         }
 
-        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page" || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
+        if (data.node.attributes.elementType == "document" && (data.node.attributes.type=="page"
+                                || data.node.attributes.type=="hardlink" || data.node.attributes.type=="link")){
             this.ckeditor.insertHtml('<a href="' + uri + '" pimcore_type="document" pimcore_id="'
                                 + id + '">' + wrappedText + '</a>');
             return true;

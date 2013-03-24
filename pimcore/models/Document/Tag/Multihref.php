@@ -198,7 +198,7 @@ class Document_Tag_Multihref extends Document_Tag implements Iterator{
         return $dependencies;
     }
 
-    public function getFromWebserviceImport($wsElement) {
+    public function getFromWebserviceImport($wsElement, $idMapper = null) {
         // currently unsupported
         return array();
     }

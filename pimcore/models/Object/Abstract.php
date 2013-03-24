@@ -340,6 +340,44 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     }
 
 
+    /**
+     * @param array $config
+     * @return total count
+     */
+    public static function getTotalCount($config = array()) {
+
+        $className = "Object";
+        // get classname
+        if(get_called_class() != "Object_Abstract" && get_called_class() != "Object_Concrete") {
+            $tmpObject = new static();
+            $className = "Object_" . ucfirst($tmpObject->getO_className());
+        }
+
+        if (!empty($config["class"])) {
+            $className = $config["class"];
+        }
+
+        if (is_array($config)) {
+            if ($className) {
+
+                $listClass = ucfirst($className) . "_List";
+
+                // check for a mapped class
+                $listClass = Pimcore_Tool::getModelClassMapping($listClass);
+
+                if (Pimcore_Tool::classExists($listClass)) {
+                    $list = new $listClass();
+                }
+            }
+
+            $list->setValues($config);
+            $count = $list->getTotalCount();
+
+            return $count;
+        }
+    }
+
+
     /*
       * @return array
       */
@@ -584,6 +622,11 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
     public function correctPath () {
         // set path
         if($this->getId() != 1) { // not for the root node
+
+            if($this->getParentId() == $this->getId()) {
+                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+            }
+
             $parent = Object_Abstract::getById($this->getParentId());
 
             if($parent) {

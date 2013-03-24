@@ -322,6 +322,24 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         }
     }
 
+    /**
+     * @param array $config
+     * @return total count
+     */
+    public static function getTotalCount($config = array()) {
+
+        if (is_array($config)) {
+            $listClass = "Document_List";
+            $listClass = Pimcore_Tool::getModelClassMapping($listClass);
+            $list = new $listClass();
+
+            $list->setValues($config);
+            $count = $list->getTotalCount();
+
+            return $count;
+        }
+    }
+
 
     /**
      * Saves the document
@@ -376,6 +394,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public function correctPath() {
         // set path
         if ($this->getId() != 1) { // not for the root node
+
+            if($this->getParentId() == $this->getId()) {
+                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+            }
+
             $parent = Document::getById($this->getParentId());
             if($parent) {
                 $this->setPath(str_replace("//", "/", $parent->getRealFullPath() . "/"));
@@ -409,6 +432,11 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         if (!$this->getKey() && $this->getId() != 1) {
             $this->delete();
             throw new Exception("Document requires key, document with id " . $this->getId() . " deleted");
+        }
+
+        $disallowedKeysInFirstLevel = array("install","admin","webservice","plugin");
+        if($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
+            throw new Exception("Key: " . $this->getKey() . " is not allowed in first level (root-level)");
         }
 
         // save properties
@@ -1164,4 +1192,5 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $inheritedProperties = $this->getResource()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
+
 }

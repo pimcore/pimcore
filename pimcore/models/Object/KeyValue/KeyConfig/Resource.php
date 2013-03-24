@@ -33,8 +33,6 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
 
         $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE id = ?", $this->model->getId());
 
-//        $data["possiblevalues"] = unserialize($data["possiblevalues"]);
-
         $this->assignVariablesToModel($data);
     }
 
@@ -45,15 +43,19 @@ class Object_KeyValue_KeyConfig_Resource extends Pimcore_Model_Resource_Abstract
         }
 
         $name = $this->model->getName();
+        $groupId = $this->model->getGroup();
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = ?", $name);
+        $stmt = "SELECT * FROM " . self::TABLE_NAME_KEYS . " WHERE name = '" . $name . "'";
+        if ($groupId > 0) {
+            $stmt .= " AND `group` = " . $groupId;
+        }
 
-//        $data["possiblevalues"] = unserialize($data["possiblevalues"]);
+        $data = $this->db->fetchRow($stmt);
 
         if($data["id"]) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Exception("Config with name: " . $this->model->getName() . " does not exist");
+            throw new Exception("KeyConfig with name: " . $this->model->getName() . " does not exist");
         }
     }
 

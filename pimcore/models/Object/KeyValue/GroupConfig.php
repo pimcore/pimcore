@@ -2,16 +2,19 @@
 
 class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
 
-    /**
+    /** Group id.
      * @var integer
      */
     public $id;
 
-    /**
+    /** The group name.
      * @var string
      */
     public $name;
 
+    /** The group description.
+     * @var
+     */
     public $description;
 
 
@@ -89,12 +92,50 @@ class Object_KeyValue_GroupConfig extends Pimcore_Model_Abstract {
         return $this->name;
     }
 
+    /** Returns the description.
+     * @return mixed
+     */
     public function getDescription() {
         return $this->description;
     }
 
+    /** Sets the description.
+     * @param $description
+     * @return Object_KeyValue_GroupConfig
+     */
     public function setDescription($description) {
         $this->description = $description;
         return $this;
+    }
+
+    /**
+     * Deletes the key value group configuration
+     */
+    public function delete() {
+        Pimcore_API_Plugin_Broker::getInstance()->preDeleteKeyValueGroupConfig($this);
+        parent::delete();
+        Pimcore_API_Plugin_Broker::getInstance()->postDeleteKeyValueGroupConfig($this);
+    }
+
+    /**
+     * Saves the group config
+     */
+    public function save() {
+        $isUpdate = false;
+
+        if ($this->getId()) {
+            $isUpdate = true;
+            Pimcore_API_Plugin_Broker::getInstance()->preUpdateKeyValueGroupConfig($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->preAddKeyValueGroupConfig($this);
+        }
+
+        parent::save();
+
+        if ($isUpdate) {
+            Pimcore_API_Plugin_Broker::getInstance()->postUpdateKeyValueGroupConfig($this);
+        } else {
+            Pimcore_API_Plugin_Broker::getInstance()->postAddKeyValueGroupConfig($this);
+        }
     }
 }

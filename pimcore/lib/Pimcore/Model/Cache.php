@@ -112,7 +112,7 @@ class Pimcore_Model_Cache {
                     if ($conf->frontend) {
                         $config["frontendType"] = (string) $conf->frontend->type;
                         $config["customFrontendNaming"] = (bool) $conf->frontend->custom;
-                        if ($conf->frontend->options && method_exists($conf->backend->options,"toArray")) {
+                        if ($conf->frontend->options && method_exists($conf->frontend->options,"toArray")) {
                             $config["frontendConfig"] = $conf->frontend->options->toArray();
                         }
                     }
@@ -444,6 +444,12 @@ class Pimcore_Model_Cache {
      * @param $key
      */
     public static function remove($key) {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         self::setWriteLock();
 
         $key = self::$cachePrefix . $key;
@@ -458,6 +464,12 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function clearAll() {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         self::setWriteLock();
 
         if($cache = self::getInstance()) {
@@ -488,6 +500,12 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function clearTags($tags = array()) {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         self::setWriteLock();
 
         Logger::info("clear cache tags: " . implode(",",$tags));
@@ -545,6 +563,12 @@ class Pimcore_Model_Cache {
      * @return void
      */
     public static function clearTagsOnShutdown() {
+
+        if (!self::$enabled) {
+            Logger::debug("Cache is not cleared because it is disabled");
+            return;
+        }
+
         if(!empty(self::$_clearTagsOnShutdown)) {
             $tags = array_unique(self::$_clearTagsOnShutdown);
             if($cache = self::getInstance()) {

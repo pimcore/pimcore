@@ -26,11 +26,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("get-image-thumbnail");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("assets")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("assets");
         }
 
         $this->_assetService = new Asset_Service($this->getUser());
@@ -955,14 +951,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                     "id" => $asset->getId(),
                     "type" => $asset->getType(),
                     "filename" => $asset->getFilename(),
-                    "url" => $asset->$thumbnailMethod(array(
-                        "contain" => true,
-                        "width" => 250,
-                        "height" => 250,
-                        "format" => "JPEG",
-                        "interlace" => true,
-                        "quality" => 80
-                    ))
+                    "url" => "/admin/asset/get-image-thumbnail/id/" . $asset->getId() . "/treepreview/true"
                 );
             }
         }
@@ -1203,6 +1192,22 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
             $success = true;
         } else {
             Logger::debug("prevented creating asset because of missing permissions");
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
+    public function clearThumbnailAction () {
+
+        $success = false;
+
+        if($asset = Asset::getById($this->getParam("id"))) {
+            if(method_exists($asset, "clearThumbnails")) {
+                $asset->clearThumbnails(true); // force clear
+                $asset->save();
+
+                $success = true;
+            }
         }
 
         $this->_helper->json(array("success" => $success));

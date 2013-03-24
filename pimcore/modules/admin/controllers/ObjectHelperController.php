@@ -387,7 +387,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
     {
 
         $success = true;
-        $supportedFieldTypes = array("checkbox", "country", "date", "datetime", "href", "image", "input", "language", "table", "multiselect", "numeric", "password", "select", "slider", "textarea", "wysiwyg", "objects", "multihref", "geopoint", "geopolygon", "geobounds", "link", "user");
+        $supportedFieldTypes = array("checkbox", "country", "date", "datetime", "href", "image", "input", "language", "table", "multiselect", "numeric", "password", "select", "slider", "textarea", "wysiwyg", "objects", "multihref", "geopoint", "geopolygon", "geobounds", "link", "user", "email", "gender", "firstname", "lastname", "newsletterActive", "newsletterConfirmed");
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id");
 
@@ -794,7 +794,7 @@ class Admin_ObjectHelperController extends Pimcore_Controller_Action_Admin {
                         $keyValuePairs->setClass($object->getClass());
                     }
 
-                    $keyValuePairs->setPropertyWithId($keyid, $value);
+                    $keyValuePairs->setPropertyWithId($keyid, $value, true);
                     $object->$setter($keyValuePairs);
                 } else if(count($parts) > 1) {
                     // check for bricks

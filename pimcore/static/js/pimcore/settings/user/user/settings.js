@@ -65,7 +65,7 @@ pimcore.settings.user.user.settings = Class.create({
         });
         generalItems.push(this.apiPasswordHint);
 
-        if (this.wsenabled && this.currentUser.admin) {
+        if (this.wsenabled) {
             this.apiPasswordHint.show();
         }
 
@@ -136,21 +136,19 @@ pimcore.settings.user.user.settings = Class.create({
                     childs[i].setValue(checked);
                 }
 
-                // API fields
                 if (checked == true) {
-                    this.apiKeyField.show();
-                    this.apiKeyDescription.show();
-                    this.apiPasswordHint.show();
+                    //this.apiKeyField.show();
+                    //this.apiKeyDescription.show();
+                    //this.apiPasswordHint.show();
                     this.roleField.hide();
                     this.userPanel.workspaces.disable();
                 } else {
-                    this.apiKeyField.hide();
-                    this.apiKeyDescription.hide();
-                    this.apiPasswordHint.hide();
+                    //this.apiKeyField.hide();
+                    //this.apiKeyDescription.hide();
+                    //this.apiPasswordHint.hide();
                     this.roleField.show();
                     this.userPanel.workspaces.enable();
                 }
-
             }.bind(this)
         });
 
@@ -167,8 +165,7 @@ pimcore.settings.user.user.settings = Class.create({
             fieldLabel:t("apikey"),
             name:"apikey",
             value:this.currentUser.password,
-            width:300,
-            hidden:true
+            width:300
         });
 
         this.apiKeyDescription = new Ext.form.DisplayField({
@@ -176,8 +173,7 @@ pimcore.settings.user.user.settings = Class.create({
             hideLabel:true,
             width:600,
             value:t("user_apikey_description"),
-            cls:"pimcore_extra_label_bottom",
-            hidden:true
+            cls:"pimcore_extra_label_bottom"
         });
 
         generalItems.push(this.apiKeyField);

@@ -388,14 +388,23 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport ($value, $object = null) {
+    public function getFromWebserviceImport ($value, $object = null, $idMapper = null) {
         $objects = array();
         if(empty($value)){
            return null;
         } else if(is_array($value)){
             foreach($value as $key => $item){
                 $item = (array) $item;
-                $dest = Object_Abstract::getById($item['id']);
+                $id = $item['id'];
+
+                if ($idMapper) {
+                    $id = $idMapper->getMappedId("object", $id);
+                }
+
+                if ($id) {
+                    $dest = Object_Abstract::getById($id);
+                }
+
                 if($dest instanceof Object_Abstract) {
 
                     $metaObject = new Object_Data_ObjectMetadata($this->getName(), $this->getColumnKeys(), $dest);
@@ -407,7 +416,12 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
                     $objects[] = $metaObject;
                 } else {
-                    throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
+                    if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                        throw new Exception("cannot get values from web service import - references unknown object with id [ ".$item['id']." ]");
+                    } else {
+                        $idMapper->recordMappingFailure($object->getId(), "object", $item['id']);
+                    }
+
                 }
             }
         } else {
@@ -432,22 +446,15 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
 
         if($object instanceof Object_Concrete) {
             $objectId = $object->getId();
-            $classId = $object->getClassId();
-            $class = $object->getClass();
         } else if($object instanceof Object_Fieldcollection_Data_Abstract) {
             $objectId = $object->getObject()->getId();
-            $classId = $object->getObject()->getClassId();
-            $class = $object->getObject()->getClass();
         } else if ($object instanceof Object_Localizedfield) {
             $objectId = $object->getObject()->getId();
-            $classId = $object->getObject()->getClassId();
-            $class = $object->getObject()->getClass();
         } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
             $objectId = $object->getObject()->getId();
-            $classId = $object->getObject()->getClassId();
-            $class = $object->getObject()->getClass();
         }
 
+        $classId = $object->getClassId();
         $table = "object_metadata_" . $classId;
         $db = Pimcore_Resource::get();
 

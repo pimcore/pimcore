@@ -122,7 +122,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             });
 
             this.toolbarButtons.remove = new Ext.Button({
-                text: t('delete'),
+                text: t('delete_folder'),
                 iconCls: "pimcore_icon_delete_medium",
                 scale: "medium",
                 handler: this.remove.bind(this)

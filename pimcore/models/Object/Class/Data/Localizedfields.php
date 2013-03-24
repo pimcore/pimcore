@@ -206,21 +206,29 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      * @param mixed $value
      * @return mixed
      */
-    public function getFromWebserviceImport($value)
+    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
     {
         if (is_array($value)) {
 
             $validLanguages = Pimcore_Tool::getValidLanguages();
-            foreach($value as $v){
-                if (!in_array($v->language, $validLanguages)) {
-                    throw new Exception("Invalid language in localized fields");
+
+            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                foreach($value as $v){
+                        if (!in_array($v->language, $validLanguages)) {
+                            throw new Exception("Invalid language in localized fields");
+                    }
                 }
             }
-
             $data = array();
             foreach ($value as $field) {
                     if ($field instanceof stdClass) {
                         $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
+                    }
+
+                    if ($idMapper && $idMapper->ignoreMappingFailures()){
+                        if (!in_array($field->language, $validLanguages)) {
+                            continue;
+                        }
                     }
 
                     if(!$field instanceof Webservice_Data_Object_Element){
@@ -232,7 +240,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     } else if ($fd->getFieldtype() != $field->type){
                         throw new Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
                     }
-                    $data[$field->language][$field->name] = $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value);
+                    $data[$field->language][$field->name] = $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value, $object, $idMapper);
 
             }
 

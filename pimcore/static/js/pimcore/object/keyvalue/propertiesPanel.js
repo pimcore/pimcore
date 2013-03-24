@@ -42,7 +42,8 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
     },
 
     createGrid: function(response) {
-        this.fields = ['id', 'name', 'description', 'type', 'unit', 'group', 'groupdescription','possiblevalues'];
+        this.fields = ['id', 'name', 'description', 'type', 'unit', 'group', 'groupdescription','possiblevalues',
+                                                                                        'translator'];
 
         var readerFields = [];
         for (var i = 0; i < this.fields.length; i++) {
@@ -95,7 +96,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                                                                             editor: new Ext.form.ComboBox({
             triggerAction: 'all',
             editable: false,
-            store: ["text","number","bool","select"]
+            store: ["text","number","bool","select","translated"]
 
         })});
 
@@ -114,15 +115,16 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                         var type = data.data.type;
                         var possiblevalues = data.data.possiblevalues;
 
-                        if (type != "select") {
-                            alert(t("keyvalue_define_select_values_error"));
-                        } else {
-
+                        if (type == 'select') {
                             var specialConfigWindow = new pimcore.object.keyvalue.specialconfigwindow(
                                 Ext.util.JSON.decode(possiblevalues), data.id, this);
                             specialConfigWindow.show();
+                        } else if (type == 'translated') {
+                            var translatorConfigWindow = new pimcore.object.keyvalue.translatorconfigwindow(
+                                data.id, this, data.data.translator).show();
+                        } else {
+                            alert(t("keyvalue_define_select_values_error"));
                         }
-
                     }.bind(this)
                 }
             ]
@@ -177,6 +179,8 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                 }
             ]
         });
+
+        gridColumns.push({header: t("keyvalue_col_translator"), width: 40, sortable: true, dataIndex: 'translator'});
 
         this.pagingtoolbar = new Ext.PagingToolbar({
             pageSize: 15,
@@ -254,6 +258,11 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         this.layout.doLayout();
     },
 
+
+    applyTranslatorConfig: function(keyid, value) {
+        var data = this.store.getById(keyid);
+        data.set("translator", value);
+    },
 
     applyDetailedConfig: function(keyid, value) {
         var data = this.store.getById(keyid);

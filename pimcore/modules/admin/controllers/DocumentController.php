@@ -26,11 +26,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         // check permissions
         $notRestrictedActions = array("doc-types");
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            if (!$this->getUser()->isAllowed("documents")) {
-
-                $this->redirect("/admin/login");
-                die();
-            }
+            $this->checkPermission("documents");
         }
 
         $this->_documentService = new Document_Service($this->getUser());
@@ -449,40 +445,41 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
     public function docTypesAction() {
 
         if ($this->getParam("data")) {
-            if ($this->getUser()->isAllowed("document_types")) {
-                if ($this->getParam("xaction") == "destroy") {
 
-                    $id = Zend_Json::decode($this->getParam("data"));
+            $this->checkPermission("document_types");
 
-                    $type = Document_DocType::getById($id);
-                    $type->delete();
+            if ($this->getParam("xaction") == "destroy") {
 
-                    $this->_helper->json(array("success" => true, "data" => array()));
-                }
-                else if ($this->getParam("xaction") == "update") {
+                $id = Zend_Json::decode($this->getParam("data"));
 
-                    $data = Zend_Json::decode($this->getParam("data"));
+                $type = Document_DocType::getById($id);
+                $type->delete();
 
-                    // save type
-                    $type = Document_DocType::getById($data["id"]);
+                $this->_helper->json(array("success" => true, "data" => array()));
+            }
+            else if ($this->getParam("xaction") == "update") {
 
-                    $type->setValues($data);
-                    $type->save();
+                $data = Zend_Json::decode($this->getParam("data"));
 
-                    $this->_helper->json(array("data" => $type, "success" => true));
-                }
-                else if ($this->getParam("xaction") == "create") {
-                    $data = Zend_Json::decode($this->getParam("data"));
-                    unset($data["id"]);
+                // save type
+                $type = Document_DocType::getById($data["id"]);
 
-                    // save type
-                    $type = Document_DocType::create();
-                    $type->setValues($data);
+                $type->setValues($data);
+                $type->save();
 
-                    $type->save();
+                $this->_helper->json(array("data" => $type, "success" => true));
+            }
+            else if ($this->getParam("xaction") == "create") {
+                $data = Zend_Json::decode($this->getParam("data"));
+                unset($data["id"]);
 
-                    $this->_helper->json(array("data" => $type, "success" => true));
-                }
+                // save type
+                $type = Document_DocType::create();
+                $type->setValues($data);
+
+                $type->save();
+
+                $this->_helper->json(array("data" => $type, "success" => true));
             }
         }
         else {
@@ -1021,6 +1018,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
      * SEO PANEL
      */
     public function seopanelTreeRootAction() {
+
+        $this->checkPermission("seo_document_editor");
+
         $root = Document::getById(1);
         if ($root->isAllowed("list")) {
 
@@ -1036,6 +1036,8 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
 
 
     public function seopanelTreeAction() {
+
+        $this->checkPermission("seo_document_editor");
 
         $document = Document::getById($this->getParam("node"));
 
@@ -1114,6 +1116,9 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
                                                 }
                                             }
                                         }
+
+                                        $html->clear();
+                                        unset($html);
                                     }
                                 }
                             } catch (Exception $e) {

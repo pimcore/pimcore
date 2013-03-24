@@ -190,6 +190,9 @@ class Pimcore_View extends Zend_View {
                         }
                     }
                     $content = $html->save();
+
+                    $html->clear();
+                    unset($html);
                 } else {
                     // add a div container if the include doesn't contain markup/html
                     $content = '<div class="' . $class . '">' . $content . '</div>';

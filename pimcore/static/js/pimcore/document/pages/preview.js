@@ -96,7 +96,8 @@ pimcore.document.pages.preview = Class.create({
                 region: "center",
                 bodyStyle: "-webkit-overflow-scrolling:touch; background:#323232;",
                 html: '<iframe src="about:blank" width="100%" onload="' + iframeOnLoad + '" frameborder="0" id="'
-                                            + this.iframeName + '" name="' + this.iframeName + '"></iframe>'
+                    + this.iframeName + '" name="' + this.iframeName + '"' +
+                    'style="background: #fff;"></iframe>'
             });
 
             this.stylesField = new Ext.form.TextArea({
@@ -150,6 +151,19 @@ pimcore.document.pages.preview = Class.create({
                                                                     + t("no_item_selected") + "</strong>"
             });
 
+            // check if CSS-Panel should be enabled
+            var cssPanelEnabled = true;
+            if(!pimcore.globalmanager.get("user").isAllowed("document_style_editor")) {
+                cssPanelEnabled = false;
+            }
+            if(!(this.page.isAllowed("save") || this.isAllowed("publish"))) {
+                cssPanelEnabled = false;
+            }
+            if(Ext.isIE8) {
+                cssPanelEnabled = false;
+            }
+
+
             this.cssPanel = new Ext.Panel({
                 border: false,
                 region: "east",
@@ -158,13 +172,13 @@ pimcore.document.pages.preview = Class.create({
                 collapsed: true,
                 split: true,
                 width: 300,
-                hidden: (!(this.page.isAllowed("save") || this.isAllowed("publish")) || Ext.isIE8),
+                hidden: !cssPanelEnabled,
                 layout: "accordion",
                 items: [this.cssEditor, this.cssSource]
             });
 
             this.layout = new Ext.Panel({
-                title: t('preview_and_styles'),
+                title: cssPanelEnabled ? t('preview_and_styles') : t("preview"),
                 border: false,
                 layout: "border",
                 tbar: tbar,
@@ -173,7 +187,10 @@ pimcore.document.pages.preview = Class.create({
                 items: [this.framePanel, this.cssPanel]
             });
 
-            this.layout.on("activate", this.refresh.bind(this));
+            this.layout.on("activate", function () {
+                this.refresh();
+                this.editorClearCurrentElement();
+            }.bind(this));
             this.layout.on("destroy", function () {
                 if(this.editorUpdateInterval) {
                     clearInterval(this.editorUpdateInterval);
@@ -322,14 +339,16 @@ pimcore.document.pages.preview = Class.create({
             throw "preview/styles not available";
         }
 
+        if(this.cssPanel.hidden) {
+            throw "styles not available";
+        }
+
         var values = {
             css: this.stylesField.getValue()
         };
 
-
         return values;
     },
-
 
 
     // EDITOR
@@ -471,7 +490,7 @@ pimcore.document.pages.preview = Class.create({
                                     var answer = window.confirm(
                                                         t("there_are_more_than_one_items_for_the_given_selector"));
                                     if(!answer) {
-                                        editor.getIframeWindow().pimcore.editorSelectElement(e, el, true);
+                                        editor.getIframeWindow().pimcore.editorSelectElement(e, element.dom, true);
                                         return;
                                     }
                                 }
@@ -536,7 +555,8 @@ pimcore.document.pages.preview = Class.create({
                             var tmpValue = styles[name];
 
                             if(tmpValue) {
-                                if(tmpValue.indexOf("px") > 0 || tmpValue.indexOf("%") > 0 || tmpValue.indexOf("em") > 0) {
+                                if(tmpValue.indexOf("px") > 0 || tmpValue.indexOf("%") > 0
+                                                                                        || tmpValue.indexOf("em") > 0) {
                                     value = tmpValue.replace(/(px|%|em)/i,"");
                                     unitValue = tmpValue.replace(/[0-9\.]+/,"");
                                 } else if(typeof tmpValue == "number") {
@@ -1062,7 +1082,7 @@ pimcore.document.pages.preview = Class.create({
         if(el.getAttribute("id") && el.getAttribute("id").indexOf("ext-") < 0) {
             css += "#" + el.getAttribute("id");
         } else if(el.getAttribute("class")) {
-            css += "." + el.getAttribute("class").replace(" ", ".");
+            css += "." + el.getAttribute("class").replace(/ /g,".");
             css = css.replace("..", ".");
         }
 
@@ -1080,7 +1100,8 @@ pimcore.document.pages.preview = Class.create({
         }
 
         this.cssEditor.removeAll();
-        this.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">' + t("no_item_selected") + "</strong>");
+        this.cssEditor.update('<strong style="display: block; padding: 30px 0 0; text-align: center;">'
+                                                            + t("no_item_selected") + "</strong>");
         this.cssEditor.doLayout();
     },
 
@@ -1090,11 +1111,19 @@ pimcore.document.pages.preview = Class.create({
             this.editorUnFrameElement();
         }
 
+        var startDistance;
+        var offsets;
+        var bodyOffsetLeft;
+        var bodyOffsetTop;
+        var width;
+        var height;
+        var borderWidth;
+
         try {
-            var startDistance = 5;
-            var offsets = Ext.get(el).getOffsetsTo(this.getIframeBody());
-            var bodyOffsetLeft = intval(this.getIframeBody().getStyle("margin-left"));
-            var bodyOffsetTop = intval(this.getIframeBody().getStyle("margin-top"));
+            startDistance = 5;
+            offsets = Ext.get(el).getOffsetsTo(this.getIframeBody());
+            bodyOffsetLeft = intval(this.getIframeBody().getStyle("margin-left"));
+            bodyOffsetTop = intval(this.getIframeBody().getStyle("margin-top"));
 
             offsets[0] -= bodyOffsetLeft;
             offsets[1] -= bodyOffsetTop;
@@ -1102,12 +1131,12 @@ pimcore.document.pages.preview = Class.create({
             offsets[0] -= startDistance;
             offsets[1] -= startDistance;
 
-            var width = Ext.get(el).getWidth() + (startDistance*2);
-            var height = Ext.get(el).getHeight() + (startDistance*2);
-            var borderWidth = 1;
+            width = Ext.get(el).getWidth() + (startDistance*2);
+            height = Ext.get(el).getHeight() + (startDistance*2);
+            borderWidth = 1;
 
             if(typeof body == "undefined") {
-                var body = this.getIframeBody().dom;
+                body = this.getIframeBody().dom;
             }
         } catch (e) {
             return;

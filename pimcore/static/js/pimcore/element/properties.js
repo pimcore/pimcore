@@ -350,8 +350,8 @@ pimcore.element.properties = Class.create({
  
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
  
-        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) center center no-repeat; height: 16px;" name="'
-                                                                        + record.data.name + '">&nbsp;</div>';
+        return '<div style="background: url(/pimcore/static/img/icon/' + value + '.png) '
+                + 'center center no-repeat; height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
     },
  
     getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {

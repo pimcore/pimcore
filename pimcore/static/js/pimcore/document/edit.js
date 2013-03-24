@@ -124,6 +124,7 @@ pimcore.document.edit = Class.create({
         var height;
         var offset;
         var element;
+        var i;
 
 
         // mask frames (iframes)
@@ -134,7 +135,7 @@ pimcore.document.edit = Class.create({
             }
 
             var iFrames = this.frame.document.getElementsByTagName("iframe");
-            for (var i = 0; i < iFrames.length; i++) {
+            for (i = 0; i < iFrames.length; i++) {
                 width = Ext.get(iFrames[i]).getWidth();
                 height = Ext.get(iFrames[i]).getHeight();
 
@@ -166,7 +167,7 @@ pimcore.document.edit = Class.create({
             if (this.frame && this.frame.editables) {
                 var editables = this.frame.editables;
 
-                for (var i = 0; i < editables.length; i++) {
+                for (i = 0; i < editables.length; i++) {
                     try {
                         if (typeof editables[i].mask == "function") {
                             editables[i].mask();
@@ -205,8 +206,8 @@ pimcore.document.edit = Class.create({
             for (var i = 0; i < this.fieldsToMask.length; i++) {
                 this.fieldsToMask[i].unmask();
             }
-        } catch (e) {
-            console.log(e);
+        } catch (e2) {
+            console.log(e2);
         }
     },
 
@@ -234,7 +235,7 @@ pimcore.document.edit = Class.create({
                 }
             }
         }
-        catch (e) {
+        catch (e2) {
         }
 
         return values;

@@ -263,7 +263,7 @@ class Pimcore_Mail extends Zend_Mail
         $paths = array("/usr/bin/html2text","/usr/local/bin/html2text", "/bin/html2text");
 
         foreach ($paths as $path) {
-            if(is_executable($path)) {
+            if(@is_executable($path)) {
                 self::$html2textInstalled = true;
             }
         }
@@ -720,6 +720,9 @@ class Pimcore_Mail extends Zend_Mail
                         }
                         $htmlContent = $body->innertext;
                     }
+
+                    $html->clear();
+                    unset($html);
                 }
                $content = $this->html2Text($htmlContent);
 

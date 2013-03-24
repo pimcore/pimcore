@@ -158,14 +158,19 @@ class Object_Abstract_Resource extends Element_Resource {
             //get objects to empty their cache
             $objects = $this->db->fetchAll("SELECT o_id,o_path FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
+            $userId = "0";
+            if($user = Pimcore_Tool_Admin::getCurrentUser()) {
+                $userId = $user->getId();
+            }
+
             //update object child paths
-            $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where o_path like " . $this->db->quote($oldPath . "/%") .";");
+            $this->db->query("update objects set o_path = replace(o_path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . "), o_modificationDate = '" . time() . "', o_userModification = '" . $userId . "' where o_path like " . $this->db->quote($oldPath . "/%") .";");
 
             //update object child permission paths
-            $this->db->query("update users_workspaces_object set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+            $this->db->query("update users_workspaces_object set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
             //update object child properties paths
-            $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath) . "," . $this->db->quote($this->model->getFullPath()) . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+            $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
             foreach ($objects as $object) {
@@ -318,7 +323,7 @@ class Object_Abstract_Resource extends Element_Resource {
 
     public function getClasses() {
         if($this->getChildAmount()) {
-            $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->model->getFullPath() . "%");
+            $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $this->model->getFullPath() . "/%");
 
             $classes = array();
             foreach ($classIds as $classId) {

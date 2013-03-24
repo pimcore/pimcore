@@ -21,7 +21,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
     
     getForm: function () {
-        
+        var i;
+
         var compositeConfig = {
             xtype: "compositefield",
             hideLabel: true,
@@ -50,7 +51,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var possibleRestrictions = ["folder", "object", "variant"];
         var filterStore = [];
         var selectedStore = [];
-        for (var i=0; i<possibleRestrictions.length; i++) {
+        for (i=0; i<possibleRestrictions.length; i++) {
            if(this.parent.restrictions.subtype.object && in_array(possibleRestrictions[i],
                                     this.parent.restrictions.subtype.object )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
@@ -95,7 +96,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         
         var filterClassStore = [];
         var selectedClassStore = [];
-        for (var i=0; i<possibleClassRestrictions.length; i++) {
+        for (i=0; i<possibleClassRestrictions.length; i++) {
            if(in_array(possibleClassRestrictions[i], this.parent.restrictions.specific.classes )) {
                 filterClassStore.push([possibleClassRestrictions[i], ts(possibleClassRestrictions[i])]);
                 selectedClassStore.push(possibleClassRestrictions[i]);
@@ -104,7 +105,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         
         // add all to store if empty
         if(filterClassStore.length < 1) {
-            for (var i=0; i<possibleClassRestrictions.length; i++) {
+            for (i=0; i<possibleClassRestrictions.length; i++) {
                 filterClassStore.push([possibleClassRestrictions[i], possibleClassRestrictions[i]]);
                 selectedClassStore.push(possibleClassRestrictions[i]);
             }

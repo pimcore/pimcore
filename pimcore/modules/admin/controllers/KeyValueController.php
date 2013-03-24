@@ -27,15 +27,10 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function addgroupAction() {
         $name = $this->_getParam("name");
         $alreadyExist = false;
+        $config = Object_KeyValue_GroupConfig::getByName($name);
 
-        try {
-            $config = Object_KeyValue_GroupConfig::getByName($name);
-            $alreadyExist = true;
-        } catch (Exception $e) {
-            $alreadyExist = false;
-        }
 
-        if(!$alreadyExist) {
+        if(!$config) {
             $config = new Object_KeyValue_GroupConfig();
             $config->setName($name);
             $config->save();
@@ -273,8 +268,13 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     try {
                         $group = Object_KeyValue_GroupConfig::getById($config->getGroup());
                         $groupDescription = $group->getDescription();
+                        $groupName = $group->getName();
                     } catch (Exception $e) {
 
+                    }
+
+                    if (empty($groupDescription)) {
+                        $groupDescription = $group->getName();
                     }
                 }
 
@@ -286,8 +286,9 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
                     "unit" => $config->getUnit(),
                     "possiblevalues" => $config->getPossibleValues(),
                     "group" => $config->getGroup(),
-                    "groupdescription" => $groupDescription
-
+                    "groupdescription" => $groupDescription,
+                    "groupName" => $groupName,
+                    "translator" => $config->getTranslator()
                 );
             }
             $rootElement["data"] = $data;
@@ -300,13 +301,13 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function addpropertyAction() {
         $name = $this->_getParam("name");
         $alreadyExist = false;
-
-        try {
-            $config = Object_KeyValue_KeyConfig::getByName($name);
-            $alreadyExist = true;
-        } catch (Exception $e) {
-            $alreadyExist = false;
-        }
+//
+//        try {
+//            $config = Object_KeyValue_KeyConfig::getByName($name);
+//            $alreadyExist = true;
+//        } catch (Exception $e) {
+//            $alreadyExist = false;
+//        }
 
         if(!$alreadyExist) {
             $config = new Object_KeyValue_KeyConfig();
@@ -333,29 +334,12 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
     public function exportAction() {
         $this->removeViewRenderer();
 
-        $helper = new Object_KeyValue_Helper();
-        $data = $helper->export();
+        $data = Object_KeyValue_Helper::export();
         header("Content-type: application/xml");
         header("Content-Disposition: attachment; filename=\"keyvalue_export.xml\"");
         echo $data;
     }
 
-    /**
-     * Imports the group and key config from an XML file.
-     */
-    public function importAction() {
-        $this->removeViewRenderer();
-
-        $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-        $conf = new Zend_Config_Xml($data);
-        $importData = $conf->toArray();
-
-        $helper = new Object_KeyValue_Helper();
-        $helper->import($importData);
-
-        $this->_helper->json(array("success" => true), false);
-        $this->getResponse()->setHeader("Content-Type", "text/html");
-    }
 
     public function testmagicAction() {
         $obj = Object_Concrete::getById(61071);
@@ -368,4 +352,55 @@ class Admin_KeyValueController extends Pimcore_Controller_Action_Admin
         $pairs->setdddd("dvalue");
         $obj->save();
     }
+
+    public function getTranslatorConfigsAction() {
+        $list = new Object_KeyValue_TranslatorConfig_List();
+        $list->load();
+        $items = $list->getList();
+        $result = array();
+        foreach ($items as $item) {
+            $result[] = array(
+                "id" => $item->getId(),
+                "name" => $item->getName(),
+                "translator" => $item->getTranslator()
+            );
+        }
+
+        $this->_helper->json(array("configurations" => $result));
+    }
+
+    public function translateAction() {
+        $success = false;
+        $keyId = $this->getParam("keyId");
+        $objectId = $this->getParam("objectId");
+        $recordId = $this->getParam("recordId");
+        $text = $this->getParam("text");
+        $translatedValue = $text;
+
+        try {
+            $keyConfig = Object_KeyValue_KeyConfig::getById($keyId);
+            $translatorID = $keyConfig->getTranslator();
+            $translatorConfig = Object_KeyValue_TranslatorConfig::getById($translatorID);
+            $className = $translatorConfig->getTranslator();
+            if (Pimcore_Tool::classExists($className)) {
+                $translator = new $className();
+                $translatedValue = $translator->translate($text);
+                if (!$translatedValue) {
+                    $translatedValue = $text;
+                }
+            }
+
+            $this->_helper->json(array("success" => true,
+                "keyId" => $this->getParam("keyId"),
+                "text" => $text,
+                "translated" => $translatedValue,
+                "recordId" => $recordId
+            ));
+        } catch (Exception $e) {
+
+        }
+
+        $this->_helper->json(array("success" => $success));
+    }
+
 }

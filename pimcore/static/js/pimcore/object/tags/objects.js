@@ -269,8 +269,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         var cls = 'object_field';
 
         this.component = new Ext.grid.GridPanel({
-            plugins: [new Ext.ux.dd.GridDragDropRowOrder({})],
             store: this.store,
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: false
@@ -279,6 +279,40 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     {header: 'ID', dataIndex: 'id', width: 50},
                     {id: "path", header: t("path"), dataIndex: 'path', width: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
+                    {
+                        xtype:'actioncolumn',
+                        width:30,
+                        items:[
+                            {
+                                tooltip:t('up'),
+                                icon:"/pimcore/static/img/icon/arrow_up.png",
+                                handler:function (grid, rowIndex) {
+                                    if (rowIndex > 0) {
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        grid.getStore().removeAt(rowIndex);
+                                        grid.getStore().insert(rowIndex - 1, [rec]);
+                                    }
+                                }.bind(this)
+                            }
+                        ]
+                    },
+                    {
+                        xtype:'actioncolumn',
+                        width:30,
+                        items:[
+                            {
+                                tooltip:t('down'),
+                                icon:"/pimcore/static/img/icon/arrow_down.png",
+                                handler:function (grid, rowIndex) {
+                                    if (rowIndex < (grid.getStore().getCount() - 1)) {
+                                        var rec = grid.getStore().getAt(rowIndex);
+                                        grid.getStore().removeAt(rowIndex);
+                                        grid.getStore().insert(rowIndex + 1, [rec]);
+                                    }
+                                }.bind(this)
+                            }
+                        ]
+                    },
                     {
                         xtype: 'actioncolumn',
                         width: 30,
