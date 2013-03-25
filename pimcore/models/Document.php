@@ -450,6 +450,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 if (!$property->getInherited()) {
                     $property->setResource(null);
                     $property->setCid($this->getId());
+                    $property->setCtype("document");
                     $property->setCpath($this->getRealFullPath());
                     $property->save();
                 }

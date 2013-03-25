@@ -71,12 +71,12 @@ class Element_Editlock_Resource extends Pimcore_Model_Resource_Abstract {
             }
         }
 
-        try {
-            $this->db->tryInsert("edit_lock", $data);
-            $this->model->setId($this->db->lastInsertId());
-        }
-        catch (Exception $e) {
-            $this->db->update("edit_lock", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
+        //var_dump($data);exit;
+        $this->db->insertOrUpdate("edit_lock", $data);
+
+        $lastInsertId = $this->db->lastInsertId();
+        if(!$this->model->getId() && $lastInsertId) {
+            $this->model->setId($lastInsertId);
         }
 
         return true;

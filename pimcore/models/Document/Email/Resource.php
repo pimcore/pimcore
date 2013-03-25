@@ -119,20 +119,9 @@ class Document_Email_Resource extends Document_PageSnippet_Resource {
                     $dataPage[$key] = $value;
                 }
             }
-            // first try to insert a new record, this is because of the recyclebin restore
-            try {
-                $this->db->tryInsert("documents", $dataDocument);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
 
-            try {
-                $this->db->tryInsert("documents_email", $dataPage);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents_email", $dataPage, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
+            $this->db->insertOrUpdate("documents", $dataDocument);
+            $this->db->insertOrUpdate("documents_email", $dataPage);
 
             $this->updateLocks();
         }
