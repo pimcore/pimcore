@@ -69,7 +69,7 @@ class Version_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         try {
-            $this->db->insert("versions", $data);
+            $this->db->tryInsert("versions", $data);
             $this->model->setId($this->db->lastInsertId());
         }
         catch (Exception $e) {

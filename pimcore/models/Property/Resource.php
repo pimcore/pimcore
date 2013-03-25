@@ -65,7 +65,7 @@ class Property_Resource extends Pimcore_Model_Resource_Abstract {
         );
 
         try {
-            $this->db->insert("properties", $saveData);
+            $this->db->tryInsert("properties", $saveData);
         }
         catch (Exception $e) {
             $this->db->update("properties", $saveData, $this->db->quoteInto("name = ?", $this->model->getName()) . " AND " . $this->db->quoteInto("cid = ?", $this->model->getCid()) . " AND " . $this->db->quoteInto("ctype = ?", $this->model->getCtype()));
