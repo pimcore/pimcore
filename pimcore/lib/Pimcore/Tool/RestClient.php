@@ -146,6 +146,10 @@ class Pimcore_Tool_RestClient {
         $result = $client->request();
 
         $body = $result->getBody();
+        $statusCode = $result->getStatus();
+        if ($statusCode != 200) {
+            throw new Exception("Status code " . $statusCode . " " . $uri);
+        }
         $body = json_decode($body);
         return $body;
     }
