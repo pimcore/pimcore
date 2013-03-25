@@ -120,7 +120,7 @@ class Object_Abstract_Resource extends Element_Resource {
         } else {
             // insert and fallback for folders etc. where the $this->insertOrUpdate is not set
             try {
-                $this->db->insert("objects", $data);
+                $this->db->tryInsert("objects", $data);
             } catch (Exception $e) {
                 $this->db->update("objects", $data, $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
             }

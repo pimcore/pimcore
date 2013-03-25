@@ -72,7 +72,7 @@ class Element_Editlock_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         try {
-            $this->db->insert("edit_lock", $data);
+            $this->db->tryInsert("edit_lock", $data);
             $this->model->setId($this->db->lastInsertId());
         }
         catch (Exception $e) {

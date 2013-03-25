@@ -34,7 +34,7 @@ class Document_Tag_Resource extends Pimcore_Model_Resource_Abstract {
         );
 
         try {
-            $this->db->insert("documents_elements", $element);
+            $this->db->tryInsert("documents_elements", $element);
         }
         catch (Exception $e) {
             $this->db->update("documents_elements", $element, $this->db->quoteInto("documentId = ?", $this->model->getDocumentId()) . " AND " .  $this->db->quoteInto("name = ?", $this->model->getName()));

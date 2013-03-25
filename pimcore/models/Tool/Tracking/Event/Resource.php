@@ -70,7 +70,7 @@ class Tool_Tracking_Event_Resource extends Pimcore_Model_Resource_Abstract {
         );
 
         if(!$this->model->getId()) {
-            $this->db->insert("tracking_events", $data);
+            $this->db->tryInsert("tracking_events", $data);
         } else {
             $data["id"] = $this->model->getId();
             $this->db->update("tracking_events", $data, "id = '" . $this->model->getId() . "'");

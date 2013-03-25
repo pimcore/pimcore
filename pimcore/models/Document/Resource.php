@@ -149,7 +149,7 @@ class Document_Resource extends Element_Resource {
 
             // first try to insert a new record, this is because of the recyclebin restore
             try {
-                $this->db->insert("documents", $data);
+                $this->db->tryInsert("documents", $data);
             }
             catch (Exception $e) {
                 $this->db->update("documents", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));

@@ -108,7 +108,7 @@ class Element_Note_Resource extends Pimcore_Model_Resource_Abstract {
         }
 
         try {
-            $this->db->insert("notes", $data);
+            $this->db->tryInsert("notes", $data);
             $this->model->setId($this->db->lastInsertId());
         }
         catch (Exception $e) {
