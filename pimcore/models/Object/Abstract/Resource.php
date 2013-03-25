@@ -113,18 +113,7 @@ class Object_Abstract_Resource extends Element_Resource {
             }
         }
 
-        // first try to insert a new record, this is because of the recyclebin restore
-        if($this->insertOrUpdate && $this->insertOrUpdate["object"]) {
-            // this is for object_concrete which exist already
-            $this->db->update("objects", $data, $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
-        } else {
-            // insert and fallback for folders etc. where the $this->insertOrUpdate is not set
-            try {
-                $this->db->tryInsert("objects", $data);
-            } catch (Exception $e) {
-                $this->db->update("objects", $data, $this->db->quoteInto("o_id = ?", $this->model->getO_id() ));
-            }
-        }
+        $this->db->insertOrUpdate("objects", $data);
 
         // tree_locks
         $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'object'");

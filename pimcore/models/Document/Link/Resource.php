@@ -123,20 +123,8 @@ class Document_Link_Resource extends Document_Resource {
                 }
             }
             
-            // first try to insert a new record, this is because of the recyclebin restore
-            try {
-                $this->db->tryInsert("documents", $dataDocument);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents", $dataDocument, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
-
-            try {
-                $this->db->tryInsert("documents_link", $dataLink);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents_link", $dataLink, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
+            $this->db->insertOrUpdate("documents", $dataDocument);
+            $this->db->insertOrUpdate("documents_link", $dataLink);
 
             $this->updateLocks();
         }

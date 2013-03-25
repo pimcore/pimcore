@@ -674,6 +674,7 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                 if (!$property->getInherited()) {
                     $property->setResource(null);
                     $property->setCid($this->getO_Id());
+                    $property->setCtype("object");
                     $property->setCpath($this->getO_Path() . $this->getO_Key());
                     $property->save();
                 }

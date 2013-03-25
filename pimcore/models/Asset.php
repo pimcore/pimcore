@@ -583,6 +583,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
                 if (!$property->getInherited()) {
                     $property->setResource(null);
                     $property->setCid($this->getId());
+                    $property->setCtype("asset");
                     $property->setCpath($this->getPath() . $this->getKey());
                     $property->save();
                 }
