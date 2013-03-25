@@ -67,11 +67,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
     public $path;
 
     /**
-     * @var string old path before update, later needed to update children
-     */
-    protected $_oldPath;
-
-    /**
      * Mime-Type of the file
      *
      * @var string
@@ -457,7 +452,16 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
                 $this->getResource()->create();
             }
 
+            // get the old path from the database before the update is done
+            $oldPath = $this->getResource()->getCurrentFullPath();
+
             $this->update();
+
+            // if the old path is different from the new path, update all children
+            if($oldPath && $oldPath != $this->getFullPath()) {
+                @rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath());
+                $this->getResource()->updateChildsPaths($oldPath);
+            }
 
             $this->commit();
         } catch (Exception $e) {
@@ -523,10 +527,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         $destinationPath = $this->getFileSystemPath();
         if (!is_dir(dirname($destinationPath))) {
             mkdir(dirname($destinationPath), self::$chmod, true);
-        }
-
-        if ($this->_oldPath) {
-            @rename(PIMCORE_ASSET_DIRECTORY . $this->_oldPath, $this->getFileSystemPath());
         }
 
         if ($this->getType() != "folder") {
@@ -604,11 +604,7 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
         }
         $d->save();
 
-
         $this->getResource()->update();
-        if ($this->_oldPath) {
-            $this->getResource()->updateChildsPaths($this->_oldPath);
-        }
 
         //set object to registry
         Zend_Registry::set("asset_" . $this->getId(), $this);
@@ -901,11 +897,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function setFilename($filename) {
-
-        //set old path so that child paths are updated after this asset was saved
-        if ($this->filename != null and $filename != null and $filename != $this->filename) {
-            $this->_oldPath = $this->getResource()->getCurrentFullPath();
-        }
         $this->filename = (string) $filename;
         return $this;
     }
@@ -924,9 +915,6 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
      * @return void
      */
     public function setParentId($parentId) {
-        if ($this->parentId != null and $parentId != null and $this->parentId != $parentId) {
-            $this->_oldPath = $this->getResource()->getCurrentFullPath();
-        }
         $this->parentId = (int) $parentId;
         return $this;
     }
@@ -1326,12 +1314,12 @@ class Asset extends Pimcore_Model_Abstract implements Element_Interface {
 
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "_oldPath", "versions", "parent");
+            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "parent");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "_oldPath", "versions", "childs", "properties", "data", "parent");
+            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "childs", "properties", "data", "parent");
         }
 
 

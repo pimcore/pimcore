@@ -198,6 +198,8 @@ class Object_Abstract_Resource extends Element_Resource {
      * @return string retrieves the current full object path from DB
      */
     public function getCurrentFullPath() {
+
+        $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(o_path,`o_key`) as o_path FROM objects WHERE o_id = ?", $this->model->getId());
         }

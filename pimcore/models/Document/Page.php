@@ -88,14 +88,16 @@ class Document_Page extends Document_PageSnippet {
      */
     protected function update() {
 
+        $oldPath = $this->getResource()->getCurrentFullPath();
+
         parent::update();
 
         $config = Pimcore_Config::getSystemConfig();
-        if ($this->_oldPath && $config->documents->createredirectwhenmoved) {
+        if ($oldPath && $config->documents->createredirectwhenmoved) {
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setTarget($this->getId());
-            $redirect->setSource("@" . $this->_oldPath . "/?@");
+            $redirect->setSource("@" . $oldPath . "/?@");
             $redirect->setStatusCode(301);
             $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
             $redirect->save();
