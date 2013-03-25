@@ -54,9 +54,9 @@ class OnlineShop_Framework_ProductList_Resource {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        Logger::log("Query: " . $query, Zend_Log::INFO);
+        OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchAll($query);
-        Logger::log("Query done.", Zend_Log::INFO);
+        OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
         return $result;
     }
 
@@ -79,18 +79,18 @@ class OnlineShop_Framework_ProductList_Resource {
                     . $condition . " GROUP BY TRIM(`" . $fieldname . "`)";
             }
 
-            Logger::log("Query: " . $query, Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchAll($query);
-            Logger::log("Query done.", Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         } else {
             $query = "SELECT `$fieldname` FROM "
                 . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . " GROUP BY `" . $fieldname . "`";
-            Logger::log("Query: " . $query, Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchCol($query);
-            Logger::log("Query done.", Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         }
     }
@@ -119,9 +119,9 @@ class OnlineShop_Framework_ProductList_Resource {
 
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
-            Logger::log("Query: " . $query, Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchAll($query);
-            Logger::log("Query done.", Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         } else {
             $query = "SELECT dest FROM " . $this->model->getCurrentTenantConfig()->getRelationTablename() . " a "
@@ -134,9 +134,9 @@ class OnlineShop_Framework_ProductList_Resource {
 
             $query .= " AND src IN (" . $subquery . ") GROUP BY dest";
 
-            Logger::log("Query: " . $query, Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $result = $this->db->fetchCol($query);
-            Logger::log("Query done.", Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
             return $result;
         }
     }
@@ -169,9 +169,9 @@ class OnlineShop_Framework_ProductList_Resource {
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
-        Logger::log("Query: " . $query, Zend_Log::INFO);
+        OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchOne($query);
-        Logger::log("Query done.");
+        OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
         return $result;
     }
 
@@ -200,14 +200,14 @@ class OnlineShop_Framework_ProductList_Resource {
             }
 
             $query = "SELECT " . $fieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a WHERE a.o_id = ?;";
-            Logger::log("Query: " . $query, Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $objectValues = $this->db->fetchRow($query, $objectId);
-            Logger::log("Query done.", Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
 
             $query = "SELECT " . $maxFieldString . " FROM " . $this->model->getCurrentTenantConfig()->getTablename() . " a";
-            Logger::log("Query: " . $query, Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
             $maxObjectValues = $this->db->fetchRow($query);
-            Logger::log("Query done.", Zend_Log::INFO);
+            OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
 
             if(!empty($objectValues)) {
 //                $subStatement = array();
@@ -246,7 +246,7 @@ class OnlineShop_Framework_ProductList_Resource {
 
                 $statement = "ABS(" . implode(" + ", $subStatement) . ")";
 
-                Logger::log("Similarity Statement: " . $statement, Zend_Log::INFO);
+                OnlineShop_Plugin::getSQLLogger()->log("Similarity Statement: " . $statement, Zend_Log::INFO);
                 return $statement;
             } else {
                 throw new Exception("Field array for given object id is empty");
@@ -255,7 +255,7 @@ class OnlineShop_Framework_ProductList_Resource {
 
 
         } catch(Exception $e) {
-            Logger::err($e);
+            OnlineShop_Plugin::getSQLLogger()->err($e);
             return "";
         }
     }

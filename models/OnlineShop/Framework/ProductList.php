@@ -355,7 +355,8 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
                 }
             }
         }
-        Logger::log("Total Condition: " . $condition, Zend_Log::INFO);
+
+        OnlineShop_Plugin::getSQLLogger()->log("Total Condition: " . $condition, Zend_Log::INFO);
         return $condition;
     }
 
@@ -369,7 +370,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
                         $condition .= " AND ";
                     }
 
-                    $condition .= "o_id IN (SELECT DISTINCT src FROM " . OnlineShop_Framework_IndexService::RELATIONTABLENAME . " WHERE " . $cond . ")";
+                    $condition .= "o_id IN (SELECT DISTINCT src FROM " . $this->getCurrentTenantConfig()->getRelationTablename() . " WHERE " . $cond . ")";
                 }
             }
         }
@@ -385,7 +386,7 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
             }
         }
 
-        Logger::log("User specific Condition Part: " . $cond, Zend_Log::INFO);
+        OnlineShop_Plugin::getSQLLogger()->log("User specific Condition Part: " . $cond, Zend_Log::INFO);
         return $condition;
     }
 

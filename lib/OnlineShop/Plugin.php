@@ -225,5 +225,22 @@ class OnlineShop_Plugin extends Pimcore_API_Plugin_Abstract implements Pimcore_A
         parent::preDeleteObject($object);
     }
 
+    /**
+    * @var Zend_Log
+    */
+    private static $sqlLogger = null;
+
+    /**
+     * @return Zend_Log
+     */
+    public static function getSQLLogger() {
+        if(!self::$sqlLogger) {
+            $logger = new Zend_Log();
+            $logger->addWriter(new Zend_Log_Writer_Stream(PIMCORE_WEBSITE_PATH . '/var/log/online-shop-sql.log'));
+            self::$sqlLogger = $logger;
+        }
+        return self::$sqlLogger;
+    }
+
 
 }
