@@ -126,12 +126,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      */
     public $o_path;
 
-
-     /**
-     * @var string old path before update, later needed to update children
-     */
-    protected $_oldPath;
-
     /**
      * @var integer
      */
@@ -596,7 +590,15 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
                 $this->getResource()->create();
             }
 
+            // get the old path from the database before the update is done
+            $oldPath = $this->getResource()->getCurrentFullPath();
+
             $this->update();
+
+            // if the old path is different from the new path, update all children
+            if($oldPath && $oldPath != $this->getFullPath()) {
+                $this->getResource()->updateChildsPaths($oldPath);
+            }
 
             self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -694,10 +696,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
         }
 
         $d->save();
-
-        if($this->_oldPath){
-            $this->getResource()->updateChildsPaths($this->_oldPath);
-        }
 
         //set object to registry
         Zend_Registry::set("object_" . $this->getId(), $this);
@@ -939,10 +937,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_parentId($o_parentId) {
-
-        if($this->o_parentId!=null and $o_parentId!=null and $this->o_parentId!=$o_parentId){
-            $this->_oldPath=$this->getResource()->getCurrentFullPath();
-        }
         $this->o_parentId = (int) $o_parentId;
 
         try {
@@ -985,10 +979,6 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
      * @return void
      */
     public function setO_key($o_key) {
-        //set old path so that child paths are updated after this object was saved
-        if($this->o_key!=null and $o_key!=null and $o_key!=$this->o_key){
-            $this->_oldPath=$this->getResource()->getCurrentFullPath();
-        }
         $this->o_key = $o_key;
         return $this;
     }
@@ -1303,12 +1293,12 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
 
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("o_userPermissions","o_dependencies","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_parent","omitMandatoryCheck");
+            $blockedVars = array("o_userPermissions","o_dependencies","o_hasChilds","o_versions","o_class","scheduledTasks","o_parent","omitMandatoryCheck");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("o_userPermissions","o_dependencies","o_childs","o_hasChilds","_oldPath","o_versions","o_class","scheduledTasks","o_properties","o_parent","o___loadedLazyFields","omitMandatoryCheck");
+            $blockedVars = array("o_userPermissions","o_dependencies","o_childs","o_hasChilds","o_versions","o_class","scheduledTasks","o_properties","o_parent","o___loadedLazyFields","omitMandatoryCheck");
         }
         
 

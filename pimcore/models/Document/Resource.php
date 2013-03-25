@@ -210,6 +210,8 @@ class Document_Resource extends Element_Resource {
      * @return string retrieves the current full document path from DB
      */
     public function getCurrentFullPath() {
+
+        $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
         }
@@ -217,7 +219,6 @@ class Document_Resource extends Element_Resource {
             Logger::error("could not  get current document path from DB");
 
         }
-
         return $path;
 
     }
