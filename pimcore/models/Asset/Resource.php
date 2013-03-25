@@ -125,12 +125,7 @@ class Asset_Resource extends Element_Resource {
             }
 
             // first try to insert a new record, this is because of the recyclebin restore
-            try {
-                $this->db->tryInsert("assets", $data);
-            }
-            catch (Exception $e) {
-                $this->db->update("assets", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
-            }
+            $this->db->insertOrUpdate("assets", $data);
 
             // tree_locks
             $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'asset'");
