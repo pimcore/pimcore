@@ -781,6 +781,47 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $this->encoder->encode(array("success" => true, "data" => $result));
     }
 
+    /**
+     * Returns the configuration for the image thumbnail with the given ID.
+     */
+    public function imageThumbnailAction () {
+        $this->checkUserPermission("thumbnails");
+        try {
+            $id = $this->getParam("id");
+            if ($id) {
+                $config = Asset_Image_Thumbnail_Config::getByName($id);
+                $this->encoder->encode(array("success" => true, "data" => $config->getForWebserviceExport()));
+                return;
+            }
+        } catch (Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+        $this->encoder->encode(array("success" => false));
+    }
+
+    /**
+     * Returns a list of all image thumbnails.
+     */
+    public function imageThumbnailsAction () {
+        $this->checkUserPermission("thumbnails");
+        $dir = Asset_Image_Thumbnail_Config::getWorkingDir();
+
+        $pipelines = array();
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if(strpos($file, ".xml")) {
+                $name = str_replace(".xml", "", $file);
+                $pipelines[] = array(
+                    "id" => $name,
+                    "text" => $name
+                );
+            }
+        }
+
+        $this->encoder->encode(array("success" => true, "data" => $pipelines));
+    }
+
 
     private static function map($wsData, $data) {
         foreach($data as $key => $value) {
@@ -862,6 +903,13 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     }
 
 
+    /**
+     * Returns the current time.
+     */
+    public function systemClockAction() {
+        $this->encoder->encode(array("success" => true,
+            "data" => array("currentTime" => time())));
+    }
 
     /**
      * Returns a list of all class definitions.
@@ -869,9 +917,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function serverInfoAction() {
         $this->checkUserPermission("system_settings");
 
+        $system = array("currentTime" => time());
         $result = array();
         $pimcore = array();
         $pimcore["version"] = Pimcore_Version::getVersion();
+
 //        $pimcore["svnInfo"] = Pimcore_Version::getSvnInfo();
         $pimcore["revision"] = Pimcore_Version::getRevision();
 
@@ -879,13 +929,13 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
 //        $phpInfo = $this->phpinfo_array();
 
-        $this->encoder->encode(array("success" => true, "pimcore" => $pimcore,
+        $this->encoder->encode(array("success" => true,
+            "system" => $system,
+            "pimcore" => $pimcore,
 //            "phpinfo" => $phpInfo,
             "plugins" => $plugins
         ));
     }
-
-
 
     private function phpinfo_array()
     {
