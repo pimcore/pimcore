@@ -147,8 +147,7 @@ pimcore.report.sql.report = Class.create(pimcore.report.abstract, {
                     query += "&name=" + this.config.name;
 
                     var downloadUrl = "/admin/reports/sql/download-csv?" + query;
-                    console.log(downloadUrl);
-                    //pimcore.helpers.download(downloadUrl);
+                    pimcore.helpers.download(downloadUrl);
                 }.bind(this)
             }]
         });
