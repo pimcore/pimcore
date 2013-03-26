@@ -27,7 +27,7 @@ pimcore.report.contentanalysis.settings = Class.create({
 
         this.panel = new Ext.FormPanel({
             layout: "pimcoreform",
-            title: "Content & Social Analysis",
+            title: t("content_social_analysis"),
             bodyStyle: "padding: 10px;",
             autoScroll: true,
             items: [{
