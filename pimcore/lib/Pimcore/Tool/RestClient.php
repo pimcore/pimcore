@@ -623,6 +623,9 @@ class Pimcore_Tool_RestClient {
     }
 
 
+    /** Returns a list of defined classes
+     * @return mixed
+     */
     public function getClasses() {
         $url = self::$baseUrl .  "classes?apikey=" . self::$apikey;
         $response = $this->doRequest($url, "GET");
@@ -630,6 +633,9 @@ class Pimcore_Tool_RestClient {
         return $response;
     }
 
+    /** Returns a list of defined object bricks
+     * @return mixed
+     */
     public function getObjectBricks() {
         $url = self::$baseUrl .  "object-bricks?apikey=" . self::$apikey;
         $response = $this->doRequest($url, "GET");
@@ -637,8 +643,22 @@ class Pimcore_Tool_RestClient {
         return $response;
     }
 
+    /** Returns the given object brick definition
+     * @param $id
+     * @return mixed
+     */
     public function getObjectBrick($id) {
         $url = self::$baseUrl .  "object-brick/id/" . $id . "?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+
+        return $response;
+    }
+
+    /** Returns the current server time
+     * @return mixed
+     */
+    public function getCurrentTime() {
+        $url = self::$baseUrl .  "system-clock?apikey=" . self::$apikey;
         $response = $this->doRequest($url, "GET");
 
         return $response;
