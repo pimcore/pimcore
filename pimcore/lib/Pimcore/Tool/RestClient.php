@@ -154,8 +154,7 @@ class Pimcore_Tool_RestClient {
         return $body;
     }
 
-    public static function setLoggingEnabled($loggingEnabled)
-    {
+    public static function setLoggingEnabled($loggingEnabled) {
         self::$loggingEnabled = $loggingEnabled;
     }
 
@@ -302,6 +301,8 @@ class Pimcore_Tool_RestClient {
             return $object;
         } else if ($wsDocument->type == "object") {
             $classname = "Object_" . ucfirst($wsDocument->className);
+            // check for a mapped class
+            $classname = Pimcore_Tool::getModelClassMapping($classname);
             if (Pimcore_Tool::classExists($classname)) {
                 $object = new $classname();
 
