@@ -100,20 +100,20 @@ pimcore.report.analytics.settings = Class.create({
                     checked: this.parent.getValue("analytics.sites." + key + ".retargetingcode")
                 },{
                     xtype: "textarea",
-                    fieldLabel: t("analytics_additional_code"),
-                    name: "additionalcode_" + id,
-                    height: 100,
-                    width: 350,
-                    id: "report_settings_analytics_additionalcode_" + id,
-                    value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
-                },{
-                    xtype: "textarea",
                     fieldLabel: t("analytics_additional_code_before_pageview"),
                     name: "additionalcodebeforepageview" + id,
                     height: 100,
                     width: 350,
                     id: "report_settings_analytics_additionalcodebeforepageview_" + id,
                     value: this.parent.getValue("analytics.sites." + key + ".additionalcodebeforepageview")
+                },{
+                    xtype: "textarea",
+                    fieldLabel: t("analytics_additional_code"),
+                    name: "additionalcode_" + id,
+                    height: 100,
+                    width: 350,
+                    id: "report_settings_analytics_additionalcode_" + id,
+                    value: this.parent.getValue("analytics.sites." + key + ".additionalcode")
                 },{
                     xtype: "displayfield",
                     hideLabel: true,
