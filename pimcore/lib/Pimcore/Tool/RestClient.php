@@ -664,4 +664,22 @@ class Pimcore_Tool_RestClient {
         return $response;
     }
 
+    /** Returns a list of image thumbnail configurations.
+     * @return mixed
+     */
+    public function getImageThumbnails() {
+        $url = self::$baseUrl .  "image-thumbnails?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+        return $response;
+    }
+
+    /** Returns the image thumbnail configuration with the given ID.
+     * @param $id
+     * @return mixed
+     */
+    public function getImageThumbnail($id) {
+        $url = self::$baseUrl .  "image-thumbnail/id/". $id . "?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+        return $response;
+    }
 }
