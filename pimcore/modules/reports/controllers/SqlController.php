@@ -154,13 +154,20 @@ class Reports_SqlController extends Pimcore_Controller_Action_Admin_Reports {
         $data = array();
         $offset = $this->getParam("start", 0);
         $limit = $this->getParam("limit", 40);
+        $sort = $this->getParam("sort");
+        $dir = $this->getParam("dir");
 
         $baseQuery = $this->getBaseQuery();
 
         if($baseQuery) {
             $total = $db->fetchOne($baseQuery["count"]);
 
-            $sql = $baseQuery["data"] . " LIMIT $offset,$limit";
+            $order = "";
+            if($sort && dir) {
+                $order = " ORDER BY " . $db->quoteIdentifier($sort) . " " . $dir;
+            }
+
+            $sql = $baseQuery["data"] . $order . " LIMIT $offset,$limit";
             $data = $db->fetchAll($sql);
         }
 
@@ -176,18 +183,29 @@ class Reports_SqlController extends Pimcore_Controller_Action_Admin_Reports {
         set_time_limit(300);
 
         $db = Pimcore_Resource::get();
-        $exportFile = "/tmp/report-export.csv";
+        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/report-export-" . uniqid() . ".csv";
         @unlink($exportFile);
 
         $baseQuery = $this->getBaseQuery();
+        $result = $db->fetchAll($baseQuery["data"]);
+
+        $fp = fopen($exportFile, 'w');
+
+        foreach ($result as $row) {
+            fputcsv($fp, array_values($row));
+        }
+
+        fclose($fp);
 
         header("Content-type: text/plain");
         header("Content-Length: " . filesize($exportFile));
-        //header("Content-Disposition: attachment; filename=\"export.csv\"");
+        header("Content-Disposition: attachment; filename=\"export.csv\"");
 
         while(@ob_end_flush());
         flush();
         readfile($exportFile);
+
+        exit;
     }
 
     protected function getBaseQuery() {
