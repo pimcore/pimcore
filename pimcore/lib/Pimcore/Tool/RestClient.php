@@ -356,7 +356,16 @@ class Pimcore_Tool_RestClient {
     }
 
 
-    public function getAssetById($id, $decode = true, $idMapper = null, $light = false) {
+    /** Returns an asset by ID
+     * @param $id the remote ID
+     * @param bool $decode reverse map the JSON response
+     * @param null $idMapper the ID mapper
+     * @param bool $light if light then actual data will be downloaded seperately
+     * @param null $thumbnail thumbnail name to be used, if download fails it will fall back to full image.
+     * @return Asset the asset
+     * @throws Exception if something went wrong
+     */
+    public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null) {
         $uri = self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey;
         if ($light) {
             $uri .= "&light=1";
@@ -391,21 +400,39 @@ class Pimcore_Tool_RestClient {
                 if ($light) {
                     $client = Pimcore_Tool::getHttpClient();
                     $client->setMethod("GET");
-                    $path = $wsDocument->path;
-                    $filename = $wsDocument->filename;
-                    $uri = "http://" . self::$host . "/website/var/assets" . $path . $filename;
-                    $client->setUri($uri);
-                    $result = $client->request();
-                    $data = $result->getBody();
-                    $asset->setData($data);
 
+                    $assetType = $asset->getType();
+                    $data = null;
+
+                    if  ($assetType == "image" && strlen($thumbnail) > 0) {
+                        // try to retrieve thumbnail first
+                        http://frischeis.pim.elements.pm/website/var/tmp/thumb_9__fancybox_thumb
+                        $uri = "http://" . self::$host . "/website/var/tmp/thumb_" . $asset->getId() . "__" . $thumbnail;
+                        $client->setUri($uri);
+                        $result = $client->request();
+                        if ($result->getStatus() == 200) {
+                            $data = $result->getBody();
+                        }
+                    }
+
+                    if (!$data) {
+                        $path = $wsDocument->path;
+                        $filename = $wsDocument->filename;
+                        $uri = "http://" . self::$host . "/website/var/assets" . $path . $filename;
+                        $client->setUri($uri);
+                        $result = $client->request();
+                        if ($result->getStatus() != 200) {
+                            throw new Exception("Could not retrieve asset");
+                        }
+                        $data = $result->getBody();
+                    }
+                    $asset->setData($data);
                 }
 
                 return $asset;
             }
         }
     }
-
 
 
     /** Creates a new document.
