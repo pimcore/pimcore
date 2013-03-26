@@ -4,13 +4,13 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
 
     protected $carts = array();
     protected $cartClass;
+    protected $initialized = false;
 
     public function __construct($config) {
         $this->checkConfig($config);
         $this->config = $config;
         $this->cartClass = $config->cart->class;
 
-        $this->initSavedCarts();
     }
 
     protected function checkConfig($config) {
@@ -45,6 +45,13 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
 
     }
 
+    protected function checkForInit() {
+        if(!$this->initialized) {
+            $this->initSavedCarts();
+            $this->initialized = true;
+        }
+    }
+
     protected function initSavedCarts() {
         $env = OnlineShop_Framework_Factory::getInstance()->getEnvironment();
 
@@ -72,6 +79,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      * @throws OnlineShop_Framework_Exception_InvalidConfigException
      */
     public function addToCart(OnlineShop_Framework_AbstractProduct $product, $count,  $key , $itemKey = null, $replace = false, $params = array(), $subProducts = array(), $comment = null) {
+        $this->checkForInit();
         if(empty($key) || !array_key_exists($key, $this->carts)) {
             throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart " . $key . " not found.");
         }
@@ -83,6 +91,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
 
 
     function save() {
+        $this->checkForInit();
         foreach($this->carts as $cart) {
             $cart->save();
         }
@@ -95,6 +104,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      * @return void
      */
     public function deleteCart($key) {
+        $this->checkForInit();
         $this->getCart($key)->delete();
     }
 
@@ -104,6 +114,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      * @return void
      */
     public function updateCartInformation($param, $key = null) {
+        $this->checkForInit();
         // TODO: Implement updateCartInformation() method.
     }
 
@@ -112,6 +123,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      * @return $key
      */
     public function createCart($param) {
+        $this->checkForInit();
         //TODO 
 //        if(empty($param['name'])) {
 //            throw new OnlineShop_Framework_Exception_InvalidConfigException("No name specified.");
@@ -138,6 +150,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      * @return void
      */
     public function clearCart($key = null) {
+        $this->checkForInit();
         if(empty($key) || !array_key_exists($key, $this->carts)) {
             throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart " . $key . " not found.");
         }
@@ -151,6 +164,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      * @return OnlineShop_Framework_ICart
      */
     public function getCart($key = null) {
+        $this->checkForInit();
         if(empty($key) || !array_key_exists($key, $this->carts)) {
             throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart " . $key . " not found.");
         }
@@ -158,6 +172,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
     }
 
     public function getCarts() {
+        $this->checkForInit();
         return $this->carts;
     }
 
@@ -167,6 +182,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
      * @return void
      */
     public function removeFromCart($itemKey, $key = null) {
+        $this->checkForInit();
         if(empty($key) || !array_key_exists($key, $this->carts)) {
             throw new OnlineShop_Framework_Exception_InvalidConfigException("Cart " . $key . " not found.");
         }

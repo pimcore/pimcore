@@ -37,7 +37,7 @@ class OnlineShop_Framework_Factory {
     }
 
     private function __construct() {
-        $this->initEnvironment();
+        //$this->initEnvironment();
     }
 
     public function getConfig() {
@@ -159,7 +159,7 @@ class OnlineShop_Framework_Factory {
                 }*/
 
                 $class = $availabilitySystemConfig->class;
-                 $availabilitySystem = new $class();
+                $availabilitySystem = new $class();
                 if (! $availabilitySystem instanceof OnlineShop_Framework_IAvailabilitySystem){
                     throw new OnlineShop_Framework_Exception_InvalidConfigException("AvailabilitySystem class " . $availabilitySystemConfig->class . " does not implement OnlineShop_Framework_IPriceSystem.");
                 }
@@ -217,6 +217,9 @@ class OnlineShop_Framework_Factory {
      * @return OnlineShop_Framework_IEnvironment
      */
     public function getEnvironment() {
+        if(!$this->environment) {
+            $this->initEnvironment();
+        }
         return $this->environment;
     }
 
@@ -238,7 +241,7 @@ class OnlineShop_Framework_Factory {
         }
 
     }
-      /**
+    /**
      * @throws OnlineShop_Framework_Exception_UnsupportedException
      * @param null $name
      * @return OnlineShop_Framework_IAvailabilitySystem
