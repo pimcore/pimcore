@@ -380,6 +380,10 @@
             "pimcore/report/contentanalysis/settings.js",
             "pimcore/report/seo/detail.js",
             "pimcore/report/seo/socialoverview.js",
+            "pimcore/report/sql/item.js",
+            "pimcore/report/sql/panel.js",
+            "pimcore/report/sql/settings.js",
+            "pimcore/report/sql/report.js",
 
             "pimcore/settings/tagmanagement/panel.js",
             "pimcore/settings/tagmanagement/item.js",

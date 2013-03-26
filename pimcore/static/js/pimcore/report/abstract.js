@@ -15,10 +15,11 @@
 pimcore.registerNS("pimcore.report.abstract");
 pimcore.report.abstract = Class.create({
 
-    initialize: function (reportPanel, type, reference) {
+    initialize: function (reportPanel, type, reference, config) {
         this.reportPanel = reportPanel;
         this.type = type;
         this.reference = reference;
+        this.config = config;
 
         this.addPanel();
     },
