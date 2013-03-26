@@ -614,6 +614,12 @@ class Pimcore_Tool_RestClient {
         return $response["data"]->totalCount;
     }
 
+    /** Returns the total number of objects that match the given condition
+     * @param null $condition
+     * @param null $groupBy
+     * @return mixed
+     * @throws Exception
+     */
     public function getObjectCount($condition = null, $groupBy = null) {
         $params = $this->fillParms($condition, null, null, null, null, $groupBy, null);
 
