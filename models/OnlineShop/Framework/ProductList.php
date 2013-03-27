@@ -230,13 +230,13 @@ class OnlineShop_Framework_ProductList implements Zend_Paginator_Adapter_Interfa
         //First case: no price filtering and no price sorting
         if(!$this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             $objectRaws = $this->resource->load($this->buildQueryFromConditions(), $this->buildOrderBy(), $this->getLimit(), $this->getOffset());
-            $this->totalCount = $this->resource->getCount($this->buildQueryFromConditions());
+            $this->totalCount = $this->resource->getLastRecordCount();
         }
 
         //Second case: no price filtering but price sorting
         else if($this->orderByPrice && $this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
             $objectRaws = $this->resource->load($this->buildQueryFromConditions());
-            $this->totalCount = $this->resource->getCount($this->buildQueryFromConditions());
+            $this->totalCount = $this->resource->getLastRecordCount();
 
             $priceSystemArrays = array();
             foreach($objectRaws as $raw) {

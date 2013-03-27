@@ -12,6 +12,12 @@ class OnlineShop_Framework_ProductList_Resource {
      */
     private $model;
 
+    /**
+     * @var int
+     */
+    private $lastRecordCount;
+
+
     public function __construct(OnlineShop_Framework_ProductList $model) {
         $this->model = $model;
         $this->db = Pimcore_Resource::get();
@@ -38,24 +44,25 @@ class OnlineShop_Framework_ProductList_Resource {
 
         if($this->model->getVariantMode() == OnlineShop_Framework_ProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             if($orderBy) {
-                $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM "
+                $query = "SELECT SQL_CALC_FOUND_ROWS DISTINCT o_virtualProductId as o_id, priceSystemName FROM "
                     . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                     . $this->model->getCurrentTenantConfig()->getJoins()
                     . $condition . " GROUP BY o_virtualProductId, priceSystemName" . $orderBy . " " . $limit;
             } else {
-                $query = "SELECT DISTINCT o_virtualProductId as o_id, priceSystemName FROM "
+                $query = "SELECT SQL_CALC_FOUND_ROWS DISTINCT o_virtualProductId as o_id, priceSystemName FROM "
                     . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                     . $this->model->getCurrentTenantConfig()->getJoins()
                     . $condition . " " . $limit;
             }
         } else {
-            $query = "SELECT a.o_id, priceSystemName FROM "
+            $query = "SELECT SQL_CALC_FOUND_ROWS a.o_id, priceSystemName FROM "
                 . $this->model->getCurrentTenantConfig()->getTablename() . " a "
                 . $this->model->getCurrentTenantConfig()->getJoins()
                 . $condition . $orderBy . " " . $limit;
         }
         OnlineShop_Plugin::getSQLLogger()->log("Query: " . $query, Zend_Log::INFO);
         $result = $this->db->fetchAll($query);
+        $this->lastRecordCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
         OnlineShop_Plugin::getSQLLogger()->log("Query done.", Zend_Log::INFO);
         return $result;
     }
@@ -272,5 +279,15 @@ class OnlineShop_Framework_ProductList_Resource {
             $columnNames[] = $this->db->quoteIdentifier($c);
         }
         return 'MATCH (' . implode(",", $columnNames) . ') AGAINST (' . $this->db->quote($searchstring) . ' IN BOOLEAN MODE)';
+    }
+
+
+    /**
+     * get the record count for the last select query
+     * @return int
+     */
+    public function getLastRecordCount()
+    {
+        return $this->lastRecordCount;
     }
 }
