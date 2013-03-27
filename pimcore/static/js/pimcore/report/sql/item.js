@@ -169,13 +169,19 @@ pimcore.report.sql.item = Class.create({
                     value: this.data.groupIconClass,
                     fieldLabel: t("group_icon_class"),
                     width: 300
+                },{
+                    xtype: "checkbox",
+                    name: "menuShortcut",
+                    checked: this.data.menuShortcut,
+                    fieldLabel: t("create_menu_shortcut"),
+                    width: 300
                 }, {
                     xtype: "textarea",
                     name: "sql",
                     fieldLabel: "SQL <br /><small>(eg. SELECT a,b,c FROM d)</small>",
                     value: this.data.sql,
-                    width: 300,
-                    height: 100,
+                    width: 500,
+                    height: 150,
                     enableKeyEvents: true,
                     listeners: {
                         keyup: this.getColumnSettings.bind(this)
@@ -297,5 +303,11 @@ pimcore.report.sql.item = Class.create({
     saveOnComplete: function () {
         this.parentPanel.tree.getRootNode().reload();
         pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
+
+        Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+            if (buttonValue == "yes") {
+                window.location.reload();
+            }
+        }.bind(this));
     }
 });

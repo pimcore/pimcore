@@ -182,47 +182,92 @@ pimcore.report.sql.report = Class.create(pimcore.report.abstract, {
     }
 });
 
-Ext.onReady(function () {
 
-    // get available reports
-    Ext.Ajax.request({
-        url: "/admin/reports/sql/get-report-config",
-        method: "get",
-        success: function (response) {
-            var res = Ext.decode(response.responseText);
-            var report;
 
-            if(res.success && res.reports && res.reports.length > 0) {
-                for (var i=0; i<res.reports.length; i++) {
-                    report = res.reports[i];
 
-                    // set some defaults
-                    if(!report["group"]) {
-                        report["group"] = "sql_reports"
+pimcore.registerNS("pimcore.report.sql.reportplugin");
+pimcore.report.sql.reportplugin = Class.create(pimcore.plugin.admin, {
+
+    getClassName: function() {
+        return "pimcore.report.sql.reportplugin";
+    },
+
+    initialize: function() {
+        pimcore.plugin.broker.registerPlugin(this);
+    },
+
+    pimcoreReady: function (params,broker){
+
+        // get available reports
+        Ext.Ajax.request({
+            url: "/admin/reports/sql/get-report-config",
+            method: "get",
+            success: function (response) {
+                var res = Ext.decode(response.responseText);
+                var report;
+
+                if(res.success && res.reports && res.reports.length > 0) {
+                    for (var i=0; i<res.reports.length; i++) {
+                        report = res.reports[i];
+
+                        // set some defaults
+                        if(!report["group"]) {
+                            report["group"] = "sql_reports"
+                        }
+
+                        if(!report["niceName"]) {
+                            report["niceName"] = report["name"]
+                        }
+
+                        if(!report["iconClass"]) {
+                            report["iconClass"] = "pimcore_icon_sql";
+                        }
+
+                        if(!report["groupIconClass"]) {
+                            report["groupIconClass"] = "pimcore_icon_sql";
+                        }
+
+                        pimcore.report.broker.addGroup(report["group"], report["group"], report["groupIconClass"]);
+                        pimcore.report.broker.addReport(pimcore.report.sql.report, report["group"], {
+                            name: report["name"],
+                            text: report["niceName"],
+                            niceName: report["niceName"],
+                            iconCls: report["iconClass"]
+                        });
+
+                        // add the report directly into the reports menu in "extras" -> main menu
+                        if(report["menuShortcut"]) {
+                            try {
+                                var reportMenu = Ext.getCmp("pimcore_mainmenu_extras_reports");
+                                if(reportMenu) {
+                                    reportMenu.menu.add({
+                                        text: report["niceName"],
+                                        iconCls: report["iconClass"],
+                                        handler: function (report) {
+                                            var toolbar = pimcore.globalmanager.get("layout_toolbar");
+                                            toolbar.showReports(pimcore.report.sql.report, {
+                                                name: report["name"],
+                                                text: report["niceName"],
+                                                niceName: report["niceName"],
+                                                iconCls: report["iconClass"]
+                                            });
+                                        }.bind(this, report)
+                                    });
+                                }
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }
                     }
-
-                    if(!report["niceName"]) {
-                        report["niceName"] = report["name"]
-                    }
-
-                    if(!report["iconClass"]) {
-                        report["iconClass"] = "pimcore_icon_sql";
-                    }
-
-                    if(!report["groupIconClass"]) {
-                        report["groupIconClass"] = "pimcore_icon_sql";
-                    }
-
-                    pimcore.report.broker.addGroup(report["group"], report["group"], report["groupIconClass"]);
-                    pimcore.report.broker.addReport(pimcore.report.sql.report, report["group"], {
-                        name: report["name"],
-                        text: report["niceName"],
-                        niceName: report["niceName"],
-                        iconCls: report["iconClass"]
-                    });
                 }
             }
-        }
-    });
+        });
+
+
+    }
 });
+
+(function() {
+    new pimcore.report.sql.reportplugin();
+})();
 

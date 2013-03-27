@@ -137,7 +137,8 @@ class Reports_SqlController extends Pimcore_Controller_Action_Admin_Reports {
                     "niceName" => $report->getNiceName(),
                     "iconClass" => $report->getIconClass(),
                     "group" => $report->getGroup(),
-                    "groupIconClass" => $report->getGroupIconClass()
+                    "groupIconClass" => $report->getGroupIconClass(),
+                    "menuShortcut" => $report->getMenuShortcut()
                 );
             }
         }

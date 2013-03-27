@@ -52,6 +52,10 @@ class Tool_SqlReport_Config {
      */
     public $iconClass = "";
 
+    /**
+     * @var bool
+     */
+    public $menuShortcut;
 
     /**
      * @param $name
@@ -255,6 +259,22 @@ class Tool_SqlReport_Config {
     public function getNiceName()
     {
         return $this->niceName;
+    }
+
+    /**
+     * @param boolean $menuShortcut
+     */
+    public function setMenuShortcut($menuShortcut)
+    {
+        $this->menuShortcut = (bool) $menuShortcut;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getMenuShortcut()
+    {
+        return $this->menuShortcut;
     }
 
 
