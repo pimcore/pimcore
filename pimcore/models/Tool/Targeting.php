@@ -23,11 +23,6 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public $id;
 
     /**
-     * @var int
-     */
-    public $documentId;
-
-    /**
      * @var string
      */
     public $name;
@@ -169,23 +164,6 @@ class Tool_Targeting extends Pimcore_Model_Abstract {
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @param int $documentId
-     */
-    public function setDocumentId($documentId)
-    {
-        $this->documentId = (int) $documentId;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getDocumentId()
-    {
-        return $this->documentId;
     }
 
     /**
