@@ -89,7 +89,7 @@ class OnlineShop_Framework_FilterService_Helper
         }
 
         if($filterService) {
-            $view->currentFilter = $filterService->initFilterService($view->filterDefinitionObject, $productList, $params);
+            $view->currentFilter = $filterService->initFilterService($filterDefinition, $productList, $params);
         }
 
 
