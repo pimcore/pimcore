@@ -79,7 +79,6 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
 
             if($this->document) {
                 $list = new Tool_Targeting_List();
-                $list->setCondition("documentId = ? OR documentId = '' OR documentId IS NULL", $this->document->getId());
 
                 foreach($list->load() as $target) {
 
