@@ -117,7 +117,11 @@ class Pimcore_Controller_Plugin_Targeting extends Zend_Controller_Plugin_Abstrac
             $this->getResponse()->setBody($body);
 
             if(count($this->events) > 0) {
-                setcookie("pimcore__~__targeting", Zend_Json::encode($this->events));
+                setcookie("pimcore__~__targeting_event", Zend_Json::encode($this->events));
+            }
+
+            if($this->document instanceof Document) {
+                setcookie("pimcore__~__targeting_document", $this->document->getId());
             }
         }
     }

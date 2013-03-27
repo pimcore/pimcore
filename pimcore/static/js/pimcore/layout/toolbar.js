@@ -144,7 +144,7 @@ pimcore.layout.toolbar = Class.create({
             seoMenu.push({
                 text: t("reports"),
                 iconCls: "pimcore_icon_reports",
-                handler: this.showReports
+                handler: this.showReports.bind(this, null)
             });
         }
 
@@ -957,8 +957,12 @@ pimcore.layout.toolbar = Class.create({
         }
 
         // this is for generated/configured reports like the SQL Report
-        if(reportClass) {
-            pimcore.globalmanager.get("reports").openReport(reportClass, reportConfig);
+        try {
+            if(reportClass) {
+                pimcore.globalmanager.get("reports").openReport(reportClass, reportConfig);
+            }
+        } catch (e) {
+
         }
     },
 

@@ -556,10 +556,10 @@
         }
 
         // get new events
-        var newEvents = util.getCookie("pimcore__~__targeting");
+        var newEvents = util.getCookie("pimcore__~__targeting_event");
         if(newEvents) {
             newEvents = JSON.parse(newEvents);
-            util.unsetCookie("pimcore__~__targeting");
+            util.unsetCookie("pimcore__~__targeting_event");
 
             for(var ev=0; ev<newEvents.length; ev++) {
                 user["events"].push(newEvents[ev]);
