@@ -145,17 +145,38 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
             var details = [];
 
-            var downloadDefaultWidth = 800;
-            if(this.data.imageInfo) {
+
+            if(this.data.imageInfo.dimensions) {
+
+                var dimensionPanel = new Ext.grid.PropertyGrid({
+                    title: t("dimensions"),
+                    source: this.data.imageInfo.dimensions,
+                    autoHeight: true,
+
+                    clicksToEdit: 1000,
+                    viewConfig : {
+                        forceFit: true,
+                        scrollOffset: 2
+                    }
+                });
+                dimensionPanel.getStore().singleSort("name","DESC");
+
+                details.push(dimensionPanel);
+            }
+
+            if(this.data.imageInfo && this.data.imageInfo) {
                 if(this.data.imageInfo.dimensions && this.data.imageInfo.dimensions.width) {
                     downloadDefaultWidth = intval(this.data.imageInfo.dimensions.width);
                 }
             }
 
+            var downloadDefaultWidth = 800;
+
             this.downloadBox = new Ext.form.FormPanel({
-                title: t("download"),
+                title: t("convert_to") + " & " + t("download"),
                 bodyStyle: "padding: 10px;",
                 layout: "pimcoreform",
+                style: "margin: 10px 0 10px 0",
                 items: [{
                     xtype: "combo",
                     triggerAction: "all",
@@ -197,35 +218,15 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             });
             details.push(this.downloadBox);
 
-            if(this.data.imageInfo) {
-                if(this.data.imageInfo.dimensions) {
+            if(this.data.imageInfo && this.data.imageInfo.exif) {
+                var exifPanel = new Ext.grid.PropertyGrid({
+                    title: t("exif_data"),
+                    source: this.data.imageInfo.exif,
+                    clicksToEdit: 1000,
+                    autoHeight: true
+                });
 
-                    var dimensionPanel = new Ext.grid.PropertyGrid({
-                        title: t("dimensions"),
-                        source: this.data.imageInfo.dimensions,
-                        autoHeight: true,
-
-                        clicksToEdit: 1000,
-                        viewConfig : {
-                            forceFit: true,
-                            scrollOffset: 2
-                        }
-                    });
-                    dimensionPanel.getStore().singleSort("name","DESC");
-
-                    details.push(dimensionPanel);
-                }
-                if(this.data.imageInfo.exif) {
-
-                    var exifPanel = new Ext.grid.PropertyGrid({
-                        title: t("exif_data"),
-                        source: this.data.imageInfo.exif,
-                        clicksToEdit: 1000,
-                        autoHeight: true
-                    });
-
-                    details.push(exifPanel);
-                }
+                details.push(exifPanel);
             }
 
             this.displayPanel = new Ext.Panel({
