@@ -92,40 +92,6 @@ pimcore.settings.targeting.item = Class.create({
                             });
                         }
                     }
-                }, {
-                    xtype: "button",
-                    hidden: (this.parent.page ? false : true),
-                    text: t("create_a_variant_from_this_page"),
-                    iconCls: "pimcore_icon_tab_variants",
-                    handler: function () {
-                        Ext.Ajax.request({
-                            url: "/admin/reports/targeting/create-variant",
-                            params: {
-                                documentId: this.parent.page.id,
-                                tragetingId: this.data.id
-                            },
-                            method: "get",
-                            success: function (response) {
-                                var res = Ext.decode(response.responseText);
-                                if(res["id"]) {
-
-                                    var urlField = this.actionsForm.findBy(function (el) {
-                                        try {
-                                            if(el.getName() == "redirect.url") {
-                                                return true;
-                                            }
-                                        } catch (e) {}
-                                    });
-
-                                    if(urlField[0]) {
-                                        urlField[0].setValue(res["path"]);
-                                    }
-
-                                    pimcore.helpers.openDocument(res["id"], "page");
-                                }
-                            }.bind(this)
-                        });
-                    }.bind(this)
                 }]
             }, {
                 xtype: "fieldset",
@@ -228,13 +194,13 @@ pimcore.settings.targeting.item = Class.create({
 
     getConditions: function() {
         var addMenu = [];
-        var itemTypes = Object.keys(pimcore.document.pages.target.conditions);
+        var itemTypes = Object.keys(pimcore.settings.targeting.target.conditions);
         for(var i=0; i<itemTypes.length; i++) {
             if(itemTypes[i].indexOf("item") == 0) {
                 addMenu.push({
                     iconCls: "pimcore_icon_add",
                     handler: this.addCondition.bind(this, itemTypes[i]),
-                    text: pimcore.document.pages.target.conditions[itemTypes[i]](null, null,true)
+                    text: pimcore.settings.targeting.target.conditions[itemTypes[i]](null, null,true)
                 });
             }
         }
@@ -255,7 +221,7 @@ pimcore.settings.targeting.item = Class.create({
 
     addCondition: function (type, data) {
 
-        var item = pimcore.document.pages.target.conditions[type](this, data);
+        var item = pimcore.settings.targeting.target.conditions[type](this, data);
 
         // add logic for brackets
         item.on("afterrender", function (el) {
@@ -363,9 +329,8 @@ pimcore.settings.targeting.item = Class.create({
 
 /* CONDITION TYPES */
 
-pimcore.registerNS("pimcore.document.pages.target.conditions");
-
-pimcore.document.pages.target.conditions = {
+pimcore.registerNS("pimcore.settings.targeting.target.conditions");
+pimcore.settings.targeting.target.conditions = {
 
     detectBlockIndex: function (blockElement, container) {
         // detect index
@@ -396,7 +361,7 @@ pimcore.document.pages.target.conditions = {
 
                 var container = parent.conditionsContainer;
                 var blockElement = Ext.getCmp(blockId);
-                var index = pimcore.document.pages.target.conditions.detectBlockIndex(blockElement, container);
+                var index = pimcore.settings.targeting.target.conditions.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
 
                 var newIndex = index-1;
@@ -426,7 +391,7 @@ pimcore.document.pages.target.conditions = {
 
                 var container = parent.conditionsContainer;
                 var blockElement = Ext.getCmp(blockId);
-                var index = pimcore.document.pages.target.conditions.detectBlockIndex(blockElement, container);
+                var index = pimcore.settings.targeting.target.conditions.detectBlockIndex(blockElement, container);
                 var tmpContainer = pimcore.viewport;
 
                 // move this node temorary to an other so ext recognizes a change
