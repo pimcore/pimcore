@@ -501,7 +501,6 @@ CREATE TABLE `targeting` (
   `conditions` longtext,
   `actions` longtext,
   PRIMARY KEY (`id`),
-  KEY `documentId` (`documentId`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `tracking_events`;
