@@ -591,7 +591,10 @@ class Object_Abstract extends Pimcore_Model_Abstract implements Element_Interfac
             }
 
             // get the old path from the database before the update is done
-            $oldPath = $this->getResource()->getCurrentFullPath();
+            $oldPath = null;
+            if ($isUpdate) {
+                $oldPath = $this->getResource()->getCurrentFullPath();
+            }
 
             $this->update();
 
