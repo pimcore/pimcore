@@ -179,7 +179,7 @@ class Document_Tag_Image extends Document_Tag {
                 $customAttributes = $this->options["attributes"];
             }
 
-            $availableAttribs = array_merge($defaultAttributes, $customAttributes, $this->options);
+            $availableAttribs = array_merge($this->options, $customAttributes, $defaultAttributes);
 
             foreach ($availableAttribs as $key => $value) {
                 if ((is_string($value) || is_numeric($value)) && (in_array($key, $allowedAttributes) || array_key_exists($key, $customAttributes))) {
