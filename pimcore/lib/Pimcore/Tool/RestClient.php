@@ -394,6 +394,14 @@ class Pimcore_Tool_RestClient {
     }
 
 
+    public function changeExtension($filename, $extension) {
+        $idx = strrpos($filename, ".");
+        if ($idx >= 0) {
+            $filename = substr($filename, 0, $idx) . "." . $extension;
+        }
+        return $filename;
+    }
+
     public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null) {
         $uri = self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey;
         if ($light) {
@@ -442,6 +450,28 @@ class Pimcore_Tool_RestClient {
                         if ($result->getStatus() == 200) {
                             $data = $result->getBody();
                         }
+                        $mimeType = $result->getHeader("Content-Type");
+
+                        $filename = $asset->getFilename();
+
+                        switch ($mimeType) {
+                            case "image/tiff":
+                                $filename = $this->changeExtension($filename, "tiff");
+                                break;
+                            case "image/jpeg":
+                                $filename = $this->changeExtension($filename, "jpg");
+                                break;
+                            case "image/gif":
+                                $filename = $this->changeExtension($filename, "gif");
+                                break;
+                            case "image/png":
+                                $filename = $this->changeExtension($filename, "png");
+                                break;
+
+                        }
+
+                        Logger::debug("mimeType: " . $mimeType);
+                        $asset->setFilename($filename);
                     }
 
                     if (!$data) {
