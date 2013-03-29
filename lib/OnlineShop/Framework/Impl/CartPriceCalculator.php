@@ -39,7 +39,7 @@ class OnlineShop_Framework_Impl_CartPriceCalculator implements OnlineShop_Framew
                     throw new OnlineShop_Framework_Exception_UnsupportedException("Different currencies within one cart are not supported");
                 }
 
-                $subTotal += $item->getPrice()->getAmount() * $item->getCount();
+                $subTotal += $item->getTotalPrice()->getAmount();
             }
         }
         if(!$currency) {
