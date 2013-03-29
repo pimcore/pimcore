@@ -64,6 +64,16 @@ class Document_Tag_Image extends Document_Tag {
     public $cropLeft;
 
     /**
+     * @var array
+     */
+    public $hotspots;
+
+    /**
+     * @var array
+     */
+    public $marker;
+
+    /**
      * @see Document_Tag_Interface::getType
      * @return string
      */
@@ -83,7 +93,9 @@ class Document_Tag_Image extends Document_Tag {
             "cropWidth" => $this->cropWidth,
             "cropHeight" => $this->cropHeight,
             "cropTop" => $this->cropTop,
-            "cropLeft" => $this->cropLeft
+            "cropLeft" => $this->cropLeft,
+            "hotspots" => $this->hotspots,
+            "marker" => $this->marker
         );
     }
 
@@ -102,7 +114,9 @@ class Document_Tag_Image extends Document_Tag {
                 "cropWidth" => $this->cropWidth,
                 "cropHeight" => $this->cropHeight,
                 "cropTop" => $this->cropTop,
-                "cropLeft" => $this->cropLeft
+                "cropLeft" => $this->cropLeft,
+                "hotspots" => $this->hotspots,
+                "marker" => $this->marker
             );
         }
         return null;
@@ -212,6 +226,8 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropHeight = $data["cropHeight"];
         $this->cropTop = $data["cropTop"];
         $this->cropLeft = $data["cropLeft"];
+        $this->marker = $data["marker"];
+        $this->hotspots = $data["hotspots"];
 
         try {
             $this->image = Asset_Image::getById($this->id);
@@ -234,6 +250,8 @@ class Document_Tag_Image extends Document_Tag {
         $this->cropHeight = $data["cropHeight"];
         $this->cropTop = $data["cropTop"];
         $this->cropLeft = $data["cropLeft"];
+        $this->marker = $data["marker"];
+        $this->hotspots = $data["hotspots"];
 
         $this->image = Asset_Image::getById($this->id);
         return $this;
@@ -462,4 +480,35 @@ class Document_Tag_Image extends Document_Tag {
         return $this->cropWidth;
     }
 
+    /**
+     * @param array $hotspots
+     */
+    public function setHotspots($hotspots)
+    {
+        $this->hotspots = $hotspots;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHotspots()
+    {
+        return $this->hotspots;
+    }
+
+    /**
+     * @param array $marker
+     */
+    public function setMarker($marker)
+    {
+        $this->marker = $marker;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMarker()
+    {
+        return $this->marker;
+    }
 }
