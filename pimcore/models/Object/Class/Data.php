@@ -103,6 +103,10 @@ abstract class Object_Class_Data
      */
     public $visibleSearch = true;
 
+    /** If set to true then null values will not be exported.
+     * @var
+     */
+    protected static $dropNullValues;
 
     /**
      * @var array
@@ -880,5 +884,23 @@ abstract class Object_Class_Data
         $result[] = $diffdata;
         return $result;
     }
+
+    /**
+     * @param  $dropNullValues
+     */
+    public static function setDropNullValues($dropNullValues)
+    {
+        self::$dropNullValues = $dropNullValues;
+    }
+
+    /**
+     * @return
+     */
+    public static function getDropNullValues()
+    {
+        return self::$dropNullValues;
+    }
+
+
 
 }

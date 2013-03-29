@@ -16,7 +16,13 @@
  */
 
 class Webservice_Data_Object extends Webservice_Data {
-    
+
+
+    /** If set to true then null values will not be exported.
+     * @var
+     */
+    protected static $dropNullValues;
+
     /**
      * @var integer
      */
@@ -32,7 +38,7 @@ class Webservice_Data_Object extends Webservice_Data {
      */
     public $key;
 
-     /**
+    /**
      * @var bool
      */
     public $published;
@@ -53,9 +59,6 @@ class Webservice_Data_Object extends Webservice_Data {
      */
     public $properties;
 
-
-  
-
     public function map ($object) {
 
         parent::map($object);
@@ -75,8 +78,23 @@ class Webservice_Data_Object extends Webservice_Data {
 
     }
 
+    /**
+     * @param  $dropNullValues
+     */
+    public static function setDropNullValues($dropNullValues)
+    {
+        self::$dropNullValues = $dropNullValues;
+    }
+
+    /**
+     * @return
+     */
+    public static function getDropNullValues()
+    {
+        return self::$dropNullValues;
+    }
 
 
 
-    
+
 }

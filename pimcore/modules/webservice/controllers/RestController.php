@@ -29,7 +29,14 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      */
     private $encoder;
 
+
     public function init() {
+
+        if ($this->getParam("condense")) {
+            Object_Class_Data::setDropNullValues(true);
+            Webservice_Data_Object::setDropNullValues(true);
+        }
+
         $profile = $this->getParam("profiling");
         if ($profile) {
             $startTs = microtime(true);
