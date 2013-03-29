@@ -182,31 +182,11 @@ class Pimcore_Resource_Wrapper {
      */
     public function __call($method, $args) {
         try {
-
-            // this wrapper allows you to append "try" to every method (eg. tryInsert()) to disable error logging in
-            // Pimcore_Resource::errorHandler(). This is especially useful if you try to insert contents first, if that
-            // fails try to update them. This is currently used in documents, assets, backend search, object folder, ...
-            /*
-             * ##### EXAMPLE #####
-             try {
-                 $this->db->tryInsert("documents", $data);
-             }
-             catch (Exception $e) {
-                 $this->db->update("documents", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
-             }
-             */
-            $logError = true;
-            if(strpos($method, "try") === 0) {
-                $method = preg_replace("/^try/", "", $method);
-                lcfirst($method);
-                $logError = false;
-            }
-
             $r = $this->callResourceMethod($method, $args);
             return $r;
         }
         catch (Exception $e) {
-            return Pimcore_Resource::errorHandler($method, $args, $e, $logError);
+            return Pimcore_Resource::errorHandler($method, $args, $e);
         }
     }
 
