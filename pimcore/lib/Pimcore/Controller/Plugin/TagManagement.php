@@ -55,8 +55,10 @@ class Pimcore_Controller_Plugin_TagManagement extends Zend_Controller_Plugin_Abs
             // site check
             if(Site::isSiteRequest() && $tag->getSiteId()) {
                 if(Site::getCurrentSite()->getId() != $tag->getSiteId()) {
-                    break;
+                    continue;
                 }
+            } else if (!Site::isSiteRequest() && $tag->getSiteId()) {
+                continue;
             }
 
             if( ($method == strtolower($this->getRequest()->getMethod()) || empty($method)) &&
