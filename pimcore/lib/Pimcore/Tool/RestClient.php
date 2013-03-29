@@ -19,6 +19,16 @@ class Pimcore_Tool_RestClient {
 
     static private $host;
 
+    public static function setDisableMappingExceptions($disableMappingExceptions)
+    {
+        self::$disableMappingExceptions = $disableMappingExceptions;
+    }
+
+    public static function getDisableMappingExceptions()
+    {
+        return self::$disableMappingExceptions;
+    }
+
     static private $baseUrl;
 
     static private $apikey;
