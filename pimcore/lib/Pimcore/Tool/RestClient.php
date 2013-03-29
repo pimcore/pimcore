@@ -443,7 +443,7 @@ class Pimcore_Tool_RestClient {
 
                     if  ($assetType == "image" && strlen($thumbnail) > 0) {
                         // try to retrieve thumbnail first
-                        http://frischeis.pim.elements.pm/website/var/tmp/thumb_9__fancybox_thumb
+                        // http://frischeis.pim.elements.pm/website/var/tmp/thumb_9__fancybox_thumb
                         $uri = "http://" . self::$host . "/website/var/tmp/thumb_" . $asset->getId() . "__" . $thumbnail;
                         $client->setUri($uri);
                         $result = $client->request();
