@@ -934,6 +934,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             try {
                 $site = Site::getByRootId($childDocument->getId());
                 $tmpDocument["iconCls"] = "pimcore_icon_site";
+                unset($site->rootDocument);
                 $tmpDocument["site"] = $site;
             }
             catch (Exception $e) {
