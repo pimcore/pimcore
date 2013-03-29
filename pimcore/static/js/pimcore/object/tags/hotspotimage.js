@@ -185,7 +185,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             Ext.MessageBox.prompt(t('hotspotimage_add_selector'), t('hotspotimage_enter_name_of_new_hotspot'),
                                                 this.completeAddSelector.bind(this), null, null, "");
         } else {
-            Ext.MessageBox.alert(t("hotspotimage_no_image"));
+            Ext.MessageBox.alert(t("error"), t("hotspotimage_no_image"));
         }
     },
 
