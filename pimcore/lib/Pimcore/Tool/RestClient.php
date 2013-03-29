@@ -25,6 +25,18 @@ class Pimcore_Tool_RestClient {
 
     static private $disableMappingExceptions = false;
 
+    static private $enableProfiling = false;
+
+    public static function setEnableProfiling($enableProfiling)
+    {
+        self::$enableProfiling = $enableProfiling;
+    }
+
+    public static function getEnableProfiling()
+    {
+        return self::$enableProfiling;
+    }
+
 
     /** Set the host name.
      * @param $host e.g. pimcore.jenkins.elements.at
@@ -96,6 +108,10 @@ class Pimcore_Tool_RestClient {
     }
 
     private static function map($wsData, $data) {
+        if (!($data instanceof stdClass)) {
+            throw new Pimcore_Tool_RestClient_Exception("Ws data format error");
+        }
+
         foreach($data as $key => $value) {
             if (is_array($value)) {
                 $tmp = array();
@@ -148,13 +164,14 @@ class Pimcore_Tool_RestClient {
         $body = $result->getBody();
         $statusCode = $result->getStatus();
         if ($statusCode != 200) {
-            throw new Exception("Status code " . $statusCode . " " . $uri);
+            throw new Pimcore_Tool_RestClient_Exception("Status code " . $statusCode . " " . $uri);
         }
         $body = json_decode($body);
         return $body;
     }
 
-    public static function setLoggingEnabled($loggingEnabled) {
+    public static function setLoggingEnabled($loggingEnabled)
+    {
         self::$loggingEnabled = $loggingEnabled;
     }
 
@@ -285,10 +302,24 @@ class Pimcore_Tool_RestClient {
     }
 
 
+    public function getProfilingInfo() {
+        return $this->profilingInfo;
+    }
 
     public function getObjectById($id, $decode = true, $idMapper = null) {
-        $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . self::$apikey, "GET");
+        $url = self::$baseUrl .  "object/id/" . $id . "?apikey=" . self::$apikey;
+        if (self::$enableProfiling) {
+            $this->profilingInfo = null;
+            $url .= "&profiling=1";
+        }
+        $response = $this->doRequest($url, "GET");
+        if (self::$enableProfiling) {
+            $this->profilingInfo = $response->profiling;
+        }
+
         $response = $response->data;
+
+
         $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
 
         if (!$decode) {
@@ -303,11 +334,18 @@ class Pimcore_Tool_RestClient {
             $classname = "Object_" . ucfirst($wsDocument->className);
             // check for a mapped class
             $classname = Pimcore_Tool::getModelClassMapping($classname);
+
             if (Pimcore_Tool::classExists($classname)) {
                 $object = new $classname();
 
                 if ($object instanceof Object_Concrete) {
+                    $curTime = microtime(true);
                     $wsDocument->reverseMap($object, self::$disableMappingExceptions, $idMapper);
+                    $timeConsumed = round(microtime(true) - $curTime,3)*1000;
+
+                    if ($this->profilingInfo) {
+                        $this->profilingInfo->reverse = $timeConsumed;
+                    }
                     return $object;
                 } else {
                     throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
@@ -356,15 +394,6 @@ class Pimcore_Tool_RestClient {
     }
 
 
-    /** Returns an asset by ID
-     * @param $id the remote ID
-     * @param bool $decode reverse map the JSON response
-     * @param null $idMapper the ID mapper
-     * @param bool $light if light then actual data will be downloaded seperately
-     * @param null $thumbnail thumbnail name to be used, if download fails it will fall back to full image.
-     * @return Asset the asset
-     * @throws Exception if something went wrong
-     */
     public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null) {
         $uri = self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey;
         if ($light) {
@@ -433,6 +462,7 @@ class Pimcore_Tool_RestClient {
             }
         }
     }
+
 
 
     /** Creates a new document.
@@ -614,12 +644,6 @@ class Pimcore_Tool_RestClient {
         return $response["data"]->totalCount;
     }
 
-    /** Returns the total number of objects that match the given condition
-     * @param null $condition
-     * @param null $groupBy
-     * @return mixed
-     * @throws Exception
-     */
     public function getObjectCount($condition = null, $groupBy = null) {
         $params = $this->fillParms($condition, null, null, null, null, $groupBy, null);
 
