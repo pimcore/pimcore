@@ -27,6 +27,13 @@ class Pimcore_Tool_RestClient {
 
     static private $enableProfiling = false;
 
+    static private $condense = false;
+
+    public static function setCondense($condense)
+    {
+        self::$condense = $condense;
+    }
+
     public static function setEnableProfiling($enableProfiling)
     {
         self::$enableProfiling = $enableProfiling;
@@ -312,6 +319,11 @@ class Pimcore_Tool_RestClient {
             $this->profilingInfo = null;
             $url .= "&profiling=1";
         }
+
+        if (self::$condense) {
+            $url .= "&condense=1";
+        }
+
         $response = $this->doRequest($url, "GET");
         if (self::$enableProfiling) {
             $this->profilingInfo = $response->profiling;
