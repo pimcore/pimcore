@@ -392,3 +392,18 @@
 .cke-code-editor textarea {
     font-family: "courier new", courier !important;
 }
+
+
+.pimcore_image_marker {
+    background: url(/pimcore/static/img/icon/marker.png);
+    width: 20px;
+    height: 35px;
+    cursor: pointer;
+    position: absolute;
+}
+
+.pimcore_image_hotspot {
+    cursor: pointer;
+    position: absolute;
+}
+

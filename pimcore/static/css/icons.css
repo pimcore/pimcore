@@ -1289,3 +1289,23 @@
 .pimcore_icon_mic {
     background: url(/pimcore/static/img/icon/user_comment.png) left center no-repeat !important;
 }
+
+.pimcore_icon_image_add_hotspot {
+     background: url(/pimcore/static/img/icon/picture_edit.png) left center no-repeat !important;
+}
+
+.pimcore_icon_image_region {
+    background: url(/pimcore/static/img/icon/picture_region.png) left center no-repeat !important;
+}
+
+.pimcore_icon_add_marker {
+    background: url(/pimcore/static/img/icon/picture_marker.png) left center no-repeat !important;
+}
+
+.pimcore_icon_add_hotspot {
+    background: url(/pimcore/static/img/icon/picture_hotspot.png) left center no-repeat !important;
+}
+
+.pimcore_icon_add_data {
+    background: url(/pimcore/static/img/icon/table_row_insert.png) left center no-repeat !important;
+}
