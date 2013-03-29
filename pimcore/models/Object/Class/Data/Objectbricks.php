@@ -344,6 +344,9 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
                     $el->name = $fd->getName();
                     $el->type = $fd->getFieldType();
                     $el->value = $fd->getForWebserviceExport($item);
+                    if ($el->value ==  null && self::$dropNullValues) {
+                        continue;
+                    }
 
                     $wsDataItem->value[] = $el;
 

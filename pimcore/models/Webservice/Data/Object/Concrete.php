@@ -45,7 +45,12 @@ class Webservice_Data_Object_Concrete extends Webservice_Data_Object {
                 $el = new Webservice_Data_Object_Element();
                 $el->name = $field->getName();
                 $el->type = $field->getFieldType();
+
                 $el->value = $field->getForWebserviceExport($object);
+                if ($el->value == null && self::$dropNullValues) {
+                    continue;
+                }
+
                 $this->elements[] = $el;
             }
 

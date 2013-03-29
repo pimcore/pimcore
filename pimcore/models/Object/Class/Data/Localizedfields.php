@@ -191,6 +191,9 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                 $el->name = $fd->getName();
                 $el->type = $fd->getFieldType();
                 $el->value = $fd->getForWebserviceExport($object);
+                if ($el->value ==  null && self::$dropNullValues) {
+                    continue;
+                }
                 $el->language = $language;
                 $wsData[] = $el;
             }
