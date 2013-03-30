@@ -147,13 +147,7 @@ class Document_Resource extends Element_Resource {
                 }
             }
 
-            // first try to insert a new record, this is because of the recyclebin restore
-            try {
-                $this->db->insert("documents", $data);
-            }
-            catch (Exception $e) {
-                $this->db->update("documents", $data, $this->db->quoteInto("id = ?", $this->model->getId() ));
-            }
+            $this->db->insertOrUpdate("documents", $data);
 
             $this->updateLocks();
         }
@@ -210,6 +204,8 @@ class Document_Resource extends Element_Resource {
      * @return string retrieves the current full document path from DB
      */
     public function getCurrentFullPath() {
+
+        $path = null;
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
         }

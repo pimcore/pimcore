@@ -91,6 +91,10 @@ class Admin_BackupController extends Pimcore_Controller_Action_Admin {
         
         header("Content-Type: application/tar");
         header('Content-Disposition: attachment; filename="' . basename($backup->getBackupFile()) . '"');
+
+        while(@ob_end_flush());
+        flush();
+
         readfile($backup->getBackupFile());
         
         exit;

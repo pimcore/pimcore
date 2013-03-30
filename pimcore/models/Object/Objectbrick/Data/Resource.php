@@ -23,27 +23,6 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
      */
     protected $inheritanceHelper = null;    
 
-    
-    /**
-     * create data rows for query table and for the store table
-     *
-     * @return void
-     */
-    protected function createDataRows($object) {
-        try {
-            $tableName = $this->model->getDefinition()->getTableName($object->getClass(), false);
-            $this->db->insert($tableName, array("o_id" => $object->getId(), "fieldname" => $this->model->getFieldname()));
-        }
-        catch (Exception $e) {
-        }
-
-        try {
-            $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
-            $this->db->insert($tableName, array("o_id" => $object->getId(), "fieldname" => $this->model->getFieldname()));
-        }
-        catch (Exception $e) {
-        }
-    }
 
     /**
      * @param Object_Concrete $object
@@ -59,9 +38,6 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
 
 
         $this->inheritanceHelper = new Object_Concrete_Resource_InheritanceHelper($object->getClassId(), "o_id", $storetable, $querytable);
-
-        $this->createDataRows($object);
-
 
         Object_Abstract::setGetInheritedValues(false);
 
@@ -101,7 +77,7 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
             }
         }
 
-        $this->db->update($storetable, $data, $this->db->quoteInto("o_id = ?", $object->getId()));
+        $this->db->insertOrUpdate($storetable, $data);
 
 
         // get data for query table 
@@ -173,7 +149,8 @@ class Object_Objectbrick_Data_Resource extends Pimcore_Model_Resource_Abstract {
                 }
             }
         }
-        $this->db->update($querytable, $data, "o_id = " . $object->getId());
+
+        $this->db->insertOrUpdate($querytable, $data);
 
         $this->inheritanceHelper->doUpdate($object->getId());
         $this->inheritanceHelper->resetFieldsToCheck();

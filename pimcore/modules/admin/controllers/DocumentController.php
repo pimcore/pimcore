@@ -243,9 +243,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
         } else if($this->getParam("id")) {
             $document = Document::getById($this->getParam("id"));
             if ($document->isAllowed("delete")) {
-                Element_Recyclebin_Item::create($document, $this->getUser());
                 $document->delete();
-
                 $this->_helper->json(array("success" => true));
             }
         }
@@ -936,6 +934,7 @@ class Admin_DocumentController extends Pimcore_Controller_Action_Admin {
             try {
                 $site = Site::getByRootId($childDocument->getId());
                 $tmpDocument["iconCls"] = "pimcore_icon_site";
+                unset($site->rootDocument);
                 $tmpDocument["site"] = $site;
             }
             catch (Exception $e) {

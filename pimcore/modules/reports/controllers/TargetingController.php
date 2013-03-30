@@ -25,12 +25,6 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         $targets = array();
         $list = new Tool_Targeting_List();
 
-        if($this->getParam("documentId")) {
-            $list->setCondition("documentId = ?", $this->getParam("documentId"));
-        } else {
-            $list->setCondition("documentId IS NULL OR documentId = ''");
-        }
-
         foreach($list->load() as $target) {
             $targets[] = array(
                 "id" => $target->getId(),
@@ -45,13 +39,7 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
 
         $target = new Tool_Targeting();
         $target->setName($this->getParam("name"));
-
-        if($this->getParam("documentId")) {
-            $target->setDocumentId($this->getParam("documentId"));
-        }
-
         $target->save();
-
 
         $this->_helper->json(array("success" => true, "id" => $target->getId()));
     }
@@ -109,17 +97,5 @@ class Reports_TargetingController extends Pimcore_Controller_Action_Admin {
         $target->save();
 
         $this->_helper->json(array("success" => true));
-    }
-
-    public function createVariantAction () {
-
-        $targeting = Tool_Targeting::getById($this->getParam("tragetingId"));
-        $page = Document::getById($this->getParam("documentId"));
-        $docService = new Document_Service($this->getUser());
-        $variant = $docService->copyAsChild($page,$page,true);
-        $variant->setKey(Element_Service::getSaveCopyName("document", $page->getKey() . "_targeting_" . Pimcore_File::getValidFilename($targeting->getName()), $page));
-        $variant->save();
-
-        $this->_helper->json(array("id" => $variant->getId(), "path" => $variant->getFullPath()));
     }
 }

@@ -19,11 +19,40 @@ class Pimcore_Tool_RestClient {
 
     static private $host;
 
+    public static function setDisableMappingExceptions($disableMappingExceptions)
+    {
+        self::$disableMappingExceptions = $disableMappingExceptions;
+    }
+
+    public static function getDisableMappingExceptions()
+    {
+        return self::$disableMappingExceptions;
+    }
+
     static private $baseUrl;
 
     static private $apikey;
 
     static private $disableMappingExceptions = false;
+
+    static private $enableProfiling = false;
+
+    static private $condense = false;
+
+    public static function setCondense($condense)
+    {
+        self::$condense = $condense;
+    }
+
+    public static function setEnableProfiling($enableProfiling)
+    {
+        self::$enableProfiling = $enableProfiling;
+    }
+
+    public static function getEnableProfiling()
+    {
+        return self::$enableProfiling;
+    }
 
 
     /** Set the host name.
@@ -96,6 +125,10 @@ class Pimcore_Tool_RestClient {
     }
 
     private static function map($wsData, $data) {
+        if (!($data instanceof stdClass)) {
+            throw new Pimcore_Tool_RestClient_Exception("Ws data format error");
+        }
+
         foreach($data as $key => $value) {
             if (is_array($value)) {
                 $tmp = array();
@@ -146,6 +179,10 @@ class Pimcore_Tool_RestClient {
         $result = $client->request();
 
         $body = $result->getBody();
+        $statusCode = $result->getStatus();
+        if ($statusCode != 200) {
+            throw new Pimcore_Tool_RestClient_Exception("Status code " . $statusCode . " " . $uri);
+        }
         $body = json_decode($body);
         return $body;
     }
@@ -282,10 +319,29 @@ class Pimcore_Tool_RestClient {
     }
 
 
+    public function getProfilingInfo() {
+        return $this->profilingInfo;
+    }
 
     public function getObjectById($id, $decode = true, $idMapper = null) {
-        $response = $this->doRequest(self::$baseUrl .  "object/id/" . $id . "?apikey=" . self::$apikey, "GET");
+        $url = self::$baseUrl .  "object/id/" . $id . "?apikey=" . self::$apikey;
+        if (self::$enableProfiling) {
+            $this->profilingInfo = null;
+            $url .= "&profiling=1";
+        }
+
+        if (self::$condense) {
+            $url .= "&condense=1";
+        }
+
+        $response = $this->doRequest($url, "GET");
+        if (self::$enableProfiling) {
+            $this->profilingInfo = $response->profiling;
+        }
+
         $response = $response->data;
+
+
         $wsDocument = self::fillWebserviceData("Webservice_Data_Object_Concrete_In", $response);
 
         if (!$decode) {
@@ -298,11 +354,20 @@ class Pimcore_Tool_RestClient {
             return $object;
         } else if ($wsDocument->type == "object") {
             $classname = "Object_" . ucfirst($wsDocument->className);
+            // check for a mapped class
+            $classname = Pimcore_Tool::getModelClassMapping($classname);
+
             if (Pimcore_Tool::classExists($classname)) {
                 $object = new $classname();
 
                 if ($object instanceof Object_Concrete) {
+                    $curTime = microtime(true);
                     $wsDocument->reverseMap($object, self::$disableMappingExceptions, $idMapper);
+                    $timeConsumed = round(microtime(true) - $curTime,3)*1000;
+
+                    if ($this->profilingInfo) {
+                        $this->profilingInfo->reverse = $timeConsumed;
+                    }
                     return $object;
                 } else {
                     throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
@@ -351,7 +416,15 @@ class Pimcore_Tool_RestClient {
     }
 
 
-    public function getAssetById($id, $decode = true, $idMapper = null, $light = false) {
+    public function changeExtension($filename, $extension) {
+        $idx = strrpos($filename, ".");
+        if ($idx >= 0) {
+            $filename = substr($filename, 0, $idx) . "." . $extension;
+        }
+        return $filename;
+    }
+
+    public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null) {
         $uri = self::$baseUrl .  "asset/id/" . $id . "?apikey=" . self::$apikey;
         if ($light) {
             $uri .= "&light=1";
@@ -386,14 +459,55 @@ class Pimcore_Tool_RestClient {
                 if ($light) {
                     $client = Pimcore_Tool::getHttpClient();
                     $client->setMethod("GET");
-                    $path = $wsDocument->path;
-                    $filename = $wsDocument->filename;
-                    $uri = "http://" . self::$host . "/website/var/assets" . $path . $filename;
-                    $client->setUri($uri);
-                    $result = $client->request();
-                    $data = $result->getBody();
-                    $asset->setData($data);
 
+                    $assetType = $asset->getType();
+                    $data = null;
+
+                    if  ($assetType == "image" && strlen($thumbnail) > 0) {
+                        // try to retrieve thumbnail first
+                        // http://frischeis.pim.elements.pm/website/var/tmp/thumb_9__fancybox_thumb
+                        $uri = "http://" . self::$host . "/website/var/tmp/thumb_" . $asset->getId() . "__" . $thumbnail;
+                        $client->setUri($uri);
+                        $result = $client->request();
+                        if ($result->getStatus() == 200) {
+                            $data = $result->getBody();
+                        }
+                        $mimeType = $result->getHeader("Content-Type");
+
+                        $filename = $asset->getFilename();
+
+                        switch ($mimeType) {
+                            case "image/tiff":
+                                $filename = $this->changeExtension($filename, "tiff");
+                                break;
+                            case "image/jpeg":
+                                $filename = $this->changeExtension($filename, "jpg");
+                                break;
+                            case "image/gif":
+                                $filename = $this->changeExtension($filename, "gif");
+                                break;
+                            case "image/png":
+                                $filename = $this->changeExtension($filename, "png");
+                                break;
+
+                        }
+
+                        Logger::debug("mimeType: " . $mimeType);
+                        $asset->setFilename($filename);
+                    }
+
+                    if (!$data) {
+                        $path = $wsDocument->path;
+                        $filename = $wsDocument->filename;
+                        $uri = "http://" . self::$host . "/website/var/assets" . $path . $filename;
+                        $client->setUri($uri);
+                        $result = $client->request();
+                        if ($result->getStatus() != 200) {
+                            throw new Exception("Could not retrieve asset");
+                        }
+                        $data = $result->getBody();
+                    }
+                    $asset->setData($data);
                 }
 
                 return $asset;
@@ -618,6 +732,9 @@ class Pimcore_Tool_RestClient {
     }
 
 
+    /** Returns a list of defined classes
+     * @return mixed
+     */
     public function getClasses() {
         $url = self::$baseUrl .  "classes?apikey=" . self::$apikey;
         $response = $this->doRequest($url, "GET");
@@ -625,6 +742,9 @@ class Pimcore_Tool_RestClient {
         return $response;
     }
 
+    /** Returns a list of defined object bricks
+     * @return mixed
+     */
     public function getObjectBricks() {
         $url = self::$baseUrl .  "object-bricks?apikey=" . self::$apikey;
         $response = $this->doRequest($url, "GET");
@@ -632,6 +752,10 @@ class Pimcore_Tool_RestClient {
         return $response;
     }
 
+    /** Returns the given object brick definition
+     * @param $id
+     * @return mixed
+     */
     public function getObjectBrick($id) {
         $url = self::$baseUrl .  "object-brick/id/" . $id . "?apikey=" . self::$apikey;
         $response = $this->doRequest($url, "GET");
@@ -639,4 +763,32 @@ class Pimcore_Tool_RestClient {
         return $response;
     }
 
+    /** Returns the current server time
+     * @return mixed
+     */
+    public function getCurrentTime() {
+        $url = self::$baseUrl .  "system-clock?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+
+        return $response;
+    }
+
+    /** Returns a list of image thumbnail configurations.
+     * @return mixed
+     */
+    public function getImageThumbnails() {
+        $url = self::$baseUrl .  "image-thumbnails?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+        return $response;
+    }
+
+    /** Returns the image thumbnail configuration with the given ID.
+     * @param $id
+     * @return mixed
+     */
+    public function getImageThumbnail($id) {
+        $url = self::$baseUrl .  "image-thumbnail/id/". $id . "?apikey=" . self::$apikey;
+        $response = $this->doRequest($url, "GET");
+        return $response;
+    }
 }

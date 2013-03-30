@@ -144,7 +144,7 @@ pimcore.layout.toolbar = Class.create({
             seoMenu.push({
                 text: t("reports"),
                 iconCls: "pimcore_icon_reports",
-                handler: this.showReports
+                handler: this.showReports.bind(this, null)
             });
         }
 
@@ -225,6 +225,7 @@ pimcore.layout.toolbar = Class.create({
             extrasItems.push({
                 text: t("reports_and_marketing"),
                 iconCls: "pimcore_icon_reports",
+                id: "pimcore_mainmenu_extras_reports",
                 hideOnClick: false,
                 menu: reportsMenu
             });
@@ -947,12 +948,21 @@ pimcore.layout.toolbar = Class.create({
         }
     },
 
-    showReports: function () {
+    showReports: function (reportClass, reportConfig) {
         try {
             pimcore.globalmanager.get("reports").activate();
         }
         catch (e) {
             pimcore.globalmanager.add("reports", new pimcore.report.panel());
+        }
+
+        // this is for generated/configured reports like the SQL Report
+        try {
+            if(reportClass) {
+                pimcore.globalmanager.get("reports").openReport(reportClass, reportConfig);
+            }
+        } catch (e) {
+
         }
     },
 

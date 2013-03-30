@@ -496,14 +496,11 @@ CREATE TABLE `staticroutes` (
 DROP TABLE IF EXISTS `targeting`;
 CREATE TABLE `targeting` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `documentId` int(11) DEFAULT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
   `description` text,
   `conditions` longtext,
   `actions` longtext,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name_documentId` (`documentId`,`name`),
-  KEY `documentId` (`documentId`)
+  PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `tracking_events`;

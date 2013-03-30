@@ -98,6 +98,17 @@ class Asset_Image_Thumbnail_Config {
     }
 
     /**
+     * Returns thumbnail config for webservice export.
+     */
+    public function getForWebserviceExport() {
+        $arrayConfig = object2array($this);
+        $items = $arrayConfig["items"];
+        $arrayConfig["items"] = $items;
+        return $arrayConfig;
+    }
+
+
+    /**
      * @return void
      */
     public function save () {

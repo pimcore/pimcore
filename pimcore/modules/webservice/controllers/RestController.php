@@ -29,12 +29,31 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
      */
     private $encoder;
 
+
     public function init() {
+
+        if ($this->getParam("condense")) {
+            Object_Class_Data::setDropNullValues(true);
+            Webservice_Data_Object::setDropNullValues(true);
+        }
+
+        $profile = $this->getParam("profiling");
+        if ($profile) {
+            $startTs = microtime(true);
+
+        }
         parent::init();
         $this->disableViewAutoRender();
         $this->service = new Webservice_Service();
         // initialize json encoder by default, maybe support xml in the near future
         $this->encoder = new Webservice_JsonEncoder();
+
+        if ($profile) {
+
+            $this->timeConsumedInit = round(microtime(true) - $startTs,3)*1000;
+        }
+
+
     }
 
     private function checkPermission($element, $category) {
@@ -93,15 +112,47 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         try {
             if ($this->isGet()) {
                 if ($id) {
+                    $profile = $this->getParam("profiling");
+                    if ($profile) {
+                        $startTs = microtime(true);
+                    }
+
                     $object = Object_Abstract::getById($id);
+                    if ($profile) {
+                        $timeConsumedGet = round(microtime(true) - $startTs,3)*1000;
+                        $startTs = microtime(true);
+                    }
+
                     $this->checkPermission($object, "get");
+
+                    if ($profile) {
+                        $timeConsumedPerm = round(microtime(true) - $startTs,3)*1000;
+                        $startTs = microtime(true);
+                    }
+
                     if ($object instanceof Object_Folder) {
                         $object = $this->service->getObjectFolderById($id);
                     } else {
                         $object = $this->service->getObjectConcreteById($id);
                     }
 
-                    $this->encoder->encode(array("success" => true, "data" => $object));
+                    if ($profile) {
+                        $timeConsumedGetWebservice = round(microtime(true) - $startTs,3)*1000;
+                    }
+
+                    if ($profile) {
+                        $profiling = array();
+                        $profiling["get"] = $timeConsumedGet;
+                        $profiling["perm"] = $timeConsumedPerm;
+                        $profiling["ws"] = $timeConsumedGetWebservice;
+                        $profiling["init"] = $this->timeConsumedInit;
+                        $result = array("success" => true, "profiling" => $profiling, "data" => $object);
+                    } else {
+                        $result = array("success" => true, "data" => $object);
+                    }
+
+
+                    $this->encoder->encode($result);
                     return;
                 }
             } else if ($this->isDelete()) {
@@ -155,11 +206,13 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
                     $success = $id != null;
                 }
 
+
+                $result = array("success" => $success);
                 if ($success && !$isUpdate) {
-                    $this->encoder->encode(array("success" => $success, "id" => $id));
-                } else {
-                    $this->encoder->encode(array("success" => $success));
+                    $result["id"] = $id;
                 }
+
+                $this->encoder->encode($result);
                 return;
 
             }
@@ -220,6 +273,46 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         $this->encoder->encode(array("success" => false));
     }
 
+    /**
+     * Returns the configuration for the image thumbnail with the given ID.
+     */
+    public function imageThumbnailAction () {
+        $this->checkUserPermission("thumbnails");
+        try {
+            $id = $this->getParam("id");
+            if ($id) {
+                $config = Asset_Image_Thumbnail_Config::getByName($id);
+                $this->encoder->encode(array("success" => true, "data" => $config->getForWebserviceExport()));
+                return;
+            }
+        } catch (Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(array("success" => false, "msg" => $e));
+        }
+        $this->encoder->encode(array("success" => false));
+    }
+
+    /**
+     * Returns a list of all image thumbnails.
+     */
+    public function imageThumbnailsAction () {
+        $this->checkUserPermission("thumbnails");
+        $dir = Asset_Image_Thumbnail_Config::getWorkingDir();
+
+        $pipelines = array();
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if(strpos($file, ".xml")) {
+                $name = str_replace(".xml", "", $file);
+                $pipelines[] = array(
+                    "id" => $name,
+                    "text" => $name
+                );
+            }
+        }
+
+        $this->encoder->encode(array("success" => true, "data" => $pipelines));
+    }
 
 
     /** end point for the object-brick definition
@@ -861,6 +954,13 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
         return $request->isPut();
     }
 
+    /**
+     * Returns the current time.
+     */
+    public function systemClockAction() {
+        $this->encoder->encode(array("success" => true,
+            "data" => array("currentTime" => time())));
+    }
 
 
     /**
@@ -869,9 +969,11 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
     public function serverInfoAction() {
         $this->checkUserPermission("system_settings");
 
+        $system = array("currentTime" => time());
         $result = array();
         $pimcore = array();
         $pimcore["version"] = Pimcore_Version::getVersion();
+
 //        $pimcore["svnInfo"] = Pimcore_Version::getSvnInfo();
         $pimcore["revision"] = Pimcore_Version::getRevision();
 
@@ -879,7 +981,8 @@ class Webservice_RestController extends Pimcore_Controller_Action_Webservice {
 
 //        $phpInfo = $this->phpinfo_array();
 
-        $this->encoder->encode(array("success" => true, "pimcore" => $pimcore,
+        $this->encoder->encode(array("success" => true, "system" => $system,
+            "pimcore" => $pimcore,
 //            "phpinfo" => $phpInfo,
             "plugins" => $plugins
         ));

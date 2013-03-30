@@ -15,7 +15,7 @@
 pimcore.registerNS("pimcore.settings.targeting.panel");
 pimcore.settings.targeting.panel= Class.create({
 
-    initialize: function(page) {
+    initialize: function() {
         this.treeDataUrl = '/admin/reports/targeting/list/';
     },
 
@@ -26,7 +26,7 @@ pimcore.settings.targeting.panel= Class.create({
             this.layout = new Ext.Panel({
                 title: t('targeting'),
                 layout: "border",
-                closable: (this.page ? false : true),
+                closable: true,
                 border: false,
                 iconCls: "pimcore_icon_tab_targeting",
                 items: [this.getTree(), this.getTabPanel()]
@@ -110,8 +110,7 @@ pimcore.settings.targeting.panel= Class.create({
             Ext.Ajax.request({
                 url: "/admin/reports/targeting/add",
                 params: {
-                    name: value,
-                    documentId: (this.page ? this.page.id : null)
+                    name: value
                 },
                 success: function (response) {
                     var data = Ext.decode(response.responseText);
@@ -165,7 +164,7 @@ pimcore.settings.targeting.panel= Class.create({
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
-                var item = new pimcore.document.pages.target.item(this, res);
+                var item = new pimcore.settings.targeting.item(this, res);
             }.bind(this)
         });
 

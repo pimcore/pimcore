@@ -43,10 +43,6 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             this.notes = new pimcore.element.notes(this, "document");
         }
 
-        if(user.isAllowed("targeting")) {
-            this.targeting = new pimcore.document.pages.targeting(this);
-        }
-
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
@@ -74,9 +70,6 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         }
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
-        }
-        if (user.isAllowed("targeting") && pimcore.settings.targeting_enabled) {
-            items.push(this.targeting.getLayout());
         }
         if (this.isAllowed("versions")) {
             items.push(this.versions.getLayout());

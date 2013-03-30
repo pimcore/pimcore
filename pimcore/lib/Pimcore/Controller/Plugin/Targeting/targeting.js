@@ -27,7 +27,8 @@
         },
 
         country: function (params) {
-            if(util.toString(params["country"]).toLowerCase()
+            if(user["location"] &&
+                util.toString(params["country"]).toLowerCase()
                                                     == util.toString(user["location"]["country"]).toLowerCase()) {
                 return true;
             }
@@ -54,7 +55,8 @@
         },
 
         geopoint: function (params) {
-            if(util.geoDistance(user["location"]["latitude"], user["location"]["longitude"], params["latitude"],
+            if(user["location"] &&
+                util.geoDistance(user["location"]["latitude"], user["location"]["longitude"], params["latitude"],
                                                                             params["longitude"]) < params["radius"]) {
                 return true;
             }
@@ -474,7 +476,7 @@
 
 
     try {
-        if(!user["location"]) {
+        if(!user["location"] && google && google.loader && google.loader.ClientLocation) {
             user["location"] = {
                 latitude: google.loader.ClientLocation.latitude,
                 longitude: google.loader.ClientLocation.longitude,
@@ -554,10 +556,10 @@
         }
 
         // get new events
-        var newEvents = util.getCookie("pimcore__~__targeting");
+        var newEvents = util.getCookie("pimcore__~__targeting_event");
         if(newEvents) {
             newEvents = JSON.parse(newEvents);
-            util.unsetCookie("pimcore__~__targeting");
+            util.unsetCookie("pimcore__~__targeting_event");
 
             for(var ev=0; ev<newEvents.length; ev++) {
                 user["events"].push(newEvents[ev]);

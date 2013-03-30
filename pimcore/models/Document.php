@@ -86,11 +86,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
     public $path;
 
     /**
-     * @var string old path before update, later needed to update children
-     */
-    protected $_oldPath;
-
-    /**
      * Sorter index in the tree, can also be used for generating a navigation and so on
      *
      * @var integer
@@ -372,7 +367,18 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 $this->getResource()->create();
             }
 
+            // get the old path from the database before the update is done
+            $oldPath = null;
+            if ($isUpdate) {
+                $oldPath = $this->getResource()->getCurrentFullPath();
+            }
+
             $this->update();
+
+            // if the old path is different from the new path, update all children
+            if($oldPath && $oldPath != $this->getFullPath()) {
+                $this->getResource()->updateChildsPaths($oldPath);
+            }
 
             $this->commit();
         } catch (Exception $e) {
@@ -447,6 +453,7 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
                 if (!$property->getInherited()) {
                     $property->setResource(null);
                     $property->setCid($this->getId());
+                    $property->setCtype("document");
                     $property->setCpath($this->getRealFullPath());
                     $property->save();
                 }
@@ -469,11 +476,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         $d->save();
 
         $this->getResource()->update();
-
-        if ($this->_oldPath) {
-            // update childs path
-            $this->getResource()->updateChildsPaths($this->_oldPath);
-        }
 
         //set object to registry
         Zend_Registry::set("document_" . $this->getId(), $this);
@@ -850,10 +852,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setKey($key) {
-        //set old path so that child paths are updated after this document was saved
-        if ($this->key != null and $key != null and $key != $this->key) {
-            $this->_oldPath = $this->getResource()->getCurrentFullPath();
-        }
         $this->key = $key;
         return $this;
     }
@@ -874,10 +872,6 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
      * @return void
      */
     public function setParentId($parentId) {
-
-        if ($this->parentId != null and $parentId != null and $this->parentId != $parentId) {
-            $this->_oldPath = $this->getResource()->getCurrentFullPath();
-        }
         $this->parentId = (int) $parentId;
         return $this;
     }
@@ -1137,12 +1131,12 @@ class Document extends Pimcore_Model_Abstract implements Document_Interface {
         
         if(isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("dependencies", "userPermissions", "hasChilds", "_oldPath", "versions", "scheduledTasks", "parent");
+            $blockedVars = array("dependencies", "userPermissions", "hasChilds", "versions", "scheduledTasks", "parent");
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("dependencies", "userPermissions", "childs", "hasChilds", "_oldPath", "versions", "scheduledTasks", "properties", "parent");
+            $blockedVars = array("dependencies", "userPermissions", "childs", "hasChilds", "versions", "scheduledTasks", "properties", "parent");
         }
         
 

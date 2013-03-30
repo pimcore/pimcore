@@ -161,6 +161,8 @@ class Pimcore_Resource_Mysql {
         } catch (Exception $e) {
             Logger::error($e);
         }
+
+        Zend_Registry::set("Pimcore_Resource_Mysql", null);
     }
 
     /**
@@ -250,9 +252,17 @@ class Pimcore_Resource_Mysql {
      * @param Exception $exception
      * @return
      */
-    public static function errorHandler ($method, $args, $exception) {
+    public static function errorHandler ($method, $args, $exception, $logError = true) {
 
-        Logger::error($exception->getMessage());
+        if($logError) {
+            Logger::error($exception);
+            Logger::error(array(
+                "message" => $exception->getMessage(),
+                "method" => $method,
+                "arguments" => $args
+            ));
+        }
+
         $lowerErrorMessage = strtolower($exception->getMessage());
 
         // check if the mysql-connection is the problem (timeout issues, ...)
@@ -262,23 +272,19 @@ class Pimcore_Resource_Mysql {
 
             // the connection to the server has probably been lost, try to reconnect and call the method again
             try {
-                Logger::info("the connection to the MySQL-Server has probably been lost, try to reconnect...");
+                Logger::warning("The connection to the MySQL-Server has probably been lost, try to reconnect...");
                 self::reset();
-                Logger::info("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
+                Logger::warning("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
                 $r = self::get()->callResourceMethod($method, $args);
+                Logger::warning("Resending the command was successful");
                 return $r;
             } catch (Exception $e) {
-                Logger::debug($e);
+                Logger::error($e);
                 throw $e;
             }
         }
 
-        if(strpos($lowerErrorMessage, "syntax error") !== false) {
-            Logger::info(array($method, $args));
-        }
-
-        // no handling just log the exception and then throw it
-        Logger::debug($exception);
+        // no handling throw it again
         throw $exception;
     }
 
