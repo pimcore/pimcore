@@ -30,7 +30,7 @@ class Asset_Image_Thumbnail_Processor {
         "setBackgroundColor" => array("color"),
         "roundCorners" => array("width","height"),
         "setBackgroundImage" => array("path"),
-        "addOverlay" => array("path", "x", "y", "alpha", "composite"),
+        "addOverlay" => array("path", "x", "y", "alpha", "composite", "origin"),
         "applyMask" => array("path"),
         "cropPercent" => array("width","height","x","y"),
         "grayscale" => array(),
