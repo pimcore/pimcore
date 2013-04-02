@@ -106,6 +106,7 @@ class OnlineShop_Framework_Impl_MultiCartManager implements OnlineShop_Framework
     public function deleteCart($key) {
         $this->checkForInit();
         $this->getCart($key)->delete();
+        unset($this->carts[$key]);
     }
 
     /**
