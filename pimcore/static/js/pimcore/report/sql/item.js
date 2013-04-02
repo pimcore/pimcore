@@ -251,7 +251,7 @@ pimcore.report.sql.item = Class.create({
                     insertData = {
                         name: columns[i],
                         display: true,
-                        export: true,
+                        "export": true,
                         order: true,
                         width: "",
                         label: ""
