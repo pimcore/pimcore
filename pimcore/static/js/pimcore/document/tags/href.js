@@ -56,21 +56,10 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
 
 
         this.element.on("render", function (el) {
-            var domElement = el.getEl().dom;
-            domElement.dndOver = false;
-
-            domElement.reference = this;
-
-            dndZones.push(domElement);
-            el.getEl().on("mouseover", function (options, e) {
-                this.dndOver = true;
-            }.bind(domElement, this.options));
-            el.getEl().on("mouseout", function (e) {
-                this.dndOver = false;
-            }.bind(domElement));
+            // register at global DnD manager
+            dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
-
         }.bind(this));
 
         // disable typing into the textfield

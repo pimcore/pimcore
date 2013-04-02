@@ -54,19 +54,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             // contextmenu
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
-
-            var domElement = el.getEl().dom;
-            domElement.dndOver = false;
-
-            domElement.reference = this;
-
-            dndZones.push(domElement);
-            el.getEl().on("mouseover", function (e) {
-                this.dndOver = true;
-            }.bind(domElement));
-            el.getEl().on("mouseout", function (e) {
-                this.dndOver = false;
-            }.bind(domElement));
+            // register at global DnD manager
+            dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
 
             el.getEl().setStyle({
                 position: "relative"

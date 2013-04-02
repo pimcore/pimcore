@@ -108,18 +108,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         mask.hide();
 
 
-        mask.dom.dndOver = false;
-        mask.dom.reference = this;
-
-        dndZones.push(mask);
-        mask.on("mouseover", function (e) {
-            this.dndOver = true;
-        }.bind(mask));
-        mask.on("mouseout", function (e) {
-            this.dndOver = false;
-        }.bind(mask));
-
-        mask.reference = this;
+        // register at global DnD manager
+        dndManager.addDropTarget(mask, this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
 
         this.maskEl = mask;
 

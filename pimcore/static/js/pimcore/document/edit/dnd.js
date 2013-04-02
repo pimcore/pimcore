@@ -17,7 +17,9 @@ pimcore.document.edit.dnd = Class.create({
 
     dndManager: null,
 
-    initialize: function(parentExt, body, iframeElement, dndZones) {
+    globalDropZone: null,
+
+    initialize: function(parentExt, body, iframeElement) {
 
         this.dndManager = parentExt.dd.DragDropMgr;
         var iFrameElement = parent.Ext.get('document_iframe_' + window.editWindow.document.id);
@@ -25,21 +27,24 @@ pimcore.document.edit.dnd = Class.create({
         parentExt.EventManager.on(body, 'mousemove', this.ddMouseMove.bind(this));
         parentExt.EventManager.on(body, 'mouseup', this.ddMouseUp.bind(this));
 
-        var dd = new parent.Ext.dd.DropZone(iframeElement, {
+        this.globalDropZone = new parent.Ext.dd.DropZone(iframeElement, {
             ddGroup: "element",
-            validElements: dndZones,
+            validElements: [],
 
             getTargetFromEvent: function(e) {
                 var element = null;
+                var elLength = this.validElements.length;
 
-                for (var i = 0; i < this.validElements.length; i++) {
+                for (var i = 0; i < elLength; i++) {
                     element = this.validElements[i];
-                    if (element.dndOver) {
-                        if (element.reference) {
-                            this.onNodeDrop = element.reference.onNodeDrop.bind(element.reference);
-                            this.onNodeOver = element.reference.onNodeOver.bind(element.reference);
-                            return element;
+                    if (element["el"].dndOver) {
+                        if(element["drop"]) {
+                            this.onNodeDrop = element["drop"];
                         }
+                        if(element["over"]) {
+                            this.onNodeOver = element["over"];
+                        }
+                        return element["el"];
                     }
                 }
             }
@@ -49,6 +54,23 @@ pimcore.document.edit.dnd = Class.create({
         this.setIframeOffset();
     },
 
+    addDropTarget: function (el, overCallback, dropCallback) {
+
+        el.on("mouseover", function (e) {
+            this.dndOver = true;
+        }.bind(el));
+        el.on("mouseout", function (e) {
+            this.dndOver = false;
+        }.bind(el));
+
+        el.dndOver = false;
+
+        this.globalDropZone.validElements.push({
+            el: el,
+            over: overCallback,
+            drop: dropCallback
+        });
+    },
 
     ddMouseMove: function (e) {
         // update the xy of the event if necessary

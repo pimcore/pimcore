@@ -28,10 +28,10 @@ if (!console) {
 
 // some globals
 var pimcore_system_i18n;
-var dndZones = []; // contains elements which are able to get data per dnd
 var editables = [];
 var editableNames = [];
 var dndManager;
+var dndZones = [];
 
 Ext.onReady(function () {
 
@@ -40,7 +40,6 @@ Ext.onReady(function () {
     // the problem is that ExtJS relies on the body height for DnD, so if the body isn't as high as the whole page
     // dnd works only in the section covered by the specified body height
     window.setInterval(pimcore.edithelpers.setBodyHeight, 1000);
-
 
     Ext.QuickTips.init();
 
@@ -63,7 +62,15 @@ Ext.onReady(function () {
 
         window.onbeforeunload = editWindow.iframeOnbeforeunload.bind(editWindow);
     }
-    
+
+    /* Drag an Drop from Tree panel */
+    // IE HACK because the body is not 100% at height
+    var bodyHeight = parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px";
+    Ext.getBody().applyStyles("min-height:" + bodyHeight);
+    // set handler
+    dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
+                            parent.Ext.get('document_iframe_' + window.editWindow.document.id));
+
     
     function getEditable(config) {
         var id = config.id;
@@ -102,15 +109,6 @@ Ext.onReady(function () {
                 window.scrollTo(editWindow.lastScrollposition.left, editWindow.lastScrollposition.top);
             }
         }
-    
-    
-        /* Drag an Drop from Tree panel */
-        // IE HACK because the body is not 100% at height
-        var bodyHeight = parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px";
-        Ext.getBody().applyStyles("min-height:" + bodyHeight);
-        // set handler
-        dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
-                                parent.Ext.get('document_iframe_' + window.editWindow.document.id), dndZones);
 
         // handler for Esc
         var mapEsc = new Ext.KeyMap(document, {

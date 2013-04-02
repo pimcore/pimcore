@@ -168,18 +168,10 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         this.element.reference = this;
 
         this.element.on("render", function (el) {
-
-            var dropTargetEl = this.element.getEl().dom;
-            dropTargetEl.dndOver = false;
-            dropTargetEl.reference = this;
-            dndZones.push(dropTargetEl);
-
-            el.getEl().on("mouseover", function (options, e) {
-                this.dndOver = true;
-            }.bind(dropTargetEl, this.options));
-            el.getEl().on("mouseout", function (e) {
-                this.dndOver = false;
-            }.bind(dropTargetEl));
+            // register at global DnD manager
+            dndManager.addDropTarget(this.element.getEl(),
+                this.onNodeOver.bind(this),
+                this.onNodeDrop.bind(this));
 
         }.bind(this));
 
