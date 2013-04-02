@@ -407,3 +407,8 @@
     position: absolute;
 }
 
+.pimcore_droptarget_input  {
+	background: url(/pimcore/static/img/icon/drop-16.png) right 2px no-repeat #fff !important;
+	cursor: default;
+}
+
