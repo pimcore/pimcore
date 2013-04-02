@@ -70,23 +70,11 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
             cls: "pimcore_droptarget_input"
         });
 
-        var initDD = function (el) {
-            var domElement = el.getEl().dom;
-            domElement.dndOver = false;
 
-            domElement.reference = this;
-
-            dndZones.push(domElement);
-            el.getEl().on("mouseover", function (e) {
-                this.dndOver = true;
-            }.bind(domElement));
-            el.getEl().on("mouseout", function (e) {
-                this.dndOver = false;
-            }.bind(domElement));
-
-        };
-
-        this.fieldPath.on("render", initDD.bind(this));
+        this.fieldPath.on("render", function (el) {
+            // register at global DnD manager
+            dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+        }.bind(this));
 
         this.form = new Ext.FormPanel({
             items: [
