@@ -66,12 +66,12 @@ class Document_Tag_Image extends Document_Tag {
     /**
      * @var array
      */
-    public $hotspots;
+    public $hotspots = array();
 
     /**
      * @var array
      */
-    public $marker;
+    public $marker = array();
 
     /**
      * @see Document_Tag_Interface::getType
@@ -100,12 +100,73 @@ class Document_Tag_Image extends Document_Tag {
     }
 
     /**
+     *
+     */
+    public function getDataForResource() {
+
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as &$metaData) {
+                        if($metaData["value"] instanceof Element_Interface) {
+                            $metaData["value"] = $metaData["value"]->getId();
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        $marker = $rewritePath($this->marker);
+        $hotspots = $rewritePath($this->hotspots);
+
+        return array(
+            "id" => $this->id,
+            "alt" => $this->alt,
+            "cropPercent" => $this->cropPercent,
+            "cropWidth" => $this->cropWidth,
+            "cropHeight" => $this->cropHeight,
+            "cropTop" => $this->cropTop,
+            "cropLeft" => $this->cropLeft,
+            "hotspots" => $hotspots,
+            "marker" => $marker
+        );
+    }
+
+    /**
      * Converts the data so it's suitable for the editmode
      *
      * @return array
      */
     public function getDataEditmode() {
         if ($this->image instanceof Asset_Image) {
+
+            $rewritePath = function ($data) {
+
+                if(!is_array($data)) {
+                    return array();
+                }
+
+                foreach ($data as &$element) {
+                    if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                        foreach($element["data"] as &$metaData) {
+                            if($metaData["value"] instanceof Element_Interface) {
+                                $metaData["value"] = $metaData["value"]->getFullPath();
+                            }
+                        }
+                    }
+                }
+                return $data;
+            };
+
+            $marker = $rewritePath($this->marker);
+            $hotspots = $rewritePath($this->hotspots);
+
             return array(
                 "id" => $this->id,
                 "path" => $this->image->getPath() . $this->image->getFilename(),
@@ -115,8 +176,8 @@ class Document_Tag_Image extends Document_Tag {
                 "cropHeight" => $this->cropHeight,
                 "cropTop" => $this->cropTop,
                 "cropLeft" => $this->cropLeft,
-                "hotspots" => $this->hotspots,
-                "marker" => $this->marker
+                "hotspots" => $hotspots,
+                "marker" => $marker
             );
         }
         return null;
@@ -219,6 +280,34 @@ class Document_Tag_Image extends Document_Tag {
             $data = Pimcore_Tool_Serialize::unserialize($data);
         }
 
+
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as &$metaData) {
+                        if(in_array($metaData["type"], array("object","asset","document"))) {
+                            $el = Element_Service::getElementById($metaData["type"], $metaData["value"]);
+                            $metaData["value"] = $el;
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        if(array_key_exists("marker",$data) && is_array($data["marker"]) && count($data["marker"]) > 0) {
+            $data["marker"] = $rewritePath($data["marker"]);
+        }
+
+        if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+            $data["hotspots"] = $rewritePath($data["hotspots"]);
+        }
+
         $this->id = $data["id"];
         $this->alt = $data["alt"];
         $this->cropPercent = $data["cropPercent"];
@@ -243,6 +332,34 @@ class Document_Tag_Image extends Document_Tag {
      * @return void
      */
     public function setDataFromEditmode($data) {
+
+        $rewritePath = function ($data) {
+
+            if(!is_array($data)) {
+                return array();
+            }
+
+            foreach ($data as &$element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as &$metaData) {
+                        if(in_array($metaData["type"], array("object","asset","document"))) {
+                            $el = Element_Service::getElementByPath($metaData["type"], $metaData["value"]);
+                            $metaData["value"] = $el;
+                        }
+                    }
+                }
+            }
+            return $data;
+        };
+
+        if(array_key_exists("marker",$data) && is_array($data["marker"]) && count($data["marker"]) > 0) {
+            $data["marker"] = $rewritePath($data["marker"]);
+        }
+
+        if(array_key_exists("hotspots",$data) && is_array($data["hotspots"]) && count($data["hotspots"]) > 0) {
+            $data["hotspots"] = $rewritePath($data["hotspots"]);
+        }
+
         $this->id = $data["id"];
         $this->alt = $data["alt"];
         $this->cropPercent = $data["cropPercent"];
@@ -336,6 +453,27 @@ class Document_Tag_Image extends Document_Tag {
             }
         }
 
+        $getMetaDataCacheTags = function ($data, $tags) {
+
+            if(!is_array($data)) {
+                return $tags;
+            }
+
+            foreach ($data as $element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as $metaData) {
+                        if($metaData["value"] instanceof Element_Interface) {
+                            $tags = $metaData["value"]->getCacheTags($tags);
+                        }
+                    }
+                }
+            }
+            return $tags;
+        };
+
+        $tags = $getMetaDataCacheTags($this->marker, $tags);
+        $tags = $getMetaDataCacheTags($this->hotspots, $tags);
+
         return $tags;
     }
 
@@ -354,6 +492,30 @@ class Document_Tag_Image extends Document_Tag {
                 "type" => "asset"
             );
         }
+
+        $getMetaDataDependencies = function ($data, $dependencies) {
+
+            if(!is_array($data)) {
+                return $dependencies;
+            }
+
+            foreach ($data as $element) {
+                if(array_key_exists("data",$element) && is_array($element["data"]) && count($element["data"]) > 0) {
+                    foreach($element["data"] as $metaData) {
+                        if($metaData["value"] instanceof Element_Interface) {
+                            $dependencies[$metaData["type"] . "_" . $metaData["value"]->getId()] = array(
+                                "id" => $metaData["value"]->getId(),
+                                "type" => $metaData["type"]
+                            );
+                        }
+                    }
+                }
+            }
+            return $dependencies;
+        };
+
+        $dependencies = $getMetaDataDependencies($this->marker, $dependencies);
+        $dependencies = $getMetaDataDependencies($this->hotspots, $dependencies);
 
         return $dependencies;
     }
