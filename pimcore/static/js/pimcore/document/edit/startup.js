@@ -27,11 +27,41 @@ if (!console) {
 }
 
 // some globals
-var pimcore_system_i18n;
 var editables = [];
 var editableNames = [];
-var dndManager;
-var dndZones = [];
+var editWindow;
+
+
+// i18n
+var pimcore_system_i18n = parent.pimcore_system_i18n;
+
+if (typeof pimcore == "object") {
+    pimcore.registerNS("pimcore.globalmanager");
+    pimcore.registerNS("pimcore.helpers");
+
+    pimcore.globalmanager = parent.pimcore.globalmanager;
+    pimcore.helpers = parent.pimcore.helpers;
+}
+
+if (pimcore_document_id) {
+    editWindow = pimcore.globalmanager.get("document_" + pimcore_document_id).edit;
+    editWindow.reloadInProgress = false;
+    editWindow.frame = window;
+
+    window.onbeforeunload = editWindow.iframeOnbeforeunload.bind(editWindow);
+}
+
+/* Drag an Drop from Tree panel */
+// IE HACK because the body is not 100% at height
+Ext.getBody().applyStyles("min-height:" +
+    parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px");
+
+// init cross frame drag & drop handler
+var dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
+                        parent.Ext.get('document_iframe_' + window.editWindow.document.id));
+
+
+
 
 Ext.onReady(function () {
 
@@ -42,35 +72,6 @@ Ext.onReady(function () {
     window.setInterval(pimcore.edithelpers.setBodyHeight, 1000);
 
     Ext.QuickTips.init();
-
-    // i18n
-    pimcore_system_i18n = parent.pimcore_system_i18n;
-    
-    if (typeof pimcore == "object") {
-        //editWindow.protectLocation();
-        pimcore.registerNS("pimcore.globalmanager");
-        pimcore.registerNS("pimcore.helpers");
-    
-        pimcore.globalmanager = parent.pimcore.globalmanager;
-        pimcore.helpers = parent.pimcore.helpers;
-    }
-    
-    if (pimcore_document_id) {
-        editWindow = pimcore.globalmanager.get("document_" + pimcore_document_id).edit;
-        editWindow.reloadInProgress = false;
-        editWindow.frame = window;
-
-        window.onbeforeunload = editWindow.iframeOnbeforeunload.bind(editWindow);
-    }
-
-    /* Drag an Drop from Tree panel */
-    // IE HACK because the body is not 100% at height
-    var bodyHeight = parent.Ext.get('document_iframe_' + window.editWindow.document.id).getHeight() + "px";
-    Ext.getBody().applyStyles("min-height:" + bodyHeight);
-    // set handler
-    dndManager = new pimcore.document.edit.dnd(parent.Ext, Ext.getBody(),
-                            parent.Ext.get('document_iframe_' + window.editWindow.document.id));
-
     
     function getEditable(config) {
         var id = config.id;
