@@ -669,6 +669,12 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         var hotspotEl = Ext.get(hotspotId);
 
+        // default dimensions
+        hotspotEl.applyStyles({
+            width: "50px",
+            height: "50px"
+        });
+
         if(typeof config == "object" && config["top"]) {
             var originalWidth = this.hotspotWindow.getInnerWidth();
             var originalHeight = this.hotspotWindow.getInnerHeight();
@@ -685,14 +691,12 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         var resizer = new Ext.Resizable(hotspotId, {
             pinned:true,
-            minWidth:50,
-            minHeight: 50,
+            minWidth:20,
+            minHeight: 20,
             preserveRatio: false,
             dynamic:true,
             handles: 'all',
-            draggable:true,
-            width: 100,
-            height: 100
+            draggable:true
         });
 
 
