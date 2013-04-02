@@ -93,7 +93,7 @@ class Document_Page extends Document_PageSnippet {
         parent::update();
 
         $config = Pimcore_Config::getSystemConfig();
-        if ($oldPath && $config->documents->createredirectwhenmoved) {
+        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getFullPath()) {
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setTarget($this->getId());
