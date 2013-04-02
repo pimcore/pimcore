@@ -96,6 +96,7 @@ class Document_Resource extends Element_Resource {
 
         try {
             $this->db->insert("documents", array(
+                "key" => $this->model->getKey(),
                 "path" => $this->model->getRealPath(),
                 "parentId" => $this->model->getParentId()
             ));
