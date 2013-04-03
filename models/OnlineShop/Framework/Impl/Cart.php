@@ -313,6 +313,7 @@ class OnlineShop_Framework_Impl_Cart extends Pimcore_Model_Abstract implements O
         $list = new OnlineShop_Framework_Impl_Cart_List();
         $db = Pimcore_Resource::get();
         $list->setCondition("userid = " . $db->quote($userId));
+        $list->setCartClass( get_called_class() );
         return $list->getCarts();
     }
 
