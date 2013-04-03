@@ -219,6 +219,9 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
             }
 
             $localizedFields = new Object_Localizedfield();
+            if($object instanceof Object_Concrete) {
+                $localizedFields->setObject($object);
+            }
 
             foreach ($value as $field) {
                 if ($field instanceof stdClass) {
