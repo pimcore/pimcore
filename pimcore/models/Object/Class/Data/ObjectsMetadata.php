@@ -473,17 +473,23 @@ class Object_Class_Data_ObjectsMetadata extends Object_Class_Data_Objects {
         parent::save($object, $params);
     }
 
-    public function preGetData ($object) {
-        $data = $object->{$this->getName()};
-        if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
-            //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
-            $data = $this->load($object, array("force" => true));
+    public function preGetData ($object, $params = array()) {
 
-            $setter = "set" . ucfirst($this->getName());
-            if(method_exists($object, $setter)) {
-                $object->$setter($data);
+        if($object instanceof Object_Concrete) {
+            $data = $object->{$this->getName()};
+            if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
+                //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+                $data = $this->load($object, array("force" => true));
+
+                $setter = "set" . ucfirst($this->getName());
+                if(method_exists($object, $setter)) {
+                    $object->$setter($data);
+                }
             }
+        } else if ($object instanceof Object_Localizedfield) {
+            $data = $params["data"];
         }
+
         if(Object_Abstract::doHideUnpublished() and is_array($data)) {
             $publishedList = array();
             foreach($data as $listElement){

@@ -152,7 +152,18 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         $language = $this->getLanguage($language);
         if($this->languageExists($language)) {
             if(array_key_exists($name, $this->items[$language])) {
-                return $this->items[$language][$name];
+                $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+
+                if(method_exists($fieldDefinition, "preGetData")) {
+                    $data =  $fieldDefinition->preGetData($this, array(
+                        "data" => $this->items[$language][$name],
+                        "language" => $language,
+                        "name" => $name
+                    ));
+                } else {
+                    $data = $this->items[$language][$name];
+                }
+                return $data;
             }
         }
     }
@@ -167,6 +178,15 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
         $language = $this->getLanguage($language);
         if(!$this->languageExists($language)) {
             $this->items[$language] = array();
+        }
+
+        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+
+        if(method_exists($fieldDefinition, "preSetData")) {
+            $value =  $fieldDefinition->preSetData($this, $value, array(
+                "language" => $language,
+                "name" => $name
+            ));
         }
 
         $this->items[$language][$name] = $value;
