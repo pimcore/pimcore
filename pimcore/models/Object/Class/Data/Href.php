@@ -519,6 +519,7 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
 
     public function preGetData ($object, $params = array()) {
 
+        $data = null;
         if($object instanceof Object_Concrete) {
             $data = $object->{$this->getName()};
 
@@ -534,6 +535,8 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
         } else if ($object instanceof Object_Localizedfield) {
             $data = $params["data"];
         } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $data = $object->{$this->getName()};
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
             $data = $object->{$this->getName()};
         }
 

@@ -439,6 +439,7 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
 
     public function preGetData ($object, $params = array()) {
 
+        $data = null;
         if($object instanceof Object_Concrete) {
             $data = $object->{$this->getName()};
             if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
@@ -453,6 +454,8 @@ class Object_Class_Data_Objects extends Object_Class_Data_Relations_Abstract {
         } else if ($object instanceof Object_Localizedfield) {
             $data = $params["data"];
         } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $data = $object->{$this->getName()};
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
             $data = $object->{$this->getName()};
         }
 

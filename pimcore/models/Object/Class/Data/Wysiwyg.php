@@ -203,11 +203,14 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      */
     public function preGetData ($object, $params = array()) {
 
+        $data = "";
         if($object instanceof Object_Concrete) {
             $data = $object->{$this->getName()};
         } else if ($object instanceof Object_Localizedfield) {
             $data = $params["data"];
         } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $data = $object->{$this->getName()};
+        } else if ($object instanceof Object_Objectbrick_Data_Abstract) {
             $data = $object->{$this->getName()};
         }
 
