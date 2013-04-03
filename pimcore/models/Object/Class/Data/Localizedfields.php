@@ -352,6 +352,10 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
 
     public function preGetData($object, $params = array())
     {
+        if(!$object instanceof Object_Concrete) {
+            throw new \Exception("Localized Fields are only valid in Objects");
+        }
+
         if (!$object->localizedfields instanceof Object_Localizedfield) {
             $lf = new Object_Localizedfield();
             $lf->setObject($object);
