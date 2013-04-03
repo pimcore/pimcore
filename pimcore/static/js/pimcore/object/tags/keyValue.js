@@ -563,7 +563,8 @@ pimcore.object.tags.keyValue = Class.create(pimcore.object.tags.abstract, {
                     colData.type = keyDef.type;
                     colData.possiblevalues = keyDef.possiblevalues;
                     colData.keyDesc = keyDef.description;
-                    colData.group = keyDef.groupdescription;
+                    colData.group = keyDef.groupName;
+                    colData.groupDesc = keyDef.groupdescription;
                     this.store.add(new this.store.recordType(colData));
                 }
             }
