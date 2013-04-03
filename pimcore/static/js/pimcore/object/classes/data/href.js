@@ -146,7 +146,15 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         xtype: "displayfield",
                         hideLabel: true,
                         value: t('lazy_loading_description'),
-                        cls: "pimcore_extra_label_bottom"
+                        cls: "pimcore_extra_label_bottom",
+                        style: "padding-bottom:0;"
+                    },
+                    {
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        value: t('lazy_loading_warning'),
+                        cls: "pimcore_extra_label_bottom",
+                        style: "color:red; font-weight: bold; padding-bottom:0;"
                     }
                 ]
             },
