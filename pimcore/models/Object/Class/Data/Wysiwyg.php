@@ -201,9 +201,15 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
      * @param Object_Concrete $object
      * @return string
      */
-    public function preGetData ($object) {
-        $key = $this->getName();
-        return Pimcore_Tool_Text::wysiwygText($object->$key);
+    public function preGetData ($object, $params = array()) {
+
+        if($object instanceof Object_Concrete) {
+            $data = $object->{$this->getName()};
+        } else if ($object instanceof Object_Localizedfield) {
+            $data = $params["data"];
+        }
+
+        return Pimcore_Tool_Text::wysiwygText($data);
     }
 
     /** True if change is allowed in edit mode.

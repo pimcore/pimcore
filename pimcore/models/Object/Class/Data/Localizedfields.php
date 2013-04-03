@@ -101,24 +101,19 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
      */
     public function getDataFromEditmode($data, $object = null)
     {
-        $localFields = $object->{"get" . ucfirst($this->getName())}();
-        $localData = array();
+        $localizedFields = $object->{"get" . ucfirst($this->getName())}();
 
-        // get existing data
-        if($localFields instanceof Object_Localizedfield) {
-            $localData = $localFields->getItems();
+        if(!$localizedFields instanceof Object_Localizedfield) {
+            $localizedFields = new Object_Localizedfield();
         }
-
 
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
-                    $localData[$language][$name] = $this->getFielddefinition($name)->getDataFromEditmode($fdata);
+                    $localizedFields->setLocalizedValue($name, $this->getFielddefinition($name)->getDataFromEditmode($fdata), $language);
                 }
             }
         }
-
-        $localizedFields = new Object_Localizedfield($localData);
 
         return $localizedFields;
     }
@@ -222,32 +217,32 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
                     }
                 }
             }
-            $data = array();
+
+            $localizedFields = new Object_Localizedfield();
+
             foreach ($value as $field) {
-                    if ($field instanceof stdClass) {
-                        $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
-                    }
+                if ($field instanceof stdClass) {
+                    $field = Pimcore_Tool_Cast::castToClass("Webservice_Data_Object_Element", $field);
+                }
 
-                    if ($idMapper && $idMapper->ignoreMappingFailures()){
-                        if (!in_array($field->language, $validLanguages)) {
-                            continue;
-                        }
+                if ($idMapper && $idMapper->ignoreMappingFailures()){
+                    if (!in_array($field->language, $validLanguages)) {
+                        continue;
                     }
+                }
 
-                    if(!$field instanceof Webservice_Data_Object_Element){
-                        throw new Exception("Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]");
-                    }
-                    $fd = $this->getFielddefinition($field->name);
-                    if (!$fd instanceof Object_Class_Data) {
-                        throw new Exception("Unknnown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ] ");
-                    } else if ($fd->getFieldtype() != $field->type){
-                        throw new Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
-                    }
-                    $data[$field->language][$field->name] = $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value, $object, $idMapper);
+                if(!$field instanceof Webservice_Data_Object_Element){
+                    throw new Exception("Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]");
+                }
+                $fd = $this->getFielddefinition($field->name);
+                if (!$fd instanceof Object_Class_Data) {
+                    throw new Exception("Unknnown field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ] ");
+                } else if ($fd->getFieldtype() != $field->type){
+                    throw new Exception("Type mismatch for field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]. Should be [ ".$fd->getFieldtype()." ], but is [ ".$field->type." ] ");
+                }
 
+                $localizedFields->setLocalizedValue($field->name, $this->getFielddefinition($field->name)->getFromWebserviceImport($field->value, $object, $idMapper), $field->language);
             }
-
-            $localizedFields = new Object_Localizedfield($data);
 
             return $localizedFields;
         } else if (!empty($value)) {
@@ -352,7 +347,7 @@ class Object_Class_Data_Localizedfields extends Object_Class_Data
         $localizedFields->createUpdateTable();
     }
 
-    public function preGetData($object)
+    public function preGetData($object, $params = array())
     {
         if (!$object->localizedfields instanceof Object_Localizedfield) {
             $lf = new Object_Localizedfield();

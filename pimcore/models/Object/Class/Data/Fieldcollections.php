@@ -450,7 +450,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
     }
  
 
-    public function preGetData ($object) {
+    public function preGetData ($object, $params = array()) {
         $data = $object->{$this->getName()};
         if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
             $data = $this->load($object, array("force" => true));
@@ -463,7 +463,7 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
         return $data;
     }
 
-    public function preSetData ($object, $data) {
+    public function preSetData ($object, $data, $params = array()) {
 
         if($data === null) $data = array();
 
