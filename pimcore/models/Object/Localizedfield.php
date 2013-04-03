@@ -150,22 +150,23 @@ class Object_Localizedfield extends Pimcore_Model_Abstract {
      */
     public function getLocalizedValue ($name, $language = null) {
         $language = $this->getLanguage($language);
+        $data = null;
         if($this->languageExists($language)) {
             if(array_key_exists($name, $this->items[$language])) {
-                $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
-
-                if(method_exists($fieldDefinition, "preGetData")) {
-                    $data =  $fieldDefinition->preGetData($this, array(
-                        "data" => $this->items[$language][$name],
-                        "language" => $language,
-                        "name" => $name
-                    ));
-                } else {
-                    $data = $this->items[$language][$name];
-                }
-                return $data;
+                $data = $this->items[$language][$name];
             }
         }
+
+        $fieldDefinition = $this->getObject()->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+        if($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
+            $data =  $fieldDefinition->preGetData($this, array(
+                "data" => $this->items[$language][$name],
+                "language" => $language,
+                "name" => $name
+            ));
+        }
+
+        return $data;
     }
 
     /**

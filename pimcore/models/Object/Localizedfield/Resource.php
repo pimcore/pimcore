@@ -65,8 +65,12 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     public function load () {
+        $validLanguages = Pimcore_Tool::getValidLanguages();
+        foreach ($validLanguages as &$language) {
+            $language = $this->db->quote($language);
+        }
 
-        $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ?", $this->model->getObject()->getId());
+        $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ? AND language IN (" . implode(",",$validLanguages) . ")", $this->model->getObject()->getId());
         foreach ($data as $row) {
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $key => $fd) {
                 if($fd) {
