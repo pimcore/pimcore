@@ -451,6 +451,11 @@ class Object_Class_Data_Fieldcollections extends Object_Class_Data
  
 
     public function preGetData ($object, $params = array()) {
+
+        if(!$object instanceof Object_Concrete) {
+            throw new \Exception("Field Collections are only valid in Objects");
+        }
+
         $data = $object->{$this->getName()};
         if($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())){
             $data = $this->load($object, array("force" => true));
