@@ -227,23 +227,6 @@ class Object_Fieldcollection_Definition extends Pimcore_Model_Abstract {
 
                 $cd .= $def->getGetterCodeFieldcollection($this);
                 $cd .= $def->getSetterCodeFieldcollection($this);
-
-
-//                $cd .= '/**' . "\n";
-//                $cd .= '* @return ' . $def->getPhpdocType() . "\n";
-//                $cd .= '*/' . "\n";
-//                $cd .= "public function get" . ucfirst($key) . " () {\n";
-//                $cd .= "\t return " . '$this->' . $key . ";\n";
-//                $cd .= "}\n\n";
-//
-//                $cd .= '/**' . "\n";
-//                $cd .= '* @param ' . $def->getPhpdocType() . ' $' . $key . "\n";
-//                $cd .= "* @return void\n";
-//                $cd .= '*/' . "\n";
-//                $cd .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
-//                $cd .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
-//                $cd .= "}\n\n";
-            
             }
         }
 
