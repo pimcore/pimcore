@@ -52,6 +52,7 @@ class Pimcore_Resource_Wrapper {
      */
     public function closeDDLResource() {
         $this->closeConnectionResource($this->DDLResource);
+        $this->DDLResource = null;
     }
 
     /**
@@ -90,6 +91,7 @@ class Pimcore_Resource_Wrapper {
      */
     public function closeResource() {
         $this->closeConnectionResource($this->resource);
+        $this->resource = null;
     }
 
     /**
@@ -104,14 +106,15 @@ class Pimcore_Resource_Wrapper {
                 // and when sending a query to the broken connection (eg. when forking)
                 // so we have to handle mysqli and pdo_mysql differently
                 if($resource instanceof Zend_Db_Adapter_Mysqli) {
-                    $connectionId = $this->resource->getConnection()->thread_id;
+                    if($resource->getConnection()) {
+                        $connectionId = $resource->getConnection()->thread_id;
+                    }
                 } else if ($resource instanceof Zend_Db_Adapter_Pdo_Mysql) {
                     $connectionId = $resource->fetchOne("SELECT CONNECTION_ID()");
                 }
                 Logger::debug(get_class($resource) . ": closing mysql connection with ID: " . $connectionId);
 
-                $this->resource->closeConnection();
-                $this->resource = null;
+                $resource->closeConnection();
             } catch (\Exception $e) {
                 // this is the case when the mysql connection has gone away (eg. when forking using pcntl)
                 Logger::info($e);
