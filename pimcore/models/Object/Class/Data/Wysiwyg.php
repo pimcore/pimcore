@@ -207,6 +207,8 @@ class Object_Class_Data_Wysiwyg extends Object_Class_Data {
             $data = $object->{$this->getName()};
         } else if ($object instanceof Object_Localizedfield) {
             $data = $params["data"];
+        } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $data = $object->{$this->getName()};
         }
 
         return Pimcore_Tool_Text::wysiwygText($data);

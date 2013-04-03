@@ -533,6 +533,8 @@ class Object_Class_Data_Href extends Object_Class_Data_Relations_Abstract {
             }
         } else if ($object instanceof Object_Localizedfield) {
             $data = $params["data"];
+        } else if ($object instanceof Object_Fieldcollection_Data_Abstract) {
+            $data = $object->{$this->getName()};
         }
 
         if(Object_Abstract::doHideUnpublished() and ($data instanceof Element_Interface)) {

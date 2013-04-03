@@ -726,12 +726,20 @@ abstract class Object_Class_Data
     public function getGetterCodeFieldcollection($fieldcollectionDefinition)
     {
         $key = $this->getName();
-        $code = '/**' . "\n";
+        $code = "";
+
+        $code .= '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
 
-        $code .= "\t return " . '$this->' . $key . ";\n";
+        if (method_exists($this, "preGetData")) {
+            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";
 
         return $code;
@@ -745,13 +753,20 @@ abstract class Object_Class_Data
     public function getSetterCodeFieldcollection($fieldcollectionDefinition)
     {
         $key = $this->getName();
+        $code = "";
 
-        $code = '/**' . "\n";
+        $code .= '/**' . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= "* @return void\n";
         $code .= '*/' . "\n";
         $code .= "public function set" . ucfirst($key) . " (" . '$' . $key . ") {\n";
-        $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
+
+        if (method_exists($this, "preSetData")) {
+            $code .= "\t" . '$this->' . $key . " = " . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
+        } else {
+            $code .= "\t" . '$this->' . $key . " = " . '$' . $key . ";\n";
+        }
+
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
 
