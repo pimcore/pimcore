@@ -733,42 +733,56 @@ pimcore.asset.tree = Class.create({
     },
 
     uploadZip: function () {
+        pimcore.helpers.uploadDialog("/admin/asset/import-zip?parentId=" + this.id, "Filedata", function (response) {
+            // this.attributes.reference
+            var res = Ext.decode(response.response.responseText);
 
-        this.uploadWindow = new Ext.Window({
-            layout: 'fit',
-            title: t('add_assets'),
-            closeAction: 'close',
-            width:400,
-            height:140,
-            modal: true
-        });
+            this.downloadProgressBar = new Ext.ProgressBar({
+                text: t('initializing')
+            });
 
-        var uploadPanel = new Ext.ux.SwfUploadPanel({
-            border: false,
-            upload_url: '/admin/asset/import-zip/?pimcore_admin_sid=' + pimcore.settings.sessionId,
-            post_params: { parentId: this.id },
-            debug: false,
-            file_size_limit: (pimcore.settings.upload_max_filesize/1000),
-            flash_url: "/pimcore/static/js/lib/ext-plugins/SwfUploadPanel/swfupload.swf",
-            confirm_delete: false,
-            remove_completed: true,
-            file_queue_limit: 1,
-            single_file_select: true,
-            file_types: "*.zip",
-            listeners: {
-                "fileUploadComplete": function (win) {
-                    win.hide();
+            this.downloadProgressWin = new Ext.Window({
+                title: t("download_as_zip"),
+                layout:'fit',
+                width:500,
+                bodyStyle: "padding: 10px;",
+                closable:false,
+                plain: true,
+                modal: true,
+                items: [this.downloadProgressBar]
+            });
 
-                    var f = this.attributes.reference.addAssetComplete.bind(this);
-                    f();
-                }.bind(this, this.uploadWindow)
-            }
-        });
+            this.downloadProgressWin.show();
 
-        this.uploadWindow.add(uploadPanel);
-        this.uploadWindow.show();
-        this.uploadWindow.setWidth(401);
-        this.uploadWindow.doLayout();
+            var pj = new pimcore.tool.paralleljobs({
+                success: function (jobId) {
+                    if(this.downloadProgressWin) {
+                        this.downloadProgressWin.close();
+                    }
+
+                    this.downloadProgressBar = null;
+                    this.downloadProgressWin = null;
+
+                    this.reload();
+                }.bind(this, res.jobId),
+                update: function (currentStep, steps, percent) {
+                    if(this.downloadProgressBar) {
+                        var status = currentStep / steps;
+                        this.downloadProgressBar.updateProgress(status, percent + "%");
+                    }
+                }.bind(this),
+                failure: function (message) {
+                    this.downloadProgressWin.close();
+                    pimcore.helpers.showNotification(t("error"), t("error"),
+                        "error", t(message));
+                }.bind(this),
+                jobs: res.jobs
+            });
+        }.bind(this), function (res) {
+            // failed
+            this.parentNode.reload();
+            console.log("failed");
+        }.bind(this));
     },
     
     enableHtml5Upload: function (tree, parent, node, index) {
