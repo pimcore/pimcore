@@ -617,6 +617,8 @@ class Element_Service extends Pimcore_Model_Abstract {
                     $folder->setParent($parentFolder);
                     if ($parentFolder) {
                         $folder->setParentId($parentFolder->getId());
+                    } else {
+                        $folder->setParentId(1);
                     }
 
                     $key = substr($currentPath, strrpos($currentPath, '/') + 1, strlen($currentPath));
