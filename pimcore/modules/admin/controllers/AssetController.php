@@ -1158,7 +1158,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 foreach ($assetList->load() as $a) {
                     if($a->isAllowed("view")) {
                         if (!$a instanceof Asset_Folder) {
-                            $zip->addFile($a->getFileSystemPath(), substr($a->getFullPath(), 1));
+                            // add the file with the relative path to the parent directory
+                            $zip->addFile($a->getFileSystemPath(), preg_replace("@^" . preg_quote($asset->getPath(),"@") . "@i","",$a->getFullPath()));
                         }
                     }
                 }
