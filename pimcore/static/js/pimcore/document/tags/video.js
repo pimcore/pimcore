@@ -76,19 +76,8 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         });
 
         var initDD = function (el) {
-            var domElement = el.getEl().dom;
-            domElement.dndOver = false;
-
-            domElement.reference = this;
-
-            dndZones.push(domElement);
-            el.getEl().on("mouseover", function (e) {
-                this.dndOver = true;
-            }.bind(domElement));
-            el.getEl().on("mouseout", function (e) {
-                this.dndOver = false;
-            }.bind(domElement));
-
+            // register at global DnD manager
+            dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
         };
 
         this.fieldPath.on("render", initDD.bind(this));
@@ -187,18 +176,18 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
     onNodeDrop: function (target, dd, e, data) {
 
-        var t = Ext.get(target);
-
-        if(t.getAttribute("name") == "path") {
-            if(this.dndAllowedPath(data)){
-                this.fieldPath.setValue(data.node.attributes.path);
-                this.form.getComponent("type").setValue("asset");
-                return true;
-            }
-        } else if (t.getAttribute("name") == "poster") {
-            if(this.dndAllowedPoster(data)){
-                this.poster.setValue(data.node.attributes.path);
-                return true;
+        if(target) {
+            if(target.getAttribute("name") == "path") {
+                if(this.dndAllowedPath(data)){
+                    this.fieldPath.setValue(data.node.attributes.path);
+                    this.form.getComponent("type").setValue("asset");
+                    return true;
+                }
+            } else if (target.getAttribute("name") == "poster") {
+                if(this.dndAllowedPoster(data)){
+                    this.poster.setValue(data.node.attributes.path);
+                    return true;
+                }
             }
         }
 
@@ -207,9 +196,8 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
     onNodeOver: function(target, dd, e, data) {
 
-        var t = Ext.get(target);
         var check = "dndAllowedPath";
-        if (t.getAttribute("name") == "poster") {
+        if (target && target.getAttribute("name") == "poster") {
             check = "dndAllowedPoster";
         }
 

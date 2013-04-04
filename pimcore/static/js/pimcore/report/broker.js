@@ -48,7 +48,7 @@ pimcore.report.broker = {
         }
 
         this.reports[groupId].push({
-            class: report,
+            "class": report,
             config: config
         });
     }

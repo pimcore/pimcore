@@ -71,6 +71,11 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
+            },{
+                xtype: "spinnerfield",
+                fieldLabel: t("maximum_items"),
+                name: "maxItems",
+                value: this.datax.maxItems
             },
             {
                 xtype: "checkbox",
@@ -82,12 +87,15 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('lazy_loading_description'),
-                cls: "pimcore_extra_label_bottom"
-            },{
-                xtype: "spinnerfield",
-                fieldLabel: t("maximum_items"),
-                name: "maxItems",
-                value: this.datax.maxItems
+                cls: "pimcore_extra_label_bottom",
+                style: "padding-bottom:0;"
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('lazy_loading_warning'),
+                cls: "pimcore_extra_label_bottom",
+                style: "color:red; font-weight: bold;"
             }
         ]);
 

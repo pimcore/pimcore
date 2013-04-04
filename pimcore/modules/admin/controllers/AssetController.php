@@ -1090,7 +1090,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     public function downloadAsZipJobsAction() {
 
         $jobId = uniqid();
-        $filesPerJob = 20;
+        $filesPerJob = 10;
         $jobs = array();
         $asset = Asset::getById($this->getParam("id"));
 
@@ -1158,7 +1158,8 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 foreach ($assetList->load() as $a) {
                     if($a->isAllowed("view")) {
                         if (!$a instanceof Asset_Folder) {
-                            $zip->addFile($a->getFileSystemPath(), substr($a->getFullPath(), 1));
+                            // add the file with the relative path to the parent directory
+                            $zip->addFile($a->getFileSystemPath(), preg_replace("@^" . preg_quote($asset->getPath(),"@") . "@i","",$a->getFullPath()));
                         }
                     }
                 }
@@ -1201,23 +1202,100 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
     }
 
     public function importZipAction() {
-        $success = true;
 
-        $importId = uniqid();
-        $tmpDirectory = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-zip-import-".$importId;
+        $jobId = uniqid();
+        $filesPerJob = 10;
+        $jobs = array();
+        $asset = Asset::getById($this->getParam("parentId"));
+        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $jobId . ".zip";
+
+        copy($_FILES["Filedata"]["tmp_name"], $zipFile);
 
         $zip = new ZipArchive;
-        if ($zip->open($_FILES["Filedata"]["tmp_name"]) === TRUE) {
-            $zip->extractTo($tmpDirectory);
+        if ($zip->open($zipFile) === true) {
+            $jobAmount = ceil($zip->numFiles/$filesPerJob);
+            for($i = 0; $i < $jobAmount; $i++) {
+                $jobs[] = array(array(
+                    "url" => "/admin/asset/import-zip-files",
+                    "params" => array(
+                        "parentId" => $asset->getId(),
+                        "offset" => $i*$filesPerJob,
+                        "limit" => $filesPerJob,
+                        "jobId" => $jobId,
+                        "last" => (($i+1) >= $jobAmount) ? "true" : ""
+                    )
+                ));
+            }
             $zip->close();
         }
 
-        $this->importFromFileSystem($tmpDirectory, $this->getParam("parentId"));
+        // here we have to use this method and not the JSON action helper ($this->_helper->json()) because this will add
+        // Content-Type: application/json which fires a download window in most browsers, because this is a normal POST
+        // request and not XHR where the content-type doesn't matter
+        $this->disableViewAutoRender();
+        echo Zend_Json::encode(array(
+            "success" => true,
+            "jobs" => $jobs,
+            "jobId" => $jobId
+        ));
+    }
 
-        // cleanup
-        recursiveDelete($tmpDirectory);
+    public function importZipFilesAction() {
+        $jobId = $this->getParam("jobId");
+        $limit = (int) $this->getParam("limit");
+        $offset = (int) $this->getParam("offset");
+        $importAsset = Asset::getById($this->getParam("parentId"));
+        $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $jobId . ".zip";
+        $tmpDir = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/zip-import";
 
-        $this->_helper->json(array("success" => $success));
+        if(!is_dir($tmpDir)) {
+            mkdir($tmpDir, 0777, true);
+        }
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipFile) === true) {
+            for($i = $offset; $i < ($offset+$limit); $i++) {
+                $path = $zip->getNameIndex($i);
+
+                if($path !== false) {
+                    if($zip->extractTo($tmpDir . "/", $path)) {
+
+                        $tmpFile = $tmpDir . "/" . preg_replace("@^/@", "", $path);
+
+                        $filename = Pimcore_File::getValidFilename(basename($path));
+                        $parentPath = $importAsset->getFullPath() . "/" . preg_replace("@^/@", "", dirname($path));
+                        $parent = Asset_Service::createFolderByPath($parentPath);
+
+                        // check for duplicate filename
+                        $filename = $this->getSafeFilename($parent->getFullPath(), $filename);
+
+                        if ($parent->isAllowed("create")) {
+
+                            $asset = Asset::create($parent->getId(), array(
+                                "filename" => $filename,
+                                "data" => file_get_contents($tmpFile),
+                                "userOwner" => $this->user->getId(),
+                                "userModification" => $this->user->getId()
+                            ));
+
+                            @unlink($tmpFile);
+                        }
+                        else {
+                            Logger::debug("prevented creating asset because of missing permissions");
+                        }
+                    }
+                }
+            }
+            $zip->close();
+        }
+
+        if($this->getParam("last")) {
+            unlink($zipFile);
+        }
+
+        $this->_helper->json(array(
+            "success" => true
+        ));
     }
 
     public function importServerAction() {
@@ -1286,7 +1364,7 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
         foreach ($files as $file) {
             if(is_file($file)) {
                 $relativePath =  $assetFolder->getFullPath() . str_replace($path, "", $file);
-                $folder = $this->getOrCreateAssetFolderByPath(dirname($relativePath));
+                $folder = Asset_Service::createFolderByPath(dirname($relativePath));
                 $filename = basename($file);
 
                 // check for duplicate filename
@@ -1306,48 +1384,5 @@ class Admin_AssetController extends Pimcore_Controller_Action_Admin {
                 }
             }
         }
-    }
-
-    protected function getOrCreateAssetFolderByPath($path)
-    {
-        $folder = Asset_Folder::getByPath($path);
-
-        if (!($folder instanceof Asset_Folder)) {
-            str_replace("\\", "/", $path);
-            $parts = explode("/", $path);
-            if (empty($parts[count($parts) - 1])) {
-                $parts = array_slice($parts, 0, -1);
-            }
-            $parts = array_slice($parts, 1);
-            $parentPath = "/";
-            foreach ($parts as $part) {
-                if($part == ''){
-                    continue;
-                }
-
-                $parent = Asset_Folder::getByPath($parentPath);
-                if ($parent instanceof Asset_Folder) {
-
-                    $part = Pimcore_File::getValidFilename($part);
-                    $folder = Asset_Folder::getByPath($parentPath . $part);
-
-                    if (!($folder instanceof Asset_Folder)) {
-                        $folder = Asset::create($parent->getId(), array(
-                           "filename" => $part,
-                           "type" => "folder",
-                           "userOwner" => $this->getUser()->getId(),
-                           "userModification" => $this->getUser()->getId()
-                        ));
-                    }
-
-                    $parentPath .= $part . "/";
-                } else {
-                    Logger::error("parent not found!");
-                    return null;
-                }
-            }
-        }
-
-        return $folder;
     }
 }

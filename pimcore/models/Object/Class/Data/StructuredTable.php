@@ -540,22 +540,29 @@ class Object_Class_Data_StructuredTable extends Object_Class_Data {
      * @param $brickClass
      * @return string
      */
-    public function getGetterCodeObjectbrick ($brickClass) {
+    public function getGetterCodeObjectbrick($brickClass)
+    {
         $key = $this->getName();
         $code = '/**' . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
 
-        $code .= "\t" . 'if((!$this->' . $key . '|| $this->' . $key . '->isEmpty()) && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
+        if (method_exists($this, "preGetData")) {
+            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        $code .= "\t" . 'if((!$data || $data->isEmpty()) && Object_Abstract::doGetInheritedValues($this->getObject())) {' . "\n";
         $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        $code .= "\t return " . '$this->' . $key . ";\n";
+
+        $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";
 
         return $code;
-
     }
 
     /** True if change is allowed in edit mode.

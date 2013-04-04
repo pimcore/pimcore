@@ -43,13 +43,20 @@ class User_Abstract extends Pimcore_Model_Abstract {
      */
     public static function getById($id) {
 
+        $cacheKey = "user_" . $id;
         try {
-            $user = new static();
-            $user->getResource()->getById($id);
+            if(Zend_Registry::isRegistered($cacheKey)) {
+                $user =  Zend_Registry::get($cacheKey);
+            } else {
+                $user = new static();
+                $user->getResource()->getById($id);
 
-            if(get_class($user) == "User_Abstract") {
-                $className = User_Service::getClassNameForType($user->getType());
-                $user = $className::getById($user->getId());
+                if(get_class($user) == "User_Abstract") {
+                    $className = User_Service::getClassNameForType($user->getType());
+                    $user = $className::getById($user->getId());
+                }
+
+                Zend_Registry::set($cacheKey, $user);
             }
 
             return $user;

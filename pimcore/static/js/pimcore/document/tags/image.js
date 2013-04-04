@@ -54,19 +54,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             // contextmenu
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
-
-            var domElement = el.getEl().dom;
-            domElement.dndOver = false;
-
-            domElement.reference = this;
-
-            dndZones.push(domElement);
-            el.getEl().on("mouseover", function (e) {
-                this.dndOver = true;
-            }.bind(domElement));
-            el.getEl().on("mouseout", function (e) {
-                this.dndOver = false;
-            }.bind(domElement));
+            // register at global DnD manager
+            dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
 
             el.getEl().setStyle({
                 position: "relative"
@@ -669,6 +658,12 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         var hotspotEl = Ext.get(hotspotId);
 
+        // default dimensions
+        hotspotEl.applyStyles({
+            width: "50px",
+            height: "50px"
+        });
+
         if(typeof config == "object" && config["top"]) {
             var originalWidth = this.hotspotWindow.getInnerWidth();
             var originalHeight = this.hotspotWindow.getInnerHeight();
@@ -685,14 +680,12 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         var resizer = new Ext.Resizable(hotspotId, {
             pinned:true,
-            minWidth:50,
-            minHeight: 50,
+            minWidth:20,
+            minHeight: 20,
             preserveRatio: false,
             dynamic:true,
             handles: 'all',
-            draggable:true,
-            width: 100,
-            height: 100
+            draggable:true
         });
 
 
@@ -766,6 +759,24 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                     handler: function () {
                         addItem("checkbox");
                     }
+                }, {
+                    text: t("object"),
+                    iconCls: "pimcore_icon_object",
+                    handler: function () {
+                        addItem("object");
+                    }
+                }, {
+                    text: t("document"),
+                    iconCls: "pimcore_icon_document",
+                    handler: function () {
+                        addItem("document");
+                    }
+                }, {
+                    text: t("asset"),
+                    iconCls: "pimcore_icon_asset",
+                    handler: function () {
+                        addItem("asset");
+                    }
                 }]
             }],
             buttons: [{
@@ -785,7 +796,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                         };
                     }
 
-                    if(data && data["name"].length > 0) {
+                    if(data && data["name"] && data["name"].length > 0) {
                         for(var i=0; i<data["name"].length; i++) {
                             normalizedData.push({
                                 name: data["name"][i],
@@ -846,6 +857,87 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                     name: "value",
                     fieldLabel: t("value"),
                     checked: data["value"]
+                };
+            } else if(type == "object") {
+                valueField = {
+                    xtype: "textfield",
+                    cls: "pimcore_droptarget_input",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    value: data["value"],
+                    width: 400,
+                    listeners: {
+                        render: function (el) {
+                            // register at global DnD manager
+                            dndManager.addDropTarget(el.getEl(), function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "object") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
+                                return Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }, function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "object") {
+                                    target.dom.value = data.node.attributes.path;
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }.bind(this));
+                        }.bind(this)
+                    }
+                };
+            } else if(type == "asset") {
+                valueField = {
+                    xtype: "textfield",
+                    cls: "pimcore_droptarget_input",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    value: data["value"],
+                    width: 400,
+                    listeners: {
+                        render: function (el) {
+                            // register at global DnD manager
+                            dndManager.addDropTarget(el.getEl(), function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "asset") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
+                                return Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }, function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "asset") {
+                                    target.dom.value = data.node.attributes.path;
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }.bind(this));
+                        }.bind(this)
+                    }
+                };
+            } else if(type == "document") {
+                valueField = {
+                    xtype: "textfield",
+                    cls: "pimcore_droptarget_input",
+                    name: "value",
+                    fieldLabel: t("value"),
+                    value: data["value"],
+                    width: 400,
+                    listeners: {
+                        render: function (el) {
+                            // register at global DnD manager
+                            dndManager.addDropTarget(el.getEl(), function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "document") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
+                                return Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }, function (target, dd, e, data) {
+                                if(data.node.attributes.elementType == "document") {
+                                    target.dom.value = data.node.attributes.path;
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }.bind(this));
+                        }.bind(this)
+                    }
                 };
             } else {
                 // no valid type

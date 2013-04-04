@@ -34,37 +34,16 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
             );
 
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $fd) {
-                /*if($fd->isRelationType()) {
-
-                    $relations = $fd->getDataForResource($items[$fd->getName()], $this->model);
-
-                    if (is_array($relations) && !empty($relations)) {
-                        foreach ($relations as $relation) {
-                            $relation["src_id"] = $object->getId();
-                            $relation["ownertype"] = "localizedfield";
-                            $relation["ownername"] = "localizedfield";
-                            $relation["position"] = $language;
-
-                            //relation needs to be an array with src_id, dest_id, type, fieldname
-                            try {
-                                $this->db->insert("object_relations_" . $object->getO_classId(), $relation);
-                            } catch (Exception $e) {
-                                Logger::warning("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"] . " already exist");
-                            }
-                        }
-                    }
-                }*/
-
                 if (method_exists($fd, "save")) {
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $fd->save($this->model, array("language" => $language));
                     
                 } else {
                     if (is_array($fd->getColumnType())) {
-                        $insertDataArray = $fd->getDataForResource($items[$fd->getName()], $object);
+                        $insertDataArray = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language), $object);
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
-                        $insertData[$fd->getName()] = $fd->getDataForResource($items[$fd->getName()], $object);
+                        $insertData[$fd->getName()] = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language), $object);
                     }
                 }
             }
@@ -86,10 +65,12 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
     }
 
     public function load () {
+        $validLanguages = Pimcore_Tool::getValidLanguages();
+        foreach ($validLanguages as &$language) {
+            $language = $this->db->quote($language);
+        }
 
-        $items = array();
-
-        $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ?", $this->model->getObject()->getId());
+        $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName() . " WHERE ooo_id = ? AND language IN (" . implode(",",$validLanguages) . ")", $this->model->getObject()->getId());
         foreach ($data as $row) {
             foreach ($this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions() as $key => $fd) {
                 if($fd) {
@@ -97,7 +78,7 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                         // datafield has it's own loader
                         $value = $fd->load($this->model, array("language" => $row["language"]));
                         if($value === 0 || !empty($value)) {
-                            $items[$row["language"]][$key] = $value;
+                            $this->model->setLocalizedValue($key, $value, $row["language"]);
                         }
                     } else {
                         if (is_array($fd->getColumnType())) {
@@ -105,19 +86,14 @@ class Object_Localizedfield_Resource extends Pimcore_Model_Resource_Abstract {
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key . "__" . $fkey] = $row[$key . "__" . $fkey];
                             }
-                            $items[$row["language"]][$key] = $fd->getDataFromResource($multidata);
-
+                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($multidata), $row["language"]);
                         } else {
-                            $items[$row["language"]][$key] = $fd->getDataFromResource($row[$key]);
+                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($row[$key]), $row["language"]);
                         }
                     }
                 }
             }
         }
-
-        $this->model->setItems($items);
-
-        return $items;
     }
 
     public function createLocalizedViews () {

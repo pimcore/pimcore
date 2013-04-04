@@ -605,18 +605,24 @@ class Element_Service extends Pimcore_Model_Abstract {
         if (!$folderType::getByPath($path)) {
             $parts = explode('/', $path);
             $parts = array_filter($parts);
+
             foreach ($parts as $part) {
-                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . $part;
+                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . Pimcore_File::getValidFilename($part);
             }
+
             for ($i = 0; $i < count($pathsArray); $i++) {
                 $currentPath = $pathsArray[$i];
                 if (!$folderType::getByPath($currentPath) instanceof $folderType) {
-                    $parentFolder = $folderType::getByPath($pathsArray[$i - 1]);
+                    $parentFolderPath = ($i ==0) ? '/' : $pathsArray[$i - 1];
+
+                    $parentFolder = $folderType::getByPath($parentFolderPath);
 
                     $folder = new $folderType();
                     $folder->setParent($parentFolder);
                     if ($parentFolder) {
                         $folder->setParentId($parentFolder->getId());
+                    } else {
+                        $folder->setParentId(1);
                     }
 
                     $key = substr($currentPath, strrpos($currentPath, '/') + 1, strlen($currentPath));

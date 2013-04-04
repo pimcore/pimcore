@@ -433,7 +433,7 @@ class Object_Class_Data_Objectbricks extends Object_Class_Data
     }
 
 
-    public function preSetData($object, $value)
+    public function preSetData($object, $value, $params = array())
     {
         if ($value instanceof Object_Objectbrick) {
             $value->setFieldname($this->getName());
