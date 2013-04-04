@@ -264,7 +264,7 @@ class Object_Class extends Pimcore_Model_Abstract {
 
                 // collect lazyloaded fields
                 if (method_exists($def,"getLazyLoading") and $def->getLazyLoading()) {
-                    $lazyLoadedFields[] = $key;
+                        $lazyLoadedFields[] = $key;
                 }
             }
 
