@@ -326,11 +326,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 handler: this.selectInTree.bind(this, this.data.general.o_type)
             });
 
+            buttons.push("-");
+            buttons.push({
+                xtype: 'tbtext',
+                text: t("id") + " " + this.data.general.o_id,
+                scale: "medium"
+            });
 
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.general.o_id,
+                text: t("parent_id") + " " + this.data.general.o_parentId,
                 scale: "medium"
             });
 

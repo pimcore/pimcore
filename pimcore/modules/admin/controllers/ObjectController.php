@@ -292,7 +292,7 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
             $objectData["metaData"] = $this->metaData;
 
             $objectData["general"] = array();
-            $allowedKeys = array("o_published", "o_key", "o_id", "o_modificationDate", "o_classId", "o_className", "o_locked", "o_type");
+            $allowedKeys = array("o_published", "o_key", "o_id", "o_modificationDate", "o_classId", "o_className", "o_locked", "o_type", "o_parentId");
 
             foreach (get_object_vars($object) as $key => $value) {
                 if (strstr($key, "o_") && in_array($key, $allowedKeys)) {
