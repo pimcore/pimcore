@@ -742,7 +742,7 @@ pimcore.asset.tree = Class.create({
             });
 
             this.downloadProgressWin = new Ext.Window({
-                title: t("download_as_zip"),
+                title: t("upload_zip"),
                 layout:'fit',
                 width:500,
                 bodyStyle: "padding: 10px;",
