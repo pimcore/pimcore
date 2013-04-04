@@ -1371,82 +1371,35 @@ class Admin_ObjectController extends Pimcore_Controller_Action_Admin
         $this->_helper->json(array("success" => $success, "message" => $message));
     }
 
-    /**
-     * Preview the object in the admin interface.
-     * The path to the object is built using the previewUrl property which can contain placeholders.
-     * Placeholders are replaced with values from the object properties in this method.
-    */
+
     public function previewAction () {
 
-        $id = $this->getParam('id');
-        $key = 'object_'.$id;
-        $session = new Zend_Session_Namespace('pimcore_objects');
+
+        $id = $this->getParam("id");
+        $key = "object_" . $id;
+        $session = new Zend_Session_Namespace("pimcore_objects");
         if($session->$key) {
             $object = $session->$key;
         } else {
             die("Preview not available, it seems that there's a problem with this object.");
         }
 
-        $url = $this->buildPreviewUrl($object);
-
-        $urlParts = parse_url($url);
-        $this->redirect($urlParts["path"] . "?pimcore_object_preview=" . $id . "&_dc=" . time() . "&" . $urlParts["query"]);
-    }
-
-    /**
-     * Build the preview path for an object.
-     * @param object $object
-     * @return string Relative URL to object preview.
-    */
-    protected function buildPreviewUrl($object) {
-        
         $url = $object->getClass()->getPreviewUrl();
-
-        $questionMarkIndex = strpos($url, '?');
-        //if there is no question mark, pretend it is at the end for simplicity's sake
-        if($questionMarkIndex === false) {
-            $questionMarkIndex = strlen($url);
-        }
 
         // replace named variables
         $vars = get_object_vars($object);
         foreach ($vars as $key => $value) {
-
-            //ignore values that are objects or arrays
-            if(is_array($value) || is_object($value)) {
-                continue;
-            }
-            
-            $key = '%'.$key;
-
             if(!empty($value)) {
-
-                $pos = strpos($url, $key);
-
-                while($pos !== false) {
-
-                    //different encodings are needed depending on if the value is in the path or query string
-                    if($pos < $questionMarkIndex) {
-                        //in path
-                        $encodedValue = rawurlencode($value);
-                        //convert slashes back, because do sometimes want them in the path
-                        $encodedValue = str_replace('%2F', '/', $encodedValue);
-                    } else {
-                        //in query string
-                       $encodedValue = urlencode($value);
-                    }
-                    //use preg_replace to replace the values one by one
-                    $url = preg_replace('/'.$key.'/', $encodedValue, $url, 1);
-                    $pos = strpos($url, $key);
-                }
+                $url = str_replace("%".$key, urlencode($value), $url);
             } else {
-                if(strpos($url, $key) !== false) {
+                if(strpos($url, "%".$key) !== false) {
                     die("No preview available, please ensure that all fields which are required for the preview are filled correctly.");
                 }
             }
         }
 
-        return $url;
+        $urlParts = parse_url($url);
+        $this->redirect($urlParts["path"] . "?pimcore_object_preview=" . $id . "&_dc=" . time() . "&" . $urlParts["query"]);
     }
 
     /**
