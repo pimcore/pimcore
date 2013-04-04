@@ -135,6 +135,7 @@ class Element_Recyclebin_Item extends Pimcore_Model_Abstract {
 
 
         // serialize data
+        Element_Service::loadAllFields($this->element);
         $this->element->_fulldump = true;
         $data = Pimcore_Tool_Serialize::serialize($this->getElement());
         
