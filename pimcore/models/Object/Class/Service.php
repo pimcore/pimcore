@@ -66,6 +66,7 @@ class Object_Class_Service  {
         $class->setIcon($importData["icon"]);
         $class->setAllowInherit($importData["allowInherit"]);
         $class->setAllowVariants($importData["allowVariants"]);
+        $class->setShowVariants($importData["showVariants"]);
         $class->setParentClass($importData["parentClass"]);
         $class->setPreviewUrl($importData["previewUrl"]);
         $class->setPropertyVisibility($importData["propertyVisibility"]);

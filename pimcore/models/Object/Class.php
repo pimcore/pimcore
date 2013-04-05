@@ -70,6 +70,11 @@ class Object_Class extends Pimcore_Model_Abstract {
     public $allowVariants = false;
 
     /**
+     * @var boolean
+     */
+    public $showVariants = false;
+
+    /**
      * @var array
      */
     public $fieldDefinitions;
@@ -661,6 +666,23 @@ class Object_Class extends Pimcore_Model_Abstract {
     {
         return $this->description;
     }
+
+    /**
+     * @param boolean $showVariants
+     */
+    public function setShowVariants($showVariants)
+    {
+        $this->showVariants = (bool) $showVariants;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getShowVariants()
+    {
+        return $this->showVariants;
+    }
+
 
 
 }

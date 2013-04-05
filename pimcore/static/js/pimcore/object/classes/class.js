@@ -487,6 +487,8 @@ pimcore.object.classes.klass = Class.create({
                     } else {
                         this.allowVariants.setValue(false);
                         this.allowVariants.setDisabled(true);
+                        this.showVariants.setValue(false);
+                        this.showVariants.setDisabled(true);
                     }
                 }.bind(this)
             }
@@ -498,8 +500,27 @@ pimcore.object.classes.klass = Class.create({
             fieldLabel: t("allow_variants"),
             name: "allowVariants",
             checked: this.data.allowVariants,
+            disabled: !this.data.allowInherit,
+            listeners: {
+                "check": function(field, checked) {
+                    if(checked == true) {
+                        this.showVariants.setDisabled(false);
+                    } else {
+                        this.showVariants.setValue(false);
+                        this.showVariants.setDisabled(true);
+                    }
+                }.bind(this)
+            }
+        });
+
+        this.showVariants = new Ext.form.Checkbox({
+            xtype: "checkbox",
+            fieldLabel: t("show_variants"),
+            name: "showVariants",
+            checked: this.data.showVariants,
             disabled: !this.data.allowInherit
         });
+
 
 
 
@@ -525,6 +546,7 @@ pimcore.object.classes.klass = Class.create({
                 },
                 this.allowInheritance,
                 this.allowVariants,
+                this.showVariants,
                 {
                     xtype: "textfield",
                     fieldLabel: t("parent_class"),

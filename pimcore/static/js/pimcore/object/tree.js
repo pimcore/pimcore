@@ -146,6 +146,12 @@ pimcore.object.tree = Class.create({
 
     onTreeNodeOver: function (event) {
 
+        if (event.data.node.attributes.type == "variant"){
+            // variant objects cannot be moved
+            return false;
+        }
+
+
         // check for permission
         try {
             if (event.data.node.attributes.permissions.settings) {
@@ -262,93 +268,112 @@ pimcore.object.tree = Class.create({
         }, objectMenu);
 
 
+        var isVariant = this.attributes.type == "variant";
+
+
         if (this.attributes.permissions.create) {
-            menu.add(new Ext.menu.Item({
-                text: t('add_object'),
-                iconCls: "pimcore_icon_object_add",
-                hideOnClick: false,
-                menu: objectMenu.objects
-            }));
-
-
-            //if (this.attributes.type == "folder") {
+            if (!isVariant) {
                 menu.add(new Ext.menu.Item({
-                    text: t('add_folder'),
-                    iconCls: "pimcore_icon_folder_add",
-                    handler: this.attributes.reference.addFolder.bind(this)
+                    text: t('add_object'),
+                    iconCls: "pimcore_icon_object_add",
+                    hideOnClick: false,
+                    menu: objectMenu.objects
                 }));
-            //}
+            }
 
-            menu.add({
-                text: t('import_csv'),
-                hideOnClick: false,
-                iconCls: "pimcore_icon_object_csv_import",
-                menu:objectMenu.importer
-            });
+            if (this.attributes.allowVariants) {
+                menu.add(new Ext.menu.Item({
+                    text: t("add_variant"),
+                    iconCls: "pimcore_icon_tree_variant",
+                    handler: this.attributes.reference.createVariant.bind(this)
+                }));
+            }
 
-            //paste
-            var pasteMenu = [];
+            if (!isVariant) {
+                //if (this.attributes.type == "folder") {
+                    menu.add(new Ext.menu.Item({
+                        text: t('add_folder'),
+                        iconCls: "pimcore_icon_folder_add",
+                        handler: this.attributes.reference.addFolder.bind(this)
+                    }));
+                //}
 
-            if(this.attributes.reference.cacheObjectId && this.attributes.permissions.create) {
-                pasteMenu.push({
-                    text: t("paste_recursive_as_childs"),
-                    iconCls: "pimcore_icon_paste",
-                    handler: this.attributes.reference.pasteInfo.bind(this, "recursive")
+
+                menu.add({
+                    text: t('import_csv'),
+                    hideOnClick: false,
+                    iconCls: "pimcore_icon_object_csv_import",
+                    menu:objectMenu.importer
                 });
-                pasteMenu.push({
-                    text: t("paste_as_child"),
-                    iconCls: "pimcore_icon_paste",
-                    handler: this.attributes.reference.pasteInfo.bind(this, "child")
-                });
 
+                //paste
+                var pasteMenu = [];
 
-                if (this.attributes.type != "folder") {
+                if(this.attributes.reference.cacheObjectId && this.attributes.permissions.create) {
                     pasteMenu.push({
-                        text: t("paste_contents"),
+                        text: t("paste_recursive_as_childs"),
                         iconCls: "pimcore_icon_paste",
-                        handler: this.attributes.reference.pasteInfo.bind(this, "replace")
+                        handler: this.attributes.reference.pasteInfo.bind(this, "recursive")
                     });
+                    pasteMenu.push({
+                        text: t("paste_as_child"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.attributes.reference.pasteInfo.bind(this, "child")
+                    });
+
+
+                    if (this.attributes.type != "folder") {
+                        pasteMenu.push({
+                            text: t("paste_contents"),
+                            iconCls: "pimcore_icon_paste",
+                            handler: this.attributes.reference.pasteInfo.bind(this, "replace")
+                        });
+                    }
                 }
             }
 
-            if(this.attributes.reference.cutObject && this.attributes.permissions.create) {
-                pasteMenu.push({
-                    text: t("paste_cut_element"),
-                    iconCls: "pimcore_icon_paste",
-                    handler: function() {
-                        this.attributes.reference.pasteCutObject(this.attributes.reference.cutObject,
-                                        this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
-                        this.attributes.reference.cutParentNode = null;
-                        this.attributes.reference.cutObject = null;
-                    }.bind(this)
-                });
-            }
+            if (!isVariant) {
+                if(this.attributes.reference.cutObject && this.attributes.permissions.create) {
+                    pasteMenu.push({
+                        text: t("paste_cut_element"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: function() {
+                            this.attributes.reference.pasteCutObject(this.attributes.reference.cutObject,
+                                            this.attributes.reference.cutParentNode, this, this.attributes.reference.tree);
+                            this.attributes.reference.cutParentNode = null;
+                            this.attributes.reference.cutObject = null;
+                        }.bind(this)
+                    });
+                }
 
-            if (pasteMenu.length > 0) {
+                if (pasteMenu.length > 0) {
+                    menu.add(new Ext.menu.Item({
+                        text: t('paste'),
+                        iconCls: "pimcore_icon_paste",
+                        hideOnClick: false,
+                        menu: pasteMenu
+                    }));
+                }
+            }
+        }
+
+        if (!isVariant) {
+            if (this.id != 1) {
                 menu.add(new Ext.menu.Item({
-                    text: t('paste'),
-                    iconCls: "pimcore_icon_paste",
-                    hideOnClick: false,
-                    menu: pasteMenu
+                    text: t('copy'),
+                    iconCls: "pimcore_icon_copy",
+                    handler: this.attributes.reference.copy.bind(this)
                 }));
             }
-        }
 
-        if (this.id != 1) {
-            menu.add(new Ext.menu.Item({
-                text: t('copy'),
-                iconCls: "pimcore_icon_copy",
-                handler: this.attributes.reference.copy.bind(this)
-            }));
-        }
-
-        //cut
-        if (this.id != 1 && !this.attributes.locked) {
-            menu.add(new Ext.menu.Item({
-                text: t('cut'),
-                iconCls: "pimcore_icon_cut",
-                handler: this.attributes.reference.cut.bind(this)
-            }));
+            //cut
+            if (this.id != 1 && !this.attributes.locked) {
+                menu.add(new Ext.menu.Item({
+                    text: t('cut'),
+                    iconCls: "pimcore_icon_cut",
+                    handler: this.attributes.reference.cut.bind(this)
+                }));
+            }
         }
 
         //publish
@@ -454,6 +479,71 @@ pimcore.object.tree = Class.create({
         this.attributes.reference.cutObject = this;
         this.attributes.reference.cutParentNode = this.parentNode;
     },
+
+    createVariant: function() {
+        Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'),
+            this.attributes.reference.addVariantCreate.bind(this));
+//        this.reload();
+    },
+
+    addVariantCreate: function (button, value, object) {
+
+        // check for identical filename in current level
+        if(this.attributes.reference.isExistingKeyInLevel(this, value)) {
+            return;
+        }
+
+        if (button == "ok") {
+//            Ext.Ajax.request({
+//                url: "/admin/object/add",
+//                params: {
+//                    className: className,
+//                    classId: classId,
+//                    parentId: this.id,
+//                    key: pimcore.helpers.getValidFilename(value)
+//                },
+//                success: this.attributes.reference.addObjectComplete.bind(this)
+//            });
+
+            Ext.Ajax.request({
+                url: "/admin/object/add",
+                params: {
+                    className: this.attributes.className,
+                    variantViaTree: true,
+//                    classId: this.element.data.general.o_classId,
+                    parentId: this.attributes.id,
+                    objecttype: "variant",
+                    key: pimcore.helpers.getValidFilename(value)
+                },
+                success: this.attributes.reference.addVariantComplete.bind(this)
+            });
+
+        }
+    },
+
+    addVariantComplete: function (response) {
+        try {
+            var rdata = Ext.decode(response.responseText);
+            if (rdata && rdata.success) {
+                this.leaf = false;
+                this.expand();
+
+                if (rdata.id && rdata.type) {
+                    if (rdata.type == "variant") {
+                        pimcore.helpers.openObject(rdata.id, rdata.type);
+                    }
+                }
+            }
+            else {
+                pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error", t(rdata.message));
+            }
+        } catch (e) {
+            pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error");
+        }
+        this.reload();
+    },
+
+
 
     pasteCutObject: function(object, oldParent, newParent, tree) {
         object.attributes.reference.updateObject(object.id, {

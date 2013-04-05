@@ -70,6 +70,11 @@ class Webservice_Data_Class extends Webservice_Data {
     public $allowVariants = false;
 
     /**
+     * @var boolean
+     */
+    public $showVariants = false;
+
+    /**
      * @var array
      */
     public $fieldDefinitions;
